@@ -1,0 +1,89 @@
+[[bean-eip]]
+== Bean EIP
+
+The *bean:* EIP binds beans to Camel message exchanges.
+
+=== URI Format
+
+[source]
+----
+bean:beanID[?options]
+----
+
+Where *beanID* can be any string which is used to look up the bean in
+the <<Registry-Registry,Registry>>
+
+=== EIP options
+
+// eip options: START
+The Bean EIP supports 4 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *ref* | Sets a reference to a bean to use |  | String
+| *method* | Sets the method name on the bean to use |  | String
+| *beanType* | Sets the Class of the bean |  | String
+| *cache* | Caches the bean lookup, to avoid lookup up bean on every usage. | true | Boolean
+|===
+// eip options: END
+
+=== Bean as endpoint
+
+Camel also supports invoking <<bean-component,Bean>> as an Endpoint. In the
+route below:
+
+What happens is that when the exchange is routed to the `myBean` Camel
+will use the link:bean-binding.html[Bean Binding] to invoke the bean. +
+ The source for the bean is just a plain POJO:
+
+Camel will use link:bean-binding.html[Bean Binding] to invoke the
+`sayHello` method, by converting the Exchange's In body to the `String`
+type and storing the output of the method on the Exchange Out body.
+
+=== Java DSL bean syntax
+
+Java DSL comes with syntactic sugar for the <<bean-component,Bean>>
+component. Instead of specifying the bean explicitly as the endpoint
+(i.e. `to("bean:beanName")`) you can use the following syntax:
+
+[source,java]
+----
+// Send message to the bean endpoint
+// and invoke method resolved using Bean Binding.
+from("direct:start").beanRef("beanName");
+
+// Send message to the bean endpoint
+// and invoke given method.
+from("direct:start").beanRef("beanName", "methodName");
+----
+
+Instead of passing name of the reference to the bean (so that Camel will
+lookup for it in the registry), you can specify the bean itself:
+
+[source,java]
+----
+// Send message to the given bean instance.
+from("direct:start").bean(new ExampleBean());
+
+// Explicit selection of bean method to be invoked.
+from("direct:start").bean(new ExampleBean(), "methodName");
+
+// Camel will create the instance of bean and cache it for you.
+from("direct:start").bean(ExampleBean.class);
+----
+
+=== Bean binding
+
+How bean methods to be invoked are chosen (if they are not specified
+explicitly through the *method* parameter) and how parameter values are
+constructed from the link:message.html[Message] are all defined by the
+link:bean-binding.html[Bean Binding] mechanism which is used throughout
+all of the various link:bean-integration.html[Bean Integration]
+mechanisms in Camel.
+
+=== See also
+
+* <<class-component,Class>> component
+* link:bean-binding.html[Bean Binding]
+* link:bean-integration.html[Bean Integration]

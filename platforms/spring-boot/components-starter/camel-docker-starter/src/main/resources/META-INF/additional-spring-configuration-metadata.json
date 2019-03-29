@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.docker.enabled",
+      "description": "Enable docker component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

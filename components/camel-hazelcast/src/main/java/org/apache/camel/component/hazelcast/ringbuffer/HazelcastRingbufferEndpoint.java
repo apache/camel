@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,12 +21,19 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.hazelcast.HazelcastCommand;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
 
+/**
+ * The hazelcast-ringbuffer component is used to access <a href="http://www.hazelcast.com/">Hazelcast</a> distributed ringbuffer.
+ */
+@UriEndpoint(firstVersion = "2.16.0", scheme = "hazelcast-ringbuffer", title = "Hazelcast Ringbuffer", syntax = "hazelcast-ringbuffer:cacheName", producerOnly = true, label = "cache,datagrid")
 public class HazelcastRingbufferEndpoint extends HazelcastDefaultEndpoint {
 
     public HazelcastRingbufferEndpoint(HazelcastInstance hazelcastInstance, String uri, Component component, final String cacheName) {
         super(hazelcastInstance, uri, component, cacheName);
+        setCommand(HazelcastCommand.ringbuffer);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {

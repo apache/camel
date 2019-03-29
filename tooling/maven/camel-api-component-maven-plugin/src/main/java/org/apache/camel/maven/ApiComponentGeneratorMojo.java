@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,7 +33,7 @@ import org.apache.velocity.VelocityContext;
  * Generates Camel Component based on a collection of APIs.
  */
 @Mojo(name = "fromApis", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresProject = true,
-        defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+        defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
 
     /**
@@ -133,7 +133,7 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
             clearSharedProjectState();
         }
     }
-
+    
     private void configureMethodGenerator(AbstractApiMethodGeneratorMojo mojo, ApiProxy apiProxy) {
 
         // set AbstractGeneratorMojo properties
@@ -146,6 +146,7 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
         // set AbstractSourceGeneratorMojo properties
         mojo.generatedSrcDir = generatedSrcDir;
         mojo.generatedTestDir = generatedTestDir;
+        mojo.addCompileSourceRoots = addCompileSourceRoots;
 
         // set AbstractAPIMethodBaseMojo properties
         mojo.substitutions = apiProxy.getSubstitutions().length != 0

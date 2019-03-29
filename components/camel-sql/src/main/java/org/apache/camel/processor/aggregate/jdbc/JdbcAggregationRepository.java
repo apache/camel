@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,9 +28,10 @@ import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +51,10 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * JDBC based {@link org.apache.camel.spi.AggregationRepository}
+ * JdbcAggregationRepository will only preserve any Serializable compatible
+ * data types. If a data type is not such a type its dropped and a WARN is
+ * logged. And it only persists the Message body and the Message headers.
+ * The Exchange properties are not persisted.
  */
 public class JdbcAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository, OptimisticLockingAggregationRepository {
 
@@ -108,6 +113,9 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         transactionTemplateReadOnly.setReadOnly(true);
     }
 
+    /**
+     * @param dataSource The DataSource to use for accessing the database
+     */
     public final void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
 
@@ -124,7 +132,7 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
             if (jdbcOptimisticLockingExceptionMapper != null && jdbcOptimisticLockingExceptionMapper.isOptimisticLocking(e)) {
                 throw new OptimisticLockingException();
             } else {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
     }
@@ -194,11 +202,12 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     }
 
     /**
-     * Inserts a new record into the given repository table
+     * Inserts a new record into the given repository table.
+     * note : the exchange properties are NOT persisted.
      *
      * @param camelContext   the current CamelContext
      * @param correlationId  the correlation key
-     * @param exchange       the aggregated exchange
+     * @param exchange       the aggregated exchange to insert. The headers will be persisted but not the properties.
      * @param repositoryName The name of the table
      * @throws Exception
      */
@@ -354,7 +363,7 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
                                 return id;
                             }
                         });
-                return new LinkedHashSet<String>(keys);
+                return new LinkedHashSet<>(keys);
             }
         });
     }
@@ -369,6 +378,12 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         return answer;
     }
 
+    /**
+     *  If recovery is enabled then a background task is run every x'th time to scan for failed exchanges to recover
+     *  and resubmit. By default this interval is 5000 millis.
+     * @param interval  the interval
+     * @param timeUnit  the time unit
+     */
     public void setRecoveryInterval(long interval, TimeUnit timeUnit) {
         this.recoveryInterval = timeUnit.toMillis(interval);
     }
@@ -385,6 +400,11 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         return useRecovery;
     }
 
+    /**
+     *
+     * @param useRecovery Whether or not recovery is enabled. This option is by default true. When enabled the Camel
+     *                    Aggregator automatic recover failed aggregated exchange and have them resubmittedd
+     */
     public void setUseRecovery(boolean useRecovery) {
         this.useRecovery = useRecovery;
     }
@@ -401,6 +421,13 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         return deadLetterUri;
     }
 
+    /**
+     *
+     * @param deadLetterUri  An endpoint uri for a Dead Letter Channel where exhausted recovered Exchanges will be
+     *                       moved. If this option is used then the maximumRedeliveries option must also be provided.
+     *                       Important note : if the deadletter route throws an exception, it will be send again to DLQ
+     *                       until it succeed !
+     */
     public void setDeadLetterUri(String deadLetterUri) {
         this.deadLetterUri = deadLetterUri;
     }
@@ -409,6 +436,12 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         return returnOldExchange;
     }
 
+    /**
+     *
+     * @param returnOldExchange Whether the get operation should return the old existing Exchange if any existed.
+     *                          By default this option is false to optimize as we do not need the old exchange when
+     *                          aggregating
+     */
     public void setReturnOldExchange(boolean returnOldExchange) {
         this.returnOldExchange = returnOldExchange;
     }
@@ -421,10 +454,20 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         return this.headersToStoreAsText != null && !this.headersToStoreAsText.isEmpty();
     }
 
+    /**
+     * Allows to store headers as String which is human readable. By default this option is disabled,
+     * storing the headers in binary format.
+     * @param headersToStoreAsText the list of headers to store as String
+     */
     public void setHeadersToStoreAsText(List<String> headersToStoreAsText) {
         this.headersToStoreAsText = headersToStoreAsText;
     }
 
+    /**
+     *
+     * @param storeBodyAsText Whether to store the message body as String which is human readable.
+     *                        By default this option is false storing the body in binary format.
+     */
     public void setStoreBodyAsText(boolean storeBodyAsText) {
         this.storeBodyAsText = storeBodyAsText;
     }
@@ -480,12 +523,12 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         if (current > 0) {
             LOG.info("On startup there are " + current + " aggregate exchanges (not completed) in repository: " + getRepositoryName());
         } else {
-            LOG.info("On startup there are no existing aggregate exchanges (not completed) in repository: " + getRepositoryName());
+            LOG.info("On startup there are no existing aggregate exchanges (not completed) in repository: {}", getRepositoryName());
         }
         if (completed > 0) {
             LOG.warn("On startup there are " + completed + " completed exchanges to be recovered in repository: " + getRepositoryNameCompleted());
         } else {
-            LOG.info("On startup there are no completed exchanges to be recovered in repository: " + getRepositoryNameCompleted());
+            LOG.info("On startup there are no completed exchanges to be recovered in repository: {}", getRepositoryNameCompleted());
         }
     }
 

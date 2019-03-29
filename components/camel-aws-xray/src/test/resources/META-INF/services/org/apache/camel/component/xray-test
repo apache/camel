@@ -1,0 +1,1 @@
+class=org.apache.camel.component.aws.xray.component.TestXRayComponent

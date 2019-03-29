@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -70,7 +70,7 @@ public class QueryResultList {
      */
     public List<String> getResult() {
         if (result == null) {
-            result = new ArrayList<String>();
+            result = new ArrayList<>();
         }
         return this.result;
     }

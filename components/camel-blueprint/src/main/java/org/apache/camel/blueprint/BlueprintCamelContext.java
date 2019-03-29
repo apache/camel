@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,14 +16,11 @@
  */
 package org.apache.camel.blueprint;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.blueprint.handler.CamelNamespaceHandler;
+import org.apache.camel.core.osgi.OsgiBeanRepository;
 import org.apache.camel.core.osgi.OsgiCamelContextHelper;
 import org.apache.camel.core.osgi.OsgiCamelContextPublisher;
 import org.apache.camel.core.osgi.OsgiFactoryFinderResolver;
@@ -31,11 +28,11 @@ import org.apache.camel.core.osgi.OsgiTypeConverter;
 import org.apache.camel.core.osgi.utils.BundleContextUtils;
 import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.ModelJAXBContextFactory;
-import org.apache.camel.spi.Registry;
-import org.apache.camel.util.LoadPropertiesException;
+import org.apache.camel.support.DefaultRegistry;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
@@ -43,26 +40,21 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.BlueprintEvent;
 import org.osgi.service.blueprint.container.BlueprintListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * OSGi Blueprint based {@link org.apache.camel.CamelContext}.
  */
 public class BlueprintCamelContext extends DefaultCamelContext implements ServiceListener, BlueprintListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BlueprintCamelContext.class);
-    
     protected final AtomicBoolean routeDefinitionValid = new AtomicBoolean(true);
 
     private BundleContext bundleContext;
     private BlueprintContainer blueprintContainer;
     private ServiceRegistration<?> registration;
-
-    public BlueprintCamelContext() {
-    }
+    private BlueprintCamelStateService bundleStateService;
 
     public BlueprintCamelContext(BundleContext bundleContext, BlueprintContainer blueprintContainer) {
+        super(false);
         this.bundleContext = bundleContext;
         this.blueprintContainer = blueprintContainer;
 
@@ -70,10 +62,17 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
         OsgiCamelContextHelper.osgiUpdate(this, bundleContext);
 
         // and these are blueprint specific
+        BeanRepository repo1 = new BlueprintContainerBeanRepository(getBlueprintContainer());
+        OsgiBeanRepository repo2 = new OsgiBeanRepository(bundleContext);
+        setRegistry(new DefaultRegistry(repo1, repo2));
+        // Need to clean up the OSGi service when camel context is closed.
+        addLifecycleStrategy(repo2);
+
         setComponentResolver(new BlueprintComponentResolver(bundleContext));
         setLanguageResolver(new BlueprintLanguageResolver(bundleContext));
         setDataFormatResolver(new BlueprintDataFormatResolver(bundleContext));
         setApplicationContextClassLoader(new BundleDelegatingClassLoader(bundleContext.getBundle()));
+        init();
     }
 
     @Override
@@ -97,69 +96,129 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     public void setBlueprintContainer(BlueprintContainer blueprintContainer) {
         this.blueprintContainer = blueprintContainer;
     }
-   
-    public void init() throws Exception {
-        LOG.trace("init {}", this);
 
+    public BlueprintCamelStateService getBundleStateService() {
+        return bundleStateService;
+    }
+
+    public void setBundleStateService(BlueprintCamelStateService bundleStateService) {
+        this.bundleStateService = bundleStateService;
+    }
+   
+    public void doInit() {
+        log.trace("init {}", this);
         // add service listener so we can be notified when blueprint container is done
         // and we would be ready to start CamelContext
         bundleContext.addServiceListener(this);
         // add blueprint listener as service, as we need this for the blueprint container
         // to support change events when it changes states
         registration = bundleContext.registerService(BlueprintListener.class, this, null);
+        // call super
+        super.doInit();
     }
 
     public void destroy() throws Exception {
-        LOG.trace("destroy {}", this);
+        log.trace("destroy {}", this);
 
         // remove listener and stop this CamelContext
         try {
             bundleContext.removeServiceListener(this);
         } catch (Exception e) {
-            LOG.warn("Error removing ServiceListener " + this + ". This exception is ignored.", e);
+            log.warn("Error removing ServiceListener: " + this + ". This exception is ignored.", e);
         }
         if (registration != null) {
             try {
                 registration.unregister();
             } catch (Exception e) {
-                LOG.warn("Error unregistering service registration " + registration + ". This exception is ignored.", e);
+                log.warn("Error unregistering service registration: " + registration + ". This exception is ignored.", e);
             }
             registration = null;
         }
+        bundleStateService.setBundleState(bundleContext.getBundle(), this.getName(), null);
 
         // must stop Camel
         stop();
     }
 
     @Override
-    public Map<String, Properties> findComponents() throws LoadPropertiesException, IOException {
-        return BundleContextUtils.findComponents(bundleContext, this);
-    }
-
-    @Override
-    public String getComponentDocumentation(String componentName) throws IOException {
-        return BundleContextUtils.getComponentDocumentation(bundleContext, this, componentName);
-    }
-
-    @Override
     public void blueprintEvent(BlueprintEvent event) {
-        // noop as we just needed to enlist the BlueprintListener to have events triggered to serviceChanged method
+        if (log.isDebugEnabled()) {
+            String eventTypeString;
+
+            switch (event.getType()) {
+            case BlueprintEvent.CREATING:
+                eventTypeString = "CREATING";
+                break;
+            case BlueprintEvent.CREATED:
+                eventTypeString = "CREATED";
+                break;
+            case BlueprintEvent.DESTROYING:
+                eventTypeString = "DESTROYING";
+                break;
+            case BlueprintEvent.DESTROYED:
+                eventTypeString = "DESTROYED";
+                break;
+            case BlueprintEvent.GRACE_PERIOD:
+                eventTypeString = "GRACE_PERIOD";
+                break;
+            case BlueprintEvent.WAITING:
+                eventTypeString = "WAITING";
+                break;
+            case BlueprintEvent.FAILURE:
+                eventTypeString = "FAILURE";
+                break;
+            default:
+                eventTypeString = "UNKNOWN";
+                break;
+            }
+
+            log.debug("Received BlueprintEvent[replay={} type={} bundle={}] %s", event.isReplay(), eventTypeString, event.getBundle().getSymbolicName(), event);
+        }
+
+        if (!event.isReplay() && this.getBundleContext().getBundle().getBundleId() == event.getBundle().getBundleId()) {
+            if (event.getType() == BlueprintEvent.CREATED) {
+                try {
+                    log.info("Attempting to start CamelContext: {}", this.getName());
+                    this.maybeStart();
+                } catch (Exception startEx) {
+                    log.error("Error occurred during starting CamelContext: {}", this.getName(), startEx);
+                }
+            } else if (event.getType() == BlueprintEvent.DESTROYING) {
+                try {
+                    log.info("Stopping CamelContext: {}", this.getName());
+                    this.stop();
+                } catch (Exception stopEx) {
+                    log.error("Error occurred during stopping CamelContext: {}", this.getName(), stopEx);
+                }
+            }
+        }
     }
 
     @Override
     public void serviceChanged(ServiceEvent event) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Service {} changed to {}", event, event.getType());
-        }
-        // look for blueprint container to be registered, and then we can start the CamelContext
-        if (event.getType() == ServiceEvent.REGISTERED
-                && event.getServiceReference().isAssignableTo(bundleContext.getBundle(), "org.osgi.service.blueprint.container.BlueprintContainer")
-                && bundleContext.getBundle().equals(event.getServiceReference().getBundle())) {
-            try {
-                maybeStart();
-            } catch (Exception e) {
-                LOG.error("Error occurred during starting Camel: " + this + " due " + e.getMessage(), e);
+        if (log.isTraceEnabled()) {
+            String eventTypeString;
+
+            switch (event.getType()) {
+            case ServiceEvent.REGISTERED:
+                eventTypeString = "REGISTERED";
+                break;
+            case ServiceEvent.MODIFIED:
+                eventTypeString = "MODIFIED";
+                break;
+            case ServiceEvent.UNREGISTERING:
+                eventTypeString = "UNREGISTERING";
+                break;
+            case ServiceEvent.MODIFIED_ENDMATCH:
+                eventTypeString = "MODIFIED_ENDMATCH";
+                break;
+            default:
+                eventTypeString = "UNKNOWN";
+                break;
             }
+
+            // use trace logging as this is very noisy
+            log.trace("Service: {} changed to: {}", event, eventTypeString);
         }
     }
 
@@ -175,30 +234,28 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     }
 
     @Override
-    protected Registry createRegistry() {
-        Registry reg = new BlueprintContainerRegistry(getBlueprintContainer());
-        return OsgiCamelContextHelper.wrapRegistry(this, reg, bundleContext);
-    }
-    
-    @Override
     public void start() throws Exception {
         final ClassLoader original = Thread.currentThread().getContextClassLoader();
         try {
             // let's set a more suitable TCCL while starting the context
             Thread.currentThread().setContextClassLoader(getApplicationContextClassLoader());
+            bundleStateService.setBundleState(bundleContext.getBundle(), this.getName(), BlueprintCamelStateService.State.Starting);
             super.start();
-        } catch (FailedToCreateRouteException e) {
+            bundleStateService.setBundleState(bundleContext.getBundle(), this.getName(), BlueprintCamelStateService.State.Active);
+        } catch (Exception e) {
+            bundleStateService.setBundleState(bundleContext.getBundle(), this.getName(), BlueprintCamelStateService.State.Failure, e);
             routeDefinitionValid.set(false);
+            throw e;
         } finally {
             Thread.currentThread().setContextClassLoader(original);
         }
     }
 
     private void maybeStart() throws Exception {
-        LOG.trace("maybeStart: {}", this);
+        log.trace("maybeStart: {}", this);
 
         if (!routeDefinitionValid.get()) {
-            LOG.trace("maybeStart: {} is skipping since CamelRoute definition is not correct.", this);
+            log.trace("maybeStart: {} is skipping since CamelRoute definition is not correct.", this);
             return;
         }
 
@@ -219,16 +276,16 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
         // when blueprint loading the bundle
         boolean skip = "true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"));
         if (skip) {
-            LOG.trace("maybeStart: {} is skipping as System property skipStartingCamelContext is set", this);
+            log.trace("maybeStart: {} is skipping as System property skipStartingCamelContext is set", this);
             return;
         }
 
         if (!isStarted() && !isStarting()) {
-            LOG.debug("Starting {}", this);
+            log.debug("Starting {}", this);
             start();
         } else {
             // ignore as Camel is already started
-            LOG.trace("Ignoring maybeStart() as {} is already started", this);
+            log.trace("Ignoring maybeStart() as {} is already started", this);
         }
     }
 

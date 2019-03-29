@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,7 +32,7 @@ public class OrderService {
     public Order generateOrder() {
         Order order = new Order();
         order.setAmount(amount.nextInt(10) + 1);
-        order.setBook(books.findOne(amount.nextInt(2) + 1));
+        order.setBook(books.findById(amount.nextInt(2) + 1).get());
         return order;
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,18 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.security.auth.Subject;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Variant;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -33,7 +38,9 @@ import org.apache.camel.component.cxf.common.header.CxfHeaderHelper;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.helpers.HttpHeaderHelper;
 import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.apache.cxf.jaxrs.model.OperationResourceInfoStack;
@@ -46,8 +53,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Default strategy  to bind between Camel and CXF exchange for RESTful resources.
  *
- *
- * @version 
  */
 public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAware {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCxfRsBinding.class);
@@ -78,7 +83,51 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
             LOG.trace("Get the response from the in message");
         }
 
-        return response.getBody();
+        Object o = response.getBody();
+        if (!(o instanceof Response)) {
+            //not a JAX-RS Response object, we need to set the headers from the Camel values
+            
+            
+            if (response.getHeader(org.apache.cxf.message.Message.PROTOCOL_HEADERS) != null) {
+                Map<String, Object> headers = CastUtils.cast((Map<?, ?>)response.getHeader(org.apache.cxf.message.Message.PROTOCOL_HEADERS));
+                if (!ObjectHelper.isEmpty(cxfExchange) && !ObjectHelper.isEmpty(cxfExchange.getOutMessage())) {
+                    cxfExchange.getOutMessage().putIfAbsent(org.apache.cxf.message.Message.PROTOCOL_HEADERS, 
+                                                        new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
+                }
+                final Map<String, List<String>> cxfHeaders =
+                    CastUtils.cast((Map<?, ?>) cxfExchange.getOutMessage().get(org.apache.cxf.message.Message.PROTOCOL_HEADERS));
+                
+                for (Map.Entry<String, Object> ent : headers.entrySet()) {
+                    List<String> v;
+                    if (ent.getValue() instanceof List) {
+                        v = CastUtils.cast((List<?>)ent.getValue());
+                    } else {
+                        v = Arrays.asList(ent.getValue().toString());
+                    }
+                    cxfHeaders.put(ent.getKey(), v);
+                }
+            }
+            
+            
+            if (response.getHeader(Exchange.HTTP_RESPONSE_CODE) != null && !cxfExchange.containsKey(org.apache.cxf.message.Message.RESPONSE_CODE)) {
+                cxfExchange.put(org.apache.cxf.message.Message.RESPONSE_CODE, response.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class));
+            }
+            if (response.getHeader(Exchange.CONTENT_TYPE) != null && !cxfExchange.containsKey(org.apache.cxf.message.Message.CONTENT_TYPE)) {
+                if (!ObjectHelper.isEmpty(cxfExchange) && !ObjectHelper.isEmpty(cxfExchange.getOutMessage())) {
+                    cxfExchange.getOutMessage().putIfAbsent(org.apache.cxf.message.Message.PROTOCOL_HEADERS, 
+                                                        new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
+                }
+                final Map<String, List<String>> cxfHeaders =
+                    CastUtils.cast((Map<?, ?>) cxfExchange.getOutMessage().get(org.apache.cxf.message.Message.PROTOCOL_HEADERS));
+
+                if (!cxfHeaders.containsKey(Exchange.CONTENT_TYPE)) {
+                    List<String> a = Arrays.asList((String)response.getHeader(Exchange.CONTENT_TYPE));
+                    cxfHeaders.put(Exchange.CONTENT_TYPE, a);
+                    cxfExchange.getOutMessage().put(Exchange.CONTENT_TYPE, response.getHeader(Exchange.CONTENT_TYPE));
+                }
+            }
+        }
+        return o;
     }
 
     public void populateExchangeFromCxfRsRequest(org.apache.cxf.message.Exchange cxfExchange,
@@ -181,6 +230,18 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         }
 
         return answer;
+    }
+
+    public Entity<Object> bindCamelMessageToRequestEntity(Object body, Message camelMessage, Exchange camelExchange) throws Exception  {
+        if (body == null) {
+            return null;
+        }
+        String contentType = camelMessage.getHeader(Exchange.CONTENT_TYPE, String.class);
+        if (contentType == null) {
+            contentType = MediaType.WILDCARD;
+        }
+        String contentEncoding = camelMessage.getHeader(Exchange.CONTENT_ENCODING, String.class);
+        return  Entity.entity(body, new Variant(MediaType.valueOf(contentType), Locale.US, contentEncoding));
     }
 
     /**

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,6 +28,7 @@ public final class GeoCoderConstants {
     public static final String CITY = "CamelGeoCoderCity";
     public static final String COUNTRY_LONG = "CamelGeoCoderCountryLong";
     public static final String COUNTRY_SHORT = "CamelGeoCoderCountryShort";
+    public static final String POSTAL_CODE = "CamelGeoCoderPostalCode";
 
     private GeoCoderConstants() {
     }

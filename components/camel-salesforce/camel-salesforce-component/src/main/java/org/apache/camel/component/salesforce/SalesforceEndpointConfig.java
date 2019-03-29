@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,12 +18,16 @@ package org.apache.camel.component.salesforce;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata;
+import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
+import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.Action;
 import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum;
@@ -38,13 +42,15 @@ import org.apache.camel.spi.UriParams;
 public class SalesforceEndpointConfig implements Cloneable {
 
     // default API version
-    public static final String DEFAULT_VERSION = "33.0";
+    public static final String DEFAULT_VERSION = "34.0";
 
     // general parameter
     public static final String API_VERSION = "apiVersion";
 
     // parameters for Rest API
     public static final String FORMAT = "format";
+    public static final String RAW_PAYLOAD = "rawPayload";
+
     public static final String SOBJECT_NAME = "sObjectName";
     public static final String SOBJECT_ID = "sObjectId";
     public static final String SOBJECT_FIELDS = "sObjectFields";
@@ -56,6 +62,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String SOBJECT_SEARCH = "sObjectSearch";
     public static final String APEX_METHOD = "apexMethod";
     public static final String APEX_URL = "apexUrl";
+    public static final String LIMIT = "limit";
 
     // prefix for parameters in headers
     public static final String APEX_QUERY_PARAM_PREFIX = "apexQueryParam.";
@@ -65,7 +72,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String JOB_ID = "jobId";
     public static final String BATCH_ID = "batchId";
     public static final String RESULT_ID = "resultId";
-    
+
     // parameters for Analytics API
     public static final String REPORT_ID = "reportId";
     public static final String INCLUDE_DETAILS = "includeDetails";
@@ -76,12 +83,19 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String DEFAULT_REPLAY_ID = "defaultReplayId";
     public static final String INITIAL_REPLAY_ID_MAP = "initialReplayIdMap";
 
+    // parameters for Approval API
+    public static final String APPROVAL = "approval";
+
     // default maximum authentication retries on failed authentication or expired session
     public static final int DEFAULT_MAX_AUTHENTICATION_RETRIES = 4;
 
     // default increment and limit for Streaming connection restart attempts
     public static final long DEFAULT_BACKOFF_INCREMENT = 1000L;
     public static final long DEFAULT_MAX_BACKOFF = 30000L;
+
+    public static final String NOT_FOUND_BEHAVIOUR = "notFoundBehaviour";
+
+    public static final String SERIALIZE_NULLS = "serializeNulls";
 
     // general properties
     @UriParam
@@ -91,23 +105,27 @@ public class SalesforceEndpointConfig implements Cloneable {
     @UriParam
     private PayloadFormat format = PayloadFormat.JSON;
     @UriParam
+    private boolean rawPayload;
+    @UriParam(displayName = "SObject Name")
     private String sObjectName;
-    @UriParam
+    @UriParam(displayName = "SObject Id")
     private String sObjectId;
-    @UriParam
+    @UriParam(displayName = "SObject Fields")
     private String sObjectFields;
-    @UriParam
+    @UriParam(displayName = "SObject Id Name")
     private String sObjectIdName;
-    @UriParam
+    @UriParam(displayName = "SObject Id Value")
     private String sObjectIdValue;
-    @UriParam
+    @UriParam(displayName = "SObject Blob Field Name")
     private String sObjectBlobFieldName;
-    @UriParam
+    @UriParam(displayName = "SObject Class")
     private String sObjectClass;
-    @UriParam
+    @UriParam(displayName = "SObject Query")
     private String sObjectQuery;
-    @UriParam
+    @UriParam(displayName = "SObject Search")
     private String sObjectSearch;
+    @UriParam(displayName = "Serialize NULL values")
+    private boolean serializeNulls;
     @UriParam
     private String apexMethod;
     @UriParam
@@ -140,7 +158,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     private Boolean notifyForOperationDelete;
     @UriParam
     private Boolean notifyForOperationUndelete;
-    
+
     // Analytics API properties
     @UriParam
     private String reportId;
@@ -153,9 +171,12 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     // Streaming API properties
     @UriParam
-    private Integer defaultReplayId;
+    private Long defaultReplayId;
     @UriParam
-    private Map<String, Integer> initialReplayIdMap;
+    private Map<String, Long> initialReplayIdMap;
+
+    // Approval API properties
+    private ApprovalRequest approval;
 
     // Salesforce Jetty9 HttpClient, set using reference
     @UriParam
@@ -172,6 +193,12 @@ public class SalesforceEndpointConfig implements Cloneable {
     // Streaming connection restart attempt maximum backoff interval
     @UriParam
     private long maxBackoff = DEFAULT_MAX_BACKOFF;
+
+    @UriParam
+    private Integer limit;
+
+    @UriParam
+    private NotFoundBehaviour notFoundBehaviour = NotFoundBehaviour.EXCEPTION;
 
     public SalesforceEndpointConfig copy() {
         try {
@@ -192,6 +219,18 @@ public class SalesforceEndpointConfig implements Cloneable {
      */
     public void setFormat(PayloadFormat format) {
         this.format = format;
+    }
+
+    public boolean getRawPayload() {
+        return rawPayload;
+    }
+
+    /**
+     * Use raw payload {@link String} for request and response (either JSON or XML depending on {@code format}),
+     * instead of DTOs, false by default
+     */
+    public void setRawPayload(boolean rawPayload) {
+        this.rawPayload = rawPayload;
     }
 
     public String getApiVersion() {
@@ -304,6 +343,18 @@ public class SalesforceEndpointConfig implements Cloneable {
         this.sObjectSearch = sObjectSearch;
     }
 
+    /**
+     * Should the NULL values of given DTO be serialized with
+     * empty (NULL) values. This affects only JSON data format.
+     */
+    public void setSerializeNulls(boolean serializeNulls) {
+        this.serializeNulls = serializeNulls;
+    }
+
+    public boolean isSerializeNulls() {
+        return serializeNulls;
+    }
+
     public String getApexMethod() {
         return apexMethod;
     }
@@ -327,7 +378,9 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     public Map<String, Object> getApexQueryParams() {
-        return apexQueryParams == null ? Collections.EMPTY_MAP : Collections.unmodifiableMap(apexQueryParams);
+        final Map<String, Object> value = Optional.ofNullable(apexQueryParams).orElse(Collections.emptyMap());
+
+        return Collections.unmodifiableMap(value);
     }
 
     /**
@@ -335,6 +388,19 @@ public class SalesforceEndpointConfig implements Cloneable {
      */
     public void setApexQueryParams(Map<String, Object> apexQueryParams) {
         this.apexQueryParams = apexQueryParams;
+    }
+
+    public ApprovalRequest getApproval() {
+        return approval;
+    }
+
+    /**
+     * The approval request for Approval API.
+     *
+     * @param approval
+     */
+    public void setApproval(final ApprovalRequest approval) {
+        this.approval = approval;
     }
 
     public ContentType getContentType() {
@@ -548,7 +614,7 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     public Map<String, Object> toValueMap() {
 
-        final Map<String, Object> valueMap = new HashMap<String, Object>();
+        final Map<String, Object> valueMap = new HashMap<>();
         valueMap.put(FORMAT, format.toString().toLowerCase());
         valueMap.put(API_VERSION, apiVersion);
 
@@ -561,8 +627,11 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(SOBJECT_CLASS, sObjectClass);
         valueMap.put(SOBJECT_QUERY, sObjectQuery);
         valueMap.put(SOBJECT_SEARCH, sObjectSearch);
+        valueMap.put(SERIALIZE_NULLS, serializeNulls);
         valueMap.put(APEX_METHOD, apexMethod);
         valueMap.put(APEX_URL, apexUrl);
+        valueMap.put(LIMIT, limit);
+        valueMap.put(APPROVAL, approval);
         // apexQueryParams are handled explicitly in AbstractRestProcessor
 
         // add bulk API properties
@@ -583,29 +652,222 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(DEFAULT_REPLAY_ID, defaultReplayId);
         valueMap.put(INITIAL_REPLAY_ID_MAP, initialReplayIdMap);
 
+        valueMap.put(NOT_FOUND_BEHAVIOUR, notFoundBehaviour);
+
         return Collections.unmodifiableMap(valueMap);
     }
 
-    public Integer getDefaultReplayId() {
+    public Long getDefaultReplayId() {
         return defaultReplayId;
     }
 
     /**
      * Default replayId setting if no value is found in {@link #initialReplayIdMap}
+     * 
      * @param defaultReplayId
      */
-    public void setDefaultReplayId(Integer defaultReplayId) {
+    public void setDefaultReplayId(Long defaultReplayId) {
         this.defaultReplayId = defaultReplayId;
     }
 
-    public Map<String, Integer> getInitialReplayIdMap() {
-        return initialReplayIdMap;
+    public Map<String, Long> getInitialReplayIdMap() {
+        return Optional.ofNullable(initialReplayIdMap).orElse(Collections.emptyMap());
     }
 
     /**
      * Replay IDs to start from per channel name.
      */
-    public void setInitialReplayIdMap(Map<String, Integer> initialReplayIdMap) {
+    public void setInitialReplayIdMap(Map<String, Long> initialReplayIdMap) {
         this.initialReplayIdMap = initialReplayIdMap;
+    }
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    /**
+     * Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation.
+     * 
+     * @param limit
+     */
+    public void setLimit(final Integer limit) {
+        this.limit = limit;
+    }
+
+    public Action getApprovalActionType() {
+        if (approval == null) {
+            return null;
+        }
+
+        return approval.getActionType();
+    }
+
+    public String getApprovalComments() {
+        if (approval == null) {
+            return null;
+        }
+
+        return approval.getComments();
+    }
+
+    public String getApprovalContextActorId() {
+        if (approval == null) {
+            return null;
+        }
+
+        return approval.getContextActorId();
+    }
+
+    public String getApprovalContextId() {
+        if (approval == null) {
+            return null;
+        }
+
+        return approval.getContextId();
+    }
+
+    public List<String> getApprovalNextApproverIds() {
+        if (approval == null) {
+            return null;
+        }
+
+        return approval.getNextApproverIds();
+    }
+
+    public String getApprovalProcessDefinitionNameOrId() {
+        if (approval == null) {
+            return null;
+        }
+
+        return approval.getProcessDefinitionNameOrId();
+    }
+
+    public boolean isApprovalSkipEntryCriteria() {
+        if (approval == null) {
+            return false;
+        }
+
+        return approval.isSkipEntryCriteria();
+    }
+
+    /**
+     * Represents the kind of action to take: Submit, Approve, or Reject.
+     *
+     * @param actionType
+     */
+    public void setApprovalActionType(final Action actionType) {
+        if (approval == null) {
+            approval = new ApprovalRequest();
+        }
+
+        approval.setActionType(actionType);
+    }
+
+    /**
+     * The comment to add to the history step associated with this request.
+     *
+     * @param comments
+     */
+    public void setApprovalComments(final String comments) {
+        if (approval == null) {
+            approval = new ApprovalRequest();
+        }
+
+        approval.setComments(comments);
+    }
+
+    /**
+     * The ID of the submitter who’s requesting the approval record. 
+     *
+     * @param contextActorId
+     */
+    public void setApprovalContextActorId(final String contextActorId) {
+        if (approval == null) {
+            approval = new ApprovalRequest();
+        }
+
+        approval.setContextActorId(contextActorId);
+    }
+
+    /**
+     * The ID of the item that is being acted upon.
+     *
+     * @param contextId
+     */
+    public void setApprovalContextId(final String contextId) {
+        if (approval == null) {
+            approval = new ApprovalRequest();
+        }
+
+        approval.setContextId(contextId);
+    }
+
+    /**
+     * If the process requires specification of the next approval, the ID of the user to be assigned the next request.
+     *
+     * @param nextApproverIds
+     */
+    public void setApprovalNextApproverIds(final List<String> nextApproverIds) {
+        if (approval == null) {
+            approval = new ApprovalRequest();
+        }
+
+        approval.setNextApproverIds(nextApproverIds);
+    }
+
+    /**
+     * If the process requires specification of the next approval, the ID of the user to be assigned the next request.
+     *
+     * @param nextApproverIds
+     */
+    public void setApprovalNextApproverIds(String nextApproverId) {
+        if (approval == null) {
+            approval = new ApprovalRequest();
+        }
+
+        approval.setNextApproverIds(nextApproverId);
+    }
+
+    /**
+     * The developer name or ID of the process definition.
+     *
+     * @param processDefinitionNameOrId
+     */
+    public void setApprovalProcessDefinitionNameOrId(final String processDefinitionNameOrId) {
+        if (approval == null) {
+            approval = new ApprovalRequest();
+        }
+
+        approval.setProcessDefinitionNameOrId(processDefinitionNameOrId);
+    }
+
+    /**
+     * Determines whether to evaluate the entry criteria for the process (true) or not (false) if the process definition
+     * name or ID isn’t null. If the process definition name or ID isn’t specified, this argument is ignored, and 
+     * standard evaluation is followed based on process order. By default, the entry criteria isn’t skipped if it’s not
+     * set by this request.
+     *
+     * @param skipEntryCriteria
+     */
+    public void setApprovalSkipEntryCriteria(final boolean skipEntryCriteria) {
+        if (approval == null) {
+            approval = new ApprovalRequest();
+        }
+
+        approval.setSkipEntryCriteria(skipEntryCriteria);
+    }
+
+    public NotFoundBehaviour getNotFoundBehaviour() {
+        return notFoundBehaviour;
+    }
+
+    /**
+     * Sets the behaviour of 404 not found status received from Salesforce API.
+     * Should the body be set to NULL {@link NotFoundBehaviour#NULL} or should a
+     * exception be signaled on the exchange {@link NotFoundBehaviour#EXCEPTION}
+     * - the default.
+     */
+    public void setNotFoundBehaviour(final NotFoundBehaviour notFoundBehaviour) {
+        this.notFoundBehaviour = notFoundBehaviour;
     }
 }

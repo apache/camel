@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,10 +23,12 @@ import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
+import org.apache.camel.spi.annotations.Dataformat;
 
 /**
  * This class is the data format that uses the CSV uniVocity parser.
  */
+@Dataformat("univocity-csv")
 public class UniVocityCsvDataFormat extends AbstractUniVocityDataFormat<CsvFormat, CsvWriterSettings, CsvWriter, CsvParserSettings, CsvParser, UniVocityCsvDataFormat> {
     protected Boolean quoteAllFields;
     protected Character quote;

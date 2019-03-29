@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import junit.framework.TestCase;
+
 import org.apache.camel.core.xml.PatternBasedPackageScanFilter;
 
 public abstract class ScanTestSupport extends TestCase {
@@ -31,7 +32,7 @@ public abstract class ScanTestSupport extends TestCase {
     }
 
     protected void validateMatchingSetContains(Set<Class<?>> scannedClasses, Class<?>... matchingClasses) {
-        HashSet<Class<?>> expectedSet = new HashSet<Class<?>>();
+        HashSet<Class<?>> expectedSet = new HashSet<>();
         for (Class<?> expected : matchingClasses) {
             expectedSet.add(expected);
         }
@@ -60,7 +61,7 @@ public abstract class ScanTestSupport extends TestCase {
     }
 
     public Set<Class<?>> getMatchingClasses(Set<Class<?>> scannedClasses, PatternBasedPackageScanFilter filter) {
-        Set<Class<?>> matching = new HashSet<Class<?>>();
+        Set<Class<?>> matching = new HashSet<>();
 
         for (Class<?> candidate : scannedClasses) {
             if (filter.matches(candidate)) {

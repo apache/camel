@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,16 +19,16 @@ package org.apache.camel.component.jms;
 import javax.jms.Message;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ServicePoolAware;
-import org.apache.camel.impl.PollingConsumerSupport;
+import org.apache.camel.support.PollingConsumerSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.support.destination.JmsDestinationAccessor;
 
 /**
  *  A JMS {@link org.apache.camel.PollingConsumer}.
  */
-public class JmsPollingConsumer extends PollingConsumerSupport implements ServicePoolAware {
+public class JmsPollingConsumer extends PollingConsumerSupport {
     private JmsOperations template;
     private JmsEndpoint jmsEndpoint;
 
@@ -37,10 +37,6 @@ public class JmsPollingConsumer extends PollingConsumerSupport implements Servic
         this.jmsEndpoint = endpoint;
         this.template = template;
     }
-    
-    public JmsPollingConsumer(JmsEndpoint endpoint) {
-        this(endpoint, endpoint.createInOnlyTemplate());
-    }
 
     @Override
     public JmsEndpoint getEndpoint() {
@@ -48,11 +44,11 @@ public class JmsPollingConsumer extends PollingConsumerSupport implements Servic
     }
 
     public Exchange receiveNoWait() {
-        return receive(JmsTemplate.RECEIVE_TIMEOUT_NO_WAIT);
+        return receive(JmsDestinationAccessor.RECEIVE_TIMEOUT_NO_WAIT);
     }
 
     public Exchange receive() {
-        return receive(JmsTemplate.RECEIVE_TIMEOUT_INDEFINITE_WAIT);
+        return receive(JmsDestinationAccessor.RECEIVE_TIMEOUT_INDEFINITE_WAIT);
     }
 
     public Exchange receive(long timeout) {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,21 +36,21 @@ public final class Mina2Helper {
 
     /**
      * Asynchronously writes the given body to MINA session. Will wait at most for
-     * 10 seconds until the body has been written.
+     * {{ writeTimeout }} milliseconds until the body has been written.
      *
      * @param session  the MINA session
      * @param body     the body to write (send)
      * @param exchange the exchange
+     * @param writeTimeout maximum amount of time we wait for the WriteFuture to complete (in milliseconds)
      * @throws CamelExchangeException is thrown if the body could not be written for some reasons
      *                                (eg remote connection is closed etc.)
      */
-    public static void writeBody(IoSession session, Object body, Exchange exchange) throws CamelExchangeException {
+    public static void writeBody(IoSession session, Object body, Exchange exchange, long writeTimeout) throws CamelExchangeException {
         // the write operation is asynchronous. Use WriteFuture to wait until the session has been written
         WriteFuture future = session.write(body);
-        // must use a timeout (we use 10s) as in some very high performance scenarios a write can cause 
-        // thread hanging forever
+        // must use a timeout as in some very high performance scenarios a write can cause thread hanging forever
         LOG.trace("Waiting for write to complete for body: {} using session: {}", body, session);
-        if (!future.awaitUninterruptibly(10000L)) {
+        if (!future.awaitUninterruptibly(writeTimeout)) {
             String message = "Cannot write body: " + body.getClass().getCanonicalName() + " using session: " + session;
             if (future.getException() != null) {
                 throw new CamelExchangeException(message, exchange, future.getException());

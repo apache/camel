@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -78,7 +78,7 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
         }
 
         try {
-            Map<String, Object> row = new LinkedHashMap<String, Object>();
+            Map<String, Object> row = new LinkedHashMap<>();
             for (Column column : columns) {
                 if (useGetBytes && column instanceof BlobColumn) {
                     row.put(column.getName(), ((BlobColumn) column).getBytes(resultSet));
@@ -101,7 +101,7 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
 
     public Set<String> getColumnNames() {
         // New copy each time in order to ensure immutability
-        Set<String> columnNames = new LinkedHashSet<String>(columns.length);
+        Set<String> columnNames = new LinkedHashSet<>(columns.length);
         for (Column column : columns) {
             columnNames.add(column.getName());
         }
@@ -130,7 +130,7 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
         try {
             resultSet.close();
         } catch (SQLException e) {
-            LOG.warn("Error by closing result set: " + e, e);
+            LOG.warn("Error by closing result set: {}", e, e);
         }
     }
 
@@ -138,7 +138,7 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
         try {
             statement.close();
         } catch (SQLException e) {
-            LOG.warn("Error by closing statement: " + e, e);
+            LOG.warn("Error by closing statement: {}", e, e);
         }
     }
 
@@ -146,7 +146,7 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
         try {
             connection.close();
         } catch (SQLException e) {
-            LOG.warn("Error by closing connection: " + e, e);
+            LOG.warn("Error by closing connection: {}", e, e);
         }
     }
 

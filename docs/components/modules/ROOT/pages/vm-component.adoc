@@ -1,0 +1,180 @@
+[[vm-component]]
+== VM Component
+
+*Available as of Camel version 1.1*
+
+The *vm:* component provides asynchronous
+http://www.eecs.harvard.edu/~mdw/proj/seda/[SEDA] behavior, exchanging
+messages on a
+http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[BlockingQueue]
+and invoking consumers in a separate thread pool.
+
+This component differs from the <<seda-component,Seda>> component in that
+VM supports communication across CamelContext instances - so you can use
+this mechanism to communicate across web applications (provided that
+`camel-core.jar` is on the `system/boot` classpath).
+
+VM is an extension to the <<seda-component,Seda>> component.
+
+=== URI format
+
+[source]
+----
+vm:queueName[?options]
+----
+
+Where *`queueName`* can be any string to uniquely identify the endpoint
+within the JVM (or at least within the classloader that loaded
+camel-core.jar)
+
+You can append query options to the URI in the following format:
+`?option=value&option=value&...`
+
+An exactly identical <<vm-component,VM>> endpoint URI *must* be used for
+both the producer and the consumer endpoint. Otherwise, Camel will
+create a second <<vm-component,VM>> endpoint despite that the `queueName`
+portion of the URI is identical. For example:
+
+[source,java]
+----
+from("direct:foo").to("vm:bar?concurrentConsumers=5");
+
+from("vm:bar?concurrentConsumers=5").to("file://output");
+----
+
+Notice that we have to use the full URI, including options in both the
+producer and consumer.
+
+In Camel 2.4 this has been fixed so that only the queue name must match.
+Using the queue name `bar`, we could rewrite the previous exmple as
+follows:
+
+[source,java]
+----
+from("direct:foo").to("vm:bar");
+
+from("vm:bar?concurrentConsumers=5").to("file://output");
+----
+
+=== Options
+
+// component options: START
+The VM component supports 6 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *queueSize* (advanced) | Sets the default maximum capacity of the SEDA queue (i.e., the number of messages it can hold). | 1000 | int
+| *concurrentConsumers* (consumer) | Sets the default number of concurrent threads processing exchanges. | 1 | int
+| *defaultQueueFactory* (advanced) | Sets the default queue factory. |  | BlockingQueueFactory
+| *defaultBlockWhenFull* (producer) | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will instead block and wait until the message can be accepted. | false | boolean
+| *defaultOfferTimeout* (producer) | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, where a configured timeout can be added to the block case. Utilizing the .offer(timeout) method of the underlining java queue |  | long
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+// endpoint options: START
+The VM endpoint is configured using URI syntax:
+
+----
+vm:name
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | *Required* Name of queue |  | String
+|===
+
+
+==== Query Parameters (17 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *size* (common) | The maximum capacity of the SEDA queue (i.e., the number of messages it can hold). Will by default use the defaultSize set on the SEDA component. | 1000 | int
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *concurrentConsumers* (consumer) | Number of concurrent threads processing exchanges. | 1 | int
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *limitConcurrentConsumers* (consumer) | Whether to limit the number of concurrentConsumers to the maximum of 500. By default, an exception will be thrown if an endpoint is configured with a greater number. You can disable that check by turning this option off. | true | boolean
+| *multipleConsumers* (consumer) | Specifies whether multiple consumers are allowed. If enabled, you can use SEDA for Publish-Subscribe messaging. That is, you can send a message to the SEDA queue and have each consumer receive a copy of the message. When enabled, this option should be specified on every consumer endpoint. | false | boolean
+| *pollTimeout* (consumer) | The timeout used when polling. When a timeout occurs, the consumer can check whether it is allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown. | 1000 | int
+| *purgeWhenStopping* (consumer) | Whether to purge the task queue when stopping the consumer/route. This allows to stop faster, as any pending messages on the queue is discarded. | false | boolean
+| *blockWhenFull* (producer) | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will instead block and wait until the message can be accepted. | false | boolean
+| *discardIfNoConsumers* (producer) | Whether the producer should discard the message (do not add the message to the queue), when sending to a queue with no active consumers. Only one of the options discardIfNoConsumers and failIfNoConsumers can be enabled at the same time. | false | boolean
+| *failIfNoConsumers* (producer) | Whether the producer should fail by throwing an exception, when sending to a queue with no active consumers. Only one of the options discardIfNoConsumers and failIfNoConsumers can be enabled at the same time. | false | boolean
+| *offerTimeout* (producer) | offerTimeout (in milliseconds) can be added to the block case when queue is full. You can disable timeout by using 0 or a negative value. |  | long
+| *timeout* (producer) | Timeout (in milliseconds) before a SEDA producer will stop waiting for an asynchronous task to complete. You can disable timeout by using 0 or a negative value. | 30000 | long
+| *waitForTaskToComplete* (producer) | Option to specify whether the caller should wait for the async task to complete or not before continuing. The following three options are supported: Always, Never or IfReplyExpected. The first two values are self-explanatory. The last value, IfReplyExpected, will only wait if the message is Request Reply based. The default option is IfReplyExpected. | IfReplyExpected | WaitForTaskToComplete
+| *queue* (advanced) | Define the queue instance which will be used by the endpoint. This option is only for rare use-cases where you want to use a custom queue instance. |  | BlockingQueue
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-vm-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 7 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.vm.concurrent-consumers* | Sets the default number of concurrent threads processing exchanges. | 1 | Integer
+| *camel.component.vm.default-block-when-full* | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will instead block and wait until the message can be accepted. | false | Boolean
+| *camel.component.vm.default-offer-timeout* | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, where a configured timeout can be added to the block case. Utilizing the .offer(timeout) method of the underlining java queue |  | Long
+| *camel.component.vm.default-queue-factory* | Sets the default queue factory. The option is a org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange> type. |  | String
+| *camel.component.vm.enabled* | Whether to enable auto configuration of the vm component. This is enabled by default. |  | Boolean
+| *camel.component.vm.queue-size* | Sets the default maximum capacity of the SEDA queue (i.e., the number of messages it can hold). | 1000 | Integer
+| *camel.component.vm.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+See the <<seda-component,Seda>> component for options and other important
+usage details as the same rules apply to the <<vm-component,Vm>> component.
+
+=== Samples
+
+In the route below we send exchanges across CamelContext instances to a
+VM queue named `order.email`:
+
+[source,java]
+----
+from("direct:in").bean(MyOrderBean.class).to("vm:order.email");
+----
+
+And then we receive exchanges in some other Camel context (such as
+deployed in another `.war` application):
+
+[source,java]
+----
+from("vm:order.email").bean(MyOrderEmailSender.class);
+----
+
+=== See Also
+
+* <<seda-component,Seda>>

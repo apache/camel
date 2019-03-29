@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.google-drive.enabled",
+      "description": "Enable google-drive component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

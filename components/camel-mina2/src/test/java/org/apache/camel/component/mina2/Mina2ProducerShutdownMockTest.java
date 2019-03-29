@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,10 +27,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.mina.transport.socket.SocketConnector;
 import org.junit.Test;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * Unit testing for using a MinaProducer that it can shutdown properly (CAMEL-395)
@@ -42,10 +40,7 @@ public class Mina2ProducerShutdownMockTest extends BaseMina2Test {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        // create our mock and record expected behavior = that worker timeout should be set to 0
-        SocketConnector mockConnector = createMock(SocketConnector.class);
-        mockConnector.dispose(true);
-        replay(mockConnector);
+        SocketConnector mockConnector = mock(SocketConnector.class);
 
         // normal camel code to get a producer
         Endpoint endpoint = context.getEndpoint(String.format("mina2:tcp://localhost:%1$s?textline=true&sync=false", getPort()));
@@ -70,7 +65,7 @@ public class Mina2ProducerShutdownMockTest extends BaseMina2Test {
         // stop using our mock
         producer.stop();
 
-        verify(mockConnector);
+        verify(mockConnector).dispose(true);
 
         assertMockEndpointsSatisfied();
     }

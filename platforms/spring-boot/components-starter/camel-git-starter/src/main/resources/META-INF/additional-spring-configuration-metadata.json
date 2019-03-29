@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.git.enabled",
+      "description": "Enable git component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

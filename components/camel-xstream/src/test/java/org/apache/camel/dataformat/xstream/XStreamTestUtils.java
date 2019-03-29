@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,9 +16,6 @@
  */
 package org.apache.camel.dataformat.xstream;
 
-/**
- * 
- */
 final class XStreamTestUtils {
     static final String PERMISSIONS_PROPERTY_KEY = "org.apache.camel.xstream.permissions";  
     private static String oldProperty;

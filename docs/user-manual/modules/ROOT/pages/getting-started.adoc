@@ -1,0 +1,75 @@
+[[GettingStarted-GettingStarted]]
+=== Getting Started
+
+First you need to Download the Camel distribution;
+or you could grab the Source and try
+Building it yourself.
+
+Then come back here and you might want to read the following
+documentation before continuing:
+
+* Longer Getting Started Guide
+* Find out about link:enterprise-integration-patterns.adoc[Enterprise
+Integration Patterns] and how to implement them with Camel
+* Review the Architecture guide to see how to
+build Routes using the Java DSL or
+Spring based link:xml-configuration.adoc[Xml
+Configuration]
+
+[[GettingStarted-WorkingwithCamelContextsandRouteBuilders]]
+==== Working with CamelContexts and RouteBuilders
+
+To get started with Camel:
+
+1.  Create a CamelContext.
+2.  Optionally, link:configuring-camel.adoc[configure components or
+endpoints].
+3.  Add whatever routing rules you wish using the DSL and
+RouteBuilder or using
+XML Configuration.
+4.  Start the context.
+
+When your application is closing you may wish to
+stop the context
+
+When you are ready, why not link:walk-through-an-example.adoc[Walk
+through an Example]? +
+ And then continue the walk link:walk-through-another-example.html[Walk
+through another example] +
+ And after the walks head over to the tutorials.
+
+[[GettingStarted-WorkingwithSpring]]
+==== Working with Spring
+
+If you use Spring as a Dependency Injection container then please refer
+to the Camel Spring documentation.
+
+[[GettingStarted-OtherResources]]
+==== Other Resources
+
+We strongly suggest that you brew a cup of coffee or tea and take the 30
+minutes to read one or more of the following resources:
+
+* http://manning.com/ibsen/chapter1sample.pdf[Camel in Action, Chapter 1
+(direct link)] free chapter 1 of the http://www.manning.com/ibsen[Camel
+in Action] book. Highly recommended to read to learn what Camel is and
+the basic Camel concepts. This is a free chapter you can download
+directly as a pdf (about 20 pages) and introduces you to Camel. We have
+been told by experience Camel end users they wished this chapter was
+available to them when they started learning Camel.
+
+* http://java.dzone.com/articles/open-source-integration-apache[Open
+Source Integration with Apache Camel and How Fuse IDE Can Help] by
+Jonathan Anstey. Updated article of the
+http://architects.dzone.com/articles/apache-camel-integration[Apache
+Camel: Integration Nirvana]. Great article to learn what Camel is and
+has a good use case example.
+
+* Several of the vendors on the
+Commercial Camel Offerings page
+also offer various tutorials, webinars, examples, etc.... that may be
+useful.
+
+* Articles is a link collection with articles,
+blogs, podcasts, presentations and the likes about Camel done by people
+from the community.

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,11 +20,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,7 +55,7 @@ public class LevelDBAggregateLoadAndRecoverTest extends CamelTestSupport {
         for (int i = 0; i < SIZE; i++) {
             final int value = 1;
             char id = 'A';
-            Map<String, Object> headers = new HashMap<String, Object>();
+            Map<String, Object> headers = new HashMap<>();
             headers.put("id", id);
             headers.put("seq", i);
             LOG.debug("Sending {} with id {}", value, id);

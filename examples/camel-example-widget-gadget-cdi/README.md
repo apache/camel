@@ -15,7 +15,7 @@ but you can run the application in any CDI compliant container.
 
 * camel-core
 * camel-jms
-* activemq-camel
+* camel-activemq
 
 ### Build 
 
@@ -66,11 +66,6 @@ The Camel application can be stopped pressing <kbd>ctrl</kbd>+<kbd>c</kbd> in th
 ### Configuration
 
 The Camel application is configured in the `org.apache.camel.example.widget.WidgetApplication.java` file.
-
-### Documentation
-
-This example is documented at
-	<http://camel.apache.org/widget-gadget.html>
 
 ### Forum, Help, etc 
 

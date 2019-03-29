@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             version="2.1"
+             xsi:schemaLocation="
+             http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+
+  <persistence-unit name="camel" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+    <class>org.apache.camel.examples.MultiSteps</class>
+    <class>org.apache.camel.examples.SendEmail</class>
+    <class>org.apache.camel.examples.Customer</class>
+    <class>org.apache.camel.examples.Address</class>
+    <class>org.apache.camel.examples.Order</class>
+
+    <properties>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyTenSevenDialect"/>
+      <property name="hibernate.connection.driver_class" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+      <property name="hibernate.connection.url" value="jdbc:derby:target/derby;create=true"/>
+      <property name="hibernate.hbm2ddl.auto" value="create"/>
+    </properties>
+  </persistence-unit>
+
+  <persistence-unit name="custom" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+    <class>org.apache.camel.examples.MultiSteps</class>
+    <class>org.apache.camel.examples.SendEmail</class>
+
+    <properties>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyTenSevenDialect"/>
+      <property name="hibernate.connection.driver_class" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+      <property name="hibernate.connection.url" value="jdbc:derby:target/custom;create=true"/>
+      <property name="hibernate.hbm2ddl.auto" value="create"/>
+    </properties>
+  </persistence-unit>
+
+  <persistence-unit name="idempotentDb" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+    <class>org.apache.camel.processor.idempotent.jpa.MessageProcessed</class>
+
+    <properties>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyTenSevenDialect"/>
+      <property name="hibernate.connection.driver_class" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+      <property name="hibernate.connection.url" value="jdbc:derby:target/idempotentTest;create=true"/>
+      <property name="hibernate.hbm2ddl.auto" value="create"/>
+    </properties>
+  </persistence-unit>
+
+  <persistence-unit name="skipLockedEntiy" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+    <class>org.apache.camel.examples.VersionedItem</class>
+
+    <properties>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyTenSevenDialect"/>
+      <property name="hibernate.connection.driver_class" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+      <property name="hibernate.connection.url" value="jdbc:derby:target/derby;create=true"/>
+      <property name="hibernate.hbm2ddl.auto" value="create"/>
+    </properties>
+  </persistence-unit>
+  
+</persistence>

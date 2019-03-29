@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,7 @@ import org.snmp4j.PDUv1;
 import org.snmp4j.smi.OID;
 import org.snmp4j.smi.VariableBinding;
 
-@Converter
+@Converter(loader = true)
 public final class SnmpConverters {
     public static final String SNMP_TAG = "snmp";
     public static final String ENTRY_TAG = "entry";

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,17 +31,12 @@ import org.apache.camel.spi.UriPath;
  */
 @UriParams
 public class GoogleMailConfiguration {
-    private static final List<String> DEFAULT_SCOPES = Arrays.asList(GmailScopes.GMAIL_COMPOSE, GmailScopes.GMAIL_MODIFY, GmailScopes.MAIL_GOOGLE_COM);
-
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private GoogleMailApiName apiName;
 
     @UriPath(enums = "attachments,create,delete,get,getProfile,gmailImport,insert,list,modify,patch,send,trash,untrash,update")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String methodName;
-
-    @UriParam
-    private List<String> scopes = DEFAULT_SCOPES;
 
     @UriParam
     private String clientId;
@@ -133,17 +128,6 @@ public class GoogleMailConfiguration {
      */
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
-    }
-
-    public List<String> getScopes() {
-        return scopes;
-    }
-
-    /**
-     * Specifies the level of permissions you want a mail application to have to a user account. See https://developers.google.com/gmail/api/auth/scopes for more info.
-     */
-    public void setScopes(List<String> scopes) {
-        this.scopes = scopes;
     }
 
 }

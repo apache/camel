@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,25 +19,21 @@ package org.apache.camel.component.sjms.producer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.jms.Connection;
-import javax.jms.Destination;
+
 import javax.jms.Message;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sjms.BatchMessage;
 import org.apache.camel.component.sjms.MessageProducerResources;
 import org.apache.camel.component.sjms.SjmsProducer;
 import org.apache.camel.component.sjms.TransactionCommitStrategy;
-import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms.tx.DefaultTransactionCommitStrategy;
-import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
 
 /**
- * A Camel Producer that provides the InOnly Exchange pattern..
+ * A Camel Producer that provides the InOnly Exchange pattern.
  */
 public class InOnlyProducer extends SjmsProducer {
 
@@ -56,7 +52,7 @@ public class InOnlyProducer extends SjmsProducer {
     @Override
     public void sendMessage(final Exchange exchange, final AsyncCallback callback, final MessageProducerResources producer, final ReleaseProducerCallback releaseProducerCallback) throws Exception {
         try {
-            Collection<Message> messages = new ArrayList<Message>(1);
+            Collection<Message> messages = new ArrayList<>(1);
             if (exchange.getIn().getBody() != null) {
                 if (exchange.getIn().getBody() instanceof List) {
                     Iterable<?> payload = (Iterable<?>) exchange.getIn().getBody();
@@ -83,7 +79,7 @@ public class InOnlyProducer extends SjmsProducer {
                 producer.getMessageProducer().send(message);
             }
         } catch (Exception e) {
-            exchange.setException(new Exception("Unable to complete sending the message: ", e));
+            exchange.setException(new CamelExchangeException("Unable to complete sending the JMS message", exchange, e));
         } finally {
             releaseProducerCallback.release(producer);
             callback.done(isSynchronous());

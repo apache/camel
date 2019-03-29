@@ -1,87 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-parent</artifactId>
-    <version>2.19.0-SNAPSHOT</version>
-    <relativePath>../parent</relativePath>
-  </parent>
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-parent</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+        <relativePath>../parent</relativePath>
+    </parent>
 
-  <artifactId>tests</artifactId>
-  <name>Camel :: Integration Tests</name>
-  <description>Camel Integration Tests</description>
-  <packaging>pom</packaging>
+    <artifactId>tests</artifactId>
+    <name>Camel :: Integration Tests</name>
+    <description>Camel Integration Tests</description>
+    <packaging>pom</packaging>
 
-  <properties>
-    <camel.osgi.export.pkg />
-  </properties>
+    <properties>
+        <camel.osgi.export.pkg/>
+    </properties>
 
-  <modules>
-    <module>test-bundles</module>
-    <module>camel-itest-standalone</module>
-    <module>camel-itest</module>
-    <module>camel-itest-cdi</module>
-    <module>camel-blueprint-cxf-test</module>
-    <module>camel-blueprint-test</module>
-    <module>camel-partial-classpath-test</module>
-    <module>camel-typeconverterscan-test</module>
-  </modules>
+    <modules>
+        <module>test-bundles</module>
+        <module>camel-itest-standalone</module>
+        <module>camel-itest</module>
+        <module>camel-itest-cdi</module>
+        <module>camel-itest-jms2</module>
+        <module>camel-jmh</module>
+        <module>camel-blueprint-cxf-test</module>
+        <module>camel-blueprint-test</module>
+        <module>camel-partial-classpath-test</module>
+        <module>camel-typeconverterscan-test</module>
+    </modules>
 
-  <profiles>
-    <!-- includes these modules when doing the release -->
-    <profile>
-      <id>release</id>
-      <modules>
-        <module>camel-itest-karaf</module>
-        <module>camel-itest-osgi</module>
-        <module>camel-itest-performance</module>
-        <module>camel-performance</module>
-      </modules>
-    </profile>
+    <profiles>
+        <!-- includes these modules when doing the release -->
+        <profile>
+            <id>release</id>
+            <modules>
+                <module>camel-itest-karaf</module>
+                <module>camel-itest-osgi</module>
+                <module>camel-itest-performance</module>
+                <module>camel-performance</module>
+            </modules>
+        </profile>
 
-    <!-- osgi tests -->
-    <profile>
-      <id>osgi.test</id>
-      <modules>
-        <module>camel-itest-karaf</module>
-        <module>camel-itest-osgi</module>
-      </modules>
-    </profile>
+        <!-- osgi tests -->
+        <profile>
+            <id>osgi.test</id>
+            <modules>
+                <module>camel-itest-karaf</module>
+                <module>camel-itest-osgi</module>
+            </modules>
+        </profile>
 
-    <!-- spring-boot tests -->
-    <profile>
-      <id>spring-boot.test</id>
-      <modules>
-        <module>camel-itest-spring-boot</module>
-      </modules>
-    </profile>
+        <!-- spring-boot tests -->
+        <profile>
+            <id>spring-boot.test</id>
+            <modules>
+                <module>camel-itest-spring-boot</module>
+            </modules>
+        </profile>
 
-    <!-- performance tests -->
-    <profile>
-      <id>performance.test</id>
-      <modules>
-        <module>camel-itest-performance</module>
-        <module>camel-performance</module>
-      </modules>
-    </profile>
-  </profiles>
+        <!-- performance tests -->
+        <profile>
+            <id>performance.test</id>
+            <modules>
+                <module>camel-itest-performance</module>
+                <module>camel-performance</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -61,22 +61,31 @@ import org.cometd.bayeux.client.ClientSession.Extension.Adapter;
  * @author yzhao
  * @since 198 (Winter '16)
  */
-public class CometDReplayExtension<V> extends Adapter {
+public class CometDReplayExtension extends Adapter {
     private static final String EXTENSION_NAME = "replay";
-    private final ConcurrentMap<String, V> dataMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Long> dataMap = new ConcurrentHashMap<>();
     private final AtomicBoolean supported = new AtomicBoolean();
 
-    public CometDReplayExtension(Map<String, V> dataMap) {
-        this.dataMap.putAll(dataMap);
+    public void addChannelReplayId(final String channelName, final long replayId) {
+        dataMap.put(channelName, replayId);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public boolean rcv(ClientSession session, Message.Mutable message) {
-        Object data = message.get(EXTENSION_NAME);
-        if (this.supported.get() && data != null) {
+        final Object value = message.get(EXTENSION_NAME);
+
+        final Long replayId;
+        if (value instanceof Long) {
+            replayId = (Long)value;
+        } else if (value instanceof Number) {
+            replayId = ((Number)value).longValue();
+        } else {
+            replayId = null;
+        }
+
+        if (this.supported.get() && replayId != null) {
             try {
-                dataMap.put(message.getChannel(), (V) data);
+                dataMap.put(message.getChannel(), replayId);
             } catch (ClassCastException e) {
                 return false;
             }

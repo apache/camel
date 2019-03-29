@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
@@ -39,13 +38,13 @@ import org.apache.camel.cdi.bean.FirstCamelContextRoute;
 import org.apache.camel.cdi.bean.SecondCamelContextBean;
 import org.apache.camel.cdi.bean.UriEndpointRoute;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.management.event.AbstractExchangeEvent;
-import org.apache.camel.management.event.CamelContextStartedEvent;
-import org.apache.camel.management.event.CamelContextStartingEvent;
-import org.apache.camel.management.event.ExchangeCompletedEvent;
-import org.apache.camel.management.event.ExchangeCreatedEvent;
-import org.apache.camel.management.event.ExchangeSendingEvent;
-import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStartingEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -77,7 +76,7 @@ public class MultiContextEventNotifierTest {
     @Inject @Uri("mock:outbound")
     private MockEndpoint defaultOutbound;
 
-    @Produces @ApplicationScoped
+    @Produces @ApplicationScoped @Named("defaultContext")
     private List<Class> defaultFiredEvents = new ArrayList<>();
 
 
@@ -107,7 +106,7 @@ public class MultiContextEventNotifierTest {
     private List<Class> secondFiredEvents = new ArrayList<>();
 
 
-    @Produces @ApplicationScoped @Any @Named("anyContext")
+    @Produces @ApplicationScoped @Named("anyContext")
     private List<Class> anyFiredEvents = new ArrayList<>();
 
 
@@ -119,21 +118,21 @@ public class MultiContextEventNotifierTest {
         events.add(CamelContextStartedEvent.class);
     }
 
-    private void onAnyExchangeEvent(@Observes AbstractExchangeEvent event, @Named("anyContext") List<Class> events) {
-        events.add(event.getClass());
+    private void onAnyExchangeEvent(@Observes ExchangeEvent event, @Named("anyContext") List<Class> events) {
+        events.add(event.getClass().getInterfaces()[0]);
     }
 
 
-    private void onDefaultContextStartingEvent(@Observes @Default CamelContextStartingEvent event, List<Class> events) {
+    private void onDefaultContextStartingEvent(@Observes @Default CamelContextStartingEvent event, @Named("defaultContext") List<Class> events) {
         events.add(CamelContextStartingEvent.class);
     }
 
-    private void onDefaultContextStartedEvent(@Observes @Default CamelContextStartedEvent event, List<Class> events) {
+    private void onDefaultContextStartedEvent(@Observes @Default CamelContextStartedEvent event, @Named("defaultContext") List<Class> events) {
         events.add(CamelContextStartedEvent.class);
     }
 
-    private void onDefaultExchangeEvent(@Observes @Default AbstractExchangeEvent event, List<Class> events) {
-        events.add(event.getClass());
+    private void onDefaultExchangeEvent(@Observes @Default ExchangeEvent event, @Named("defaultContext") List<Class> events) {
+        events.add(event.getClass().getInterfaces()[0]);
     }
 
 
@@ -145,8 +144,8 @@ public class MultiContextEventNotifierTest {
         events.add(CamelContextStartedEvent.class);
     }
 
-    private void onFirstExchangeEvent(@Observes @ContextName("first") AbstractExchangeEvent event, @ContextName("first") List<Class> events) {
-        events.add(event.getClass());
+    private void onFirstExchangeEvent(@Observes @ContextName("first") ExchangeEvent event, @ContextName("first") List<Class> events) {
+        events.add(event.getClass().getInterfaces()[0]);
     }
 
 
@@ -158,8 +157,8 @@ public class MultiContextEventNotifierTest {
         events.add(CamelContextStartedEvent.class);
     }
 
-    private void onSecondExchangeEvent(@Observes @ContextName("second") AbstractExchangeEvent event, @ContextName("second") List<Class> events) {
-        events.add(event.getClass());
+    private void onSecondExchangeEvent(@Observes @ContextName("second") ExchangeEvent event, @ContextName("second") List<Class> events) {
+        events.add(event.getClass().getInterfaces()[0]);
     }
 
     @Deployment
@@ -180,7 +179,7 @@ public class MultiContextEventNotifierTest {
 
     @Test
     @InSequence(1)
-    public void configureCamelContexts(List<Class> defaultEvents,
+    public void configureCamelContexts(@Named("defaultContext") List<Class> defaultEvents,
                                        @ContextName("first") List<Class> firstEvents,
                                        @ContextName("second") List<Class> secondEvents,
                                        @Named("anyContext") List<Class> anyEvents) throws Exception {
@@ -191,7 +190,7 @@ public class MultiContextEventNotifierTest {
             }
         });
 
-        secondCamelContext.startAllRoutes();
+        secondCamelContext.getRouteController().startAllRoutes();
 
         assertThat("Events fired for any contexts are incorrect", anyEvents,
             everyItem(
@@ -214,7 +213,7 @@ public class MultiContextEventNotifierTest {
 
     @Test
     @InSequence(2)
-    public void sendMessageToDefaultCamelContextInbound(List<Class> events) throws InterruptedException {
+    public void sendMessageToDefaultCamelContextInbound(@Named("defaultContext") List<Class> events) throws InterruptedException {
         defaultOutbound.expectedMessageCount(1);
         defaultOutbound.expectedBodiesReceived("test-default");
         defaultOutbound.message(0).exchange().matches(fromCamelContext("camel-cdi"));
@@ -285,7 +284,7 @@ public class MultiContextEventNotifierTest {
 
     @Test
     @InSequence(5)
-    public void stopCamelContexts(List<Class> defaultEvents,
+    public void stopCamelContexts(@Named("defaultContext") List<Class> defaultEvents,
                                   @ContextName("first") List<Class> firstEvents,
                                   @ContextName("second") List<Class> secondEvents,
                                   @Named("anyContext") List<Class> anyEvents) throws Exception {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,7 +32,11 @@ public class KubernetesTestSupport extends CamelTestSupport {
     public void setUp() throws Exception {
         // INSERT credentials and host here
         authToken = "";
-        host = "https://172.28.128.4:8443";
+        host = "https://192.168.99.100:8443";
         super.setUp();
+    }
+    
+    public static String toUrlEncoded(String str) {
+        return str.replaceAll("=", "%3D");
     }
 }

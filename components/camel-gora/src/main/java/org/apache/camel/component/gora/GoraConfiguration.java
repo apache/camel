@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,7 +32,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @UriParams
 public class GoraConfiguration {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String name;
     @UriParam
     private String keyClass;

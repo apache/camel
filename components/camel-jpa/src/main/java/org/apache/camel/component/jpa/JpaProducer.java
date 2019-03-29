@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,28 +17,35 @@
 package org.apache.camel.component.jpa;
 
 import java.util.Collection;
+import java.util.Map;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.impl.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.Message;
+import org.apache.camel.language.simple.SimpleLanguage;
+import org.apache.camel.support.DefaultProducer;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 
-/**
- * @version 
- */
 public class JpaProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(JpaProducer.class);
+
     private final EntityManagerFactory entityManagerFactory;
     private final TransactionTemplate transactionTemplate;
     private final Expression expression;
+    private String query;
+    private String namedQuery;
+    private String nativeQuery;
+    private Map<String, Object> parameters;
+    private Class<?> resultClass;
+    private QueryFactory queryFactory;
+    private Boolean useExecuteUpdate;
 
     public JpaProducer(JpaEndpoint endpoint, Expression expression) {
         super(endpoint);
@@ -52,10 +59,152 @@ public class JpaProducer extends DefaultProducer {
         return (JpaEndpoint) super.getEndpoint();
     }
 
+    public QueryFactory getQueryFactory() {
+        if (queryFactory == null) {
+            if (query != null) {
+                queryFactory = QueryBuilder.query(query);
+            } else if (namedQuery != null) {
+                queryFactory = QueryBuilder.namedQuery(namedQuery);
+            } else if (nativeQuery != null) {
+                if (resultClass != null) {
+                    queryFactory = QueryBuilder.nativeQuery(nativeQuery, resultClass);
+                } else {
+                    queryFactory = QueryBuilder.nativeQuery(nativeQuery);
+                }
+            }
+        }
+        return queryFactory;
+    }
+
+    public void setQueryFactory(QueryFactory queryFactory) {
+        this.queryFactory = queryFactory;
+    }
+
+    public void setParameters(Map<String, Object> params) {
+        this.parameters = params;
+    }
+    
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
+
+    public String getNamedQuery() {
+        return namedQuery;
+    }
+
+    public void setNamedQuery(String namedQuery) {
+        this.namedQuery = namedQuery;
+    }
+
+    public String getNativeQuery() {
+        return nativeQuery;
+    }
+
+    public void setNativeQuery(String nativeQuery) {
+        this.nativeQuery = nativeQuery;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+    
+    public Class<?> getResultClass() {
+        return resultClass;
+    }
+
+    public void setResultClass(Class<?> resultClass) {
+        this.resultClass = resultClass;
+    }
+
+    public void setUseExecuteUpdate(Boolean executeUpdate) {
+        this.useExecuteUpdate = executeUpdate;
+    }
+
+    public boolean isUseExecuteUpdate() {
+        if (useExecuteUpdate == null) {
+            if (query != null) {
+                if (query.regionMatches(true, 0, "select", 0, 6)) {
+                    useExecuteUpdate = false;
+                } else {
+                    useExecuteUpdate = true;
+                }
+            } else if (nativeQuery != null) {
+                if (nativeQuery.regionMatches(true, 0, "select", 0, 6)) {
+                    useExecuteUpdate = false;
+                } else {
+                    useExecuteUpdate = true;
+                }
+            } else {
+                useExecuteUpdate = false;
+            }
+        }
+        return useExecuteUpdate;
+    }
+
     public void process(final Exchange exchange) {
         // resolve the entity manager before evaluating the expression
         final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory,
                 getEndpoint().isUsePassedInEntityManager(), getEndpoint().isSharedEntityManager(), true);
+
+        if (getQueryFactory() != null) {
+            processQuery(exchange, entityManager);
+        } else {
+            processEntity(exchange, entityManager);
+        }
+    }
+
+    protected void processQuery(Exchange exchange, EntityManager entityManager) {
+        Query query = getQueryFactory().createQuery(entityManager);
+        configureParameters(query, exchange);
+
+        transactionTemplate.execute(new TransactionCallback<Object>() {
+            public Object doInTransaction(TransactionStatus status) {
+                if (getEndpoint().isJoinTransaction()) {
+                    entityManager.joinTransaction();
+                }
+
+                Object answer = isUseExecuteUpdate() ? query.executeUpdate() : query.getResultList();
+                Message target = exchange.getPattern().isOutCapable() ? exchange.getOut() : exchange.getIn();
+                target.setBody(answer);
+
+                if (getEndpoint().isFlushOnSend()) {
+                    entityManager.flush();
+                }
+
+                return null;
+            }
+        });
+    }
+
+    @SuppressWarnings("unchecked")
+    private void configureParameters(Query query, Exchange exchange) {
+        int maxResults = getEndpoint().getMaximumResults();
+        if (maxResults > 0) {
+            query.setMaxResults(maxResults);
+        }
+        // setup the parameters
+        Map<String, ?> params;
+        if (parameters != null) {
+            params = parameters;
+        } else {
+            params = exchange.getIn().getHeader(JpaConstants.JPA_PARAMETERS_HEADER, Map.class);
+        }
+        if (params != null) {
+            params.forEach((key, value) -> {
+                Object resolvedValue = value;
+                if (value instanceof String) {
+                    resolvedValue = SimpleLanguage.expression((String)value).evaluate(exchange, Object.class);
+                }
+                query.setParameter(key, resolvedValue);
+            });
+        }
+    }
+
+    protected void processEntity(Exchange exchange, EntityManager entityManager) {
         final Object values = expression.evaluate(exchange, Object.class);
 
         if (values != null) {
@@ -108,7 +257,7 @@ public class JpaProducer extends DefaultProducer {
                  * @return the managed entity
                  */
                 private Object save(final Object entity) {
-                    LOG.debug("save: {}", entity);
+                    log.debug("save: {}", entity);
                     if (getEndpoint().isUsePersist()) {
                         entityManager.persist(entity);
                         return entity;
@@ -123,7 +272,7 @@ public class JpaProducer extends DefaultProducer {
                  * @return the managed entity
                  */
                 private Object remove(final Object entity) {
-                    LOG.debug("remove: {}", entity);
+                    log.debug("remove: {}", entity);
 
                     Object managedEntity;
 

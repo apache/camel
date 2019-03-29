@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.mllp;
 
-import java.net.SocketException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.EndpointInject;
@@ -31,7 +30,8 @@ import org.junit.Rule;
 import org.junit.Test;
 
 public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
-    static final int RECEIVE_TIMEOUT = 500;
+    static final int RECEIVE_TIMEOUT = 1000;
+    static final int READ_TIMEOUT = 500;
 
     @Rule
     public MllpClientResource mllpClient = new MllpClientResource();
@@ -41,6 +41,11 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
     MockEndpoint result;
 
     @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
+    @Override
     protected void doPreSetup() throws Exception {
         mllpClient.setMllpHost("localhost");
         mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
@@ -48,54 +53,62 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
         super.doPreSetup();
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            String routeId = "mllp-receiver";
-
-            public void configure() {
-                fromF("mllp://%s:%d?autoAck=false", mllpClient.getMllpHost(), mllpClient.getMllpPort())
-                        .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
-                        .to(result);
-            }
-        };
-
-    }
-
     /**
      * Simulate a Load Balancer Probe
      * <p/>
-     * Load Balancers check the status of a port by establishing and closing a TCP connection periodically.  The time
-     * between these probes can normally be configured, but it is typically set to about 15-sec.  Since there could be
-     * a large number of port that are being probed, the logging from the connect/disconnect operations can drown-out
-     * more useful information.
+     * Load Balancers check the status of a port by establishing and closing a TCP connection periodically.  The time between these probes can normally be configured, but it is typically set to about
+     * 15-sec.  Since there could be a large number of port that are being probed, the logging from the connect/disconnect operations can drown-out more useful information.
      * <p/>
-     * Watch the logs when running this test to verify that the log output will be acceptable when a load balancer
-     * is probing the port.
+     * Watch the logs when running this test to verify that the log output will be acceptable when a load balancer is probing the port.
      * <p/>
      * TODO:  Need to add a custom Log4j Appender that can verify the logging is acceptable
      *
      * @throws Exception
      */
     @Test
-    public void testConnectWithoutData() throws Exception {
+    public void testConnectThenCloseWithoutData() throws Exception {
         int connectionCount = 10;
         long connectionMillis = 200;
 
         result.setExpectedCount(0);
+        result.setAssertPeriod(1000);
 
-        addTestRoute(-1);
+        addTestRouteWithIdleTimeout(-1);
 
         for (int i = 1; i <= connectionCount; ++i) {
             mllpClient.connect();
             Thread.sleep(connectionMillis);
             mllpClient.close();
         }
+
+        // Connect one more time and allow a client thread to start
+        mllpClient.connect();
+        Thread.sleep(1000);
+        mllpClient.close();
+
+        assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void testConnectThenResetWithoutData() throws Exception {
+        int connectionCount = 10;
+        long connectionMillis = 200;
+
+        result.setExpectedCount(0);
+        result.setAssertPeriod(1000);
+
+        addTestRouteWithIdleTimeout(-1);
+
+        for (int i = 1; i <= connectionCount; ++i) {
+            mllpClient.connect();
+            Thread.sleep(connectionMillis);
+            mllpClient.reset();
+        }
+
+        // Connect one more time and allow a client thread to start
+        mllpClient.connect();
+        Thread.sleep(1000);
+        mllpClient.reset();
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
     }
@@ -107,37 +120,38 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
      */
     @Test
     public void testIdleConnection() throws Exception {
-        final int maxReceiveTimeouts = 3;
+        final int idleTimeout = RECEIVE_TIMEOUT * 3;
         String testMessage = "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20160902123950|RISTECH|ADT^A08|00001|D|2.3|||||||" + '\r' + '\n';
 
         result.setExpectedCount(1);
         result.setAssertPeriod(1000);
 
-        addTestRoute(maxReceiveTimeouts);
+        addTestRouteWithIdleTimeout(idleTimeout);
 
         mllpClient.connect();
         mllpClient.sendMessageAndWaitForAcknowledgement(testMessage);
-        Thread.sleep(RECEIVE_TIMEOUT * (maxReceiveTimeouts + 1));
+        Thread.sleep(idleTimeout + RECEIVE_TIMEOUT);
 
         try {
-            mllpClient.sendMessageAndWaitForAcknowledgement(testMessage);
+            mllpClient.checkConnection();
             fail("The MllpClientResource should have thrown an exception when writing to the reset socket");
-        } catch (MllpJUnitResourceException ex) {
-            Throwable cause = ex.getCause();
-            assertIsInstanceOf(SocketException.class, cause);
+        } catch (MllpJUnitResourceException expectedEx) {
+            assertEquals("checkConnection failed - read() returned END_OF_STREAM", expectedEx.getMessage());
+            assertNull(expectedEx.getCause());
         }
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
     }
 
-    void addTestRoute(int maxReceiveTimeouts) throws Exception {
+    void addTestRouteWithIdleTimeout(final int idleTimeout) throws Exception {
         RouteBuilder builder = new RouteBuilder() {
-            String routeId = "mllp-receiver";
+            String routeId = "mllp-receiver-with-timeout";
 
             public void configure() {
-                fromF("mllp://%s:%d?receiveTimeout=%d&maxReceiveTimeouts=%d", mllpClient.getMllpHost(), mllpClient.getMllpPort(), RECEIVE_TIMEOUT, maxReceiveTimeouts)
-                        .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
-                        .to(result);
+                fromF("mllp://%s:%d?receiveTimeout=%d&readTimeout=%d&idleTimeout=%d", mllpClient.getMllpHost(), mllpClient.getMllpPort(), RECEIVE_TIMEOUT, READ_TIMEOUT, idleTimeout)
+                    .routeId(routeId)
+                    .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
+                    .to(result);
             }
         };
 

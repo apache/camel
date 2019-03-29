@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,9 +33,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-/**
- * @version 
- */
 public abstract class AbstractJpaTest extends CamelTestSupport {
     protected ApplicationContext applicationContext;
     protected TransactionTemplate transactionTemplate;
@@ -62,7 +59,7 @@ public abstract class AbstractJpaTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         applicationContext = new ClassPathXmlApplicationContext(routeXml());
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
     protected void cleanupRepository() {
@@ -80,10 +77,25 @@ public abstract class AbstractJpaTest extends CamelTestSupport {
     }
 
     protected void assertEntityInDB(int size) throws Exception {
-        List<?> list = entityManager.createQuery(selectAllString()).getResultList();
-        assertEquals(size, list.size());
+        assertEntityInDB(size, SendEmail.class);
+    }
 
-        assertIsInstanceOf(SendEmail.class, list.get(0));
+    protected void assertEntityInDB(int size, Class entityType) {
+        List<?> results = entityManager.createQuery("select o from " + entityType.getName() + " o").getResultList();
+        assertEquals(size, results.size());
+
+        assertIsInstanceOf(entityType, results.get(0));
+    }
+
+    protected void saveEntityInDB(final Object entity) {
+        transactionTemplate.execute(new TransactionCallback<Object>() {
+            public Object doInTransaction(TransactionStatus status) {
+                entityManager.joinTransaction();
+                entityManager.persist(entity);
+                entityManager.flush();
+                return null;
+            }
+        });
     }
     
     protected abstract String routeXml();

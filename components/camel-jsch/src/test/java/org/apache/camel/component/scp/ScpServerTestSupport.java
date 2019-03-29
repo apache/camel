@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.component.scp;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.security.Provider;
 import java.security.Provider.Service;
 import java.security.PublicKey;
@@ -30,15 +31,13 @@ import com.jcraft.jsch.UserInfo;
 
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.sshd.SshServer;
-import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
-import org.apache.sshd.server.Command;
-import org.apache.sshd.server.PasswordAuthenticator;
-import org.apache.sshd.server.PublickeyAuthenticator;
-import org.apache.sshd.server.command.ScpCommandFactory;
+import org.apache.sshd.server.SshServer;
+import org.apache.sshd.server.auth.password.PasswordAuthenticator;
+import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
+import org.apache.sshd.server.scp.ScpCommandFactory;
 import org.apache.sshd.server.session.ServerSession;
-import org.apache.sshd.server.sftp.SftpSubsystem;
+import org.apache.sshd.server.subsystem.sftp.SftpSubsystemFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -119,8 +118,8 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
     protected boolean startSshd() {
         sshd = SshServer.setUpDefaultServer();
         sshd.setPort(getPort());
-        sshd.setKeyPairProvider(new FileKeyPairProvider(new String[]{"src/test/resources/hostkey.pem"}));
-        sshd.setSubsystemFactories(Arrays.<NamedFactory<Command>>asList(new SftpSubsystem.Factory()));
+        sshd.setKeyPairProvider(new FileKeyPairProvider(Paths.get("src/test/resources/hostkey.pem")));
+        sshd.setSubsystemFactories(Arrays.asList(new SftpSubsystemFactory()));
         sshd.setCommandFactory(new ScpCommandFactory());
         sshd.setPasswordAuthenticator(new PasswordAuthenticator() {
             @Override

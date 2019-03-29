@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -59,7 +59,7 @@ public class NettyConsumerClientModeReconnectTest extends BaseNettyTest {
             receive.expectedBodiesReceived("Bye Willem");
 
             log.info(">>> starting Camel route while Netty server is not ready");
-            context.startRoute("client");
+            context.getRouteController().startRoute("client");
 
             Thread.sleep(500);
 

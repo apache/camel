@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,10 +17,10 @@
 package org.apache.camel.component.mybatis;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
 import org.junit.Before;
 
 public abstract class MyBatisTestSupport extends CamelTestSupport {
@@ -28,8 +28,31 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
     protected boolean createTestData() {
         return true;
     }
-    
-    protected String createStatement() {
+
+    /**
+     * Gets the name of the database table handling the test data.
+     * 
+     * @return The name of the database table handling the test data.
+     */
+    protected String getTableName() {
+        return "ACCOUNT";
+    }
+
+    /**
+     * Gets the SQL query dropping the test data table.
+     * 
+     * @return The SQL query dropping the test data table.
+     */
+    protected String getDropStatement() {
+        return "drop table ACCOUNT";
+    }
+
+    /**
+     * Gets the SQL query creating the test data table.
+     * 
+     * @return The SQL query creating the test data table.
+     */
+    protected String getCreateStatement() {
         return "create table ACCOUNT (ACC_ID INTEGER, ACC_FIRST_NAME VARCHAR(255), ACC_LAST_NAME VARCHAR(255), ACC_EMAIL VARCHAR(255))";
     }
 
@@ -38,13 +61,20 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
     public void setUp() throws Exception {
         super.setUp();
 
-        // lets create the table...
-        Connection connection = createConnection();
-        Statement statement = connection.createStatement();
-        statement.execute(createStatement());
-        connection.commit();
-        statement.close();
-        connection.close();
+        try (Connection connection = createConnection();
+            ResultSet checkTableExistResultSet = connection.getMetaData().getTables(null, null, getTableName(), null);
+            Statement deletePreExistingTableStatement = connection.createStatement();
+            Statement createTableStatement = connection.createStatement()) {
+
+            // delete any pre-existing ACCOUNT table
+            if (checkTableExistResultSet.next()) {
+                deletePreExistingTableStatement.execute(getDropStatement());
+            }
+
+            // lets create the table...
+            createTableStatement.execute(getCreateStatement());
+            connection.commit();
+        }
 
         if (createTestData()) {
             Account account1 = new Account();
@@ -58,28 +88,14 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
             account2.setFirstName("Claus");
             account2.setLastName("Ibsen");
             account2.setEmailAddress("Noname@gmail.com");
-            
-            template.sendBody("mybatis:insertAccount?statementType=Insert", new Account[]{account1, account2});
+
+            template.sendBody("mybatis:insertAccount?statementType=Insert", new Account[] {account1, account2});
         }
     }
 
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        // should drop the table properly to avoid any side effects while running all the tests together under maven
-        Connection connection = createConnection();
-        Statement statement = connection.createStatement();
-        statement.execute("drop table ACCOUNT");
-        connection.commit();
-        statement.close();
-        connection.close();
-
-        super.tearDown();
-    }
-
-    private Connection createConnection() throws Exception {
+    protected Connection createConnection() throws Exception {
         MyBatisComponent component = context.getComponent("mybatis", MyBatisComponent.class);
-        return component.createSqlSessionFactory().getConfiguration().getEnvironment().getDataSource().getConnection();
+        return component.getSqlSessionFactory().getConfiguration().getEnvironment().getDataSource().getConnection();
     }
 
 }

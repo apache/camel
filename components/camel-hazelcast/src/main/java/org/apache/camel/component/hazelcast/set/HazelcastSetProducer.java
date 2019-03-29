@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,6 +27,7 @@ import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.component.hazelcast.HazelcastDefaultProducer;
+import org.apache.camel.component.hazelcast.HazelcastOperation;
 
 /**
  * Implementation of Hazelcast Set {@link Producer}.
@@ -42,31 +43,31 @@ public class HazelcastSetProducer extends HazelcastDefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
 
-        final int operation = lookupOperationNumber(exchange);
+        final HazelcastOperation operation = lookupOperation(exchange);
 
         switch (operation) {
 
-        case HazelcastConstants.ADD_OPERATION:
+        case ADD:
             this.add(exchange);
             break;
 
-        case HazelcastConstants.REMOVEVALUE_OPERATION:
+        case REMOVE_VALUE:
             this.remove(exchange);
             break;
             
-        case HazelcastConstants.CLEAR_OPERATION:
+        case CLEAR:
             this.clear();
             break;
             
-        case HazelcastConstants.ADD_ALL_OPERATION:
+        case ADD_ALL:
             this.addAll(exchange);
             break;
             
-        case HazelcastConstants.REMOVE_ALL_OPERATION:
+        case REMOVE_ALL:
             this.removeAll(exchange);
             break;
 
-        case HazelcastConstants.RETAIN_ALL_OPERATION:
+        case RETAIN_ALL:
             this.retainAll(exchange);
             break;
             

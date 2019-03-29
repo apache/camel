@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.component.sjms.consumer;
 
 import java.util.concurrent.ExecutorService;
+
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.Session;
@@ -30,7 +31,7 @@ import org.apache.camel.spi.Synchronization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 /**
  * Abstract MessageListener
@@ -47,12 +48,11 @@ public abstract class AbstractMessageHandler implements MessageListener {
     private boolean transacted;
     private boolean sharedJMSSession;
     private boolean synchronous = true;
-    private Synchronization synchronization;
+    private final Synchronization synchronization;
     private boolean topic;
 
     public AbstractMessageHandler(SjmsEndpoint endpoint, ExecutorService executor) {
-        this.endpoint = endpoint;
-        this.executor = executor;
+        this(endpoint, executor, null);
     }
 
     public AbstractMessageHandler(SjmsEndpoint endpoint, ExecutorService executor, Synchronization synchronization) {
@@ -61,23 +61,15 @@ public abstract class AbstractMessageHandler implements MessageListener {
         this.executor = executor;
     }
 
-    /*
-     * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
-     *
-     * @param message
-     */
     @Override
     public void onMessage(Message message) {
         RuntimeCamelException rce = null;
         try {
             final Exchange exchange = getEndpoint().createExchange(message, getSession());
 
-            log.debug("Processing Exchange.id:{}", exchange.getExchangeId());
+            log.debug("Processing ExchangeId: {}", exchange.getExchangeId());
 
             if (isTransacted()) {
-                if (synchronization != null) {
-                    exchange.addOnCompletion(synchronization);
-                }
                 if (isSharedJMSSession()) {
                     // Propagate a JMS Session as an initiator if sharedJMSSession is enabled
                     exchange.getIn().setHeader(SjmsConstants.JMS_SESSION, getSession());
@@ -87,6 +79,11 @@ public abstract class AbstractMessageHandler implements MessageListener {
                 if (isTransacted() || isSynchronous()) {
                     log.debug("Handling synchronous message: {}", exchange.getIn().getBody());
                     handleMessage(exchange);
+                    if (exchange.isFailed()) {
+                        synchronization.onFailure(exchange);
+                    } else {
+                        synchronization.onComplete(exchange);
+                    }
                 } else {
                     log.debug("Handling asynchronous message: {}", exchange.getIn().getBody());
                     executor.execute(new Runnable() {
@@ -116,7 +113,7 @@ public abstract class AbstractMessageHandler implements MessageListener {
         }
     }
 
-    public abstract void handleMessage(final Exchange exchange);
+    public abstract void handleMessage(Exchange exchange);
 
     /**
      * Method will be called to

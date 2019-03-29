@@ -1,0 +1,198 @@
+[[timer-component]]
+== Timer Component
+
+*Available as of Camel version 1.0*
+
+The *timer:* component is used to generate message exchanges when a
+timer fires You can only consume events from this endpoint.
+
+=== URI format
+
+[source]
+----
+timer:name[?options]
+----
+
+Where `name` is the name of the `Timer` object, which is created and
+shared across endpoints. So if you use the same name for all your timer
+endpoints, only one `Timer` object and thread will be used.
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+*Note:* The IN body of the generated exchange is `null`. So
+`exchange.getIn().getBody()` returns `null`.
+
+TIP:*Advanced Scheduler*
+See also the <<quartz-component,Quartz>> component that supports much more
+advanced scheduling.
+
+TIP:*Specify time in human friendly format*
+In *Camel 2.3* onwards you can specify the time in
+link:how-do-i-specify-time-period-in-a-human-friendly-syntax.html[human
+friendly syntax].
+
+
+=== Options
+
+// component options: START
+The Timer component has no options.
+// component options: END
+
+
+// endpoint options: START
+The Timer endpoint is configured using URI syntax:
+
+----
+timer:timerName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *timerName* | *Required* The name of the timer |  | String
+|===
+
+
+==== Query Parameters (12 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *delay* (consumer) | The number of milliseconds to wait before the first event is generated. Should not be used in conjunction with the time option. The default value is 1000. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *fixedRate* (consumer) | Events take place at approximately regular intervals, separated by the specified period. | false | boolean
+| *period* (consumer) | If greater than 0, generate periodic events every period milliseconds. The default value is 1000. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *repeatCount* (consumer) | Specifies a maximum limit of number of fires. So if you set it to 1, the timer will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *daemon* (advanced) | Specifies whether or not the thread associated with the timer endpoint runs as a daemon. The default value is true. | true | boolean
+| *pattern* (advanced) | Allows you to specify a custom Date pattern to use for setting the time option using URI syntax. |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *time* (advanced) | A java.util.Date the first event should be generated. If using the URI, the pattern expected is: yyyy-MM-dd HH:mm:ss or yyyy-MM-dd'T'HH:mm:ss. |  | Date
+| *timer* (advanced) | To use a custom Timer |  | Timer
+|===
+// endpoint options: END
+
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-timer-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.timer.enabled* | Whether to enable auto configuration of the timer component. This is enabled by default. |  | Boolean
+| *camel.component.timer.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+=== Exchange Properties
+
+When the timer is fired, it adds the following information as properties
+to the `Exchange`:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+|Name |Type |Description
+
+|`Exchange.TIMER_NAME` |`String` |The value of the `name` option.
+
+|`Exchange.TIMER_TIME` |`Date` |The value of the `time` option.
+
+|`Exchange.TIMER_PERIOD` |`long` |The value of the `period` option.
+
+|`Exchange.TIMER_FIRED_TIME` |`Date` |The time when the consumer fired.
+
+|`Exchange.TIMER_COUNTER` |`Long` |*Camel 2.8:* The current fire counter. Starts from 1.
+|===
+
+=== Sample
+
+To set up a route that generates an event every 60 seconds:
+
+[source,java]
+----
+from("timer://foo?fixedRate=true&period=60000").to("bean:myBean?method=someMethodName");
+----
+
+TIP: Instead of 60000 you can use period=60s which is more friendly to read.
+
+The above route will generate an event and then invoke the
+`someMethodName` method on the bean called `myBean` in the
+Registry such as JNDI or Spring.
+
+And the route in Spring DSL:
+
+[source,xml]
+-----
+<route>
+  <from uri="timer://foo?fixedRate=true&amp;period=60000"/>
+  <to uri="bean:myBean?method=someMethodName"/>
+</route>
+-----
+
+=== Firing as soon as possible
+
+*Available as of Camel 2.17*
+
+You may want to fire messages in a Camel route as soon as possible you
+can use a negative delay:
+
+[source,xml]
+----
+<route>
+  <from uri="timer://foo?delay=-1"/>
+  <to uri="bean:myBean?method=someMethodName"/>
+</route>
+----
+
+In this way the timer will fire messages immediately.
+
+You can also specify a repeatCount parameter in conjunction with a
+negative delay to stop firing messages after a fixed number has been
+reached.
+
+If you don't specify a repeatCount then the timer will continue firing
+messages until the route will be stopped. 
+
+=== Firing only once
+
+*Available as of Camel 2.8*
+
+You may want to fire a message in a Camel route only once, such as when
+starting the route. To do that you use the repeatCount option as shown:
+
+[source,xml]
+----
+<route>
+  <from uri="timer://foo?repeatCount=1"/>
+  <to uri="bean:myBean?method=someMethodName"/>
+</route>
+----
+
+=== See Also
+
+* <<scheduler-component,Scheduler>>
+* <<quartz-component,Quartz>>

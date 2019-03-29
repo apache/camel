@@ -10,20 +10,19 @@
     This bundle provides the Karaf shell commands to manipulate and manage Camel Components.
 
     The following commands are available:
-    \u001B[36mcamel:component-list\u001B[0m Lists all Camel components that are in use in Karaf.
     \u001B[36mcamel:context-info\u001B[0m Display detailed information about a Camel context.
     \u001B[36mcamel:context-list\u001B[0m Lists all Camel contexts.
     \u001B[36mcamel:context-resume\u001B[0m Resumes a Camel context.
     \u001B[36mcamel:context-start\u001B[0m Start a Camel context.
     \u001B[36mcamel:context-stop\u001B[0m Stops a Camel context.
     \u001B[36mcamel:context-suspend\u001B[0m Suspends a Camel context.
-    \u001B[36mcamel:endpoint-explain\u001B[0m Explain all Camel endpoints available in Camel Context deployed
     \u001B[36mcamel:endpoint-list\u001B[0m List the Camel endpoints.
     \u001B[36mcamel:rest-registry-list\u001B[0m Lists all Camel REST services enlisted in the Rest Registry from all CamelContexts.
     \u001B[36mcamel:rest-show\u001B[0m Display the Camel REST definition in XML..
     \u001B[36mcamel:route-info\u001B[0m Display information about a Camel route.
     \u001B[36mcamel:route-list\u001B[0m Lists the Camel routes.
     \u001B[36mcamel:route-profile\u001B[0m Display profile information about Camel route(s).
+    \u001B[36mcamel:route-step\u001B[0m Display step information about Camel route(s).
     \u001B[36mcamel:route-reset-stats\u001B[0m Reset performance stats on a route or group of routes.
     \u001B[36mcamel:route-resume\u001B[0m Resume a Camel route.
     \u001B[36mcamel:route-show\u001B[0m Display the Camel route definition in XML.

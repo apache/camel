@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ package org.apache.camel.script.osgi;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
+
 import javax.script.ScriptEngineFactory;
 
 import org.junit.Before;
@@ -34,7 +35,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 public class ActivatorTest {
@@ -46,7 +47,7 @@ public class ActivatorTest {
     @Before
     public void mockBundle() throws ClassNotFoundException {
         mockBundle = Mockito.mock(Bundle.class);
-        when(mockBundle.loadClass(anyString())).thenAnswer(new Answer() {
+        when(mockBundle.loadClass(anyString())).thenAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 return ActivatorTest.class.getClassLoader().loadClass(invocation.getArguments()[0].toString());

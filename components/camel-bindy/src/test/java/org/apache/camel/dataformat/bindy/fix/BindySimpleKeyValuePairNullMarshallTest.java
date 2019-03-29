@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -57,8 +57,8 @@ public class BindySimpleKeyValuePairNullMarshallTest extends AbstractJUnit4Sprin
     }
 
     public List<Map<String, Object>> generateModel() {
-        List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
-        Map<String, Object> model = new HashMap<String, Object>();
+        List<Map<String, Object>> models = new ArrayList<>();
+        Map<String, Object> model = new HashMap<>();
 
         Header header = new Header();
         header.setBeginString("FIX 4.1");

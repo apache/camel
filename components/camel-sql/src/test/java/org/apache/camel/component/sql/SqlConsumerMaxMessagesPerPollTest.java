@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -92,7 +92,7 @@ public class SqlConsumerMaxMessagesPerPollTest extends CamelTestSupport {
                 getContext().setTracing(true);
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("sql:select * from projects where processed = false order by id?maxMessagesPerPoll=2")
+                from("sql:select * from projects where processed = false order by id?maxMessagesPerPoll=2&consumer.initialDelay=0&consumer.delay=50")
                     .to("mock:result")
                     .to("sql:update projects set processed = true where id = :#id");
             }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,7 +27,7 @@ public class SshComponentErrorHandlingTest extends SshComponentTestSupport {
 
     @Test
     public void testRedelivery() throws Exception {
-        final String msg = "test\n";
+        final String msg = "test";
 
         MockEndpoint mockError = getMockEndpoint("mock:error");
         mockError.expectedMinimumMessageCount(0);

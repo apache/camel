@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.restlet;
 
 import java.util.HashMap;
@@ -30,7 +29,7 @@ public class RestletThrowExceptionOnFailureTest extends RestletTestSupport {
 
     @Test(expected = CamelExecutionException.class)
     public void testRestletProducerGet2() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("id", 123);
         headers.put("beverage.beer", "Carlsberg");
 

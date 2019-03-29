@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 public final class HBaseHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(HBaseIdempotentRepository.class);
-    private static final Map<String, byte[]> NAMES = new HashMap<String, byte[]>();
+    private static final Map<String, byte[]> NAMES = new HashMap<>();
 
     private HBaseHelper() {
         //Utility Class
@@ -50,7 +50,9 @@ public final class HBaseHelper {
     }
 
     public static byte[] toBytes(Object obj) {
-        if (obj instanceof byte[]) {
+        if (obj instanceof String) {
+            return Bytes.toBytes((String) obj);
+        } else if (obj instanceof byte[]) {
             return (byte[]) obj;
         } else if (obj instanceof Byte) {
             return Bytes.toBytes((Byte) obj);
@@ -62,8 +64,6 @@ public final class HBaseHelper {
             return Bytes.toBytes((Long) obj);
         } else if (obj instanceof Double) {
             return Bytes.toBytes((Double) obj);
-        } else if (obj instanceof String) {
-            return Bytes.toBytes((String) obj);
         } else {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = null;

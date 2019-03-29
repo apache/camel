@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,7 +32,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.commons.io.IOUtils;
 
 import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_ENDPOINT_URI_PREFIX;
@@ -43,7 +43,7 @@ import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_TEMPLATE;
 /**
  * Transforms the message using a Chunk template.
  */
-@UriEndpoint(scheme = "chunk", title = "Chunk", syntax = "chunk:resourceUri", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "chunk", title = "Chunk", syntax = "chunk:resourceUri", producerOnly = true, label = "transformation")
 public class ChunkEndpoint extends ResourceEndpoint {
 
     private Theme theme;
@@ -179,6 +179,11 @@ public class ChunkEndpoint extends ResourceEndpoint {
             }
             if (encoding != null) {
                 theme.setEncoding(encoding);
+            }
+
+            ClassLoader apcl = getCamelContext().getApplicationContextClassLoader();
+            if (apcl != null) {
+                theme.setJarContext(apcl);
             }
         }
         return theme;

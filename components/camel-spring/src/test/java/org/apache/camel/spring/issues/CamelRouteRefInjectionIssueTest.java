@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.spring.issues;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -29,6 +29,7 @@ public class CamelRouteRefInjectionIssueTest  extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/CamelRouteRefInjectionIssueTest.xml");
     }
     
+    @Test
     public void testTheRouteRefInjection() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World!");

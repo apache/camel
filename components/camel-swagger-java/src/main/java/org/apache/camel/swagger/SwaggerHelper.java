@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,10 @@
  */
 package org.apache.camel.swagger;
 
+import io.swagger.models.Model;
+import io.swagger.models.Operation;
+import io.swagger.models.Path;
+import io.swagger.models.Swagger;
 import org.apache.camel.util.FileUtil;
 
 public final class SwaggerHelper {
@@ -34,4 +38,35 @@ public final class SwaggerHelper {
             return path2;
         }
     }
+
+    /**
+     * Clears all the vendor extension on the swagger model. This may be needed as some API tooling does not support this.
+     */
+    public static void clearVendorExtensions(Swagger swagger) {
+        if (swagger.getVendorExtensions() != null) {
+            swagger.getVendorExtensions().clear();
+        }
+
+        if (swagger.getDefinitions() != null) {
+            for (Model model : swagger.getDefinitions().values()) {
+                if (model.getVendorExtensions() != null) {
+                    model.getVendorExtensions().clear();
+                }
+            }
+        }
+
+        if (swagger.getPaths() != null) {
+            for (Path path : swagger.getPaths().values()) {
+                if (path.getVendorExtensions() != null) {
+                    path.getVendorExtensions().clear();
+                }
+                for (Operation op : path.getOperations()) {
+                    if (op.getVendorExtensions() != null) {
+                        op.getVendorExtensions().clear();
+                    }
+                }
+            }
+        }
+    }
+
 }

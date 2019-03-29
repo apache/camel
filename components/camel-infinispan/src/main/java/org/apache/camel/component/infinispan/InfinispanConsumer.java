@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.infinispan.embedded.InfinispanConsumerEmbeddedHandler;
 import org.apache.camel.component.infinispan.remote.InfinispanConsumerRemoteHandler;
 import org.apache.camel.component.infinispan.remote.InfinispanRemoteOperation;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.Search;
 import org.infinispan.commons.api.BasicCache;
@@ -35,13 +35,15 @@ public class InfinispanConsumer extends DefaultConsumer {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(InfinispanProducer.class);
     private final InfinispanConfiguration configuration;
     private final InfinispanManager manager;
+    private final String cacheName;
     private InfinispanEventListener listener;
     private InfinispanConsumerHandler consumerHandler;
     private BasicCache<Object, Object> cache;
     private ContinuousQuery<Object, Object> continuousQuery;
 
-    public InfinispanConsumer(InfinispanEndpoint endpoint, Processor processor, InfinispanConfiguration configuration) {
+    public InfinispanConsumer(InfinispanEndpoint endpoint, Processor processor, String cacheName, InfinispanConfiguration configuration) {
         super(endpoint, processor);
+        this.cacheName = cacheName;
         this.configuration = configuration;
         this.manager = new InfinispanManager(endpoint.getCamelContext(), configuration);
     }
@@ -72,7 +74,7 @@ public class InfinispanConsumer extends DefaultConsumer {
         super.doStart();
         manager.start();
 
-        cache = manager.getCache();
+        cache = manager.getCache(cacheName);
         if (configuration.hasQueryBuilder()) {
             if (InfinispanUtil.isRemote(cache)) {
                 RemoteCache<Object, Object> remoteCache = InfinispanUtil.asRemote(cache);
@@ -134,6 +136,11 @@ public class InfinispanConsumer extends DefaultConsumer {
         @Override
         public void resultJoining(Object key, Object value) {
             processEvent(InfinispanConstants.CACHE_ENTRY_JOINING, false, cacheName, key, value);
+        }
+        
+        @Override
+        public void resultUpdated(Object key, Object value) {
+            processEvent(InfinispanConstants.CACHE_ENTRY_UPDATED, false, cacheName, key, value);
         }
 
         @Override

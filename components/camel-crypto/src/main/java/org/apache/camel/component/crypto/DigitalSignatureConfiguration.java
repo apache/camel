@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,16 +30,16 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 
 @UriParams
 public class DigitalSignatureConfiguration implements Cloneable, CamelContextAware {
 
     private CamelContext context;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private CryptoOperation cryptoOperation;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String name;
     @UriParam(secret = true)
     private PrivateKey privateKey;
@@ -190,7 +190,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     }
 
     /**
-     * Sets the reference name for a PrivateKey that can be fond in the registry.
+     * Sets the reference name for a PrivateKey that can be found in the registry.
      */
     public void setPrivateKeyName(String privateKeyName) {
         if (context != null && privateKeyName != null) {
@@ -212,7 +212,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     }
 
     /**
-     * Sets the reference name for a publicKey that can be fond in the registry.
+     * Sets the reference name for a publicKey that can be found in the registry.
      */
     public void setPublicKeyName(String publicKeyName) {
         if (context != null && publicKeyName != null) {
@@ -270,7 +270,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     }
 
     /**
-     * Sets the reference name for a PrivateKey that can be fond in the registry.
+     * Sets the reference name for a PrivateKey that can be found in the registry.
      */
     public void setCertificateName(String certificateName) {
         if (context != null && certificateName != null) {
@@ -309,7 +309,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     }
 
     /**
-     * Sets the reference name for a Keystore that can be fond in the registry.
+     * Sets the reference name for a Keystore that can be found in the registry.
      */
     public void setKeystoreName(String keystoreName) {
         if (context != null && keystoreName != null) {
@@ -365,7 +365,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     }
 
     /**
-     * Sets the reference name for a SecureRandom that can be fond in the registry.
+     * Sets the reference name for a SecureRandom that can be found in the registry.
      */
     public void setSecureRandomName(String randomName) {
         if (context != null && randomName != null) {
@@ -473,7 +473,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     }
 
     /**
-     * Gets the Crypto operation that was supplied in the the crypto scheme in the endpoint uri
+     * Gets the Crypto operation that was supplied in the crypto scheme in the endpoint uri
      */
     public CryptoOperation getCryptoOperation() {
         return cryptoOperation;

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,7 +31,7 @@ public class CamelItemReaderTest extends CamelTestSupport {
 
     @Override
     protected void doPostSetup() throws Exception {
-        camelItemReader = new CamelItemReader<String>(consumer(), "seda:start");
+        camelItemReader = new CamelItemReader<>(consumer(), "seda:start");
         sendBody("seda:start", message);
     }
 

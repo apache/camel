@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,8 +33,6 @@ import org.junit.Test;
 
 /**
  * Tests duplicate delivery via mqtt consumer.
- * 
- * @version
  */
 public class MQTTDuplicatesTest extends MQTTBaseTest {
 
@@ -110,8 +108,8 @@ public class MQTTDuplicatesTest extends MQTTBaseTest {
     private void assertNoDuplicates() {
         List<Exchange> exchanges = resultEndpoint.getExchanges();
         Assert.assertTrue("No message was delivered - something wrong happened", exchanges.size() > 0);
-        Set<String> values = new HashSet<String>();
-        List<String> duplicates = new ArrayList<String>();
+        Set<String> values = new HashSet<>();
+        List<String> duplicates = new ArrayList<>();
         for (Exchange e : exchanges) {
             String body = e.getIn().getBody(String.class);
             if (values.contains(body)) {

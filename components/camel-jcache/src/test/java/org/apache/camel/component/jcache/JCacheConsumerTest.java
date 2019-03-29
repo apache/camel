@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -86,7 +86,7 @@ public class JCacheConsumerTest extends JCacheComponentTestSupport {
         mockRemoved.expectedMessagesMatches(new Predicate() {
             @Override
             public boolean matches(Exchange exchange) {
-                return exchange.getIn().getBody(String.class).equals(val2);
+                return exchange.getIn().getBody(String.class) == null;
             }
         });
 

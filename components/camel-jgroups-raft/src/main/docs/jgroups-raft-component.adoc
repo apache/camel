@@ -1,0 +1,209 @@
+[[jgroups-raft-component]]
+== JGroups raft Component
+
+*Available as of Camel version 2.24*
+
+http://belaban.github.io/jgroups-raft/[JGroups-raft] is a https://raftconsensus.github.io/[Raft] implementation in http://www.jgroups.org/[JGroups].
+The *jgroups-raft:* component provides interoperability between camel and a JGroups-raft clusters.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component.
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-jgroups-raft</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.y.z</version>
+</dependency>
+------------------------------------------------------------
+
+### URI format
+
+[source,java]
+-----------------------------
+jgroups-raft:clusterName[?options]
+-----------------------------
+
+Where *clusterName* represents the name of the JGroups-raft cluster the
+component should connect to.
+
+### Options
+
+// component options: START
+The JGroups raft component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *raftHandle* (common) | RaftHandle to use. |  | RaftHandle
+| *stateMachine* (common) | StateMachine to use. | NopStateMachine | StateMachine
+| *raftId* (common) | *Required* Unique raftId to use. |  | String
+| *channelProperties* (common) | Specifies configuration properties of the RaftHandle JChannel used by the endpoint (ignored if raftHandle ref is provided). | raft.xml | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The JGroups raft endpoint is configured using URI syntax:
+
+----
+jgroups-raft:clusterName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *clusterName* | *Required* The name of the JGroupsraft cluster the component should connect to. |  | String
+|===
+
+
+==== Query Parameters (5 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *enableRoleChangeEvents* (consumer) | If set to true, the consumer endpoint will receive roleChange event as well (not just connecting and/or using the state machine). By default it is set to false. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-jgroups-raft-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 11 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.jgroups-raft.channel-properties* | Specifies configuration properties of the RaftHandle JChannel used by the endpoint (ignored if raftHandle ref is provided). | raft.xml | String
+| *camel.component.jgroups-raft.enabled* | Enable jgroups-raft component | true | Boolean
+| *camel.component.jgroups-raft.raft-handle* | RaftHandle to use. The option is a org.jgroups.raft.RaftHandle type. |  | String
+| *camel.component.jgroups-raft.raft-id* | Unique raftId to use. |  | String
+| *camel.component.jgroups-raft.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.jgroups-raft.state-machine* | StateMachine to use. The option is a org.jgroups.protocols.raft.StateMachine type. |  | String
+| *camel.component.jgroups.raft.cluster.service.enabled* | Sets if the jgroups raft cluster service should be enabled or not, default is false. | false | Boolean
+| *camel.component.jgroups.raft.cluster.service.id* | Cluster Service ID |  | String
+| *camel.component.jgroups.raft.cluster.service.jgroups-raft-cluster-name* | JGroups Cluster name |  | String
+| *camel.component.jgroups.raft.cluster.service.jgroups-raft-config* | JGrups-raft configuration File name |  | String
+| *camel.component.jgroups.raft.cluster.service.raft-id* | JGroups-raft ID |  | String
+|===
+// spring-boot-auto-configure options: END
+
+### Headers
+
+[width="100%",cols="10%,10%,10%,70%",options="header",]
+|=======================================================================
+|Header |Constant |Since version |Description
+
+|`JGROUPSRAFT_COMMIT_INDEX` |`JGroupsRaftEndpoint.HEADER_JGROUPSRAFT_COMMIT_INDEX` |*2.24.0* | *Consumer* : The commit index (int).
+
+|`JGROUPSRAFT_CURRENT_TERM` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_CURRENT_TERM` |*2.24.0* | *Consumer* : The current raft term (int).
+
+|`JGROUPSRAFT_IS_LEADER` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_IS_LEADER` |*2.24.0* | *Consumer*: Whether the node is the Raft Leader or not (boolean).
+
+|`JGROUPSRAFT_LAST_APPLIED` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_LAST_APPLIED` |*2.24.0* | *Consumer*: The index of the last log entry that was appended to the log (int).
+
+|`JGROUPSRAFT_LEADER_ADDRESS` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_LEADER_ADDRESS` |*2.24.0* | *Consumer*: The Address ot Raft Leader or not (org.jgroups.Address).
+
+|`JGROUPSRAFT_LOG_SIZE` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_LOG_SIZE` |*2.24.0* | *Consumer*: The Raft log size in number of entries (int).
+
+|`JGROUPSRAFT_LOG_SIZE_BYTE` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_LOG_SIZE_BYTE` |*2.24.0* | *Consumer*: The Raft log size in bytes (int).
+
+|`JGROUPSRAFT_RAFT_ID` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_RAFT_ID` |*2.24.0* | *Consumer*: The Raft id of the node (String).
+
+|`JGROUPSRAFT_EVENT_TYPE` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_EVENT_TYPE` |*2.24.0* | *Consumer*: The event type, one of org.apache.camel.component.jgroups.raft.JGroupsRaftEventType ENUM.
+
+|`JGROUPSRAFT_SET_OFFSET` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_OFFSET` |*2.24.0* | *Producer*: Offset to use in the byte[] buffer to be set().
+
+|`JGROUPSRAFT_SET_LENGTH` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_LENGTH` |*2.24.0* | *Producer*: Length to use in the byte[] buffer to be set().
+
+|`JGROUPSRAFT_SET_TIMEOUT` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_TIMEOUT` |*2.24.0* | *Producer*: Timeout to be used in set() operation.
+
+|`JGROUPSRAFT_SET_TIMEUNIT` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_TIMEUNIT` |*2.24.0* | *Producer*: Timeunit to be used in set() operation.
+|=======================================================================
+ 
+### Usage
+
+Using `jgroups-raft` component with `enableRoleChangeEvents=true` on the consumer side of the route will capture
+change in JGrups-raft role and forward them to the Camel route.
+JGroups-raft consumer processes incoming messages
+http://camel.apache.org/asynchronous-routing-engine.html[asynchronously].
+
+[source,java]
+----------------------------------------------
+// Capture raft role changes from cluster named
+// 'clusterName' and send them to Camel route.
+from("jgroups-raft:clusterName?enableRoleChangeEvents=true").to("seda:queue");
+----------------------------------------------
+
+Using `jgroups-raft` component on the producer side of the route will use the body of the camel exchange (which must be a `byte[]`)
+to perform a setX() operation on the raftHandle associated with the endpoint..
+
+[source,java]
+--------------------------------------------------
+// perform a setX() operation to the cluster named 'clusterName' shared state machine
+from("direct:start").to("jgroups-raft:clusterName");
+--------------------------------------------------
+
+### Examples
+
+#### Receive cluster view change notifications
+
+The snippet below demonstrates how to create the consumer endpoint
+listening to the change role events. By default this option is off.
+
+[source,java]
+---------------------------------------------------------------------
+...
+from("jgroups-raft:clusterName?enableRoleChangeEvents=true").to(mock:mockEndpoint);
+...
+---------------------------------------------------------------------
+
+#### Keeping singleton route within the cluster
+
+The snippet below demonstrates how to keep the singleton consumer route
+in the cluster of Camel Contexts. As soon as the master node dies, one
+of the slaves will be elected as a new master and started. In this
+particular example we want to keep singleton <<jetty-component,jetty>>
+instance listening for the requests on
+address` http://localhost:8080/orders`.
+
+[source,java]
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+JGroupsRaftClusterService service = new JGroupsRaftClusterService();
+service.setId("raftId");
+service.setRaftId("raftId");
+service.setJgroupsClusterName("clusterName");
+...
+context.addService(service);
+
+from("master:mycluster:jetty:http://localhost:8080/orders").to("jms:orders"); 
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,9 +31,9 @@ import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.DestinationFactoryManager;
 import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
-import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
+import org.mockito.Mockito;
 
 public abstract class CamelTransportTestSupport extends CamelTestSupport {
 
@@ -70,7 +70,7 @@ public abstract class CamelTransportTestSupport extends CamelTestSupport {
         if (decoupled) {
             // setup the reference type
         } else {
-            target = EasyMock.createMock(EndpointReferenceType.class);
+            target = Mockito.mock(EndpointReferenceType.class);
         }
 
         CamelConduit camelConduit = new CamelConduit(context, bus, endpointInfo, target);

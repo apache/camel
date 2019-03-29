@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,20 +21,23 @@ import javax.sql.DataSource;
 
 import com.opengamma.elsql.ElSqlConfig;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.IntrospectionSupport;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-public class ElsqlComponent extends UriEndpointComponent {
+@Component("elsql")
+public class ElsqlComponent extends DefaultComponent {
 
     private ElSqlDatabaseVendor databaseVendor;
     private DataSource dataSource;
+    @Metadata(label = "advanced")
     private ElSqlConfig elSqlConfig;
     private String resourceUri;
 
     public ElsqlComponent() {
-        super(ElsqlEndpoint.class);
     }
 
     @Override
@@ -87,7 +90,7 @@ public class ElsqlComponent extends UriEndpointComponent {
         ElsqlEndpoint endpoint = new ElsqlEndpoint(uri, this, jdbcTemplate, target, elsqlName, resUri);
         endpoint.setElSqlConfig(elSqlConfig);
         endpoint.setDatabaseVendor(databaseVendor);
-        endpoint.setDataSource(ds);
+        endpoint.setDataSource(target);
         endpoint.setDataSourceRef(dataSourceRef);
         endpoint.setOnConsume(onConsume);
         endpoint.setOnConsumeFailed(onConsumeFailed);

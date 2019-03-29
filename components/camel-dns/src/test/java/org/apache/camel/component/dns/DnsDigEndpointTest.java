@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -45,10 +45,10 @@ public class DnsDigEndpointTest extends CamelTestSupport {
                 + "living specie\" \"s of monkey. Many are arboreal, although there are "
                 + "species that live primarily on the ground, such as baboons... "
                 + "http://en.wikipedia.org/wiki/Monkey\""; 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -69,7 +69,7 @@ public class DnsDigEndpointTest extends CamelTestSupport {
                 return RESPONSE_MONKEY.equals(str);
             }
         });
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("dns.name", "monkey.wp.dg.cx");
         headers.put("dns.type", "TXT");
         template.sendBodyAndHeaders(null, headers);

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -41,8 +41,6 @@ import org.apache.cxf.service.model.MessagePartInfo;
  * {@link #initialize(org.apache.cxf.service.Service)}
  * method can initialize the service model's message part schema based on the service class in the message part info.  
  * Hence, this DataBinding supports DOMSource object de/serialization without requiring users to provide a WSDL.
- * 
- * @version 
  */
 public class HybridSourceDataBinding extends JAXBDataBinding {
     private static final Logger LOG = LogUtils.getL7dLogger(SourceDataBinding.class);

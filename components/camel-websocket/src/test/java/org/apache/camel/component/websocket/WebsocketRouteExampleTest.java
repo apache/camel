@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,7 +34,7 @@ import org.junit.Test;
 
 public class WebsocketRouteExampleTest extends CamelTestSupport {
 
-    private static List<String> received = new ArrayList<String>();
+    private static List<String> received = new ArrayList<>();
     private static CountDownLatch latch = new CountDownLatch(1);
     protected int port;
 
@@ -90,7 +90,7 @@ public class WebsocketRouteExampleTest extends CamelTestSupport {
                 WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
                 websocketComponent.setPort(port);
                 websocketComponent.setMinThreads(1);
-                websocketComponent.setMaxThreads(20);
+                websocketComponent.setMaxThreads(25);
 
                 // START SNIPPET: e1
                 // expose a echo websocket client, that sends back an echo

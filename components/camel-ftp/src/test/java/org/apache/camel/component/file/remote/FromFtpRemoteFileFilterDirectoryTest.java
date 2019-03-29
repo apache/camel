@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,7 +36,7 @@ public class FromFtpRemoteFileFilterDirectoryTest extends FtpServerTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myFilter", new MyFileFilter<Object>());
+        jndi.bind("myFilter", new MyFileFilter<>());
         return jndi;
     }
 

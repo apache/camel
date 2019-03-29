@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -88,7 +88,7 @@ public class MultiContextConsumerTemplateTest {
     @Test
     @InSequence(1)
     public void configureCamelContexts() throws Exception {
-        secondCamelContext.startAllRoutes();
+        secondCamelContext.getRouteController().startAllRoutes();
     }
 
     @Test

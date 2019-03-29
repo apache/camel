@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -48,7 +48,7 @@ public class CxfGreeterCXFMessageRouterTest extends AbstractCXFGreeterRouterTest
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                context.setErrorHandlerBuilder(new NoErrorHandlerBuilder());
+                context.setErrorHandlerFactory(new NoErrorHandlerBuilder());
                 from("cxf:bean:routerEndpoint?dataFormat=CXF_MESSAGE&publishedEndpointUrl=http://www.simple.com/services/test")
                     .to("cxf:bean:serviceEndpoint?dataFormat=CXF_MESSAGE");
             }

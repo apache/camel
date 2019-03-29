@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,9 +24,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
-/**
- * @version 
- */
 public class MailCollectionHeaderTest extends CamelTestSupport {
 
     @Test
@@ -55,7 +52,7 @@ public class MailCollectionHeaderTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:a").to("smtp://localhost?username=james@localhost");
 
-                from("pop3://localhost?username=james&password=secret&consumer.delay=1000").to("mock:result");
+                from("pop3://localhost?username=james&password=secret&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
             }
         };
     }

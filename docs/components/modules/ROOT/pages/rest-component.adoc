@@ -1,0 +1,282 @@
+[[rest-component]]
+== REST Component
+
+*Available as of Camel version 2.14*
+
+The rest component allows to define REST endpoints (consumer) using the
+Rest DSL and plugin to other Camel components as the
+REST transport.
+
+From Camel 2.18 onwards the rest component can also be used as a client (producer) to call REST services.
+
+=== URI format
+
+[source]
+----
+rest://method:path[:uriTemplate]?[options]
+----
+
+=== URI Options
+
+// component options: START
+The REST component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *componentName* (common) | The Camel Rest component to use for the REST transport, such as restlet, spark-rest. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory (consumer) or org.apache.camel.spi.RestProducerFactory (producer) is registered in the registry. If either one is found, then that is being used. |  | String
+| *apiDoc* (producer) | The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSon format. |  | String
+| *host* (producer) | Host and port of HTTP service to use (override host in swagger schema) |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The REST endpoint is configured using URI syntax:
+
+----
+rest:method:path:uriTemplate
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (3 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *method* | *Required* HTTP method to use. |  | String
+| *path* | *Required* The base path |  | String
+| *uriTemplate* | The uri template |  | String
+|===
+
+
+==== Query Parameters (15 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *componentName* (common) | The Camel Rest component to use for the REST transport, such as restlet, spark-rest. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found, then that is being used. |  | String
+| *consumes* (common) | Media type such as: 'text/xml', or 'application/json' this REST service accepts. By default we accept all kinds of types. |  | String
+| *inType* (common) | To declare the incoming POJO binding type as a FQN class name |  | String
+| *outType* (common) | To declare the outgoing POJO binding type as a FQN class name |  | String
+| *produces* (common) | Media type such as: 'text/xml', or 'application/json' this REST service returns. |  | String
+| *routeId* (common) | Name of the route this REST services creates |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *description* (consumer) | Human description to document this REST service |  | String
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *apiDoc* (producer) | The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSon format. |  | String
+| *bindingMode* (producer) | Configures the binding mode for the producer. If set to anything other than 'off' the producer will try to convert the body of the incoming message from inType to the json or xml, and the response from json or xml to outType. |  | RestBindingMode
+| *host* (producer) | Host and port of HTTP service to use (override host in swagger schema) |  | String
+| *queryParameters* (producer) | Query parameters for the HTTP service to call |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-rest-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.rest.api-doc* | The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSon format. |  | String
+| *camel.component.rest.component-name* | The Camel Rest component to use for the REST transport, such as restlet, spark-rest. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory (consumer) or org.apache.camel.spi.RestProducerFactory (producer) is registered in the registry. If either one is found, then that is being used. |  | String
+| *camel.component.rest.enabled* | Whether to enable auto configuration of the rest component. This is enabled by default. |  | Boolean
+| *camel.component.rest.host* | Host and port of HTTP service to use (override host in swagger schema) |  | String
+| *camel.component.rest.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+=== Supported rest components
+
+The following components support rest consumer (Rest DSL):
+
+* camel-coap
+* camel-netty-http
+* camel-netty4-http
+* camel-jetty
+* camel-restlet
+* camel-servlet
+* camel-spark-rest
+* camel-undertow
+
+The following components support rest producer:
+
+* camel-http
+* camel-http4
+* camel-netty4-http
+* camel-jetty
+* camel-restlet
+* camel-undertow
+
+=== Path and uriTemplate syntax
+
+The path and uriTemplate option is defined using a REST syntax where you
+define the REST context path using support for parameters. 
+
+TIP:If no uriTemplate is configured then path option works the same way. It
+does not matter if you configure only path or if you configure both
+options. Though configuring both a path and uriTemplate is a more common
+practice with REST.
+
+The following is a Camel route using a a path only
+
+[source,java]
+----
+from("rest:get:hello")
+  .transform().constant("Bye World");
+----
+
+And the following route uses a parameter which is mapped to a Camel
+header with the key "me".
+
+[source,java]
+----
+from("rest:get:hello/{me}")
+  .transform().simple("Bye ${header.me}");
+----
+
+The following examples have configured a base path as "hello" and then
+have two REST services configured using uriTemplates.
+
+[source,java]
+----
+from("rest:get:hello:/{me}")
+  .transform().simple("Hi ${header.me}");
+
+from("rest:get:hello:/french/{me}")
+  .transform().simple("Bonjour ${header.me}");
+----
+
+=== Rest producer examples
+
+You can use the rest component to call REST services like any other Camel component.
+
+For example to call a REST service on using `hello/{me}` you can do
+
+[source,java]
+----
+from("direct:start")
+  .to("rest:get:hello/{me}");
+----
+
+And then the dynamic value `{me}` is mapped to Camel message with the same name.
+So to call this REST service you can send an empty message body and a header as shown:
+
+[source,java]
+----
+template.sendBodyAndHeader("direct:start", null, "me", "Donald Duck");
+----
+
+The Rest producer needs to know the hostname and port of the REST service, which you can configure
+using the host option as shown:
+
+[source,java]
+----
+from("direct:start")
+  .to("rest:get:hello/{me}?host=myserver:8080/foo");
+----
+
+Instead of using the host option, you can configure the host on the `restConfiguration` as shown:
+
+[source,java]
+----
+restConfiguration().host("myserver:8080/foo");
+
+from("direct:start")
+  .to("rest:get:hello/{me}");
+----
+
+You can use the `producerComponent` to select which Camel component to use as the HTTP client, for example
+to use http4 you can do:
+
+[source,java]
+----
+restConfiguration().host("myserver:8080/foo").producerComponent("http4");
+
+from("direct:start")
+  .to("rest:get:hello/{me}");
+----
+
+
+=== Rest producer binding
+
+The REST producer supports binding using JSon or XML like the rest-dsl does.
+
+For example to use jetty with json binding mode turned on you can configure this in the rest configuration:
+
+[source,java]
+----
+restConfiguration().component("jetty").host("localhost").port(8080).bindingMode(RestBindingMode.json);
+
+from("direct:start")
+  .to("rest:post:user");
+----
+
+Then when calling the REST service using rest producer it will automatic bind any POJOs to json before calling the REST service:
+
+[source,java]
+----
+  UserPojo user = new UserPojo();
+  user.setId(123);
+  user.setName("Donald Duck");
+
+  template.sendBody("direct:start", user);
+----
+
+In the example above we send a POJO instance `UserPojo` as the message body. And because we have turned on JSon binding
+in the rest configuration, then the POJO will be marshalled from POJO to JSon before calling the REST service.
+
+However if you want to also perform binding for the response message (eg what the REST service send back as response) you
+would need to configure the `outType` option to specify what is the classname of the POJO to unmarshal from JSon to POJO.
+
+For example if the REST service returns a JSon payload that binds to `com.foo.MyResponsePojo` you can configure this as shown:
+
+[source,java]
+----
+  restConfiguration().component("jetty").host("localhost").port(8080).bindingMode(RestBindingMode.json);
+
+  from("direct:start")
+    .to("rest:post:user?outType=com.foo.MyResponsePojo");
+----
+
+IMPORTANT: You must configure `outType` option if you want POJO binding to happen for the response messages received from calling the REST service.
+
+
+=== More examples
+
+See Rest DSL which offers more examples and how you
+can use the Rest DSL to define those in a nicer RESTful way.
+
+There is a *camel-example-servlet-rest-tomcat* example in the Apache
+Camel distribution, that demonstrates how to use the
+Rest DSL with SERVLET as
+transport that can be deployed on Apache Tomcat, or similar web
+containers.
+
+=== See Also
+
+* Rest DSL
+* <<servlet-component,SERVLET>>

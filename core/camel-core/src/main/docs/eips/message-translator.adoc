@@ -1,0 +1,78 @@
+[[messageTranslator-eip]]
+== Message Translator
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/MessageTranslator.html[Message
+Translator] from the link:enterprise-integration-patterns.html[EIP
+patterns] by using an arbitrary link:processor.html[Processor] in the
+routing logic, by using a link:bean-integration.html[bean] to perform
+the transformation, or by using transform() in the DSL. You can also use
+a link:data-format.html[Data Format] to marshal and unmarshal messages
+in different encodings.
+
+image:http://www.enterpriseintegrationpatterns.com/img/MessageTranslator.gif[image]
+
+=== Samples
+
+You can transform a message using Camel's
+link:bean-integration.html[Bean Integration] to call any method on a
+bean in your <<Registry-Registry,Registry>> such as your
+link:spring.html[Spring] XML configuration file as follows
+
+[source,java]
+----
+from("activemq:SomeQueue")
+  .bean("myTransformerBean", "myMethodName")
+  .to("mqseries:AnotherQueue");
+----
+
+Where the "myTransformerBean" would be defined in a Spring XML file or
+defined in JNDI etc. You can omit the method name parameter from
+beanRef() and the link:bean-integration.html[Bean Integration] will try
+to deduce the method to invoke from the message exchange.
+
+or you can add your own explicit link:processor.html[Processor] to do
+the transformation
+
+or you can use the DSL to explicitly configure the transformation
+
+You can also use <<SpringXMLExtensions-SpringXMLExtensions,Spring XML Extensions>>
+to do a transformation. Basically any link:expression.html[Expression]
+language can be substituted inside the transform element as shown below
+
+Or you can use the link:bean-integration.html[Bean Integration] to
+invoke a bean
+
+[source,xml]
+----
+<route>
+  <from uri="activemq:SomeQueue"/>
+  <bean ref="myTransformerBean" method="myMethodName"/>
+  <to uri="mqseries:AnotherQueue"/>
+</route>
+----
+
+You can also use link:templating.html[Templating] to consume a message
+from one destination, transform it with something like
+<<velocity-component,Velocity>> or <<velocity-component,XQuery>> and then send
+it on to another destination. For example using InOnly (one way
+messaging)
+
+[source,java]
+----
+from("activemq:My.Queue")
+    .to("velocity:com/acme/MyResponse.vm")
+    .to("activemq:Another.Queue");
+----
+
+If you want to use InOut (request-reply) semantics to process requests
+on the *My.Queue* queue on link:activemq.html[ActiveMQ] with a template
+generated response, then sending responses back to the JMSReplyTo
+Destination you could use this.
+
+[source,java]
+----
+from("activemq:My.Queue")
+    .to("velocity:com/acme/MyResponse.vm");
+----
+

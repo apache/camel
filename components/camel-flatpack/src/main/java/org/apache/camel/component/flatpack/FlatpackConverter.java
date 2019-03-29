@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -30,10 +31,7 @@ import org.w3c.dom.Element;
 import net.sf.flatpack.DataSet;
 import org.apache.camel.Converter;
 
-/**
- * @version 
- */
-@Converter
+@Converter(loader = true)
 public final class FlatpackConverter {
 
     private FlatpackConverter() {
@@ -42,18 +40,18 @@ public final class FlatpackConverter {
 
     @Converter
     public static Map<String, Object> toMap(DataSet dataSet) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         putValues(map, dataSet);
         return map;
     }
 
     @Converter
     public static List<Map<String, Object>> toList(DataSet dataSet) {
-        List<Map<String, Object>> answer = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> answer = new ArrayList<>();
         dataSet.goTop();
 
         while (dataSet.next()) {
-            Map<String, Object> map = new HashMap<String, Object>();
+            Map<String, Object> map = new HashMap<>();
             putValues(map, dataSet);
             answer.add(map);
         }
@@ -63,7 +61,9 @@ public final class FlatpackConverter {
 
     @Converter
     public static Document toDocument(DataSet dataSet) throws ParserConfigurationException {
-        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        Document doc = dbf.newDocumentBuilder().newDocument();
 
         if (dataSet.getIndex() == -1) {
             Element list = doc.createElement("Dataset");

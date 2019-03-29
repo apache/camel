@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Unit test for Camel loadbalancer failover with JMS
@@ -30,7 +31,8 @@ public class JmsSpringLoadBalanceFailoverTest extends JmsLoadBalanceFailoverTest
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext("org/apache/camel/component/jms/JmsSpringLoadBalanceFailoverTest.xml");
+        return SpringCamelContext.springCamelContext(
+                new ClassPathXmlApplicationContext("org/apache/camel/component/jms/JmsSpringLoadBalanceFailoverTest.xml"), true);
     }
 
 }

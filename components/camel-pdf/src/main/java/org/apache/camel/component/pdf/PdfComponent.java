@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,16 +16,17 @@
  */
 package org.apache.camel.component.pdf;
 
- import java.net.URI;
+import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
-public class PdfComponent extends UriEndpointComponent {
+@Component("pdf")
+public class PdfComponent extends DefaultComponent {
 
     public PdfComponent() {
-        super(PdfEndpoint.class);
     }
 
     @Override

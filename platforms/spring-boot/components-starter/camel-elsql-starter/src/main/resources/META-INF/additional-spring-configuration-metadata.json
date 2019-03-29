@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.elsql.enabled",
+      "description": "Enable elsql component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

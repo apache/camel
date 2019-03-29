@@ -1,0 +1,33 @@
+[[SpringXMLExtensions-SpringXMLExtensions]]
+=== Spring XML Extensions
+
+The Camel Spring XML Extensions allow you use a very concise XML syntax
+to describe your Camel configuration when you are using spring to wire
+together your application.
+
+The following is an example of what it looks like:
+
+[source,xml]
+----
+<camelContext errorHandlerRef="errorHandler" xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:a"/>
+        <choice>
+            <when>
+                <xpath>$foo = 'bar'</xpath>
+                <to uri="direct:b"/>
+            </when>
+            <when>
+                <xpath>$foo = 'cheese'</xpath>
+                <to uri="direct:c"/>
+            </when>
+            <otherwise>
+                <to uri="direct:d"/>
+            </otherwise>
+        </choice>
+    </route>
+</camelContext>
+----
+
+For more usage examples see the
+link:enterprise-integration-patterns.adoc[Enterprise Integration Patterns].

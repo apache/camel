@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.dns.enabled",
+      "description": "Enable dns component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

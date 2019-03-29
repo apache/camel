@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,21 +20,26 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
-import static org.mockito.Matchers.anyCollection;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anySet;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RedisSetTest extends RedisTestSupport {
-    private RedisTemplate redisTemplate;
-    private SetOperations setOperations;
+
+    @Mock
+    private RedisTemplate<String, String> redisTemplate;
+    @Mock
+    private SetOperations<String, String> setOperations;
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -45,16 +50,9 @@ public class RedisSetTest extends RedisTestSupport {
         return registry;
     }
 
-    @Before
-    public void setUp() throws Exception {
-        redisTemplate = mock(RedisTemplate.class);
-        setOperations = mock(SetOperations.class);
-        super.setUp();
-    }
-
     @Test
     public void shouldExecuteSADD() throws Exception {
-        when(setOperations.add(anyString(), anyObject())).thenReturn(null);
+        when(setOperations.add(anyString(), any())).thenReturn(null);
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "SADD",
@@ -83,7 +81,7 @@ public class RedisSetTest extends RedisTestSupport {
         Set<String> difference = new HashSet<>();
         difference.add("a");
         difference.add("b");
-        when(setOperations.difference(anyString(), anyCollection())).thenReturn(difference);
+        when(setOperations.difference(anyString(), anySet())).thenReturn(difference);
 
         Set<String> keys = new HashSet<>();
         keys.add("key2");
@@ -116,7 +114,7 @@ public class RedisSetTest extends RedisTestSupport {
         Set<String> difference = new HashSet<>();
         difference.add("a");
         difference.add("b");
-        when(setOperations.intersect(anyString(), anyCollection())).thenReturn(difference);
+        when(setOperations.intersect(anyString(), anySet())).thenReturn(difference);
 
         Set<String> keys = new HashSet<>();
         keys.add("key2");
@@ -146,7 +144,7 @@ public class RedisSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteSISMEMBER() throws Exception {
-        when(setOperations.isMember(anyString(), anyObject())).thenReturn(true);
+        when(setOperations.isMember(anyString(), any())).thenReturn(true);
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "SISMEMBER",
@@ -212,7 +210,7 @@ public class RedisSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteSREM() throws Exception {
-        when(setOperations.remove(anyString(), anyObject())).thenReturn(Long.valueOf(1));
+        when(setOperations.remove(anyString(), any())).thenReturn(Long.valueOf(1));
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "SREM",
@@ -229,7 +227,7 @@ public class RedisSetTest extends RedisTestSupport {
         resultKeys.add("key2");
         resultKeys.add("key3");
 
-        when(setOperations.union(anyString(), anyCollection())).thenReturn(resultKeys);
+        when(setOperations.union(anyString(), anySet())).thenReturn(resultKeys);
 
         Set<String> keys = new HashSet<>();
         keys.add("key2");

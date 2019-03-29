@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,8 +29,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.header.CxfHeaderHelper;
 import org.apache.camel.component.cxf.common.message.DefaultCxfMessageMapper;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.configuration.Configurable;
@@ -48,7 +48,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version 
  *
  * Forwards messages from Camel to CXF and the CXF response back to Camel
  */
@@ -277,9 +276,12 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             if (checkException && exception != null) {
                 camelExchange.setException(exception);
             }
-
-            CachedOutputStream outputStream = (CachedOutputStream)outMessage.getContent(OutputStream.class);
-            camelExchange.getOut().setBody(outputStream.getInputStream());
+            OutputStream outputStream = outMessage.getContent(OutputStream.class);
+            if (outputStream instanceof CachedOutputStream) {
+                camelExchange.getOut().setBody(((CachedOutputStream)outputStream).getInputStream());
+            } else {
+                camelExchange.getOut().setBody(outputStream);
+            }
             LOG.debug("send the response message: {}", outputStream);
         }
 

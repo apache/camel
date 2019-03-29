@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
  * Represents a task which has multiple steps so that it can move from stage to stage
  * with the method annotated with {@link @Consumed} being invoked when the Camel consumer
  * has processed the entity bean
- *
- * @version 
  */
 @Entity
 @NamedQuery(name = "step1", query = "select x from MultiSteps x where x.step = 1")

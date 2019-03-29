@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,27 +18,19 @@ package org.apache.camel.component.google.pubsub;
 
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * Represents the component that manages {@link GooglePubsubEndpoint}.
  */
-public class GooglePubsubComponent extends UriEndpointComponent {
+@Component("google-pubsub")
+public class GooglePubsubComponent extends DefaultComponent {
 
     private GooglePubsubConnectionFactory connectionFactory;
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     public GooglePubsubComponent() {
-        super(GooglePubsubEndpoint.class);
-    }
-
-    public GooglePubsubComponent(CamelContext context) {
-        super(context, GooglePubsubEndpoint.class);
     }
 
     @Override

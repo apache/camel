@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,12 +17,11 @@
 package org.apache.camel.component.atom;
 
 import java.text.SimpleDateFormat;
-import javax.naming.Context;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
 
 /**
@@ -52,11 +51,9 @@ public class AtomEntryPollingConsumerTest extends CamelTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext jndi = new JndiContext();
+    protected void bindToRegistry(Registry registry) throws Exception {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
-        jndi.bind("myDate", df.parse("2007-11-13 14:35:00 +0100"));
-        return jndi;
+        registry.bind("myDate", df.parse("2007-11-13 14:35:00 +0100"));
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

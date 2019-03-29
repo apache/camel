@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.twilio.enabled",
+      "description": "Enable twilio component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,9 +23,10 @@ import com.github.dockerjava.api.command.ListContainersCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates List Containers Request headers are applied properly
@@ -55,11 +56,11 @@ public class ListContainersCmdHeaderTest extends BaseDockerHeaderTest<ListContai
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).listContainersCmd();
-        Mockito.verify(mockObject, Mockito.times(1)).withShowAll(Matchers.eq(showAll));
-        Mockito.verify(mockObject, Mockito.times(1)).withShowSize(Matchers.eq(showSize));
-        Mockito.verify(mockObject, Mockito.times(1)).withLimit(Matchers.eq(limit));
-        Mockito.verify(mockObject, Mockito.times(1)).withSince(Matchers.eq(since));
-        Mockito.verify(mockObject, Mockito.times(1)).withBefore(Matchers.eq(before));
+        Mockito.verify(mockObject, Mockito.times(1)).withShowAll(eq(showAll));
+        Mockito.verify(mockObject, Mockito.times(1)).withShowSize(eq(showSize));
+        Mockito.verify(mockObject, Mockito.times(1)).withLimit(eq(limit));
+        Mockito.verify(mockObject, Mockito.times(1)).withSince(eq(since));
+        Mockito.verify(mockObject, Mockito.times(1)).withBefore(eq(before));
 
     }
 

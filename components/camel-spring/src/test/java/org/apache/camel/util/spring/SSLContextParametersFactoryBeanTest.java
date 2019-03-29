@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,9 +18,9 @@ package org.apache.camel.util.spring;
 
 import javax.annotation.Resource;
 
-import org.apache.camel.util.jsse.BaseSSLContextParameters;
-import org.apache.camel.util.jsse.ClientAuthentication;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.BaseSSLContextParameters;
+import org.apache.camel.support.jsse.ClientAuthentication;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;

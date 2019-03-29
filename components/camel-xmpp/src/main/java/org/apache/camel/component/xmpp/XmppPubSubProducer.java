@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,9 +18,9 @@ package org.apache.camel.component.xmpp;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
-import org.apache.camel.impl.DefaultProducer;
-import org.jivesoftware.smack.XMPPConnection;
+import org.apache.camel.support.DefaultProducer;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.pubsub.packet.PubSub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 public class XmppPubSubProducer extends DefaultProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(XmppPrivateChatProducer.class);
     private final XmppEndpoint endpoint;
-    private XMPPConnection connection;
+    private XMPPTCPConnection connection;
 
     public XmppPubSubProducer(XmppEndpoint endpoint) {
         super(endpoint);
@@ -45,7 +45,7 @@ public class XmppPubSubProducer extends DefaultProducer {
             // make sure we are connected
             if (!connection.isConnected()) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Reconnecting to: " + XmppEndpoint.getConnectionMessage(connection));
+                    LOG.debug("Reconnecting to: {}", XmppEndpoint.getConnectionMessage(connection));
                 }
                 connection.connect();
             }
@@ -58,18 +58,15 @@ public class XmppPubSubProducer extends DefaultProducer {
             Object body = exchange.getIn().getBody(Object.class);
             if (body instanceof PubSub) {
                 PubSub pubsubpacket = (PubSub) body;
-                endpoint.getBinding().populateXmppPacket(pubsubpacket, exchange);
+                endpoint.getBinding().populateXmppStanza(pubsubpacket, exchange);
                 exchange.getIn().setHeader(XmppConstants.DOC_HEADER, pubsubpacket);
-                connection.sendPacket(pubsubpacket);
+                connection.sendStanza(pubsubpacket);
             } else {
                 throw new Exception("Message does not contain a pubsub packet");
             }
         } catch (XMPPException xmppe) {
             throw new RuntimeExchangeException("Cannot send XMPP pubsub: from " + endpoint.getUser()
                     + " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, xmppe);
-        } catch (Exception e) {
-            throw new RuntimeExchangeException("Cannot send XMPP pubsub: from " + endpoint.getUser()
-                    + " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, e);
         }
     }
 

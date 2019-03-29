@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -42,7 +42,6 @@ public class CamelCxfTest extends AbstractSpringBootTestSupport {
     public void componentTests() throws Exception {
         this.runComponentTest(config, "cxf");
         this.runComponentTest(config, "cxfrs");
-        this.runComponentTest(config, "cxfbean");
 
         this.runModuleUnitTestsIfEnabled(config);
     }

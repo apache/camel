@@ -1,0 +1,225 @@
+[[dataset-component]]
+== Dataset Component
+
+*Available as of Camel version 1.3*
+
+Testing of distributed and asynchronous processing is
+notoriously difficult. The <<mock-component,Mock>>, <<mock-component,Test>>
+and <<dataset-component,DataSet>> endpoints work great with the
+Camel Testing Framework to simplify your unit and
+integration testing using
+link:enterprise-integration-patterns.html[Enterprise Integration
+Patterns] and Camel's large range of Components
+together with the powerful Bean Integration.
+
+The DataSet component provides a mechanism to easily perform load & soak
+testing of your system. It works by allowing you to create
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/dataset/DataSet.html[DataSet
+instances] both as a source of messages and as a way to assert that the
+data set is received.
+
+Camel will use the <<log-component,throughput logger>> when sending
+dataset's.
+
+=== URI format
+
+[source]
+----
+dataset:name[?options]
+----
+
+Where *name* is used to find the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/dataset/DataSet.html[DataSet
+instance] in the Registry
+
+Camel ships with a support implementation of
+`org.apache.camel.component.dataset.DataSet`, the
+`org.apache.camel.component.dataset.DataSetSupport` class, that can be
+used as a base for implementing your own DataSet. Camel also ships with
+some implementations that can be used for testing:
+ `org.apache.camel.component.dataset.SimpleDataSet`, `org.apache.camel.component.dataset.ListDataSet`
+and `org.apache.camel.component.dataset.FileDataSet`, all of which
+extend `DataSetSupport`.
+
+=== Options
+
+
+// component options: START
+The Dataset component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The Dataset endpoint is configured using URI syntax:
+
+----
+dataset:name
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | *Required* Name of DataSet to lookup in the registry |  | DataSet
+|===
+
+
+==== Query Parameters (19 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *dataSetIndex* (common) | Controls the behaviour of the CamelDataSetIndex header. For Consumers: - off = the header will not be set - strict/lenient = the header will be set For Producers: - off = the header value will not be verified, and will not be set if it is not present = strict = the header value must be present and will be verified = lenient = the header value will be verified if it is present, and will be set if it is not present | lenient | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *initialDelay* (consumer) | Time period in millis to wait before starting sending messages. | 1000 | long
+| *minRate* (consumer) | Wait until the DataSet contains at least this number of messages | 0 | int
+| *preloadSize* (consumer) | Sets how many messages should be preloaded (sent) before the route completes its initialization | 0 | long
+| *produceDelay* (consumer) | Allows a delay to be specified which causes a delay when a message is sent by the consumer (to simulate slow processing) | 3 | long
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *assertPeriod* (producer) | Sets a grace period after which the mock endpoint will re-assert to ensure the preliminary assertion is still valid. This is used for example to assert that exactly a number of messages arrives. For example if expectedMessageCount(int) was set to 5, then the assertion is satisfied when 5 or more message arrives. To ensure that exactly 5 messages arrives, then you would need to wait a little period to ensure no further message arrives. This is what you can use this method for. By default this period is disabled. | 0 | long
+| *consumeDelay* (producer) | Allows a delay to be specified which causes a delay when a message is consumed by the producer (to simulate slow processing) | 0 | long
+| *expectedCount* (producer) | Specifies the expected number of message exchanges that should be received by this endpoint. Beware: If you want to expect that 0 messages, then take extra care, as 0 matches when the tests starts, so you need to set a assert period time to let the test run for a while to make sure there are still no messages arrived; for that use setAssertPeriod(long). An alternative is to use NotifyBuilder, and use the notifier to know when Camel is done routing some messages, before you call the assertIsSatisfied() method on the mocks. This allows you to not use a fixed assert period, to speedup testing times. If you want to assert that exactly n'th message arrives to this mock endpoint, then see also the setAssertPeriod(long) method for further details. | -1 | int
+| *reportGroup* (producer) | A number that is used to turn on throughput logging based on groups of the size. |  | int
+| *resultMinimumWaitTime* (producer) | Sets the minimum expected amount of time (in millis) the assertIsSatisfied() will wait on a latch until it is satisfied | 0 | long
+| *resultWaitTime* (producer) | Sets the maximum amount of time (in millis) the assertIsSatisfied() will wait on a latch until it is satisfied | 0 | long
+| *retainFirst* (producer) | Specifies to only retain the first n'th number of received Exchanges. This is used when testing with big data, to reduce memory consumption by not storing copies of every Exchange this mock endpoint receives. Important: When using this limitation, then the getReceivedCounter() will still return the actual number of received Exchanges. For example if we have received 5000 Exchanges, and have configured to only retain the first 10 Exchanges, then the getReceivedCounter() will still return 5000 but there is only the first 10 Exchanges in the getExchanges() and getReceivedExchanges() methods. When using this method, then some of the other expectation methods is not supported, for example the expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received. You can configure both setRetainFirst(int) and setRetainLast(int) methods, to limit both the first and last received. | -1 | int
+| *retainLast* (producer) | Specifies to only retain the last n'th number of received Exchanges. This is used when testing with big data, to reduce memory consumption by not storing copies of every Exchange this mock endpoint receives. Important: When using this limitation, then the getReceivedCounter() will still return the actual number of received Exchanges. For example if we have received 5000 Exchanges, and have configured to only retain the last 20 Exchanges, then the getReceivedCounter() will still return 5000 but there is only the last 20 Exchanges in the getExchanges() and getReceivedExchanges() methods. When using this method, then some of the other expectation methods is not supported, for example the expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received. You can configure both setRetainFirst(int) and setRetainLast(int) methods, to limit both the first and last received. | -1 | int
+| *sleepForEmptyTest* (producer) | Allows a sleep to be specified to wait to check that this endpoint really is empty when expectedMessageCount(int) is called with zero | 0 | long
+| *copyOnExchange* (producer) | Sets whether to make a deep copy of the incoming Exchange when received at this mock endpoint. Is by default true. | true | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+=== Configuring DataSet
+
+Camel will lookup in the Registry for a bean
+implementing the DataSet interface. So you can register your own DataSet
+as:
+
+[source,xml]
+----
+<bean id="myDataSet" class="com.mycompany.MyDataSet">
+  <property name="size" value="100"/>
+</bean>
+----
+
+=== Example
+
+For example, to test that a set of messages are sent to a queue and then
+consumed from the queue without losing any messages:
+
+[source,java]
+----
+// send the dataset to a queue
+from("dataset:foo").to("activemq:SomeQueue");
+
+// now lets test that the messages are consumed correctly
+from("activemq:SomeQueue").to("dataset:foo");
+----
+
+The above would look in the Registry to find the
+*foo* DataSet instance which is used to create the messages.
+
+Then you create a DataSet implementation, such as using the
+`SimpleDataSet` as described below, configuring things like how big the
+data set is and what the messages look like etc.  
+ 
+
+=== DataSetSupport (abstract class)
+
+The DataSetSupport abstract class is a nice starting point for new
+DataSets, and provides some useful features to derived classes.
+
+==== Properties on DataSetSupport
+
+[width="100%",cols="10%,10%,10%,70%",options="header",]
+|===
+|Property |Type |Default |Description
+
+|`defaultHeaders` |`Map<String,Object>` |`null` |Specifies the default message body. For SimpleDataSet it is a constant
+payload; though if you want to create custom payloads per message,
+create your own derivation of `DataSetSupport`.
+
+|`outputTransformer` |`org.apache.camel.Processor` |null |
+
+|`size` |`long` |`10` |Specifies how many messages to send/consume.
+
+|`reportCount` |`long` |`-1` |Specifies the number of messages to be received before reporting
+progress. Useful for showing progress of a large load test. If < 0, then
+`size` / 5, if is 0 then `size`, else set to `reportCount` value.
+|===
+
+=== SimpleDataSet
+
+The `SimpleDataSet` extends `DataSetSupport`, and adds a default body.
+
+==== Additional Properties on SimpleDataSet
+
+[width="100%",cols="10%,10%,10%,70%",options="header",]
+|===
+|Property |Type |Default |Description
+
+|`defaultBody` |`Object` |`<hello>world!</hello>` |Specifies the default message body. By default, the `SimpleDataSet`
+produces the same constant payload for each exchange. If you want to
+customize the payload for each exchange, create a Camel `Processor` and
+configure the `SimpleDataSet` to use it by setting the
+`outputTransformer` property.
+|===
+
+=== ListDataSet
+
+*Available since Camel 2.17*
+
+The List`DataSet` extends `DataSetSupport`, and adds a list of default
+bodies.
+
+==== Additional Properties on ListDataSet
+
+[width="100%",cols="10%,10%,10%,70%",options="header",]
+|===
+|Property |Type |Default |Description
+
+|`defaultBodies` |`List<Object>` |`empty LinkedList<Object>` |Specifies the default message body. By default, the `ListDataSet`
+selects a constant payload from the list of `defaultBodies` using the
+`CamelDataSetIndex`. If you want to customize the payload, create a
+Camel `Processor` and configure the `ListDataSet` to use it by setting
+the `outputTransformer` property.
+
+|`size` |`long` |the size of the defaultBodies list |Specifies how many messages to send/consume. This value can be different
+from the size of the `defaultBodies` list. If the value is less than the
+size of the `defaultBodies` list, some of the list elements will not be
+used. If the value is greater than the size of the `defaultBodies` list,
+the payload for the exchange will be selected using the modulus of the
+`CamelDataSetIndex` and the size of the `defaultBodies` list (i.e.
+`CamelDataSetIndex % defaultBodies.size()` )
+|===
+
+=== FileDataSet
+
+*Available since Camel 2.17*
+
+The `FileDataSet` extends `ListDataSet`, and adds support for loading
+the bodies from a file.
+
+==== Additional Properties on FileDataSet
+
+[width="100%",cols="10%,10%,10%,70%",options="header",]
+|===
+|Property |Type |Default |Description
+
+|`sourceFile` |`File` |null |Specifies the source file for payloads
+
+|`delimiter` |`String` |\z |Specifies the delimiter pattern used by a `java.util.Scanner` to split
+the file into multiple payloads.
+|===

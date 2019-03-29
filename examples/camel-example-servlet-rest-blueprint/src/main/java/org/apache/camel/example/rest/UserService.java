@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,7 @@ import java.util.TreeMap;
 public class UserService {
 
     // use a tree map so they become sorted
-    private final Map<String, User> users = new TreeMap<String, User>();
+    private final Map<String, User> users = new TreeMap<>();
 
     public UserService() {
         users.put("123", new User(123, "John Doe"));

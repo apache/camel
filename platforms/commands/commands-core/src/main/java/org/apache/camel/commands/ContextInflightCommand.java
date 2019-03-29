@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -109,7 +109,7 @@ public class ContextInflightCommand extends AbstractContextCommand {
                 maxDurationLen = java.lang.Math.max(maxDurationLen, duration == null ? 0 : duration.length());
             }
 
-            final Map<String, Integer> retval = new Hashtable<String, Integer>(5);
+            final Map<String, Integer> retval = new Hashtable<>(5);
             retval.put(EXCHANGE_COLUMN_LABEL, maxExchangeLen);
             retval.put(FROM_ROUTE_COLUMN_LABEL, maxFromRouteLen);
             retval.put(ROUTE_COLUMN_LABEL, maxRouteLen);

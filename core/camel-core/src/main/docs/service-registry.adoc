@@ -1,0 +1,157 @@
+[[ServiceRegistry-ServiceRegistry]]
+== Service Registry
+
+*Available as of Camel 2.22*
+
+[WARNING]
+====
+*Experimental feature*
+====
+
+Service registration is a key part of service discovery which Camel leverages through the _Service Call EIP_ and as of v 2.22.0 Camel provides an experimental support to ease the process to expose routes in a cloud environment and consume them with minimal configuration.
+
+=== Service Registry Set-Up
+
+A _Service Registry_ is just like any other camel service so set it up you only need to register your implementations to the camel context:
+
+[source,java]
+----
+ServiceRegistry service = new MyServiceRegistry();
+
+context.addService(service);
+----
+
+The configuration of the _Service Registry_ depends on the implementation you have chosen.
+Out of the box camel provides the following implementations:
+
+[cols="1,1,2", options="header"]
+|====
+|Type         |Module             | Class
+|consul       |camel-consul       | org.apache.camel.component.consul.cloud.ConsulServiceRegistry
+|zookeeper    |camel-zookeeper    | org.apache.camel.component.zookeeper.cloud.ZooKeeperServiceRegistry
+|spring-cloud |camel-spring-cloud | org.apache.camel.component.spring.cloud.CamelSpringCloudServiceRegistry
+|====
+
+On Spring/Blueprint all the _Service Registry_ instances are automatically added to the camel context.
+
+=== Serice Registry Usage
+
+The _Service Registry SPI_ is leveraged by the following new implementations:
+
+- *ServiceRegistryRoutePolicy*
++
+This is an implementation of a RoutePolicy that register/deregister routes to a given _Service Registry_ according to route's life-cycle
++
+[source,java]
+----
+fiRoutePolicy policy = new ServiceRegistrationRoutePolicy()
+
+// bind the policy to one or more routes
+from("undertow:http://0.0.0.0:8080")
+    .routePolicy(policy)
+    .log("Route ${routeId} has been invoked");
+----
++
+To apply the same policy to all the routes a dedicated _RoutePolicyFactory_ can be used:
++
+[source,java]
+----
+// add the service registry route policy factory to context
+context.addRoutePolicyFactory(new ServiceRegistrationRoutePolicyFactory()));
+----
++
+To configure how the service is exposed you can add route specific properties like:
++
+[source,java]
+----
+// bind the policy to one or more routes
+from("undertow:http://0.0.0.0:8080")
+    .routePolicy(policy)
+    .routeProperty(ServiceDefinition.SERVICE_META_NAME, "my-service")
+    .routeProperty(ServiceDefinition.SERVICE_META_ID, "my-id")
+    .routeProperty(ServiceDefinition.SERVICE_META_PORT, "8080")
+    .log("Route ${routeId} has been invoked");
+----
++
+Service name and service id can also be provided by _routeId_ and _routeGroup_
++
+[source,java]
+----
+// bind the policy to one or more routes
+from("undertow:http://0.0.0.0:8080")
+    .routePolicy(policy)
+    .routeGroup("my-service")
+    .routeId("my-id")
+    .routeProperty(ServiceDefinition.SERVICE_META_PORT, "8080")
+    .log("Route ${routeId} has been invoked");
+----
++
+[TIP]
+====
+Some component such has camel-undertow and those based on camel-http-common implement _DiscoverableService_ and they can automatically provide the metadata needed for service registration.
+====
++
+[TIP]
+====
+Any property prefixed with _service._ is automatically added to the service's metadata.
+====
+
+- *Service Component*
++
+The service component is similar to a _ServiceRegistrationRoutePolicyFactory_ but let to "tags" routes that need to be registered to the _Service Registry_ by prefixing the related endpoints according to the service component syntax:
++
+[source]
+----
+service:serviceName:delegateUri[?options]
+----
++
+Example:
++
+[source,java]
+----
+from("service:my-service:undertow:http://0.0.0.0:8080")
+    .log("Route ${routeId} has been invoked");
+----
+
+To configure how the service is exposed you can add service specific endpoint options such as:
+
+[source,java]
+----
+from("service:my-service:undertow:http://0.0.0.0:8080?service.id=my-service-id")
+    .log("Route ${routeId} has been invoked");
+----
+
+[TIP]
+====
+Any option prefixed with _service._ is automatically added to the service's metadata.
+====
+
+== Spring Cloud
+
+The _Service Registry_ binding for _Spring Cloud_ let you register your route with minimal code changes a a _Service Registry_ is automatically added to the Camel Context as soon as the camel-spring-cloud dependency is added to the classpath.
+
+[WARNING]
+====
+As the spring-cloud backend has some limitations you need to include also some additional dependencies according to the selected backend. At the moment, the following implementations are provided:
+
+[options="header"]
+|====
+|Spring Cloud           |Camel
+|spring-cloud-consul    |camel-spring-cloud-consul
+|spring-cloud-zookeeper |camel-spring-cloud-zookeeper
+|====
+====
+
+Assuming the consul backend has been chosen the following code will configure and activate the _Service Registry_:
+
+[source,properties]
+----
+# Spring cloud
+spring.cloud.consul.enabled = true
+spring.cloud.consul.discovery.enabled = true
+
+# Camel Cloud
+camel.cloud.service-registry.service-host = localhost
+----
+
+To register a route, the easy way is then to use the _service_ component as described above.

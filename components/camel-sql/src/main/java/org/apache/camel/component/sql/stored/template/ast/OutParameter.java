@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,18 +18,16 @@ package org.apache.camel.component.sql.stored.template.ast;
 
 public class OutParameter {
 
-    private String name;
     private int sqlType;
     private String outValueMapKey;
+    private Integer scale;
+    private String typeName;
 
-    public OutParameter(String name, int sqlType, String outValueMapKey) {
-        this.name = name;
+    public OutParameter(int sqlType, String outValueMapKey, Integer scale, String typeName) {
         this.sqlType = sqlType;
         this.outValueMapKey = outValueMapKey;
-    }
-
-    public String getName() {
-        return name;
+        this.scale = scale;
+        this.typeName = typeName;
     }
 
     public int getSqlType() {
@@ -38,5 +36,13 @@ public class OutParameter {
 
     public String getOutValueMapKey() {
         return outValueMapKey;
+    }
+
+    public Integer getScale() {
+        return scale;
+    }
+
+    public String getTypeName() {
+        return typeName;
     }
 }

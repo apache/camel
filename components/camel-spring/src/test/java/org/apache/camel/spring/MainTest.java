@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,36 +18,32 @@ package org.apache.camel.spring;
 
 import java.util.List;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.example.MyProcessor;
+import org.junit.Assert;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
-public class MainTest extends TestCase {
+public class MainTest extends Assert {
     private static final Logger LOG = LoggerFactory.getLogger(MainTest.class);
 
+    @Test
     public void testMain() throws Exception {
         // lets make a simple route
         Main main = new Main();
         main.addRouteBuilder(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://src/test/data?noop=true").process(new MyProcessor()).to("mock:results");
+                from("file://src/test/data?initialDelay=0&delay=10&noop=true").process(new MyProcessor()).to("mock:results");
             }
         });
         main.start();
 
-        List<CamelContext> contextList = main.getCamelContexts();
-        assertNotNull(contextList);
-        assertEquals("size", 1, contextList.size());
-        CamelContext camelContext = contextList.get(0);
+        CamelContext camelContext = main.getCamelContext();
 
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
         // in case we add more files in src/test/data
@@ -58,6 +54,5 @@ public class MainTest extends TestCase {
         LOG.debug("Received: " + list);
 
         main.stop();
-
     }
 }

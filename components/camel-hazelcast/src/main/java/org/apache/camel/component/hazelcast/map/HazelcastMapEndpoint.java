@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,13 +20,20 @@ import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.hazelcast.HazelcastComponent;
+import org.apache.camel.component.hazelcast.HazelcastCommand;
+import org.apache.camel.component.hazelcast.HazelcastDefaultComponent;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
 
+/**
+ * The hazelcast-map component is used to access <a href="http://www.hazelcast.com/">Hazelcast</a> distributed map.
+ */
+@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-map", title = "Hazelcast Map", syntax = "hazelcast-map:cacheName", label = "cache,datagrid")
 public class HazelcastMapEndpoint extends HazelcastDefaultEndpoint {
 
-    public HazelcastMapEndpoint(HazelcastInstance hazelcastInstance, String uri, String cacheName, HazelcastComponent component) {
+    public HazelcastMapEndpoint(HazelcastInstance hazelcastInstance, String uri, String cacheName, HazelcastDefaultComponent component) {
         super(hazelcastInstance, uri, component, cacheName);
+        setCommand(HazelcastCommand.map);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {

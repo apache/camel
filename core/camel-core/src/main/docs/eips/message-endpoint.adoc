@@ -1,0 +1,37 @@
+[[messageEndpoint-eip]]
+== Message Endpoint
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/MessageEndpoint.html[Message
+Endpoint] from the link:enterprise-integration-patterns.html[EIP
+patterns] using the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html[Endpoint]
+interface.
+
+image:http://www.enterpriseintegrationpatterns.com/img/MessageEndpointSolution.gif[image]
+
+When using the link:dsl.html[DSL] to create link:routes.html[Routes] you
+typically refer to Message Endpoints by their link:uris.html[URIs]
+rather than directly using the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html[Endpoint]
+interface. Its then a responsibility of the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/CamelContext.html[CamelContext]
+to create and activate the necessary Endpoint instances using the
+available
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Component.html[Component]
+implementations.
+
+[[messageEndpoint-Example]]
+=== Samples
+
+See first example in link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/to-eip.adoc[To EIP]
+
+=== See Also
+
+For more details see:
+
+* link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/toD-eip.adoc[ToD EIP]
+* link:recipient-list.html[Recipient List]
+* link:message.html[Message]
+* link:wire-tap.html[Wire Tap] 
+

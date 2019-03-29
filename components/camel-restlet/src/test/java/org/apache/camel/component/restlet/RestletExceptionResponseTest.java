@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,10 +24,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
-/**
- *
- * @version
- */
 public class RestletExceptionResponseTest extends RestletTestSupport {
 
     @Override

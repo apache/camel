@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -15,6 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
 VERSION=${1}
 DOWNLOAD=${2:-/tmp/camel-release}
@@ -62,7 +62,7 @@ echo
 echo "################################################################################"
 echo "                           CHECKOUT SCHEMAS WEBSITE                             "
 echo "################################################################################"
-cd "${SITE_DIR}/${VERSION}" && svn co --quiet --non-interactive "${WEBSITE_URL}/schema/"
+cd "${SITE_DIR}/${VERSION}" && svn co --non-interactive "${WEBSITE_URL}/schema/"
 
 echo "################################################################################"
 echo "                           PUBLISH CAMEL SCHEMAS                                "
@@ -86,7 +86,7 @@ wget -e robots=off --wait 3 --no-check-certificate \
 echo "################################################################################"
 echo "                           CHECKOUT MANUAL WEBSITE                             "
 echo "################################################################################"
-cd "${SITE_DIR}/${VERSION}" && svn co --quiet --non-interactive "${WEBSITE_URL}/manual/"
+cd "${SITE_DIR}/${VERSION}" && svn co --non-interactive "${WEBSITE_URL}/manual/"
 
 echo "################################################################################"
 echo "                           PUBLISH CAMEL MANUAL                                "

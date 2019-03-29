@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,12 +25,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
  * Unit test for using JMS as DLQ and to preserve the Exchange using transferExchange=true option
- *
- * @version 
  */
 public class JmsDeadLetterQueueUsingTransferExchangeTest extends CamelTestSupport {
 
@@ -56,10 +55,6 @@ public class JmsDeadLetterQueueUsingTransferExchangeTest extends CamelTestSuppor
         template.sendBody("direct:start", "Kabom");
 
         assertMockEndpointsSatisfied();
-
-        Exchange dead = mock.getReceivedExchanges().get(0);
-        // caused exception is stored as a property
-        assertEquals("Kabom", dead.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getMessage());
     }
 
     protected CamelContext createCamelContext() throws Exception {

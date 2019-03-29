@@ -1,0 +1,142 @@
+[[direct-vm-component]]
+== Direct VM Component
+
+*Available as of Camel version 2.10*
+
+The *direct-vm:* component provides direct, synchronous invocation of
+any consumers in the JVM when a producer sends a message exchange. +
+ This endpoint can be used to connect existing routes in the same camel
+context, as well from other camel contexts in the *same* JVM.
+
+This component differs from the <<direct-component,Direct>> component in
+that <<direct-vm-component,Direct-VM>> supports communication across
+CamelContext instances - so you can use this mechanism to communicate
+across web applications (provided that camel-core.jar is on the
+system/boot classpath).
+
+At runtime you can swap in new consumers, by stopping the existing
+consumer(s) and start new consumers. +
+ But at any given time there can be at most only one active consumer for
+a given endpoint.
+
+This component allows also to connect routes deployed in different OSGI
+Bundles as you can see here after. Even if they are running in different
+bundles, the camel routes will use +
+ the same thread. That autorises to develop applications using
+Transactions - Tx.
+
+image:camel-direct-vm.png[image]
+
+=== URI format
+
+[source]
+----
+direct-vm:someName
+----
+
+Where *someName* can be any string to uniquely identify the endpoint
+
+=== Options
+
+
+
+// component options: START
+The Direct VM component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *block* (producer) | If sending a message to a direct endpoint which has no active consumer, then we can tell the producer to block and wait for the consumer to become active. | true | boolean
+| *timeout* (producer) | The timeout value to use if block is enabled. | 30000 | long
+| *headerFilterStrategy* (advanced) | Sets a HeaderFilterStrategy that will only be applied on producer endpoints (on both directions: request and response). Default value: none. |  | HeaderFilterStrategy
+| *propagateProperties* (advanced) | Whether to propagate or not properties from the producer side to the consumer side, and vice versa. Default value: true. | true | boolean
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The Direct VM endpoint is configured using URI syntax:
+
+----
+direct-vm:name
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | *Required* Name of direct-vm endpoint |  | String
+|===
+
+
+==== Query Parameters (9 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *block* (producer) | If sending a message to a direct endpoint which has no active consumer, then we can tell the producer to block and wait for the consumer to become active. | true | boolean
+| *failIfNoConsumers* (producer) | Whether the producer should fail by throwing an exception, when sending to a Direct-VM endpoint with no active consumers. | false | boolean
+| *timeout* (producer) | The timeout value to use if block is enabled. | 30000 | long
+| *headerFilterStrategy* (producer) | Sets a HeaderFilterStrategy that will only be applied on producer endpoints (on both directions: request and response). Default value: none. |  | HeaderFilterStrategy
+| *propagateProperties* (advanced) | Whether to propagate or not properties from the producer side to the consumer side, and vice versa. Default value: true. | true | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+
+=== Samples
+
+In the route below we use the direct component to link the two routes
+together:
+
+[source,java]
+----
+from("activemq:queue:order.in")
+    .to("bean:orderServer?method=validate")
+    .to("direct-vm:processOrder");
+----
+
+And now in another CamelContext, such as another OSGi bundle
+
+[source,java]
+----
+from("direct-vm:processOrder")
+    .to("bean:orderService?method=process")
+    .to("activemq:queue:order.out");
+----
+
+And the sample using spring DSL:
+
+[source,xml]
+----
+<route>
+ <from uri="activemq:queue:order.in"/>
+ <to uri="bean:orderService?method=validate"/>
+ <to uri="direct-vm:processOrder"/>
+</route>
+
+<route>
+ <from uri="direct-vm:processOrder"/>
+ <to uri="bean:orderService?method=process"/>
+ <to uri="activemq:queue:order.out"/>
+</route>
+----
+
+=== See Also
+
+* <<direct-component,Direct>>
+* <<seda-component,SEDA>>
+* <<vm-component,VM>>

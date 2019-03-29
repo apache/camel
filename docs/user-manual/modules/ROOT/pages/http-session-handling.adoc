@@ -1,0 +1,152 @@
+[[HTTP-SessionHandling-SessionScope]]
+=== HTTP Session Handling
+
+*Available as of Camel 2.19*
+
+Several Camel components can use HTTP as the underlying transport
+protocol. In general HTTP calls are stateless in nature, however some
+servers allow to maintain state via cookies. Cookies are often used to
+maintain a server session (e.g. via a session cookie called "JSESSIONID"
+with servers implementing the JEE Servlet specification).
+
+[[HTTP-SessionHandling-SessionScope]]
+==== Session Scope
+
+If a Camel route intends to implement some kind of HTTP session handling
+the scope of this session should be considered.
+
+Independently from the session scope the implementation must honor the
+domain of the handled cookies.
+
+[[HTTP-SessionHandling-RouteContextScope]]
+==== Route/Context Scope
+
+It might be desirable to have a single session for a route or a
+link:camelcontext.html[CamelContext]. This essentially means that all
+calls to a server issued from a route or CamelContext share a single
+HTTP session.
+
+[[HTTP-SessionHandling-EndpointScope]]
+==== Endpoint Scope
+
+It is also possible to have a session on an link:endpoint.html[Endpoint]
+entity. This would mean that all invocations of an HTTP call issued by a
+single Endpoint share a session, whereas different Endpoints never share
+sessions, even if the call is sent to the same server. 
+Some components like camel-http, and camel-http4 support endpoint scoped
+sessions even prior to version 2.19.
+
+[[HTTP-SessionHandling-ExchangeScope]]
+====  Exchange Scope
+
+The third option to define a session scope is on
+link:exchange.html[Exchange]level. This is particularly useful for
+scenarios where the server session is really maintaining state.
+
+In this case the route could e.g. first do a login call, then some
+update calls and finally a logout call. If the session handling would be
+defined on route or CamelContext scopes this would seem to run, however
+under load parallel invocations of the route would share a *single*
+session, which could cause issues. If the session is defined on exchange
+scope, each invocation of the route will get a separate session and the
+server can maintain a separate state for the different parallel
+invocations.
+
+[[HTTP-SessionHandling-Usage]]
+==== Usage
+
+If you are a Camel user, you see that several Camel components support
+the cookieHandler parameter on endpoint level. All you need to do is to
+instantiate a cookie handler  appropriate for your use case and
+reference it in the cookieHandler parameter for all endpoints that are
+supposed to participate in the HTTP session.
+
+There are two pre-implemented cookie handlers:
+`org.apache.camel.http.common.cookie.InstanceCookieHandler` and
+`org.apache.camel.http.common.cookie.ExchangeCookieHandler.`
+
+The `InstanceCookieHandler` stores  cookies in an instance of itself.
+You can compare that with a browser instance that is shared between all
+the endpoints that use it (and will be used for all invocations of these
+endpoints). If you want to maintain separate sessions for different
+endpoints or groups of endpoints you may have multiple instances of the
+`InstanceCookieHandler`.
+
+The `ExchangeCookieHandler` stores the session in the exchange. With the
+browser analogy this means that each Exchange will get its own browser
+instance (so sessions are separated). As the `ExchangeCookieHandler`
+does not store any state it is generally not useful to have multiple
+`ExchangeCookieHandler` instances (as they would access the same data,
+anyway).
+
+[[HTTP-SessionHandling-Example]]
+==== Example
+
+The following three routes will each do two invocations of an echo REST
+service. In the first route (without a cookie handler) each invocation
+will get a new session. For the second route all invocations will share
+a session. For the third route the first and the second invocation
+within the route share a session, but different (even parallel)
+invocations of the route will not share a session.
+
+[source,xml]
+--------------------------------------------------------------------------------------------------------
+ <cxf:rsClient id="rsClientProxy" address="http://127.0.0.1:8080/CxfRsProducerSessionTest/"
+    serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.EchoService"
+    loggingFeatureEnabled="true" />
+
+  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <route>
+       <from uri="direct://proxy"/>
+       <to uri="cxfrs://bean://rsClientProxy"/>
+       <convertBodyTo type="java.lang.String"/>
+       <to uri="cxfrs://bean://rsClientProxy"/>
+    </route>
+    <route>
+       <from uri="direct://proxyinstance"/>
+       <to uri="cxfrs://bean://rsClientProxy?cookieHandler=#instanceCookieHandler"/>
+       <convertBodyTo type="java.lang.String"/>
+       <to uri="cxfrs://bean://rsClientProxy?cookieHandler=#instanceCookieHandler"/>
+    </route>
+    <route>
+       <from uri="direct://proxyexchange"/>
+       <to uri="cxfrs://bean://rsClientProxy?cookieHandler=#exchangeCookieHandler"/>
+       <convertBodyTo type="java.lang.String"/>
+       <to uri="cxfrs://bean://rsClientProxy?cookieHandler=#exchangeCookieHandler"/>
+    </route>
+  </camelContext>
+
+  <bean id="instanceCookieHandler" class="org.apache.camel.http.common.cookie.InstanceCookieHandler"/>
+  <bean id="exchangeCookieHandler" class="org.apache.camel.http.common.cookie.ExchangeCookieHandler"/>  
+--------------------------------------------------------------------------------------------------------
+
+[[HTTP-SessionHandling-ComponentDevelopers]]
+==== Component Developers
+
+If you want to develop a HTTP based component that is supposed to
+participate in a session you have to add the following parts to your
+code:
+
+1.  Include a build reference to camel-http-common (if it is not already
+there)
+2.  Add a cookieHandler parameter to the endpoint class (together with
+getter and setter)
+3.  Before your code does the HTTP call, if a cookie handler is set on
+the endpoint perform a `cookieHandler.loadCookies(exchange, uri)` call.
+It will return a `Map<String, List<String>>` containing the headers that
+need to be sent to the server. The details how you need to send these
+headers to the server depend on the underlying HTTP API you are using.
+4.  After your code does receive the HTTP response if a cookie handler
+is set on the endpoint perform a
+`cookieHandler.storeCookies(exchange, uri, m)` call. `m` is a
+`Map<String, List<String>>` containing the HTTP headers returned from
+the server.
+
+[[HTTP-SessionHandling-MoreInfo]]
+==== More Info
+
+Some APIs provide more direct support for cookie handling. In this case
+it might be easier to get the underlying `java.net.CookieStore` with a
+`cookeManager.getCookieStore(exchange)` call and handle the cookies
+using the cookie interface provided by the underlying library.
+

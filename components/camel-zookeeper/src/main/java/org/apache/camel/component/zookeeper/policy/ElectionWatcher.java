@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.zookeeper.policy;
 
-
 public interface ElectionWatcher {
+
     /**
      * This method is called when there is a potential change to the master.
      * Implementations should call "isMaster" on their ZookeeperElection

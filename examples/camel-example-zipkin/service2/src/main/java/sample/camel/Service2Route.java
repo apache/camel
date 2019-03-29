@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,8 +25,7 @@ public class Service2Route extends RouteBuilder {
     public void configure() throws Exception {
         // create zipkin
         ZipkinTracer zipkin = new ZipkinTracer();
-        zipkin.setHostName("192.168.99.100");
-        zipkin.setPort(9410);
+        zipkin.setEndpoint("http://localhost:9411/api/v2/spans");
         // set the service name
         zipkin.setServiceName("service2");
         // capture 100% of all the events

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.component.mail;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.mail.Message;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -35,7 +36,7 @@ public class MailMultipleRecipientsUsingHeadersTest extends CamelTestSupport {
         Mailbox.clearAll();
 
         // START SNIPPET: e1
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
 
         map.put("To", new String[] {"davsclaus@apache.org", "janstey@apache.org"});
         map.put("From", "jstrachan@apache.org");

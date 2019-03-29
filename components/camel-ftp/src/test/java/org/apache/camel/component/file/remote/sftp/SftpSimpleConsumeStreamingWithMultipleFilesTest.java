@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,9 +24,6 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class SftpSimpleConsumeStreamingWithMultipleFilesTest extends SftpServerTestSupport {
 
     @Test
@@ -46,7 +43,7 @@ public class SftpSimpleConsumeStreamingWithMultipleFilesTest extends SftpServerT
         mock.expectedMessageCount(2);
         mock.expectedBodiesReceivedInAnyOrder(expected, expected2);
         
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 

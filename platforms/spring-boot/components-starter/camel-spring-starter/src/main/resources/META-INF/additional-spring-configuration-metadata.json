@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.spring-event.enabled",
+      "description": "Enable spring-event component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.language.spel.enabled",
+      "description": "Enable spel language",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

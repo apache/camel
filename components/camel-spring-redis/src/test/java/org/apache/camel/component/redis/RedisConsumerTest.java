@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,24 +20,32 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.data.redis.connection.DefaultMessage;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.Topic;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RedisConsumerTest extends CamelTestSupport {
+
+    @Mock
     private RedisMessageListenerContainer listenerContainer;
+
+    @Captor
+    private ArgumentCaptor<Collection<ChannelTopic>> collectionCaptor;
+    @Captor
+    private ArgumentCaptor<MessageListener> messageListenerCaptor;
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -46,15 +54,8 @@ public class RedisConsumerTest extends CamelTestSupport {
         return registry;
     }
 
-    @Before
-    public void setUp() throws Exception {
-        listenerContainer = mock(RedisMessageListenerContainer.class);
-        super.setUp();
-    }
-
     @Test
     public void registerConsumerForTwoChannelTopics() throws Exception {
-        ArgumentCaptor<Collection> collectionCaptor = ArgumentCaptor.forClass(Collection.class);
         verify(listenerContainer).addMessageListener(any(MessageListener.class), collectionCaptor.capture());
 
         Collection<ChannelTopic> topics = collectionCaptor.getValue();
@@ -65,22 +66,6 @@ public class RedisConsumerTest extends CamelTestSupport {
 
         assertEquals("one", firstTopic.getTopic());
         assertEquals("two", twoTopic.getTopic());
-    }
-
-    @Test
-    public void consumerReceivesMessages() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(2);
-
-        ArgumentCaptor<MessageListener> messageListenerCaptor = ArgumentCaptor
-                .forClass(MessageListener.class);
-        verify(listenerContainer).addMessageListener(messageListenerCaptor.capture(), any(Collection.class));
-
-        MessageListener messageListener = messageListenerCaptor.getValue();
-        messageListener.onMessage(new DefaultMessage(null, null), null);
-        messageListener.onMessage(new DefaultMessage(null, null), null);
-
-        mock.assertIsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() {

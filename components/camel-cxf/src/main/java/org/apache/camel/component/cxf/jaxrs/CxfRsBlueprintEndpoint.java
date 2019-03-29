@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,20 +32,6 @@ public class CxfRsBlueprintEndpoint extends CxfRsEndpoint {
     private BlueprintContainer blueprintContainer;
     private BundleContext bundleContext;
     private BlueprintCamelContext blueprintCamelContext;
-    
-    @Deprecated 
-    /**
-     * It will be removed in Camel 3.0
-     * @param comp
-     * @param bean
-     */
-    public CxfRsBlueprintEndpoint(Component comp, AbstractJAXRSFactoryBean bean) {
-        super(bean.getAddress(), comp);
-        this.bean = bean;
-        BlueprintSupport support = (BlueprintSupport)bean;
-        setBlueprintContainer(support.getBlueprintContainer());
-        setBundleContext(support.getBundleContext());
-    }
 
     public CxfRsBlueprintEndpoint(Component comp, String uri, AbstractJAXRSFactoryBean bean) {
         super(uri, comp);
@@ -91,6 +77,7 @@ public class CxfRsBlueprintEndpoint extends CxfRsEndpoint {
     @Override
     protected JAXRSClientFactoryBean newJAXRSClientFactoryBean() {
         checkBeanType(bean, JAXRSClientFactoryBean.class);
+        // TODO Need to find a way to setup the JAXRSClientFactory Bean, as the JAXRSClientFactoryBean properties could be changed by the configurer
         return (RsClientBlueprintBean)bean;
     }
     

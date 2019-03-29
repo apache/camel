@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.component.infinispan;
 
 import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -70,9 +71,9 @@ public class InfinispanLocalConsumerTest extends InfinispanTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("infinispan://localhost?cacheContainer=#cacheContainer&eventTypes=CACHE_ENTRY_CREATED")
+                from("infinispan?cacheContainer=#cacheContainer&eventTypes=CACHE_ENTRY_CREATED")
                         .to("mock:result");
-                from("infinispan://localhost?cacheContainer=#cacheContainer&eventTypes=CACHE_ENTRY_EXPIRED")
+                from("infinispan?cacheContainer=#cacheContainer&eventTypes=CACHE_ENTRY_EXPIRED")
                         .to("mock:result2");
             }
         };

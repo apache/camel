@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.CookieStore;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,22 +35,18 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.http.common.HttpConstants;
 import org.apache.camel.http.common.HttpHelper;
-import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.util.component.LifeCycle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
+@Deprecated
 public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProcessor {
-    private static final Logger LOG = LoggerFactory.getLogger(JettyHttpProducer.class);
+
     private HttpClient client;
     private boolean sharedClient;
     private JettyHttpBinding binding;
@@ -115,6 +112,20 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
 
         JettyContentExchange httpExchange = getEndpoint().createContentExchange();
         httpExchange.init(exchange, getBinding(), client, callback);
+
+        // url must have scheme
+        try {
+            uri = new URI(url);
+            String scheme = uri.getScheme();
+            if (scheme == null) {
+                throw new IllegalArgumentException("Url must include scheme: " + url + ". If you are bridging endpoints set bridgeEndpoint=true."
+                        + " If you want to call a specific url, then you may need to remove all CamelHttp* headers in the route before this."
+                        + " See more details at: http://camel.apache.org/how-to-remove-the-http-protocol-headers-in-the-camel-message.html");
+            }
+        } catch (URISyntaxException e) {
+            // ignore
+        }
+
         httpExchange.setURL(url); // Url has to be set first
         httpExchange.setMethod(methodName);
         
@@ -131,7 +142,7 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
             }
         }
 
-        LOG.trace("Using URL: {} with method: {}", url, methodName);
+        log.trace("Using URL: {} with method: {}", url, methodName);
 
         // if there is a body to send as data
         if (exchange.getIn().getBody() != null) {
@@ -149,7 +160,7 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
                         HttpHelper.writeObjectToStream(bos, obj);
                         httpExchange.setRequestContent(bos.toByteArray());
                     } finally {
-                        IOHelper.close(bos, "body", LOG);
+                        IOHelper.close(bos, "body", log);
                     }
                 } else {
                     throw new RuntimeCamelException("Content-type " + HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed");
@@ -162,16 +173,21 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
                     // so we only do an instanceof check and accept String if the body is really a String
                     // do not fallback to use the default charset as it can influence the request
                     // (for example application/x-www-form-urlencoded forms being sent)
-                    String charset = IOHelper.getCharsetName(exchange, false);
+                    String charset = ExchangeHelper.getCharsetName(exchange, false);
                     httpExchange.setRequestContent(data, charset);
                 } else {
                     // then fallback to input stream
                     InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, exchange.getIn().getBody());
-                    httpExchange.setRequestContent(is);
                     // setup the content length if it is possible
                     String length = exchange.getIn().getHeader(Exchange.CONTENT_LENGTH, String.class);
-                    if (ObjectHelper.isNotEmpty(length)) {
+                    if (org.apache.camel.util.ObjectHelper.isNotEmpty(length)) {
                         httpExchange.addRequestHeader(Exchange.CONTENT_LENGTH, length);
+                        //send with content-length
+                        httpExchange.setRequestContent(is, new Integer(length));
+                        
+                    } else {
+                        //send chunked
+                        httpExchange.setRequestContent(is);
                     }
                 }
             }
@@ -200,7 +216,7 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
                 final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
 
                 // the values to add as a request header
-                final List<String> values = new ArrayList<String>();
+                final List<String> values = new ArrayList<>();
 
                 // if its a multi value then check each value if we can add it and for multi values they
                 // should be combined into a single value
@@ -242,8 +258,8 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
         }
 
         // set the callback, which will handle all the response logic
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending HTTP request to: {}", httpExchange.getUrl());
+        if (log.isDebugEnabled()) {
+            log.debug("Sending HTTP request to: {}", httpExchange.getUrl());
         }
 
         if (getEndpoint().getCookieHandler() != null) {
@@ -304,7 +320,7 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
             // start the thread pool
             Object tp = getClientThreadPool();
             if (tp instanceof LifeCycle) {
-                LOG.debug("Starting client thread pool {}", tp);
+                log.debug("Starting client thread pool {}", tp);
                 ((LifeCycle) tp).start();
             }
         }
@@ -320,7 +336,7 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
             // stop thread pool
             Object tp = getClientThreadPool();
             if (tp instanceof LifeCycle) {
-                LOG.debug("Stopping client thread pool {}", tp);
+                log.debug("Stopping client thread pool {}", tp);
                 ((LifeCycle) tp).stop();
             }
         }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,7 +38,7 @@ import javax.xml.datatype.DatatypeFactory;
 import org.apache.camel.component.jmx.jaxb.NotificationEventType;
 import org.apache.camel.component.jmx.jaxb.ObjectFactory;
 import org.apache.camel.component.jmx.jaxb.ObjectNamesType;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -155,7 +155,7 @@ public class NotificationXmlFormatter extends ServiceSupport {
     }
 
     private List<String> toStringList(List<ObjectName> objectNames) {
-        List<String> roles = new ArrayList<String>(objectNames.size());
+        List<String> roles = new ArrayList<>(objectNames.size());
         for (ObjectName on : objectNames) {
             roles.add(on.toString());
         }
@@ -171,7 +171,7 @@ public class NotificationXmlFormatter extends ServiceSupport {
             LOG.info("Creating JAXBContext with contextPath: " + contextPath + " and classloader: " + cl);
             return JAXBContext.newInstance(contextPath, cl);
         } catch (Exception e) {
-            LOG.info("Creating JAXBContext with contextPath: " + contextPath);
+            LOG.info("Creating JAXBContext with contextPath: {}", contextPath);
             return JAXBContext.newInstance(contextPath);
         }
     }

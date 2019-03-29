@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregate.tarfile;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Arrays;
@@ -28,6 +27,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.junit.Before;
 import org.junit.Test;
 
 public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
@@ -37,6 +37,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
     private TarAggregationStrategy tar = new TarAggregationStrategy(true, true);
 
     @Override
+    @Before
     public void setUp() throws Exception {
         tar.setParentDir("target/temp");
         deleteDirectory("target/temp");
@@ -57,7 +58,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
         assertTrue("Should be a file in target/out directory", files.length > 0);
 
         File resultFile = files[0];
-        Set<String> expectedTarFiles = new HashSet<String>(Arrays.asList("another/hello.txt",
+        Set<String> expectedTarFiles = new HashSet<>(Arrays.asList("another/hello.txt",
                 "other/greetings.txt",
                 "chiau.txt", "hi.txt", "hola.txt"));
         TarArchiveInputStream tin = new TarArchiveInputStream(new FileInputStream(resultFile));

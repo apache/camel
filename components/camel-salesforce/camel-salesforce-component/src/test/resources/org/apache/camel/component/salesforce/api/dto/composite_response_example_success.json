@@ -1,0 +1,27 @@
+{
+  "compositeResponse" : [ {
+    "body" : {
+      "id" : "a1V3E000000EXomUAM",
+      "success" : true,
+      "errors" : [ ],
+      "warnings" : [ ]
+    },
+    "httpHeaders" : {
+      "Location" : "/services/data/v41.0/sobjects/blng__Payment__c/a1V3E000000EXomUAM"
+    },
+    "httpStatusCode" : 201,
+    "referenceId" : "NewPayment1"
+  }, {
+    "body" : {
+      "id" : "a1V3E000000EXomUAG",
+      "success" : true,
+      "errors" : [ ],
+      "warnings" : [ ]
+    },
+    "httpHeaders" : {
+      "Location" : "/services/data/v41.0/sobjects/blng__Payment__c/a1V3E000000EXomUAG"
+    },
+    "httpStatusCode" : 201,
+    "referenceId" : "NewPayment2"
+  } ]
+}

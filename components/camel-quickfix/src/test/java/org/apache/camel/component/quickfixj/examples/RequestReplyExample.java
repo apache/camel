@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -37,10 +37,8 @@ import org.apache.camel.component.quickfixj.examples.transform.QuickfixjMessageJ
 import org.apache.camel.component.quickfixj.examples.util.CountDownLatchDecrementer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.IOHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import quickfix.FieldNotFound;
 import quickfix.SessionID;
 import quickfix.field.AvgPx;

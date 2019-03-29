@@ -1,0 +1,168 @@
+[[fhir-component]]
+== FHIR Component
+
+*Available as of Camel version 2.23*
+
+The FHIR component integrates with the
+http://hapifhir.io/[HAPI-FHIR] library which is an open-source implementation of the
+http://hl7.org/implement/standards/fhir/[FHIR] (Fast Healthcare Interoperability Resources) specification in Java.
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-fhir</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+----
+
+=== URI Format
+
+The FHIR Component uses the following URI format:
+
+[source,text]
+----
+fhir://endpoint-prefix/endpoint?[options]
+----
+
+Endpoint prefix can be one of:
+
+* capabilities
+* create
+* delete
+* history
+* load-page
+* meta
+* operation
+* patch
+* read
+* search
+* transaction
+* update
+* validate
+
+
+// component options: START
+The FHIR component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (common) | To use the shared configuration |  | FhirConfiguration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+// endpoint options: START
+The FHIR endpoint is configured using URI syntax:
+
+----
+fhir:apiName/methodName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *apiName* | *Required* What kind of operation to perform |  | FhirApiName
+| *methodName* | *Required* What sub operation to use for the selected operation |  | String
+|===
+
+
+==== Query Parameters (26 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *encoding* (common) | Encoding to use for all request |  | String
+| *fhirVersion* (common) | The FHIR Version to use | DSTU3 | String
+| *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
+| *log* (common) | Will log every requests and responses | false | boolean
+| *prettyPrint* (common) | Pretty print all request | false | boolean
+| *serverUrl* (common) | The FHIR server base URL |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *compress* (advanced) | Compresses outgoing (POST/PUT) contents to the GZIP format | false | boolean
+| *connectionTimeout* (advanced) | How long to try and establish the initial TCP connection (in ms) | 10000 | Integer
+| *deferModelScanning* (advanced) | When this option is set, model classes will not be scanned for children until the child list for the given type is actually accessed. | false | boolean
+| *fhirContext* (advanced) | FhirContext is an expensive object to create. To avoid creating multiple instances, it can be set directly. |  | FhirContext
+| *forceConformanceCheck* (advanced) | Force conformance check | false | boolean
+| *sessionCookie* (advanced) | HTTP session cookie to add to every request |  | String
+| *socketTimeout* (advanced) | How long to block for individual read/write operations (in ms) | 10000 | Integer
+| *summary* (advanced) | Request that the server modify the response using the _summary param |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *validationMode* (advanced) | When should Camel validate the FHIR Server's conformance statement | ONCE | String
+| *proxyHost* (proxy) | The proxy host |  | String
+| *proxyPassword* (proxy) | The proxy password |  | String
+| *proxyPort* (proxy) | The proxy port |  | Integer
+| *proxyUser* (proxy) | The proxy username |  | String
+| *accessToken* (security) | OAuth access token |  | String
+| *password* (security) | Username to use for basic authentication |  | String
+| *username* (security) | Username to use for basic authentication |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-fhir-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 27 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.fhir.configuration.access-token* | What sub operation to use for the selected operation |  | String
+| *camel.component.fhir.configuration.api-name* | What kind of operation to perform |  | FhirApiName
+| *camel.component.fhir.configuration.client* | What sub operation to use for the selected operation |  | IGenericClient
+| *camel.component.fhir.configuration.client-factory* | What sub operation to use for the selected operation |  | IRestfulClientFactory
+| *camel.component.fhir.configuration.compress* | What sub operation to use for the selected operation | false | Boolean
+| *camel.component.fhir.configuration.connection-timeout* | What sub operation to use for the selected operation | 10000 | Integer
+| *camel.component.fhir.configuration.defer-model-scanning* | What sub operation to use for the selected operation | false | Boolean
+| *camel.component.fhir.configuration.encoding* | Component configuration for FHIR component. |  | String
+| *camel.component.fhir.configuration.fhir-context* | What sub operation to use for the selected operation |  | FhirContext
+| *camel.component.fhir.configuration.fhir-version* | Component configuration for FHIR component. | DSTU3 | String
+| *camel.component.fhir.configuration.force-conformance-check* | What sub operation to use for the selected operation | false | Boolean
+| *camel.component.fhir.configuration.log* | What sub operation to use for the selected operation | false | Boolean
+| *camel.component.fhir.configuration.method-name* | What sub operation to use for the selected operation |  | String
+| *camel.component.fhir.configuration.password* | What sub operation to use for the selected operation |  | String
+| *camel.component.fhir.configuration.pretty-print* | Component configuration for FHIR component. | false | Boolean
+| *camel.component.fhir.configuration.proxy-host* | What sub operation to use for the selected operation |  | String
+| *camel.component.fhir.configuration.proxy-password* | What sub operation to use for the selected operation |  | String
+| *camel.component.fhir.configuration.proxy-port* | What sub operation to use for the selected operation |  | Integer
+| *camel.component.fhir.configuration.proxy-user* | What sub operation to use for the selected operation |  | String
+| *camel.component.fhir.configuration.server-url* | Component configuration for FHIR component. |  | String
+| *camel.component.fhir.configuration.session-cookie* | What sub operation to use for the selected operation |  | String
+| *camel.component.fhir.configuration.socket-timeout* | What sub operation to use for the selected operation | 10000 | Integer
+| *camel.component.fhir.configuration.summary* | Component configuration for FHIR component. |  | String
+| *camel.component.fhir.configuration.username* | What sub operation to use for the selected operation |  | String
+| *camel.component.fhir.configuration.validation-mode* | What sub operation to use for the selected operation | ONCE | String
+| *camel.component.fhir.enabled* | Whether to enable auto configuration of the fhir component. This is enabled by default. |  | Boolean
+| *camel.component.fhir.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,10 +32,6 @@ import org.junit.Test;
 import org.restlet.data.CacheDirective;
 import org.restlet.engine.header.HeaderConstants;
 
-/**
- *
- * @version 
- */
 public class RestletResponseTest extends RestletTestSupport {
 
     @Override
@@ -64,7 +60,7 @@ public class RestletResponseTest extends RestletTestSupport {
                         exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "417");
                         exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/JSON");
                         // set cache control with cacheDirectives
-                        List<CacheDirective> cacheDirectives = new ArrayList<CacheDirective>();
+                        List<CacheDirective> cacheDirectives = new ArrayList<>();
                         cacheDirectives.add(CacheDirective.maxAge(20));
                         exchange.getOut().setHeader(HeaderConstants.HEADER_CACHE_CONTROL, cacheDirectives);
                         
@@ -89,7 +85,7 @@ public class RestletResponseTest extends RestletTestSupport {
     
     @Test(expected = CamelExecutionException.class)
     public void testRestletProducer() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();        
+        Map<String, Object> headers = new HashMap<>();        
         headers.put("username", "homer");
         String response = (String)template.requestBodyAndHeaders("restlet:http://localhost:" + portNum + "/users/{username}?restletMethod=POST", "<request>message</request>", headers);
         assertEquals("The response is wrong ", response, "{homer}");

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,10 +25,6 @@ public class SpringModelJAXBContextFactory extends DefaultModelJAXBContextFactor
             + "org.apache.camel.core.xml:"
             + "org.apache.camel.spring:"
             + "org.apache.camel.util.spring:";
-
-    protected ClassLoader getClassLoader() {
-        return getClass().getClassLoader();
-    }
 
     protected String getPackages() {
         return super.getPackages() + ADDITIONAL_JAXB_CONTEXT_PACKAGES;

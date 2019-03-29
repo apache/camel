@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,9 +30,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.InvocationCallback;
+import javax.ws.rs.client.ResponseProcessingException;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -40,9 +46,10 @@ import org.apache.camel.component.cxf.CxfEndpointUtils;
 import org.apache.camel.component.cxf.CxfOperationException;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.http.common.cookie.CookieHandler;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.LRUCache;
+import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
@@ -57,7 +64,7 @@ import org.slf4j.LoggerFactory;
  * JAXRS client, it will turn the normal Object invocation to a RESTful request
  * according to resource annotation.  Any response will be bound to Camel exchange.
  */
-public class CxfRsProducer extends DefaultProducer {
+public class CxfRsProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsProducer.class);
 
@@ -96,7 +103,130 @@ public class CxfRsProducer extends DefaultProducer {
             invokeProxyClient(exchange);
         }
     }
-    
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        try {
+            Message inMessage = exchange.getIn();
+            Boolean httpClientAPI = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.class);
+            // set the value with endpoint's option
+            if (httpClientAPI == null) {
+                httpClientAPI = ((CxfRsEndpoint) getEndpoint()).isHttpClientAPI();
+            }
+            if (httpClientAPI.booleanValue()) {
+                invokeAsyncHttpClient(exchange, callback);
+            } else {
+                invokeAsyncProxyClient(exchange, callback);
+            }
+            return false;
+        } catch (Exception exception) {
+            LOG.error("Error invoking request", exception);
+            exchange.setException(exception);
+            callback.done(true);
+            return true;
+        }
+    }
+
+    protected void invokeAsyncHttpClient(Exchange exchange, final AsyncCallback callback) throws Exception {
+        Message inMessage = exchange.getIn();
+        JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfEndpointUtils
+            .getEffectiveAddress(exchange, ((CxfRsEndpoint) getEndpoint()).getAddress()));
+        Bus bus = ((CxfRsEndpoint) getEndpoint()).getBus();
+        // We need to apply the bus setting from the CxfRsEndpoint which is not use the default bus
+        if (bus != null) {
+            cfb.setBus(bus);
+        }
+        WebClient client = cfb.createWebClient();
+        ((CxfRsEndpoint) getEndpoint()).getChainedCxfRsEndpointConfigurer().configureClient(client);
+        String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
+        Class<?> responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);
+        Type genericType = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE, Type.class);
+        Object[] pathValues = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_VAR_VALUES, Object[].class);
+        String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("HTTP method = {}", httpMethod);
+            LOG.trace("path = {}", path);
+            LOG.trace("responseClass = {}", responseClass);
+        }
+
+        // set the path
+        if (path != null) {
+            if (ObjectHelper.isNotEmpty(pathValues) && pathValues.length > 0) {
+                client.path(path, pathValues);
+            } else {
+                client.path(path);
+            }
+        }
+
+        CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) getEndpoint();
+        CxfRsBinding binding = cxfRsEndpoint.getBinding();
+        Object body = getBody(exchange, inMessage, httpMethod, cxfRsEndpoint, binding);
+        setupClientMatrix(client, exchange);
+        setupClientQueryAndHeaders(client, exchange);
+
+        // ensure the CONTENT_TYPE header can be retrieved
+        if (ObjectHelper.isEmpty(inMessage.getHeader(Exchange.CONTENT_TYPE, String.class))
+                && ObjectHelper.isNotEmpty(client.getHeaders().get(Exchange.CONTENT_TYPE))) {
+            inMessage.setHeader(Exchange.CONTENT_TYPE, client.getHeaders().get(Exchange.CONTENT_TYPE).get(0));
+        }
+
+        //Build message entity
+        Entity<Object> entity = binding.bindCamelMessageToRequestEntity(body, inMessage, exchange);
+
+        // handle cookies
+        CookieHandler cookieHandler = ((CxfRsEndpoint)getEndpoint()).getCookieHandler();
+        loadCookies(exchange, client, cookieHandler);
+        
+        // invoke the client
+        client.async().method(httpMethod, entity, new CxfInvocationCallback(client, exchange, cxfRsEndpoint, responseClass, callback, genericType));
+    }
+
+    protected void invokeAsyncProxyClient(Exchange exchange, final AsyncCallback callback) throws Exception {
+        Message inMessage = exchange.getIn();
+        Object[] varValues = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_VAR_VALUES, Object[].class);
+        String methodName = inMessage.getHeader(CxfConstants.OPERATION_NAME, String.class);
+        Client target;
+
+        JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfEndpointUtils
+            .getEffectiveAddress(exchange, ((CxfRsEndpoint)getEndpoint()).getAddress()));
+        Bus bus = ((CxfRsEndpoint)getEndpoint()).getBus();
+        // We need to apply the bus setting from the CxfRsEndpoint which is not use the default bus
+        if (bus != null) {
+            cfb.setBus(bus);
+        }
+        if (varValues == null) {
+            target = cfb.create();
+        } else {
+            target = cfb.createWithValues(varValues);
+        }
+
+        ((CxfRsEndpoint) getEndpoint()).getChainedCxfRsEndpointConfigurer().configureClient(target);
+
+        setupClientHeaders(target, exchange);
+
+        // find out the method which we want to invoke
+        JAXRSServiceFactoryBean sfb = cfb.getServiceFactory();
+        sfb.getResourceClasses();
+        // check the null body first
+        Object[] parameters = null;
+        if (inMessage.getBody() != null) {
+            parameters = inMessage.getBody(Object[].class);
+        }
+        // get the method
+        Method method = findRightMethod(sfb.getResourceClasses(), methodName, getParameterTypes(parameters));
+
+        CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) getEndpoint();
+        final CxfProxyInvocationCallback invocationCallback = new CxfProxyInvocationCallback(target, exchange, cxfRsEndpoint, callback);
+        WebClient.getConfig(target).getRequestContext().put(InvocationCallback.class.getName(), invocationCallback);
+        
+        // handle cookies
+        CookieHandler cookieHandler = ((CxfRsEndpoint)getEndpoint()).getCookieHandler();
+        loadCookies(exchange, target, cookieHandler);
+        
+        method.invoke(target, parameters);
+    }
+
+
     @SuppressWarnings("unchecked")
     protected void setupClientQueryAndHeaders(WebClient client, Exchange exchange) throws Exception {
         Message inMessage = exchange.getIn();
@@ -108,7 +238,7 @@ public class CxfRsProducer extends DefaultProducer {
             String queryString = inMessage.getHeader(Exchange.HTTP_QUERY, String.class);
             if (queryString != null) {
                 maps = getQueryParametersFromQueryString(queryString,
-                                                         IOHelper.getCharsetName(exchange));
+                                                         ExchangeHelper.getCharsetName(exchange));
             }
         }
         if (maps == null) {
@@ -136,7 +266,7 @@ public class CxfRsProducer extends DefaultProducer {
             if (requestURL != null && matrixStart > 0) {
                 matrixParam = requestURL.substring(matrixStart + 1, matrixEnd);
                 if (matrixParam != null) {
-                    maps = getMatrixParametersFromMatrixString(matrixParam, IOHelper.getCharsetName(exchange));
+                    maps = getMatrixParametersFromMatrixString(matrixParam, ExchangeHelper.getCharsetName(exchange));
                 }
             }
             if (maps != null) {
@@ -192,19 +322,7 @@ public class CxfRsProducer extends DefaultProducer {
 
         CxfRsBinding binding = cxfRsEndpoint.getBinding();
 
-        // set the body
-        Object body = null;
-        if (!"GET".equals(httpMethod)) {
-            // need to check the request object if the http Method is not GET      
-            if ("DELETE".equals(httpMethod) && cxfRsEndpoint.isIgnoreDeleteMethodMessageBody()) {
-                // just ignore the message body if the ignoreDeleteMethodMessageBody is true
-            } else {
-                body = binding.bindCamelMessageBodyToRequestBody(inMessage, exchange);
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Request body = " + body);
-                }
-            }
-        }
+        Object body = getBody(exchange, inMessage, httpMethod, cxfRsEndpoint, binding);
         
         setupClientMatrix(client, exchange); 
 
@@ -305,7 +423,9 @@ public class CxfRsProducer extends DefaultProducer {
         } else {
             target = cfb.createWithValues(varValues);
         }
-        
+
+        ((CxfRsEndpoint) getEndpoint()).getChainedCxfRsEndpointConfigurer().configureClient(target);
+
         setupClientHeaders(target, exchange);
         
         // find out the method which we want to invoke
@@ -359,7 +479,7 @@ public class CxfRsProducer extends DefaultProducer {
     }
     
     private Map<String, String> getQueryParametersFromQueryString(String queryString, String charset) throws UnsupportedEncodingException {
-        Map<String, String> answer  = new LinkedHashMap<String, String>();
+        Map<String, String> answer  = new LinkedHashMap<>();
         for (String param : queryString.split("&")) {
             String[] pair = param.split("=", 2);
             if (pair.length == 2) {
@@ -418,7 +538,7 @@ public class CxfRsProducer extends DefaultProducer {
     }
 
     private Map<String, String> getMatrixParametersFromMatrixString(String matrixString, String charset) throws UnsupportedEncodingException {
-        Map<String, String> answer  = new LinkedHashMap<String, String>();
+        Map<String, String> answer  = new LinkedHashMap<>();
         for (String param : matrixString.split(";")) {
             String[] pair = param.split("=", 2);
             if (pair.length == 2) {
@@ -496,7 +616,7 @@ public class CxfRsProducer extends DefaultProducer {
 
     protected Map<String, String> parseResponseHeaders(Object response, Exchange camelExchange) {
 
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         if (response instanceof Response) {
 
             for (Map.Entry<String, List<Object>> entry : ((Response) response).getMetadata().entrySet()) {
@@ -507,19 +627,231 @@ public class CxfRsProducer extends DefaultProducer {
 
         return answer;
     }
-    
+
+    private Object getBody(Exchange exchange, Message inMessage, String httpMethod, CxfRsEndpoint cxfRsEndpoint, CxfRsBinding binding) throws Exception {
+        Object body = null;
+        if (!"GET".equals(httpMethod)) {
+            // need to check the request object if the http Method is not GET      
+            if ("DELETE".equals(httpMethod) && cxfRsEndpoint.isIgnoreDeleteMethodMessageBody()) {
+                // just ignore the message body if the ignoreDeleteMethodMessageBody is true
+            } else {
+                body = binding.bindCamelMessageBodyToRequestBody(inMessage, exchange);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Request body = {}", body);
+                }
+            }
+        }
+        return body;
+    }
+    private final class CxfInvocationCallback implements InvocationCallback<Response> {
+
+        private final Exchange exchange;
+        private final CxfRsEndpoint cxfRsEndpoint;
+        private final Class<?> responseClass;
+        private final AsyncCallback callback;
+        private final Type genericType;
+        private final Client client;
+
+        private CxfInvocationCallback(Client client, Exchange exchange, CxfRsEndpoint cxfRsEndpoint, Class<?> responseClass, AsyncCallback callback, Type genericType) {
+            this.exchange = exchange;
+            this.cxfRsEndpoint = cxfRsEndpoint;
+            this.responseClass = responseClass;
+            this.callback = callback;
+            this.genericType = genericType;
+            this.client = client;
+        }
+
+
+        @Override
+        public void completed(Response response) {
+            try {
+                if (shouldHandleError(response)) {
+                    handleError(response);
+                    return;
+                }
+                // handle cookies
+                saveCookies(exchange, client, cxfRsEndpoint.getCookieHandler());
+                if (!exchange.getPattern().isOutCapable()) {
+                    return;
+                }
+
+                LOG.trace("Response body = {}", response);
+                exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+                final CxfRsBinding binding = cxfRsEndpoint.getBinding();
+                exchange.getOut().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
+                
+                if (genericType != null && !genericType.equals(Void.TYPE)) {
+                    GenericType genericType = new GenericType(this.genericType);
+                    exchange.getOut().setBody(binding.bindResponseToCamelBody(response.readEntity(genericType), exchange));
+                } else if (responseClass != null && !responseClass.equals(Void.TYPE)) {
+                    exchange.getOut().setBody(binding.bindResponseToCamelBody(response.readEntity(responseClass), exchange));
+                } else {
+                    exchange.getOut().setBody(binding.bindResponseToCamelBody(response, exchange));
+                }
+                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, response.getStatus());
+            } catch (Exception exception) {
+                LOG.error("Error while processing response", exception);
+                fail(exception);
+            } finally {
+                callback.done(false);
+            }
+        }
+
+        @Override
+        public void failed(Throwable throwable) {
+            LOG.error("Failed request ", throwable);
+            try {
+                // handle cookies
+                saveCookies(exchange, client, cxfRsEndpoint.getCookieHandler());
+                fail(throwable);
+            } catch (Exception error) {
+                LOG.error("Error while processing failed request", error);
+            } finally {
+                callback.done(false);
+            }
+        }
+
+        private void fail(Throwable throwable) {
+            if (throwable.getClass().isInstance(WebApplicationException.class)) {
+                final WebApplicationException cast = WebApplicationException.class.cast(throwable);
+                final Response response = cast.getResponse();
+                if (shouldHandleError(response)) {
+                    handleError(response);
+                }
+            } else if (throwable.getClass().isInstance(ResponseProcessingException.class)) {
+                final ResponseProcessingException cast = ResponseProcessingException.class.cast(throwable);
+                final Response response = cast.getResponse();
+                if (shouldHandleError(response)) {
+                    handleError(response);
+                }
+            } else {
+                exchange.setException(throwable);    
+            }
+        }
+
+        private boolean shouldHandleError(Response response) {
+            //Throw exception on a response > 207
+            //http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+            if (response != null && throwException) {
+                Integer respCode = response.getStatus();
+                if (respCode > 207) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void handleError(Response response) {
+            exchange.setException(populateCxfRsProducerException(exchange, response, response.getStatus()));
+        }
+    }
+
+    private final class CxfProxyInvocationCallback implements InvocationCallback<Object> {
+
+        private final Exchange exchange;
+        private final CxfRsEndpoint cxfRsEndpoint;
+        private final AsyncCallback callback;
+        private final Client client;
+
+        private CxfProxyInvocationCallback(Client client, Exchange exchange, CxfRsEndpoint cxfRsEndpoint, AsyncCallback callback) {
+            this.exchange = exchange;
+            this.cxfRsEndpoint = cxfRsEndpoint;
+            this.callback = callback;
+            this.client = client;
+        }
+
+        @Override
+        public void completed(Object body) {
+            try {
+                Response response = client.getResponse();
+                // handle cookies
+                saveCookies(exchange, client, cxfRsEndpoint.getCookieHandler());
+                //handle error
+                if (shouldHandleError(response)) {
+                    handleError(response);
+                    return;
+                }
+                if (!exchange.getPattern().isOutCapable()) {
+                    return;
+                }
+
+                LOG.trace("Response body = {}", response);
+                exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+                final CxfRsBinding binding = cxfRsEndpoint.getBinding();
+                exchange.getOut().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
+                exchange.getOut().setBody(binding.bindResponseToCamelBody(body, exchange));
+                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, response.getStatus());
+            } catch (Exception exception) {
+                LOG.error("Error while processing response", exception);
+                fail(exception);
+            } finally {
+                callback.done(false);
+            }
+        }
+
+        @Override
+        public void failed(Throwable throwable) {
+            LOG.error("Failed request ", throwable);
+            try {
+                // handle cookies
+                saveCookies(exchange, client, cxfRsEndpoint.getCookieHandler());
+                fail(throwable);
+            } catch (Exception error) {
+                LOG.error("Error while processing failed request", error);
+            } finally {
+                callback.done(false);
+            }
+        }
+
+        private void fail(Throwable throwable) {
+            if (throwable.getClass().isInstance(WebApplicationException.class)) {
+                final WebApplicationException cast = WebApplicationException.class.cast(throwable);
+                final Response response = cast.getResponse();
+                if (shouldHandleError(response)) {
+                    handleError(response);
+                }
+            } else if (throwable.getClass().isInstance(ResponseProcessingException.class)) {
+                final ResponseProcessingException cast = ResponseProcessingException.class.cast(throwable);
+                final Response response = cast.getResponse();
+                if (shouldHandleError(response)) {
+                    handleError(response);
+                }
+            } else {
+                exchange.setException(throwable);
+            }
+        }
+
+        private void handleError(Response response) {
+            exchange.setException(populateCxfRsProducerException(exchange, response, response.getStatus()));
+        }
+
+        private boolean shouldHandleError(Response response) {
+            //Throw exception on a response > 207
+            //http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+            if (response != null && throwException) {
+                Integer respCode = response.getStatus();
+                if (respCode > 207) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
     /**
      * Cache contains {@link org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean}
      */
     class ClientFactoryBeanCache {
-        private LRUSoftCache<String, JAXRSClientFactoryBean> cache;    
+        private Map<String, JAXRSClientFactoryBean> cache;
         
         ClientFactoryBeanCache(final int maxCacheSize) {
-            this.cache = new LRUSoftCache<String, JAXRSClientFactoryBean>(maxCacheSize);
+            this.cache = LRUCacheFactory.newLRUSoftCache(maxCacheSize);
         }
         
         public void start() throws Exception {
-            cache.resetStatistics();
+            if (cache instanceof LRUCache) {
+                ((LRUCache) cache).resetStatistics();
+            }
         }
         
         public void stop() throws Exception {

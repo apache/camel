@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -158,8 +158,8 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
     @Bean
     public CamelContext camelContext() throws Exception {
         CamelContext camelContext = createCamelContext();
-        SpringCamelContext.setNoStart(true);
         setupCamelContext(camelContext);
+        camelContext.init();
         return camelContext;
     }
 
@@ -193,7 +193,7 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
     public List<RouteBuilder> routes() {
         if (this.applicationContext != null) {
             Map<String, RouteBuilder> routeBuildersMap = applicationContext.getBeansOfType(RouteBuilder.class);
-            List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>(routeBuildersMap.size());
+            List<RouteBuilder> routeBuilders = new ArrayList<>(routeBuildersMap.size());
             for (RouteBuilder routeBuilder : routeBuildersMap.values()) {
                 routeBuilders.add(routeBuilder);
             }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -39,7 +39,7 @@ public class FilePropertySource extends PropertySource {
 
     public FilePropertySource(String name, ApplicationContext applicationContext, String directory) {
         super(name);
-        ObjectHelper.notEmpty(directory, "directory");
+        StringHelper.notEmpty(directory, "directory");
 
         Properties loaded = new Properties();
         try {

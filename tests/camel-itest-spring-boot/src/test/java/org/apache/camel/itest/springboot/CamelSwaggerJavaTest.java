@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,6 @@
 package org.apache.camel.itest.springboot;
 
 import org.apache.camel.itest.springboot.util.ArquillianPackager;
-import org.apache.camel.itest.springboot.util.DependencyResolver;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -36,7 +35,7 @@ public class CamelSwaggerJavaTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelSwaggerJavaTest.class))
-                //.dependency(DependencyResolver.withVersion("org.hibernate:hibernate-validator"))
+                //.dependency(DependencyResolver.withVersion("org.hibernate.validator:hibernate-validator"))
                 .build();
     }
 

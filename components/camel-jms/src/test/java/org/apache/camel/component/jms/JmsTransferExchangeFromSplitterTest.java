@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,9 +28,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class JmsTransferExchangeFromSplitterTest extends CamelTestSupport {
 
     protected String getUri() {
@@ -42,7 +39,6 @@ public class JmsTransferExchangeFromSplitterTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A", "B", "C");
         mock.allMessages().header("foo").isEqualTo("cheese");
-        mock.allMessages().exchangeProperty("bar").isEqualTo(123);
 
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {

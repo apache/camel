@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -7,142 +8,169 @@
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+         http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+-->
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>components</artifactId>
-    <version>2.19.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>components</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>camel-restlet</artifactId>
-  <packaging>jar</packaging>
-  <name>Camel :: Restlet</name>
-  <description>Camel REST (Restlet based) Component</description>
+    <artifactId>camel-restlet</artifactId>
+    <packaging>jar</packaging>
+    <name>Camel :: Restlet</name>
+    <description>Camel REST (Restlet based) Component</description>
 
-  <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.restlet.*
-    </camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=restlet</camel.osgi.export.service>
-  </properties>
+    <properties>
+    </properties>
 
-  <repositories>
-    <repository>
-      <id>maven-restlet</id>
-      <name>Public online Restlet repository</name>
-      <url>http://maven.restlet.org</url>
-    </repository>
-  </repositories>
+    <repositories>
+        <repository>
+            <id>maven-restlet</id>
+            <name>Public online Restlet repository</name>
+            <url>https://maven.restlet.com</url>
+        </repository>
+    </repositories>
 
-  <dependencies>
+    <dependencies>
 
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-http-common</artifactId>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-http-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${javax.servlet-api-version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.restlet.jee</groupId>
-      <artifactId>org.restlet</artifactId>
-    </dependency>
-    <!-- used for restlet producer -->
-    <dependency>
-      <groupId>org.restlet.jee</groupId>
-      <artifactId>org.restlet.ext.httpclient</artifactId>
-    </dependency>
-    <!-- extensions -->
-    <dependency>
-      <groupId>org.restlet.jse</groupId>
-      <artifactId>org.restlet.ext.jackson</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.restlet.jse</groupId>
-      <artifactId>org.restlet.ext.gson</artifactId>
-      <optional>true</optional>
-    </dependency>
+        <dependency>
+            <groupId>org.restlet.jee</groupId>
+            <artifactId>org.restlet</artifactId>
+        </dependency>
+        <!-- used for restlet producer -->
+        <dependency>
+            <groupId>org.restlet.jee</groupId>
+            <artifactId>org.restlet.ext.httpclient</artifactId>
+        </dependency>
+        <!-- extensions -->
+        <dependency>
+            <groupId>org.restlet.jse</groupId>
+            <artifactId>org.restlet.ext.jackson</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.restlet.jse</groupId>
+            <artifactId>org.restlet.ext.gson</artifactId>
+            <optional>true</optional>
+        </dependency>
 
-    <!-- camel test dependencies -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-spring</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-http</artifactId>
-      <scope>test</scope>
-    </dependency>
+        <!-- camel test dependencies -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-spring</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jetty</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-http4</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-    <!-- for testing rest-dsl -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jackson</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jaxb</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-swagger-java</artifactId>
-      <scope>test</scope>
-    </dependency>
+        <!-- for testing rest-dsl -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jaxb</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-swagger-java</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-    <!-- other test dependencies -->   
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <scope>test</scope>
-    </dependency>
+        <!-- other test dependencies -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-jul</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <version>${slf4j-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-  </dependencies>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <configuration>
+                    <pomElements combine.children="append">
+                        <repositories>keep</repositories>
+                    </pomElements>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

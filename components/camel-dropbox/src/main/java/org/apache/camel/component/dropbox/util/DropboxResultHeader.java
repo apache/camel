@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,6 @@
 package org.apache.camel.component.dropbox.util;
 
 public enum DropboxResultHeader {
-    DOWNLOADED_FILE, DOWNLOADED_FILES, UPLOADED_FILE, UPLOADED_FILES, FOUNDED_FILES, DELETED_PATH, MOVED_PATH;
+    DOWNLOADED_FILE, DOWNLOADED_FILES, UPLOADED_FILE, UPLOADED_FILES, FOUND_FILES, DELETED_PATH, MOVED_PATH
 }
 

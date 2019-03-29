@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,17 +19,16 @@ package org.apache.camel.component.smpp;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.SMPPSession;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class SmppCancelSmCommandTest {
 
@@ -39,7 +38,7 @@ public class SmppCancelSmCommandTest {
     
     @Before
     public void setUp() {
-        session = createMock(SMPPSession.class);
+        session = mock(SMPPSession.class);
         config = new SmppConfiguration();
         
         command = new SmppCancelSmCommand(session, config);
@@ -50,13 +49,10 @@ public class SmppCancelSmCommandTest {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
         exchange.getIn().setHeader(SmppConstants.COMMAND, "CancelSm");
         exchange.getIn().setHeader(SmppConstants.ID, "1");
-        session.cancelShortMessage("CMT", "1", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1616", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1717");
-        
-        replay(session);
         
         command.execute(exchange);
         
-        verify(session);
+        verify(session).cancelShortMessage("", "1", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1616", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1717");
         
         assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
     }
@@ -73,13 +69,10 @@ public class SmppCancelSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.DEST_ADDR_TON, TypeOfNumber.INTERNATIONAL.value());
         exchange.getIn().setHeader(SmppConstants.DEST_ADDR_NPI, NumberingPlanIndicator.INTERNET.value());
         exchange.getIn().setHeader(SmppConstants.DEST_ADDR, "1919");
-        session.cancelShortMessage("XXX", "1", TypeOfNumber.NATIONAL, NumberingPlanIndicator.NATIONAL, "1818", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.INTERNET, "1919");
-        
-        replay(session);
         
         command.execute(exchange);
         
-        verify(session);
+        verify(session).cancelShortMessage("XXX", "1", TypeOfNumber.NATIONAL, NumberingPlanIndicator.NATIONAL, "1818", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.INTERNET, "1919");
         
         assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
     }

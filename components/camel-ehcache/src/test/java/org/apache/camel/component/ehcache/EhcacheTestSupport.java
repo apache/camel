@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.ehcache;
 
 import java.net.URL;
@@ -27,8 +26,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.camel.component.ehcache.processor.aggregate.EhcacheAggregationRepository;
-import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.support.DefaultExchangeHolder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;

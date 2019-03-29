@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,19 +26,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.StartupListener;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.util.StringHelper;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerContext;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A factory for QuartzEndpoint. This component will hold a Quartz Scheduler that will provide scheduled timer based
@@ -48,24 +49,32 @@ import org.slf4j.LoggerFactory;
  * of the code, but mostly has been re-written in attempt to be more easier to maintain, and use Quartz more
  * fully.</p>
  */
-public class QuartzComponent extends UriEndpointComponent implements StartupListener {
-    private static final Logger LOG = LoggerFactory.getLogger(QuartzComponent.class);
-    private SchedulerFactory schedulerFactory;
+@Component("quartz,quartz2")
+public class QuartzComponent extends DefaultComponent implements StartupListener {
+
+    @Metadata(label = "advanced")
     private Scheduler scheduler;
+    @Metadata(label = "advanced")
+    private SchedulerFactory schedulerFactory;
     private Properties properties;
     private String propertiesFile;
+    @Metadata(label = "scheduler")
     private int startDelayedSeconds;
+    @Metadata(label = "scheduler", defaultValue = "true")
     private boolean autoStartScheduler = true;
-    private boolean prefixJobNameWithEndpointId;
+    @Metadata(label = "scheduler")
+    private boolean interruptJobsOnShutdown;
+    @Metadata(defaultValue = "true")
     private boolean enableJmx = true;
+    private boolean prefixJobNameWithEndpointId;
+    @Metadata(defaultValue = "true")
     private boolean prefixInstanceName = true;
 
     public QuartzComponent() {
-        super(QuartzEndpoint.class);
     }
 
     public QuartzComponent(CamelContext camelContext) {
-        super(camelContext, QuartzEndpoint.class);
+        super(camelContext);
     }
 
     public boolean isAutoStartScheduler() {
@@ -154,6 +163,18 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         this.prefixInstanceName = prefixInstanceName;
     }
 
+    public boolean isInterruptJobsOnShutdown() {
+        return interruptJobsOnShutdown;
+    }
+
+    /**
+     * Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs.
+     * If this is enabled then any running jobs can fail due to being interrupted.
+     */
+    public void setInterruptJobsOnShutdown(boolean interruptJobsOnShutdown) {
+        this.interruptJobsOnShutdown = interruptJobsOnShutdown;
+    }
+
     public SchedulerFactory getSchedulerFactory() throws SchedulerException {
         if (schedulerFactory == null) {
             schedulerFactory = createSchedulerFactory();
@@ -177,10 +198,14 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
                 prop.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, instName);
             }
 
+            if (isInterruptJobsOnShutdown()) {
+                prop.setProperty(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN, "true");
+            }
+
             // enable jmx unless configured to not do so
             if (enableJmx && !prop.containsKey("org.quartz.scheduler.jmx.export")) {
                 prop.put("org.quartz.scheduler.jmx.export", "true");
-                LOG.info("Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX.");
+                log.info("Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX.");
             }
 
             answer = new StdSchedulerFactory(prop);
@@ -214,18 +239,22 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
             prop.put("org.quartz.scheduler.skipUpdateCheck", "true");
             prop.put("org.terracotta.quartz.skipUpdateCheck", "true");
 
+            if (isInterruptJobsOnShutdown()) {
+                prop.setProperty(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN, "true");
+            }
+
             // enable jmx unless configured to not do so
             if (enableJmx && !prop.containsKey("org.quartz.scheduler.jmx.export")) {
                 prop.put("org.quartz.scheduler.jmx.export", "true");
-                LOG.info("Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX.");
+                log.info("Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX.");
             }
 
             answer = new StdSchedulerFactory(prop);
         }
 
-        if (LOG.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             String name = prop.getProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME);
-            LOG.debug("Creating SchedulerFactory: {} with properties: {}", name, prop);
+            log.debug("Creating SchedulerFactory: {} with properties: {}", name, prop);
         }
         return answer;
     }
@@ -255,7 +284,7 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
     private Properties loadProperties() throws SchedulerException {
         Properties answer = getProperties();
         if (answer == null && getPropertiesFile() != null) {
-            LOG.info("Loading Quartz properties file from: {}", getPropertiesFile());
+            log.info("Loading Quartz properties file from: {}", getPropertiesFile());
             InputStream is = null;
             try {
                 is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), getPropertiesFile());
@@ -294,7 +323,7 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         Integer startDelayedSeconds = getAndRemoveParameter(parameters, "startDelayedSeconds", Integer.class);
         if (startDelayedSeconds != null) {
             if (this.startDelayedSeconds != 0 && !(this.startDelayedSeconds == startDelayedSeconds)) {
-                LOG.warn("A Quartz job is already configured with a different 'startDelayedSeconds' configuration! "
+                log.warn("A Quartz job is already configured with a different 'startDelayedSeconds' configuration! "
                         + "All Quartz jobs must share the same 'startDelayedSeconds' configuration! Cannot apply the 'startDelayedSeconds' configuration!");
             } else {
                 this.startDelayedSeconds = startDelayedSeconds;
@@ -336,12 +365,12 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
     private TriggerKey createTriggerKey(String uri, String remaining, QuartzEndpoint endpoint) throws Exception {
         // Parse uri for trigger name and group
         URI u = new URI(uri);
-        String path = ObjectHelper.after(u.getPath(), "/");
+        String path = StringHelper.after(u.getPath(), "/");
         String host = u.getHost();
 
         // host can be null if the uri did contain invalid host characters such as an underscore
         if (host == null) {
-            host = ObjectHelper.before(remaining, "/");
+            host = StringHelper.before(remaining, "/");
             if (host == null) {
                 host = remaining;
             }
@@ -376,7 +405,7 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
     }
 
     private void createAndInitScheduler() throws SchedulerException {
-        LOG.info("Create and initializing scheduler.");
+        log.info("Create and initializing scheduler.");
         scheduler = createScheduler();
 
         SchedulerContext quartzContext = storeCamelContextInQuartzContext();
@@ -394,7 +423,7 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         // Store CamelContext into QuartzContext space
         SchedulerContext quartzContext = scheduler.getContext();
         String camelContextName = QuartzHelper.getQuartzContextName(getCamelContext());
-        LOG.debug("Storing camelContextName={} into Quartz Context space.", camelContextName);
+        log.debug("Storing camelContextName={} into Quartz Context space.", camelContextName);
         quartzContext.put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName, getCamelContext());
         return quartzContext;
     }
@@ -408,13 +437,19 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         super.doStop();
 
         if (scheduler != null) {
-            AtomicInteger number = (AtomicInteger) scheduler.getContext().get(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT);
-            if (number != null && number.get() > 0) {
-                LOG.info("Cannot shutdown scheduler: " + scheduler.getSchedulerName() + " as there are still " + number.get() + " jobs registered.");
-            } else {
-                LOG.info("Shutting down scheduler. (will wait for all jobs to complete first.)");
-                scheduler.shutdown(true);
+            if (isInterruptJobsOnShutdown()) {
+                log.info("Shutting down scheduler. (will interrupts jobs to shutdown quicker.)");
+                scheduler.shutdown(false);
                 scheduler = null;
+            } else {
+                AtomicInteger number = (AtomicInteger) scheduler.getContext().get(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT);
+                if (number != null && number.get() > 0) {
+                    log.info("Cannot shutdown scheduler: " + scheduler.getSchedulerName() + " as there are still " + number.get() + " jobs registered.");
+                } else {
+                    log.info("Shutting down scheduler. (will wait for all jobs to complete first.)");
+                    scheduler.shutdown(true);
+                    scheduler = null;
+                }
             }
         }
     }
@@ -433,20 +468,20 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         
         // Now scheduler is ready, let see how we should start it.
         if (!autoStartScheduler) {
-            LOG.info("Not starting scheduler because autoStartScheduler is set to false.");
+            log.info("Not starting scheduler because autoStartScheduler is set to false.");
         } else {
             if (startDelayedSeconds > 0) {
                 if (scheduler.isStarted()) {
-                    LOG.warn("The scheduler has already started. Cannot apply the 'startDelayedSeconds' configuration!");
+                    log.warn("The scheduler has already started. Cannot apply the 'startDelayedSeconds' configuration!");
                 } else {
-                    LOG.info("Starting scheduler with startDelayedSeconds={}", startDelayedSeconds);
+                    log.info("Starting scheduler with startDelayedSeconds={}", startDelayedSeconds);
                     scheduler.startDelayed(startDelayedSeconds);
                 }
             } else {
                 if (scheduler.isStarted()) {
-                    LOG.info("The scheduler has already been started.");
+                    log.info("The scheduler has already been started.");
                 } else {
-                    LOG.info("Starting scheduler.");
+                    log.info("Starting scheduler.");
                     scheduler.start();
                 }
             }

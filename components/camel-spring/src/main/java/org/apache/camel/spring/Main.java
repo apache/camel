@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
@@ -30,9 +29,9 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.impl.MainSupport;
 import org.apache.camel.util.IOHelper;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
@@ -48,8 +47,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
  * Each line in the {@link #LOCATION_PROPERTIES} is a reference to a Spring XML file to include,
  * which by default gets loaded from classpath.
  */
-@SuppressWarnings("deprecation")
-public class Main extends MainSupport {
+public class Main extends org.apache.camel.main.MainSupport {
 
     public static final String LOCATION_PROPERTIES = "META-INF/camel-spring/location.properties";
     protected static Main instance;
@@ -147,6 +145,17 @@ public class Main extends MainSupport {
     // -------------------------------------------------------------------------
 
     @Override
+    protected CamelContext createCamelContext() {
+        Map<String, SpringCamelContext> camels = applicationContext.getBeansOfType(SpringCamelContext.class);
+        if (camels.size() > 1) {
+            throw new IllegalArgumentException("Multiple CamelContext detected. This Main class only supports single CamelContext");
+        } else if (camels.size() == 1) {
+            return camels.values().iterator().next();
+        }
+        return null;
+    }
+
+    @Override
     protected void doStart() throws Exception {
         try {
             super.doStart();
@@ -158,21 +167,19 @@ public class Main extends MainSupport {
             if (additionalApplicationContext == null) {
                 additionalApplicationContext = createAdditionalLocationsFromClasspath();
                 if (additionalApplicationContext != null) {
-                    LOG.debug("Starting Additional ApplicationContext: " + additionalApplicationContext.getId());
+                    LOG.debug("Starting Additional ApplicationContext: {}", additionalApplicationContext.getId());
                     additionalApplicationContext.start();
                 }
             }
 
-            LOG.debug("Starting Spring ApplicationContext: " + applicationContext.getId());
+            LOG.debug("Starting Spring ApplicationContext: {}", applicationContext.getId());
             applicationContext.start();
 
-            postProcessContext();
+            initCamelContext();
         } finally {
-            if (camelContexts != null && !camelContexts.isEmpty()) {
-                // if we were veto started then mark as completed
-                if (getCamelContexts().get(0).isVetoStarted()) {
-                    completed();
-                }
+            // if we were veto started then mark as completed
+            if (getCamelContext() != null && getCamelContext().isVetoStarted()) {
+                completed();
             }
         }
     }
@@ -180,11 +187,11 @@ public class Main extends MainSupport {
     protected void doStop() throws Exception {
         super.doStop();
         if (additionalApplicationContext != null) {
-            LOG.debug("Stopping Additional ApplicationContext: " + additionalApplicationContext.getId());
+            LOG.debug("Stopping Additional ApplicationContext: {}", additionalApplicationContext.getId());
             IOHelper.close(additionalApplicationContext);
         }
         if (applicationContext != null) {
-            LOG.debug("Stopping Spring ApplicationContext: " + applicationContext.getId());
+            LOG.debug("Stopping Spring ApplicationContext: {}", applicationContext.getId());
             IOHelper.close(applicationContext);
         }
     }
@@ -194,10 +201,10 @@ public class Main extends MainSupport {
         if (names != null && names.length > 0) {
             return getApplicationContext().getBean(names[0], ProducerTemplate.class);
         }
-        if (getCamelContexts().isEmpty()) {
-            throw new IllegalArgumentException("No CamelContexts are available so cannot create a ProducerTemplate!");
+        if (getCamelContext() == null) {
+            throw new IllegalArgumentException("No CamelContext are available so cannot create a ProducerTemplate!");
         }
-        return getCamelContexts().get(0).createProducerTemplate();
+        return getCamelContext().createProducerTemplate();
     }
 
     protected AbstractApplicationContext createDefaultApplicationContext() throws IOException {
@@ -219,24 +226,31 @@ public class Main extends MainSupport {
         if (parentContext != null) {
             return new ClassPathXmlApplicationContext(args, parentContext);
         } else {
-            return new ClassPathXmlApplicationContext(args);
+            // okay no application context specified so lets look for either
+            // classpath xml or annotation based
+            if (routeBuilderClasses != null) {
+                AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext();
+                ac.register(SpringCamelContext.class);
+                Set<String> packages = new LinkedHashSet<>();
+                String[] classes = routeBuilderClasses.split(",");
+                for (String clazz : classes) {
+                    if (clazz.contains(".")) {
+                        String packageName = clazz.substring(0, clazz.lastIndexOf("."));
+                        packages.add(packageName);
+                    }
+                }
+                LOG.info("Using Spring annotation scanning in packages: {}", packages);
+                ac.scan(packages.toArray(new String[packages.size()]));
+                ac.refresh();
+                return ac;
+            } else {
+                return new ClassPathXmlApplicationContext(args);
+            }
         }
-    }
-
-    protected Map<String, CamelContext> getCamelContextMap() {
-        Map<String, SpringCamelContext> map = applicationContext.getBeansOfType(SpringCamelContext.class);
-        Set<Map.Entry<String, SpringCamelContext>> entries = map.entrySet();
-        Map<String, CamelContext> answer = new HashMap<String, CamelContext>();
-        for (Map.Entry<String, SpringCamelContext> entry : entries) {
-            String name = entry.getKey();
-            CamelContext camelContext = entry.getValue();
-            answer.put(name, camelContext);
-        }
-        return answer;
     }
 
     protected AbstractApplicationContext createAdditionalLocationsFromClasspath() throws IOException {
-        Set<String> locations = new LinkedHashSet<String>();
+        Set<String> locations = new LinkedHashSet<>();
         findLocations(locations, Main.class.getClassLoader());
 
         if (!locations.isEmpty()) {

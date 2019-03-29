@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,6 +20,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -30,6 +31,12 @@ public class DualSpringManagedThreadsThreadPoolTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringDualManagedThreadsThreadPoolTest.xml");
     }
 
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Test
     public void testDualManagedThreadPool() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 

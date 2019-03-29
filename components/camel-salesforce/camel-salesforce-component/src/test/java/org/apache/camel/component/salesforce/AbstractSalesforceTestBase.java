@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,12 +25,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 public abstract class AbstractSalesforceTestBase extends CamelTestSupport {
 
     @Override
-    public boolean isCreateCamelContextPerClass() {
-        // only create the context once for this class
-        return true;
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         // create the test component
         createComponent();
@@ -38,13 +32,19 @@ public abstract class AbstractSalesforceTestBase extends CamelTestSupport {
         return doCreateRouteBuilder();
     }
 
-    protected abstract RouteBuilder doCreateRouteBuilder() throws Exception;
+    protected RouteBuilder doCreateRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+            }
+        };
+    }
 
     protected void createComponent() throws Exception {
         // create the component
         SalesforceComponent component = new SalesforceComponent();
         final SalesforceEndpointConfig config = new SalesforceEndpointConfig();
-        config.setApiVersion(System.getProperty("apiVersion", SalesforceEndpointConfig.DEFAULT_VERSION));
+        config.setApiVersion(System.getProperty("apiVersion", salesforceApiVersionToUse()));
         component.setConfig(config);
         component.setLoginConfig(LoginConfigHelper.getLoginConfig());
 
@@ -62,6 +62,10 @@ public abstract class AbstractSalesforceTestBase extends CamelTestSupport {
 
         // add it to context
         context().addComponent("salesforce", component);
+    }
+
+    protected String salesforceApiVersionToUse() {
+        return SalesforceEndpointConfig.DEFAULT_VERSION;
     }
 
 }

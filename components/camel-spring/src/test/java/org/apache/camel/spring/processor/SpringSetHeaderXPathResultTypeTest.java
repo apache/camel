@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -26,6 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SpringSetHeaderXPathResultTypeTest extends SpringTestSupport {
 
+    @Test
     public void testXPathResultType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

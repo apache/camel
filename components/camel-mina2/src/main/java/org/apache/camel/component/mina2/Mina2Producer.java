@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mina2;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.charset.Charset;
@@ -27,11 +28,10 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
-import org.apache.camel.ServicePoolAware;
-import org.apache.camel.converter.IOConverter;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.spi.CamelLogger;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.filterchain.IoFilter;
 import org.apache.mina.core.future.CloseFuture;
@@ -59,10 +59,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.apache.camel.Producer} implementation for MINA
- *
- * @version
  */
-public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
+public class Mina2Producer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(Mina2Producer.class);
     private final ResponseHandler handler;
@@ -70,6 +68,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
     private CountDownLatch responseLatch;
     private CountDownLatch closeLatch;
     private boolean lazySessionCreation;
+    private long writeTimeout;
     private long timeout;
     private SocketAddress address;
     private IoConnector connector;
@@ -83,6 +82,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         super(endpoint);
         this.configuration = endpoint.getConfiguration();
         this.lazySessionCreation = configuration.isLazySessionCreation();
+        this.writeTimeout = configuration.getWriteTimeout();
         this.timeout = configuration.getTimeout();
         this.sync = configuration.isSync();
         this.noReplyLogger = new CamelLogger(LOG, configuration.getNoReplyLogLevel());
@@ -108,9 +108,10 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
     public boolean isSingleton() {
         // the producer should not be singleton otherwise cannot use concurrent producers and safely
         // use request/reply with correct correlation
-        return false;
+        return !sync;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         try {
             doProcess(exchange);
@@ -120,7 +121,6 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         }
     }
 
-    @SuppressWarnings("deprecation")
     protected void doProcess(Exchange exchange) throws Exception {
         if (session == null && !lazySessionCreation) {
             throw new IllegalStateException("Not started yet!");
@@ -131,7 +131,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
 
         // set the exchange encoding property
         if (getEndpoint().getConfiguration().getCharsetName() != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(getEndpoint().getConfiguration().getCharsetName()));
+            exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(getEndpoint().getConfiguration().getCharsetName()));
         }
 
         Object body = Mina2PayloadHelper.getIn(getEndpoint(), exchange);
@@ -163,7 +163,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             LOG.debug("Writing body: {}", out);
         }
         // write the body
-        Mina2Helper.writeBody(session, body, exchange);
+        Mina2Helper.writeBody(session, body, exchange, writeTimeout);
 
         if (sync) {
             // wait for response, consider timeout
@@ -404,7 +404,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             codecFactory = new Mina2UdpProtocolCodecFactory(this.getEndpoint().getCamelContext());
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("{}: Using CodecFactory: {}", new Object[]{type, codecFactory});
+                LOG.debug("{}: Using CodecFactory: {}", type, codecFactory);
             }
         }
 
@@ -511,13 +511,14 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             this.message = null;
             this.messageReceived = false;
             this.cause = cause;
-            if (ioSession != null) {
-                try {
-                    closeSessionIfNeededAndAwaitCloseInHandler(ioSession);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
+            if (ioSession != null && !closedByMina(cause)) {
+                CloseFuture closeFuture = ioSession.closeNow();
+                closeFuture.awaitUninterruptibly(timeout, TimeUnit.MILLISECONDS);
             }
+        }
+
+        private boolean closedByMina(Throwable cause) {
+            return cause instanceof IOException;
         }
 
         public Throwable getCause() {

@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.nats.enabled",
+      "description": "Enable nats component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

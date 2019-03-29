@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,8 +25,8 @@ import org.eclipse.egit.github.core.Issue;
 import org.eclipse.egit.github.core.service.IssueService;
 
 /**
- * Producer endpoint that closes a pull request.  The endpoint requires the "GitHubPullRequest" header,
- * identifying the pull request number (integer).
+ * Producer endpoint that creates an issue. The endpoint requires the "GitHubIssueTitle" header,
+ * which sets the GitHub issue title. The issue body content is set from the exchange message body.
  */
 public class CreateIssueProducer extends AbstractGitHubProducer {
     

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,7 +36,7 @@ public class VelocitySomeValuesNotInExchangeTest extends CamelTestSupport {
         mock.message(0).constant("Hello Claus");
         mock.message(0).constant("You have id: 123 if an id was assigned to you.");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("name", "Claus");
         headers.put("id", 123);
         template.sendBodyAndHeaders("direct:a", "", headers);
@@ -51,7 +51,7 @@ public class VelocitySomeValuesNotInExchangeTest extends CamelTestSupport {
         mock.message(0).constant("Hello Claus");
         mock.message(0).constant("You have id:  if an id was assigned to you.");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("name", "Claus");
         template.sendBodyAndHeaders("direct:a", "", headers);
 
@@ -61,7 +61,9 @@ public class VelocitySomeValuesNotInExchangeTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:a").to("velocity:org/apache/camel/component/velocity/someValuesNotInExchange.vm").to("mock:result");
+                from("direct:a")
+                    .to("velocity:org/apache/camel/component/velocity/someValuesNotInExchange.vm")
+                    .to("mock:result");
             }
         };
     }

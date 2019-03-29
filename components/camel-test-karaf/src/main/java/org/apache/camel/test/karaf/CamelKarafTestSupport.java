@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -41,6 +41,7 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import javax.security.auth.Subject;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.CommandSession;
@@ -95,7 +96,7 @@ public class CamelKarafTestSupport extends CamelTestSupport {
      * @param command The command to execute
      * @param principals The principals (e.g. RolePrincipal objects) to run the command under
      */
-    protected String executeCommand(final String command, Principal ... principals) {
+    protected String executeCommand(final String command, Principal... principals) {
         return executeCommand(command, COMMAND_TIMEOUT, false, principals);
     }
 
@@ -108,7 +109,7 @@ public class CamelKarafTestSupport extends CamelTestSupport {
      * @param silent     Specifies if the command should be displayed in the screen.
      * @param principals The principals (e.g. RolePrincipal objects) to run the command under
      */
-    protected String executeCommand(final String command, final Long timeout, final Boolean silent, final Principal ... principals) {
+    protected String executeCommand(final String command, final Long timeout, final Boolean silent, final Principal... principals) {
 
         waitForCommandService(command);
         String response;
@@ -134,10 +135,10 @@ public class CamelKarafTestSupport extends CamelTestSupport {
 
         FutureTask<String> commandFuture;
         if (principals.length == 0) {
-            commandFuture = new FutureTask<String>(commandCallable);
+            commandFuture = new FutureTask<>(commandCallable);
         } else {
             // If principals are defined, run the command callable via Subject.doAs()
-            commandFuture = new FutureTask<String>(new Callable<String>() {
+            commandFuture = new FutureTask<>(new Callable<String>() {
                 @Override
                 public String call() throws Exception {
                     Subject subject = new Subject();
@@ -294,23 +295,31 @@ public class CamelKarafTestSupport extends CamelTestSupport {
     }
 
     public void assertFeatureInstalled(String featureName) {
-        Feature[] features = featuresService.listInstalledFeatures();
-        for (Feature feature : features) {
-            if (featureName.equals(feature.getName())) {
-                return;
+        try {
+            Feature[] features = featuresService.listInstalledFeatures();
+            for (Feature feature : features) {
+                if (featureName.equals(feature.getName())) {
+                    return;
+                }
             }
+            fail("Feature " + featureName + " should be installed but is not");
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
-        fail("Feature " + featureName + " should be installed but is not");
     }
 
     public void assertFeatureInstalled(String featureName, String featureVersion) {
-        Feature[] features = featuresService.listInstalledFeatures();
-        for (Feature feature : features) {
-            if (featureName.equals(feature.getName()) && featureVersion.equals(feature.getVersion())) {
-                return;
+        try {
+            Feature[] features = featuresService.listInstalledFeatures();
+            for (Feature feature : features) {
+                if (featureName.equals(feature.getName()) && featureVersion.equals(feature.getVersion())) {
+                    return;
+                }
             }
+            fail("Feature " + featureName + "/" + featureVersion + " should be installed but is not");
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
-        fail("Feature " + featureName + "/" + featureVersion + " should be installed but is not");
     }
     
     protected void installAndAssertFeature(String feature) throws Exception {
@@ -324,7 +333,7 @@ public class CamelKarafTestSupport extends CamelTestSupport {
     }
 
     protected void installAssertAndUninstallFeature(String feature) throws Exception {
-        Set<Feature> featuresBefore = new HashSet<Feature>(Arrays.asList(featuresService.listInstalledFeatures()));
+        Set<Feature> featuresBefore = new HashSet<>(Arrays.asList(featuresService.listInstalledFeatures()));
         try {
             featuresService.installFeature(feature);
             assertFeatureInstalled(feature);
@@ -334,7 +343,7 @@ public class CamelKarafTestSupport extends CamelTestSupport {
     }
 
     protected void installAssertAndUninstallFeature(String feature, String version) throws Exception {
-        Set<Feature> featuresBefore = new HashSet<Feature>(Arrays.asList(featuresService.listInstalledFeatures()));
+        Set<Feature> featuresBefore = new HashSet<>(Arrays.asList(featuresService.listInstalledFeatures()));
         try {
             featuresService.installFeature(feature, version);
             assertFeatureInstalled(feature, version);
@@ -344,7 +353,7 @@ public class CamelKarafTestSupport extends CamelTestSupport {
     }
 
     protected void installAssertAndUninstallFeatures(String... feature) throws Exception {
-        Set<Feature> featuresBefore = new HashSet<Feature>(Arrays.asList(featuresService.listInstalledFeatures()));
+        Set<Feature> featuresBefore = new HashSet<>(Arrays.asList(featuresService.listInstalledFeatures()));
         try {
             for (String curFeature : feature) {
                 featuresService.installFeature(curFeature);
@@ -360,16 +369,20 @@ public class CamelKarafTestSupport extends CamelTestSupport {
      * So we need to make sure we uninstall all features that were newly installed.
      */
     protected void uninstallNewFeatures(Set<Feature> featuresBefore) {
-        Feature[] features = featuresService.listInstalledFeatures();
-        for (Feature curFeature : features) {
-            if (!featuresBefore.contains(curFeature)) {
-                try {
-                    System.out.println("Uninstalling " + curFeature.getName());
-                    featuresService.uninstallFeature(curFeature.getName(), curFeature.getVersion());
-                } catch (Exception e) {
-                    // ignore
+        try {
+            Feature[] features = featuresService.listInstalledFeatures();
+            for (Feature curFeature : features) {
+                if (!featuresBefore.contains(curFeature)) {
+                    try {
+                        System.out.println("Uninstalling " + curFeature.getName());
+                        featuresService.uninstallFeature(curFeature.getName(), curFeature.getVersion());
+                    } catch (Exception e) {
+                        // ignore
+                    }
                 }
             }
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,7 +24,7 @@ import com.google.common.base.Strings;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.stream.CachedOutputStream;
-import org.apache.camel.impl.ScheduledBatchPollingConsumer;
+import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -32,12 +32,9 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class JcloudsBlobStoreConsumer extends ScheduledBatchPollingConsumer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JcloudsBlobStoreConsumer.class);
     private final JcloudsBlobStoreEndpoint endpoint;
     private final String container;
     private final BlobStore blobStore;
@@ -63,7 +60,7 @@ public class JcloudsBlobStoreConsumer extends ScheduledBatchPollingConsumer {
         shutdownRunningTask = null;
         pendingExchanges = 0;
 
-        Queue<Exchange> queue = new LinkedList<Exchange>();
+        Queue<Exchange> queue = new LinkedList<>();
         String directory = endpoint.getDirectory();
 
         ListContainerOptions opt = new ListContainerOptions();
@@ -105,7 +102,7 @@ public class JcloudsBlobStoreConsumer extends ScheduledBatchPollingConsumer {
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
-            LOG.trace("Processing exchange [{}]...", exchange);
+            log.trace("Processing exchange [{}]...", exchange);
             getProcessor().process(exchange);
             if (exchange.getException() != null) {
                 // if we failed then throw exception

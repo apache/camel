@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -27,10 +28,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- *
- * @version 
- */
 public class JmsNotIncludeAllJMSXPropertiesTest extends CamelTestSupport {
 
     @Test

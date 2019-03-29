@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,11 +27,13 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
+@DirtiesContext
 @RunWith(SpringRunner.class)
 @EnableAutoConfiguration
-@SpringBootTest(classes = CamelConfigurationLocationsTest.class, properties = "camel.springboot.file-configurations=file:src/test/secret/*.properties")
+@SpringBootTest(properties = "camel.springboot.file-configurations=file:src/test/secret/*.properties")
 public class CamelConfigurationLocationsTest extends Assert {
 
     @Configuration

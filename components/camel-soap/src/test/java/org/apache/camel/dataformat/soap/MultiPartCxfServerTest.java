@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,6 @@ import com.example.customerservice.multipart.GetCustomersByNameResponse;
 import com.example.customerservice.multipart.MultiPartCustomerService;
 import com.example.customerservice.multipart.Product;
 import com.example.customerservice.multipart.SaveCustomer;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Produce;
@@ -122,7 +121,7 @@ public class MultiPartCxfServerTest extends RouteBuilder {
                 product.setName("Multiuse Product");
                 product.setDescription("Useful for lots of things.");
                 
-                Holder<Company> holder = new Holder<Company>();
+                Holder<Company> holder = new Holder<>();
                 
                 Object[] args = new Object[] {saveCustomer, product, holder};
                 beanInvocation.setArgs(args);
@@ -169,7 +168,7 @@ public class MultiPartCxfServerTest extends RouteBuilder {
                 product.setName("Multiuse Product");
                 product.setDescription("Useful for lots of things.");
                 
-                Holder<Company> holder = new Holder<Company>();
+                Holder<Company> holder = new Holder<>();
                 
                 Object[] args = new Object[] {saveCustomer, product, holder};
                 beanInvocation.setArgs(args);

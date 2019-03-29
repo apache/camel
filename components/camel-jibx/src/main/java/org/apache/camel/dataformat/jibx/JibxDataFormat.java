@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,8 @@ import java.io.OutputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
@@ -30,11 +31,13 @@ import org.jibx.runtime.IMarshallingContext;
 import org.jibx.runtime.IUnmarshallingContext;
 import org.jibx.runtime.JiBXException;
 
+@Dataformat("jibx")
 public class JibxDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     public static final String UNMARSHALL_CLASS = "CamelJibxUnmarshallClass";
 
     private Class<?> unmarshallClass;
     private String bindingName;
+    private boolean contentTypeHeader = true;
 
     public JibxDataFormat() {
     }
@@ -57,6 +60,14 @@ public class JibxDataFormat extends ServiceSupport implements DataFormat, DataFo
         IBindingFactory bindingFactory = createBindingFactory(body.getClass(), bindingName);
         IMarshallingContext marshallingContext = bindingFactory.createMarshallingContext();
         marshallingContext.marshalDocument(body, null, null, stream);
+
+        if (contentTypeHeader) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            }
+        }
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
@@ -71,7 +82,6 @@ public class JibxDataFormat extends ServiceSupport implements DataFormat, DataFo
         IUnmarshallingContext unmarshallingContext = bindingFactory.createUnmarshallingContext();
         return unmarshallingContext.unmarshalDocument(stream, null);
     }
-
 
     @Override
     protected void doStart() throws Exception {
@@ -98,6 +108,19 @@ public class JibxDataFormat extends ServiceSupport implements DataFormat, DataFo
     public void setBindingName(String bindingName) {
         this.bindingName = bindingName;
     }
+
+
+    public boolean isContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    /**
+     * If enabled then Jibx will set the Content-Type header to <tt>application/xml</tt> when marshalling.
+     */
+    public void setContentTypeHeader(boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
+    }
+
 
     private IBindingFactory createBindingFactory(Class<?> clazz, String bindingName) throws JiBXException {
         if (bindingName == null) {

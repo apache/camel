@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.infinispan;
 
-import org.infinispan.cache.impl.DecoratedCache;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.commons.api.BasicCache;
+import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 import org.jgroups.util.UUID;
 import org.junit.Test;
@@ -32,24 +32,14 @@ public class InfinispanConfigurationTestIT {
     @Test
     public void embeddedCacheWithFlagsTest() throws Exception {
         InfinispanConfiguration configuration = new InfinispanConfiguration();
-        configuration.setHost("localhost");
-        configuration.setCacheName("misc_cache");
-        configuration.setCacheContainer(new DefaultCacheManager(true));
-        configuration.setFlags(
-            org.infinispan.context.Flag.SKIP_CACHE_LOAD,
-            org.infinispan.context.Flag.SKIP_CACHE_STORE
-        );
+        configuration.setHosts("localhost");
+        configuration.setCacheContainer(new DefaultCacheManager(new ConfigurationBuilder().build(), true));
 
         InfinispanManager manager = new InfinispanManager(configuration);
         manager.start();
 
-        BasicCache<Object, Object> cache = manager.getCache();
+        BasicCache<Object, Object> cache = manager.getCache("misc_cache");
         assertNotNull(cache);
-        assertTrue(cache instanceof DecoratedCache);
-
-        DecoratedCache<Object, Object> decoratedCache = (DecoratedCache<Object, Object>)cache;
-        assertTrue(decoratedCache.getFlags().contains(org.infinispan.context.Flag.SKIP_CACHE_LOAD));
-        assertTrue(decoratedCache.getFlags().contains(org.infinispan.context.Flag.SKIP_CACHE_STORE));
 
         manager.getCacheContainer().stop();
         manager.stop();
@@ -58,13 +48,12 @@ public class InfinispanConfigurationTestIT {
     @Test
     public void remoteCacheWithoutProperties() throws Exception {
         InfinispanConfiguration configuration = new InfinispanConfiguration();
-        configuration.setHost("localhost");
-        configuration.setCacheName("misc_cache");
+        configuration.setHosts("localhost");
 
         InfinispanManager manager = new InfinispanManager(configuration);
         manager.start();
 
-        BasicCache<Object, Object> cache = manager.getCache();
+        BasicCache<Object, Object> cache = manager.getCache("misc_cache");
         assertNotNull(cache);
         assertTrue(cache instanceof RemoteCache);
 
@@ -80,14 +69,13 @@ public class InfinispanConfigurationTestIT {
     @Test
     public void remoteCacheWithPropertiesTest() throws Exception {
         InfinispanConfiguration configuration = new InfinispanConfiguration();
-        configuration.setHost("localhost");
-        configuration.setCacheName("misc_cache");
+        configuration.setHosts("localhost");
         configuration.setConfigurationUri("infinispan/client.properties");
 
         InfinispanManager manager = new InfinispanManager(configuration);
         manager.start();
 
-        BasicCache<Object, Object> cache = manager.getCache();
+        BasicCache<Object, Object> cache = manager.getCache("misc_cache");
         assertNotNull(cache);
         assertTrue(cache instanceof RemoteCache);
 

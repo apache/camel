@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CXFTestSupport;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,8 +40,6 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * Unit test for exercising MTOM enabled end-to-end router in PAYLOAD mode
- * 
- * @version 
  */
 @ContextConfiguration
 public class CxfMtomPOJOProducerTest extends AbstractJUnit4SpringContextTests {
@@ -74,8 +71,8 @@ public class CxfMtomPOJOProducerTest extends AbstractJUnit4SpringContextTests {
             return;
         }
 
-        final Holder<byte[]> photo = new Holder<byte[]>(MtomTestHelper.REQ_PHOTO_DATA);
-        final Holder<Image> image = new Holder<Image>(getImage("/java.jpg"));
+        final Holder<byte[]> photo = new Holder<>(MtomTestHelper.REQ_PHOTO_DATA);
+        final Holder<Image> image = new Holder<>(getImage("/java.jpg"));
         
         Exchange exchange = context.createProducerTemplate().send("direct://testEndpoint", new Processor() {
 

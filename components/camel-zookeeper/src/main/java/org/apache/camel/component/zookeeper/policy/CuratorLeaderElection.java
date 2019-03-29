@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.StatefulService;
 import org.apache.camel.impl.JavaUuidGenerator;
 import org.apache.camel.spi.UuidGenerator;
@@ -37,7 +36,6 @@ import org.apache.curator.framework.recipes.leader.LeaderSelectorListenerAdapter
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * <code>CuratorLeaderElection</code> uses the leader election capabilities of a
@@ -55,14 +53,13 @@ import org.slf4j.LoggerFactory;
 public class CuratorLeaderElection {
 
     private static final Logger LOG = LoggerFactory.getLogger(CuratorLeaderElection.class);
-    private final ProducerTemplate producerTemplate;
     private final CamelContext camelContext;
     private final String uri;
 
     private final String candidateName;
     private final Lock lock = new ReentrantLock();
     private final CountDownLatch electionComplete = new CountDownLatch(1);
-    private final List<ElectionWatcher> watchers = new ArrayList<ElectionWatcher>();
+    private final List<ElectionWatcher> watchers = new ArrayList<>();
     private AtomicBoolean masterNode = new AtomicBoolean(false);
     private volatile boolean isCandidateCreated;
     private int enabledCount = 1;
@@ -71,12 +68,7 @@ public class CuratorLeaderElection {
     private CuratorFramework client;
 
     public CuratorLeaderElection(CamelContext camelContext, String uri) {
-        this(camelContext.createProducerTemplate(), camelContext, uri);
-    }
-
-    public CuratorLeaderElection(ProducerTemplate producerTemplate, CamelContext camelContext, String uri) {
         this.camelContext = camelContext;
-        this.producerTemplate = producerTemplate;
         this.uri = uri;
         this.candidateName = createCandidateName();
 

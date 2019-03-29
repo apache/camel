@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,12 +28,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.management.JMException;
 import javax.management.ObjectName;
 
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.quickfixj.jmx.JmxExporter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import quickfix.Acceptor;
 import quickfix.Application;
 import quickfix.ConfigError;
@@ -86,8 +83,6 @@ public class QuickfixjEngine extends ServiceSupport {
     public static final String SETTING_THREAD_MODEL = "ThreadModel";
     public static final String SETTING_USE_JMX = "UseJmx";
 
-    private static final Logger LOG = LoggerFactory.getLogger(QuickfixjEngine.class);
-
     private Acceptor acceptor;
     private Initiator initiator;
     private JmxExporter jmxExporter;
@@ -95,7 +90,7 @@ public class QuickfixjEngine extends ServiceSupport {
     private LogFactory sessionLogFactory;
     private MessageFactory messageFactory;
     private final MessageCorrelator messageCorrelator = new MessageCorrelator();
-    private List<QuickfixjEventListener> eventListeners = new CopyOnWriteArrayList<QuickfixjEventListener>();
+    private List<QuickfixjEventListener> eventListeners = new CopyOnWriteArrayList<>();
     private final String uri;
     private ObjectName acceptorObjectName;
     private ObjectName initiatorObjectName;
@@ -214,7 +209,7 @@ public class QuickfixjEngine extends ServiceSupport {
         }
 
         if (settings.isSetting(SETTING_USE_JMX) && settings.getBool(SETTING_USE_JMX)) {
-            LOG.info("Enabling JMX for QuickFIX/J");
+            log.info("Enabling JMX for QuickFIX/J");
             jmxExporter = new JmxExporter();
         } else {
             jmxExporter = null;
@@ -329,7 +324,7 @@ public class QuickfixjEngine extends ServiceSupport {
     }
 
     private MessageStoreFactory inferMessageStoreFactory(SessionSettings settings) throws ConfigError {
-        Set<MessageStoreFactory> impliedMessageStoreFactories = new HashSet<MessageStoreFactory>();
+        Set<MessageStoreFactory> impliedMessageStoreFactories = new HashSet<>();
         isJdbcStore(settings, impliedMessageStoreFactories);
         isFileStore(settings, impliedMessageStoreFactories);
         isSleepycatStore(settings, impliedMessageStoreFactories);
@@ -342,7 +337,7 @@ public class QuickfixjEngine extends ServiceSupport {
         } else {
             messageStoreFactory = new MemoryStoreFactory();
         }
-        LOG.info("Inferring message store factory: {}", messageStoreFactory.getClass().getName());
+        log.info("Inferring message store factory: {}", messageStoreFactory.getClass().getName());
         return messageStoreFactory;
     }
 
@@ -365,7 +360,7 @@ public class QuickfixjEngine extends ServiceSupport {
     }
 
     private LogFactory inferLogFactory(SessionSettings settings) throws ConfigError {
-        Set<LogFactory> impliedLogFactories = new HashSet<LogFactory>();
+        Set<LogFactory> impliedLogFactories = new HashSet<>();
         isFileLog(settings, impliedLogFactories);
         isScreenLog(settings, impliedLogFactories);
         isSL4JLog(settings, impliedLogFactories);
@@ -380,7 +375,7 @@ public class QuickfixjEngine extends ServiceSupport {
             // Default
             sessionLogFactory = new ScreenLogFactory(settings);
         }
-        LOG.info("Inferring log factory: {}", sessionLogFactory.getClass().getName());
+        log.info("Inferring log factory: {}", sessionLogFactory.getClass().getName());
         return sessionLogFactory;
     }
 
@@ -418,14 +413,9 @@ public class QuickfixjEngine extends ServiceSupport {
         boolean hasRole = false;
         Iterator<SessionID> sessionIdItr = settings.sectionIterator();
         while (sessionIdItr.hasNext()) {
-            try {
-                if (connectorRole.equals(settings.getString(sessionIdItr.next(),
-                        SessionFactory.SETTING_CONNECTION_TYPE))) {
-                    hasRole = true;
-                    break;
-                }
-            } catch (FieldConvertError e) {
-                throw new ConfigError(e);
+            if (connectorRole.equals(settings.getString(sessionIdItr.next(), SessionFactory.SETTING_CONNECTION_TYPE))) {
+                hasRole = true;
+                break;
             }
         }
         return hasRole;
@@ -522,7 +512,7 @@ public class QuickfixjEngine extends ServiceSupport {
         }
 
         private void dispatch(QuickfixjEventCategory quickfixjEventCategory, SessionID sessionID, Message message) throws Exception {
-            LOG.debug("FIX event dispatched: {} {}", quickfixjEventCategory, message != null ? message : "");
+            log.debug("FIX event dispatched: {} {}", quickfixjEventCategory, message != null ? message : "");
             for (QuickfixjEventListener listener : eventListeners) {
                 // Exceptions propagate back to the FIX engine so sequence numbers can be adjusted
                 listener.onEvent(quickfixjEventCategory, sessionID, message);

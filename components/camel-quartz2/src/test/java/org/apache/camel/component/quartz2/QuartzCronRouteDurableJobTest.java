@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,9 +27,9 @@ public class QuartzCronRouteDurableJobTest extends QuartzCronRouteTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // triggers every 2th second at precise 00,02,04,06..58
+                // triggers every 1th second at precise 00,01,02,03..59
                 // notice we must use + as space when configured using URI parameter
-                from("quartz2://myGroup/myTimerName?durableJob=true&recoverableJob=true&cron=0/2+*+*+*+*+?").to("mock:result");
+                from("quartz2://myGroup/myTimerName?durableJob=true&recoverableJob=true&cron=0/1+*+*+*+*+?").to("mock:result");
             }
         };
     }

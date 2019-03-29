@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.mvel.enabled",
+      "description": "Enable mvel component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.language.mvel.enabled",
+      "description": "Enable mvel language",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

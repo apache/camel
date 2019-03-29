@@ -1,0 +1,215 @@
+# Camel Health Checks and Spring Boot
+
+This example shows how to work with a simple Apache Camel application using Spring Boot.
+
+NOTE: Some of the routes fail intentionally to have health check monitor their failures
+
+## How to run
+
+* mvn clean package
+* service/src/main/bash/consul-run-linux.sh
+* mvn -pl service spring-boot:run
+* mvn -pl application spring-boot:run
+
+### How to play with the example
+
+You can interact with the example using curl or httpie
+
+* Trigger the checks an gather the results:
++
+[source,console]
+----
+$ http -b GET localhost:8080/camel/health/check
+----
++
+[source,json]
+----
+[
+    {
+        "check": {
+            "id": "consul-file"
+        },
+        "status": "UP"
+    },
+    {
+        "check": {
+            "id": "consul-http"
+        },
+        "status": "UP"
+    },
+    {
+        "check": {
+            "group": "global",
+            "id": "my-check-1"
+        },
+        "status": "UP"
+    },
+    {
+        "check": {
+            "group": "local",
+            "id": "my-check-2"
+        },
+        "status": "UP"
+    }
+]
+----
+
+* Query the status of a named check
++
+[source,console]
+----
+$ http -b GET localhost:8080/camel/health/check/consul-http
+----
++
+[source,json]
+----
+{
+    "check": {
+        "configuration": {
+            "enabled": true,
+            "failureThreshold": 0,
+            "interval": "PT0S"
+        },
+        "id": "consul-http",
+        "metaData": {
+            "check.id": "consul-http",
+            "failure.count": 0,
+            "invocation.attempt.time": "2017-08-29T10:03:10.292+02:00[Europe/Rome]",
+            "invocation.count": 3,
+            "invocation.time": "2017-08-29T10:03:10.292+02:00[Europe/Rome]"
+        }
+    },
+    "details": {
+        "consul.check.id": "http",
+        "consul.check.status": "passing",
+        "consul.service.id": "",
+        "consul.service.name": "",
+        "failure.count": 0,
+        "invocation.count": 3,
+        "invocation.time": "2017-08-29T10:03:10.292+02:00[Europe/Rome]"
+    },
+    "status": "UP"
+}
+----
++
+IMPORTANT: This call may result in a direct invocation of the check, the behavior is implementation dependant.
+
+
+* Trigger a named check
++
+[source,console]
+----
+$ http -b GET localhost:8080/camel/health/check/consul-http/invoke
+----
++
+[source,json]
+----
+{
+    "check": {
+        "configuration": {
+            "enabled": true,
+            "failureThreshold": 0,
+            "interval": "PT0S"
+        },
+        "id": "consul-http",
+        "metaData": {
+            "check.id": "consul-http",
+            "failure.count": 0,
+            "invocation.attempt.time": "2017-08-29T10:05:02.729+02:00[Europe/Rome]",
+            "invocation.count": 14,
+            "invocation.time": "2017-08-29T10:05:02.729+02:00[Europe/Rome]"
+        }
+    },
+    "details": {
+        "consul.check.id": "http",
+        "consul.check.status": "passing",
+        "consul.service.id": "",
+        "consul.service.name": "",
+        "failure.count": 0,
+        "invocation.count": 14,
+        "invocation.time": "2017-08-29T10:05:02.729+02:00[Europe/Rome]"
+    },
+    "status": "UP"
+}
+----
+
+* Check the application status using Spring-Boot's health endpoint:
++
+[source,console]
+----
+$ http -b GET localhost:8080/health
+----
++
+[source,json]
+----
+{
+    "camel": {
+        "contextStatus": "Started",
+        "name": "SampleHealthChecks",
+        "status": "UP",
+        "version": "2.20.0-SNAPSHOT"
+    },
+    "camel-health-checks": {
+        "consul-file": "UP",
+        "consul-http": "UP",
+        "my-check-1": "UP",
+        "my-check-2": "UP",
+        "status": "UP"
+    },
+    "diskSpace": {
+        "free": 120546111488,
+        "status": "UP",
+        "threshold": 10485760,
+        "total": 192459673600
+    },
+    "status": "UP"
+}
+----
+
+If you stop the `service` application, the Spring-Boot's health endpoint will report the `application` as un-healthy:
+
+[source,console]
+----
+$ http -b GET localhost:8080/health
+----
+
+[source,json]
+----
+{
+    "camel": {
+        "contextStatus": "Started",
+        "name": "SampleHealthChecks",
+        "status": "UP",
+        "version": "2.20.0-SNAPSHOT"
+    },
+    "camel-health-checks": {
+        "consul-file": "UP",
+        "consul-http": "UP",
+        "my-check-1": "UP",
+        "my-check-2": "UP",
+        "status": "DOWN"
+    },
+    "diskSpace": {
+        "free": 120546017280,
+        "status": "UP",
+        "threshold": 10485760,
+        "total": 192459673600
+    },
+    "status": "DOWN"
+}
+----
+
+### Using the HealthCheckService
+
+The HealthCheckService can be enabled by setting the property `camel.health.check.service.enabled` to `true`. Once done every call to the Camel health check endpoint as well as the SpringBoot one will return the last known response or an error if the requested check has not yet been invoked.
+
+To force the service to refresh a check, you can use:
+
+[source,console]
+----
+$ http -b GET localhost:8080/camel/health/check/{id}/invoke
+----
+
+## More information
+
+You can find more information about Apache Camel at the website: http://camel.apache.org/

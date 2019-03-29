@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,9 +27,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -38,14 +39,13 @@ public class HazelcastTopicConsumerTest extends HazelcastCamelTestSupport {
     @Mock
     private ITopic<String> topic;
 
-    private ArgumentCaptor<MessageListener> argument;
+    @Captor
+    private ArgumentCaptor<MessageListener<String>> argument;
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
         when(hazelcastInstance.<String>getTopic("foo")).thenReturn(topic);
-        argument = ArgumentCaptor.forClass(MessageListener.class);
-        when(topic.addMessageListener(argument.capture())).thenReturn("foo");
+        when(topic.addMessageListener(any())).thenReturn("foo");
     }
 
     @Override
@@ -56,12 +56,12 @@ public class HazelcastTopicConsumerTest extends HazelcastCamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void receive() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:received");
         out.expectedMessageCount(1);
 
-        final Message<String> msg = new Message<String>("foo", "foo", new java.util.Date().getTime(), null);
+        verify(topic).addMessageListener(argument.capture());
+        final Message<String> msg = new Message<>("foo", "foo", new java.util.Date().getTime(), null);
         argument.getValue().onMessage(msg);
 
         assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
@@ -74,7 +74,7 @@ public class HazelcastTopicConsumerTest extends HazelcastCamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(String.format("hazelcast:%sfoo", HazelcastConstants.TOPIC_PREFIX)).log("object...")
+                from(String.format("hazelcast-%sfoo", HazelcastConstants.TOPIC_PREFIX)).log("object...")
                         .choice()
                             .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.RECEIVED))
                                 .log("...received").to("mock:received")

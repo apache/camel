@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,9 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.linkedin.internal.LinkedInApiCollection;
-import org.apache.camel.component.linkedin.internal.SearchResourceApiMethod;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -43,7 +40,7 @@ public class SearchResourceIntegrationTest extends AbstractLinkedInTestSupport {
 
     @Test
     public void testSearchCompanies() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.fields", "");
         // parameter type is String
@@ -73,7 +70,7 @@ public class SearchResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore("Requires vetted API Access Program")
     @Test
     public void testSearchJobs() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.fields", "");
 /*
@@ -110,7 +107,7 @@ public class SearchResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore("Requires vetted API Access Program")
     @Test
     public void testSearchPeople() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.fields", "");
 /*

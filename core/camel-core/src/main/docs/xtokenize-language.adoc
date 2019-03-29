@@ -1,0 +1,31 @@
+[[xtokenize-language]]
+== XML Tokenize Language
+
+*Available as of Camel version 2.14*
+
+The xml tokenizer language is a built-in language in camel-core, which
+is a truly XML-aware tokenizer that can be used with the Splitter as the
+conventional Tokenizer to efficiently and
+effectively tokenize XML documents. XMLTokenizer is capable of not only
+recognizing XML namespaces and hierarchical structures of the document
+but also more efficiently tokenizing XML documents than the conventional
+Tokenizer. 
+
+For more details see Splitter.
+
+=== XML Tokenizer Options
+
+// language options: START
+The XML Tokenize language supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| headerName |  | String | Name of header to tokenize instead of using the message body.
+| mode |  | String | The extraction mode. The available extraction modes are: i - injecting the contextual namespace bindings into the extracted token (default) w - wrapping the extracted token in its ancestor context u - unwrapping the extracted token to its child content t - extracting the text content of the specified element
+| group |  | Integer | To group N parts together
+| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
+|===
+// language options: END

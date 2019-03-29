@@ -1,0 +1,106 @@
+[[chatscript-component]]
+== ChatScript Component
+== ChatScript Component
+*Available as of Camel version 3.0.0*
+
+
+*Available as of Camel version 3.0.0*
+
+The *ChatScript:* component allows you to interact with ChatScript Server and have conversations. This component is stateless and relies on ChatScript to maintain chat history. 
+
+Original ChatScript is available here : https://github.com/bwilcox-1234/ChatScript
+
+This component expects a JSON having the following fields:
+{
+username:
+botname:
+body:
+}
+
+Refer ChatScriptMessage.java and samples  
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+      <artifactId>camel-chatscript</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+### URI format
+[source,java]
+-------------------------------------------------------------------------------------------------------------------------
+ChatScript:host:[port]/botName[?options]
+-------------------------------------------------------------------------------------------------------------------------
+
+### Options
+
+// component options: START
+The ChatScript component has no options.
+// component options: END
+
+// endpoint options: START
+The ChatScript endpoint is configured using URI syntax:
+
+----
+chatscript:host:port/botname
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (3 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *host* | *Required* Hostname or IP of the server on which CS server is running |  | String
+| *port* | Port on which ChatScript is listening to | 1024 | int
+| *botName* | *Required* Name of the Bot in CS to converse with |  | String
+|===
+
+
+==== Query Parameters (3 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *resetchat* (reset) | Issues :reset command to start a new conversation everytime | false | boolean
+| *chatUserName* (username) | Username who initializes the CS conversation. To be set when chat is initialized from camel route |  | String
+|===
+// endpoint options: END
+
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-chatscript-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.chatscript.enabled* | Whether to enable auto configuration of the chatscript component. This is enabled by default. |  | Boolean
+| *camel.component.chatscript.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END

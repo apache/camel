@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +24,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.URISupport;
 import org.apache.cxf.BusFactory;
@@ -71,7 +70,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:EndpointA").to(getSimpleEndpointUri());
-                from("direct:EndpointB").to(getSimpleEndpointUri() + "&dataFormat=MESSAGE");
+                from("direct:EndpointB").to(getSimpleEndpointUri() + "&dataFormat=RAW");
                 from("direct:EndpointC").to(getSimpleEndpointUri() + "&dataFormat=PAYLOAD");
                 // This route is for checking camel-cxf producer throwing exception
                 from("direct:start")
@@ -89,7 +88,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         error.expectedMessageCount(1);
     
         Exchange senderExchange = new DefaultExchange(context, ExchangePattern.InOut);
-        final List<String> params = new ArrayList<String>();
+        final List<String> params = new ArrayList<>();
         // Prepare the request message for the camel-cxf procedure
         params.add(TEST_MESSAGE);
         senderExchange.getIn().setBody(params);
@@ -103,8 +102,8 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         CxfEndpoint endpoint = context.getEndpoint(getSimpleEndpointUri(), CxfEndpoint.class);
         assertEquals("Get a wrong endpoint uri", getSimpleEndpointUri(), endpoint.getEndpointUri());
         
-        endpoint = context.getEndpoint(getSimpleEndpointUri() + "&dataFormat=MESSAGE", CxfEndpoint.class);
-        assertEquals("Get a wrong endpoint uri", URISupport.normalizeUri(getSimpleEndpointUri() + "&dataFormat=MESSAGE"), endpoint.getEndpointUri());
+        endpoint = context.getEndpoint(getSimpleEndpointUri() + "&dataFormat=RAW", CxfEndpoint.class);
+        assertEquals("Get a wrong endpoint uri", URISupport.normalizeUri(getSimpleEndpointUri() + "&dataFormat=RAW"), endpoint.getEndpointUri());
 
     }
 
@@ -112,7 +111,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
     public void testInvokingSimpleServerWithParams() throws Exception {
      // START SNIPPET: sending
         Exchange senderExchange = new DefaultExchange(context, ExchangePattern.InOut);
-        final List<String> params = new ArrayList<String>();
+        final List<String> params = new ArrayList<>();
         // Prepare the request message for the camel-cxf procedure
         params.add(TEST_MESSAGE);
         senderExchange.getIn().setBody(params);

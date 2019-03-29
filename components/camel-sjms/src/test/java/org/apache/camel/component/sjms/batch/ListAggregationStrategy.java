@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,8 +19,8 @@ package org.apache.camel.component.sjms.batch;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 public class ListAggregationStrategy implements AggregationStrategy {
 
@@ -28,7 +28,7 @@ public class ListAggregationStrategy implements AggregationStrategy {
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         String body = newExchange.getIn().getBody(String.class);
         if (oldExchange == null) {
-            List<String> list = new ArrayList<String>();
+            List<String> list = new ArrayList<>();
             list.add(body);
             newExchange.getIn().setBody(list);
             return newExchange;

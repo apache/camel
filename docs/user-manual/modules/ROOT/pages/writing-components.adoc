@@ -1,0 +1,158 @@
+[[WritingComponents-WritingComponents]]
+=== Writing Components
+
+Apache Camel is designed to make it very easy to drop in new components
+whether they be routing components, transformers, transports etc. The
+idea of a component is to be a factory and manager of
+link:endpoint.adoc[Endpoints].
+
+Here are the main steps to writing a component:
+
+* Write a POJO which implements the
+http://activemq.apache.org/camel/maven/current/camel-core/apidocs/org/apache/camel/Component.html[Component]
+interface. The simplest approach is just to derive from
+http://activemq.apache.org/camel/maven/current/camel-core/apidocs/org/apache/camel/impl/DefaultComponent.html[DefaultComponent].
+* To support auto-discovery of your component add a file to
+`META-INF/services/org/apache/camel/component/FOO` where FOO is the URI
+scheme for your component and any related endpoints created on the fly.
+The latter file should contain the definition of the component class.
+For example if your component is implemented by the
+`com.example.CustomComponent` class, the service file should contain the
+following line -- `class=com.example.CustomComponent`.
+
+Users can then either explicitly create your component, configure it and
+register with a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/CamelContext.html[CamelContext]
+or users can use a URI which auto-creates your component.
+
+[[WritingComponents-WritingEndpoints]]
+==== Writing Endpoints
+
+When implementing an link:endpoint.adoc[Endpoint] you typically may
+implement one or more of the following methods:
+
+* http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createProducer()[createProducer()]
+will create a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Producer.html[Producer]
+for sending message exchanges to the endpoint
+* http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createConsumer(org.apache.camel.Processor)[createConsumer()]
+implements the link:event-driven-consumer.adoc[Event Driven Consumer]
+pattern for consuming message exchanges from the endpoint via a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
+when creating a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Consumer.html[Consumer]
+* http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createPollingConsumer()[createPollingConsumer()]
+implements the link:polling-consumer.adoc[Polling Consumer] pattern for
+consuming message exchanges from the endpoint via a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/PollingConsumer.html[PollingConsumer]
+
+Typically you just derive from
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/DefaultEndpoint.html[DefaultEndpoint]
+and implement the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createProducer()[createProducer()]
+and / or
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createConsumer(org.apache.camel.Processor)[createConsumer()]
+methods. The
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createPollingConsumer()[createPollingConsumer()]
+method will be created by default for you in the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/DefaultEndpoint.html[DefaultEndpoint]
+class.
+
+If your endpoint is a polling-centric component you can derive from
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/DefaultPollingEndpoint.html[DefaultPollingEndpoint]
+and then implement
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createPollingConsumer()[createPollingConsumer()];
+the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createConsumer(org.apache.camel.Processor)[createConsumer()]
+method will be created for you which avoids you having to write any
+polling code.
+
+[[WritingComponents-AnnotatingyourEndpoint]]
+==== Annotating your Endpoint
+
+As of *Camel 2.12* if you want to benefit from the automatic generation
+of HTML documentation for all the parameters on your endpoint as part of
+the maven site reports, you need to
+link:endpoint-annotations.adoc[annotate your Endpoint's parameters].
+
+So this means you add a `@UriEndpoint` annotation to your Endpoint class
+and then annotate each parameter you wish to be configured via the URI
+configuration mechanism with `@UriParam` (or `@UriParams` for nested
+configuration objects).
+
+In addition its recommended that your Component implementation inherit
+from the UriEndpointComponent base class as that means your Component
+will automatically generate better metadata for the
+link:componentconfiguration.adoc[ComponentConfiguration] API.
+
+Refer to the link:endpoint-annotations.adoc[Endpoint Annotations guide
+for details].
+
+[[WritingComponents-UsingaProcessor]]
+==== Using a Processor
+
+If you are writing a simple endpoint which just processes messages in
+some way, you can just implement a link:processor.adoc[Processor] and
+link:processor.adoc[use that to create an endpoint].
+
+[[WritingComponents-Dependencyinjectionandauto-discovery]]
+==== Dependency injection and auto-discovery
+
+When using auto-discovery the CamelContext will default to its
+link:injector.adoc[Injector] implementation to inject any required or
+optional dependencies on the component. This allows you to use
+auto-discovery of components via link:uris.adoc[URIs] while still
+getting the benefits of dependency injection.
+
+For example your component can depend on a JDBC DataSource or JMS
+ConnectionFactory which can be provided in the ApplicationContext in
+Spring or Module in Guice.
+
+So you can if you prefer configure your Component using an IoC framework
+like Spring or Guice; then add it to the CamelContext. Or you can let
+the Component auto-inject itself as the endpoints are auto-discovered.
+
+[[WritingComponents-Options]]
+==== Options
+
+If your component has options you can let it have public getters/setters
+and Camel will automatically set the properties when the endpoint is
+created. If you however want to take the matter in your own hands, then
+you must remove the option from the given parameter list as Camel will
+validate that all options are used. If not Camel will throw a
+ResolveEndpointFailedException stating some of the options are unknown.
+
+The parameters is provided by Camel in the createEndpoint method from
+DefaultComponent:
+
+[source,java]
+----
+protected abstract Endpoint<E> createEndpoint(String uri, String remaining, Map parameters)
+----
+
+The code is an example from the <<seda-component,SEDA>> component that removes the size
+parameter:
+
+[source,java]
+----
+    public BlockingQueue<Exchange> createQueue(String uri, Map parameters) {
+        int size = 1000;
+        Object value = parameters.remove("size");
+        if (value != null) {
+            Integer i = convertTo(Integer.class, value);
+            if (i != null) {
+                size = i;
+            }
+        }
+        return new LinkedBlockingQueue<Exchange>(size);
+    }
+----
+
+[[WritingComponents-SeeAlso]]
+==== See Also
+
+* link:configuring-camel.adoc[Configuring Camel]
+* link:endpoint.adoc[Endpoint]
+* link:component.adoc[Component]
+* http://camel.apache.org/creating-a-new-camel-component.html[Creating a
+new Camel Component with Maven]

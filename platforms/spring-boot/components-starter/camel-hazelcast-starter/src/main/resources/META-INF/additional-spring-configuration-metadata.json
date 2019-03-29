@@ -1,0 +1,76 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.hazelcast.enabled",
+      "description": "Enable hazelcast component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.hazelcast-list.enabled",
+      "description": "Enable hazelcast-list component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.hazelcast-map.enabled",
+      "description": "Enable hazelcast-map component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.hazelcast-replicatedmap.enabled",
+      "description": "Enable hazelcast-replicatedmap component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.hazelcast-queue.enabled",
+      "description": "Enable hazelcast-queue component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.hazelcast-set.enabled",
+      "description": "Enable hazelcast-set component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.hazelcast-topic.enabled",
+      "description": "Enable hazelcast-topic component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.hazelcast-seda.enabled",
+      "description": "Enable hazelcast-seda component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.hazelcast-multimap.enabled",
+      "description": "Enable hazelcast-multimap component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.hazelcast-ringbuffer.enabled",
+      "description": "Enable hazelcast-ringbuffer component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.hazelcast-instance.enabled",
+      "description": "Enable hazelcast-instance component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.hazelcast-atomicvalue.enabled",
+      "description": "Enable hazelcast-atomicvalue component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

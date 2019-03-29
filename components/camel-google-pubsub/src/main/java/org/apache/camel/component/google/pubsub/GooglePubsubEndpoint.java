@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,32 +25,31 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
- /**
- * Messaging client for Google Cloud Platform PubSub Service:
- * https://cloud.google.com/pubsub/
- *
+/**
+ * Messaging client for Google Cloud Platform PubSub Service
+ * <p/>
  * Built on top of the Service API libraries (v1).
  */
-@UriEndpoint(scheme = "google-pubsub", title = "Google Pubsub",
+@UriEndpoint(firstVersion = "2.19.0", scheme = "google-pubsub", title = "Google Pubsub",
         syntax = "google-pubsub:projectId:destinationName", label = "messaging")
 public class GooglePubsubEndpoint extends DefaultEndpoint {
 
     private Logger log;
 
     @UriPath(description = "Project Id")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String projectId;
 
     @UriPath(description = "Destination Name")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String destinationName;
 
     @UriParam(name = "loggerId", description = "Logger ID to use when a match to the parent route required")
@@ -91,15 +90,14 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
             log = LoggerFactory.getLogger(loggerId);
         }
 
-        GooglePubsubConnectionFactory cf = (null == connectionFactory)
-                ? getComponent().getConnectionFactory()
-                : connectionFactory;
+        // Default pubsub connection.
+        // With the publisher endpoints - the main publisher
+        // with the consumer endpoints  - the ack client
+        pubsub = getConnectionFactory().getDefaultClient();
 
-        pubsub = cf.getClient();
-
+        log.trace("Credential file location : {}", getConnectionFactory().getCredentialsFileLocation());
         log.trace("Project ID: {}", this.projectId);
         log.trace("Destination Name: {}", this.destinationName);
-        log.trace("From file : {}", cf.getCredentialsFileLocation());
     }
 
     public Producer createProducer() throws Exception {
@@ -177,8 +175,13 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
         return pubsub;
     }
 
+    /**
+     * ConnectionFactory to obtain connection to PubSub Service. If non provided the default will be used.
+     */
     public GooglePubsubConnectionFactory getConnectionFactory() {
-        return connectionFactory;
+        return (null == connectionFactory)
+                ? getComponent().getConnectionFactory()
+                : connectionFactory;
     }
 
     public void setConnectionFactory(GooglePubsubConnectionFactory connectionFactory) {

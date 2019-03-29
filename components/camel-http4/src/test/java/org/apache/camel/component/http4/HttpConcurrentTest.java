@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -40,9 +40,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class HttpConcurrentTest extends BaseHttpTest {
 
     private final AtomicInteger counter = new AtomicInteger();
@@ -99,7 +96,7 @@ public class HttpConcurrentTest extends BaseHttpTest {
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         // we access the responses Map below only inside the main thread,
         // so no need for a thread-safe Map implementation
-        Map<Integer, Future<String>> responses = new HashMap<Integer, Future<String>>();
+        Map<Integer, Future<String>> responses = new HashMap<>();
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {
@@ -113,7 +110,7 @@ public class HttpConcurrentTest extends BaseHttpTest {
         assertEquals(files, responses.size());
 
         // get all responses
-        Set<String> unique = new HashSet<String>();
+        Set<String> unique = new HashSet<>();
         for (Future<String> future : responses.values()) {
             unique.add(future.get());
         }

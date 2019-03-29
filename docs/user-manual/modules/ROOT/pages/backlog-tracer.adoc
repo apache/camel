@@ -1,0 +1,114 @@
+[[BacklogTracer-BacklogTracerInterceptor]]
+=== BacklogTracer Interceptor
+
+*Available as of Camel 2.11*
+
+Camel supports a backlog tracer interceptor that is used for capturing a
+trace message of each message as they are routed in Camel. +
+ The trace message is stored in a backlog queue, which contains the last
+N messages for each node in the routes (by default 10).
+
+The BacklogTracer is an InterceptStrategy which can be applied to a
+DefaultCamelContext or SpringCamelContext to ensure that there is a
+TracerInterceptor created for every node in the DSL.
+
+You can enable or disable the BacklogTracer's logging dynamically, by
+calling the backlogTracer's `setEnabled` method.
+
+[[BacklogTracer-BacklogTracerDifference]]
+==== What is the difference between BacklogTracer and Tracer
+
+Camel also provides a link:tracer.html[Tracer] which has similar
+capabilities as this backlog tracer. The difference is that the backlog
+tracer is storing +
+ a capture of the message in an internal backlog queue. Where as the
+link:tracer.html[Tracer] is event based and logs the messages as they
+happen (or route to another Camel destination). Also the
+link:tracer.html[Tracer] has more fine grained events where it dives
+into link:enterprise-integration-patterns.adoc[EIP]s such as the
+link:content-based-router.html[Content Based Router] and traces the
+when/otherwise(s). Though the link:tracer.html[Tracer] has much more
+complicated logic to handle this (there is some edge-cases where this
+may not work). The BacklogTracer allows you to pull the messages from
+the backlog queues on demand. The BacklogTracer works better with JMX
+capable tooling as it is simpler and allow to bulk dump all its traced
+messages in either a POJO or XML format. And there is a Karaf command
+for the BacklogTracer which allows you to control the tracing from a
+Karaf shell.
+
+[[BacklogTracer-Options]]
+==== Options
+
+[width="100%",cols="10%,90%",options="header",]
+|===
+
+|Option |Default |Description
+
+|enabled |`false` |Flag to enable or disable this tracer
+
+|backlogSize |`1000` |Maximum number of total traced messages to keep in the backlog (FIFO
+queue).
+
+|tracePattern |`null` |Allows to filter tracing using a pattern that matches against the node
+id and route id. For example use `"to1,to2"` to match only nodes with
+either the name "to1", or "to2". You can use * for wildcards. So you can
+do "to*" to match any to. Or use "route-foo*" to match any foo routes.
+
+|traceFilter |`null` |Allow to configure a filter as a link:predicate.html[Predicate] using
+any of the Camel link:languages.adoc[languages]. But default the
+<<simple-language,Simple>> language is used. For example to filter on
+messages with a given header, use `${header.foo} != null`. To use
+link:groovy.html[Groovy] then prefix the value with "groovy:". And
+similar for the other languages.
+
+|removeOnDump |`true` |Whether to remove the traced messages that was returned when invoking
+the dump methods.
+
+|bodyMaxChars |`128kb` |To limit the message body to a maximum size in the traced message. Use 0
+or negative value to use unlimited size.
+
+|bodyIncludeStreams |`false` |Whether to include the message body of stream based messages. If enabled
+then beware the stream may not be re-readable later. See more about
+link:stream-caching.adoc[Stream Caching].
+
+|bodyIncludeFiles |`true` |Whether to include the message body of file based messages. The overhead
+is that the file content has to be read from the file.
+|===
+
+[[BacklogTracer-Operations]]
+==== Operations
+
+[width="100%",cols="10%,90%",options="header",]
+|===
+
+|Option |Default |Description
+
+|getTraceCounter |`long` |Gets the total number of traced messages.
+
+|resetTraceCounter |`void` |To reset the trace counter.
+
+|dumpTracedMessages(nodeOrRouteId) |`List<BacklogTracerEventMessage>` |To dump the traced messages from the give node or route id.
+
+|dumpTracedMessagesAsXml(nodeOrRouteId) |`String` |To dump the traced messages from the give node or route id in XML
+format.
+
+|dumpAllTracedMessages |`List<BacklogTracerEventMessage>` |To dump all the traced messages
+
+|dumpAllTracedMessagesAsXml |`String` |To dump all the traced messages in XML format.
+
+|===
+
+[[BacklogTracer-Enabling]]
+==== Enabling
+
+You would need to enable this using the JMX API.
+
+[[BacklogTracer-SeeAlso]]
+==== See Also
+
+* link:tracer.html[Tracer]
+* link:tracer-example.html[Tracer Example]
+* link:debugger.adoc[Debugger]
+* link:delay-interceptor.adoc[Delay Interceptor]
+* <<log-component,Log>>
+

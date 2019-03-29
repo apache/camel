@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -30,13 +31,14 @@ public class RemoveHeadersExcludeTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/processor/camel-context.xml");
     }
 
+    @Test
     public void testRemoveHeadersWithExcludePatterns() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);
         mockEndpoint.expectedHeaderReceived("header1", "value1");
         mockEndpoint.expectedHeaderReceived("header3", "value3");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("header1", "value1");
         headers.put("header2", "value2");
         headers.put("header3", "value3");

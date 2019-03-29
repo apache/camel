@@ -1,0 +1,23 @@
+{
+  "ok": true,
+  "result": {
+    "message_id": 33,
+    "from": {
+      "id": 665977497,
+      "is_bot": true,
+      "first_name": "camelbot",
+      "username": "camel_component_bot"
+    },
+    "chat": {
+      "id": -182520913,
+      "title": "testgroup",
+      "type": "group",
+      "all_members_are_administrators": true
+    },
+    "date": 1548091564,
+    "location": {
+      "latitude": 59.9386292,
+      "longitude": 30.3141308
+    }
+  }
+}

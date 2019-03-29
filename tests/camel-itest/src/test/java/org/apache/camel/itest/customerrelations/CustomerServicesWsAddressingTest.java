@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,6 @@
  */
 package org.apache.camel.itest.customerrelations;
 import org.apache.camel.util.IOHelper;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

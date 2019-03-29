@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,6 +22,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.net.SocketFactory;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -32,13 +33,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockftpserver.fake.FakeFtpServer;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import static org.mockito.Matchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 public class FtpInitialConnectTimeoutTest extends CamelTestSupport {
@@ -52,7 +53,7 @@ public class FtpInitialConnectTimeoutTest extends CamelTestSupport {
 
         @Override
         public Socket answer(InvocationOnMock invocation) throws Throwable {
-            final Socket socket = Mockito.spy(new Socket());
+            final Socket socket = spy(new Socket());
             final AtomicBoolean timeout = new AtomicBoolean();
 
             try {
@@ -79,7 +80,7 @@ public class FtpInitialConnectTimeoutTest extends CamelTestSupport {
             }
 
             try {
-                doAnswer(new Answer() {
+                doAnswer(new Answer<Object>() {
                     @Override
                     public Object answer(InvocationOnMock invocation) throws Throwable {
                         if ((Integer) invocation.getArguments()[0] == CONNECT_TIMEOUT) {

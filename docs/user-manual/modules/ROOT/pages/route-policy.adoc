@@ -1,0 +1,227 @@
+[[RoutePolicy-RoutePolicy]]
+=== RoutePolicy
+
+*Available as of Camel 2.1*
+
+A route policy *`org.apache.camel.spi.RoutePolicy`* is used to control
+route(s) at runtime. For example you can use it to determine whether a
+route should be running or not. However the policies can support any
+kind of use cases.
+
+[[RoutePolicy-Howitworks]]
+==== How it works
+
+You associate a route with a given *`RoutePolicy`* and then during
+runtime Camel will invoke callbacks on this policy where you can
+implement your custom logic. Camel provides a support class that is a
+good base class to extend *`org.apache.camel.impl.RoutePolicySupport`*.
+
+There are these callbacks invoked:
+
+* `onInit` *Camel 2.3*
+* `onRemove` *Camel 2.9*
+* `onStart` *Camel 2.9*
+* `onStop` *Camel 2.9*
+* `onSuspend` *Camel 2.9*
+* `onResume` *Camel 2.9*
+* `onExchangeBegin`
+* `onExchangeDone`
+
+See the Javadoc of the *`org.apache.camel.spi.RoutePolicy`* for more
+details. And also the implementation of the
+*`org.apache.camel.impl.ThrottlingInflightRoutePolicy`* for a concrete
+example.
+
+Camel provides the following policies out of the box:
+
+* *`org.apache.camel.impl.ThrottlingInflightRoutePolicy`* - a throttling
+based policy that automatic suspends/resumes route(s) based on metrics
+from the current in flight exchanges. You can use this to dynamically
+throttle e.g. a link:jms.html[JMS] consumer, to avoid it consuming too
+fast.
+
+As of *Camel 2.5*, Camel also provides an ability to schedule routes to
+be activated, deactivated, suspended and/or resumed at certain times
+during the day using a
+link:scheduledroutepolicy.html[ScheduledRoutePolicy] (offered via the
+http://camel.apache.org/quartz.html[camel-quartz] component).
+
+[[RoutePolicy-SuspendableService]]
+==== SuspendableService
+
+If you want to dynamic suspend/resume routes as the
+*`org.apache.camel.impl.ThrottlingRoutePolicy`* does then its advised to
+use *`org.apache.camel.SuspendableService`* as it allows for fine
+grained *`suspend`* and *`resume`* operations. And use the
+*`org.apache.camel.util.ServiceHelper`* to aid when invoking these
+operations as it support fallback for regular
+*`org.apache.camel.Service`* instances.
+
+[[RoutePolicy-ThrottlingInflightRoutePolicy]]
+==== `ThrottlingInflightRoutePolicy`
+
+The *`ThrottlingInflightRoutePolicy`* is triggered when an
+link:exchange.adoc[Exchange] is complete, which means that it requires
+at least one link:exchange.adoc[Exchange] to be complete before it
+_works_.
+
+The throttling inflight route policy has the following options:
+
+[width="100%",cols="10%,90%",options="header",]
+|===
+
+|Option |Default |Description
+
+|`scope` |`Route` |A scope for either *`Route`* or *`Context`* which defines if the current
+number of inflight exchanges is context based or for that particular
+route.
+
+|`maxInflightExchanges` |`1000` |The maximum threshold when the throttling will start to suspend the
+route if the current number of inflight exchanges is higher than this
+value.
+
+|`resumePercentOfMax` |`70` |A percentage *`0..100`* which defines when the throttling should resume
+again in case it has been suspended.
+
+|`loggingLevel` |`INFO` |The logging level used for logging the throttling activity.
+
+|`logger` |`ThrottlingInflightRoutePolicy` |The logger category.
+|===
+
+[[RoutePolicy-ThrottlingInflightRoutePolicy]]
+====  ThrottlingInflightRoutePolicy compared to the Throttler EIP
+
+The *`ThrottlingInflightRoutePolicy`* compared to
+link:throttler.html[Throttler] is that it does *not* block during
+throttling. It does throttling that is approximate based, meaning that
+its more coarse grained and not explicit precise as the
+link:throttler.html[Throttler]. The link:throttler.html[Throttler] can
+be much more accurate and only allow a specific number of messages being
+passed per a given time unit. Also the *`ThrottlingInflightRoutePolicy`*
+is based its metrics on number of inflight exchanges where as
+link:throttler.html[Throttler] is based on number of messages per time
+unit.
+
+[[RoutePolicy-ScheduledRoutePolicy(SimpleandCronbased)usingcamelQuartz]]
+==== `ScheduledRoutePolicy` (Simple and Cron based) using camel Quartz
+
+For more details check out the following links
+
+[[RoutePolicy-ConfiguringPolicy]]
+==== Configuring Policy
+
+You configure the route policy as follows from Java DSL, using the
+*`routePolicy`* method:
+
+[source,java]
+-----------------------------------------------------------
+  RoutePolicy myPolicy = new MyRoutePolicy();
+  from("seda:foo").routePolicy(myPolicy).to("mock:result");
+-----------------------------------------------------------
+
+In Spring XML its a bit different as follows using the
+*`routePolicyRef`* attribute:
+
+[source,java]
+---------------------------------------------------------
+<bean id="myPolicy" class="com.mycompany.MyRoutePolicy"/>
+   
+<route routePolicyRef="myPolicy">
+    <from uri="seda:foo"/>
+    <to uri="mock:result"/>
+</route>
+---------------------------------------------------------
+
+[[RoutePolicy-ConfiguringPolicySets]]
+==== Configuring Policy Sets
+
+*Available as of Camel 2.7*
+
+*`RoutePolicy`* has been further improved to allow addition of policy
+sets or a collection of policies that are concurrently applied on a
+route. The addition of policies is done as follows.
+
+In the example below, the route *`testRoute`* has a *`startPolicy`*
+and *`throttlePolicy`* applied concurrently. Both policies are applied
+as necessary on the route.
+
+[source,java]
+----------------------------------------------------------------------------------------------
+<bean id="date" class="org.apache.camel.routepolicy.quartz.SimpleDate"/>
+
+<bean id="startPolicy" class="org.apache.camel.routepolicy.quartz.SimpleScheduledRoutePolicy">
+  <property name="routeStartDate" ref="date"/>
+  <property name="routeStartRepeatCount" value="1"/>
+  <property name="routeStartRepeatInterval" value="3000"/>        
+</bean>
+
+<bean id="throttlePolicy" class="org.apache.camel.impl.ThrottlingInflightRoutePolicy">
+  <property name="maxInflightExchanges" value="10"/>        
+</bean>
+         
+<camelContext id="testRouteContext" xmlns="http://camel.apache.org/schema/spring">
+  <route id="testRoute" autoStartup="false" routePolicyRef="startPolicy, throttlePolicy">
+    <from uri="seda:foo?concurrentConsumers=20"/>
+    <to uri="mock:result"/>
+  </route>
+</camelContext>
+----------------------------------------------------------------------------------------------
+
+[[RoutePolicy-UsingRoutePolicyFactory]]
+==== Using `RoutePolicyFactory`
+
+*Available as of Camel 2.14*
+
+If you want to use a route policy for every route, you can use
+a *`org.apache.camel.spi.RoutePolicyFactory`* as a factory for creating
+a *`RoutePolicy`* instance for each route. This can be used when you
+want to use the same kind of route policy for every routes. Then you
+need to only configure the factory once, and every route created will
+have the policy assigned.
+
+There is API on CamelContext to add a factory, as shown below
+
+[source,java]
+----------------------------------------------------------
+context.addRoutePolicyFactory(new MyRoutePolicyFactory());
+----------------------------------------------------------
+
+And from XML DSL you just define a *`<bean>`* with the factory
+
+[source,java]
+----------------------------------------------------------------------
+<bean id="myRoutePolicyFactory" class="com.foo.MyRoutePolicyFactory"/>
+----------------------------------------------------------------------
+
+The factory has a single method that creates the route policy
+
+[source,java]
+------------------------------------------------------------------------------------------------------------------------
+    /**
+     * Creates a new {@link org.apache.camel.spi.RoutePolicy} which will be assigned to the given route.
+     *
+     * @param camelContext the camel context
+     * @param routeId      the route id
+     * @param route        the route definition
+     * @return the created {@link org.apache.camel.spi.RoutePolicy}, or <tt>null</tt> to not use a policy for this route
+     */
+    RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route);
+------------------------------------------------------------------------------------------------------------------------
+
+Note you can have as many route policy factories as you want. Just call
+the *`addRoutePolicyFactory`* again, or declare the other factories
+as *`<bean>`* in XML.
+
+[[RoutePolicy-SeeAlso]]
+==== See Also
+
+* link:route-throttling-example.html[Route Throttling Example] for an
+example using this in practice with
+the *`ThrottlingInflightRoutePolicy`*
+* link:scheduledroutepolicy.html[ScheduledRoutePolicy] for information
+on policy based scheduling capability for camel routes
+* link:metrics-component.html[MetricsRoutePolicyFactory] for information
+on a policy using the metrics component to expose route statistics using
+the metrics library.
+* link:architecture.html[Architecture]
+

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.dropbox.util;
 
-public final class DropboxConstants {
+public interface DropboxConstants {
 
-    public static final String DROPBOX_FILE_SEPARATOR = "/";
-    public static final long POLL_CONSUMER_DELAY = 60 * 60 * 1000L;
+    String DROPBOX_FILE_SEPARATOR = "/";
+    long POLL_CONSUMER_DELAY = 60 * 60 * 1000L;
 
-    private DropboxConstants() { }
-
+    String HEADER_REMOTE_PATH = "CamelDropboxRemotePath";
+    String HEADER_NEW_REMOTE_PATH = "CamelDropboxNewRemotePath";
+    String HEADER_LOCAL_PATH = "CamelDropboxLocalPath";
+    String HEADER_UPLOAD_MODE = "CamelDropboxUploadMode";
+    String HEADER_QUERY = "CamelDropboxQuery";
+    String HEADER_PUT_FILE_NAME = "CamelDropboxPutFileName";
 }

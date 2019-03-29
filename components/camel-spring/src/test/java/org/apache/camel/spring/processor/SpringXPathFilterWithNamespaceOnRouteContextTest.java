@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.processor;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.XPathFilterTest;
+import org.junit.Before;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
@@ -27,7 +27,8 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 public class SpringXPathFilterWithNamespaceOnRouteContextTest extends XPathFilterTest {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         matchingBody = "<person name='James' city='London' xmlns='http://example.com/person'/>";
         super.setUp();
     }

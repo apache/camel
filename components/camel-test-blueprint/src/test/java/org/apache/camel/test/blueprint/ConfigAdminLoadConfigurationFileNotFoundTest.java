@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.test.blueprint;
+import org.junit.Before;
 
 import org.junit.Test;
 
@@ -29,6 +30,7 @@ public class ConfigAdminLoadConfigurationFileNotFoundTest extends CamelBlueprint
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         try {
             super.setUp();

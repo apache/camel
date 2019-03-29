@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -111,16 +111,8 @@ public class BindySimpleKeyValuePairFixTest extends AbstractJUnit4SpringContextT
             return id;
         }
 
-        public void setId(String id) {
-            id = id;
-        }
-
         public String getProduct() {
             return product;
-        }
-
-        public void setProduct(String product) {
-            this.product = product;
         }
 
         public String getQuantity() {

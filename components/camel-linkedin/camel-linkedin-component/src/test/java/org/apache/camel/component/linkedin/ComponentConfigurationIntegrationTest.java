@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,8 +26,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.linkedin.internal.CommentsResourceApiMethod;
-import org.apache.camel.component.linkedin.internal.LinkedInApiCollection;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +48,7 @@ public class ComponentConfigurationIntegrationTest extends AbstractLinkedInTestS
 
     @Test
     public void testGetComment() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.comment_id", "123");
         // parameter type is String

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,8 +21,8 @@ import java.io.IOException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultExchangeHolder;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.DefaultExchangeHolder;
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtbuf.DataByteArrayInputStream;
 import org.fusesource.hawtbuf.DataByteArrayOutputStream;
@@ -30,13 +30,10 @@ import org.fusesource.hawtbuf.codec.Codec;
 import org.fusesource.hawtbuf.codec.ObjectCodec;
 import org.fusesource.hawtbuf.codec.StringCodec;
 
-/**
- * @version 
- */
 public final class LevelDBCamelCodec {
 
     private Codec<String> keyCodec = new StringCodec();
-    private Codec<DefaultExchangeHolder> exchangeCodec = new ObjectCodec<DefaultExchangeHolder>();
+    private Codec<DefaultExchangeHolder> exchangeCodec = new ObjectCodec<>();
 
     public Buffer marshallKey(String key) throws IOException {
         DataByteArrayOutputStream baos = new DataByteArrayOutputStream();

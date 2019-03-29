@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,18 +19,22 @@ package org.apache.camel.component.websocket;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.DispatcherType;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.StringHelper;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
@@ -38,11 +42,9 @@ import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.SessionManager;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
-import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -56,33 +58,45 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WebsocketComponent extends UriEndpointComponent {
+@Component("websocket")
+public class WebsocketComponent extends DefaultComponent implements SSLContextParametersAware {
 
     protected static final Logger LOG = LoggerFactory.getLogger(WebsocketComponent.class);
-    protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<String, ConnectorRef>();
+    protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<>();
 
-    protected SSLContextParameters sslContextParameters;
-    protected MBeanContainer mbContainer;
-    protected ThreadPool threadPool;
-
-    protected Integer port = 9292;
-    protected Integer minThreads;
-    protected Integer maxThreads;
-
-    protected boolean enableJmx;
-
-    protected String host = "0.0.0.0";
-    protected String staticResources;
+    protected Map<String, WebSocketFactory> socketFactory;
     protected Server staticResourcesServer;
+    protected MBeanContainer mbContainer;
+
+    @Metadata(label = "security")
+    protected SSLContextParameters sslContextParameters;
+    @Metadata(label = "security", defaultValue = "false")
+    protected boolean useGlobalSslContextParameters;
+    @Metadata(label = "advanced")
+    protected ThreadPool threadPool;
+    @Metadata(defaultValue = "9292")
+    protected Integer port = 9292;
+    @Metadata(label = "advanced")
+    protected Integer minThreads;
+    @Metadata(label = "advanced")
+    protected Integer maxThreads;
+    @Metadata(label = "advanced")
+    protected boolean enableJmx;
+    @Metadata(defaultValue = "0.0.0.0")
+    protected String host = "0.0.0.0";
+    @Metadata(label = "consumer")
+    protected String staticResources;
+    @Metadata(label = "security", secret = true)
     protected String sslKeyPassword;
+    @Metadata(label = "security", secret = true)
     protected String sslPassword;
+    @Metadata(label = "security", secret = true)
     protected String sslKeystore;
-    protected Map<String, WebSocketFactory> socketFactory; 
 
     /**
      * Map for storing servlets. {@link WebsocketComponentServlet} is identified by pathSpec {@link String}.
      */
-    private Map<String, WebsocketComponentServlet> servlets = new HashMap<String, WebsocketComponentServlet>();
+    private Map<String, WebsocketComponentServlet> servlets = new HashMap<>();
 
     class ConnectorRef {
         Server server;
@@ -113,10 +127,10 @@ public class WebsocketComponent extends UriEndpointComponent {
     }
 
     public WebsocketComponent() {
-        super(WebsocketEndpoint.class);
+        super();
 
         if (this.socketFactory == null) {
-            this.socketFactory = new HashMap<String, WebSocketFactory>();
+            this.socketFactory = new HashMap<>();
             this.socketFactory.put("default", new DefaultWebsocketFactory());
         }
     }
@@ -269,11 +283,8 @@ public class WebsocketComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        // TODO cmueller: remove the "sslContextParametersRef" look up in Camel 3.0
-        SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
-        if (sslContextParameters == null) {
-            sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
-        }
+        SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
+
         Boolean enableJmx = getAndRemoveParameter(parameters, "enableJmx", Boolean.class);
         String staticResources = getAndRemoveParameter(parameters, "staticResources", String.class);
         int port = extractPortNumber(remaining);
@@ -287,19 +298,13 @@ public class WebsocketComponent extends UriEndpointComponent {
             endpoint.setEnableJmx(isEnableJmx());
         }
 
-        /*
-        if (sslContextParameters == null) {
-            sslContextParameters = this.sslContextParameters;
-        } */
-
         // prefer to use endpoint configured over component configured
         if (sslContextParameters == null) {
             // fallback to component configured
             sslContextParameters = getSslContextParameters();
         }
-
-        if (sslContextParameters != null) {
-            endpoint.setSslContextParameters(sslContextParameters);
+        if (sslContextParameters == null) {
+            sslContextParameters = retrieveGlobalSslContextParameters();
         }
 
         // prefer to use endpoint configured over component configured
@@ -382,8 +387,7 @@ public class WebsocketComponent extends UriEndpointComponent {
 
         context.setContextPath("/");
 
-        SessionManager sm = new HashSessionManager();
-        SessionHandler sh = new SessionHandler(sm);
+        SessionHandler sh = new SessionHandler();
         context.setSessionHandler(sh);
 
         if (home != null) {
@@ -393,10 +397,7 @@ public class WebsocketComponent extends UriEndpointComponent {
             }
 
             if (resources[0].equals("classpath")) {
-                // Does not work when deployed as a bundle
-                // context.setBaseResource(new JettyClassPathResource(getCamelContext().getClassResolver(), resources[1]));
-                URL url = this.getCamelContext().getClassResolver().loadResourceAsURL(resources[1]);
-                context.setBaseResource(Resource.newResource(url));
+                context.setBaseResource(new JettyClassPathResource(getCamelContext().getClassResolver(), resources[1]));
             } else if (resources[0].equals("file")) {
                 context.setBaseResource(Resource.newResource(resources[1]));
             }
@@ -451,7 +452,7 @@ public class WebsocketComponent extends UriEndpointComponent {
     }
 
     protected WebsocketComponentServlet createServlet(NodeSynchronization sync, String pathSpec, Map<String, WebsocketComponentServlet> servlets, ServletContextHandler handler) {
-        WebsocketComponentServlet servlet = new WebsocketComponentServlet(sync, socketFactory);
+        WebsocketComponentServlet servlet = new WebsocketComponentServlet(sync, pathSpec, socketFactory);
         servlets.put(pathSpec, servlet);
         ServletHolder servletHolder = new ServletHolder(servlet);
         servletHolder.getInitParameters().putAll(handler.getInitParams());
@@ -545,7 +546,7 @@ public class WebsocketComponent extends UriEndpointComponent {
         return false;
     }
 
-    private static String createPathSpec(String remaining) {
+    public static String createPathSpec(String remaining) {
         // Is not correct as it does not support to add port in the URI
         //return String.format("/%s/*", remaining);
 
@@ -737,6 +738,19 @@ public class WebsocketComponent extends UriEndpointComponent {
         this.sslContextParameters = sslContextParameters;
     }
 
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
     public Map<String, WebSocketFactory> getSocketFactory() {
         return socketFactory;
     }
@@ -764,10 +778,10 @@ public class WebsocketComponent extends UriEndpointComponent {
 
         if (staticResources != null) {
             // host and port must be configured
-            ObjectHelper.notEmpty(host, "host", this);
+            StringHelper.notEmpty(host, "host", this);
             ObjectHelper.notNull(port, "port", this);
 
-            LOG.info("Starting static resources server {}:{} with static resource: {}", new Object[]{host, port, staticResources});
+            LOG.info("Starting static resources server {}:{} with static resource: {}", host, port, staticResources);
             ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
             staticResourcesServer = createStaticResourcesServer(context, host, port, staticResources);
             staticResourcesServer.start();
@@ -801,7 +815,7 @@ public class WebsocketComponent extends UriEndpointComponent {
         CONNECTORS.clear();
 
         if (staticResourcesServer != null) {
-            LOG.info("Stopping static resources server {}:{} with static resource: {}", new Object[]{host, port, staticResources});
+            LOG.info("Stopping static resources server {}:{} with static resource: {}", host, port, staticResources);
             staticResourcesServer.stop();
             staticResourcesServer.destroy();
             staticResourcesServer = null;

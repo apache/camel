@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,7 @@ import java.util.Collection;
 import org.apache.camel.component.pdf.PdfConfiguration;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 
 /**
  * Writes given lines to PDF document. If document already contains some text then new text will be appended

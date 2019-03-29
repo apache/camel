@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,12 +16,49 @@
  */
 package org.apache.camel.component.salesforce.internal.processor;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Service;
 
 public interface SalesforceProcessor extends Service {
 
     boolean process(Exchange exchange, AsyncCallback callback);
+
+    default Map<String, List<String>> determineHeaders(final Exchange exchange) {
+        final Message inboundMessage = exchange.getIn();
+
+        final Map<String, Object> headers = inboundMessage.getHeaders();
+
+        final Map<String, List<String>> answer = new HashMap<>();
+        for (final String headerName : headers.keySet()) {
+            final String headerNameLowercase = headerName.toLowerCase(Locale.US);
+            if (headerNameLowercase.startsWith("sforce") || headerNameLowercase.startsWith("x-sfdc")) {
+                final Object headerValue = inboundMessage.getHeader(headerName);
+
+                if (headerValue instanceof String) {
+                    answer.put(headerName, Collections.singletonList((String) headerValue));
+                } else if (headerValue instanceof String[]) {
+                    answer.put(headerName, Arrays.asList((String[]) headerValue));
+                } else if (headerValue instanceof Collection) {
+                    Collection<?> collection = (Collection<?>) headerValue;
+                    answer.put(headerName, collection.stream().map(String.class::cast).collect(Collectors.toList()));
+                } else {
+                    answer.put(headerName, Collections.singletonList(String.valueOf(headerValue)));
+                }
+            }
+        }
+
+        return answer;
+    }
 
 }

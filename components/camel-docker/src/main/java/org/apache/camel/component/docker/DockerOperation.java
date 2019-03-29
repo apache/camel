@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -219,7 +219,7 @@ public enum DockerOperation {
         this.canProduce = canProduce;
         this.async = async;
 
-        parameters = new HashMap<String, Class<?>>();
+        parameters = new HashMap<>();
 
         if (params.length > 0) {
 

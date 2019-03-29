@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,8 +23,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * An example POJO which is injected with a CamelTemplate
- * 
- * @version 
  */
 public class MySender {
     @EndpointInject(uri = "mock:a")

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,7 +35,7 @@ public abstract class SolrTestSupport extends CamelTestSupport {
     protected static int getPort() {
         return port;
     }
-    
+
     protected static int getHttpsPort() {
         return httpsPort;
     }

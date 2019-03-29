@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,9 +26,6 @@ import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class XMLSecurityConcurrencyTest extends CamelTestSupport {
     private static final boolean HAS_3DES;
     static {

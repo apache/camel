@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -103,7 +103,7 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(null);
                 exchange.getIn().setHeader("from", "me");
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 list.add("foo");
                 list.add("bar");
                 exchange.getIn().setHeader("to", list);

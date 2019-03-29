@@ -1,0 +1,90 @@
+[[Binding-Binding]]
+=== Binding
+
+In Camel terms a _binding_ is a way of wrapping an
+link:endpoint.html[Endpoint] in a contract; such as a
+link:data-format.html[Data Format], a link:content-enricher.html[Content
+Enricher] or validation step. Bindings are completely optional and you
+can choose to use them on any link:components.html[camel endpoint].
+
+Bindings are inspired by the work of
+http://www.jboss.org/switchyard[SwitchYard project] adding service
+contracts to various technologies like Camel and many others. But rather
+than the SwitchYard approach of wrapping Camel in SCA, _Camel Bindings_
+provide a way of wrapping Camel endpoints with contracts inside the
+Camel framework itself; so you can use them easily inside any Camel
+route.
+
+[[Binding-UsingBindings]]
+==== Using Bindings
+
+A Binding is currently a bean which defines the contract (though we'll
+hopefully add bindings to the Camel DSL).
+
+There are a few approaches to defining a bound endpoint (i.e. an
+endpoint bound with a Binding).
+
+[[Binding-UsingthebindingURI]]
+==== Using the binding URI
+
+You can prefix any endpoint URI with *binding:nameOfBinding:* where
+_nameOfBinding_ is the name of the Binding bean in your registry.
+
+[source,java]
+------------------------------------------------------------------------------
+from("binding:jaxb:activemq:myQueue").to("binding:jaxb:activemq:anotherQueue")
+------------------------------------------------------------------------------
+
+Here we are using the "jaxb" binding which may, for example, use the
+JAXB link:data-format.html[Data Format] to marshal and unmarshal
+messages.
+
+[[Binding-UsingaBindingComponent]]
+==== Using a BindingComponent
+
+There is a link:component.html[Component] called BindingComponent which
+can be configured in your link:registry.html[Registry] by dependency
+injection which allows the creation of endpoints which are already bound
+to some binding.
+
+For example if you registered a new component called "jsonmq" in your
+registry using code like this
+
+[source,java]
+-----------------------------------------------------------------------------------------------------
+        JacksonDataFormat format = new JacksonDataFormat(MyBean.class);
+        context.bind("jsonmq", new BindingComponent(new DataFormatBinding(format), "activemq:foo."));
+-----------------------------------------------------------------------------------------------------
+
+Then you could use the endpoint as if it were any other endpoint.
+
+[source,java]
+------------------------------------------------
+from("jsonmq:myQueue").to("jsonmq:anotherQueue")
+------------------------------------------------
+
+This would use the queues "foo.myQueue" and "foo.anotherQueue" and would
+use the given Jackson link:data-format.html[Data Format] to marshal on
+and off the queue.
+
+[[Binding-WhentouseBindings]]
+==== When to use Bindings
+
+If you only use an endpoint once in a single route; a binding may
+actually be more complex and more work than just using the 'raw'
+endpoint directly and using explicit marshalling and validation in the
+camel route as normal.
+
+However bindings can help when you are composing many routes together;
+or using a single route as a 'template' that is configured input and
+output endpoints; bindings then provide a nice way to wrap up a contract
+and endpoint together.
+
+Another good use case for bindings is when you are using many endpoints
+which use the same binding; rather than always having to mention a
+specific data format or validation rule, you can just use the
+BindingComponent to wrap the endpoints in the binding of your choice.
+
+So bindings are a composition tool really; only use them when they make
+sense - the extra complexity may not be worth it unless you have lots of
+routes or endpoints.

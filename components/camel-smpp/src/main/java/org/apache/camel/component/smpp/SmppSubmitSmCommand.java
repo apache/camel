@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -44,7 +44,7 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
     @Override
     public void execute(Exchange exchange) throws SmppException {
         SubmitSm[] submitSms = createSubmitSm(exchange);
-        List<String> messageIDs = new ArrayList<String>(submitSms.length);
+        List<String> messageIDs = new ArrayList<>(submitSms.length);
         
         for (int i = 0; i < submitSms.length; i++) {
             SubmitSm submitSm = submitSms[i];
@@ -95,8 +95,11 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
         SubmitSm template = createSubmitSmTemplate(exchange);
         byte[][] segments = splitBody(exchange.getIn());
 
-        // multipart message
-        if (segments.length > 1) {
+        ESMClass esmClass = exchange.getIn().getHeader(SmppConstants.ESM_CLASS, ESMClass.class);
+        if (null != esmClass) {
+            template.setEsmClass(esmClass.value());
+            // multipart message
+        } else if (segments.length > 1) {
             template.setEsmClass(new ESMClass(MessageMode.DEFAULT, MessageType.DEFAULT, GSMSpecificFeature.UDHI).value());
         }
 

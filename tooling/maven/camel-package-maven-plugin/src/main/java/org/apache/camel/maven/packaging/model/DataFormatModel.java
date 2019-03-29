@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,20 +19,36 @@ package org.apache.camel.maven.packaging.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.maven.packaging.StringHelper;
+
+import static org.apache.camel.maven.packaging.StringHelper.cutLastZeroDigit;
+
 public class DataFormatModel {
+
+    private final boolean coreOnly;
 
     private String kind;
     private String name;
     private String modelName;
     private String title;
     private String description;
+    private String firstVersion;
     private String label;
     private String deprecated;
+    private String deprecationNote;
     private String javaType;
     private String groupId;
     private String artifactId;
     private String version;
-    private final List<DataFormatOptionModel> dataFormatOptions = new ArrayList<DataFormatOptionModel>();
+    private final List<DataFormatOptionModel> dataFormatOptions = new ArrayList<>();
+
+    public DataFormatModel() {
+        this(false);
+    }
+
+    public DataFormatModel(boolean coreOnly) {
+        this.coreOnly = coreOnly;
+    }
 
     public String getKind() {
         return kind;
@@ -74,6 +90,14 @@ public class DataFormatModel {
         this.description = description;
     }
 
+    public String getFirstVersion() {
+        return firstVersion;
+    }
+
+    public void setFirstVersion(String firstVersion) {
+        this.firstVersion = firstVersion;
+    }
+
     public String getLabel() {
         return label;
     }
@@ -88,6 +112,14 @@ public class DataFormatModel {
 
     public void setDeprecated(String deprecated) {
         this.deprecated = deprecated;
+    }
+
+    public String getDeprecationNote() {
+        return deprecationNote;
+    }
+
+    public void setDeprecationNote(String deprecationNote) {
+        this.deprecationNote = deprecationNote;
     }
 
     public String getJavaType() {
@@ -131,27 +163,24 @@ public class DataFormatModel {
     }
 
     public String getShortJavaType() {
-        if (javaType.startsWith("java.util.Map")) {
-            return "Map";
-        } else if (javaType.startsWith("java.util.Set")) {
-            return "Set";
-        } else if (javaType.startsWith("java.util.List")) {
-            return "List";
-        }
-        int pos = javaType.lastIndexOf(".");
-        if (pos != -1) {
-            return javaType.substring(pos + 1);
-        } else {
-            return javaType;
-        }
+        return StringHelper.getClassShortName(javaType);
     }
 
     public String getDocLink() {
+        // special for these components
+        if ("camel-fhir".equals(artifactId)) {
+            return "camel-fhir/camel-fhir-component/src/main/docs";
+        }
+
         if ("camel-core".equals(artifactId)) {
-            return "src/main/docs";
+            return coreOnly ? "src/main/docs" : "../core/camel-core/src/main/docs";
         } else {
             return artifactId + "/src/main/docs";
         }
+    }
+
+    public String getFirstVersionShort() {
+        return cutLastZeroDigit(firstVersion);
     }
 
 }

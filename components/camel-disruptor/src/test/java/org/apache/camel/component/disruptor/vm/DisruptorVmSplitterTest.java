@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.disruptor.vm;
 
 import java.util.Arrays;
@@ -24,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.vm.AbstractVmTestSupport;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 public class DisruptorVmSplitterTest extends AbstractVmTestSupport {
 
@@ -34,6 +34,7 @@ public class DisruptorVmSplitterTest extends AbstractVmTestSupport {
     }
 
 
+    @Test
     public void testSplitUsingMethodCall() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("Claus", "James", "Willem");

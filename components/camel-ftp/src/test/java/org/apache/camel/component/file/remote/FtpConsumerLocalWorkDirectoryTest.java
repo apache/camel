@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
@@ -29,14 +30,11 @@ import org.apache.camel.util.FileUtil;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort()
-               + "/lwd/?password=admin&delay=5000&localWorkDirectory=target/lwd&noop=true";
+               + "/lwd/?password=admin&localWorkDirectory=target/lwd&noop=true";
     }
 
     @Override
@@ -50,8 +48,7 @@ public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
 
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want
-        // to unit
-        // test that we can pool
+        // to unit test that we can pool
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World");
@@ -64,14 +61,18 @@ public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
 
     @Test
     public void testLocalWorkDirectory() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
         mock.expectedMessageCount(1);
 
+        context.getRouteController().startRoute("myRoute");
+
         assertMockEndpointsSatisfied();
 
-        // give test some time to close file resources
-        Thread.sleep(6000);
+        assertMockEndpointsSatisfied();
+        assertTrue(notify.matchesMockWaitTime());
 
         // and the out file should exists
         File out = new File("target/out/hello.txt");
@@ -86,14 +87,15 @@ public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl()).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        File body = exchange.getIn().getBody(File.class);
-                        assertNotNull(body);
-                        assertTrue("Local work file should exists", body.exists());
-                        assertEquals(FileUtil.normalizePath("target/lwd/hello.txt"), body.getPath());
-                    }
-                }).to("mock:result", "file://target/out");
+                from(getFtpUrl()).routeId("myRoute").noAutoStartup()
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            File body = exchange.getIn().getBody(File.class);
+                            assertNotNull(body);
+                            assertTrue("Local work file should exists", body.exists());
+                            assertEquals(FileUtil.normalizePath("target/lwd/hello.txt"), body.getPath());
+                        }
+                    }).to("mock:result", "file://target/out");
             }
         };
     }

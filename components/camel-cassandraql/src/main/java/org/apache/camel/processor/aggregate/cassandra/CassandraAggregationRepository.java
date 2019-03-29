@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,7 +35,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -217,7 +217,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     @Override
     public Exchange get(CamelContext camelContext, String key) {
         Object[] pkValues = getPKValues(key);
-        LOGGER.debug("Selecting key {} ", pkValues);
+        LOGGER.debug("Selecting key {}", pkValues);
         Row row = getSession().execute(selectStatement.bind(pkValues)).one();
         Exchange exchange = null;
         if (row != null) {
@@ -254,7 +254,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
             if (row.getString(exchangeIdColumn).equals(exchangeId)) {
                 String key = row.getString(keyColumn);
                 Object[] cqlParams = append(getPKValues(key), exchangeId);
-                LOGGER.debug("Deleting If Id {} ", cqlParams);
+                LOGGER.debug("Deleting If Id {}", cqlParams);
                 getSession().execute(deleteIfIdStatement.bind(cqlParams));
             }
         }
@@ -301,7 +301,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     @Override
     public Set<String> getKeys() {
         List<Row> rows = selectKeyIds();
-        Set<String> keys = new HashSet<String>(rows.size());
+        Set<String> keys = new HashSet<>(rows.size());
         String keyColumnName = getKeyColumn();
         for (Row row : rows) {
             keys.add(row.getString(keyColumnName));
@@ -318,7 +318,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     @Override
     public Set<String> scan(CamelContext camelContext) {
         List<Row> rows = selectKeyIds();
-        Set<String> exchangeIds = new HashSet<String>(rows.size());
+        Set<String> exchangeIds = new HashSet<>(rows.size());
         for (Row row : rows) {
             exchangeIds.add(row.getString(exchangeIdColumn));
         }

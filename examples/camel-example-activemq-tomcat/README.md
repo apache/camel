@@ -3,6 +3,9 @@
 ### Introduction
 This example shows how you can embed Apache ActiveMQ Broker and Camel in a web application, which can run on Apache Tomcat or other web containers.
 
+This example embeds ActiveMQ Broker and a Camel application which will continuously send a message per second to an inbox queue.
+Then another Camel route will route messages from the inbox to the outbox queue.
+
 #### Camel component used in this example
 
 * camel-core
@@ -32,10 +35,6 @@ to the outbox queue.
 The ActiveMQ broker is configured in the `src/main/resources/broker.xml` file.
 And the Camel application in the `src/main/resources/camel-context.xml` file.
 
-### Documentation
-
-This example is documented at
-	[http://camel.apache.org/activemq-camel-tomcat.html](http://camel.apache.org/activemq-camel-tomcat.html)
 
 ### Forum, Help, etc
 

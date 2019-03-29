@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.netty4-http.enabled",
+      "description": "Enable netty4-http component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

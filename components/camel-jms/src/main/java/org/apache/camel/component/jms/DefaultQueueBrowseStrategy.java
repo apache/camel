@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,8 +31,6 @@ import org.springframework.jms.core.JmsOperations;
 
 /**
  * A default implementation of queue browsing using the Spring {@link BrowserCallback}
- *
- * @version 
  */
 public class DefaultQueueBrowseStrategy implements QueueBrowseStrategy {
 
@@ -47,7 +45,7 @@ public class DefaultQueueBrowseStrategy implements QueueBrowseStrategy {
 
                     // not the best implementation in the world as we have to browse
                     // the entire queue, which could be massive
-                    List<Exchange> answer = new ArrayList<Exchange>();
+                    List<Exchange> answer = new ArrayList<>();
                     Enumeration<?> iter = browser.getEnumeration();
                     for (int i = 0; i < size && iter.hasMoreElements(); i++) {
                         Message message = (Message) iter.nextElement();
@@ -67,7 +65,7 @@ public class DefaultQueueBrowseStrategy implements QueueBrowseStrategy {
 
                     // not the best implementation in the world as we have to browse
                     // the entire queue, which could be massive
-                    List<Exchange> answer = new ArrayList<Exchange>();
+                    List<Exchange> answer = new ArrayList<>();
                     Enumeration<?> iter = browser.getEnumeration();
                     for (int i = 0; i < size && iter.hasMoreElements(); i++) {
                         Message message = (Message) iter.nextElement();

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,8 +21,6 @@ import org.apache.camel.spring.Main;
 /**
  * A Main to let you easily start the application from a IDE.
  * Usually you can just right click and choose Run
- *
- * @version 
  */
 public final class MyMain {
 

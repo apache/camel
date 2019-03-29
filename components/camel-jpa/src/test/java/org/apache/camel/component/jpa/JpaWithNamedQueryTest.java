@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,7 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.examples.MultiSteps;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,9 +41,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-/**
- * @version 
- */
 public class JpaWithNamedQueryTest extends Assert {
     
     protected static final Logger LOG = LoggerFactory.getLogger(JpaWithNamedQueryTest.class);
@@ -113,7 +110,10 @@ public class JpaWithNamedQueryTest extends Assert {
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
                 // make use of the EntityManager having the relevant persistence-context
-                EntityManager entityManager2 = receivedExchange.getIn().getHeader(JpaConstants.ENTITYMANAGER, EntityManager.class);
+                EntityManager entityManager2 = receivedExchange.getIn().getHeader(JpaConstants.ENTITY_MANAGER, EntityManager.class);
+                if (!entityManager2.isOpen()) {
+                    entityManager2 = endpoint.getEntityManagerFactory().createEntityManager();
+                }
                 entityManager2.joinTransaction();
 
                 // now lets assert that there are still 2 entities left
@@ -161,7 +161,7 @@ public class JpaWithNamedQueryTest extends Assert {
     @Before
     public void setUp() throws Exception {
         template = camelContext.createProducerTemplate();
-        ServiceHelper.startServices(template, camelContext);
+        ServiceHelper.startService(template, camelContext);
 
         Endpoint value = camelContext.getEndpoint(getEndpointUri());
         assertNotNull("Could not find endpoint!", value);
@@ -169,7 +169,7 @@ public class JpaWithNamedQueryTest extends Assert {
         endpoint = (JpaEndpoint)value;
 
         transactionTemplate = endpoint.createTransactionTemplate();
-        entityManager = endpoint.createEntityManager();
+        entityManager = endpoint.getEntityManagerFactory().createEntityManager();
     }
 
     protected String getEndpointUri() {
@@ -178,6 +178,6 @@ public class JpaWithNamedQueryTest extends Assert {
 
     @After
     public void tearDown() throws Exception {
-        ServiceHelper.stopServices(consumer, template, camelContext);
+        ServiceHelper.stopService(consumer, template, camelContext);
     }
 }

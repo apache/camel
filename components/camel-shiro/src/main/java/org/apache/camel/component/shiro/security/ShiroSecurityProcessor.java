@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,8 +24,8 @@ import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.DelegateAsyncProcessor;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.shiro.SecurityUtils;
@@ -162,7 +162,7 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
                 throw new IncorrectCredentialsException("Authentication Failed. Password for account " + token.getPrincipal() + " was incorrect!", ice.getCause());
             } catch (LockedAccountException lae) {
                 throw new LockedAccountException("Authentication Failed. The account for username " + token.getPrincipal() + " is locked."
-                        + "Please contact your administrator to unlock it.", lae.getCause());
+                        + " Please contact your administrator to unlock it.", lae.getCause());
             } catch (AuthenticationException ae) {
                 throw new AuthenticationException("Authentication Failed.", ae.getCause());
             }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,6 +24,8 @@ import java.util.Set;
  * A configuration bean for a test execution.
  */
 public class ITestConfig implements Serializable {
+
+    private static final int DEFAULT_SPRING_BOOT_MAJOR_VERSION = 2;
 
     private static final long serialVersionUID = -3641997669166217595L;
 
@@ -70,6 +72,8 @@ public class ITestConfig implements Serializable {
     private Set<String> ignoreLibraryMismatch;
 
     private Map<String, String> testLibraryVersions;
+
+    private String springBootVersion;
 
     public ITestConfig() {
     }
@@ -250,32 +254,48 @@ public class ITestConfig implements Serializable {
         this.testLibraryVersions = testLibraryVersions;
     }
 
+    public String getSpringBootVersion() {
+        return springBootVersion;
+    }
+
+    public Integer getSpringBootMajorVersion() {
+        if (springBootVersion != null) {
+            return Integer.parseInt(springBootVersion.substring(0, 1));
+        } else {
+            return DEFAULT_SPRING_BOOT_MAJOR_VERSION;
+        }
+    }
+
+    public void setSpringBootVersion(String springBootVersion) {
+        this.springBootVersion = springBootVersion;
+    }
+
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("ITestConfig{");
-        sb.append("moduleName='").append(moduleName).append('\'');
-        sb.append(", mavenGroup='").append(mavenGroup).append('\'');
-        sb.append(", mavenVersion='").append(mavenVersion).append('\'');
-        sb.append(", mavenOfflineResolution=").append(mavenOfflineResolution);
-        sb.append(", modulesPath='").append(modulesPath).append('\'');
-        sb.append(", moduleBasePath='").append(moduleBasePath).append('\'');
-        sb.append(", includeTestDependencies=").append(includeTestDependencies);
-        sb.append(", includeProvidedDependencies=").append(includeProvidedDependencies);
-        sb.append(", unitTestEnabled=").append(unitTestEnabled);
-        sb.append(", unitTestInclusionPattern='").append(unitTestInclusionPattern).append('\'');
-        sb.append(", unitTestExclusionPattern='").append(unitTestExclusionPattern).append('\'');
-        sb.append(", unitTestBasePackage='").append(unitTestBasePackage).append('\'');
-        sb.append(", unitTestsExpectedNumber=").append(unitTestsExpectedNumber);
-        sb.append(", resources=").append(resources);
-        sb.append(", additionalDependencies=").append(additionalDependencies);
-        sb.append(", mavenExclusions=").append(mavenExclusions);
-        sb.append(", autoStartComponent=").append(autoStartComponent);
-        sb.append(", jmxDisabledNames=").append(jmxDisabledNames);
-        sb.append(", systemProperties=").append(systemProperties);
-        sb.append(", useCustomLog=").append(useCustomLog);
-        sb.append(", ignoreLibraryMismatch=").append(ignoreLibraryMismatch);
-        sb.append(", testLibraryVersions=").append(testLibraryVersions);
-        sb.append('}');
-        return sb.toString();
+        return "ITestConfig{"
+                + "moduleName='" + moduleName + '\''
+                + ", mavenGroup='" + mavenGroup + '\''
+                + ", mavenVersion='" + mavenVersion + '\''
+                + ", mavenOfflineResolution=" + mavenOfflineResolution
+                + ", modulesPath='" + modulesPath + '\''
+                + ", moduleBasePath='" + moduleBasePath + '\''
+                + ", includeTestDependencies=" + includeTestDependencies
+                + ", includeProvidedDependencies=" + includeProvidedDependencies
+                + ", unitTestEnabled=" + unitTestEnabled
+                + ", unitTestInclusionPattern='" + unitTestInclusionPattern + '\''
+                + ", unitTestExclusionPattern='" + unitTestExclusionPattern + '\''
+                + ", unitTestBasePackage='" + unitTestBasePackage + '\''
+                + ", unitTestsExpectedNumber=" + unitTestsExpectedNumber
+                + ", resources=" + resources
+                + ", additionalDependencies=" + additionalDependencies
+                + ", mavenExclusions=" + mavenExclusions
+                + ", autoStartComponent=" + autoStartComponent
+                + ", jmxDisabledNames=" + jmxDisabledNames
+                + ", systemProperties=" + systemProperties
+                + ", useCustomLog=" + useCustomLog
+                + ", ignoreLibraryMismatch=" + ignoreLibraryMismatch
+                + ", testLibraryVersions=" + testLibraryVersions
+                + ", springBootVersion=" + springBootVersion
+                + '}';
     }
 }

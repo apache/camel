@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.disruptor;
 
 import java.util.concurrent.CountDownLatch;
@@ -31,7 +30,7 @@ abstract class AbstractLifecycleAwareExchangeEventHandler implements LifecycleAw
     private volatile CountDownLatch stoppedLatch = new CountDownLatch(1);
 
     @Override
-    public abstract void onEvent(final ExchangeEvent event, long sequence, boolean endOfBatch)
+    public abstract void onEvent(ExchangeEvent event, long sequence, boolean endOfBatch)
         throws Exception;
 
     @Override

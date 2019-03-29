@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.google.calendar;
-
-import java.util.Random;
-
-import com.google.api.services.calendar.model.Calendar;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;

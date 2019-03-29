@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.pdf.enabled",
+      "description": "Enable pdf component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -45,7 +45,7 @@ public class PubsubTestSupport extends CamelTestSupport {
 
     private static Properties loadProperties() {
         Properties testProperties = new Properties();
-        InputStream fileIn = testProperties.getClass().getResourceAsStream("/simple.properties");
+        InputStream fileIn = PubsubTestSupport.class.getClassLoader().getResourceAsStream("simple.properties");
         try {
             testProperties.load(fileIn);
 
@@ -94,7 +94,7 @@ public class PubsubTestSupport extends CamelTestSupport {
             .setServiceAccount(SERVICE_ACCOUNT)
             .setServiceAccountKey(SERVICE_KEY)
             .setServiceURL(SERVICE_URL)
-            .getClient();
+            .getDefaultClient();
 
         String topicFullName = String.format("projects/%s/topics/%s",
                                          PubsubTestSupport.PROJECT_ID,

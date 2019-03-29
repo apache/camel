@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -47,6 +47,9 @@ public interface KubernetesConstants {
     String KUBERNETES_SERVICE_ACCOUNT = "CamelKubernetesServiceAccount";
     String KUBERNETES_NODES_LABELS = "CamelKubernetesNodesLabels";
     String KUBERNETES_NODE_NAME = "CamelKubernetesNodeName";
+    String KUBERNETES_DEPLOYMENTS_LABELS = "CamelKubernetesDeploymentsLabels";
+    String KUBERNETES_DEPLOYMENT_NAME = "CamelKubernetesDeploymentName";
+    String KUBERNETES_DEPLOYMENT_SPEC = "CamelKubernetesDeploymentSpec";
     String KUBERNETES_CONFIGMAPS_LABELS = "CamelKubernetesConfigMapsLabels";
     String KUBERNETES_CONFIGMAP_NAME = "CamelKubernetesConfigMapName";
     String KUBERNETES_CONFIGMAP_DATA = "CamelKubernetesConfigData";
@@ -54,6 +57,12 @@ public interface KubernetesConstants {
     String KUBERNETES_BUILD_NAME = "CamelKubernetesBuildName";
     String KUBERNETES_BUILD_CONFIGS_LABELS = "CamelKubernetesBuildConfigsLabels";
     String KUBERNETES_BUILD_CONFIG_NAME = "CamelKubernetesBuildConfigName";
+    String KUBERNETES_DEPLOYMENT_REPLICAS = "CamelKubernetesDeploymentReplicas";
+    String KUBERNETES_HPA_NAME = "CamelKubernetesHPAName";
+    String KUBERNETES_HPA_SPEC = "CamelKubernetesHPASpec";
+    String KUBERNETES_JOB_NAME = "CamelKubernetesJobName";
+    String KUBERNETES_JOB_SPEC = "CamelKubernetesJobSpec";
+    String KUBERNETES_JOB_LABELS = "CamelKubernetesJobLabels";
 
     // Consumer
     String KUBERNETES_EVENT_ACTION = "CamelKubernetesEventAction";

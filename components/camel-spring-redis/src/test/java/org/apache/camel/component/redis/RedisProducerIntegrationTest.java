@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,7 +33,7 @@ public class RedisProducerIntegrationTest extends RedisTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        redisTemplate = new RedisTemplate();
+        redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(CONNECTION_FACTORY);
         redisTemplate.afterPropertiesSet();
 

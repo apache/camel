@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,7 +31,7 @@ public class RssEndpointTest extends RssPollingConsumerTest {
                 rss.setFeedUri("file:src/test/data/rss20.xml");
                 rss.setSplitEntries(false);
 
-                Map<String, Object> map = new HashMap<String, Object>();
+                Map<String, Object> map = new HashMap<>();
                 map.put("delay", 100);
                 rss.setConsumerProperties(map);
 

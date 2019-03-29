@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty4;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Collection;
 import java.util.Properties;
 
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.util.ResourceLeakDetector;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.converter.IOConverter;
@@ -33,8 +34,6 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.netty.buffer.ByteBufAllocator;
-import io.netty.util.ResourceLeakDetector;
 
 /**
  *
@@ -91,7 +90,7 @@ public class BaseNettyTest extends CamelTestSupport {
         if (!events.isEmpty()) {
             String message = "Leaks detected while running tests: " + events;
             // Just write the message into log to help debug
-            for(LogEvent event: events) {
+            for (LogEvent event: events) {
                 LOG.info(event.getMessage().getFormattedMessage());
             }
             LogCaptureAppender.reset();

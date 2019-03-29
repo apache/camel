@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,43 +17,28 @@
 package org.apache.camel.component.infinispan;
 
 public interface InfinispanConstants {
-    int OPERATION_LEN = InfinispanConstants.OPERATION.length();
 
     String EVENT_TYPE = "CamelInfinispanEventType";
     String IS_PRE = "CamelInfinispanIsPre";
     String CACHE_NAME = "CamelInfinispanCacheName";
     String KEY = "CamelInfinispanKey";
     String VALUE = "CamelInfinispanValue";
+    String DEFAULT_VALUE = "CamelInfinispanDefaultValue";
     String OLD_VALUE = "CamelInfinispanOldValue";
     String MAP = "CamelInfinispanMap";
     String OPERATION = "CamelInfinispanOperation";
-    String PUT = "CamelInfinispanOperationPut";
-    String PUT_ASYNC = "CamelInfinispanOperationPutAsync";
-    String PUT_IF_ABSENT = "CamelInfinispanOperationPutIfAbsent";
-    String PUT_IF_ABSENT_ASYNC = "CamelInfinispanOperationPutIfAbsentAsync";
-    String GET = "CamelInfinispanOperationGet";
-    String CONTAINS_KEY = "CamelInfinispanOperationContainsKey";
-    String CONTAINS_VALUE = "CamelInfinispanOperationContainsValue";
-    String PUT_ALL = "CamelInfinispanOperationPutAll";
-    String PUT_ALL_ASYNC = "CamelInfinispanOperationPutAllAsync";
-    String REMOVE = "CamelInfinispanOperationRemove";
-    String REMOVE_ASYNC = "CamelInfinispanOperationRemoveAsync";
-    String REPLACE = "CamelInfinispanOperationReplace";
-    String REPLACE_ASYNC = "CamelInfinispanOperationReplaceAsync";
-    String CLEAR = "CamelInfinispanOperationClear";
-    String CLEAR_ASYNC = "CamelInfinispanOperationClearAsync";
-    String SIZE = "CamelInfinispanOperationSize";
     String RESULT = "CamelInfinispanOperationResult";
+    String RESULT_HEADER = "CamelInfinispanOperationResultHeader";
     String LIFESPAN_TIME = "CamelInfinispanLifespanTime";
     String LIFESPAN_TIME_UNIT = "CamelInfinispanTimeUnit";
     String MAX_IDLE_TIME = "CamelInfinispanMaxIdleTime";
     String MAX_IDLE_TIME_UNIT = "CamelInfinispanMaxIdleTimeUnit";
     String IGNORE_RETURN_VALUES = "CamelInfinispanIgnoreReturnValues";
     String EVENT_DATA = "CamelInfinispanEventData";
-    String QUERY = "CamelInfinispanOperationQuery";
     String QUERY_BUILDER = "CamelInfinispanQueryBuilder";
-    String STATS = "CamelInfinispanOperationStats";
 
     String CACHE_ENTRY_JOINING = "CacheEntryJoining";
     String CACHE_ENTRY_LEAVING = "CacheEntryLeaving";
+    String CACHE_ENTRY_UPDATED = "CacheEntryUpdated";
+
 }

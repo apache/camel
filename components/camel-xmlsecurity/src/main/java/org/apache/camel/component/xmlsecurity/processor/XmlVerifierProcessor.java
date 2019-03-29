@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -41,6 +41,7 @@ import javax.xml.validation.Schema;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
 import org.xml.sax.SAXException;
 
 import org.apache.camel.Exchange;
@@ -51,8 +52,8 @@ import org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureFormatException;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureInvalidException;
-import org.apache.camel.processor.validation.DefaultValidationErrorHandler;
-import org.apache.camel.processor.validation.ValidatorErrorHandler;
+import org.apache.camel.support.processor.validation.DefaultValidationErrorHandler;
+import org.apache.camel.support.processor.validation.ValidatorErrorHandler;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,8 +129,8 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
 
         NodeList signatureNodes = getSignatureNodes(doc);
 
-        List<XMLObject> collectedObjects = new ArrayList<XMLObject>(3);
-        List<Reference> collectedReferences = new ArrayList<Reference>(3);
+        List<XMLObject> collectedObjects = new ArrayList<>(3);
+        List<Reference> collectedReferences = new ArrayList<>(3);
         int totalCount = signatureNodes.getLength();
         for (int i = 0; i < totalCount; i++) {
 

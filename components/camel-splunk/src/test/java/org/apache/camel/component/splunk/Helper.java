@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,23 +16,12 @@
  */
 package org.apache.camel.component.splunk;
 
-import java.io.IOException;
 import java.net.Socket;
 import java.util.Map;
 
-import com.splunk.Args;
-import com.splunk.Index;
-import com.splunk.IndexCollection;
-import com.splunk.InputCollection;
 import com.splunk.Service;
-import com.splunk.TcpInput;
 
 import org.apache.camel.CamelContext;
-
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public final class Helper {
 
@@ -51,32 +40,9 @@ public final class Helper {
 }
 
 final class MockConnectionSettings extends SplunkConfiguration {
-    private Service service;
-    private Socket socket;
 
     MockConnectionSettings(Service service, Socket socket) {
-        this.service = service;
-        this.socket = socket;
-        mockSplunkWriterApi();
         setConnectionFactory(new MockConnectionFactory(service));
-    }
-
-    private void mockSplunkWriterApi() {
-        try {
-            Index index = mock(Index.class);
-            IndexCollection indexColl = mock(IndexCollection.class);
-            when(service.getIndexes()).thenReturn(indexColl);
-            InputCollection inputCollection = mock(InputCollection.class);
-            when(service.getInputs()).thenReturn(inputCollection);
-            TcpInput input = mock(TcpInput.class);
-            when(input.attach()).thenReturn(socket);
-            when(inputCollection.get(anyString())).thenReturn(input);
-            when(indexColl.get(anyString())).thenReturn(index);
-            when(index.attach(isA(Args.class))).thenReturn(socket);
-            when(socket.getOutputStream()).thenReturn(System.out);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     class MockConnectionFactory extends SplunkConnectionFactory {

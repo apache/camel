@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.net.ssl.SSLContext;
@@ -30,24 +31,22 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
  * Represents the configuration data for communicating over email
- *
- * @version
  */
 @UriParams
 public class MailConfiguration implements Cloneable {
 
     private ClassLoader applicationClassLoader;
     private Properties javaMailProperties;
-    private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
+    private Map<Message.RecipientType, String> recipients = new HashMap<>();
 
     // protocol is implied by component name so it should not be in UriPath
     private String protocol;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String host;
     @UriPath
     private int port = -1;
@@ -109,6 +108,8 @@ public class MailConfiguration implements Cloneable {
     private boolean skipFailedMessage;
     @UriParam @Metadata(label = "consumer")
     private boolean handleFailedMessage;
+    @UriParam(defaultValue = "false") @Metadata(label = "consumer")
+    private boolean mimeDecodeHeaders;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "advanced", prefix = "mail.", multiValue = true)
@@ -118,7 +119,7 @@ public class MailConfiguration implements Cloneable {
 
     public MailConfiguration() {
     }
-    
+
     public MailConfiguration(CamelContext context) {
         this.applicationClassLoader = context.getApplicationContextClassLoader();
     }
@@ -130,7 +131,7 @@ public class MailConfiguration implements Cloneable {
         try {
             MailConfiguration copy = (MailConfiguration) clone();
             // must set a new recipients map as clone just reuse the same reference
-            copy.recipients = new HashMap<Message.RecipientType, String>();
+            copy.recipients = new HashMap<>();
             copy.recipients.putAll(this.recipients);
             return copy;
         } catch (CloneNotSupportedException e) {
@@ -165,7 +166,7 @@ public class MailConfiguration implements Cloneable {
         int port = uri.getPort();
         if (port > 0) {
             setPort(port);
-        } else if (port <= 0 && this.port <= 0) {
+        } else if (this.port <= 0) {
             // resolve default port if no port number was provided, and not already configured with a port number
             setPort(MailUtils.getDefaultPortForProtocol(uri.getScheme()));
         }
@@ -244,25 +245,36 @@ public class MailConfiguration implements Cloneable {
             properties.put("javax.net.debug", "all");
         }
 
-        if (sslContextParameters != null && (isSecureProtocol() || isStartTlsEnabled())) {
-            SSLContext sslContext;
-            try {
-                sslContext = sslContextParameters.createSSLContext();
-            } catch (Exception e) {
-                throw new RuntimeCamelException("Error initializing SSLContext.", e);
-            }
-            properties.put("mail." + protocol + ".socketFactory", sslContext.getSocketFactory());
+        if (sslContextParameters != null && isSecureProtocol()) {
+            properties.put("mail." + protocol + ".socketFactory", createSSLContext().getSocketFactory());
             properties.put("mail." + protocol + ".socketFactory.fallback", "false");
             properties.put("mail." + protocol + ".socketFactory.port", "" + port);
         }
-        if (dummyTrustManager && (isSecureProtocol() || isStartTlsEnabled())) {
+        if (sslContextParameters != null && isStartTlsEnabled()) {
+            properties.put("mail." + protocol + ".ssl.socketFactory", createSSLContext().getSocketFactory());
+            properties.put("mail." + protocol + ".ssl.socketFactory.port", "" + port);
+        }
+        if (dummyTrustManager && isSecureProtocol()) {
             // set the custom SSL properties
             properties.put("mail." + protocol + ".socketFactory.class", "org.apache.camel.component.mail.DummySSLSocketFactory");
             properties.put("mail." + protocol + ".socketFactory.fallback", "false");
             properties.put("mail." + protocol + ".socketFactory.port", "" + port);
         }
+        if (dummyTrustManager && isStartTlsEnabled()) {
+            // set the custom SSL properties
+            properties.put("mail." + protocol + ".ssl.socketFactory.class", "org.apache.camel.component.mail.DummySSLSocketFactory");
+            properties.put("mail." + protocol + ".ssl.socketFactory.port", "" + port);
+        }
 
         return properties;
+    }
+
+    private SSLContext createSSLContext() {
+        try {
+            return sslContextParameters.createSSLContext(null);
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Error initializing SSLContext.", e);
+        }
     }
 
     /**
@@ -275,10 +287,8 @@ public class MailConfiguration implements Cloneable {
 
     public boolean isStartTlsEnabled() {
         if (additionalJavaMailProperties != null) {
-            return ObjectHelper.equal(
-                additionalJavaMailProperties.getProperty("mail." + protocol + ".starttls.enable"),
-                "true",
-                true);
+            return ObjectHelper.equal(additionalJavaMailProperties.getProperty("mail." + protocol + ".starttls.enable"), "true", true)
+                   || ObjectHelper.equal(additionalJavaMailProperties.getProperty("mail." + protocol + ".starttls.required"), "true", true);
         }
 
         return false;
@@ -496,10 +506,10 @@ public class MailConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the <tt>To</tt> email address. Separate multiple email addresses with comma.
+     * Sets the To email address. Separate multiple email addresses with comma.
      */
     public void setTo(String address) {
-        this.to = to;
+        this.to = address;
         recipients.put(Message.RecipientType.TO, address);
     }
 
@@ -508,7 +518,7 @@ public class MailConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the <tt>CC</tt> email address. Separate multiple email addresses with comma.
+     * Sets the CC email address. Separate multiple email addresses with comma.
      */
     public void setCc(String address) {
         this.cc = address;
@@ -520,7 +530,7 @@ public class MailConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the <tt>BCC</tt> email address. Separate multiple email addresses with comma.
+     * Sets the BCC email address. Separate multiple email addresses with comma.
      */
     public void setBcc(String address) {
         this.bcc = address;
@@ -738,5 +748,16 @@ public class MailConfiguration implements Cloneable {
      */
     public void setAttachmentsContentTransferEncodingResolver(AttachmentsContentTransferEncodingResolver attachmentsContentTransferEncodingResolver) {
         this.attachmentsContentTransferEncodingResolver = attachmentsContentTransferEncodingResolver;
+    }
+
+    /**
+     * This option enables transparent MIME decoding and unfolding for mail headers.
+     */
+    public void setMimeDecodeHeaders(boolean mimeDecodeHeaders) {
+        this.mimeDecodeHeaders = mimeDecodeHeaders;
+    }
+
+    public boolean isMimeDecodeHeaders() {
+        return mimeDecodeHeaders;
     }
 }

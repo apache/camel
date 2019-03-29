@@ -1,0 +1,151 @@
+[[validator-component]]
+== Validator Component
+
+*Available as of Camel version 1.1*
+
+The Validation component performs XML validation of the message body
+using the JAXP Validation API and based on any of the supported XML
+schema languages, which defaults to http://www.w3.org/XML/Schema[XML
+Schema]
+
+Note that the <<jing-component,Jing>> component also supports the following
+useful schema languages:
+
+* http://relaxng.org/compact-tutorial-20030326.html[RelaxNG Compact
+Syntax]
+* http://relaxng.org/[RelaxNG XML Syntax]
+
+The <<msv-component,MSV>> component also supports
+http://relaxng.org/[RelaxNG XML Syntax].
+
+=== URI format
+
+[source]
+----
+validator:someLocalOrRemoteResource
+----
+
+Where *someLocalOrRemoteResource* is some URL to a local resource on the
+classpath or a full URL to a remote resource or resource on the file
+system which contains the XSD to validate against. For example:
+
+* `msv:org/foo/bar.xsd`
+* `msv:file:../foo/bar.xsd`
+* `msv:http://acme.com/cheese.xsd`
+* `validator:com/mypackage/myschema.xsd`
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component when using *Camel 2.8* or older:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spring</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+From Camel 2.9 onwards the Validation component is
+provided directly in the camel-core.
+
+=== Options
+
+// component options: START
+The Validator component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resourceResolverFactory* (advanced) | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI |  | ValidatorResource ResolverFactory
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+// endpoint options: START
+The Validator endpoint is configured using URI syntax:
+
+----
+validator:resourceUri
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resourceUri* | *Required* URL to a local resource on the classpath,or a reference to lookup a bean in the Registry, or a full URL to a remote resource or resource on the file system which contains the XSD to validate against. |  | String
+|===
+
+
+==== Query Parameters (10 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *failOnNullBody* (producer) | Whether to fail if no body exists. | true | boolean
+| *failOnNullHeader* (producer) | Whether to fail if no header exists when validating against a header. | true | boolean
+| *headerName* (producer) | To validate against a header instead of the message body. |  | String
+| *errorHandler* (advanced) | To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception. |  | ValidatorErrorHandler
+| *resourceResolver* (advanced) | To use a custom LSResourceResolver. See also setResourceResolverFactory(ValidatorResourceResolverFactory) |  | LSResourceResolver
+| *resourceResolverFactory* (advanced) | For creating a resource resolver which depends on the endpoint resource URI. Must not be used in combination with method setResourceResolver(LSResourceResolver). If not set then DefaultValidatorResourceResolverFactory is used |  | ValidatorResource ResolverFactory
+| *schemaFactory* (advanced) | To use a custom javax.xml.validation.SchemaFactory |  | SchemaFactory
+| *schemaLanguage* (advanced) | Configures the W3C XML Schema Namespace URI. | http://www.w3.org/2001/XMLSchema | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *useSharedSchema* (advanced) | Whether the Schema instance should be shared or not. This option is introduced to work around a JDK 1.6.x bug. Xerces should not have this issue. | true | boolean
+|===
+// endpoint options: END
+
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-validator-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.validator.enabled* | Whether to enable auto configuration of the validator component. This is enabled by default. |  | Boolean
+| *camel.component.validator.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.validator.resource-resolver-factory* | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI. The option is a org.apache.camel.component.validator.ValidatorResourceResolverFactory type. |  | String
+|===
+// spring-boot-auto-configure options: END
+
+=== Example
+
+The following
+https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/component/validator/camelContext.xml[example]
+shows how to configure a route from endpoint *direct:start* which then
+goes to one of two endpoints, either *mock:valid* or *mock:invalid*
+based on whether or not the XML matches the given schema (which is
+supplied on the classpath).
+
+=== Advanced: JMX method clearCachedSchema
+
+Since *Camel 2.17*, you can force that the cached schema in the
+validator endpoint is cleared and reread with the next process call with
+the JMX operation `clearCachedSchema. `You can also use this method to
+programmatically clear the cache. This method is available on the
+`ValidatorEndpoint `class`.`

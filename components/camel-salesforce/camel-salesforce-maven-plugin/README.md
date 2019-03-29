@@ -1,6 +1,6 @@
 # Maven plugin for camel-salesforce component #
 
-This plugin generates DTOs for the [Camel Salesforce Component](https://github.com/dhirajsb/camel-salesforce). 
+This plugin generates DTOs for the [Camel Salesforce Component](https://github.com/apache/camel/tree/master/components/camel-salesforce/camel-salesforce-component). 
 
 ## Usage ##
 
@@ -18,6 +18,7 @@ The plugin configuration has the following properties.
 * includePattern - Java RegEx for SObject types to include
 * excludePattern - Java RegEx for SObject types to exclude
 * packageName - Java package name for generated DTOs, defaults to org.apache.camel.salesforce.dto.
+* customTypes - override default types in generated DTOs
 
 Additonal properties to provide proxy information, if behind a firewall.
 
@@ -90,3 +91,18 @@ The plugin should be configured for the rest of the properties, and can be execu
 	mvn camel-salesforce:generate -DcamelSalesforce.clientId=<clientid> -DcamelSalesforce.clientSecret=<clientsecret> -DcamelSalesforce.userName=<username> -DcamelSalesforce.password=<password>
 
 The generated DTOs use Jackson and XStream annotations. All Salesforce field types are supported. Date and time fields are mapped to java.time.ZonedDateTime, and picklist fields are mapped to generated Java Enumerations.
+
+You can customize types, i.e. use java.time.LocalDateTime instead of the default java.time.ZonedDateTime by specifying the `customTypes` property like:
+
+```xml
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-salesforce-maven-plugin</artifactId>
+  <configuration>
+    <!-- ... -->
+    <customTypes>
+      <date>java.time.LocalDateTime</date>
+    </customTypes>
+  </configuration>
+</plugin>
+````

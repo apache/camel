@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,23 +22,23 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * To collect various metrics directly from Camel routes using the DropWizard metrics library.
  */
-@UriEndpoint(scheme = "metrics", title = "Metrics", syntax = "metrics:metricsType:metricsName", producerOnly = true, label = "monitoring")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "metrics", title = "Metrics", syntax = "metrics:metricsType:metricsName", producerOnly = true, label = "monitoring")
 public class MetricsEndpoint extends DefaultEndpoint {
 
     protected final MetricRegistry registry;
 
-    @UriPath(description = "Type of metrics") @Metadata(required = "true")
+    @UriPath(description = "Type of metrics") @Metadata(required = true)
     protected final MetricsType metricsType;
-    @UriPath(description = "Name of metrics") @Metadata(required = "true")
+    @UriPath(description = "Name of metrics") @Metadata(required = true)
     protected final String metricsName;
     @UriParam(description = "Action when using timer type")
     private MetricsTimerAction action;

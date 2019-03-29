@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.xslt;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -27,9 +27,8 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.TransformerFactoryImpl;
-import org.apache.camel.builder.xml.XsltUriResolver;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.ResourceHelper;
 import org.junit.Assert;
 import org.junit.Test;
 

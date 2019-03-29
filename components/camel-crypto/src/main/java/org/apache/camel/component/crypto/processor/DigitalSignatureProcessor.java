@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,7 +29,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.crypto.DigitalSignatureConfiguration;
 import org.apache.camel.component.crypto.DigitalSignatureConstants;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 

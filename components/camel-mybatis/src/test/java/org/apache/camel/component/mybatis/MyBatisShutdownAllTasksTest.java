@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -82,7 +82,7 @@ public class MyBatisShutdownAllTasksTest extends MyBatisTestSupport {
 
     @Test
     public void testShutdownAllTasks() throws Exception {
-        context.startRoute("route1");
+        context.getRouteController().startRoute("route1");
 
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);

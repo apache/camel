@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.karaf.commands.internal.CamelControllerImpl;
-import org.apache.karaf.shell.api.action.Action;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.apache.karaf.shell.api.console.CommandLine;
 import org.apache.karaf.shell.api.console.Completer;
@@ -34,9 +33,19 @@ import org.apache.karaf.shell.support.completers.StringsCompleter;
 public class RouteCompleter extends CamelControllerImpl implements Completer {
 
     public int complete(Session session, CommandLine commandLine, List<String> candidates) {
+
+        // grab selected camel context from the first argument
+        String contextName = null;
+        String[] args = commandLine.getArguments();
+        if (args != null && args.length > 1) {
+            // 0 is the command name itself
+            // 1 is the first argument which is the camel context name
+            contextName = args[1];
+        }
+
         try {
             StringsCompleter delegate = new StringsCompleter();
-            List<Map<String, String>> routes = getRoutes(null);
+            List<Map<String, String>> routes = getRoutes(contextName);
             for (Map<String, String> row : routes) {
                 delegate.getStrings().add(row.get("routeId"));
             }

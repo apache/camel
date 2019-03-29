@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,8 +33,8 @@ import org.slf4j.LoggerFactory;
 /**
  * The rss component is used for consuming RSS feeds.
  */
-@UriEndpoint(scheme = "rss", extendsScheme = "atom", title = "RSS",
-        syntax = "rss:feedUri", consumerOnly = true, consumerClass = RssEntryPollingConsumer.class, label = "rss", lenientProperties = true)
+@UriEndpoint(firstVersion = "2.0.0", scheme = "rss", extendsScheme = "atom", title = "RSS",
+        syntax = "rss:feedUri", consumerOnly = true, label = "rss", lenientProperties = true)
 public class RssEndpoint extends FeedEndpoint {
     protected static final Logger LOG = LoggerFactory.getLogger(RssEndpoint.class);
 

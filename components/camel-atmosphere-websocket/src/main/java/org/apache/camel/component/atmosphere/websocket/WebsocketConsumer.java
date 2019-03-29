@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +32,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.servlet.ServletConsumer;
 import org.atmosphere.cpr.ApplicationConfig;
 import org.atmosphere.cpr.AtmosphereFramework;
+import org.atmosphere.cpr.AtmosphereFrameworkInitializer;
 import org.atmosphere.cpr.AtmosphereRequestImpl;
 import org.atmosphere.cpr.AtmosphereResponseImpl;
 import org.atmosphere.websocket.WebSocketProtocol;
@@ -38,25 +41,34 @@ import org.atmosphere.websocket.WebSocketProtocol;
  *
  */
 public class WebsocketConsumer extends ServletConsumer {
-    private AtmosphereFramework framework;
     private boolean enableEventsResending;
     private Map<String, String> queryMap = new HashMap<>();
+    private AtmosphereFramework framework;
+    private final AtmosphereFrameworkInitializer initializer;
+
 
     public WebsocketConsumer(WebsocketEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        this.framework = new AtmosphereFramework(false, true);
+        initializer = new AtmosphereFrameworkInitializer(false, true);
+    }
+    
+    public void configureEventsResending(final boolean enableEventsResending) {
+        this.enableEventsResending = enableEventsResending;
+    }
 
-        framework.setUseNativeImplementation(false);
-        framework.addInitParameter(ApplicationConfig.WEBSOCKET_SUPPORT, "true");
-        framework.addInitParameter(ApplicationConfig.WEBSOCKET_PROTOCOL, 
-            endpoint.isUseStreaming() ? WebsocketStreamHandler.class.getName() : WebsocketHandler.class.getName());
-        //REVISIT we need to disable JSR356 detection for now when using jetty-9.3 when using atmosphere-2.4.x
-        framework.addInitParameter(ApplicationConfig.WEBSOCKET_SUPPRESS_JSR356, "true");
-        framework.init();
-        
-        WebSocketProtocol wsp = framework.getWebSocketProtocol();
+    public void configureFramework(ServletConfig config) throws ServletException {
+        initializer.configureFramework(config, false, false, AtmosphereFramework.class);
+        this.framework = initializer.framework();
+        this.framework.setUseNativeImplementation(false);
+        this.framework.addInitParameter(ApplicationConfig.ANALYTICS, "false");
+        this.framework.addInitParameter(ApplicationConfig.WEBSOCKET_SUPPORT, "true");
+        this.framework.addInitParameter(ApplicationConfig.WEBSOCKET_PROTOCOL,
+                                        getEndpoint().isUseStreaming() ? WebsocketStreamHandler.class.getName() : WebsocketHandler.class.getName());
+        this.framework.init(config);
+
+        WebSocketProtocol wsp = this.framework.getWebSocketProtocol();
         if (wsp instanceof WebsocketHandler) {
-            ((WebsocketHandler)wsp).setConsumer(this);            
+            ((WebsocketHandler)wsp).setConsumer(this);
         } else {
             throw new IllegalArgumentException("Unexpected WebSocketHandler: " + wsp);
         }
@@ -66,9 +78,8 @@ public class WebsocketConsumer extends ServletConsumer {
     public WebsocketEndpoint getEndpoint() {
         return (WebsocketEndpoint)super.getEndpoint();
     }
-    
-    void service(HttpServletRequest request, HttpServletResponse response, boolean enableEventsResending) throws IOException, ServletException {
-        this.enableEventsResending = enableEventsResending;
+
+    void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         this.queryMap = getQueryMap(request.getQueryString());
         framework.doCometSupport(AtmosphereRequestImpl.wrap(request), AtmosphereResponseImpl.wrap(response));
     }

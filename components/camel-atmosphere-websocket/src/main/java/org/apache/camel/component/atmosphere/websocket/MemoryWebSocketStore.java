@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,8 +34,8 @@ public class MemoryWebSocketStore implements WebSocketStore {
     private Map<WebSocket, String> keys;
     
     public MemoryWebSocketStore() {
-        values = new ConcurrentHashMap<String, WebSocket>();
-        keys = new ConcurrentHashMap<WebSocket, String>();
+        values = new ConcurrentHashMap<>();
+        keys = new ConcurrentHashMap<>();
     }
     
     /* (non-Javadoc)

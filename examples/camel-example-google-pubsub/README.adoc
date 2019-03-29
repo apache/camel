@@ -1,0 +1,72 @@
+# Camel Google Pubsub example
+
+### Introduction
+
+An example which shows how to integrate Camel with Google Pubsub.
+
+### Preparing Google Pubsub
+
+This example requires a Google Cloud Account with a Pubsub subscription.
+To create a Goolge Cloud account please visit https://cloud.google.com.
+To setup Pubsub subscription see https://cloud.google.com/pubsub/docs/overview
+
+A topic and subscription need to be created and the topic and subscription name
+set in the application.properties.
+
+The topic and subscription (with names as configured in application.properties) can be created within the
+Google Cloud Console or by running:
+
+    mvn compile exec:java -Ppubsub-create-topic-subscription
+
+
+In the application.properties you need to specify the
+
+For authenticating against Google Cloud one of the following options can be used:
+
+Using your default credentials::
+  Comment out  `credentials.fileLocation`, `credentials.account` and `credentials.key`
+Using a json service account credentials file::
+  Set `credentials.fileLocation` to the location of the json credentials file.
+  Comment out  `credentials.account` and `credentials.key`
+Using an account and key::
+  Set `credentials.account` to the service account email and `credentials.key` to the service account key.
+
+
+### Run
+
+Run the consumer and producer in separate shells:
+
+
+    mvn compile exec:java -Ppubsub-producer
+
+    mvn compile exec:java -Ppubsub-consumer
+
+Initially, some messages are sent programmatically.
+
+On the command prompt for the producer, type the messages. Each line is sent as one message to Google Pubsub.
+Press `Ctrl-C` to exit.
+
+As the pubsub channel is persistent the consumer and producer do not need to run at the same time.
+
+Messages can be send from the Google Pubsub console which will be picked up by the consumer.
+
+
+### Configuration
+
+You can configure the details in the file:
+  `src/main/resources/application.properties`
+
+You can enable verbose logging by adjusting the `src/main/resources/log4j2.properties`
+  file as documented in the file.
+
+
+### Forum, Help, etc
+
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
+
+Please help us make Apache Camel better - we appreciate any feedback you may
+have.  Enjoy!
+
+
+The Camel riders!

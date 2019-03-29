@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -47,6 +47,7 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 
 
@@ -55,7 +56,6 @@ import org.springframework.test.context.ContextConfiguration;
  * Unit test for exercising SOAP with Attachment (SwA) feature of a CxfProducer in PAYLOAD mode.  
  * That is, testing attachment with MTOM optimization off.
  *  
- * @version 
  */
 @ContextConfiguration
 public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPayloadModeTest {
@@ -71,6 +71,7 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
     }
     
     @Override
+    @Test
     public void testProducer() throws Exception {
         if (MtomTestHelper.isAwtHeadless(logger, null)) {
             return;
@@ -80,9 +81,9 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
 
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
-                List<Source> elements = new ArrayList<Source>();
+                List<Source> elements = new ArrayList<>();
                 elements.add(new DOMSource(StaxUtils.read(new StringReader(MtomTestHelper.MTOM_DISABLED_REQ_MESSAGE)).getDocumentElement()));
-                CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
+                CxfPayload<SoapHeader> body = new CxfPayload<>(new ArrayList<SoapHeader>(),
                     elements, null);
                 exchange.getIn().setBody(body);
                 exchange.getIn().addAttachment(MtomTestHelper.REQ_PHOTO_CID, 

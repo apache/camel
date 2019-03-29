@@ -1,0 +1,285 @@
+[[seda-component]]
+== SEDA Component
+
+*Available as of Camel version 1.1*
+
+The *seda:* component provides asynchronous
+http://www.eecs.harvard.edu/~mdw/proj/seda/[SEDA] behavior, so that
+messages are exchanged on a
+http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[BlockingQueue]
+and consumers are invoked in a separate thread from the producer.
+
+Note that queues are only visible within a _single_
+CamelContext. If you want to communicate across
+`CamelContext` instances (for example, communicating between Web
+applications), see the <<vm-component,VM>> component.
+
+This component does not implement any kind of persistence or recovery,
+if the VM terminates while messages are yet to be processed. If you need
+persistence, reliability or distributed SEDA, try using either
+<<jms-component,JMS>> or <<jms-component,ActiveMQ>>.
+
+TIP:*Synchronous*
+The <<direct-component,Direct>> component provides synchronous invocation
+of any consumers when a producer sends a message exchange.
+
+=== URI format
+
+[source]
+----
+seda:someName[?options]
+----
+
+Where *someName* can be any string that uniquely identifies the endpoint
+within the current CamelContext.
+
+You can append query options to the URI in the following format:
+`?option=value&option=value&…`
+
+=== Options
+
+// component options: START
+The SEDA component supports 6 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *queueSize* (advanced) | Sets the default maximum capacity of the SEDA queue (i.e., the number of messages it can hold). | 1000 | int
+| *concurrentConsumers* (consumer) | Sets the default number of concurrent threads processing exchanges. | 1 | int
+| *defaultQueueFactory* (advanced) | Sets the default queue factory. |  | BlockingQueueFactory
+| *defaultBlockWhenFull* (producer) | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will instead block and wait until the message can be accepted. | false | boolean
+| *defaultOfferTimeout* (producer) | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, where a configured timeout can be added to the block case. Utilizing the .offer(timeout) method of the underlining java queue |  | long
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+// endpoint options: START
+The SEDA endpoint is configured using URI syntax:
+
+----
+seda:name
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | *Required* Name of queue |  | String
+|===
+
+
+==== Query Parameters (17 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *size* (common) | The maximum capacity of the SEDA queue (i.e., the number of messages it can hold). Will by default use the defaultSize set on the SEDA component. | 1000 | int
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *concurrentConsumers* (consumer) | Number of concurrent threads processing exchanges. | 1 | int
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *limitConcurrentConsumers* (consumer) | Whether to limit the number of concurrentConsumers to the maximum of 500. By default, an exception will be thrown if an endpoint is configured with a greater number. You can disable that check by turning this option off. | true | boolean
+| *multipleConsumers* (consumer) | Specifies whether multiple consumers are allowed. If enabled, you can use SEDA for Publish-Subscribe messaging. That is, you can send a message to the SEDA queue and have each consumer receive a copy of the message. When enabled, this option should be specified on every consumer endpoint. | false | boolean
+| *pollTimeout* (consumer) | The timeout used when polling. When a timeout occurs, the consumer can check whether it is allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown. | 1000 | int
+| *purgeWhenStopping* (consumer) | Whether to purge the task queue when stopping the consumer/route. This allows to stop faster, as any pending messages on the queue is discarded. | false | boolean
+| *blockWhenFull* (producer) | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will instead block and wait until the message can be accepted. | false | boolean
+| *discardIfNoConsumers* (producer) | Whether the producer should discard the message (do not add the message to the queue), when sending to a queue with no active consumers. Only one of the options discardIfNoConsumers and failIfNoConsumers can be enabled at the same time. | false | boolean
+| *failIfNoConsumers* (producer) | Whether the producer should fail by throwing an exception, when sending to a queue with no active consumers. Only one of the options discardIfNoConsumers and failIfNoConsumers can be enabled at the same time. | false | boolean
+| *offerTimeout* (producer) | offerTimeout (in milliseconds) can be added to the block case when queue is full. You can disable timeout by using 0 or a negative value. |  | long
+| *timeout* (producer) | Timeout (in milliseconds) before a SEDA producer will stop waiting for an asynchronous task to complete. You can disable timeout by using 0 or a negative value. | 30000 | long
+| *waitForTaskToComplete* (producer) | Option to specify whether the caller should wait for the async task to complete or not before continuing. The following three options are supported: Always, Never or IfReplyExpected. The first two values are self-explanatory. The last value, IfReplyExpected, will only wait if the message is Request Reply based. The default option is IfReplyExpected. | IfReplyExpected | WaitForTaskToComplete
+| *queue* (advanced) | Define the queue instance which will be used by the endpoint. This option is only for rare use-cases where you want to use a custom queue instance. |  | BlockingQueue
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-seda-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 7 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.seda.concurrent-consumers* | Sets the default number of concurrent threads processing exchanges. | 1 | Integer
+| *camel.component.seda.default-block-when-full* | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will instead block and wait until the message can be accepted. | false | Boolean
+| *camel.component.seda.default-offer-timeout* | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, where a configured timeout can be added to the block case. Utilizing the .offer(timeout) method of the underlining java queue |  | Long
+| *camel.component.seda.default-queue-factory* | Sets the default queue factory. The option is a org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange> type. |  | String
+| *camel.component.seda.enabled* | Whether to enable auto configuration of the seda component. This is enabled by default. |  | Boolean
+| *camel.component.seda.queue-size* | Sets the default maximum capacity of the SEDA queue (i.e., the number of messages it can hold). | 1000 | Integer
+| *camel.component.seda.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+=== Choosing BlockingQueue implementation
+
+*Available as of Camel 2.12*
+
+By default, the SEDA component always intantiates LinkedBlockingQueue,
+but you can use different implementation, you can reference your own
+BlockingQueue implementation, in this case the size option is not used
+
+[source,xml]
+----
+<bean id="arrayQueue" class="java.util.ArrayBlockingQueue">
+  <constructor-arg index="0" value="10" ><!-- size -->
+  <constructor-arg index="1" value="true" ><!-- fairness -->
+</bean>
+
+<!-- ... and later -->
+<from>seda:array?queue=#arrayQueue</from>
+----
+
+Or you can reference a BlockingQueueFactory implementation, 3
+implementations are provided LinkedBlockingQueueFactory,
+ArrayBlockingQueueFactory and PriorityBlockingQueueFactory:
+
+[source,xml]
+----
+<bean id="priorityQueueFactory" class="org.apache.camel.component.seda.PriorityBlockingQueueFactory">
+  <property name="comparator">
+    <bean class="org.apache.camel.demo.MyExchangeComparator" />
+  </property>
+</bean>
+
+<!-- ... and later -->
+<from>seda:priority?queueFactory=#priorityQueueFactory&size=100</from>
+----
+
+=== Use of Request Reply
+
+The <<seda-component,SEDA>> component supports using
+Request Reply, where the caller will wait for
+the Async route to complete. For instance:
+
+[source,java]
+----
+from("mina:tcp://0.0.0.0:9876?textline=true&sync=true").to("seda:input");
+
+from("seda:input").to("bean:processInput").to("bean:createResponse");
+----
+
+In the route above, we have a TCP listener on port 9876 that accepts
+incoming requests. The request is routed to the `seda:input` queue. As
+it is a Request Reply message, we wait for the
+response. When the consumer on the `seda:input` queue is complete, it
+copies the response to the original message response.
+
+NOTE: *until 2.2: Works only with 2 endpoints*
+Using Request Reply over SEDA
+or <<vm-component,VM>> only works with 2 endpoints. You *cannot* chain
+endpoints by sending to A -> B -> C etc. Only between A -> B. The reason
+is the implementation logic is fairly simple. To support 3+ endpoints
+makes the logic much more complex to handle ordering and notification
+between the waiting threads properly.
+This has been improved in *Camel 2.3* onwards, which allows you to chain
+as many endpoints as you like.
+
+=== Concurrent consumers
+
+By default, the SEDA endpoint uses a single consumer thread, but you can
+configure it to use concurrent consumer threads. So instead of thread
+pools you can use:
+
+[source,java]
+----
+from("seda:stageName?concurrentConsumers=5").process(...)
+----
+
+As for the difference between the two, note a _thread pool_ can
+increase/shrink dynamically at runtime depending on load, whereas the
+number of concurrent consumers is always fixed.
+
+=== Thread pools
+
+Be aware that adding a thread pool to a SEDA endpoint by doing something
+like:
+
+[source,java]
+----
+from("seda:stageName").thread(5).process(...)
+----
+
+Can wind up with two `BlockQueues`: one from the SEDA endpoint, and one
+from the workqueue of the thread pool, which may not be what you want.
+Instead, you might wish to configure a <<direct-component,Direct>> endpoint
+with a thread pool, which can process messages both synchronously and
+asynchronously. For example:
+
+[source,java]
+----
+from("direct:stageName").thread(5).process(...)
+----
+
+You can also directly configure number of threads that process messages
+on a SEDA endpoint using the `concurrentConsumers` option.
+
+=== Sample
+
+In the route below we use the SEDA queue to send the request to this
+async queue to be able to send a fire-and-forget message for further
+processing in another thread, and return a constant reply in this thread
+to the original caller.
+
+Here we send a Hello World message and expects the reply to be OK.
+
+The "Hello World" message will be consumed from the SEDA queue from
+another thread for further processing. Since this is from a unit test,
+it will be sent to a `mock` endpoint where we can do assertions in the
+unit test.
+
+=== Using multipleConsumers
+
+*Available as of Camel 2.2*
+
+In this example we have defined two consumers and registered them as
+spring beans.
+
+Since we have specified *multipleConsumers=true* on the seda foo
+endpoint we can have those two consumers receive their own copy of the
+message as a kind of pub-sub style messaging.
+
+As the beans are part of an unit test they simply send the message to a
+mock endpoint, but notice how we can use @Consume to consume from the
+seda queue.
+
+=== Extracting queue information.
+
+If needed, information such as queue size, etc. can be obtained without
+using JMX in this fashion:
+
+[source,java]
+----
+SedaEndpoint seda = context.getEndpoint("seda:xxxx");
+int size = seda.getExchanges().size();
+----
+
+=== See Also
+
+* <<vm-component,VM>>
+* <<disruptor-component,Disruptor>>
+* <<direct-component,Direct>>
+* Async

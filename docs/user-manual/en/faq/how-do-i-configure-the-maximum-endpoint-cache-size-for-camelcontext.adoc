@@ -1,0 +1,42 @@
+[[HowdoIconfigurethemaximumendpointcachesizeforCamelContext-HowdoIconfigurethemaximumendpointcachesizeforCamelContext?]
+=== How do I configure the maximum endpoint cache size for CamelContext?
+
+link:../camelcontext.adoc[CamelContext] will by default cache the last 1000
+used endpoints (based on a LRUCache).
+
+[[HowdoIconfigurethemaximumendpointcachesizeforCamelContext-Configuringcachesize]]
+==== Configuring cache size
+
+*Available as of Camel 2.8*
+
+You can configure the default maximum cache size by setting the
+`Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE` property on
+link:../camelcontext.adoc[CamelContext].
+
+[source,java]
+----
+getCamelContext().getProperties().put(Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE, "500");
+----
+
+You need to configure this before link:../camelcontext.adoc[CamelContext]
+is started.
+
+And in Spring XML its done as:
+
+[source,java]
+----
+<camelContext>
+   <properties>
+      <property key="CamelMaximumEndpointCacheSize" value="500"/>
+   </properties>
+...
+</camelContext>
+----
+
+At runtime you can see the `EndpointRegistry` in JMX as they are listed
+in the `services` category.
+
+[[HowdoIconfigurethemaximumendpointcachesizeforCamelContext-SeeAlso]]
+==== See Also
+
+* link:how-do-i-configure-the-default-maximum-cache-size-for-producercache-or-producertemplate.adoc[How do I configure the default maximum cache size for ProducerCache or ProducerTemplate]

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,7 @@ import com.datastax.driver.core.Session;
  * Concrete implementation of {@link  CassandraIdempotentRepository} using 2
  * columns as primary key: name (partition key) and key (clustering key).
  */
-public class NamedCassandraIdempotentRepository<K> extends CassandraIdempotentRepository<K> {
+public class NamedCassandraIdempotentRepository extends CassandraIdempotentRepository {
     public NamedCassandraIdempotentRepository() {
         setPKColumns("NAME", "KEY");
         setName("DEFAULT");

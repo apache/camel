@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,27 +20,27 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.security.GeneralSecurityException;
+import java.util.Iterator;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.TypeConverter;
-import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ExchangeHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.springframework.ws.WebServiceMessage;
-import org.springframework.ws.client.core.SourceExtractor;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.mime.Attachment;
 import org.springframework.ws.soap.SoapHeader;
+import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.addressing.client.ActionCallback;
 import org.springframework.ws.soap.addressing.core.EndpointReference;
@@ -52,11 +52,9 @@ import org.springframework.ws.transport.http.HttpComponentsMessageSender;
 import org.springframework.ws.transport.http.HttpUrlConnection;
 import org.springframework.ws.transport.http.HttpUrlConnectionMessageSender;
 
-public class SpringWebserviceProducer extends DefaultProducer {
+import static org.apache.camel.component.spring.ws.SpringWebserviceHelper.toResult;
 
-    private static final Logger LOG = LoggerFactory.getLogger(SpringWebserviceProducer.class);
-    private static final SourceExtractor<Object> SOURCE_EXTRACTOR = new NoopSourceExtractor();
-    private static final XmlConverter XML_CONVERTER = new XmlConverter();
+public class SpringWebserviceProducer extends DefaultProducer {
 
     public SpringWebserviceProducer(Endpoint endpoint) {
         super(endpoint);
@@ -83,21 +81,74 @@ public class SpringWebserviceProducer extends DefaultProducer {
         WebServiceMessageCallback callback = new DefaultWebserviceMessageCallback(soapActionHeader, wsAddressingActionHeader,
                 wsReplyToHeader, wsFaultToHeader, soapHeaderSource, getEndpoint().getConfiguration(), exchange);
 
-        Object body;
-        if (endpointUriHeader != null) {
-            body = getEndpoint().getConfiguration().getWebServiceTemplate().sendSourceAndReceive(endpointUriHeader, sourcePayload, callback, SOURCE_EXTRACTOR);
-        } else {
-            body = getEndpoint().getConfiguration().getWebServiceTemplate().sendSourceAndReceive(sourcePayload, callback, SOURCE_EXTRACTOR);
+        if (endpointUriHeader == null) {
+            endpointUriHeader = getEndpoint().getConfiguration().getWebServiceTemplate().getDefaultUri();
         }
+        getEndpoint().getConfiguration().getWebServiceTemplate().sendAndReceive(endpointUriHeader, new WebServiceMessageCallback() {
+            @Override
+            public void doWithMessage(WebServiceMessage requestMessage) throws IOException, TransformerException {
+                toResult(sourcePayload, requestMessage.getPayloadResult());
+                callback.doWithMessage(requestMessage);
+            }
+        }, new WebServiceMessageCallback() {
+            @Override
+            public void doWithMessage(WebServiceMessage responseMessage) throws IOException, TransformerException {
+                SoapMessage soapMessage = (SoapMessage) responseMessage;
+                if (ExchangeHelper.isOutCapable(exchange)) {
+                    exchange.getOut().copyFromWithNewBody(exchange.getIn(), soapMessage.getPayloadSource());
+                    populateHeaderAndAttachmentsFromResponse(exchange.getOut(), soapMessage);
+                } else {
+                    exchange.getIn().setBody(soapMessage.getPayloadSource());
+                    populateHeaderAndAttachmentsFromResponse(exchange.getIn(), soapMessage);
+                }
 
-        if (ExchangeHelper.isOutCapable(exchange)) {
-            exchange.getOut().copyFrom(exchange.getIn());
-            exchange.getOut().setBody(body);
-        } else {
-            exchange.getIn().setBody(body);
+            }
+        });
+    }
+ 
+    /**
+     * Populates soap message headers and attachments from soap response
+     */
+    private void populateHeaderAndAttachmentsFromResponse(Message inOrOut, SoapMessage soapMessage) {
+        if (soapMessage.getSoapHeader() != null && getEndpoint().getConfiguration().isAllowResponseHeaderOverride()) {
+            populateMessageHeaderFromResponse(inOrOut, soapMessage.getSoapHeader());
+        }
+        if (soapMessage.getAttachments() != null && getEndpoint().getConfiguration().isAllowResponseAttachmentOverride()) {
+            populateMessageAttachmentsFromResponse(inOrOut, soapMessage.getAttachments());
         }
     }
 
+    /**
+     * Populates message headers from soapHeader response
+     */
+    private void populateMessageHeaderFromResponse(Message message, SoapHeader soapHeader) {
+        message.setHeader(SpringWebserviceConstants.SPRING_WS_SOAP_HEADER, soapHeader.getSource());
+        // Set header values for the soap header attributes
+        Iterator<QName> attIter = soapHeader.getAllAttributes();
+        while (attIter.hasNext()) {
+            QName name = attIter.next();
+            message.getHeaders().put(name.getLocalPart(), soapHeader.getAttributeValue(name));
+        }
+
+        // Set header values for the soap header elements
+        Iterator<SoapHeaderElement> elementIter = soapHeader.examineAllHeaderElements();
+        while (elementIter.hasNext()) {
+            SoapHeaderElement element = elementIter.next();
+            QName name = element.getName();
+            message.getHeaders().put(name.getLocalPart(), element);
+
+        }
+    }
+    /**
+     * Populates message attachments from soap response attachments 
+     */
+    private void populateMessageAttachmentsFromResponse(Message inOrOut, Iterator<Attachment> attachments) {
+        while (attachments.hasNext()) {
+            Attachment attachment = attachments.next();
+            inOrOut.getAttachments().put(attachment.getContentId(), attachment.getDataHandler());
+        }
+    }    
+    
     private void prepareMessageSenders(SpringWebserviceConfiguration configuration) {
         // Skip this whole thing if none of the relevant config options are set.
         if (!(configuration.getTimeout() > -1) && configuration.getSslContextParameters() == null) {
@@ -112,7 +163,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
             WebServiceMessageSender messageSender = messageSenders[i];
             if (messageSender instanceof HttpComponentsMessageSender) {
                 if (configuration.getSslContextParameters() != null) {
-                    LOG.warn("Not applying SSLContextParameters based configuration to HttpComponentsMessageSender.  "
+                    log.warn("Not applying SSLContextParameters based configuration to HttpComponentsMessageSender.  "
                             + "If you are using this MessageSender, which you are not by default, you will need "
                             + "to configure SSL using the Commons HTTP 3.x Protocol registry.");
                 }
@@ -121,7 +172,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
                     if (messageSender.getClass().equals(HttpComponentsMessageSender.class)) {
                         ((HttpComponentsMessageSender) messageSender).setReadTimeout(configuration.getTimeout());
                     } else {
-                        LOG.warn("Not applying timeout configuration to HttpComponentsMessageSender based implementation.  "
+                        log.warn("Not applying timeout configuration to HttpComponentsMessageSender based implementation.  "
                                 + "You are using what appears to be a custom MessageSender, which you are not doing by default. "
                                 + "You will need configure timeout on your own.");
                     }
@@ -132,7 +183,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
                 messageSenders[i] = new AbstractHttpWebServiceMessageSenderDecorator((HttpUrlConnectionMessageSender) messageSender, configuration, getEndpoint().getCamelContext());
             } else {
                 // For example this will be the case during unit-testing with the net.javacrumbs.spring-ws-test API
-                LOG.warn("Ignoring the timeout and SSLContextParameters options for {}.  You will need to configure "
+                log.warn("Ignoring the timeout and SSLContextParameters options for {}.  You will need to configure "
                         + "these options directly on your custom configured WebServiceMessageSender", messageSender);
             }
         }
@@ -241,7 +292,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
             // Create the SOAP header
             if (soapHeaderSource != null) {
                 SoapHeader header = ((SoapMessage) message).getSoapHeader();
-                XML_CONVERTER.toResult(soapHeaderSource, header.getResult());
+                toResult(soapHeaderSource, header.getResult());
             }
 
             if (wsAddressingAction != null) {
@@ -260,13 +311,4 @@ public class SpringWebserviceProducer extends DefaultProducer {
         }
     }
 
-    /**
-     * A {@link SourceExtractor} that performs no conversion, instead conversion
-     * is handled by Camel's {@link TypeConverter} hierarchy.
-     */
-    private static class NoopSourceExtractor implements SourceExtractor<Object> {
-        public Object extractData(Source source) throws IOException, TransformerException {
-            return source;
-        }
-    }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,8 +24,6 @@ import org.springframework.beans.factory.InitializingBean;
 /**
  * An example bean which adds some expectations on some mock endpoints and then
  * asserts that the expectactions are met.
- *
- * @version 
  */
 // START SNIPPET: example
 public class MyAssertions implements InitializingBean {

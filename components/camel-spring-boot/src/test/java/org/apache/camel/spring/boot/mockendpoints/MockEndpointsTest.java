@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,7 @@
 package org.apache.camel.spring.boot.mockendpoints;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringBootRunner;
 import org.apache.camel.test.spring.MockEndpoints;
@@ -34,7 +34,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class MockEndpointsTest {
 
     @Autowired
-    ProducerTemplate producerTemplate;
+    FluentProducerTemplate producerTemplate;
 
     @Autowired
     CamelContext camelContext;
@@ -48,7 +48,7 @@ public class MockEndpointsTest {
         mock.expectedBodiesReceived(msg);
 
         // When
-        producerTemplate.sendBody("direct:start", msg);
+        producerTemplate.withBody(msg).to("direct:start").send();
 
         // Then
         mock.assertIsSatisfied();

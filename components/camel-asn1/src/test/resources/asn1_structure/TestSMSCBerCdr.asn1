@@ -1,0 +1,480 @@
+TestSMSCBerCdr DEFINITIONS IMPLICIT TAGS ::=
+
+BEGIN
+
+SmsCdr ::= CHOICE
+{
+	callDetailRecord	CallDetailRecord,
+	commandRecord 	[APPLICATION 0] CommandRecord,
+	notificationRecord	[APPLICATION 1] NotificationRecord,
+	summaryRecord	[APPLICATION 2] SummaryRecord
+}
+
+CallDetailRecord ::= SEQUENCE
+{
+	origAddress		[0]	AddressInformation	OPTIONAL,
+	origAddressGSM	[1]	AddressString		OPTIONAL,
+	recipAddress		[2]	AddressInformation	OPTIONAL,
+	recipAddressGSM	[3]	AddressString		OPTIONAL,
+	submitDate		[4]	Date		OPTIONAL,
+	submitTime		[5]	Time		OPTIONAL,
+	status		[6]	Status		OPTIONAL,
+	terminDate		[7]	Date		OPTIONAL,
+	terminTime		[8]	Time		OPTIONAL,
+	lengthOfMessage	[9]	MessageLength	OPTIONAL,
+	prioIndicator		[10]	IMPLICIT BOOLEAN	OPTIONAL,
+	validityPeriod		[11]	Period		OPTIONAL,
+	deferIndicator		[12]	IMPLICIT BOOLEAN	OPTIONAL,
+	deferPeriod		[13]	Period		OPTIONAL,
+	notifIndicator		[14]	IMPLICIT BOOLEAN	OPTIONAL,
+	notifAddress		[15]	AddressInformation	OPTIONAL,
+	notifAddressGSM 	[16]	AddressString		OPTIONAL,
+	vsmscid		[17]	RangeVSMSC		OPTIONAL,
+	vsmsctype		[18]	TypeVSMSC		OPTIONAL,
+	dgtiAddress		[19]	AddressInformation	OPTIONAL,
+	dgtiAddressGSM	[20]	AddressString		OPTIONAL,
+	destPointCode		[21]	C7PointCode		OPTIONAL,
+	ogtiAddress		[22]	AddressInformation	OPTIONAL,
+	ogtiAddressGSM	[23]	AddressString		OPTIONAL,
+	origPointCode		[24]	C7PointCode		OPTIONAL,
+	orglSubmitDate		[25]	Date		OPTIONAL,
+	orglSubmitTime	[26]	Time		OPTIONAL,
+	transparentPid		[27]	TransparentPid		OPTIONAL,
+	mesgReplyPath	[28]	MesgReplyPath		OPTIONAL,
+	intlMobileSubId		[29]	IMSI		OPTIONAL,
+	callingLineId		[30]	AddressInformation	OPTIONAL,
+	callingLineIdGSM 	[31]	AddressString		OPTIONAL,
+	consolidation		[32]	IA5String		OPTIONAL,
+	portNumber		[33]	PortNumber		OPTIONAL,
+	aser		[34]	AdditionalServices	OPTIONAL,
+	mser		[35]	RequestedServices	OPTIONAL,
+	nser		[36]	NewServices		OPTIONAL,
+	xser		[37]	ExtraServices		OPTIONAL,
+	origIntlMobileSubId	[38]	IMSI		OPTIONAL,
+	billid		[39]	IA5String		OPTIONAL,
+	lang		[40]	LanguageIndicator	OPTIONAL,
+	cbat		[41]	IA5String		OPTIONAL,
+	ppPser		[42]	PrepaidPrimSer	OPTIONAL,
+	ppAser		[43]	PrepaidAddSer		OPTIONAL,
+	ppAserDuringJam	[44]	PrepaidAddSer		OPTIONAL,
+	ppAserFree		[45]	PrepaidAddSer		OPTIONAL,
+	ppAserRecip		[46]	PrepaidAddSer		OPTIONAL,
+	smeReference		[47]	SmeReference		OPTIONAL,
+	smsContentDcs	[48]	IA5String		OPTIONAL,
+	smsContents		[49]	SMS-STRING		OPTIONAL,
+	cmReferenceNr		[50]	CmReference		OPTIONAL,
+	currentSegment	[51]	CmNumber		OPTIONAL,
+	segmentsTotal		[52]	CmNumber		OPTIONAL,
+	textFormatting		[53]	EmsBitString		OPTIONAL,
+	bytesCompressedData	[54]	EmsBytesCompressed	OPTIONAL,
+	predefinedAnimations	[55]	EmsNumber		OPTIONAL,
+	userDefinedAnimations	[56]	EmsNumber		OPTIONAL,
+	predefinedSounds	[57]	EmsNumber		OPTIONAL,
+	userDefinedSounds	[58]	EmsNumber		OPTIONAL,
+	blackWhitePictures	[59]	EmsNumber		OPTIONAL,
+	standardWvg		[60]	EmsNumber		OPTIONAL,
+	characterSizeWvg	[61]	EmsNumber		OPTIONAL,
+	greyscalePictures     	[62]	EmsNumber		OPTIONAL,
+	colourPictures		[63]	EmsNumber		OPTIONAL,
+	businessCards		[64]	EmsNumber		OPTIONAL,
+	calendarEntries		[65]	EmsNumber		OPTIONAL,
+	polyphonicMelodies	[66]	EmsNumber		OPTIONAL,
+	bit8PortNumberDest	[67]	EmsPortNumbers8	OPTIONAL,
+	bit16PortNumberDest	[68]	EmsPortNumbers16	OPTIONAL,
+	lmsgNrSeg		[69]	LmsgNumseg		OPTIONAL,
+	messageReference	[70]	MsgRef		OPTIONAL,
+	boolSer		[71]	BooleanServices	OPTIONAL,
+	origLASN		[72]	IA5String		OPTIONAL,
+	recipLASN		[73]	IA5String		OPTIONAL,
+	origMsgID		[74]	IA5String		OPTIONAL,
+	recipMsgID		[75]	IA5String		OPTIONAL,
+	receiptDate		[76]	Date		OPTIONAL,
+	receiptTime		[77]	Time		OPTIONAL,
+	isr		[78]	ISRFlags		OPTIONAL,
+	recipAltAddress		[79]	AddressInformation	OPTIONAL,
+	generatedSegments	[80]	NumGenSegments	OPTIONAL,
+	serviceType		[81]	IA5String		OPTIONAL,
+	deliveryAttempts	[82]	DeliveryAttempts	OPTIONAL,
+	untranslOrigAddress	[83]	UTF8AddressInformation	OPTIONAL,
+	untranslOrigAddressGSM	[84]	AddressString		OPTIONAL,
+	untranslRecipAddress	[85]	UTF8AddressInformation	OPTIONAL,
+	untranslRecipAddressGSM	[86]	AddressString		OPTIONAL,
+	msgError		[87]	MessageError		OPTIONAL,
+	tpDCS		[88]	GSM-TP-DCS		OPTIONAL,
+	bgwCdrType		[100]	CdrType		OPTIONAL,
+	smppBillid		[101]	IA5String	OPTIONAL,
+	subscriptionType	[200]	OCTET STRING	OPTIONAL,
+	predefinedPaymentOption	[201]	OCTET STRING	OPTIONAL,
+	iNRatedAmount		[202]	IA5String		OPTIONAL,
+	cspsServiceId		[203]	IA5String		OPTIONAL,
+	cspsCdrSequence	[204]	IA5String		OPTIONAL,
+	chargingMultiplier 	[205]	IA5String		OPTIONAL,
+	contentId 		[206]	IA5String		OPTIONAL,
+	calledPartyMNPInfo [207] OCTET STRING OPTIONAL,
+	chargeInfo [208] ChargeInfo OPTIONAL,
+	bgwDomain		[209]	Domain		OPTIONAL,
+	cdrUniqueKey	[300]	CdrUniqueKey OPTIONAL
+}
+
+CommandRecord ::= SEQUENCE
+{
+	commandType		[0]	CommandType		OPTIONAL,
+	origAddress		[1]	AddressInformation	OPTIONAL,
+	origAddressGSM	[2]	AddressString		OPTIONAL,
+	recipAddress		[3]	AddressInformation	OPTIONAL,
+	recipAddressGSM	[4]	AddressString		OPTIONAL,
+	cmdTerminReason	[5]	CmdTerminReason	OPTIONAL,
+	vsmscid		[6]	RangeVSMSC		OPTIONAL,
+	vsmsctype		[7]	TypeVSMSC		OPTIONAL,
+	ogtiAddress		[8]	AddressInformation	OPTIONAL,
+	ogtiAddressGSM	[9]	AddressString		OPTIONAL,
+	origPointCode		[10]	C7PointCode		OPTIONAL,
+	orglSubmitDate		[11]	Date		OPTIONAL,
+	orglSubmitTime	[12]	Time		OPTIONAL,
+	intlMobileSubId		[13]	IMSI		OPTIONAL,
+	callingLineId		[14]	AddressInformation	OPTIONAL,
+	callingLineIdGSM 	[15]	AddressString		OPTIONAL,
+	consolidation		[16]	IA5String		OPTIONAL,
+	billid		[17]	IA5String		OPTIONAL,
+	smeReference		[18]	SmeReference		OPTIONAL,
+	smsContentDcs	[19]	IA5String		OPTIONAL,
+	smsContents		[20]	SMS-STRING		OPTIONAL,	
+	messageReference	[21]	MsgRef		OPTIONAL,
+	serviceType		[22]	IA5String		OPTIONAL,
+	tpDCS		[23]	GSM-TP-DCS		OPTIONAL
+}
+
+NotificationRecord ::= SEQUENCE
+{
+	orglOrigAddress	[0]	AddressInformation	OPTIONAL,
+	orglOrigAddressGSM	[1]	AddressString		OPTIONAL,
+	orglRecipAddress	[2]	AddressInformation	OPTIONAL,
+	orglRecipAddressGSM	[3]	AddressString		OPTIONAL,
+	orglNotifAddress	[4]	AddressInformation	OPTIONAL,
+	orglNotifAddressGSM	[5]	AddressString		OPTIONAL,
+	submitDate		[6]	Date		OPTIONAL,
+	submitTime		[7]	Time		OPTIONAL,
+	orglSubmitDate		[8]	Date		OPTIONAL,
+	orglSubmitTime	[9]	Time		OPTIONAL,
+	status		[10]	Status		OPTIONAL,
+	terminDate		[11]	Date		OPTIONAL,
+	terminTime		[12]	Time		OPTIONAL,
+	lengthOfMessage	[13]	MessageLength	OPTIONAL,
+	validityPeriod		[14]	Period		OPTIONAL,
+	vsmscid		[15]	RangeVSMSC		OPTIONAL,
+	vsmsctype		[16]	TypeVSMSC		OPTIONAL,
+	consolidation		[17]	IA5String		OPTIONAL,
+	billid		[18]	IA5String		OPTIONAL,
+	smeReference		[19]	SmeReference		OPTIONAL,
+	smsContentDcs	[20]	IA5String		OPTIONAL,
+	smsContents		[21]	SMS-STRING		OPTIONAL,
+	messageReference	[22]	MsgRef		OPTIONAL,
+	recipLASN		[23]	IA5String		OPTIONAL,
+	origMsgID		[24]	IA5String		OPTIONAL,
+	isr		[25]	ISRFlags		OPTIONAL,
+	boolSer		[26]	BooleanServicesNotif	OPTIONAL,
+	recipAltAddress		[27]	AddressInformation 	OPTIONAL,
+	serviceType		[28]	IA5String		OPTIONAL,
+	orglDgtiAddress	[29]	AddressInformation	OPTIONAL,
+	orglDgtiAddressGSM	[30]	AddressString		OPTIONAL,
+	orglDestPointCode	[31]	C7PointCode		OPTIONAL,
+	orglOgtiAddress	[32]	AddressInformation	OPTIONAL,
+	orglOgtiAddressGSM	[33]	AddressString		OPTIONAL,
+	orglOrigPointCode	[34]	C7PointCode		OPTIONAL,
+	deliveryAttempts	[35]	DeliveryAttempts	OPTIONAL,
+	orglUntranslOrigAddress	[36]	UTF8AddressInformation	OPTIONAL,
+	orglUntranslOrigAddressGSM	[37]	AddressString		OPTIONAL,
+	orglUntranslRecipAddress	[38]	UTF8AddressInformation	OPTIONAL,
+	orglUntranslRecipAddressGSM	[39]	AddressString		OPTIONAL,
+	msgError		[40]	MessageError		OPTIONAL,
+	tpDCS		[41]	GSM-TP-DCS		OPTIONAL
+}
+
+SummaryRecord ::= SEQUENCE
+{
+	origAddress		[0]	AddressInformation 	OPTIONAL,
+	origAddressGSM	[1]	AddressString 		OPTIONAL,
+	recipAddress		[2]	AddressInformation 	OPTIONAL,
+	recipAddressGSM	[3]	AddressString 		OPTIONAL,
+	status		[4]	Status 		OPTIONAL,
+	vsmscid		[5]	RangeVSMSC 		OPTIONAL,
+	vsmsctype		[6]	TypeVSMSC 		OPTIONAL,
+	dgtiAddress		[7]	AddressInformation 	OPTIONAL,
+	dgtiAddressGSM	[8]	AddressString 		OPTIONAL,
+	destPointCode		[9]	C7PointCode 		OPTIONAL,
+	ogtiAddress		[10]	AddressInformation 	OPTIONAL,
+	ogtiAddressGSM	[11]	AddressString 		OPTIONAL,
+	origPointCode		[12]	C7PointCode 		OPTIONAL,
+	transparentPid		[13]	TransparentPid 	OPTIONAL,
+	intlMobileSubId		[14]	IMSI 		OPTIONAL,
+	callingLineId		[15]	AddressInformation 	OPTIONAL,
+	callingLineIdGSM 	[16]	AddressString 		OPTIONAL,
+	origIntlMobileSubId 	[17] 	IMSI 		OPTIONAL,
+	billid		[18]	IA5String 		OPTIONAL,
+	ppPser		[19]	PrepaidPrimSer 	OPTIONAL,
+	totalUdLength		[20]	UdLength 		OPTIONAL,
+	submissionTimeFirst   	[21] 	Time		OPTIONAL,
+	submissionDateFirst    	[22] 	Date		OPTIONAL,
+	submissionTimeLast    	[23] 	Time		OPTIONAL,
+	submissionDateLast    	[24] 	Date		OPTIONAL,	
+	deliveryTimeFirst     	[25] 	Time		OPTIONAL,
+	deliveryDateFirst     	[26] 	Date		OPTIONAL,
+	deliveryTimeLast      	[27] 	Time		OPTIONAL,
+	deliveryDateLast     	[28] 	Date		OPTIONAL,
+	cmReferenceNr         	[29] 	CmReference		OPTIONAL,
+	segmentsTotal         	[30] 	CmNumber		OPTIONAL,
+	segmentsAccepted      	[31] 	CmNumber		OPTIONAL,
+	segmentsDelivered     	[32] 	CmNumber		OPTIONAL,
+	segmentsDuplicate     	[33] 	CmNumber		OPTIONAL,
+	segmentsReplaced      	[34] 	CmNumber		OPTIONAL,
+	textFormatting        	[35] 	EmsBitString		OPTIONAL,
+	bytesCompressedData   	[36] 	EmsBytesCompressed	OPTIONAL,
+	predefinedAnimations  	[37] 	EmsNumber		OPTIONAL,
+	userDefinedAnimations 	[38] 	EmsNumber		OPTIONAL,
+	predefinedSounds      	[39] 	EmsNumber		OPTIONAL,
+	userDefinedSounds     	[40] 	EmsNumber		OPTIONAL,
+	blackWhitePictures    	[41] 	EmsNumber		OPTIONAL,
+	standardWvg		[42]	EmsNumber		OPTIONAL,
+	characterSizeWvg	[43]	EmsNumber		OPTIONAL,
+	greyscalePictures     	[44] 	EmsNumber      	OPTIONAL,
+	colourPictures        	[45] 	EmsNumber            	OPTIONAL,
+	businessCards         	[46] 	EmsNumber            	OPTIONAL,
+	calendarEntries       	[47] 	EmsNumber            	OPTIONAL,
+	polyphonicMelodies	[48] 	EmsNumber            	OPTIONAL,
+	bit8PortNumberDest    	[49] 	EmsPortNumbers8      	OPTIONAL,
+	bit16PortNumberDest   	[50] 	EmsPortNumbers16     	OPTIONAL,
+	boolSer		[51]	BooleanServicesCM	OPTIONAL,
+	recipAltAddress		[52]	AddressInformation 	OPTIONAL,
+	serviceType		[53]	IA5String		OPTIONAL,
+	totalAttempts		[54]	DeliveryAttempts	OPTIONAL,
+	segmError		[55]	MessageError		OPTIONAL
+}
+
+AddressInformation ::= SEQUENCE
+{
+	ton	[0]	TypeOfNumber		OPTIONAL,
+	npi	[1]	NumberingPlanIndicator	OPTIONAL,
+	pid	[2]	ProtocolIdentifier	OPTIONAL,
+	msisdn	[3]	IA5String		OPTIONAL,
+	msisdnUTF8	[4]	UTF8String		OPTIONAL
+}
+
+UTF8AddressInformation ::= SEQUENCE
+{
+	ton	[0]	TypeOfNumber		OPTIONAL,
+	npi	[1]	NumberingPlanIndicator	OPTIONAL,
+	pid	[2]	ProtocolIdentifier	OPTIONAL,
+	msisdn	[3]	UTF8String		OPTIONAL
+}
+
+TypeOfNumber ::= ENUMERATED
+{
+	unknown (0), 
+	international (1),
+	national (2),
+	network (3),
+	short (4),
+	alpha (5),
+	abbreviated (6),
+	reserved7 (7)
+}
+
+NumberingPlanIndicator ::= ENUMERATED 
+{
+	unknown (0),
+	telephone (1),
+	reserved2 (2),
+	data (3),
+	telex (4),
+	tcpip (5),
+	landmobile (6),
+	reserved7 (7),
+	national (8),
+	private (9),
+	ermes (10),
+	reserved11 (11),
+	reserved12 (12),
+	reserved13 (13),
+	internet (14),
+	reserved15 (15)
+}
+
+ProtocolIdentifier ::= ENUMERATED
+{
+	plmn (0),
+	globaltitle (24),
+	faxg3 (34),
+	faxg4 (35),
+	ivr (36),
+	speech (36),
+	ermes (37),
+	menu (56),
+	pc (57),
+	tap (58),
+	smpp (59),
+	wap (60),
+	ois (61),
+	vms (62),
+	smtp (204)
+}
+
+Date ::= OCTET STRING (SIZE (3))
+	-- 3 octets [yy][mm][dd]
+
+Time ::= OCTET STRING (SIZE (3))
+	-- 3 octets [hh][mm][ss]
+
+Status ::= ENUMERATED
+{
+	delivered (0),
+	expired (1),
+	deleted (2),
+	replaced (3),
+	submitted (4),
+	incomplete-submission (5),
+	incomplete-delivery (6),
+	undeliverable (7),
+	passed-on (8),
+	pp-rejected (9)
+}
+
+MessageLength ::= INTEGER {min (0), max (640)}
+
+LanguageIndicator ::= INTEGER {min (0), max (255)}
+
+Period ::= SEQUENCE
+{
+	hours	[0]	HoursPeriod	OPTIONAL,
+	minutes	[1]	Minutes	OPTIONAL
+}
+
+HoursPeriod ::= INTEGER {min (0), max (8760)}
+
+Minutes ::= INTEGER {first (0), last (59)}
+
+RangeVSMSC ::= INTEGER 
+
+TypeVSMSC  ::= ENUMERATED
+{
+	none (0), 
+	private (1),
+	public (2)
+}
+
+C7PointCode ::= INTEGER {max (16777215)}
+
+TransparentPid ::= INTEGER {min (0), max (255)}
+
+PortNumber  ::= INTEGER
+
+SmeReference ::= INTEGER { min(0), max(4294967295)}
+
+MesgReplyPath ::= ENUMERATED
+{
+	request (1),
+	response (2)
+}       
+
+CommandType ::= ENUMERATED
+{
+	phase1cmdinqm (0), -- phase1 command "inquire message"
+	phase1cmddelm (1), -- phase1 command "delete message"
+	gsmcmdcenq (2),    -- gsm    command "enquire message"
+	gsmcmdcdel (3),    -- gsm    command "delete message"
+	gsmcmdcesr (4),    -- gsm    command "enable status report"
+	gsmcmdccsr (5),    -- gsm    command "clear  status report"
+	phase1cmdmodm (6), -- phase1 command "modify message"
+	gsmcmdssdl (7)     -- gsm    command "show subsciber distribution list"
+}       
+
+CmdTerminReason ::= ENUMERATED
+{
+	notaccepted (0),
+	accepted (1),
+	notfound (2),
+	tmpnotavail (3)
+}
+
+AdditionalServices ::= OCTET STRING (SIZE(4))
+
+RequestedServices ::= OCTET STRING (SIZE(2))
+
+NewServices ::= OCTET STRING (SIZE(4))
+
+ExtraServices ::= OCTET STRING (SIZE(2))
+
+PrepaidPrimSer ::= OCTET STRING (SIZE(4))
+
+PrepaidAddSer ::= OCTET STRING (SIZE(4))
+
+ISRFlags ::= OCTET STRING (SIZE(1))
+
+UdLength ::= INTEGER {min (0), max (40800) }
+
+CmReference ::=  INTEGER {min (0), max (65535) }
+
+CmNumber ::=  INTEGER {min (0), max (255) }
+
+EmsBitString ::= OCTET STRING (SIZE(1))
+
+EmsBytesCompressed ::= INTEGER  {min (0), max (35700) }
+
+EmsNumber ::=  INTEGER {min (0), max (8607) }
+
+EmsPortNumbers8 ::=  INTEGER {min (0), max (255) }
+
+EmsPortNumbers16 ::=  INTEGER {min (0), max (65535) }
+
+LmsgNumseg ::= INTEGER {min (0), max (255)}
+
+BooleanServices ::= OCTET STRING (SIZE(4))
+
+BooleanServicesNotif ::= OCTET STRING (SIZE(4))
+
+BooleanServicesCM ::= OCTET STRING (SIZE(4))
+
+SMS-STRING ::= IA5String
+
+MsgRef ::= OCTET STRING
+
+NumGenSegments ::= INTEGER {min (0), max (255) }    -- generatedSegments for CR SMSC_2002_182: Hebrew conv.
+
+DeliveryAttempts ::=  INTEGER {min (1), max (65535) } -- CR SMSC_3057
+
+TBCD-STRING ::= OCTET STRING
+
+AddressString   ::= OCTET STRING (SIZE (1..20))
+
+IMSI    ::= TBCD-STRING (SIZE (3..8))
+
+MessageError ::= INTEGER {min (0), max (65534)}
+
+GSM-TP-DCS ::= INTEGER {min (0), max (255) }
+
+CdrType ::= ENUMERATED
+{
+	undefined		(0),
+	peer2peer		(1),
+	peer2vasNonALA	(2),
+	peer2vasALA		(3),
+	vas2peer		(4),
+	alpha2peer		(5),
+	long2peer		(6)
+}
+
+Domain ::= ENUMERATED
+{
+	domain0		(0),
+	domain1		(1),
+	domain2		(2)
+}
+
+ChargeInfo ::= ENUMERATED
+{
+noCharge (0),
+charge (1)
+}
+
+CdrUniqueKey ::= IA5String
+
+END

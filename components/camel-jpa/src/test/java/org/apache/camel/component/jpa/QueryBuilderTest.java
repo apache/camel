@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,9 +22,6 @@ import java.util.Map;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class QueryBuilderTest extends CamelTestSupport {
 
     @Test
@@ -60,7 +57,7 @@ public class QueryBuilderTest extends CamelTestSupport {
     public void testQueryBuilderWithParametersMap() throws Exception {
         QueryBuilder q = QueryBuilder.query("select x from SendEmail x where x.id = :a");
         assertNotNull(q);
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("a", 1);
         q.parameters(map);
         assertEquals("Query: select x from SendEmail x where x.id = :a Parameters: {a=1}", q.toString());

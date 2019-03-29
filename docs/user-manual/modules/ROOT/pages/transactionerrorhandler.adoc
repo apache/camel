@@ -1,0 +1,178 @@
+[[TransactionErrorHandler-TransactionErrorHandler]]
+=== TransactionErrorHandler
+
+*Available as of Camel 2.0*
+
+This is the new default transaction error handler in Camel 2.0 onwards,
+used for transacted routes.
+
+It uses the same base as the
+link:defaulterrorhandler.adoc[DefaultErrorHandler] so it has the same
+feature set as this error handler.
+
+By default any exception thrown during routing will be propagated back
+to the caller and the link:exchange.adoc[Exchange] ends immediately.
+However you can use the link:exception-clause.adoc[Exception Clause] to
+catch a given exception and lower the exception by marking it as
+handled. If so the exception will *not* be sent back to the caller and
+the link:exchange.adoc[Exchange] continues to be routed.
+
+[[TransactionErrorHandler-Example]]
+==== Example
+
+In this route below, any exception thrown in eg the `validateOrder` bean
+will be propagated back to the caller, and its the jetty endpoint. It
+will return a HTTP error message back to the client.
+
+[source,java]
+----
+from("jetty:http://localhost/myservice/order").transacted().to("bean:validateOrder").to("jms:queue:order");
+----
+
+We can add a *onException* in case we want to catch certain exceptions
+and route them differently, for instance to catch a
+*ValidationException* and return a fixed response to the caller.
+
+[source,java]
+----
+onException(ValidationException.class).handled(true).transform(body(constant("INVALID ORDER")));
+
+from("jetty:http://localhost/myservice/order").transacted().to("bean:validateOrder").to("jms:queue:order");
+----
+
+When the *ValidationException* is thrown from the validate order bean it
+is intercepted by the
+link:transactionerrorhandler.adoc[TransactionErrorHandler] and it let
+the `onException(ValidationException.class` handle it so the
+link:exchange.adoc[Exchange] is routed to this route and since we use
+*handled(true)* then the original exception is lowered (= cleared) and
+we transform the message into a fixed response that are returned to
+jetty endpoint that returns it to the original caller.
+
+[[TransactionErrorHandler-Conventionoverconfiguration]]
+==== Convention over configuration
+
+When you configure a route to be transacted you just mark it as
+transacted as follows:
+
+[source,java]
+----
+from("jms:queue:foo").transacted().to("bean:handleFoo");
+----
+
+And in Spring DSL:
+
+[source,xml]
+----
+<route>
+   <from uri="jms:queue:foo"/>
+   <transacted/>
+   <to uri="bean:handleFoo"/>
+</route>
+----
+
+What happens is that Camel will automatic lookup the right Spring
+transaction manager. It does using the following rules, in order: +
+1. If there is only 1 bean with the type
+`org.apache.camel.spi.TransactedPolicy` then its used. +
+2. If there is a bean with id `PROPAGATION_REQUIRED` and of type
+`org.apache.camel.spi.TransactedPolicy` then its used. +
+3. If there is only 1 bean with the type
+`org.springframework.transaction.PlatformTransactionManager` then its
+used.
+
+However you can explicit configure what you want to use. For instance
+the *transacted* DSL accepts a String reference parameter to indicate
+the bean id of the `org.apache.camel.spi.TransactedPolicy` bean to use
+in case you have multiple beans. For instance a PROPAGATION_REQUIRES_NEW
+bean.
+
+The *transactionErrorHandler* like the *transacted* also supprts
+convention over configuration and it will also automatic lookup the
+right Spring transaction manager. It does using the following rules, in
+order: +
+1. If there is only 1 bean with the type
+`org.apache.camel.spi.TransactedPolicy` then its used. +
+2. If there is a bean with id `PROPAGATION_REQUIRED` and of type
+`org.apache.camel.spi.TransactedPolicy` then its used. +
+3. If there is only 1 bean with the type
+`org.springframework.transaction.support.TransactionTemplate` then its
+used. +
+4. If there is only 1 bean with the type
+`org.springframework.transaction.PlatformTransactionManager` then its
+used.
+
+However you can explicit configure what you want to use. For instance
+the *transactionErrorHandler* DSL accepts either a TransactedPolicy, a
+TransactionTemplate or a PlatformTransactionManager.
+
+[[TransactionErrorHandler-UsingCameltodoredeliveries]]
+==== Using Camel to do redeliveries
+
+As the link:transactionerrorhandler.adoc[TransactionErrorHandler] also
+supports to let Camel do redeliveries you can use both worlds. Letting
+Camel do some redeliveries and at the end the backing transaction
+manager doing other redeliveries. In fact in the end the transaction
+manager have the final word. That means if Camel cannot process the
+exchange then its thrown back to the transaction manager that will
+perform the rollback, and redelivery.
+
+[[TransactionErrorHandler-ExamplewithusingCameltodoredeliveries]]
+===== Example with using Camel to do redeliveries
+
+In the route below we have configured a transaction error handler. It
+will by default do local redeliveries up till 6 times. In Case Camel
+could not redeliver the message it will be thrown back to the
+transaction manager that will do a rollback, and a redelivery if it was
+configured to do so.
+
+Notice that as we have all the powers from
+link:defaulterrorhandler.adoc[DefaultErrorHandler] we can configure an
+*onException* where we state that in case of this particular exception,
+an IllegalArgumentException we will only do redeliveries up till 4
+times. (Yes the code is based on an unit test).
+
+And also notice that we mark the routes as transacted using
+*transacted*. This is always needed to instruct Camel that these routes
+are transacted.
+
+If you do not provide any Spring TransactionTemplate to either the
+*transactionErrorHandler*, then Camel will automatic lookup in the
+Spring application context for a transaction manager to use. See more in
+the Convention over configuration section on this page.
+
+And now the route:
+
+[source,java]
+----
+// configure transacted error handler to use up till 4 redeliveries
+// we have not passed in any spring TX manager. Camel will automatic
+// find it in the spring application context. You only need to help
+// Camel in case you have multiple TX managers
+errorHandler(transactionErrorHandler().maximumRedeliveries(6));
+
+// speical for this exception we only want to do it at most 4 times
+onException(IllegalArgumentException.class).maximumRedeliveries(4);
+
+from("direct:okay")
+    // marks this route as transacted, and we dont pass in any parameters so we
+    // will auto lookup and use the Policy defined in the spring XML file
+    .transacted()
+    .setBody(constant("Tiger in Action")).bean("bookService")
+    .setBody(constant("Elephant in Action")).bean("bookService");
+
+// marks this route as transacted that will use the single policy defined in the registry
+from("direct:fail")
+    // marks this route as transacted, and we dont pass in any parameters so we
+    // will auto lookup and use the Policy defined in the spring XML file
+    .transacted()
+    .setBody(constant("Tiger in Action")).bean("bookService")
+    .setBody(constant("Donkey in Action")).bean("bookService");
+----
+
+[[TransactionErrorHandler-SeeAlso]]
+==== See Also
+
+* link:error-handler.adoc[Error Handler]
+* link:error-handling-in-camel.adoc[Error handling in Camel]
+* <<transactionalClient-eip,Transactional Client>>

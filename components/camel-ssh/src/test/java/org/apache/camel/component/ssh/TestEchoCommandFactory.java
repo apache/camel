@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,7 @@ package org.apache.camel.component.ssh;
 
 import java.util.concurrent.CountDownLatch;
 
-import org.apache.sshd.server.Command;
+import org.apache.sshd.server.command.Command;
 
 public class TestEchoCommandFactory extends EchoCommandFactory {
 

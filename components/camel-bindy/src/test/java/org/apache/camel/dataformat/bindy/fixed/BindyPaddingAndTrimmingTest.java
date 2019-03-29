@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,8 +25,6 @@ import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.hamcrest.core.Is;
 import org.junit.Test;
-
-import static org.hamcrest.core.IsNull.nullValue;
 
 public class BindyPaddingAndTrimmingTest extends CamelTestSupport {
 
@@ -56,7 +54,7 @@ public class BindyPaddingAndTrimmingTest extends CamelTestSupport {
         unmarhsalResult.assertIsSatisfied();
         MyBindyModel myBindyModel = unmarhsalResult.getReceivedExchanges().get(0).getIn().getBody(MyBindyModel.class);
         assertEquals("foo  ", myBindyModel.foo);
-        assertThat(myBindyModel.bar, Is.is(nullValue()));
+        assertThat(myBindyModel.bar, Is.is(""));
     }
 
     @Test

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,23 +23,20 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.component.mllp.MllpConstants;
+import org.apache.camel.component.mllp.MllpProtocolConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.mllp.MllpConstants.MLLP_ACKNOWLEDGEMENT;
-import static org.apache.camel.component.mllp.MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE;
-import static org.apache.camel.component.mllp.MllpEndpoint.MESSAGE_TERMINATOR;
-import static org.apache.camel.component.mllp.MllpEndpoint.SEGMENT_DELIMITER;
-
 /**
- * A Camel Processor for generating HL7 Acknowledgements
+ * An example of a Camel Processor for generating HL7 Acknowledgements.
  */
 public class Hl7AcknowledgementGenerator implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(Hl7AcknowledgementGenerator.class);
 
-    String defaultNack = "MSH|^~\\&|||||||NACK||P|2.2" + SEGMENT_DELIMITER
-            + "MSA|AR|" + SEGMENT_DELIMITER
-            + MESSAGE_TERMINATOR;
+    String defaultNack = "MSH|^~\\&|||||||NACK||P|2.2" + MllpProtocolConstants.SEGMENT_DELIMITER
+        + "MSA|AR|" + MllpProtocolConstants.SEGMENT_DELIMITER
+        + MllpProtocolConstants.MESSAGE_TERMINATOR;
 
 
     @Override
@@ -56,13 +53,13 @@ public class Hl7AcknowledgementGenerator implements Processor {
         byte[] acknowledgementBytes = null;
         if (null == exchange.getException()) {
             acknowledgementBytes = generateApplicationAcceptAcknowledgementMessage(hl7Bytes);
-            message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "AA");
+            exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, "AA");
         } else {
             acknowledgementBytes = generateApplicationErrorAcknowledgementMessage(hl7Bytes);
-            message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "AE");
+            exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, "AE");
         }
 
-        message.setHeader(MLLP_ACKNOWLEDGEMENT, acknowledgementBytes);
+        exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT, acknowledgementBytes);
     }
 
     public byte[] generateApplicationAcceptAcknowledgementMessage(byte[] hl7MessageBytes) throws Hl7AcknowledgementGenerationException {
@@ -92,24 +89,24 @@ public class Hl7AcknowledgementGenerator implements Processor {
         for (int i = 0; i < hl7MessageBytes.length; ++i) {
             if (fieldSeparator == hl7MessageBytes[i]) {
                 fieldSeparatorIndexes.add(i);
-            } else if (SEGMENT_DELIMITER == hl7MessageBytes[i]) {
+            } else if (MllpProtocolConstants.SEGMENT_DELIMITER == hl7MessageBytes[i]) {
                 endOfMSH = i;
                 break;
             }
         }
 
         if (-1 == endOfMSH) {
-            throw new Hl7AcknowledgementGenerationException("Failed to find the end of the  MSH Segment while attempting to generate response", hl7MessageBytes);
+            throw new Hl7AcknowledgementGenerationException("Failed to find the end of the MSH Segment while attempting to generate response", hl7MessageBytes);
         }
 
         if (8 > fieldSeparatorIndexes.size()) {
-            throw new Hl7AcknowledgementGenerationException("Insufficient number of fields in after MSH-2 in MSH to generate a response - 8 are required but "
-                    + fieldSeparatorIndexes.size() + " " + "were found", hl7MessageBytes);
+            throw new Hl7AcknowledgementGenerationException("Insufficient number of fields in MSH to generate a response - 8 are required but "
+                + fieldSeparatorIndexes.size() + " " + "were found", hl7MessageBytes);
         }
 
         // Build the MSH Segment
         ByteArrayOutputStream acknowledgement = new ByteArrayOutputStream(1024);
-        acknowledgement.write(hl7MessageBytes, 0, 8); // through MSH-2 (without trailing field separator)
+        acknowledgement.write(hl7MessageBytes, 0, fieldSeparatorIndexes.get(1)); // through MSH-2 (without trailing field separator)
         acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(3), fieldSeparatorIndexes.get(4) - fieldSeparatorIndexes.get(3)); // MSH-5
         acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(4), fieldSeparatorIndexes.get(5) - fieldSeparatorIndexes.get(4)); // MSH-6
         acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(1), fieldSeparatorIndexes.get(2) - fieldSeparatorIndexes.get(1)); // MSH-3
@@ -133,18 +130,21 @@ public class Hl7AcknowledgementGenerator implements Processor {
         }
 
         acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(8), endOfMSH - fieldSeparatorIndexes.get(8)); // MSH-10 through the end of the MSH
-        acknowledgement.write(SEGMENT_DELIMITER);
+        acknowledgement.write(MllpProtocolConstants.SEGMENT_DELIMITER);
 
         // Build the MSA Segment
         acknowledgement.write("MSA".getBytes(), 0, 3);
         acknowledgement.write(fieldSeparator);
         acknowledgement.write(acknowledgementCode.getBytes(), 0, 2);
         acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(8), fieldSeparatorIndexes.get(9) - fieldSeparatorIndexes.get(8)); // MSH-10 end
-        acknowledgement.write(SEGMENT_DELIMITER);
+        acknowledgement.write(MllpProtocolConstants.SEGMENT_DELIMITER);
 
         // Terminate the message
-        acknowledgement.write(MESSAGE_TERMINATOR);
+        // acknowledgement.write(SEGMENT_DELIMITER);
+        // acknowledgement.write(MESSAGE_TERMINATOR);
 
         return acknowledgement.toByteArray();
     }
+
+
 }

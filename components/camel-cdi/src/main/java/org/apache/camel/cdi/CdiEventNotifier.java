@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,14 +20,12 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EventObject;
 import java.util.List;
+
 import javax.enterprise.inject.spi.BeanManager;
 
-import org.apache.camel.management.event.RouteAddedEvent;
-import org.apache.camel.management.event.RouteRemovedEvent;
-import org.apache.camel.management.event.RouteStartedEvent;
-import org.apache.camel.management.event.RouteStoppedEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.RouteEvent;
 import org.apache.camel.support.EventNotifierSupport;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
@@ -45,31 +43,25 @@ final class CdiEventNotifier extends EventNotifierSupport {
     }
 
     @Override
-    public void notify(EventObject event) {
+    public void notify(CamelEvent event) {
         String id = null;
 
-        if (event instanceof RouteAddedEvent) {
-            id = ((RouteAddedEvent) event).getRoute().getId();
-        } else if (event instanceof RouteStartedEvent) {
-            id = ((RouteStartedEvent) event).getRoute().getId();
-        } else if (event instanceof RouteStoppedEvent) {
-            id = ((RouteStoppedEvent) event).getRoute().getId();
-        } else if (event instanceof RouteRemovedEvent) {
-            id = ((RouteRemovedEvent) event).getRoute().getId();
+        if (event instanceof RouteEvent) {
+            id = ((RouteEvent) event).getRoute().getId();
         }
 
         if (isNotEmpty(id)) {
             List<Annotation> annotations = new ArrayList<>();
             Collections.addAll(annotations, qualifiers);
             annotations.add(NamedLiteral.of(id));
-            manager.fireEvent(event, annotations.stream().toArray(Annotation[]::new));
+            manager.fireEvent(event, annotations.toArray(new Annotation[0]));
         } else {
             manager.fireEvent(event, qualifiers);
         }
     }
 
     @Override
-    public boolean isEnabled(EventObject event) {
+    public boolean isEnabled(CamelEvent event) {
         return true;
     }
 }

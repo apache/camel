@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -28,14 +29,11 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class JmsRouteUsingDifferentHeadersTest extends CamelTestSupport {
 
     @Test
     public void testUsingDifferentHeaderTypes() throws Exception {
-        Map<String, Object> headers = new LinkedHashMap<String, Object>();
+        Map<String, Object> headers = new LinkedHashMap<>();
         headers.put("a", new Byte("65"));
         headers.put("b", Boolean.TRUE);
         headers.put("c", new Double("44444"));

@@ -1,0 +1,19 @@
+{
+    "ok": true,
+    "result": [
+        {
+            "update_id": 219398823,
+            "channel_post": {
+                "message_id": 67,
+                "chat": {
+                    "id": -1001245756934,
+                    "title": "cameltemp",
+                    "username": "cameltelegram",
+                    "type": "channel"
+                },
+                "date": 1546505413,
+                "text": "test"
+            }
+        }
+    ]
+}

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.mqtt;
 
+import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.test.AvailablePortFinder;
 
 /**
@@ -57,5 +57,23 @@ public final class MQTTTestSupport {
 
     public static String getHostForMQTTEndpoint() {
         return HOST;
+    }
+
+
+
+    public static BrokerService newBrokerService() throws Exception {
+        BrokerService service = new BrokerService();
+        service.setPersistent(false);
+        service.setAdvisorySupport(false);
+        service.addConnector(getConnection());
+
+        return service;
+    }
+
+    public static MQTTComponent newComponent() throws Exception {
+        MQTTComponent component = new MQTTComponent();
+        component.setHost(getHostForMQTTEndpoint());
+
+        return component;
     }
 }

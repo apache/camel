@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.google-calendar.enabled",
+      "description": "Enable google-calendar component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

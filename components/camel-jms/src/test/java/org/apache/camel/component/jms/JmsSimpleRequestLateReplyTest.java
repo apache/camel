@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
@@ -82,7 +83,7 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
 
             LOG.info("Sending late reply");
             // use some dummy queue as we override this with the property: JmsConstants.JMS_DESTINATION
-            Map<String, Object> headers = new HashMap<String, Object>();
+            Map<String, Object> headers = new HashMap<>();
             headers.put(JmsConstants.JMS_DESTINATION, replyDestination);
             headers.put("JMSCorrelationID", cid);
             template.sendBodyAndHeaders("activemq:dummy", expectedBody, headers);

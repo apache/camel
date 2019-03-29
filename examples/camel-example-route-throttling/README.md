@@ -21,24 +21,27 @@ You will need to compile this example first:
 
 	mvn compile
 
-### Run
+### How to Run
 
-The example should run if you type:
+The example has 3 maven goals to run the example
 
-	mvn exec:java -PCamelServer
+    mvn compile exec:java -PCamelServer
+    
+  Starts the Camel Server which contains the 3 routes and where you should check its log output for how it goes.
 
+    mvn compile exec:java -PCamelClient
+    
+  Is a client that sends 10000 JMS messages to the JMS broker which is consumed by route1. The Server must be started beforehand.
 
-	mvn exec:java -PCamelClient
+    mvn compile exec:java -PCamelFileClient
+    
+  Is a client that creates 5000 files that are consumed by route2. The server may be started beforehand, but its not required.
 
-
-	mvn exec:java -PCamelFileClient
+So at first you start the server. Then at any time you can run a client at will. For example you can run the JMS client and let it run to completion at the server. You can see at the server console logging that it reports the progress. And at sometime it will reach 10000 messages processed. You can then start the client again if you like.
+You can also start the other client to create the files which then let the example be a bit more complicated as we have concurrent processing of JMS messages and files at the same time. And where as both of these should be dynamic throttled so we wont go too fast.
 
 To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
-### Documentation
-
-This example is documented at
-  <http://camel.apache.org/route-throttling-example.html>
 
 ### Forum, Help, etc
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,9 +25,6 @@ import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class JmsMessageBindTest extends CamelSpringTestSupport {
     
     @Test
@@ -35,7 +32,7 @@ public class JmsMessageBindTest extends CamelSpringTestSupport {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedBodiesReceived("Completed");
         
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", "bar");
         // this header should not be sent as its value cannot be serialized 
         headers.put("binding", new JmsBinding());

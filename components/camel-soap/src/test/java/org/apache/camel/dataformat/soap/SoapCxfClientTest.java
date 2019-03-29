@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.soap;
-
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -28,7 +27,6 @@ import com.example.customerservice.GetCustomersByNameResponse;
 import com.example.customerservice.NoSuchCustomer;
 import com.example.customerservice.NoSuchCustomerException;
 import com.example.customerservice.SaveCustomer;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;

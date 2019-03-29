@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms.issues;
 
 import java.util.List;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -42,7 +43,7 @@ public class JmsDirectStartupOrderIssueTest extends CamelTestSupport {
         template.sendBody("activemq:queue:foo", "Bye World");
         template.sendBody("activemq:queue:foo", "Bye Camel");
 
-        context.startRoute("amq");
+        context.getRouteController().startRoute("amq");
 
         getMockEndpoint("mock:result").expectedMessageCount(4);
 

@@ -1,0 +1,167 @@
+[[bean-language]]
+== Bean method Language
+
+*Available as of Camel version 1.3*
+
+The purpose of the Bean Language is to be able to implement an
+Expression or Predicate using
+a simple method on a bean.
+
+So the idea is you specify a bean name which will then be resolved in
+the Registry such as the Spring
+ApplicationContext then a method is invoked to evaluate the
+Expression or Predicate.
+
+If no method name is provided then one is attempted to be chosen using
+the rules for Bean Binding; using the type of
+the message body and using any annotations on the bean methods.
+
+The Bean Binding rules are used to bind the
+Message Exchange to the method parameters; so you can
+annotate the bean to extract headers or other expressions such as
+<<xpath-language,XPath>> or <<xpath-language,XQuery>> from the message.
+
+=== Bean Options
+
+// language options: START
+The Bean method language supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| ref |  | String | Reference to bean to lookup in the registry
+| method |  | String | Name of method to call
+| beanType |  | String | Class name of the bean to use
+| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
+|===
+// language options: END
+
+
+=== Using Bean Expressions from the Java DSL
+
+[source,java]
+----
+from("activemq:topic:OrdersTopic").
+  filter().method("myBean", "isGoldCustomer").
+    to("activemq:BigSpendersQueue");
+----
+
+=== Using Bean Expressions from XML
+
+[source,xml]
+----
+<route>
+  <from uri="activemq:topic:OrdersTopic"/>
+  <filter>
+    <method ref="myBean" method="isGoldCustomer"/>
+    <to uri="activemq:BigSpendersQueue"/>
+  </filter>
+</route>
+----
+
+CAUTION: Bean attribute is now deprecated. The `bean` attribute of the method expression element is now
+deprecated. You should now make use of `ref` attribute instead.
+
+=== Writing the expression bean
+
+The bean in the above examples is just any old Java Bean with a method
+called isGoldCustomer() that returns some object that is easily
+converted to a *boolean* value in this case, as its used as a predicate.
+
+So we could implement it like this...
+
+[source,java]
+----
+public class MyBean {
+  public boolean isGoldCustomer(Exchange exchange) {
+    ...
+  }
+}
+----
+
+We can also use the Bean Integration
+annotations. For example you could do...
+
+[source,java]
+----
+public boolean isGoldCustomer(String body) {
+  // do something
+}
+----
+
+or
+
+[source,java]
+----
+public boolean isGoldCustomer(@Header(name = "foo") Integer fooHeader) {
+  // do something
+}
+----
+
+So you can bind parameters of the method to the Exchange, the
+Message or individual headers, properties, the body
+or other expressions.
+
+=== Non registry beans
+
+The <<bean-language,Bean Language>> also supports invoking beans
+that isn't registered in the Registry. This is
+usable for quickly to invoke a bean from Java DSL where you don't need
+to register the bean in the Registry such as the
+Spring ApplicationContext.
+
+Camel can instantiate the bean and invoke the method if given a class or
+invoke an already existing instance. This is illustrated from the
+example below:
+
+[source,java]
+----
+from("activemq:topic:OrdersTopic").
+        filter().expression(BeanLanguage(MyBean.class, "isGoldCustomer")).
+        to("activemq:BigSpendersQueue");
+----
+
+The 2nd parameter `isGoldCustomer` is an optional parameter to explicit
+set the method name to invoke. If not provided Camel will try to invoke
+the best suited method. If case of ambiguity Camel will thrown an
+Exception. In these situations the 2nd parameter can solve this problem.
+Also the code is more readable if the method name is provided. The 1st
+parameter can also be an existing instance of a Bean such as:
+
+[source,java]
+----
+private MyBean my;
+
+    from("activemq:topic:OrdersTopic").
+        filter().expression(BeanLanguage.bean(my, "isGoldCustomer")).
+            to("activemq:BigSpendersQueue");
+----
+
+In Camel 2.2 onwards you can avoid the `BeanLanguage` and have it just
+as:
+
+[source,java]
+----
+private MyBean my;
+
+    from("activemq:topic:OrdersTopic").
+        filter().expression(bean(my, "isGoldCustomer")).
+            to("activemq:BigSpendersQueue");
+----
+
+Which also can be done in a bit shorter and nice way:
+
+[source,java]
+----
+private MyBean my;
+
+    from("activemq:topic:OrdersTopic").
+        filter().method(my, "isGoldCustomer").
+            to("activemq:BigSpendersQueue");
+----
+
+=== Dependencies
+
+The Bean language is part of *camel-core*.

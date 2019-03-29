@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.apns.enabled",
+      "description": "Enable apns component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

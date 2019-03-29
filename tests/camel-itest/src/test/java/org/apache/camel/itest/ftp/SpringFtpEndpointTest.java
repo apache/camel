@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -54,7 +54,7 @@ public class SpringFtpEndpointTest extends AbstractJUnit4SpringContextTests {
     @Autowired
     protected ProducerTemplate template;
 
-    @EndpointInject(ref = "myFTPEndpoint")
+    @EndpointInject(uri = "ref:myFTPEndpoint")
     protected Endpoint inputFTP;
 
     @EndpointInject(uri = "mock:result")

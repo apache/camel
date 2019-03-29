@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,19 +25,15 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.ExchangeTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
-public class JAXBConvertTest extends Assert {
-    protected CamelContext context = new DefaultCamelContext();
-    protected TypeConverter converter = context.getTypeConverter();
+public class JAXBConvertTest extends ExchangeTestSupport {
 
     @Test
     public void testConverter() throws Exception {
-        PurchaseOrder purchaseOrder = converter.convertTo(PurchaseOrder.class, 
+        PurchaseOrder purchaseOrder = context.getTypeConverter().convertTo(PurchaseOrder.class, exchange,
             "<purchaseOrder name='foo' amount='123.45' price='2.22'/>");
 
         assertNotNull("Purchase order should not be null!", purchaseOrder);
@@ -48,7 +44,7 @@ public class JAXBConvertTest extends Assert {
 
     @Test
     public void testConverterTwice() throws Exception {
-        PurchaseOrder purchaseOrder = converter.convertTo(PurchaseOrder.class,
+        PurchaseOrder purchaseOrder = context.getTypeConverter().convertTo(PurchaseOrder.class, exchange,
             "<purchaseOrder name='foo' amount='123.45' price='2.22'/>");
 
         assertNotNull("Purchase order should not be null!", purchaseOrder);
@@ -56,7 +52,7 @@ public class JAXBConvertTest extends Assert {
         assertEquals("amount", 123.45, purchaseOrder.getAmount(), 0);
         assertEquals("price", 2.22, purchaseOrder.getPrice(), 0);
 
-        PurchaseOrder purchaseOrder2 = converter.convertTo(PurchaseOrder.class,
+        PurchaseOrder purchaseOrder2 = context.getTypeConverter().convertTo(PurchaseOrder.class, exchange,
             "<purchaseOrder name='bar' amount='5.12' price='3.33'/>");
 
         assertNotNull("Purchase order should not be null!", purchaseOrder2);
@@ -70,7 +66,7 @@ public class JAXBConvertTest extends Assert {
         String data = "<purchaseOrder name='foo' amount='123.45' price='2.22'/>";
         InputStream is = new ByteArrayInputStream(data.getBytes());
 
-        PurchaseOrder purchaseOrder = converter.convertTo(PurchaseOrder.class, is);
+        PurchaseOrder purchaseOrder = context.getTypeConverter().convertTo(PurchaseOrder.class, exchange, is);
         assertNotNull(purchaseOrder);
         assertEquals(-1, is.read());
     }
@@ -81,7 +77,7 @@ public class JAXBConvertTest extends Assert {
         InputStream is = new ByteArrayInputStream(data.getBytes());
 
         try {
-            converter.convertTo(PurchaseOrder.class, is);
+            context.getTypeConverter().convertTo(PurchaseOrder.class, exchange, is);
             fail("Should have thrown exception");
         } catch (TypeConversionException e) {
             // expected
@@ -93,7 +89,7 @@ public class JAXBConvertTest extends Assert {
     public void testNoConversionForStreamCache() throws Exception {
         PurchaseOrder order = new PurchaseOrder();
         try {
-            converter.mandatoryConvertTo(StreamCache.class, order);
+            context.getTypeConverter().mandatoryConvertTo(StreamCache.class, exchange, order);
             fail("We should not use the JAXB FallbackTypeConverter for stream caching");
         } catch (NoTypeConversionAvailableException e) {
             //this is OK

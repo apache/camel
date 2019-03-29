@@ -1,0 +1,40 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.openstack-swift.enabled",
+      "description": "Enable openstack-swift component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.openstack-glance.enabled",
+      "description": "Enable openstack-glance component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.openstack-neutron.enabled",
+      "description": "Enable openstack-neutron component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.openstack-nova.enabled",
+      "description": "Enable openstack-nova component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.openstack-cinder.enabled",
+      "description": "Enable openstack-cinder component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.openstack-keystone.enabled",
+      "description": "Enable openstack-keystone component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

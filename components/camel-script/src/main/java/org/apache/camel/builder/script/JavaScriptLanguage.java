@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,6 +21,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.LanguageSupport;
 
+@org.apache.camel.spi.annotations.Language("javaScript")
 public class JavaScriptLanguage extends LanguageSupport {
 
     @Override

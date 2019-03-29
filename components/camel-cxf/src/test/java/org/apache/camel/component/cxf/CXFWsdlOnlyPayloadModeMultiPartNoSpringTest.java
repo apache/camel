@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,8 +34,6 @@ import org.junit.Test;
 
 /**
  * Unit test that verifies multi part SOAP message functionality
- * 
- * @version 
  */
 public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSupport {
     protected static int port1 = CXFTestSupport.getPort1(); 
@@ -93,10 +91,10 @@ public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSuppor
             .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                  "http://localhost:" + port2 
                      + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart");
-        Holder<Integer> ssn = new Holder<Integer>();
+        Holder<Integer> ssn = new Holder<>();
         ssn.value = 0;
         
-        Holder<String> name = new Holder<String>();
+        Holder<String> name = new Holder<>();
         name.value = "Unknown name";
         
         client.getPersonMultiPartOperation("foo", 0, name, ssn);

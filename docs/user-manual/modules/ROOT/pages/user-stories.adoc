@@ -1,0 +1,342 @@
+[[UserStories-UserStories]]
+=== User Stories
+
+This page is intended as a place to collect user stories and feedback on
+Apache Camel. If you are using or have tried Apache Camel please add an
+entry or comment; or post to the mailing list.
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|Company, Product, or Project |Description
+|http://activemq.apache.org/[Apache ActiveMQ] |Uses Camel to add
+link:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
+support into the
+http://activemq.apache.org/enterprise-integration-patterns.html[ActiveMQ
+broker]. If you run an out of the box ActiveMQ broker, look in
+conf/camel.xml and you'll see `<camelContext>` with some example routing
+rules. Can be used to bridge ActiveMQ with any of the camel
+link:component.adoc[Components].
+
+|http://servicemix.apache.org/home.html[Apache ServiceMix] |Uses Camel
+as a routing engine as a
+http://servicemix.apache.org/servicemix-camel.html[JBI service unit] for
+use either in JBI or OSGi to route between JBI endpoints.
+See the
+http://servicemix.apache.org/3-beginner-using-apache-camel-inside-servicemix.html[tutorial]
+or http://servicemix.apache.org/camel-example.html[example]
+
+|https://ignite.apache.org/[Apache Ignite] |
+Apache Ignite In-Memory Data Fabric is a high-performance, integrated
+and distributed in-memory platform for computing and transacting on
+large-scale data sets in real-time, orders of magnitude faster than
+possible with traditional disk-based or flash technologies.
+
+It uses Camel for its universal streamer.
+
+|http://www.jboss.org/products/fuse/overview/[JBoss Fuse]
+http://fusesource.com/products/enterprise-servicemix/[(formerly known as Fuse ESB)] |
+Red Hat provides a commercial
+distribution of an ESB which includes Camel, ActiveMQ, CXF, ServiceMix,
+Karaf, http://fabric8.io/[Fabric8], and http://hawt.io/[Hawtio].
+
+|http://tools.jboss.org/features/apachecamel.html[Tools for Apache Camel]
+(formerly know as Fuse IDE) |JBoss provides developer tooling for
+Camel, ActiveMQ, ServiceMix, Karaf, CXF, and
+http://fabric8.io/[fabric8]. The tools is a set of Eclipse plugins, such
+as a graphical Camel editor and also includes a Camel route debugger,
+where you can set breakpoints in your routes.
+
+|https://github.com/camel-idea-plugin/camel-idea-plugin[Apache Camel
+IDEA Plugin] |Plugin for IntelliJ IDEA to provide a set of Apache Camel
+related editing capabilities to the code editor.
+
+|https://syndesis.io/[Syndesis] |
+Syndesis is for anyone that wants to integrate services. Syndesis
+includes a swish UI that enables the user to design integration flows
+and manage them from their browser.
+
+No coding required… Unless you really want to and then Syndesis allows
+you to dive into the code, develop your own connectors (if one doesn’t
+already exist), or hack on the integration definition directly.
+
+|http://fabric8.io/[Fabric8] |Fabric8 is an open source integration
+platform, allow to run Camel applications anywhere; whether its
+on-premise or in the cloud.
+
+|http://hawt.io/[Hawtio] |Hawtio is an open source HTML5 web
+application for visualizing, managing and tracing Camel routes &
+endpoints, ActiveMQ brokers, JMX, OSGi, logging, and much more.
+
+|http://grails.org[Grails] |The http://grails.org/plugin/routing[Grails
+Camel Routing Plugin] provides integration of Camel into Grails
+
+|http://wiki.open-esb.java.net/Wiki.jsp?page=CamelSE[Open ESB Camel SE]
+|Provides a JBI Service Engine for https://open-esb.dev.java.net/[Open
+ESB]. See the http://blogs.sun.com/polyblog/entry/camel_fuji[example
+using OpenESB and Fuji]
+
+|http://www.subrecord.org/[SubRecord] |Uses Camel for routing and EDA
+processing
+
+|http://openehealth.org/display/ipf2/Home[Open eHealth Integration
+Platform] |The Open eHealth Integration Platform (IPF) is an extension
+of the Apache Camel routing and mediation engine. It has an application
+programming layer based on the Groovy programming language and comes
+with comprehensive support for message processing and connecting systems
+in the eHealth domain.
+
+|http://code.google.com/p/camel-soap/[Camel SOAP] |Zero code WSDL based
+SOAP Client component for Apache Camel.
+
+|http://www.opensplice.com/section-item.asp?id=964[PrismTech] |PrismTech
+Simplifies Systems Integration & SOA Connectivity with Release of Open
+Source OpenSplice DDS Connector for Apache Camel.
+
+|http://github.com/hyperthunk/axiom[Axiom] |Axiom is is a framework for
+testing integration scenarios and uses Apache Camel to interact with
+your integration stack.
+
+|http://www.regionh.dk/English/English.htm[Capital Region of Denmark]
+|Chose to switch proprietary ESB to open source Apache Camel.
+
+|http://www.arla.com/[Arla Foods] |Uses Camel to integrate business
+backend with web application for farmers to access information about
+quality of their delivered milk. Application used in numerous european
+countries.
+
+|http://akkasource.org/[Akka] |Akka uses Apache Camel to implement
+additional messaging interfaces for
+http://doc.akkasource.org/actors[actors]. Any Camel
+http://camel.apache.org/components.html[component] can be used to send
+and receive messages from Akka actors. For details refer to the
+documentation of the http://doc.akkasource.org/camel[akka-camel]
+extension module.
+
+|http://jboss.org/drools[JBoss Drools]
+|http://blog.athico.com/2010/07/declarative-rest-services-for-drools.html[Drools]
+integrates with Camel.
+
+|http://www.jboss.org/jbossesb[JBoss ESB] |JBoss ESB integrates with
+Camel.
+
+|http://code.google.com/p/simple-dm/[simple-dm] |Simple Dynamic Module
+System for Maven integrates with Camel.
+
+|http://wiki.jonas.ow2.org/xwiki/bin/view/Main/WebHome[JOnAS Application
+Server] |JOnAS Application Server integrates with Camel.
+
+|http://code.google.com/p/active-bam/[Active BAM] |Web Console Business
+Activity Monitoring for ServiceMix, Camel and ActiveMQ.
+
+|http://incubator.apache.org/hise/[Apache Hise] |Apache Hise (Open
+Source Implementation of WS-Human-Task Specification) integrates with
+Camel.
+
+|http://www.catify.com/[Catify] |Catify is build on top of proven
+software stack like Spring, Apache ActiveMQ, Apache Camel, Apache Felix
+and MongoDB.
+
+|http://touk.pl/toukeu/rw/pages/index.en.do[TouK] |We are using Apache
+ServiceMix (both 3.x and 4.x) with http://camel.apache.org/[Apache
+Camel], http://ode.apache.org/[Apache ODE] and
+http://incubator.apache.org/hise/[Apache HISE] as a middleware
+integration platform, with the biggest deployment for
+http://www.playmobile.pl/[Play], mobile telco operator in Poland
+
+|http://web.progress.com/en/sonic/sonic-esb.html[Progress Sonic ESB]
+|Progress Sonic ESB uses Camel internally to mediate Web Service
+messages (leveraging CXF stack) and Sonic ESB messages
+
+|https://github.com/krasserm/scalaz-camel[scalaz-camel] |A
+Scala(z)-based DSL for Apache Camel
+
+|https://github.com/obergner/camelpe[camel-camelpe] |A CDI Portable
+Extension for Apache Camel
+
+|http://www.kuali.org/ole[Kuali Ole] |Kuali OLE uses Apache Camel in
+their open source administrative software
+
+|http://code.google.com/p/caerusone/[CaerusOne] |CaerusOne is advanced
+application integration framework, sdk, server application server. It
+uses apache camel routing engine as part of core process engine.
+
+|http://www.jboss.org/switchyard[JBoss SwitchYard] |SwitchYard is a
+lightweight service delivery framework for SOA and its integrated with
+Camel out of the box.
+
+|https://github.com/osinka/camel-scala-extra[camel-scala-extra] |Extra
+Apache Camel methods for Scala
+
+|https://github.com/marcuspocus/play-camel[camel-play] |A EIP +
+Messaging module for the Play! Framework
+
+|http://activiti.org/[Activiti]
+|http://bpmn20inaction.blogspot.com/2011/05/supersize-activiti-with-mule-esb-and.html[Activiti
+BPM] has direct Apache Camel integration.
+
+|http://easyforms-camel.forge.onehippo.org/[EasyForms Camel Support]
+|The EasyForms Camel Support Components provides extended HST EasyForms
+Components which can invoke Apache Camel Routes.
+
+|http://code.google.com/p/rmannibucau/wiki/CamelDiagramGenerator[CamelDiagramGenerator]
+|A maven plugin to generate camel diagram from routes.
+
+|http://sksamuel.github.com/camelwatch/[CamelWatch] |A web app for
+monitoring Camel applications.
+
+|http://zeroturnaround.com/software/jrebel[JRebel] |JRebel now supports
+http://zeroturnaround.com/jrebel/jrebel-5-1-2-released-apache-camel-now-supported/[reloading
+Camel routes] without any application server restarts.
+
+|https://github.com/AlanFoster/Camelry[Camelry] |This IntelliJ plugin is
+designed to improve the development experience when working with Apache
+Blueprint, Apache karaf and Apache Camel.
+
+|http://giacomolm.github.io/Jel/[Jel] |Javascript graphical Editor that
+generates DSL. This is a web based tooling that offers a GUI for
+defining and editing Apache Camel routes using the XML DSL.
+
+|http://crossing-tech.github.io/babel/[Babel] |Babel is a Domain
+Specific Language for Integration made in Scala. It provides elegant API
+in order to use well-known integration frameworks. Babel provides an API
+on top of Apache Camel which may be used in Scala.
+
+|https://github.com/wildflyext/wildfly-camel[Wildfly Camel] |The
+WildFly-Camel Subsystem allows you to add Camel Routes as part of the
+WildFly configuration. Routes can be deployed as part of JavaEE
+applications. JavaEE components can access the Camel Core API and
+various Camel Component APIs. Your Enterprise Integration Solution can
+be architected as a combination of JavaEE and Camel functionality.
+
+|https://github.com/hekonsek/camel-m2m-gateway[Camel M2M gateway] |This
+project summarizes the R&D activities around the process of adopting the
+Apache Camel as the Internet Of Things M2M gateway. By the gateway we
+understand a field device with the moderate processing power (such as
+Raspberry Pi or BeagleBone Black) responsible for the routing of the
+messages between the IoT edge devices (sensors, drones, cars, etc) and
+the data center.
+
+|https://www.youtube.com/watch?v=k_ckJ7QgLW0#t=480[Netflix] |Netflix
+uses Apache Camel as part of the cloud payment system.
+
+|http://forge.jboss.org/[JBoss Forge] |The
+http://forge.jboss.org/addon/io.fabric8.forge:camel[Camel addon] from
+http://fabric8.io/[fabric8] allows to setup and manage your Apache Camel
+maven projects from a CLI, Eclipse, IDEA, and NetBeans. With this addon
+from the IDEs you can use a wizard driven UI to add new Camel
+components, add/edit existing endpoints in a UI that allows to edit each
+options individually in a more type safe manner. You can also setup your
+Maven project for Docker and Kubernetes platforms.
+
+|http://islandora.ca/[Islandora] |Islandora** **is an open-source
+software framework designed to help institutions and organizations and
+their audiences collaboratively manage, and discover digital assets
+using a best-practices framework.  They use Camel and JMS queues in the
+platform.
+
+|SAP HANA |The
+https://blogs.saphana.com/2016/02/01/hana-smart-data-integration-simplifies-connecting-consuming-facebook-data-hana-apache-camel-adapter[HANA
+platform from SAP] uses Apache Camel.
+
+|https://github.com/hammock-project/hammock[Hammock] |Hammock is a CDI
+based microservices framework. Hammock integrates with Camel.
+
+|https://github.com/krasserm/streamz[Streamz] |A combinator library for
+integrating Functional Streams for Scala (FS2), Akka Streams and Apache
+Camel
+
+|http://www.openhub.cz/[OpenHub] |OpenHub is an integration platform
+that is built on top of Apache Camel.
+
+|https://abi-laboratory.pro/java/tracker/timeline/camel-core/[API
+Tracker 4j of camel-core] |The review of API changes for the Camel Core
+library since Camel 2.16 which is updated several times per week.
+|=======================================================================
+
+==== User Groups
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|User Groups |Description
+|https://groups.google.com/group/camel-user-group-denmark[Apache Camel
+User Group Denmark] |A danish user group for Apache Camel.
+
+|http://groups.google.com/group/apache-camel-user-group-tunisia[Apache
+Camel User Group Tunisia] |A tunisian user group for Apache Camel.
+
+|http://www.linkedin.com/groups?gid=2447439&trk=hb_side_g[Linkedin
+Apache Camel Group] |The Apache Camel group in linkedin.
+
+|https://plus.google.com/communities/106271384875356488225[Google+
+Apache Camel Group] |The Apache Camel group in google+
+
+|https://jcug-oss.github.io/[Apache Camel User Group Japan] |A Japanese
+user group for Apache Camel.
+|=======================================================================
+
+==== External Camel Components
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|External Camel Components |Description
+|https://github.com/gerco/camel-apama[camel-apama] |A Camel component
+for http://web.progress.com/en/apama/index.html[Progress Apama]
+
+|https://github.com/bbonnin/camel-arangodb[camel-arangdodb] |Camel
+component for accessing ArangoDB
+
+|http://github.com/osinka/camel-beanstalk[camel-beanstalk] |Apache Camel
+component for beanstalk.
+
+|http://github.com/ticktock/camel-cassandra[camel-cassandra] |A Camel
+Cassandra component.
+
+|https://github.com/oscerd/camel-cassandra[camel-cassandra]http://github.com/ticktock/camel-cassandra[]
+|Another Camel Cassandra component based on Cassandra Datastax Java
+Driver.
+
+|https://github.com/jdavisonc/camel-gdrive[camel-gdrive] |A Camel
+component for Google Drive.
+
+|https://github.com/cdollins/camel-grizzly[camel-grizzly] |A component
+that works with the Glassfish Grizzly networking library
+
+|https://code.google.com/p/isotypes/[camel-isotypes] |A Camel component
+for ISO8583 isotypes.
+
+|http://accord.ow2.org/odetteftp/camel.html[camel-oftp2]
+|http://www.neociclo.com/[Neociclo] provides an
+http://accord.ow2.org/odetteftp/protocol.html[OFTP2] component for
+Apache Camel.
+
+|https://bitbucket.org/arkadi/camel-sipe[camel-sipe] |A Camel component
+to communicate with Microsoft Office Communicator and Lync Servers.
+
+|https://github.com/Redpill-Linpro/camel-smb[Camel SMB] |This project is
+a Samba Camel component build on top of http://jcifs.samba.org[JCIFS].
+
+|https://github.com/wheijke/camel-tika[camel-tika] |Camel data format
+for http://tika.apache.org/[Apache Tika]
+
+|https://github.com/soluvas/tumblej[camel-tumblr] |A Camel component to
+post to Tumblr.
+
+|http://code.google.com/p/oracle-coherence-camel-component/[Oracle
+Coherence Camel Component] |A Camel component for integrating with
+Oracle Coherence
+
+|https://github.com/osinka/camel-scala-extra[camel-scala-extra] |Extra
+Apache Camel methods for Scala
+
+|https://github.com/Bluelock/camel-spring-amqp[camel-spring-amqp] |A
+Camel component to integrate with Spring AMQP to communicate with for
+example RabbitMQ.
+
+|https://github.com/osinka/camel-kamon[camel-kamon] |Kamon metrics and
+traces for Apache Camel routes, processors
+
+|https://github.com/donovanmuller/camel-spring-cloud-stream[camel-spring-cloud-stream]
+|A component to integrate with Spring Cloud Stream
+|=======================================================================
+
+ 

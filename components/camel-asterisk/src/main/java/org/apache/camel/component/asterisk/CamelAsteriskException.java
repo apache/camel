@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,13 +21,7 @@ import org.apache.camel.CamelException;
 public class CamelAsteriskException extends CamelException {
     private static final long serialVersionUID = -8873987361491963823L;
 
-    public CamelAsteriskException() {
-        super();
-    }
-
     public CamelAsteriskException(String message) {
         super(message);
     }
-
-
 }

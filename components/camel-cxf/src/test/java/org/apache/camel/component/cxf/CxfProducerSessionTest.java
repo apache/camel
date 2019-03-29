@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
-
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.cookie.ExchangeCookieHandler;
 import org.apache.camel.http.common.cookie.InstanceCookieHandler;
@@ -101,6 +101,18 @@ public class CxfProducerSessionTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testSessionWithInvalidPayload() throws Throwable {
+        try {
+            template.requestBody("direct:invalid", "World", String.class);
+        } catch (CamelExecutionException e) {
+            if (e.getCause() != null) {
+                throw e.getCause();
+            }
+            throw e;
+        }
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -128,6 +140,8 @@ public class CxfProducerSessionTest extends CamelTestSupport {
                     .to(url + "&cookieHandler=#exchangeCookieHandler")
                     .setBody().xpath(PARAMETER_XPATH, String.class, NAMESPACES)
                     .to("mock:result");
+                from("direct:invalid")
+                    .to(url + "&cookieHandler=#exchangeCookieHandler");
             }
         };
     }

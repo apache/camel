@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jgroups;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
+import org.junit.After;
 import org.junit.Test;
 
 public class JGroupsComponentTest extends CamelTestSupport {
@@ -31,11 +31,11 @@ public class JGroupsComponentTest extends CamelTestSupport {
 
     static final String MESSAGE = "MESSAGE";
 
-    static final String SAMPLE_CHANNEL_PROPERTY = "discard_incompatible_packets=true";
+    static final String SAMPLE_CHANNEL_PROPERTY = "enable_diagnostics=true";
 
     static final String SAMPLE_CHANNEL_PROPERTIES = String.format("UDP(%s)", SAMPLE_CHANNEL_PROPERTY);
 
-    static final String CONFIGURED_ENDPOINT_URI = String.format("jgroups:%s?channelProperties=%s", CLUSTER_NAME, SAMPLE_CHANNEL_PROPERTIES);
+    static final String CONFIGURED_ENDPOINT_URI = String.format("jgroups:%s", CLUSTER_NAME);
 
     // Fixtures
 
@@ -72,6 +72,7 @@ public class JGroupsComponentTest extends CamelTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         clientChannel.close();
         super.tearDown();
@@ -85,7 +86,9 @@ public class JGroupsComponentTest extends CamelTestSupport {
         mockEndpoint.expectedBodiesReceived(MESSAGE);
 
         // When
-        clientChannel.send(new Message(null, null, MESSAGE));
+        Message message = new Message(null, MESSAGE);
+        message.setSrc(null);
+        clientChannel.send(message);
 
         // Then
         mockEndpoint.assertIsSatisfied();

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cxf;
-
 import javax.xml.ws.Endpoint;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -49,7 +47,7 @@ public class CxfGreeterMessageCamelHttpRouterTest extends CxfGreeterMessageRoute
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("cxf:bean:routerEndpoint?dataFormat=Message&publishedEndpointUrl=http://www.simple.com/services/test")
+                from("cxf:bean:routerEndpoint?dataFormat=RAW&publishedEndpointUrl=http://www.simple.com/services/test")
                     // The fix the side effect of CAMEL-7436
                     .removeHeaders("CamelHttp*") 
                     .to(serverAddress + "?throwExceptionOnFailure=false");

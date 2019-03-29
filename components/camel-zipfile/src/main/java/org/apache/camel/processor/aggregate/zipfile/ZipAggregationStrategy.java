@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,13 +26,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileMessage;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -52,6 +52,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
     private String fileSuffix = ".zip";
     private boolean preserveFolderStructure;
     private boolean useFilenameHeader;
+    private File parentDir = new File(System.getProperty("java.io.tmpdir"));
 
     public ZipAggregationStrategy() {
         this(false, false);
@@ -108,6 +109,24 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         this.fileSuffix = fileSuffix;
     }
 
+    public File getParentDir() {
+        return parentDir;
+    }
+
+    /**
+     * Sets the parent directory to use for writing temporary files.
+     */
+    public void setParentDir(File parentDir) {
+        this.parentDir = parentDir;
+    }
+
+    /**
+     * Sets the parent directory to use for writing temporary files.
+     */
+    public void setParentDir(String parentDir) {
+        this.parentDir = new File(parentDir);
+    }
+
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         File zipFile;
@@ -121,7 +140,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         // First time for this aggregation
         if (oldExchange == null) {
             try {
-                zipFile = FileUtil.createTempFile(this.filePrefix, this.fileSuffix);
+                zipFile = FileUtil.createTempFile(this.filePrefix, this.fileSuffix, this.parentDir);
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
             }

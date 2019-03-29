@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,6 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.interceptor.Fault;
-import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;

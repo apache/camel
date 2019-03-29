@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,15 +39,12 @@ import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.transport.DestinationFactoryManager;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 
-/**
- * @version 
- */
 @NoJSR250Annotations
 public class CamelTransportFactory extends AbstractTransportFactory implements ConduitInitiator, DestinationFactory, CamelContextAware {
 
     public static final String TRANSPORT_ID = "http://cxf.apache.org/transports/camel";
     public static final List<String> DEFAULT_NAMESPACES = Arrays.asList(TRANSPORT_ID);
-    private static final Set<String> URI_PREFIXES = new HashSet<String>();
+    private static final Set<String> URI_PREFIXES = new HashSet<>();
 
     private HeaderFilterStrategy headerFilterStrategy;
     private boolean checkException;

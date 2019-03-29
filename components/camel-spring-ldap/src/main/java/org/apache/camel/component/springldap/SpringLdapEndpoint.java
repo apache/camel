@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,17 +21,17 @@ import javax.naming.directory.SearchControls;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 import org.springframework.ldap.core.LdapTemplate;
 
 /**
  * The spring-ldap component allows you to perform searches in LDAP servers using filters as the message payload.
  */
-@UriEndpoint(scheme = "spring-ldap", title = "Spring LDAP", syntax = "spring-ldap:templateName", producerOnly = true, label = "spring,ldap")
+@UriEndpoint(firstVersion = "2.11.0", scheme = "spring-ldap", title = "Spring LDAP", syntax = "spring-ldap:templateName", producerOnly = true, label = "spring,ldap")
 public class SpringLdapEndpoint extends DefaultEndpoint {
 
     private static final String OBJECT_SCOPE_NAME = "object";
@@ -39,9 +39,9 @@ public class SpringLdapEndpoint extends DefaultEndpoint {
     private static final String SUBTREE_SCOPE_NAME = "subtree";
 
     private LdapTemplate ldapTemplate;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String templateName;
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = true)
     private LdapOperation operation;
     @UriParam(defaultValue = "subtree", enums = "object,onelevel,subtree")
     private String scope = SUBTREE_SCOPE_NAME;

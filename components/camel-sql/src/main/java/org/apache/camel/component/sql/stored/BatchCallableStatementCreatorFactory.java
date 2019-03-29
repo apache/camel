@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.component.sql.stored.template.ast.InputParameter;
+import org.apache.camel.component.sql.stored.template.ast.InParameter;
 import org.apache.camel.component.sql.stored.template.ast.Template;
 import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.core.CallableStatementCreatorFactory;
@@ -73,9 +73,19 @@ public class BatchCallableStatementCreatorFactory {
         List<SqlParameter> params = new ArrayList<>();
 
         for (Object parameter : template.getParameterList()) {
-            if (parameter instanceof InputParameter) {
-                InputParameter inputParameter = (InputParameter) parameter;
-                params.add(new SqlParameter(inputParameter.getName(), inputParameter.getSqlType()));
+            if (parameter instanceof InParameter) {
+                InParameter inputParameter = (InParameter) parameter;
+
+                SqlParameter sqlParameter;
+                if (inputParameter.getScale() != null) {
+                    sqlParameter = new SqlParameter(inputParameter.getName(), inputParameter.getSqlType(), inputParameter.getScale());
+                } else if (inputParameter.getTypeName() != null) {
+                    sqlParameter = new SqlParameter(inputParameter.getName(), inputParameter.getSqlType(), inputParameter.getTypeName());
+                } else {
+                    sqlParameter = new SqlParameter(inputParameter.getName(), inputParameter.getSqlType());
+                }
+
+                params.add(sqlParameter);
 
             } else {
                 throw new UnsupportedOperationException("Only IN parameters supported by batch!");

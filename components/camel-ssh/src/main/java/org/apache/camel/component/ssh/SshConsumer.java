@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,31 +18,31 @@ package org.apache.camel.component.ssh;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.ScheduledPollConsumer;
-import org.apache.sshd.SshClient;
+import org.apache.camel.support.ScheduledPollConsumer;
+import org.apache.sshd.client.SshClient;
 
 public class SshConsumer extends ScheduledPollConsumer {
     private final SshEndpoint endpoint;
-    
+
     private SshClient client;
 
     public SshConsumer(SshEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
     }
-    
+
     @Override
     protected void doStart() throws Exception {
         client = SshClient.setUpDefaultClient();
         client.start();
-        
+
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        
+
         if (client != null) {
             client.stop();
             client = null;
@@ -54,11 +54,18 @@ public class SshConsumer extends ScheduledPollConsumer {
         if (!isRunAllowed()) {
             return 0;
         }
-        
-        String command = endpoint.getPollCommand();
-        SshResult result = SshHelper.sendExecCommand(command, endpoint, client);
 
+        String command = endpoint.getPollCommand();
         Exchange exchange = endpoint.createExchange();
+
+        String knownHostResource = endpoint.getKnownHostsResource();
+        if (knownHostResource != null) {
+            client.setServerKeyVerifier(new ResourceBasedSSHKeyVerifier(exchange.getContext(), knownHostResource,
+                    endpoint.isFailOnUnknownHost()));
+        }
+
+        SshResult result = SshHelper.sendExecCommand(exchange.getIn().getHeaders(), command, endpoint, client);
+
         exchange.getIn().setBody(result.getStdout());
         exchange.getIn().setHeader(SshResult.EXIT_VALUE, result.getExitValue());
         exchange.getIn().setHeader(SshResult.STDERR, result.getStderr());

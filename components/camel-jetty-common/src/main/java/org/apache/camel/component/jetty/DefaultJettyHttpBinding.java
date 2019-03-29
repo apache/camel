@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,14 +31,11 @@ import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.http.common.HttpProtocolHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultJettyHttpBinding.class);
@@ -51,7 +48,7 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
     public DefaultJettyHttpBinding() {
     }
-    
+
     public void populateResponse(Exchange exchange, JettyContentExchange httpExchange) throws Exception {
         int responseCode = httpExchange.getResponseStatus();
 
@@ -158,7 +155,7 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
         Map<String, String> headers = getSimpleMap(httpExchange.getResponseHeaders());
         Object responseBody = extractResponseBody(exchange, httpExchange);
 
-        if (transferException && responseBody != null && responseBody instanceof Exception) {
+        if (transferException && responseBody instanceof Exception) {
             // if the response was a serialized exception then use that
             return (Exception) responseBody;
         }
@@ -211,7 +208,7 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
     }
 
     Map<String, String> getSimpleMap(Map<String, Collection<String>> headers) {
-        Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<>();
         for (String key : headers.keySet()) {
             Collection<String> valueCol = headers.get(key);
             String value = (valueCol == null) ? null : valueCol.iterator().next();

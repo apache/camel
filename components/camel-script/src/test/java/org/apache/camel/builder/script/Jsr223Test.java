@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,13 +19,10 @@ package org.apache.camel.builder.script;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
-public class Jsr223Test extends TestCase {
+public class Jsr223Test extends Assert {
     private String [] scriptNames = {"beanshell", "groovy", "js", "python", "ruby", "javascript"};
 
     @Test

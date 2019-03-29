@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,8 +28,6 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- */
 public class CsvTest extends CamelTestSupport {
     private static final String FIXED_DATA =
             "James,Strachan,22" + LS + "Claus,Ibsen,21" + LS;
@@ -66,7 +64,7 @@ public class CsvTest extends CamelTestSupport {
                 log.info("received message {} of class {}", body, body.getClass().getName());
             }
         }
-        List<Map> results = new ArrayList<Map>();
+        List<Map> results = new ArrayList<>();
         for (Exchange exchange : exchanges) {
             Map body = exchange.getIn().getBody(Map.class);
             if (body != null) {

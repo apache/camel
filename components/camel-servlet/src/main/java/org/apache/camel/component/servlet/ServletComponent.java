@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,26 +30,37 @@ import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
 import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
+@Component("servlet")
 public class ServletComponent extends HttpCommonComponent implements RestConsumerFactory, RestApiConsumerFactory {
 
+    @Metadata(label = "consumer", defaultValue = "CamelServlet", description = "Default name of servlet to use. The default name is CamelServlet.")
     private String servletName = "CamelServlet";
+    @Metadata(label = "consumer,advanced", description = "To use a custom org.apache.camel.component.servlet.HttpRegistry.")
     private HttpRegistry httpRegistry;
+    @Metadata(label = "consumer,advanced", description = "Whether to automatic bind multipart/form-data as attachments on the Camel Exchange}."
+        + " The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together."
+        + " Remove disableStreamCache to use AttachmentMultipartBinding."
+        + " This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.")
     private boolean attachmentMultipartBinding;
+    @Metadata(label = "consumer,advanced", description = "Whitelist of accepted filename extensions for accepting uploaded files."
+        + " Multiple extensions can be separated by comma, such as txt,xml.")
+    private String fileNameExtWhitelist;
 
     public ServletComponent() {
-        super(ServletEndpoint.class);
     }
 
     public ServletComponent(Class<? extends ServletEndpoint> endpointClass) {
-        super(endpointClass);
+        super();
     }
 
     @Override
@@ -64,12 +75,14 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
         Boolean async = getAndRemoveParameter(parameters, "async", Boolean.class);
+        Boolean attachmentMultipartBinding = getAndRemoveParameter(parameters, "attachmentMultipartBinding", Boolean.class);
+        Boolean disableStreamCache = getAndRemoveParameter(parameters, "disableStreamCache", Boolean.class);
 
         if (lenientContextPath()) {
             // the uri must have a leading slash for the context-path matching to work with servlet, and it can be something people
             // forget to add and then the servlet consumer cannot match the context-path as would have been expected
-            String scheme = ObjectHelper.before(uri, ":");
-            String after = ObjectHelper.after(uri, ":");
+            String scheme = StringHelper.before(uri, ":");
+            String after = StringHelper.after(uri, ":");
             // rebuild uri to have exactly one leading slash
             while (after.startsWith("/")) {
                 after = after.substring(1);
@@ -83,6 +96,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
 
         ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri);
         endpoint.setServletName(servletName);
+        endpoint.setFileNameExtWhitelist(fileNameExtWhitelist);
         if (async != null) {
             endpoint.setAsync(async);
         }
@@ -116,6 +130,26 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         }
         if (httpMethodRestrict != null) {
             endpoint.setHttpMethodRestrict(httpMethodRestrict);
+        }
+        if (attachmentMultipartBinding != null) {
+            endpoint.setAttachmentMultipartBinding(attachmentMultipartBinding);
+        } else {
+            endpoint.setAttachmentMultipartBinding(isAttachmentMultipartBinding());
+        }
+        if (disableStreamCache != null) {
+            endpoint.setDisableStreamCache(disableStreamCache);
+        }
+
+        // turn off stream caching if in attachment mode
+        if (endpoint.isAttachmentMultipartBinding()) {
+            if (disableStreamCache == null) {
+                // disableStreamCache not explicit configured so we can automatic change it
+                log.info("Disabling stream caching as attachmentMultipartBinding is enabled");
+                endpoint.setDisableStreamCache(true);
+            } else if (!disableStreamCache) {
+                throw new IllegalArgumentException("The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together."
+                        + " Remove disableStreamCache to use AttachmentMultipartBinding");
+            }
         }
 
         setProperties(endpoint, parameters);
@@ -163,7 +197,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
     }
 
     /**
-     * Default name of servlet to use. The default name is <tt>CamelServlet</tt>.
+     * Default name of servlet to use. The default name is CamelServlet.
      */
     public void setServletName(String servletName) {
         this.servletName = servletName;
@@ -174,7 +208,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
     }
 
     /**
-     * To use a custom {@link org.apache.camel.component.servlet.HttpRegistry}.
+     * To use a custom org.apache.camel.component.servlet.HttpRegistry.
      */
     public void setHttpRegistry(HttpRegistry httpRegistry) {
         this.httpRegistry = httpRegistry;
@@ -187,10 +221,26 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
     /**
      * Whether to automatic bind multipart/form-data as attachments on the Camel {@link Exchange}.
      * <p/>
-     * This is turn off by default as this may require servet specific configuration to enable this when using Servlet's.
+     * The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together.
+     * Remove disableStreamCache to use AttachmentMultipartBinding.
+     * <p/>
+     * This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.
      */
     public void setAttachmentMultipartBinding(boolean attachmentMultipartBinding) {
         this.attachmentMultipartBinding = attachmentMultipartBinding;
+    }
+
+    public String getFileNameExtWhitelist() {
+        return fileNameExtWhitelist;
+    }
+
+    /**
+     * Whitelist of accepted filename extensions for accepting uploaded files.
+     * <p/>
+     * Multiple extensions can be separated by comma, such as txt,xml.
+     */
+    public void setFileNameExtWhitelist(String fileNameExtWhitelist) {
+        this.fileNameExtWhitelist = fileNameExtWhitelist;
     }
 
     @Override
@@ -226,7 +276,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
             config = camelContext.getRestConfiguration("servlet", true);
         }
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         // build query string, and append any endpoint configuration properties
         if (config.getComponent() == null || config.getComponent().equals("servlet")) {
             // setup endpoint options
@@ -267,7 +317,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         ServletEndpoint endpoint = camelContext.getEndpoint(url, ServletEndpoint.class);
         setProperties(camelContext, endpoint, parameters);
 
-        if (!map.containsKey("httpBindingRef")) {
+        if (!map.containsKey("httpBinding")) {
             // use the rest binding, if not using a custom http binding
             HttpBinding binding = new ServletRestHttpBinding();
             binding.setHeaderFilterStrategy(endpoint.getHeaderFilterStrategy());

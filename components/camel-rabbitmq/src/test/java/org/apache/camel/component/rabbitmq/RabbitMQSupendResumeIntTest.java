@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,10 +24,9 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class RabbitMQSupendResumeIntTest extends CamelTestSupport {
+public class RabbitMQSupendResumeIntTest extends AbstractRabbitMQIntTest {
     private static final String EXCHANGE = "ex6";
 
     @EndpointInject(uri = "mock:result")
@@ -60,7 +59,7 @@ public class RabbitMQSupendResumeIntTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        context.suspendRoute("consumer");
+        context.getRouteController().resumeRoute("consumer");
 
         // sleep a bit to ensure its properly suspended
         Thread.sleep(2000);
@@ -76,7 +75,7 @@ public class RabbitMQSupendResumeIntTest extends CamelTestSupport {
         resultEndpoint.expectedBodiesReceived("Hello2");
         resultEndpoint.expectedMessageCount(1);
 
-        context.resumeRoute("consumer");
+        context.getRouteController().resumeRoute("consumer");
 
         assertMockEndpointsSatisfied();
     }

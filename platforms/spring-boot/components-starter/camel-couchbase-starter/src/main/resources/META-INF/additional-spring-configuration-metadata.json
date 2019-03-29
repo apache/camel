@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.couchbase.enabled",
+      "description": "Enable couchbase component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

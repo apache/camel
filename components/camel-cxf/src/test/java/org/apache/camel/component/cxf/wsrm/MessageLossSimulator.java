@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cxf.wsrm;
 
 import java.io.IOException;
@@ -31,7 +30,6 @@ import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.phase.PhaseInterceptor;
 import org.apache.cxf.ws.rm.RMContextUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

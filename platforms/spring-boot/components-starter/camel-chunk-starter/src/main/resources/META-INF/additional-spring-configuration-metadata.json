@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.chunk.enabled",
+      "description": "Enable chunk component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

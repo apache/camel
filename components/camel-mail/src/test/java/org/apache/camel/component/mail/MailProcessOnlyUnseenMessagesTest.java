@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
-
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -25,6 +24,7 @@ import javax.mail.internet.MimeMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
@@ -34,6 +34,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailProcessOnlyUnseenMessagesTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
@@ -87,7 +88,7 @@ public class MailProcessOnlyUnseenMessagesTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:a").to("smtp://claus@localhost");
 
-                from("imap://localhost?username=claus&password=secret&unseen=true&consumer.delay=1000").to("mock:result");
+                from("imap://localhost?username=claus&password=secret&unseen=true&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
             }
         };
     }

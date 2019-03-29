@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,6 +20,7 @@ import java.util.Properties;
 
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +44,7 @@ public class UseOverridePropertiesWithPropertiesComponentTest extends CamelTestS
                         .to("mock:file");
             }
         };
-        context.getRouteDefinition("myRoute").adviceWith(context, mocker);
+        RouteReifier.adviceWith(context.getRouteDefinition("myRoute"), context, mocker);
     }
 
     @Override

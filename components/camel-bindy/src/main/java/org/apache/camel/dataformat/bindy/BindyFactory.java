@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,8 @@ package org.apache.camel.dataformat.bindy;
 
 import java.util.List;
 import java.util.Map;
+
+import org.apache.camel.CamelContext;
 
 /**
  * The bindy factory is a factory used to create the POJO models and bind or
@@ -39,12 +41,12 @@ public interface BindyFactory {
      * 
      * @param data List<String> represents the csv, ... data to transform
      * @param model Map<String, object> is a collection of objects used to bind
-     *            data. String is the the key name of the class link to POJO
+     *            data. String is the key name of the class link to POJO
      *            objects
      * @param line is the position of the record into the file
      * @throws Exception can be thrown
      */
-    void bind(List<String> data, Map<String, Object> model, int line) throws Exception;
+    void bind(CamelContext camelContext, List<String> data, Map<String, Object> model, int line) throws Exception;
 
     /**
      * The unbind is used to transform the content of the classes model objects
@@ -52,10 +54,10 @@ public interface BindyFactory {
      * 
      * @return String represents a csv record created
      * @param model Map<String, Object> is a collection of objects used to
-     *            create csv, ... records. String is the the key name of the
+     *            create csv, ... records. String is the key name of the
      *            class link to POJO objects
      * @throws Exception can be thrown
      */
-    String unbind(Map<String, Object> model) throws Exception;
+    String unbind(CamelContext camelContext, Map<String, Object> model) throws Exception;
 
 }

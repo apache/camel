@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,10 +22,12 @@ import java.util.Map;
 
 import org.apache.camel.component.servlet.ServletComponent;
 import org.apache.camel.component.servlet.ServletEndpoint;
+import org.apache.camel.spi.annotations.Component;
 
 /**
  * To exchange data with external Websocket clients using Atmosphere
  */
+@Component("atmosphere-websocket")
 public class WebsocketComponent extends ServletComponent {
     private Map<String, WebSocketStore> stores;
     
@@ -34,7 +36,7 @@ public class WebsocketComponent extends ServletComponent {
         super(WebsocketEndpoint.class);
         setServletName("CamelWsServlet");
         
-        this.stores = new HashMap<String, WebSocketStore>();
+        this.stores = new HashMap<>();
     }
     
     @Override

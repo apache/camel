@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,6 +33,13 @@ import java.lang.annotation.Target;
 public @interface Metadata {
 
     /**
+     * A human display name of the parameter.
+     * <p/>
+     * This is used for documentation and tooling only.
+     */
+    String displayName() default "";
+
+    /**
      * To define one or more labels.
      * <p/>
      * Multiple labels can be defined as a comma separated value.
@@ -47,7 +54,7 @@ public @interface Metadata {
     /**
      * To define that this entity is required.
      */
-    String required() default "";
+    boolean required() default false;
 
     /**
      * An optional human readable title of this entity, to be used instead of a computed title.
@@ -62,8 +69,35 @@ public @interface Metadata {
     String description() default "";
 
     /**
+     * Allows to define enums this options accepts.
+     * <p/>
+     * If the type is already an enum, then this option should not be used; instead you can use
+     * this option when the type is a String that only accept certain values.
+     * <p/>
+     * Multiple values is separated by comma.
+     */
+    String enums() default "";
+
+    /**
      * Whether the option is secret/sensitive information such as a password.
      */
     boolean secret() default false;
+
+    /**
+     * To re-associate the preferred Java type of this parameter.
+     * <p/>
+     * This is used for parameters which are of a specialized type but can be configured by another Java type, such as from a String.
+     */
+    String javaType() default "";
+
+    /**
+     * The first version this functionality was added to Apache Camel.
+     */
+    String firstVersion() default "";
+
+    /**
+     * Additional description that can explain the user about the deprecation and give reference to what to use instead.
+     */
+    String deprecationNote() default "";
 
 }

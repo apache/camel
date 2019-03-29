@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.bindy.format.factories;
 
 import java.util.Locale;
+
 import org.apache.camel.dataformat.bindy.Format;
 import org.apache.camel.dataformat.bindy.FormattingOptions;
 import org.apache.camel.dataformat.bindy.format.NumberPatternFormat;

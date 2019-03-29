@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,19 +15,20 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.remote;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.net.SocketFactory;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.commons.net.ftp.FTPClient;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -37,7 +38,7 @@ public class FtpBadLoginMockNoopConnectionLeakTest extends FtpServerTestSupport 
     /**
      * Mapping of socket hashcode to two element tab ([connect() called, close() called])
      */
-    private Map<Integer, boolean[]> socketAudits = new HashMap<Integer, boolean[]>();
+    private Map<Integer, boolean[]> socketAudits = new HashMap<>();
 
     private String getFtpUrl() {
         return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremeber&maximumReconnectAttempts=3"
@@ -45,6 +46,7 @@ public class FtpBadLoginMockNoopConnectionLeakTest extends FtpServerTestSupport 
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.http.common.cookie;
 
 import java.io.IOException;
+import java.net.CookiePolicy;
 import java.net.CookieStore;
 import java.net.URI;
 import java.util.List;
@@ -28,7 +29,8 @@ import org.apache.camel.Exchange;
  * The interface for cookie handling will allow components to handle cookies for
  * HTTP requests.
  * <p>
- * Note: The usual cookie policies apply, so cookies will only be handled for
+ * Note: The defined cookie policies apply. The default is
+ * CookiePolicy.ACCEPT_ORIGINAL_SERVER, so cookies will only be handled for
  * fully qualified host names in the URI (not local host names like "myhost" or
  * "localhost").
  */
@@ -64,4 +66,11 @@ public interface CookieHandler {
      * @return the CookieStore
      */
     CookieStore getCookieStore(Exchange exchange);
+
+    /**
+     * Define a CookiePolicy for cookies stored by this CookieHandler
+     * 
+     * @param cookiePolicy the CookiePolicy
+     */
+    void setCookiePolicy(CookiePolicy cookiePolicy);
 }

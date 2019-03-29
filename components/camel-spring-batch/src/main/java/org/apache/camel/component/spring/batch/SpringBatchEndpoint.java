@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,12 +22,12 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultEndpoint;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -35,11 +35,11 @@ import org.springframework.batch.core.launch.JobLauncher;
 /**
  * The spring-batch component allows to send messages to Spring Batch for further processing.
  */
-@UriEndpoint(scheme = "spring-batch", title = "Spring Batch", syntax = "spring-batch:jobName", producerOnly = true, label = "spring,batch,scheduling")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "spring-batch", title = "Spring Batch", syntax = "spring-batch:jobName", producerOnly = true, label = "spring,batch,scheduling")
 public class SpringBatchEndpoint extends DefaultEndpoint {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String jobName;
 
     @UriParam

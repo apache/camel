@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,6 +27,7 @@ import java.util.Set;
 import org.apache.camel.spring.SpringCamelContext;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.TestContext;
 
 /**
  * Helper that provides state information across the levels of Spring Test that do not expose the
@@ -39,9 +40,10 @@ import org.springframework.context.ApplicationContext;
  */
 public final class CamelSpringTestHelper {
     
-    private static ThreadLocal<String> originalJmxDisabledValue = new ThreadLocal<String>();
-    private static ThreadLocal<Class<?>> testClazz = new ThreadLocal<Class<?>>();
-    
+    private static ThreadLocal<String> originalJmxDisabledValue = new ThreadLocal<>();
+    private static ThreadLocal<Class<?>> testClazz = new ThreadLocal<>();
+    private static ThreadLocal<TestContext> testContext = new ThreadLocal<>();
+
     private CamelSpringTestHelper() {
     }
     
@@ -60,12 +62,20 @@ public final class CamelSpringTestHelper {
     public static void setTestClass(Class<?> testClass) {
         testClazz.set(testClass);
     }
-    
+
+    public static Method getTestMethod() {
+        return testContext.get().getTestMethod();
+    }
+
+    public static void setTestContext(TestContext context) {
+        testContext.set(context);
+    }
+
     /**
      * Returns all methods defined in {@code clazz} and its superclasses/interfaces.
      */
     public static Collection<Method> getAllMethods(Class<?> clazz)  {
-        Set<Method> methods = new LinkedHashSet<Method>();
+        Set<Method> methods = new LinkedHashSet<>();
         Class<?> currentClass = clazz;
         
         while (currentClass != null) {

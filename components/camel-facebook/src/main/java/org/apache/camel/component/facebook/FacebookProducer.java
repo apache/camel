@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,10 +32,9 @@ import org.apache.camel.component.facebook.config.FacebookEndpointConfiguration;
 import org.apache.camel.component.facebook.data.FacebookMethodsType;
 import org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper;
 import org.apache.camel.component.facebook.data.FacebookPropertiesHelper;
-import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.ThreadPoolProfile;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +63,7 @@ public class FacebookProducer extends DefaultAsyncProducer {
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         // properties for method arguments
-        final Map<String, Object> properties = new HashMap<String, Object>();
+        final Map<String, Object> properties = new HashMap<>();
 
         getExchangeProperties(exchange, properties);
         FacebookPropertiesHelper.configureReadingProperties(endpoint.getConfiguration(), properties);
@@ -115,7 +114,7 @@ public class FacebookProducer extends DefaultAsyncProducer {
                     }
 
                 } catch (Throwable t) {
-                    exchange.setException(ObjectHelper.wrapRuntimeCamelException(t));
+                    exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(t));
                 } finally {
                     callback.done(false);
                 }

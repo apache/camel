@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,11 +24,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.BraintreeApiName;
-import org.apache.camel.util.component.AbstractApiComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.component.AbstractApiComponent;
 
 /**
  * Represents the component that manages {@link BraintreeEndpoint}.
  */
+@Component("braintree")
 public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, BraintreeConfiguration, BraintreeApiCollection> {
     private final Map<String, BraintreeGateway> gateways;
 
@@ -51,7 +53,7 @@ public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, B
     protected Endpoint createEndpoint(String uri, String methodName, BraintreeApiName apiName, BraintreeConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
-        return new BraintreeEndpoint(uri, this, apiName, methodName, endpointConfiguration, getGateway(endpointConfiguration));
+        return new BraintreeEndpoint(uri, this, apiName, methodName, endpointConfiguration);
     }
 
     /**
@@ -67,13 +69,21 @@ public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, B
         return super.getConfiguration();
     }
 
-    private synchronized BraintreeGateway getGateway(BraintreeConfiguration configuration) {
-        BraintreeGateway gateway = gateways.get(configuration.getMerchantId());
-        if (gateway == null) {
-            //TODO: review the key used to track gateways
-            gateways.put(configuration.getMerchantId(), gateway = configuration.newBraintreeGateway());
+    public synchronized BraintreeGateway getGateway(BraintreeConfiguration configuration) {
+        BraintreeGateway gateway;
+        if (configuration.getAccessToken() != null) {
+            gateway = gateways.get(configuration.getAccessToken());
+            if (gateway == null) {
+                gateway = configuration.newBraintreeGateway();
+                gateways.put(configuration.getAccessToken(), gateway);
+            }
+        } else {
+            gateway = gateways.get(configuration.getMerchantId());
+            if (gateway == null) {
+                gateway = configuration.newBraintreeGateway();
+                gateways.put(configuration.getMerchantId(), gateway);
+            }
         }
-
         return gateway;
     }
 }

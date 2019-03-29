@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,9 +29,11 @@ import org.apache.cxf.common.security.SimplePrincipal;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.security.SecurityContext;
-import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class DefaultCxfMessageMapperTest extends Assert {
 
@@ -44,7 +46,7 @@ public class DefaultCxfMessageMapperTest extends Assert {
 
         Exchange camelExchange = setupCamelExchange(requestURI, requestPath, null);
         Message cxfMessage = mapper.createCxfMessageFromCamelExchange(
-            camelExchange, EasyMock.createMock(HeaderFilterStrategy.class));
+            camelExchange, mock(HeaderFilterStrategy.class));
 
         assertEquals(requestURI, cxfMessage.get(Message.REQUEST_URI).toString());
         assertEquals(requestPath, cxfMessage.get(Message.BASE_PATH).toString());
@@ -54,18 +56,14 @@ public class DefaultCxfMessageMapperTest extends Assert {
     public void testSecurityContext() {
         DefaultCxfMessageMapper mapper = new DefaultCxfMessageMapper();
 
-        HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
-        request.getUserPrincipal();
-        EasyMock.expectLastCall().andReturn(new SimplePrincipal("barry"));
-        request.isUserInRole("role1");
-        EasyMock.expectLastCall().andReturn(true);
-        request.isUserInRole("role2");
-        EasyMock.expectLastCall().andReturn(false);
-        EasyMock.replay(request);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getUserPrincipal()).thenReturn(new SimplePrincipal("barry"));
+        when(request.isUserInRole("role1")).thenReturn(true);
+        when(request.isUserInRole("role2")).thenReturn(false);
         Exchange camelExchange = setupCamelExchange("/", "/", request);
         
         Message cxfMessage = mapper.createCxfMessageFromCamelExchange(
-            camelExchange, EasyMock.createMock(HeaderFilterStrategy.class));
+            camelExchange, mock(HeaderFilterStrategy.class));
         SecurityContext sc = cxfMessage.get(SecurityContext.class);
         assertNotNull(sc);
         assertEquals("barry", sc.getUserPrincipal().getName());
@@ -74,45 +72,25 @@ public class DefaultCxfMessageMapperTest extends Assert {
     }
 
     private Exchange setupCamelExchange(String requestURI, String requestPath, HttpServletRequest request) {
-        org.apache.camel.Message camelMessage = EasyMock
-            .createMock(org.apache.camel.Message.class);
-        Exchange camelExchange = EasyMock.createMock(Exchange.class);
-        camelExchange.getProperty(CamelTransportConstants.CXF_EXCHANGE,
-            org.apache.cxf.message.Exchange.class);
-        EasyMock.expectLastCall().andReturn(new ExchangeImpl());
-        camelExchange.hasOut();
-        EasyMock.expectLastCall().andReturn(false);
-        camelExchange.getIn();
-        EasyMock.expectLastCall().andReturn(camelMessage).times(3);
-        camelMessage.getHeaders();
-        EasyMock.expectLastCall().andReturn(Collections.emptyMap()).times(2);
-        camelMessage.getHeader(Exchange.CONTENT_TYPE, String.class);
-        EasyMock.expectLastCall().andReturn(null);
-        camelMessage.getHeader("Accept", String.class);
-        EasyMock.expectLastCall().andReturn(null);
-        camelMessage.getHeader(Exchange.HTTP_CHARACTER_ENCODING, String.class);
-        EasyMock.expectLastCall().andReturn(null);
-        camelMessage.getHeader(Exchange.CHARSET_NAME, String.class);
-        EasyMock.expectLastCall().andReturn(null);
-        camelMessage.getHeader(Exchange.HTTP_URI, String.class);
-        EasyMock.expectLastCall().andReturn(requestURI);
-        camelMessage.getHeader(Exchange.HTTP_PATH, String.class);
-        EasyMock.expectLastCall().andReturn(requestPath);
-        camelMessage.getHeader(Exchange.HTTP_BASE_URI, String.class);
-        EasyMock.expectLastCall().andReturn(requestPath);
-        camelMessage.getHeader(Exchange.HTTP_METHOD, String.class);
-        EasyMock.expectLastCall().andReturn("GET");
-        camelMessage.getHeader(Exchange.HTTP_QUERY, String.class);
-        EasyMock.expectLastCall().andReturn("");
-        camelMessage.getHeader(Exchange.HTTP_SERVLET_REQUEST);
-        EasyMock.expectLastCall().andReturn(request);
-        camelMessage.getHeader(Exchange.HTTP_SERVLET_RESPONSE);
-        EasyMock.expectLastCall().andReturn(null);
-
-        camelMessage.getBody(InputStream.class);
-        EasyMock.expectLastCall().andReturn(
-            new ByteArrayInputStream("".getBytes()));
-        EasyMock.replay(camelExchange, camelMessage);
+        org.apache.camel.Message camelMessage = mock(org.apache.camel.Message.class);
+        Exchange camelExchange = mock(Exchange.class);
+        when(camelExchange.getProperty(CamelTransportConstants.CXF_EXCHANGE,
+            org.apache.cxf.message.Exchange.class)).thenReturn(new ExchangeImpl());
+        when(camelExchange.hasOut()).thenReturn(false);
+        when(camelExchange.getIn()).thenReturn(camelMessage);
+        when(camelMessage.getHeaders()).thenReturn(Collections.emptyMap());
+        when(camelMessage.getHeader(Exchange.CONTENT_TYPE, String.class)).thenReturn(null);
+        when(camelMessage.getHeader("Accept", String.class)).thenReturn(null);
+        when(camelMessage.getHeader(Exchange.HTTP_CHARACTER_ENCODING, String.class)).thenReturn(null);
+        when(camelMessage.getHeader(Exchange.CHARSET_NAME, String.class)).thenReturn(null);
+        when(camelMessage.getHeader(Exchange.HTTP_URI, String.class)).thenReturn(requestURI);
+        when(camelMessage.getHeader(Exchange.HTTP_PATH, String.class)).thenReturn(requestPath);
+        when(camelMessage.getHeader(Exchange.HTTP_BASE_URI, String.class)).thenReturn(requestPath);
+        when(camelMessage.getHeader(Exchange.HTTP_METHOD, String.class)).thenReturn("GET");
+        when(camelMessage.getHeader(Exchange.HTTP_QUERY, String.class)).thenReturn("");
+        when(camelMessage.getHeader(Exchange.HTTP_SERVLET_REQUEST)).thenReturn(request);
+        when(camelMessage.getHeader(Exchange.HTTP_SERVLET_RESPONSE)).thenReturn(null);
+        when(camelMessage.getBody(InputStream.class)).thenReturn(new ByteArrayInputStream("".getBytes()));
         return camelExchange;
     }
 }

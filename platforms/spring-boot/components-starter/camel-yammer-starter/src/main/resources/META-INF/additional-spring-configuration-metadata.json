@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.yammer.enabled",
+      "description": "Enable yammer component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

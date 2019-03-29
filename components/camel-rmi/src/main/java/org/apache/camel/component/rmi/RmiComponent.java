@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,15 +22,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
-/**
- * @version 
- */
-public class RmiComponent extends UriEndpointComponent {
+@Component("rmi")
+public class RmiComponent extends DefaultComponent {
 
     public RmiComponent() {
-        super(RmiEndpoint.class);
     }
 
     @Override
@@ -38,7 +36,7 @@ public class RmiComponent extends UriEndpointComponent {
         RmiEndpoint rmi = new RmiEndpoint(uri, this);
 
         // lookup remote interfaces
-        List<Class<?>> classes = new ArrayList<Class<?>>();
+        List<Class<?>> classes = new ArrayList<>();
         Iterator<?> it = getAndRemoveParameter(parameters, "remoteInterfaces", Iterator.class);
         while (it != null && it.hasNext()) {
             Object next = it.next();

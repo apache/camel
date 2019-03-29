@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,15 +20,13 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
  * A pluggable strategy for configuring the HttpClient used by this component
- *
- * @version 
  */
 public interface HttpClientConfigurer {
 
     /**
      * Configure the HttpClient such as setting the authentication or proxying details
      *
-     * @param client the client
+     * @param clientBuilder the client
      */
     void configureHttpClient(HttpClientBuilder clientBuilder);
 }

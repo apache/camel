@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,14 +20,14 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The pdf components provides the ability to create, modify or extract content from PDF documents.
  */
-@UriEndpoint(scheme = "pdf", title = "PDF", syntax = "pdf:operation", producerOnly = true, label = "pdf,printing")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "pdf", title = "PDF", syntax = "pdf:operation", producerOnly = true, label = "document,transformation,printing")
 public class PdfEndpoint extends DefaultEndpoint {
 
     @UriParam

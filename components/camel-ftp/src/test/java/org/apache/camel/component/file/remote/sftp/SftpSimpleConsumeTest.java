@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,9 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class SftpSimpleConsumeTest extends SftpServerTestSupport {
 
     @Test
@@ -42,7 +39,7 @@ public class SftpSimpleConsumeTest extends SftpServerTestSupport {
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
         mock.expectedBodiesReceived(expected);
         
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
     }

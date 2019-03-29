@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,17 +20,25 @@ import java.io.ByteArrayInputStream;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-
 import org.apache.camel.component.telegram.TelegramService;
+import org.apache.camel.component.telegram.model.EditMessageLiveLocationMessage;
+import org.apache.camel.component.telegram.model.MessageResult;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
+import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
 import org.apache.camel.component.telegram.model.OutgoingMessage;
 import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
+import org.apache.camel.component.telegram.model.SendLocationMessage;
+import org.apache.camel.component.telegram.model.SendVenueMessage;
+import org.apache.camel.component.telegram.model.StopMessageLiveLocationMessage;
 import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -45,8 +53,12 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     private RestBotAPI api;
 
     public TelegramServiceRestBotAPIAdapter() {
-        this.api = JAXRSClientFactory.create(RestBotAPI.BOT_API_DEFAULT_URL, RestBotAPI.class, Collections.singletonList(new JacksonJsonProvider()));
+        this.api = JAXRSClientFactory.create(RestBotAPI.BOT_API_DEFAULT_URL, RestBotAPI.class, Collections.singletonList(providerByCustomObjectMapper()));
         WebClient.getConfig(this.api).getHttpConduit().getClient().setAllowChunking(false);
+    }
+
+    public TelegramServiceRestBotAPIAdapter(RestBotAPI api) {
+        this.api = api;
     }
 
     @Override
@@ -55,28 +67,39 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     }
 
     @Override
-    public void sendMessage(String authorizationToken, OutgoingMessage message) {
+    public Object sendMessage(String authorizationToken, OutgoingMessage message) {
+        Object resultMessage;
+
         if (message instanceof OutgoingTextMessage) {
-            this.sendMessage(authorizationToken, (OutgoingTextMessage) message);
+            resultMessage = this.sendMessage(authorizationToken, (OutgoingTextMessage) message);
         } else if (message instanceof OutgoingPhotoMessage) {
-            this.sendMessage(authorizationToken, (OutgoingPhotoMessage) message);
+            resultMessage = this.sendMessage(authorizationToken, (OutgoingPhotoMessage) message);
         } else if (message instanceof OutgoingAudioMessage) {
-            this.sendMessage(authorizationToken, (OutgoingAudioMessage) message);
+            resultMessage = this.sendMessage(authorizationToken, (OutgoingAudioMessage) message);
         } else if (message instanceof OutgoingVideoMessage) {
-            this.sendMessage(authorizationToken, (OutgoingVideoMessage) message);
+            resultMessage = this.sendMessage(authorizationToken, (OutgoingVideoMessage) message);
+        } else if (message instanceof OutgoingDocumentMessage) {
+            resultMessage = this.sendMessage(authorizationToken, (OutgoingDocumentMessage) message);
+        } else if (message instanceof SendLocationMessage) {
+            resultMessage = api.sendLocation(authorizationToken, (SendLocationMessage) message);
+        } else if (message instanceof EditMessageLiveLocationMessage) {
+            resultMessage = api.editMessageLiveLocation(authorizationToken, (EditMessageLiveLocationMessage) message);
+        } else if (message instanceof StopMessageLiveLocationMessage) {
+            resultMessage = api.stopMessageLiveLocation(authorizationToken, (StopMessageLiveLocationMessage) message);
+        } else if (message instanceof SendVenueMessage) {
+            resultMessage = api.sendVenue(authorizationToken, (SendVenueMessage) message);
         } else {
             throw new IllegalArgumentException("Unsupported message type " + (message != null ? message.getClass().getName() : null));
         }
+
+        return resultMessage;
     }
 
-
-    private void sendMessage(String authorizationToken, OutgoingTextMessage message) {
-        api.sendMessage(authorizationToken, message.getChatId(), message.getText(), message.getParseMode(), message.getDisableWebPagePreview(), message.getDisableNotification(), message
-                .getReplyToMessageId());
+    private MessageResult sendMessage(String authorizationToken, OutgoingTextMessage message) {
+        return api.sendMessage(authorizationToken, message);
     }
 
-
-    private void sendMessage(String authorizationToken, OutgoingPhotoMessage message) {
+    private MessageResult sendMessage(String authorizationToken, OutgoingPhotoMessage message) {
         List<Attachment> parts = new LinkedList<>();
 
         fillCommonMediaParts(parts, message);
@@ -86,10 +109,10 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             parts.add(buildTextPart("caption", message.getCaption()));
         }
 
-        api.sendPhoto(authorizationToken, parts);
+        return api.sendPhoto(authorizationToken, parts);
     }
 
-    private void sendMessage(String authorizationToken, OutgoingAudioMessage message) {
+    private MessageResult sendMessage(String authorizationToken, OutgoingAudioMessage message) {
         List<Attachment> parts = new LinkedList<>();
 
         fillCommonMediaParts(parts, message);
@@ -105,10 +128,10 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             parts.add(buildTextPart("performer", message.getPerformer()));
         }
 
-        api.sendAudio(authorizationToken, parts);
+        return api.sendAudio(authorizationToken, parts);
     }
 
-    private void sendMessage(String authorizationToken, OutgoingVideoMessage message) {
+    private MessageResult sendMessage(String authorizationToken, OutgoingVideoMessage message) {
         List<Attachment> parts = new LinkedList<>();
 
         fillCommonMediaParts(parts, message);
@@ -127,7 +150,20 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             parts.add(buildTextPart("height", String.valueOf(message.getHeight())));
         }
 
-        api.sendVideo(authorizationToken, parts);
+        return api.sendVideo(authorizationToken, parts);
+    }
+
+    private MessageResult sendMessage(String authorizationToken, OutgoingDocumentMessage message) {
+        List<Attachment> parts = new LinkedList<>();
+
+        fillCommonMediaParts(parts, message);
+
+        parts.add(buildMediaPart("document", message.getFilenameWithExtension(), message.getDocument()));
+        if (message.getCaption() != null) {
+            parts.add(buildTextPart("caption", message.getCaption()));
+        }
+
+        return api.sendDocument(authorizationToken, parts);
     }
 
     private void fillCommonMediaParts(List<Attachment> parts, OutgoingMessage message) {
@@ -159,4 +195,10 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     private String escapeMimeName(String name) {
         return name.replace("\"", "");
     }
+    
+    private JacksonJsonProvider providerByCustomObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(Include.NON_NULL);
+        return new JacksonJsonProvider(mapper);
+    }    
 }

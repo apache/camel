@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,10 +22,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
+import javax.persistence.Version;
 
-/**
- * @version 
- */
 @Entity
 @NamedQuery(name = "findAllCustomersWithName",
 query = "SELECT c FROM Customer c WHERE c.name LIKE :custName ")
@@ -37,6 +35,10 @@ public class Customer {
     private String name;
     @OneToOne(cascade = CascadeType.ALL)
     private Address address;
+    private int orderCount;
+
+    @Version
+    private Long version;
 
     public Long getId() {
         return id;
@@ -62,10 +64,18 @@ public class Customer {
         this.address = address;
     }
 
+    public int getOrderCount() {
+        return orderCount;
+    }
+
+    public void setOrderCount(int orderCount) {
+        this.orderCount = orderCount;
+    }
+
     @Override
     public String toString() {
         // OpenJPA warns about fields being accessed directly in methods if NOT using the corresponding getters.
-        return "Customer[id: " + getId() + ", name: " + getName() + ", address: " + getAddress() + "]";
+        return "Customer[id: " + getId() + ", version: " + version + ", name: " + getName() + ", address: " + getAddress() + "]";
     }
 
 }

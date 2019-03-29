@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ package org.apache.camel.example.cafe;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.example.cafe.stuff.Barista;
@@ -26,28 +27,29 @@ import org.apache.camel.example.cafe.stuff.CafeAggregationStrategy;
 import org.apache.camel.example.cafe.stuff.OrderSplitter;
 import org.apache.camel.example.cafe.test.TestDrinkRouter;
 import org.apache.camel.example.cafe.test.TestWaiter;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class CafeRouteBuilderTest extends CamelTestSupport {
     protected TestWaiter waiter = new TestWaiter();
     protected TestDrinkRouter driverRouter = new TestDrinkRouter();
-    
+
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("drinkRouter", driverRouter);
-        jndi.bind("orderSplitter", new OrderSplitter());
-        jndi.bind("barista", new Barista());
-        jndi.bind("waiter", waiter);
-        jndi.bind("aggregatorStrategy", new CafeAggregationStrategy());
-        return jndi;
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        bindBeans(context.getRegistry());
+        return context;
     }
-    
+
+    protected void bindBeans(Registry registry) throws Exception {
+        registry.bind("drinkRouter", driverRouter);
+        registry.bind("orderSplitter", new OrderSplitter());
+        registry.bind("barista", new Barista());
+        registry.bind("waiter", waiter);
+        registry.bind("aggregatorStrategy", new CafeAggregationStrategy());
+    }
+
     @Test
     public void testSplitter() throws InterruptedException {
         MockEndpoint coldDrinks = context.getEndpoint("mock:coldDrinks", MockEndpoint.class);
@@ -68,7 +70,7 @@ public class CafeRouteBuilderTest extends CamelTestSupport {
     @Test
     public void testCafeRoute() throws Exception {
         driverRouter.setTestModel(false);
-        List<Drink> drinks = new ArrayList<Drink>();
+        List<Drink> drinks = new ArrayList<>();
         Order order = new Order(2);
         order.addItem(DrinkType.ESPRESSO, 2, true);
         order.addItem(DrinkType.CAPPUCCINO, 4, false);

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,7 +35,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -56,7 +56,7 @@ public class HazelcastInstanceConsumerTest extends HazelcastCamelTestSupport {
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
         when(hazelcastInstance.getCluster()).thenReturn(cluster);
         argument = ArgumentCaptor.forClass(MembershipListener.class);
-        when(cluster.addMembershipListener(argument.capture())).thenReturn("foo");
+        when(cluster.addMembershipListener(any())).thenReturn("foo");
     }
 
     @Override
@@ -72,6 +72,7 @@ public class HazelcastInstanceConsumerTest extends HazelcastCamelTestSupport {
         added.setExpectedMessageCount(1);
         when(member.getSocketAddress()).thenReturn(new InetSocketAddress("foo.bar", 12345));
 
+        verify(cluster).addMembershipListener(argument.capture());
         MembershipEvent event = new MembershipEvent(cluster, member, MembershipEvent.MEMBER_ADDED, null);
         argument.getValue().memberAdded(event);
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
@@ -91,6 +92,7 @@ public class HazelcastInstanceConsumerTest extends HazelcastCamelTestSupport {
 
         when(member.getSocketAddress()).thenReturn(new InetSocketAddress("foo.bar", 12345));
 
+        verify(cluster).addMembershipListener(argument.capture());
         MembershipEvent event = new MembershipEvent(cluster, member, MembershipEvent.MEMBER_REMOVED, null);
         argument.getValue().memberRemoved(event);
 
@@ -108,7 +110,7 @@ public class HazelcastInstanceConsumerTest extends HazelcastCamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(String.format("hazelcast:%sfoo", HazelcastConstants.INSTANCE_PREFIX)).log("instance...").choice()
+                from(String.format("hazelcast-%sfoo", HazelcastConstants.INSTANCE_PREFIX)).log("instance...").choice()
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED)).log("...added").to("mock:added").otherwise().log("...removed").to("mock:removed");
             }
         };

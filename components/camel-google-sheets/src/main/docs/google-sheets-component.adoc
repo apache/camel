@@ -1,0 +1,192 @@
+[[google-sheets-component]]
+== Google Sheets Component
+
+*Available as of Camel version 2.23*
+
+The Google Sheets component provides access
+to http://google.com/sheets[Google Sheets] via
+the https://developers.google.com/sheets/api/reference/rest/[Google
+Sheets Web APIs].
+
+Google Sheets uses
+the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
+protocol] for authenticating a Google account and authorizing access to
+user data. Before you can use this component, you will need
+to https://developers.google.com/google-apps/sheets/auth[create an
+account and generate OAuth credentials]. Credentials comprise of a
+clientId, clientSecret, and a refreshToken. A handy resource for
+generating a long-lived refreshToken is
+the https://developers.google.com/oauthplayground[OAuth playground].
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+----------------------------------------------------------
+    <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-google-sheets</artifactId>
+            <version>2.23.0</version>
+    </dependency>
+
+----------------------------------------------------------
+
+### URI Format
+
+The GoogleSheets Component uses the following URI format:
+
+------------------------------------------------------------
+        google-sheets://endpoint-prefix/endpoint?[options]
+
+------------------------------------------------------------
+
+Endpoint prefix can be one of:
+
+* spreadsheets
+* data
+
+### GoogleSheetsComponent
+
+
+
+
+
+// component options: START
+The Google Sheets component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (common) | To use the shared configuration |  | GoogleSheets Configuration
+| *clientFactory* (advanced) | To use the GoogleSheetsClientFactory as factory for creating the client. Will by default use BatchGoogleSheetsClientFactory |  | GoogleSheetsClient Factory
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+
+
+// endpoint options: START
+The Google Sheets endpoint is configured using URI syntax:
+
+----
+google-sheets:apiName/methodName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *apiName* | *Required* What kind of operation to perform |  | GoogleSheetsApiName
+| *methodName* | *Required* What sub operation to use for the selected operation |  | String
+|===
+
+
+==== Query Parameters (10 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *accessToken* (common) | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
+| *applicationName* (common) | Google Sheets application name. Example would be camel-google-sheets/1.0 |  | String
+| *clientId* (common) | Client ID of the sheets application |  | String
+| *clientSecret* (common) | Client secret of the sheets application |  | String
+| *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
+| *refreshToken* (common) | OAuth 2 refresh token. Using this, the Google Sheets component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-google-sheets-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 10 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.google-sheets.client-factory* | To use the GoogleSheetsClientFactory as factory for creating the client. Will by default use BatchGoogleSheetsClientFactory. The option is a org.apache.camel.component.google.sheets.GoogleSheetsClientFactory type. |  | String
+| *camel.component.google-sheets.configuration.access-token* | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
+| *camel.component.google-sheets.configuration.api-name* | What kind of operation to perform |  | GoogleSheetsApiName
+| *camel.component.google-sheets.configuration.application-name* | Google Sheets application name. Example would be "camel-google-sheets/1.0" |  | String
+| *camel.component.google-sheets.configuration.client-id* | Client ID of the sheets application |  | String
+| *camel.component.google-sheets.configuration.client-secret* | Client secret of the sheets application |  | String
+| *camel.component.google-sheets.configuration.method-name* | What sub operation to use for the selected operation |  | String
+| *camel.component.google-sheets.configuration.refresh-token* | OAuth 2 refresh token. Using this, the Google Sheets component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
+| *camel.component.google-sheets.enabled* | Whether to enable auto configuration of the google-sheets component. This is enabled by default. |  | Boolean
+| *camel.component.google-sheets.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+### Producer Endpoints
+
+Producer endpoints can use endpoint prefixes followed by endpoint names
+and associated options described next. A shorthand alias can be used for
+some endpoints. The endpoint URI MUST contain a prefix.
+
+Endpoint options that are not mandatory are denoted by []. When there
+are no mandatory options for an endpoint, one of the set of [] options
+MUST be provided. Producer endpoints can also use a special option
+*`inBody`* that in turn should contain the name of the endpoint option
+whose value will be contained in the Camel Exchange In message.
+
+Any of the endpoint options can be provided in either the endpoint URI,
+or dynamically in a message header. The message header name must be of
+the format `CamelGoogleSheets.<option>`. Note that the `inBody` option
+overrides message header, i.e. the endpoint option `inBody=option` would
+override a `CamelGoogleSheets.option` header.
+
+For more information on the endpoints and options see API documentation
+at: https://developers.google.com/sheets/api/reference/rest/[https://developers.google.com/sheets/api/reference/rest/]
+
+### Consumer Endpoints
+
+Any of the producer endpoints can be used as a consumer endpoint.
+Consumer endpoints can use
+http://camel.apache.org/polling-consumer.html#PollingConsumer-ScheduledPollConsumerOptions[Scheduled
+Poll Consumer Options] with a `consumer.` prefix to schedule endpoint
+invocation. Consumer endpoints that return an array or collection will
+generate one exchange per element, and their routes will be executed
+once for each exchange.
+
+### Message Headers
+
+Any URI option can be provided in a message header for producer
+endpoints with a `CamelGoogleSheets.` prefix.
+
+### Message Body
+
+All result message bodies utilize objects provided by the underlying
+APIs used by the GoogleSheetsComponent. Producer endpoints can specify
+the option name for incoming message body in the `inBody` endpoint URI
+parameter. For endpoints that return an array or collection, a consumer
+endpoint will map every element to distinct messages.     

@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.xquery.enabled",
+      "description": "Enable xquery component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.language.xquery.enabled",
+      "description": "Enable xquery language",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -72,13 +72,7 @@ public class CxfEndpointUtilsTest extends Assert {
     public char sepChar() {
         return '&';
     }
-    
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testGetDataFormatMessage() throws Exception {
-        CxfEndpoint endpoint = createEndpoint(getEndpointURI() + sepChar() + "dataFormat=MESSAGE");
-        assertEquals("We should get the Message DataFormat", DataFormat.MESSAGE, endpoint.getDataFormat());
-    }
+
     @Test
     public void testGetDataFormatCXF() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getEndpointURI() + sepChar() + "dataFormat=CXF_MESSAGE");

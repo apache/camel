@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -45,9 +45,9 @@ public class GetChildrenOperation extends ZooKeeperOperation<List<String>> {
                     LOG.debug(format("Received children from '%s' path ", node));
                 }
             }
-            return new OperationResult<List<String>>(children, statistics);
+            return new OperationResult<>(children, statistics);
         } catch (Exception e) {
-            return new OperationResult<List<String>>(e);
+            return new OperationResult<>(e);
         }
     }
 }

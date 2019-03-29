@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,21 +22,20 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link SolrEndpoint}.
  */
-public class SolrComponent extends UriEndpointComponent {
+@Component("solr,solrCloud,solrs")
+public class SolrComponent extends DefaultComponent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SolrComponent.class);
-    private final Map<SolrEndpoint, SolrServerReference> servers = new HashMap<SolrEndpoint, SolrServerReference>();
+    private final Map<SolrEndpoint, SolrServerReference> servers = new HashMap<>();
 
     protected static final class SolrServerReference {
 
@@ -79,7 +78,6 @@ public class SolrComponent extends UriEndpointComponent {
     }
 
     public SolrComponent() {
-        super(SolrEndpoint.class);
     }
 
     @Override
@@ -111,7 +109,7 @@ public class SolrComponent extends UriEndpointComponent {
     
     private void shutdownServer(SolrClient server) throws IOException {
         if (server != null) {
-            LOG.info("Shutting down solr server: {}", server);
+            log.info("Shutting down solr server: {}", server);
             server.close();
         }
     }
@@ -120,18 +118,18 @@ public class SolrComponent extends UriEndpointComponent {
         try {
             shutdownServer(ref.getSolrServer());
         } catch (Exception e) {
-            LOG.warn("Error shutting down solr server. This exception is ignored.", e);
+            log.warn("Error shutting down solr server. This exception is ignored.", e);
         }
         try {
             shutdownServer(ref.getUpdateSolrServer());
         } catch (Exception e) {
-            LOG.warn("Error shutting down streaming solr server. This exception is ignored.", e);
+            log.warn("Error shutting down streaming solr server. This exception is ignored.", e);
         }
         
         try {
             shutdownServer(ref.getCloudSolrServer());
         } catch (Exception e) {
-            LOG.warn("Error shutting down streaming solr server. This exception is ignored.", e);
+            log.warn("Error shutting down streaming solr server. This exception is ignored.", e);
         }
 
         if (remove) {

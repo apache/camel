@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,26 +20,32 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.component.file.FileProcessStrategy;
 import org.apache.camel.component.file.GenericFileEndpoint;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.component.file.remote.strategy.FtpProcessStrategyFactory;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.commons.net.ftp.FTPFile;
 
 /**
  * FTP Secure (FTP over SSL/TLS) Component.
  * <p/>
  * If desired, the JVM property <tt>-Djavax.net.debug=all</tt> can be used to see wire-level SSL details.
- * 
- * @version 
  */
-public class FtpsComponent extends FtpComponent {
+@Component("ftps")
+@FileProcessStrategy(FtpProcessStrategyFactory.class)
+public class FtpsComponent extends FtpComponent implements SSLContextParametersAware {
+
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public FtpsComponent() {
-        setEndpointClass(FtpsEndpoint.class);
     }
 
     public FtpsComponent(CamelContext context) {
         super(context);
-        setEndpointClass(FtpsEndpoint.class);
     }
 
     @Override
@@ -57,7 +63,11 @@ public class FtpsComponent extends FtpComponent {
         extractAndSetFtpClientTrustStoreParameters(parameters, endpoint);
         extractAndSetFtpClientConfigParameters(parameters, endpoint);
         extractAndSetFtpClientParameters(parameters, endpoint);
-        
+
+        if (endpoint.getSslContextParameters() == null) {
+            endpoint.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
+
         return endpoint;
     }
 
@@ -83,6 +93,19 @@ public class FtpsComponent extends FtpComponent {
             Map<String, Object> param = IntrospectionSupport.extractProperties(parameters, "ftpClient.trustStore.");
             endpoint.setFtpClientTrustStoreParameters(param);
         }
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
 }

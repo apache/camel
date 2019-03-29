@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,10 +22,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.spi.RecoverableAggregationRepository;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.DefaultExchangeHolder;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.configuration.cache.Configuration;
@@ -67,18 +67,18 @@ public class InfinispanLocalAggregationRepository extends ServiceSupport impleme
     public Exchange add(final CamelContext camelContext, final String key, final Exchange exchange) {
         LOG.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
         DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
-        DefaultExchangeHolder oldHolder = (DefaultExchangeHolder) cache.put(key, newHolder);
+        DefaultExchangeHolder oldHolder = cache.put(key, newHolder);
         return unmarshallExchange(camelContext, oldHolder);
     }
 
     @Override
     public Exchange get(CamelContext camelContext, String key) {
-        return unmarshallExchange(camelContext, (DefaultExchangeHolder) cache.get(key));
+        return unmarshallExchange(camelContext, cache.get(key));
     }
 
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
-        LOG.trace("Removing an exchange with ID {} for key {} ", exchange.getExchangeId(), key);
+        LOG.trace("Removing an exchange with ID {} for key {}", exchange.getExchangeId(), key);
         cache.remove(key);
     }
 

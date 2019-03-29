@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.netty4;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.internal.logging.InternalLoggerFactory;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * This test ensures LogCaptureAppender is configured properly

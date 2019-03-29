@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cxf.soap.headers;
 
 import java.io.StringReader;
@@ -48,7 +47,7 @@ import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy;
 import org.apache.camel.component.cxf.common.header.MessageHeaderFilter;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.headers.Header;
@@ -64,6 +63,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -71,8 +71,6 @@ import static org.junit.Assert.fail;
 
 /**
  * This test suite verifies message header filter features
- *
- * @version 
  */
 @ContextConfiguration
 public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests {
@@ -165,8 +163,8 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
 
         OutHeader me = new OutHeader();
         me.setRequestType("CXF user");
-        Holder<OutHeaderResponse> result = new Holder<OutHeaderResponse>(new OutHeaderResponse()); 
-        Holder<SOAPHeaderData> header = new Holder<SOAPHeaderData>(new SOAPHeaderData());
+        Holder<OutHeaderResponse> result = new Holder<>(new OutHeaderResponse()); 
+        Holder<SOAPHeaderData> header = new Holder<>(new SOAPHeaderData());
         proxy.outHeader(me, result, header);
         assertTrue("Expected in band header to propagate but it didn't", 
                    result.value.getResponseType().equals("pass"));
@@ -185,7 +183,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
                  "http://localhost:" + portE1 + "/CxfMessageHeadersRelayTest/HeaderService/");
         InoutHeader me = new InoutHeader();
         me.setRequestType("CXF user");
-        Holder<SOAPHeaderData> header = new Holder<SOAPHeaderData>(Constants.IN_OUT_REQUEST_HEADER_DATA);
+        Holder<SOAPHeaderData> header = new Holder<>(Constants.IN_OUT_REQUEST_HEADER_DATA);
         InoutHeaderResponse result = proxy.inoutHeader(me, header);
         assertTrue("Expected in band header to propagate but it didn't", 
                    result.getResponseType().equals("pass"));
@@ -365,8 +363,8 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
                  "http://localhost:" + portE3 + "/CxfMessageHeadersRelayTest/HeaderService/");
         OutHeader me = new OutHeader();
         me.setRequestType("CXF user");
-        Holder<OutHeaderResponse> result = new Holder<OutHeaderResponse>(new OutHeaderResponse()); 
-        Holder<SOAPHeaderData> header = new Holder<SOAPHeaderData>(new SOAPHeaderData());
+        Holder<OutHeaderResponse> result = new Holder<>(new OutHeaderResponse()); 
+        Holder<SOAPHeaderData> header = new Holder<>(new SOAPHeaderData());
         try {
             proxy.outHeader(me, result, header);
         } catch (Exception e) {
@@ -388,7 +386,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
                  "http://localhost:" + portE3 + "/CxfMessageHeadersRelayTest/HeaderService/");
         InoutHeader me = new InoutHeader();
         me.setRequestType("CXF user");
-        Holder<SOAPHeaderData> header = new Holder<SOAPHeaderData>(Constants.IN_OUT_REQUEST_HEADER_DATA);
+        Holder<SOAPHeaderData> header = new Holder<>(Constants.IN_OUT_REQUEST_HEADER_DATA);
         InoutHeaderResponse result = null;
         try {
             result = proxy.inoutHeader(me, header);
@@ -413,12 +411,12 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
             +   "</message></ns2:SOAPHeaderInfo>";
         String requestBody = "<ns2:inoutHeader xmlns:ns2=\"http://apache.org/camel/component/cxf/soap/headers\">" 
             + "<requestType>CXF user</requestType></ns2:inoutHeader>";
-        List<Source> elements = new ArrayList<Source>();
+        List<Source> elements = new ArrayList<>();
         elements.add(new DOMSource(StaxUtils.read(new StringReader(requestBody)).getDocumentElement()));
-        final List<SoapHeader> headers = new ArrayList<SoapHeader>();
+        final List<SoapHeader> headers = new ArrayList<>();
         headers.add(new SoapHeader(qname,
                                    StaxUtils.read(new StringReader(requestHeader)).getDocumentElement()));
-        final CxfPayload<SoapHeader> cxfPayload = new CxfPayload<SoapHeader>(headers, elements, null);
+        final CxfPayload<SoapHeader> cxfPayload = new CxfPayload<>(headers, elements, null);
         
         Exchange exchange = template.request(uri, new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -491,7 +489,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
     protected void doTestInOutOfBandHeaderCamelTemplate(String producerUri) throws Exception {
         // START SNIPPET: sending
         Exchange senderExchange = new DefaultExchange(context, ExchangePattern.InOut);
-        final List<Object> params = new ArrayList<Object>();
+        final List<Object> params = new ArrayList<>();
         Me me = new Me();
         me.setFirstName("john");
         me.setLastName("Doh");
@@ -501,7 +499,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
         senderExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "inOutOfBandHeader");
 
         List<Header> headers = buildOutOfBandHeaderList(false);
-        Map<String, Object> requestContext = new HashMap<String, Object>();
+        Map<String, Object> requestContext = new HashMap<>();
         requestContext.put(Header.HEADER_LIST, headers);
         senderExchange.getIn().setHeader(Client.REQUEST_CONTEXT, requestContext);
 
@@ -519,7 +517,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
     protected void doTestOutOutOfBandHeaderCamelTemplate(String producerUri) throws Exception {
         // START SNIPPET: sending
         Exchange senderExchange = new DefaultExchange(context, ExchangePattern.InOut);
-        final List<Object> params = new ArrayList<Object>();
+        final List<Object> params = new ArrayList<>();
         Me me = new Me();
         me.setFirstName("john");
         me.setLastName("Doh");
@@ -543,7 +541,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
     public void doTestInOutOutOfBandHeaderCamelTemplate(String producerUri) throws Exception {
         // START SNIPPET: sending
         Exchange senderExchange = new DefaultExchange(context, ExchangePattern.InOut);
-        final List<Object> params = new ArrayList<Object>();
+        final List<Object> params = new ArrayList<>();
         Me me = new Me();
         me.setFirstName("john");
         me.setLastName("Doh");
@@ -553,7 +551,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
         senderExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "inoutOutOfBandHeader");
 
         List<Header> inHeaders = buildOutOfBandHeaderList(false);
-        Map<String, Object> requestContext = new HashMap<String, Object>();
+        Map<String, Object> requestContext = new HashMap<>();
         requestContext.put(Header.HEADER_LIST, inHeaders);
         senderExchange.getIn().setHeader(Client.REQUEST_CONTEXT, requestContext);
 
@@ -640,13 +638,13 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
         
         hdr.setMustUnderstand(invalid);
 
-        List<Header> headers = new ArrayList<Header>();
+        List<Header> headers = new ArrayList<>();
         headers.add(hdr);
         return headers;
     }
     
     protected static void validateReturnedOutOfBandHeaderWithInsertion(Map<String, Object> responseContext, boolean expect) {
-        List<OutofBandHeader> hdrToTest = new ArrayList<OutofBandHeader>();
+        List<OutofBandHeader> hdrToTest = new ArrayList<>();
         List<Header> oobHdr = CastUtils.cast((List<?>)responseContext.get(Header.HEADER_LIST));
         if (!expect) {
             if (oobHdr == null || (oobHdr != null && oobHdr.size() == 0)) {
@@ -723,7 +721,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
             List<SoapHeader> soapHeaders = CastUtils.cast((List<?>)exchange.getIn().getHeader(Header.HEADER_LIST));
             if (soapHeaders == null) {
                 // we just create a new soap headers in case the header is null
-                soapHeaders = new ArrayList<SoapHeader>();
+                soapHeaders = new ArrayList<>();
             }
             
             // Insert a new header

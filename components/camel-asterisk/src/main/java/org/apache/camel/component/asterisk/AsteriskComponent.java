@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,19 +20,20 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * Represents the component that manages {@link AsteriskEndpoint}.
  */
-public class AsteriskComponent extends UriEndpointComponent {
+@Component("asterisk")
+public class AsteriskComponent extends DefaultComponent {
 
     public AsteriskComponent() {
-        super(AsteriskEndpoint.class);
     }
 
     public AsteriskComponent(CamelContext context) {
-        super(context, AsteriskEndpoint.class);
+        super(context);
     }
 
     @Override

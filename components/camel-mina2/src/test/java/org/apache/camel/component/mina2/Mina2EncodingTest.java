@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,8 +27,6 @@ import org.junit.Test;
 
 /**
  * Unit testing using different encodings with the TCP protocol.
- *
- * @version 
  */
 public class Mina2EncodingTest extends BaseMina2Test {
 

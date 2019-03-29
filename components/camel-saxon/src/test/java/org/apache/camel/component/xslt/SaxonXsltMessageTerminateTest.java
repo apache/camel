@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.xslt;
 
+import net.sf.saxon.expr.instruct.TerminationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -28,6 +29,8 @@ public class SaxonXsltMessageTerminateTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(1);
 
+        context.getRouteController().startRoute("foo");
+
         assertMockEndpointsSatisfied();
 
         Exchange out = getMockEndpoint("mock:dead").getReceivedExchanges().get(0);
@@ -37,9 +40,9 @@ public class SaxonXsltMessageTerminateTest extends CamelTestSupport {
         assertNotNull(cause);
 
         // we have the xsl termination message as a error property on the exchange as we set terminate=true
-        Exception error = out.getProperty(Exchange.XSLT_ERROR, Exception.class);
+        Exception error = out.getProperty(Exchange.XSLT_FATAL_ERROR, Exception.class);
         assertNotNull(error);
-        assertEquals("Error: DOB is an empty string!", error.getMessage());
+        assertIsInstanceOf(TerminationException.class, error);
     }
 
     @Override
@@ -49,7 +52,7 @@ public class SaxonXsltMessageTerminateTest extends CamelTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("file:src/test/data/?fileName=terminate.xml&noop=true")
+                from("file:src/test/data/?fileName=terminate.xml&noop=true").routeId("foo").noAutoStartup()
                     .to("xslt:org/apache/camel/component/xslt/terminate.xsl?saxon=true")
                     .to("log:foo")
                     .to("mock:result");

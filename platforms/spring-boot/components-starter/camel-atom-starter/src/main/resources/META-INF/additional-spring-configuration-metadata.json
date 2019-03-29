@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.atom.enabled",
+      "description": "Enable atom component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

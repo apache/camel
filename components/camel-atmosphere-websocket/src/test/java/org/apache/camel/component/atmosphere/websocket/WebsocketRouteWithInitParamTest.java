@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,7 +31,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
 
     private static final String[] EXISTED_USERS = {"Kim", "Pavlo", "Peter"};
     private static String[] broadcastMessageTo = {};
-    private static Map<String, String> connectionKeyUserMap = new HashMap<String, String>();
+    private static Map<String, String> connectionKeyUserMap = new HashMap<>();
 
     @Test
     public void testWebsocketEventsResendingEnabled() throws Exception {

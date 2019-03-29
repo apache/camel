@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -59,9 +59,10 @@ public class VelocityContentCacheTest extends CamelTestSupport {
         template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?fileExist=Override", "Bye $headers.name", Exchange.FILE_NAME, "hello.vm");
 
         mock.reset();
-        mock.expectedBodiesReceived("Bye Paris");
+        mock.expectedBodiesReceived("Bye Paris", "Bye World");
 
         template.sendBodyAndHeader("direct:a", "Body", "name", "Paris");
+        template.sendBodyAndHeader("direct:a", "Body", "name", "World");
         mock.assertIsSatisfied();
     }
 
@@ -124,7 +125,7 @@ public class VelocityContentCacheTest extends CamelTestSupport {
         // clear the cache via the mbean server
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
         Set<ObjectName> objNameSet = mbeanServer.queryNames(new ObjectName("org.apache.camel:type=endpoints,name=\"velocity:*contentCache=true*\",*"), null);
-        ObjectName managedObjName = new ArrayList<ObjectName>(objNameSet).get(0);        
+        ObjectName managedObjName = new ArrayList<>(objNameSet).get(0);        
         mbeanServer.invoke(managedObjName, "clearContentCache", null, null);
            
         // now change content in the file in the classpath

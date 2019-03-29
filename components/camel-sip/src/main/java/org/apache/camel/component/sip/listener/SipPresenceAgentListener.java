@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -189,7 +189,7 @@ public class SipPresenceAgentListener implements SipListener, SipMessageCodes {
 
     public void processTimeout(javax.sip.TimeoutEvent timeoutEvent) {
         if (LOG.isWarnEnabled()) {
-            LOG.warn("TimeoutEvent received at Sip Subscription Listener");
+            LOG.warn("TimeoutEvent received at Sip Presence Agent Listener");
         }
     }
 

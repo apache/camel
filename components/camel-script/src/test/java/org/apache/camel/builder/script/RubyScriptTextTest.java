@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,7 +38,7 @@ public class RubyScriptTextTest extends CamelTestSupport {
     public void parallelExecutionWithCachedScriptAndReusedScriptEngine() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                getContext().getProperties().put(Exchange.REUSE_SCRIPT_ENGINE, "true");
+                getContext().getGlobalOptions().put(Exchange.REUSE_SCRIPT_ENGINE, "true");
                 //getContext().getProperties().put(Exchange.COMPILE_SCRIPT, "true");
 
                 from("seda:jruby?concurrentConsumers=5")

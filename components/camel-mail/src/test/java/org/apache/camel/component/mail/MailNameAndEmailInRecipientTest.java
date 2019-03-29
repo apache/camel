@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,7 +32,7 @@ public class MailNameAndEmailInRecipientTest extends CamelTestSupport {
         Mailbox.clearAll();
 
         // START SNIPPET: e1
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("to", "Claus Ibsen <davsclaus@localhost>");
         headers.put("cc", "James Strachan <jstrachan@localhost>");
 
@@ -55,9 +55,9 @@ public class MailNameAndEmailInRecipientTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://davsclaus@localhost?consumer.delay=1000").to("mock:davsclaus");
+                from("pop3://davsclaus@localhost?consumer.initialDelay=100&consumer.delay=100").to("mock:davsclaus");
 
-                from("pop3://jstrachan@localhost?consumer.delay=1000").to("mock:jstrachan");
+                from("pop3://jstrachan@localhost?consumer.initialDelay=100&consumer.delay=100").to("mock:jstrachan");
             }
         };
     }

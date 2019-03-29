@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,8 +26,8 @@ import com.google.api.services.calendar.model.Calendar;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.IntrospectionSupport;
 import org.junit.After;
 import org.junit.Before;
 
@@ -76,7 +76,7 @@ public class AbstractGoogleCalendarTestSupport extends CamelTestSupport {
             throw new IOException(String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()), e);
         }
 
-        Map<String, Object> options = new HashMap<String, Object>();
+        Map<String, Object> options = new HashMap<>();
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             options.put(entry.getKey().toString(), entry.getValue());
         }

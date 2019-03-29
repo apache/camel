@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf.jms;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -49,7 +50,7 @@ public class CxfEndpointJMSConsumerTest extends CamelTestSupport {
     
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
     
     protected ClassPathXmlApplicationContext createApplicationContext() {

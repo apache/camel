@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,6 +28,11 @@ public class JettyRestHttpBinding extends DefaultHttpBinding {
     }
     public JettyRestHttpBinding(HttpCommonEndpoint ep) {
         super(ep);
+        setHeaderFilterStrategy(ep.getHeaderFilterStrategy());
+        setTransferException(ep.isTransferException());
+        setEagerCheckContentAvailable(ep.isEagerCheckContentAvailable());
+        setMapHttpMessageBody(ep.isMapHttpMessageBody());
+        setMapHttpMessageHeaders(ep.isMapHttpMessageHeaders());
     }
 
     @Override

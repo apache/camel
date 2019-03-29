@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -50,7 +50,6 @@ public class HttpRedirectTest extends BaseHttpTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/test", new RedirectHandler(HttpStatus.SC_MOVED_PERMANENTLY)).
                 registerHandler("/someplaceelse", new BasicValidationHandler("GET", null, null, "Bye World")).
                 registerHandler("/test", new RedirectHandler(HttpStatus.SC_MOVED_PERMANENTLY)).
                 create();

@@ -1,5 +1,0 @@
-<!-- { "a": 1, "b": true, "c": "foo" } -->
-<root>
-	<a json_type="number">1</a>
-	<b json_type="boolean">true</b>
-</root>

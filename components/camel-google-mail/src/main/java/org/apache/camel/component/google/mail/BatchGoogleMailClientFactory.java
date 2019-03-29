@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.google.mail;
 
-import java.util.Collection;
-
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.gmail.Gmail;
 
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,10 +37,12 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
     }
 
     @Override
-    public Gmail makeClient(String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken, String accessToken) {
-        Credential credential;
+    public Gmail makeClient(String clientId, String clientSecret, String applicationName, String refreshToken, String accessToken) {
+        if (clientId == null || clientSecret == null) {
+            throw new IllegalArgumentException("clientId and clientSecret are required to create Gmail client.");
+        }
         try {
-            credential = authorize(clientId, clientSecret, scopes);
+            Credential credential = authorize(clientId, clientSecret);
 
             if (refreshToken != null && !"".equals(refreshToken)) {
                 credential.setRefreshToken(refreshToken);
@@ -51,13 +52,12 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
             }
             return new Gmail.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
         } catch (Exception e) {
-            LOG.error("Could not create Google Drive client.", e);
+            throw new RuntimeCamelException("Could not create Gmail client.", e);
         }
-        return null;
     }
 
     // Authorizes the installed application to access user's protected data.
-    private Credential authorize(String clientId, String clientSecret, Collection<String> scopes) throws Exception {
+    private Credential authorize(String clientId, String clientSecret) throws Exception {
         // authorize
         return new GoogleCredential.Builder().setJsonFactory(jsonFactory).setTransport(transport).setClientSecrets(clientId, clientSecret).build();
     }

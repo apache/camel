@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,11 +19,11 @@ package org.apache.camel.component.leveldb;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.util.HeaderDto;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,7 +58,7 @@ public class LevelDBAggregateSerializedHeadersTest extends CamelTestSupport {
             HeaderDto headerDto = new HeaderDto("test", "company", 1);
             char id = 'A';
             LOG.debug("Sending {} with id {}", value, id);
-            Map<String, Object> headers = new HashMap<String, Object>();
+            Map<String, Object> headers = new HashMap<>();
             headers.put("id", headerDto);
             template.sendBodyAndHeaders("seda:start?size=" + SIZE, value, headers);
         }

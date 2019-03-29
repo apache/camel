@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,45 +16,53 @@
  */
 package org.apache.camel.component.cmis;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * Represents the component that manages {@link CMISComponent}.
  */
-public class CMISComponent extends UriEndpointComponent {
+@Component("cmis")
+public class CMISComponent extends DefaultComponent {
+
+    private CMISSessionFacadeFactory sessionFacadeFactory;
 
     public CMISComponent() {
-        super(CMISEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
-        boolean queryMode = removeQueryMode(parameters);
+        CMISEndpoint endpoint = new CMISEndpoint(uri, this, remaining);
 
-        CMISSessionFacade sessionFacade = new CMISSessionFacade(remaining);
-        setProperties(sessionFacade, parameters);
+        // create a copy of parameters which we need to store on the endpoint which are in use from the session factory
+        Map<String, Object> copy = new HashMap<>(parameters);
+        endpoint.setProperties(copy);
+        if (sessionFacadeFactory != null) {
+            endpoint.setSessionFacadeFactory(sessionFacadeFactory);
+        }
 
-        CMISEndpoint endpoint = new CMISEndpoint(uri, this, new CMISSessionFacadeFactory() {
-            @Override
-            public CMISSessionFacade create() throws Exception {
-                CMISSessionFacade sessionFacade = new CMISSessionFacade(remaining);
-                setProperties(sessionFacade, parameters);
+        // create a dummy CMISSessionFacade which we set the properties on
+        // so we can validate if they are all known options and fail fast if there are unknown options
+        CMISSessionFacade dummy = new CMISSessionFacade(remaining);
+        setProperties(dummy, parameters);
 
-                return sessionFacade;
-            }
-        });
-
-        endpoint.setQueryMode(queryMode);
+        // and the remainder options are for the endpoint
+        setProperties(endpoint, parameters);
 
         return endpoint;
     }
 
-    private boolean removeQueryMode(Map<String, Object> parameters) {
-        if (parameters.containsKey("queryMode")) {
-            return Boolean.valueOf((String)parameters.remove("queryMode"));
-        }
-        return false;
+    public CMISSessionFacadeFactory getSessionFacadeFactory() {
+        return sessionFacadeFactory;
+    }
+
+    /**
+     * To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade instances
+     */
+    public void setSessionFacadeFactory(CMISSessionFacadeFactory sessionFacadeFactory) {
+        this.sessionFacadeFactory = sessionFacadeFactory;
     }
 }

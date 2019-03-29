@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.tests.component;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
@@ -30,16 +31,16 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
 
 public class PerformanceTestComponent extends DefaultComponent {
     public static final String HEADER_THREADS = "CamelPerfThreads";
     public static final String HEADER_ITERATIONS = "CamelPerfIterations";
-    
+
     private static final int DEFAULT_THREADS = 8;
     private static final int DEFAULT_ITERATIONS = 100;
 
@@ -52,9 +53,7 @@ public class PerformanceTestComponent extends DefaultComponent {
 
     public static int getHeaderValue(Exchange exchange, String header) {
         Integer value = exchange.getContext().getTypeConverter().convertTo(Integer.class, exchange, exchange.getIn().getHeader(header));
-        return value != null ? value 
-            : header.equals(HEADER_THREADS) ? DEFAULT_THREADS
-            : header.equals(HEADER_ITERATIONS) ? DEFAULT_ITERATIONS : 0;
+        return value != null ? value : header.equals(HEADER_THREADS) ? DEFAULT_THREADS : header.equals(HEADER_ITERATIONS) ? DEFAULT_ITERATIONS : 0;
     }
 
     private static final class PerformanceTestEndpoint extends DefaultEndpoint {
@@ -63,7 +62,7 @@ public class PerformanceTestComponent extends DefaultComponent {
         protected PerformanceTestEndpoint(String uri, Component component) {
             super(uri, component);
         }
-        
+
         @Override
         public Consumer createConsumer(Processor processor) throws Exception {
             synchronized (this) {
@@ -84,12 +83,12 @@ public class PerformanceTestComponent extends DefaultComponent {
         public boolean isSingleton() {
             return true;
         }
-        
+
         public Consumer getConsumer() {
             return consumer;
         }
     }
-    
+
     private static final class PerformanceTestConsumer extends DefaultConsumer {
         protected PerformanceTestConsumer(Endpoint endpoint, Processor processor) {
             super(endpoint, processor);
@@ -109,9 +108,10 @@ public class PerformanceTestComponent extends DefaultComponent {
             if (endpoint != null) {
                 final DefaultConsumer consumer = (DefaultConsumer)endpoint.getConsumer();
                 ExecutorService executor = exchange.getContext().getExecutorServiceManager().newFixedThreadPool(this, "perf", threads);
-                CompletionService<Exchange> tasks = new ExecutorCompletionService<Exchange>(executor);
+                CompletionService<Exchange> tasks = new ExecutorCompletionService<>(executor);
 
-                // StopWatch watch = new StopWatch();  // if we want to clock how long it takes
+                // StopWatch watch = new StopWatch(); // if we want to clock how
+                // long it takes
                 for (int i = 0; i < count; i++) {
                     tasks.submit(new Callable<Exchange>() {
                         @Override
@@ -126,10 +126,10 @@ public class PerformanceTestComponent extends DefaultComponent {
                         }
                     });
                 }
-                
+
                 for (int i = 0; i < count; i++) {
                     // Future<Exchange> result = tasks.take();
-                    tasks.take();       // wait for all exchanges to complete
+                    tasks.take(); // wait for all exchanges to complete
                 }
             }
         }
@@ -143,6 +143,12 @@ public class PerformanceTestComponent extends DefaultComponent {
             }
             callback.done(true);
             return true;
+        }
+
+        @Override
+        public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 }

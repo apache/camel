@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,23 +15,31 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.zipfile;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.apache.camel.Exchange.FILE_NAME;
@@ -53,6 +61,8 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         + "With horsemen riding royally.";
 
     private static final File TEST_DIR = new File("target/zip");
+    
+    private ZipFileDataFormat zip;
 
     @Test
     public void testZipAndStreamCaching() throws Exception {
@@ -94,6 +104,28 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
     }
 
     @Test
+    public void testZipWithPathElements() throws Exception {
+        getMockEndpoint("mock:zip").expectedBodiesReceived(getZippedText("poem.txt"));
+        getMockEndpoint("mock:zip").expectedHeaderReceived(FILE_NAME, "poem.txt.zip");
+
+        template.sendBodyAndHeader("direct:zip", TEXT, FILE_NAME, "poems/poem.txt");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testZipWithPreservedPathElements() throws Exception {
+        zip.setPreservePathElements(true);
+
+        getMockEndpoint("mock:zip").expectedBodiesReceived(getZippedTextInFolder("poems/", "poems/poem.txt"));
+        getMockEndpoint("mock:zip").expectedHeaderReceived(FILE_NAME, "poem.txt.zip");
+
+        template.sendBodyAndHeader("direct:zip", TEXT, FILE_NAME, "poems/poem.txt");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testUnzip() throws Exception {
         getMockEndpoint("mock:unzip").expectedBodiesReceived(TEXT);
         getMockEndpoint("mock:unzip").expectedHeaderReceived(FILE_NAME, "file");
@@ -101,6 +133,26 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         template.sendBody("direct:unzip", getZippedText("file"));
 
         assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testUnzipWithEmptyDirectorySupported() throws Exception {
+        deleteDirectory(new File("hello_out"));
+        zip.setUsingIterator(true);
+        zip.setAllowEmptyDirectory(true);
+        template.sendBody("direct:unzipWithEmptyDirectory", new File("src/test/resources/hello.odt"));
+        assertTrue(Files.exists(Paths.get("hello_out/Configurations2")));
+        deleteDirectory(new File("hello_out"));
+    }
+    
+    @Test
+    public void testUnzipWithEmptyDirectoryUnsupported() throws Exception {
+        deleteDirectory(new File("hello_out"));
+        zip.setUsingIterator(true);
+        zip.setAllowEmptyDirectory(false);
+        template.sendBody("direct:unzipWithEmptyDirectory", new File("src/test/resources/hello.odt"));
+        assertTrue(!Files.exists(Paths.get("hello_out/Configurations2")));
+        deleteDirectory(new File("hello_out"));
     }
 
     @Test
@@ -183,9 +235,33 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory(TEST_DIR);
         super.setUp();
+    }
+    
+    private static void copy(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[1024];
+        while (true) {
+            int readCount = in.read(buffer);
+            if (readCount < 0) {
+                break;
+            }
+            out.write(buffer, 0, readCount);
+        }
+    }
+
+    private static void copy(File file, OutputStream out) throws IOException { 
+        try (InputStream in = new FileInputStream(file)) {
+            copy(in, out); 
+        } 
+    }
+
+    private static void copy(InputStream in, File file) throws IOException { 
+        try (OutputStream out = new FileOutputStream(file)) {
+            copy(in, out); 
+        }
     }
 
     @Override
@@ -195,10 +271,34 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
             public void configure() throws Exception {
                 interceptSendToEndpoint("file:*").to("mock:intercepted");
 
-                ZipFileDataFormat zip = new ZipFileDataFormat();
+                zip = new ZipFileDataFormat();
 
                 from("direct:zip").marshal(zip).to("mock:zip");
                 from("direct:unzip").unmarshal(zip).to("mock:unzip");
+                from("direct:unzipWithEmptyDirectory").unmarshal(zip)
+                                        .split(bodyAs(Iterator.class))
+                                        .streaming()
+                                        //.to("file:hello_out?autoCreate=true")
+                                        .process(new Processor() {
+                                            @Override
+                                            public void process(Exchange exchange) throws Exception {
+                                                ZipFile zfile = new ZipFile(new File("src/test/resources/hello.odt"));
+                                                ZipEntry entry = new ZipEntry((String)exchange.getIn().getHeader(Exchange.FILE_NAME));
+                                                File file = new File("hello_out", entry.getName());
+                                                if (entry.isDirectory()) {
+                                                    file.mkdirs();
+                                                } else {
+                                                    file.getParentFile().mkdirs();
+                                                    InputStream in = zfile.getInputStream(entry);
+                                                    try {
+                                                        copy(in, file);
+                                                    } finally {
+                                                        in.close();
+                                                    }
+                                                }
+                                            }
+                                        })
+                                        .end();
                 from("direct:zipAndUnzip").marshal(zip).unmarshal(zip).to("mock:zipAndUnzip");
                 from("direct:zipToFile").marshal(zip).to("file:" + TEST_DIR.getPath()).to("mock:zipToFile");
                 from("direct:dslZip").marshal().zipFile().to("mock:dslZip");
@@ -214,6 +314,20 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         ZipOutputStream zos = new ZipOutputStream(baos);
         try {
             zos.putNextEntry(new ZipEntry(entryName));
+            IOHelper.copy(bais, zos);
+        } finally {
+            IOHelper.close(bais, zos);
+        }
+        return baos.toByteArray();
+    }
+
+    private static byte[] getZippedTextInFolder(String folder, String file) throws IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(TEXT.getBytes("UTF-8"));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ZipOutputStream zos = new ZipOutputStream(baos);
+        try {
+            zos.putNextEntry(new ZipEntry(folder));
+            zos.putNextEntry(new ZipEntry(file));
             IOHelper.copy(bais, zos);
         } finally {
             IOHelper.close(bais, zos);

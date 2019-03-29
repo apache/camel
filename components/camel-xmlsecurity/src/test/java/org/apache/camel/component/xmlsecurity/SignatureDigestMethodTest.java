@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -72,6 +72,7 @@ import org.apache.camel.component.xmlsecurity.util.XmlSignature2Message2MessageW
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -86,8 +87,7 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
     
     static {
         boolean includeNewLine = true;
-        if (System.getProperty("java.version") != null
-            && System.getProperty("java.version").startsWith("1.9")) {
+        if (TestSupport.getJavaMajorVersion() >= 9) {
             includeNewLine = false;
         }
         payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -391,7 +391,7 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
     }
 
     private AlgorithmMethod getCanonicalizationMethod() {
-        List<String> inclusivePrefixes = new ArrayList<String>(1);
+        List<String> inclusivePrefixes = new ArrayList<>(1);
         inclusivePrefixes.add("ds");
         return XmlSignatureHelper.getCanonicalizationMethod(CanonicalizationMethod.EXCLUSIVE, inclusivePrefixes);
     }

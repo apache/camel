@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,7 +29,7 @@ import org.apache.camel.component.metrics.GaugeProducer.CamelMetricsGauge;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
-import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
+import org.apache.camel.test.spring.CamelSpringRunner;
 import org.apache.camel.test.spring.MockEndpoints;
 import org.junit.After;
 import org.junit.Before;
@@ -46,20 +46,22 @@ import org.springframework.test.context.ContextConfiguration;
 import static org.apache.camel.component.metrics.MetricsComponent.METRIC_REGISTRY_NAME;
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_GAUGE_SUBJECT;
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METRIC_NAME;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.argThat;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(CamelSpringJUnit4ClassRunner.class)
+@RunWith(CamelSpringRunner.class)
 @ContextConfiguration(
         classes = { GaugeRouteTest.TestConfig.class },
         loader = CamelSpringDelegatingTestContextLoader.class)
 @MockEndpoints
 public class GaugeRouteTest {
 
-    private static SortedMap<String, Gauge> mockGauges = new TreeMap<String, Gauge>();;
+    private static SortedMap<String, Gauge> mockGauges = new TreeMap<>();
 
     @EndpointInject(uri = "mock:out")
     private MockEndpoint endpoint;
@@ -100,12 +102,12 @@ public class GaugeRouteTest {
         public MetricRegistry getMetricRegistry() {
             MetricRegistry registry = Mockito.mock(MetricRegistry.class);
             when(registry.getGauges()).thenReturn(mockGauges);
-            when(registry.register(Mockito.anyString(), Mockito.any(CamelMetricsGauge.class))).then(
+            when(registry.register(anyString(), any())).then(
                     new Answer<CamelMetricsGauge>() {
                         @Override
                         public CamelMetricsGauge answer(InvocationOnMock invocation) throws Throwable {
-                            mockGauges.put(invocation.getArgumentAt(0, String.class), invocation.getArgumentAt(1, CamelMetricsGauge.class));
-                            return invocation.getArgumentAt(1, CamelMetricsGauge.class);
+                            mockGauges.put(invocation.getArgument(0), invocation.getArgument(1));
+                            return invocation.getArgument(1);
                         }
                     });
             return registry;
@@ -136,8 +138,8 @@ public class GaugeRouteTest {
         endpoint.assertIsSatisfied();
         verify(mockRegistry, times(1)).register(eq("A"), argThat(new ArgumentMatcher<CamelMetricsGauge>() {
             @Override
-            public boolean matches(Object argument) {
-                return argument instanceof CamelMetricsGauge && "my subject".equals(((CamelMetricsGauge)argument).getValue());
+            public boolean matches(CamelMetricsGauge argument) {
+                return "my subject".equals(argument.getValue());
             }
         }));
     }
@@ -146,8 +148,8 @@ public class GaugeRouteTest {
     public void testOverride() throws Exception {
         verify(mockRegistry, times(1)).register(eq("A"), argThat(new ArgumentMatcher<CamelMetricsGauge>() {
             @Override
-            public boolean matches(Object argument) {
-                return argument instanceof CamelMetricsGauge && "my subject".equals(((CamelMetricsGauge)argument).getValue());
+            public boolean matches(CamelMetricsGauge argument) {
+                return "my subject".equals(argument.getValue());
             }
         }));
         endpoint.expectedMessageCount(1);
@@ -155,8 +157,8 @@ public class GaugeRouteTest {
         endpoint.assertIsSatisfied();
         verify(mockRegistry, times(1)).register(eq("B"), argThat(new ArgumentMatcher<CamelMetricsGauge>() {
             @Override
-            public boolean matches(Object argument) {
-                return argument instanceof CamelMetricsGauge && "my overriding subject".equals(((CamelMetricsGauge)argument).getValue());
+            public boolean matches(CamelMetricsGauge argument) {
+                return "my overriding subject".equals(argument.getValue());
             }
         }));
     }

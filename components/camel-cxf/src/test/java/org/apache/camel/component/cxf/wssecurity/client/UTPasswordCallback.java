@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,13 +25,11 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
 
-/**
- */
 
 public class UTPasswordCallback implements CallbackHandler {
     
     private Map<String, String> passwords = 
-        new HashMap<String, String>();
+        new HashMap<>();
     
     public UTPasswordCallback() {
         passwords.put("Alice", "ecilA");

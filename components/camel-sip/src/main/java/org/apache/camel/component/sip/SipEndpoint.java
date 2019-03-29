@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,14 +20,14 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * To send and receive messages using the SIP protocol (used in telco and mobile).
  */
-@UriEndpoint(scheme = "sip,sips", title = "SIP", syntax = "sip:uri", label = "mobile")
+@UriEndpoint(firstVersion = "2.5.0", scheme = "sip,sips", title = "SIP", syntax = "sip:uri", label = "mobile")
 public class SipEndpoint extends DefaultEndpoint {
     @UriParam
     private SipConfiguration configuration;
@@ -54,7 +54,7 @@ public class SipEndpoint extends DefaultEndpoint {
     }
     
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 
     public SipConfiguration getConfiguration() {

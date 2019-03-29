@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jcache;
 
 import java.lang.reflect.Constructor;
@@ -42,7 +41,7 @@ public final class JCacheHelper {
         return new JCacheManager<>(configuration);
     }
 
-    @SuppressWarnings("uncheked")
+    @SuppressWarnings("unchecked")
     public static <T> T tcclProxy(final T instance, Class<T> type, final ClassLoader classLoader) {
         return (T) Proxy.newProxyInstance(
             JCacheHelper.class.getClassLoader(),

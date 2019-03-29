@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,37 +25,48 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
-public class SparkComponent extends UriEndpointComponent implements RestConsumerFactory, RestApiConsumerFactory {
+@Component("spark-rest")
+public class SparkComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory {
 
-    private final Pattern pattern = Pattern.compile("\\{(.*?)\\}");
+    private static final Pattern PATTERN = Pattern.compile("\\{(.*?)\\}");
 
+    @Metadata(defaultValue = "4567")
     private int port = 4567;
+    @Metadata(defaultValue = "0.0.0.0")
     private String ipAddress;
 
+    @Metadata(label = "advanced")
     private int minThreads;
+    @Metadata(label = "advanced")
     private int maxThreads;
+    @Metadata(label = "advanced")
     private int timeOutMillis;
 
+    @Metadata(label = "security")
     private String keystoreFile;
+    @Metadata(label = "security", secret = true)
     private String keystorePassword;
+    @Metadata(label = "security")
     private String truststoreFile;
+    @Metadata(label = "security", secret = true)
     private String truststorePassword;
 
+    @Metadata(label = "advanced")
     private SparkConfiguration sparkConfiguration = new SparkConfiguration();
+    @Metadata(label = "advanced")
     private SparkBinding sparkBinding = new DefaultSparkBinding();
-
-    public SparkComponent() {
-        super(SparkEndpoint.class);
-    }
 
     public int getPort() {
         return port;
@@ -194,8 +205,8 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
             throw new IllegalArgumentException("Invalid syntax. Must be spark-rest:verb:path");
         }
 
-        String verb = ObjectHelper.before(remaining, ":");
-        String path = ObjectHelper.after(remaining, ":");
+        String verb = StringHelper.before(remaining, ":");
+        String path = StringHelper.after(remaining, ":");
 
         answer.setVerb(verb);
         answer.setPath(path);
@@ -226,11 +237,11 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
             RestConfiguration config = getCamelContext().getRestConfiguration("spark-rest", true);
             host = config.getHost();
             if (ObjectHelper.isEmpty(host)) {
-                if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+                if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
                     host = "0.0.0.0";
-                } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+                } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
                     host = HostUtils.getLocalHostName();
-                } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+                } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
                     host = HostUtils.getLocalIp();
                 }
             }
@@ -287,7 +298,7 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
             config = camelContext.getRestConfiguration("spark-rest", true);
         }
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         if (consumes != null) {
             map.put("accept", consumes);
         }
@@ -299,7 +310,7 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
         if (ObjectHelper.isNotEmpty(path)) {
             // spark-rest uses :name syntax instead of {name} so we need to replace those
-            Matcher matcher = pattern.matcher(path);
+            Matcher matcher = PATTERN.matcher(path);
             path = matcher.replaceAll(":$1");
         }
 

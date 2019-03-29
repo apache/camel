@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,6 +21,8 @@ import java.sql.Types;
 
 import org.apache.camel.component.sql.stored.template.generated.SSPTParserConstants;
 import org.apache.camel.component.sql.stored.template.generated.Token;
+import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.util.StringHelper;
 import org.springframework.util.ReflectionUtils;
 
 public final class ParseHelper {
@@ -28,22 +30,63 @@ public final class ParseHelper {
     private ParseHelper() {
     }
 
-    public static int parseSqlType(Token sqlType) {
+    public static int parseSqlType(Token sqlTypeToken, ClassResolver classResolver) {
+
+        String sqlType = sqlTypeToken.toString();
 
         //if number then use it(probably Vendor spesific SQL-type)
-        if (sqlType.kind == SSPTParserConstants.NUMBER) {
-            return Integer.valueOf(sqlType.toString());
+        if (sqlTypeToken.kind == SSPTParserConstants.NUMBER) {
+            return Integer.valueOf(sqlType);
+        }
+
+        //if contains .
+        if (sqlType.contains(".")) {
+            String className;
+            String fieldName;
+            try {
+                className = sqlType.substring(0, sqlType.lastIndexOf("."));
+                fieldName = sqlType.substring(sqlType.lastIndexOf(".") + 1);
+            } catch (Exception ex) {
+                throw new ParseRuntimeException("Failed to parse class.field:" + sqlType);
+            }
+            try {
+                Class clazz = classResolver.resolveMandatoryClass(className);
+                return getFieldInt(clazz, fieldName);
+            } catch (ClassNotFoundException e) {
+                throw new ParseRuntimeException("Class for " + className + " not found", e);
+            }
         }
 
         //Loop-up from "Standard" types
-        Field field = ReflectionUtils.findField(Types.class, sqlType.toString());
+        return getFieldInt(Types.class, sqlType);
+    }
+
+    public static Integer parseScale(Token token) {
+        try {
+            String str = token.toString();
+            return Integer.valueOf(str.substring(1, str.length() - 1));
+        } catch (Exception ex) {
+            throw new ParseRuntimeException("Failed to parse scale from token:" + token.toString(), ex);
+        }
+    }
+
+    private static int getFieldInt(Class clazz, String sqlType) {
+        Field field = ReflectionUtils.findField(clazz, sqlType);
         if (field == null) {
-            throw new ParseRuntimeException("Field " + sqlType + " not found from java.procedureName.Types");
+            throw new ParseRuntimeException("Field " + sqlType + " not found from " + clazz.getName());
         }
         try {
             return field.getInt(Types.class);
         } catch (IllegalAccessException e) {
             throw new ParseRuntimeException(e);
+        }
+    }
+
+    public static String removeQuotes(String token) {
+        try {
+            return StringHelper.removeLeadingAndEndingQuotes(token);
+        } catch (Exception ex) {
+            throw new ParseRuntimeException("Failed to remove quotes from token:" + token, ex);
         }
     }
 }

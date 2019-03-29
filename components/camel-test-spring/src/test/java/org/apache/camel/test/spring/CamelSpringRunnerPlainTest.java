@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,7 +24,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.management.DefaultManagementStrategy;
+import org.apache.camel.impl.DefaultManagementStrategy;
 import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -116,6 +116,11 @@ public class CamelSpringRunnerPlainTest {
     public void testProvidesBreakpoint() {
         assertNull(camelContext.getDebugger());
         assertNull(camelContext2.getDebugger());
+    }
+
+    @Test
+    public void testRouteCoverage() throws Exception {
+        // noop
     }
 
 }

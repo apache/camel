@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,10 +18,11 @@ package org.apache.camel.component.cxf.common;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+
 import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.transport.http.HTTPConduit;
 

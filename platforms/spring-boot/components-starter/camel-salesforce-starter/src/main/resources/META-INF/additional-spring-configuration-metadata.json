@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.salesforce.enabled",
+      "description": "Enable salesforce component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

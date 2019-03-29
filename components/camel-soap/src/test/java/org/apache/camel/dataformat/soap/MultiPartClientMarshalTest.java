@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,6 @@ import java.util.Map;
 import com.example.customerservice.multipart.GetCustomersByName;
 import com.example.customerservice.multipart.MultiPartCustomerService;
 import com.example.customerservice.multipart.Product;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -80,7 +79,7 @@ public class MultiPartClientMarshalTest extends CamelTestSupport {
             throw exchange.getException();
         }
            
-        Map<String, String> nsMap = new HashMap<String, String>();
+        Map<String, String> nsMap = new HashMap<>();
         nsMap.put("soap", "http://schemas.xmlsoap.org/soap/envelope/");
         nsMap.put("example", "http://multipart.customerservice.example.com/");
         XQueryBuilder builder = XQueryBuilder.xquery("//soap:Envelope/soap:Header/example:product/name");

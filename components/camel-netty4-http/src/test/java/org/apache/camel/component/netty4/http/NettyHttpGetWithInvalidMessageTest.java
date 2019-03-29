@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,14 +22,12 @@ import java.util.List;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Test;
 
 public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
@@ -49,10 +47,10 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
         StringEncoder stringEncoder = new StringEncoder();
         registry.bind("string-encoder", stringEncoder);
 
-        List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
+        List<ChannelHandler> decoders = new ArrayList<>();
         decoders.add(stringDecoder);
 
-        List<ChannelHandler> encoders = new ArrayList<ChannelHandler>();
+        List<ChannelHandler> encoders = new ArrayList<>();
         encoders.add(stringEncoder);
 
         registry.bind("encoders", encoders);

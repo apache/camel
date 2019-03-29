@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,9 +22,6 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringMarshalOmitFieldsTest extends XStreamDataFormatOmitFieldsTest {
 
     protected CamelContext createCamelContext() throws Exception {
@@ -43,7 +40,7 @@ public class SpringMarshalOmitFieldsTest extends XStreamDataFormatOmitFieldsTest
             }
         });
 
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
    
 }

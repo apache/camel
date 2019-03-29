@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="
+                http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+                http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd
+                http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
+
+    <property-placeholder persistent-id="MllpTcpServerConsumerBlueprintTest" update-strategy="reload" xmlns="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0" >
+        <default-properties>
+            <property name="sourceUri" value="direct://source" />
+            <property name="targetUri" value="mock://target" />
+        </default-properties>
+    </property-placeholder>
+
+    <bean id="mllp-configuration" class="org.apache.camel.component.mllp.MllpConfiguration" >
+        <property name="charsetName" value="ASCII" />
+    </bean>
+
+
+    <camelContext id="mllp-configuration-bean-context" useMDCLogging="true" xmlns="http://camel.apache.org/schema/blueprint">
+        <route>
+            <from uri="{{sourceUri}}" />
+            <filter>
+                <simple>$simple{header[DummyHeader]} == 'foo'</simple>
+                <to uri="mllp://localhost:12345?configuration=#mllp-configuration&amp;autoAck=false&amp;bridgeErrorHandler=true" />
+            </filter>
+            <to uri="{{targetUri}}" />
+        </route>
+    </camelContext>
+
+</blueprint>

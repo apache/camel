@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,20 +24,24 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration;
 import org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 
-public class XmlSignatureComponent extends UriEndpointComponent {
+@Component("xmlsecurity")
+public class XmlSignatureComponent extends DefaultComponent {
 
+    @Metadata(label = "advanced")
     private XmlSignerConfiguration signerConfiguration;
+    @Metadata(label = "advanced")
     private XmlVerifierConfiguration verifierConfiguration;
 
     public XmlSignatureComponent() {
-        super(XmlSignatureEndpoint.class);
     }
 
     public XmlSignatureComponent(CamelContext context) {
-        super(context, XmlSignatureEndpoint.class);
+        super(context);
     }
 
     @Override

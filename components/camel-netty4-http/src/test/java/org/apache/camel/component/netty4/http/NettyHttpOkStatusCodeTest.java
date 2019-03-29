@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -37,10 +37,33 @@ public class NettyHttpOkStatusCodeTest extends BaseNettyTest {
         }
     }
 
+
+    @Test
+    public void testNoOkComplexRange() throws Exception {
+        byte[] data = "Hello World".getBytes();
+        try {
+            template.requestBody("netty4-http:http://localhost:{{port}}/test?okStatusCodeRange=200-204,301", data, String.class);
+            fail("Should have thrown exception");
+        } catch (CamelExecutionException e) {
+            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+            assertEquals(209, cause.getStatusCode());
+            String body = cause.getContentAsString();
+            assertEquals("Not allowed", body);
+        }
+    }
+
     @Test
     public void testOk() throws Exception {
         byte[] data = "Hello World".getBytes();
         String out = template.requestBody("netty4-http:http://localhost:{{port}}/test?okStatusCodeRange=200-209", data, String.class);
+        assertEquals("Not allowed", out);
+    }
+
+
+    @Test
+    public void testOkComplexRange() throws Exception {
+        byte[] data = "Hello World".getBytes();
+        String out = template.requestBody("netty4-http:http://localhost:{{port}}/test?okStatusCodeRange=200-204,209,301-304", data, String.class);
         assertEquals("Not allowed", out);
     }
 

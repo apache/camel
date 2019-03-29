@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -75,6 +75,9 @@ public class HystrixManagementTest extends CamelTestSupport {
 
         Long errorCount = (Long) mbeanServer.getAttribute(on, "HystrixErrorCount");
         assertEquals(0, errorCount.longValue());
+
+        Boolean open = (Boolean) mbeanServer.getAttribute(on, "CircuitBreakerOpen");
+        assertEquals(false, open.booleanValue());
 
         // let it gather for a while
         Thread.sleep(1000);

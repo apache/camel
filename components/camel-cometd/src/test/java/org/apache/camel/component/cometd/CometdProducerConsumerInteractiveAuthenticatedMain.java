@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -129,7 +129,7 @@ public class CometdProducerConsumerInteractiveAuthenticatedMain {
                     advice.put(Message.RECONNECT_FIELD, Message.RECONNECT_HANDSHAKE_VALUE);
 
                     Map<String, Object> ext = message.getExt(true);
-                    Map<String, Object> authentication = new HashMap<String, Object>();
+                    Map<String, Object> authentication = new HashMap<>();
                     ext.put("authentication", authentication);
                     authentication.put("failed", true);
                     authentication.put("failureReason", "invalid_credentials");

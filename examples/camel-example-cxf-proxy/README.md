@@ -13,7 +13,7 @@ You will need to compile this example first:
 
 To run the example type:
 	
-	mvn camel:run
+	mvn camel:run -Dmaven.test.skip=true
 
 The proxied webservice is located at
 
@@ -61,9 +61,6 @@ Then make SOAP requests of this format:
 
 You can change `${proxy.port}` and `${real.port}` via configuration file `src/main/resources/incident.properties`
 
-### Documentation
-
-This example is documented at <http://camel.apache.org/cxf-proxy-example.html>
 
 ### Forum, Help, etc 
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,20 +18,63 @@ package org.apache.camel.component.infinispan;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
+import org.infinispan.commons.api.BasicCacheContainer;
 
-public class InfinispanComponent extends UriEndpointComponent {
+@Component("infinispan")
+public class InfinispanComponent extends DefaultComponent {
+    @Metadata(description = "Default configuration")
+    private InfinispanConfiguration configuration;
+    @Metadata(description = "Default Cache container")
+    private BasicCacheContainer cacheContainer;
 
     public InfinispanComponent() {
-        super(InfinispanEndpoint.class);
+    }
+
+    public InfinispanComponent(CamelContext camelContext) {
+        super(camelContext);
+    }
+
+    public InfinispanConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * The default configuration shared among endpoints.
+     */
+    public void setConfiguration(InfinispanConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public BasicCacheContainer getCacheContainer() {
+        return cacheContainer;
+    }
+
+    /**
+     * The default cache container.
+     */
+    public void setCacheContainer(BasicCacheContainer cacheContainer) {
+        this.cacheContainer = cacheContainer;
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        InfinispanConfiguration configuration = new InfinispanConfiguration();
-        configuration.setHost(remaining);
-        setProperties(configuration, parameters);
-        return new InfinispanEndpoint(uri, this, configuration);
+
+        InfinispanConfiguration conf;
+        if (configuration != null) {
+            conf = configuration.copy();
+        } else {
+            conf = new InfinispanConfiguration();
+        }
+
+        conf.setCacheContainer(cacheContainer);
+
+        setProperties(conf, parameters);
+
+        return new InfinispanEndpoint(uri, remaining, this, conf);
     }
 }

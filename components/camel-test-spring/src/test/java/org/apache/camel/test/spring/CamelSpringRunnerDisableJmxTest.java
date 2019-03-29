@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,9 +16,9 @@
  */
 package org.apache.camel.test.spring;
 
-import org.apache.camel.management.ManagedManagementStrategy;
-
+import org.apache.camel.management.JmxManagementStrategy;
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 
 @DisableJmx(false)
@@ -28,6 +28,6 @@ public class CamelSpringRunnerDisableJmxTest
     @Test
     @Override
     public void testJmx() throws Exception {
-        assertEquals(ManagedManagementStrategy.class, camelContext.getManagementStrategy().getClass());
+        assertEquals(JmxManagementStrategy.class, camelContext.getManagementStrategy().getClass());
     }
 }

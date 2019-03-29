@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,6 +33,9 @@ import java.util.regex.Pattern;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
@@ -40,9 +43,8 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 
 /**
  * Prepares the Spring Boot provider camel catalog to include component it supports
- *
- * @goal prepare-catalog-springboot
  */
+@Mojo(name = "prepare-catalog-springboot", threadSafe = true)
 public class PrepareCatalogSpringBootMojo extends AbstractMojo {
 
     public static final int BUFFER_SIZE = 128 * 1024;
@@ -51,61 +53,60 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * The output directory for components catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/springboot/components"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/springboot/components")
     protected File componentsOutDir;
 
     /**
      * The output directory for dataformats catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/springboot/dataformats"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/springboot/dataformats")
     protected File dataFormatsOutDir;
 
     /**
      * The output directory for languages catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/springboot/languages"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/springboot/languages")
     protected File languagesOutDir;
+
+    /**
+     * The output directory for others catalog
+     *
+     */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/springboot/others")
+    protected File othersOutDir;
 
     /**
      * The directory where all spring-boot starters are
      *
-     * @parameter default-value="${project.build.directory}/../../../components-starter"
      */
+    @Parameter(defaultValue = "${project.build.directory}/../../../platforms/spring-boot/components-starter")
     protected File componentsStarterDir;
 
     /**
      * The components directory where all the Apache Camel components are
      *
-     * @parameter default-value="${project.build.directory}/../../../components"
      */
+    @Parameter(defaultValue = "${project.build.directory}/../../../components")
     protected File componentsDir;
 
     /**
      * The camel-core directory where camel-core components are
      *
-     * @parameter default-value="${project.build.directory}/../../../camel-core"
      */
+    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core")
     protected File coreDir;
 
     /**
      * Maven ProjectHelper.
-     *
-     * @component
-     * @readonly
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
@@ -120,26 +121,21 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
         executeComponents(starters);
         executeDataFormats(starters);
         executeLanguages(starters);
+        executeOthers(starters);
     }
 
     protected void executeComponents(Set<String> starters) throws MojoExecutionException, MojoFailureException {
         getLog().info("Copying all Camel component json descriptors");
 
         // lets use sorted set/maps
-        Set<File> jsonFiles = new TreeSet<File>();
-        Set<File> componentFiles = new TreeSet<File>();
+        Set<File> jsonFiles = new TreeSet<>();
+        Set<File> componentFiles = new TreeSet<>();
 
         // find all json files in components and camel-core
         if (componentsDir != null && componentsDir.isDirectory()) {
             File[] components = componentsDir.listFiles();
             if (components != null) {
                 for (File dir : components) {
-                    // skip camel-spring-dm
-                    if (dir.isDirectory() && "camel-spring-dm".equals(dir.getName())) {
-                        continue;
-                    }
-
-
                     if (dir.isDirectory() && !"target".equals(dir.getName())) {
                         File target = new File(dir, "target/classes");
 
@@ -148,11 +144,17 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
                             continue;
                         }
 
-                        // special for camel-salesforce which is in a sub dir
-                        if ("camel-salesforce".equals(dir.getName())) {
+                        // special for some which is in a sub dir
+                        if ("camel-as2".equals(dir.getName())) {
+                            target = new File(dir, "camel-as2-component/target/classes");
+                        } else if ("camel-box".equals(dir.getName())) {
+                            target = new File(dir, "camel-box-component/target/classes");
+                        } else if ("camel-salesforce".equals(dir.getName())) {
                             target = new File(dir, "camel-salesforce-component/target/classes");
                         } else if ("camel-linkedin".equals(dir.getName())) {
                             target = new File(dir, "camel-linkedin-component/target/classes");
+                        } else if ("camel-servicenow".equals(dir.getName())) {
+                            target = new File(dir, "camel-servicenow-component/target/classes");
                         }
 
 
@@ -197,7 +199,7 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
             FileOutputStream fos = new FileOutputStream(all, false);
 
             String[] names = componentsOutDir.list();
-            List<String> components = new ArrayList<String>();
+            List<String> components = new ArrayList<>();
             // sort the names
             for (String name : names) {
                 if (name.endsWith(".json")) {
@@ -224,8 +226,8 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
         getLog().info("Copying all Camel dataformat json descriptors");
 
         // lets use sorted set/maps
-        Set<File> jsonFiles = new TreeSet<File>();
-        Set<File> dataFormatFiles = new TreeSet<File>();
+        Set<File> jsonFiles = new TreeSet<>();
+        Set<File> dataFormatFiles = new TreeSet<>();
 
         // find all data formats from the components directory
         if (componentsDir != null && componentsDir.isDirectory()) {
@@ -233,11 +235,7 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
             if (dataFormats != null) {
                 for (File dir : dataFormats) {
                     if (dir.isDirectory() && !"target".equals(dir.getName())) {
-                        // skip camel-spring-dm
-                        if (dir.isDirectory() && "camel-spring-dm".equals(dir.getName())) {
-                            continue;
-                        }
-                        // the directory must be in the list of known features
+                        // the directory must be in the list of known starters
                         if (!starters.contains(dir.getName())) {
                             continue;
                         }
@@ -283,7 +281,7 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
             FileOutputStream fos = new FileOutputStream(all, false);
 
             String[] names = dataFormatsOutDir.list();
-            List<String> dataFormats = new ArrayList<String>();
+            List<String> dataFormats = new ArrayList<>();
             // sort the names
             for (String name : names) {
                 if (name.endsWith(".json")) {
@@ -310,19 +308,15 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
         getLog().info("Copying all Camel language json descriptors");
 
         // lets use sorted set/maps
-        Set<File> jsonFiles = new TreeSet<File>();
-        Set<File> languageFiles = new TreeSet<File>();
+        Set<File> jsonFiles = new TreeSet<>();
+        Set<File> languageFiles = new TreeSet<>();
 
         // find all languages from the components directory
         if (componentsDir != null && componentsDir.isDirectory()) {
             File[] languages = componentsDir.listFiles();
             if (languages != null) {
                 for (File dir : languages) {
-                    // skip camel-spring-dm
-                    if (dir.isDirectory() && "camel-spring-dm".equals(dir.getName())) {
-                        continue;
-                    }
-                    // the directory must be in the list of known features
+                    // the directory must be in the list of known starters
                     if (!starters.contains(dir.getName())) {
                         continue;
                     }
@@ -369,7 +363,7 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
             FileOutputStream fos = new FileOutputStream(all, false);
 
             String[] names = languagesOutDir.list();
-            List<String> languages = new ArrayList<String>();
+            List<String> languages = new ArrayList<>();
             // sort the names
             for (String name : names) {
                 if (name.endsWith(".json")) {
@@ -381,6 +375,101 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
 
             Collections.sort(languages);
             for (String name : languages) {
+                fos.write(name.getBytes());
+                fos.write("\n".getBytes());
+            }
+
+            fos.close();
+
+        } catch (IOException e) {
+            throw new MojoFailureException("Error writing to file " + all);
+        }
+    }
+
+    protected void executeOthers(Set<String> starters) throws MojoExecutionException, MojoFailureException {
+        getLog().info("Copying all Camel other json descriptors");
+
+        // lets use sorted set/maps
+        Set<File> jsonFiles = new TreeSet<>();
+        Set<File> otherFiles = new TreeSet<>();
+
+        // find all other from the components directory
+        if (componentsDir != null && componentsDir.isDirectory()) {
+            File[] others = componentsDir.listFiles();
+            if (others != null) {
+                for (File dir : others) {
+                    // the directory must be in the list of known starters
+                    if (!starters.contains(dir.getName())) {
+                        continue;
+                    }
+
+                    // skip these special cases
+                    boolean special = "camel-core-osgi".equals(dir.getName())
+                        || "camel-core-xml".equals(dir.getName())
+                        || "camel-http-common".equals(dir.getName())
+                        || "camel-jetty-common".equals(dir.getName());
+                    boolean special2 = "camel-as2".equals(dir.getName())
+                        || "camel-box".equals(dir.getName())
+                        || "camel-linkedin".equals(dir.getName())
+                        || "camel-olingo2".equals(dir.getName())
+                        || "camel-olingo4".equals(dir.getName())
+                        || "camel-servicenow".equals(dir.getName())
+                        || "camel-salesforce".equals(dir.getName());
+                    if (special || special2) {
+                        continue;
+                    }
+
+                    if (dir.isDirectory() && !"target".equals(dir.getName())) {
+                        File target = new File(dir, "target/classes");
+                        findOtherFilesRecursive(target, jsonFiles, otherFiles, new CamelOthersFileFilter());
+                    }
+                }
+            }
+        }
+
+        getLog().info("Found " + otherFiles.size() + " other.properties files");
+        getLog().info("Found " + jsonFiles.size() + " other json files");
+
+        // make sure to create out dir
+        othersOutDir.mkdirs();
+
+        for (File file : jsonFiles) {
+            // for spring-boot we need to amend the json file to use -starter as the artifact-id
+            try {
+                String text = loadText(new FileInputStream(file));
+
+                text = ARTIFACT_PATTERN.matcher(text).replaceFirst("\"artifactId\": \"camel-$1-starter\"");
+
+                // write new json file
+                File to = new File(othersOutDir, file.getName());
+                FileOutputStream fos = new FileOutputStream(to, false);
+
+                fos.write(text.getBytes());
+
+                fos.close();
+
+            } catch (IOException e) {
+                throw new MojoFailureException("Cannot write json file " + file, e);
+            }
+        }
+
+        File all = new File(othersOutDir, "../others.properties");
+        try {
+            FileOutputStream fos = new FileOutputStream(all, false);
+
+            String[] names = othersOutDir.list();
+            List<String> others = new ArrayList<>();
+            // sort the names
+            for (String name : names) {
+                if (name.endsWith(".json")) {
+                    // strip out .json from the name
+                    String otherName = name.substring(0, name.length() - 5);
+                    others.add(otherName);
+                }
+            }
+
+            Collections.sort(others);
+            for (String name : others) {
                 fos.write(name.getBytes());
                 fos.write("\n".getBytes());
             }
@@ -449,6 +538,25 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
         }
     }
 
+    private void findOtherFilesRecursive(File dir, Set<File> found, Set<File> others, FileFilter filter) {
+        File[] files = dir.listFiles(filter);
+        if (files != null) {
+            for (File file : files) {
+                // skip files in root dirs as Camel does not store information there but others may do
+                boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
+                boolean jsonFile = rootDir && file.isFile() && file.getName().endsWith(".json");
+                boolean otherFile = !rootDir && file.isFile() && file.getName().equals("other.properties");
+                if (jsonFile) {
+                    found.add(file);
+                } else if (otherFile) {
+                    others.add(file);
+                } else if (file.isDirectory()) {
+                    findOtherFilesRecursive(file, found, others, filter);
+                }
+            }
+        }
+    }
+
     private class CamelComponentsFileFilter implements FileFilter {
 
         @Override
@@ -512,24 +620,43 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
         }
     }
 
+    private class CamelOthersFileFilter implements FileFilter {
+
+        @Override
+        public boolean accept(File pathname) {
+            if (pathname.isFile() && pathname.getName().endsWith(".json")) {
+                // must be a language json file
+                try {
+                    String json = loadText(new FileInputStream(pathname));
+                    return json != null && json.contains("\"kind\": \"other\"");
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            return pathname.isDirectory() || (pathname.isFile() && pathname.getName().equals("other.properties"));
+        }
+    }
+
     public static void copyFile(File from, File to) throws IOException {
         FileChannel in = null;
         FileChannel out = null;
-        try {
-            in = new FileInputStream(from).getChannel();
-            out = new FileOutputStream(to).getChannel();
+        try (FileInputStream fis = new FileInputStream(from); FileOutputStream fos = new FileOutputStream(to)) {
+            try {
+                in = fis.getChannel();
+                out = fos.getChannel();
 
-            long size = in.size();
-            long position = 0;
-            while (position < size) {
-                position += in.transferTo(position, BUFFER_SIZE, out);
-            }
-        } finally {
-            if (in != null) {
-                in.close();
-            }
-            if (out != null) {
-                out.close();
+                long size = in.size();
+                long position = 0;
+                while (position < size) {
+                    position += in.transferTo(position, BUFFER_SIZE, out);
+                }
+            } finally {
+                if (in != null) {
+                    in.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
             }
         }
     }
@@ -547,6 +674,9 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
                 }
             }
         }
+
+        getLog().info("Found " + answer.size() + " Camel Spring Boot starters from: " + componentsStarterDir);
+
         return answer;
     }
 

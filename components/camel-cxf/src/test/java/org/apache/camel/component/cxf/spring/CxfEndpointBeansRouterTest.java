@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,7 +30,6 @@ import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.util.URISupport;
 import org.apache.cxf.transport.http.HTTPException;
-
 import org.junit.Test;
 
 public class CxfEndpointBeansRouterTest extends AbstractSpringBeanTestSupport {
@@ -74,7 +73,7 @@ public class CxfEndpointBeansRouterTest extends AbstractSpringBeanTestSupport {
 
         Exchange reply = template.request("cxf:bean:serviceEndpoint", new Processor() {
             public void process(final Exchange exchange) {
-                final List<String> params = new ArrayList<String>();
+                final List<String> params = new ArrayList<>();
                 params.add("hello");
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "echo");

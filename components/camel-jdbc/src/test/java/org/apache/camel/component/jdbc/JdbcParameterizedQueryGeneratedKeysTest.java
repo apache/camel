@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,7 +27,7 @@ public class JdbcParameterizedQueryGeneratedKeysTest extends AbstractJdbcGenerat
     private static final Map<String, Object> VALUE_MAP;
 
     static {
-        VALUE_MAP = new HashMap<String, Object>();
+        VALUE_MAP = new HashMap<>();
         VALUE_MAP.put("value", "testValue");
     }
 

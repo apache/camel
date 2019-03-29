@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.tools.apt;
 
 import org.junit.Test;
 
+import static org.apache.camel.tools.apt.helper.Strings.asTitle;
 import static org.apache.camel.tools.apt.helper.Strings.between;
 import static org.junit.Assert.assertEquals;
 
@@ -26,5 +27,12 @@ public class StringsTest {
     @Test
     public void testBetween() {
         assertEquals("org.apache.camel.model.OnCompletionDefinition", between("java.util.List<org.apache.camel.model.OnCompletionDefinition>", "<", ">"));
+    }
+
+    @Test
+    public void testAsTitle() {
+        assertEquals("Broker URL", asTitle("brokerURL"));
+        assertEquals("Expose All Queues", asTitle("exposeAllQueues"));
+        assertEquals("Reply To Concurrent Consumers", asTitle("replyToConcurrentConsumers"));
     }
 }

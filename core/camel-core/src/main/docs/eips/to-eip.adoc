@@ -1,0 +1,89 @@
+[[to-eip]]
+== To EIP
+
+See message related documentation
+
+* link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message.adoc[Message]
+* link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-bus.adoc[Message Bus]
+* link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-channel.adoc[Message Channel]
+* link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-endpoint.adoc[Message Endpoint]
+* link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-router.adoc[Message Router]
+* link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-translator.adoc[Message Translator]
+
+=== Options
+
+// eip options: START
+The To EIP supports 2 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *uri* | *Required* Sets the uri of the endpoint to send to. |  | String
+| *pattern* | Sets the optional ExchangePattern used to invoke this endpoint |  | ExchangePattern
+|===
+// eip options: END
+
+=== Samples
+
+The following example route demonstrates the use of a file consumer endpoint and a JMS producer endpoint.
+
+[source,java]
+----
+from("file://local/router/messages/foo")
+    .to("jms:queue:foo");
+----
+
+And in XML:
+
+[source,xml]
+----
+<route>
+    <from uri="file://local/router/messages/foo"/>
+    <to uri="jms:queue:foo"/>
+</route>
+----
+
+=== to-eip with pattern
+
+Instead of using `inOnly` and `inOut` you may want to keep using `to`
+where you can specify the exchange pattern as shown:
+
+[source,java]
+----
+from("direct:startInOnly")
+  .to(ExchangePattern.InOnly, "bean:process");
+
+from("direct:startInOut")
+  .to(ExchangePattern.InOut, "bean:process");
+----
+
+
+And here is how to do it in XML:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:startInOnly"/>
+  <inOnly uri="bean:process"/>
+</route>
+
+<route>
+  <from uri="direct:startInOut"/>
+  <inOut uri="bean:process"/>
+</route>
+----
+
+And here we use `<to>` with the `pattern` attribute to set the exchange pattern:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:startInOnly"/>
+  <to pattern="InOnly" uri="bean:process"/>
+</route>
+
+<route>
+  <from uri="direct:startInOut"/>
+  <to pattern="InOut" uri="bean:process"/>
+</route>
+----

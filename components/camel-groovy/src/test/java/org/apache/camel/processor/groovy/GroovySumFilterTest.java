@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,9 +24,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class GroovySumFilterTest extends CamelSpringTestSupport {
 
     @Override
@@ -39,7 +36,7 @@ public class GroovySumFilterTest extends CamelSpringTestSupport {
         getMockEndpoint("mock:high").expectedMessageCount(1);
         getMockEndpoint("mock:low").expectedMessageCount(0);
 
-        List orders = new ArrayList();
+        List<Order> orders = new ArrayList<>();
         orders.add(new Order("Camel in Action", 50));
         orders.add(new Order("ActiveMQ in Action", 40));
         orders.add(new Order("Spring in Action", 60));
@@ -54,7 +51,7 @@ public class GroovySumFilterTest extends CamelSpringTestSupport {
         getMockEndpoint("mock:high").expectedMessageCount(0);
         getMockEndpoint("mock:low").expectedMessageCount(1);
 
-        List orders = new ArrayList();
+        List<Order> orders = new ArrayList<>();
         orders.add(new Order("Camel in Action", 50));
         orders.add(new Order("ActiveMQ in Action", 40));
 

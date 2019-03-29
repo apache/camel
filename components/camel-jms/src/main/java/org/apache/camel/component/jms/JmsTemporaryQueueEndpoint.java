@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,30 +26,28 @@ import javax.jms.TemporaryQueue;
  * for working with a {@link TemporaryQueue}
  * <p/>
  * <b>Important:</b> Need to be really careful to always use the same Connection otherwise the destination goes stale
- *
- * @version 
  */
 public class JmsTemporaryQueueEndpoint extends JmsQueueEndpoint implements DestinationEndpoint {
     private Destination jmsDestination;
 
     public JmsTemporaryQueueEndpoint(String uri, JmsComponent component, String destination, JmsConfiguration configuration) {
         super(uri, component, destination, configuration);
-        setDestinationType("temp:queue");
+        setDestinationType("temp-queue");
     }
 
     public JmsTemporaryQueueEndpoint(String uri, JmsComponent component, String destination, JmsConfiguration configuration, QueueBrowseStrategy queueBrowseStrategy) {
         super(uri, component, destination, configuration, queueBrowseStrategy);
-        setDestinationType("temp:queue");
+        setDestinationType("temp-queue");
     }
 
     public JmsTemporaryQueueEndpoint(String endpointUri, String destination) {
         super(endpointUri, destination);
-        setDestinationType("temp:queue");
+        setDestinationType("temp-queue");
     }
 
     public JmsTemporaryQueueEndpoint(TemporaryQueue jmsDestination) throws JMSException {
-        super("jms:temp:queue:" + jmsDestination.getQueueName(), null);
-        setDestinationType("temp:queue");
+        super("jms:temp-queue:" + jmsDestination.getQueueName(), null);
+        setDestinationType("temp-queue");
         this.jmsDestination = jmsDestination;
         setDestination(jmsDestination);
     }

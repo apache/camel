@@ -1,27 +1,32 @@
-# @{title}
+= @{title}
 
 @{description}
 
-### Syntax
+== Syntax
 
 The syntax:
 
-    @{syntax}
+----
+@{syntax}
+----
 
 @if{alternativeSyntax != ""}
 An alternative syntax can be used:
 
-    @{alternativeSyntax}
+----
+@{alternativeSyntax}
+----
 @end{}
 
-### Maven Dependency
+=== Maven Dependency
 
 Maven users would need to add dependency:
 
-```xml
-    <dependency>
-      <groupId>${groupId}</groupId>
-      <artifactId>${artifactId}</artifactId>
-      <version>${version}</version>
-    </dependency>
-```
+[source,xml]
+----
+<dependency>
+  <groupId>${groupId}</groupId>
+  <artifactId>${artifactId}</artifactId>
+  <version>${version}</version>
+</dependency>
+----

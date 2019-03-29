@@ -1,0 +1,29 @@
+[[HowdoesCamelcomparetoMule-HowdoesCamelcomparetoMule]]
+=== How does Camel compare to Mule?
+
+This FAQ entry was written when Mule 1.x and 2.x existed. It doesn't
+cater for how Mule may go in Mule 3.x.
+
+I guess from 30,000 feet they're kinda
+link:why-the-name-camel.adoc[similar beasts]; they're both kinds of
+routing/mediation engines. The main differences are as follows:
+
+* Camel uses a Java link:../dsl.adoc[Domain Specific Language] in addition
+  to Spring XML for configuring the routing rules and providing
+  link:../enterprise-integration-patterns.adoc[Enterprise Integration
+  Patterns]
+* Camel's API is smaller & cleaner (IMHO) and is closely aligned with
+  the APIs of JBI, <<cxf-component,CXF>> and
+  <<jms-component,JMS>>; based around message exchanges (with in and optional
+  out messages) which more closely maps to REST, WS, WSDL & JBI than the
+  UMO model Mule is based on
+* Camel allows the underlying transport details to be easily exposed
+  (e.g. the `JmsExchange`, `JbiExchange`, `HttpExchange` objects expose all the
+  underlying transport information & behaviour if its required). See
+  link:how-does-the-camel-api-compare-to.adoc[How does the Camel API
+  compare to]
+* Camel supports an implicit link:../type-converter.adoc[Type Converter] in
+  the core API to make it simpler to connect components together requiring
+  different types of payload & headers
+* Camel uses the link:../notice.md[Apache 2 License] rather than Mule's more restrictive
+  commercial license

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,6 +28,7 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.junit.After;
 import org.junit.Test;
 
 public class PahoComponentTest extends CamelTestSupport {
@@ -59,6 +60,7 @@ public class PahoComponentTest extends CamelTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         broker.stop();
@@ -211,4 +213,16 @@ public class PahoComponentTest extends CamelTestSupport {
         testCustomizedPahoMock.assertIsSatisfied();
     }
 
+    @Test
+    public void shouldNotSendMessageAuthIsNotValid() throws InterruptedException {
+        // Given
+        mock.expectedMessageCount(0);
+
+        // When
+        template.sendBody("paho:someRandomQueue?brokerUrl=tcp://localhost:" + mqttPort + "&userName=test&password=test", "msg");
+
+        // Then
+        mock.assertIsSatisfied();
+    }
+    
 }

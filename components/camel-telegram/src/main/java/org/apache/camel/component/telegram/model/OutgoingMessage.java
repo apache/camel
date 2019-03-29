@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,6 +27,7 @@ public abstract class OutgoingMessage implements Serializable {
 
     private static final long serialVersionUID = -5958829164103569292L;
 
+    @JsonProperty("chat_id")
     protected String chatId;
 
     @JsonProperty("disable_notification")

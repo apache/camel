@@ -1,0 +1,22 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.crypto.enabled",
+      "description": "Enable crypto component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.pgp.enabled",
+      "description": "Enable pgp dataformat",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.crypto.enabled",
+      "description": "Enable crypto dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

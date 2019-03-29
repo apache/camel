@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -37,7 +36,6 @@ import org.apache.camel.component.zookeeper.ZooKeeperEndpoint;
 import org.apache.camel.component.zookeeper.ZooKeeperMessage;
 import org.apache.camel.impl.JavaUuidGenerator;
 import org.apache.camel.spi.UuidGenerator;
-
 import org.apache.zookeeper.CreateMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +71,7 @@ public class ZooKeeperElection {
     private volatile boolean isCandidateCreated;
     private int enabledCount = 1;
     private UuidGenerator uuidGenerator = new JavaUuidGenerator();
-    private final List<ElectionWatcher> watchers = new ArrayList<ElectionWatcher>();
+    private final List<ElectionWatcher> watchers = new ArrayList<>();
 
     public ZooKeeperElection(CamelContext camelContext, String uri, int enabledCount) {
         this(camelContext.createProducerTemplate(), camelContext, uri, enabledCount);
@@ -146,7 +144,7 @@ public class ZooKeeperElection {
         producerTemplate.send(zep, e);
 
         if (e.isFailed()) {
-            LOG.warn("Error setting up election node " + fullpath, e.getException());
+            LOG.warn("Error setting up election node {}", fullpath, e.getException());
         } else {
             LOG.info("Candidate node '{}' has been created", fullpath);
             try {

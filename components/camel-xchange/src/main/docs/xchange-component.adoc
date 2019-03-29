@@ -1,0 +1,129 @@
+[[xchange-component]]
+== XChange Component
+
+*Available as of Camel version 2.21*
+
+The *xchange:* component uses the https://knowm.org/open-source/xchange/[XChange] Java library to provide access to 60+ Bitcoin and Altcoin exchanges.
+It comes with a consistent interface for trading and accessing market data. 
+
+Camel can get crypto currency market data, query historical data, place market orders and much more.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-xchange</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+### URI format
+
+[source,java]
+---------------------------------
+xchange://exchange?options
+---------------------------------
+
+### Options
+
+// component options: START
+The XChange component has no options.
+// component options: END
+
+// endpoint options: START
+The XChange endpoint is configured using URI syntax:
+
+----
+xchange:name
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | *Required* The exchange to connect to |  | String
+|===
+
+
+==== Query Parameters (5 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *currency* (producer) | The currency |  | Currency
+| *currencyPair* (producer) | The currency pair |  | CurrencyPair
+| *method* (producer) | *Required* The method to execute |  | XChangeMethod
+| *service* (producer) | *Required* The service to call |  | XChangeService
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-xchange-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.xchange.enabled* | Whether to enable auto configuration of the xchange component. This is enabled by default. |  | Boolean
+| *camel.component.xchange.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+### Authentication
+
+This component communicates with supported crypto currency exchanges via REST API. Some API requests use simple unauthenticated GET request. 
+For most of the interesting stuff however, you'd need an account with the exchange and have API access keys enabled.
+
+These API access keys need to be guarded tightly, especially so when they also allow for the withdraw functionality. 
+In which case, anyone who can get hold of your API keys can easily transfer funds from your account to some other address i.e. steal your money.   
+
+Your API access keys can be strored in an exchange specific properties file in your SSH directory.
+For Binance for example this would be: `~/.ssh/binance-secret.keys`
+
+----
+##
+# This file MUST NEVER be commited to source control. 
+# It is therefore added to .gitignore. 
+#
+apiKey = GuRW0*********
+secretKey = nKLki************
+----
+
+### Message Headers
+
+[TODO]
+
+### Samples
+
+In this sample we find the current Bitcoin market price in USDT:
+
+[source,java]
+---------------------------------------------------------------------------------------------
+from("direct:ticker").to("xchange:binance?service=market&method=ticker&currencyPair=BTC/USDT")
+---------------------------------------------------------------------------------------------

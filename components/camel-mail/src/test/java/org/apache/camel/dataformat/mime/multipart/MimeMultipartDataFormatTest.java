@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,8 +33,8 @@ import org.apache.camel.Attachment;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultAttachment;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultAttachment;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.Before;
@@ -65,7 +65,7 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         in.setBody("Body text");
         in.setHeader(Exchange.CONTENT_TYPE, "text/plain;charset=iso8859-1;other-parameter=true");
         in.setHeader(Exchange.CONTENT_ENCODING, "UTF8");
-        Map<String, String> headers = new HashMap<String, String>();
+        Map<String, String> headers = new HashMap<>();
         headers.put("Content-Description", "Sample Attachment Data");
         headers.put("X-AdditionalData", "additional data");
         addAttachment(attContentType, attText, attFileName, headers);
@@ -255,7 +255,7 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
     public void marhsalOnlyMixed() throws IOException {
         in.setBody("Body text");
         in.setHeader("Content-Type", "text/plain");
-        Map<String, String> headers = new HashMap<String, String>();
+        Map<String, String> headers = new HashMap<>();
         headers.put("Content-Description", "Sample Attachment Data");
         headers.put("X-AdditionalData", "additional data");
         addAttachment("application/octet-stream", "foobar", "attachment.bin", headers);

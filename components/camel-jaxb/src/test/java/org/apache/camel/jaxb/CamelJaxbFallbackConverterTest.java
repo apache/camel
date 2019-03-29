@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,16 +25,16 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.example.Bar;
 import org.apache.camel.example.Foo;
 import org.apache.camel.foo.bar.PersonType;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.test.junit4.ExchangeTestSupport;
 import org.junit.Test;
 
-public class CamelJaxbFallbackConverterTest extends CamelTestSupport {
+public class CamelJaxbFallbackConverterTest extends ExchangeTestSupport {
 
     @Test
     public void testFallbackConverterWithoutObjectFactory() throws Exception {
         TypeConverter converter = context.getTypeConverter();
-        Foo foo = converter.convertTo(Foo.class, "<foo><zot name=\"bar1\" value=\"value\" otherValue=\"otherValue\"/></foo>");
+        Foo foo = converter.convertTo(Foo.class, exchange, "<foo><zot name=\"bar1\" value=\"value\" otherValue=\"otherValue\"/></foo>");
         assertNotNull("foo should not be null", foo);
         assertEquals("value", foo.getBarRefs().get(0).getValue());
 
@@ -74,7 +74,7 @@ public class CamelJaxbFallbackConverterTest extends CamelTestSupport {
     @Test
     public void testConverter() throws Exception {
         TypeConverter converter = context.getTypeConverter();
-        PersonType person = converter.convertTo(PersonType.class, "<Person><firstName>FOO</firstName><lastName>BAR</lastName></Person>");
+        PersonType person = converter.convertTo(PersonType.class, exchange, "<Person><firstName>FOO</firstName><lastName>BAR</lastName></Person>");
         assertNotNull("Person should not be null ", person);
         assertEquals("Get the wrong first name ", "FOO", person.getFirstName());
         assertEquals("Get the wrong second name ", "BAR", person.getLastName());

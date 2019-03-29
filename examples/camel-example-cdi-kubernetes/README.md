@@ -42,7 +42,7 @@ $ mvn package
 You can run this example using:
 
 ```sh
-$ mvn camel:run
+$ KUBERNETES_MASTER="https://$(minikube ip):8443/" mvn camel:run
 ```
 
 When the Camel application runs, you should see the pods list being logged

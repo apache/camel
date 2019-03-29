@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -45,7 +45,7 @@ public class StreamSystemOutTest extends CamelTestSupport {
             template.sendBody("direct:in", message);
 
             // Then
-            assertEquals(message + System.lineSeparator(), new String(mockOut.toByteArray()));
+            assertEquals(message + LS, new String(mockOut.toByteArray()));
         } finally {
             System.setOut(stdOut);
         }

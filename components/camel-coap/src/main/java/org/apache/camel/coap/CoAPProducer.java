@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,7 @@ import java.net.URI;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
@@ -44,37 +44,26 @@ public class CoAPProducer extends DefaultProducer {
             //?default?
             ct = "application/octet-stream";
         }
-        String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
-        if (method == null) {
-            method = endpoint.getCoapMethod();
-        }
-        if (method == null) {
-            Object body = exchange.getIn().getBody();
-            if (body == null) {
-                method = "GET";
-            } else {
-                method = "POST";
-            }
-        }
+        String method = CoAPHelper.getDefaultMethod(exchange, client);
         int mediaType = MediaTypeRegistry.parse(ct);
         CoapResponse response = null;
         boolean pingResponse = false;
         switch (method) {
-        case "GET":
+        case CoAPConstants.METHOD_GET:
             response = client.get();
             break;
-        case "DELETE":
+        case CoAPConstants.METHOD_DELETE:
             response = client.delete();
             break;
-        case "POST":
+        case CoAPConstants.METHOD_POST:
             byte[] bodyPost = exchange.getIn().getBody(byte[].class);
             response = client.post(bodyPost, mediaType);
             break;
-        case "PUT":
+        case CoAPConstants.METHOD_PUT:
             byte[] bodyPut = exchange.getIn().getBody(byte[].class);
             response = client.put(bodyPut, mediaType);
             break;
-        case "PING":
+        case CoAPConstants.METHOD_PING:
             pingResponse = client.ping();
             break;
         default:
@@ -85,10 +74,11 @@ public class CoAPProducer extends DefaultProducer {
             Message resp = exchange.getOut();
             String mt = MediaTypeRegistry.toString(response.getOptions().getContentFormat());
             resp.setHeader(org.apache.camel.Exchange.CONTENT_TYPE, mt);
+            resp.setHeader(CoAPConstants.COAP_RESPONSE_CODE, response.getCode().toString());
             resp.setBody(response.getPayload());
         }
-        
-        if (method.equalsIgnoreCase("PING")) {
+
+        if (method.equalsIgnoreCase(CoAPConstants.METHOD_PING)) {
             Message resp = exchange.getOut();
             resp.setBody(pingResponse);
         }
@@ -96,7 +86,7 @@ public class CoAPProducer extends DefaultProducer {
 
     private synchronized CoapClient getClient(Exchange exchange) {
         if (client == null) {
-            URI uri = exchange.getIn().getHeader("coapUri", URI.class);
+            URI uri = exchange.getIn().getHeader(CoAPConstants.COAP_URI, URI.class);
             if (uri == null) {
                 uri = endpoint.getUri();
             }

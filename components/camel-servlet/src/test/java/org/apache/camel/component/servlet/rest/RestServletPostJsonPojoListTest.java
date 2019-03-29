@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -68,7 +68,7 @@ public class RestServletPostJsonPojoListTest extends ServletCamelRouterTestSuppo
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").typeList(UserPojo.class)
+                    .post("new").type(UserPojo[].class)
                         .to("mock:input");
             }
         };

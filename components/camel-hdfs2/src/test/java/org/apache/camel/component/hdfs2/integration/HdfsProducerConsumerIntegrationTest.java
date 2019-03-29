@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,7 +35,6 @@ import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 
@@ -59,7 +58,7 @@ public class HdfsProducerConsumerIntegrationTest extends CamelTestSupport {
         });
         context.start();
 
-        Set<String> sent = new HashSet<String>();
+        Set<String> sent = new HashSet<>();
 
         for (int i = 0; i < 10; ++i) {
             String text = "CIAO" + i;
@@ -93,7 +92,7 @@ public class HdfsProducerConsumerIntegrationTest extends CamelTestSupport {
             os.close();
         }
 
-        final Set<String> fileNames = new HashSet<String>();
+        final Set<String> fileNames = new HashSet<>();
         final CountDownLatch latch = new CountDownLatch(ITERATIONS);
         MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.whenAnyExchangeReceived(new Processor() {

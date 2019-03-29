@@ -1,0 +1,112 @@
+[[dataformat-component]]
+== Data Format Component
+
+*Available as of Camel version 2.12*
+
+The *dataformat:* component allows to use link:data-format.html[Data
+Format] as a Camel Component.
+
+=== URI format
+
+[source]
+----
+dataformat:name:(marshal|unmarshal)[?options]
+----
+
+Where *name* is the name of the Data Format. And
+then followed by the operation which must either be `marshal` or
+`unmarshal`. The options is used for configuring the link:data-format.html[Data
+Format] in use. See the Data Format documentation
+for which options it support.
+
+=== DataFormat Options
+
+
+// component options: START
+The Data Format component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The Data Format endpoint is configured using URI syntax:
+
+----
+dataformat:name:operation
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | *Required* Name of data format |  | String
+| *operation* | *Required* Operation to use either marshal or unmarshal |  | String
+|===
+
+
+==== Query Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-dataformat-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.dataformat.enabled* | Whether to enable auto configuration of the dataformat component. This is enabled by default. |  | Boolean
+| *camel.component.dataformat.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+=== Samples
+
+For example to use the <<jaxb-dataformat,JAXB>> link:data-format.html[Data
+Format] we can do as follows:
+
+[source,java]
+----
+from("activemq:My.Queue").
+  to("dataformat:jaxb:unmarshal?contextPath=com.acme.model").
+  to("mqseries:Another.Queue");
+----
+
+And in XML DSL you do:
+
+[source,xml]
+----
+<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="activemq:My.Queue"/>
+    <to uri="dataformat:jaxb:unmarshal?contextPath=com.acme.model"/>
+    <to uri="mqseries:Another.Queue"/>
+  </route>
+</camelContext>
+----

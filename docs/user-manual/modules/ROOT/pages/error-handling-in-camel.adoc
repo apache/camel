@@ -1,0 +1,235 @@
+[[ErrorhandlinginCamel-ErrorhandlinginCamel]]
+=== Error handling in Camel
+
+Error handling in Camel can roughly be separated into two distinct
+types:
+
+* non transactional
+* transactional
+
+Where non transactional is the most common type that is enabled
+out-of-the-box and handled by Camel itself. The transaction type is
+handled by a backing system such as a J2EE application server.
+
+[TIP]
+====
+**Using try ... catch ... finally**
+
+Related to error handling is the link:try-catch-finally.adoc[Try Catch
+Finally] feature in Camel.
+====
+
+[[ErrorhandlinginCamel-Whendoesanerrorhappen]]
+==== When does an error happen
+
+An error happens when
+
+* any uncaught exception is thrown during routing and processing of
+messages within Camel
+
+TIP: So think of this as a big exception interceptor that catches all
+exceptions and handles what to do.
+
+[[ErrorhandlinginCamel-Nontransactional]]
+==== Non transactional
+
+By default Camel uses the non transaction type and orchestrates the
+error handling during processing and routing.
+
+As there isn't a single error handling configuration that suites all
+uses cases, you should consider altering the default configurations to
+better suit you needs.
+
+[[ErrorhandlinginCamel-Camel1.xdefaulterrorhandler]]
+==== Camel 1.x default error handler
+
+In Camel 1.x a global <<deadLetterChannel-eip,Dead Letter Channel>>
+is setup as the link:error-handler.adoc[Error Handler] by default. It's
+configured as:
+
+* redeliver up to 6 times
+* pause 1 second between each redelivery attempt
+* if all redelivery attempts failed then move exchange into the dead
+letter queue
+* the default dead letter queue is a logger that logs the exchange at
+ERROR level :star:
+
+[WARNING]
+====
+**Dead Letter Queue (*)**
+
+A dead letter queue is like a black hole, it will consume the
+link:exchange.adoc[Exchange] and the link:exchange.adoc[Exchange]
+routing is ended with no indication that it failed. +
+This works great in the <<jms-component,JMS>> Messaging world where we
+don't want a bad message to cause endless retries and causing the system
+to exhaust. The message is said to be poison and thus we want to move it
+to a dead letter queue so the system can continue to operate and work
+with the next message.
+
+This default does not go well with other transports using in a
+request/reply messaging style. If the link:exchange.adoc[Exchange]
+failed then the original caller will still want a response after the
+failure.
+
+So the bottom line is that you *must* configure and setup the error
+handling strategies that suits your business needs.
+====
+
+[[ErrorhandlinginCamel-Camel2.0onwardsdefaulterrorhandler]]
+==== Camel 2.0 onwards default error handler
+
+In Camel 2.0 onwards a global
+link:defaulterrorhandler.adoc[DefaultErrorHandler] is set up as the
+link:error-handler.adoc[Error Handler] by default. It's configured as:
+
+* no redeliveries
+* no dead letter queue
+* if the exchange failed an exception is thrown and propagated back to
+the original caller wrapped in a `RuntimeCamelException`.
+
+[[ErrorhandlinginCamel-Scopes]]
+==== Scopes
+
+Camel supports 2 scopes that is determined by the DSL in use:
+
+[width="100%",cols="25%,25%,25%,25%",options="header",]
+|=======================================================================
+|DSL |Scope 1 |Scope 2 |Note
+|XML DSL |CamelContext |route |Scope 2 takes precedence over scope 1
+
+|Java/Scala DSL |RouteBuilder |route |Scope 2 takes precedence over
+scope 1
+|=======================================================================
+
+When using XML DSL then scope 1 applies for all routes. Where as when
+using Java DSL then route 1 only applies for the given RouteBuilder
+instance. So if you have multiple RouteBuilder's then each route builder
+has its own scope 1.
+
+[TIP]
+====
+If you want to share scope among RouteBuilder's you can use class
+inheritance and create a base class, and then extend this class for your
+RouteBuilder's and invoke the super.configure() method.
+====
+
+Mind that there was a bug in Camel that affected the scopes when using
+multiple RouteBuilder classes. See more details at
+https://issues.apache.org/jira/browse/CAMEL-5456[CAMEL-5456].
+
+[[ErrorhandlinginCamel-Howdoestheerrorhandlerwork]]
+==== How does the <<deadLetterChannel-eip,Dead Letter Channel>> error handler work
+
+When Camel is started it will inspect the routes and weave in the error
+handling into the routing. With up to 3 supported scopes, the error
+handling can be quite complex. And on top of that you have inherited
+error handling and you can even configure
+link:exception-clause.adoc[Exception Clause]s to handle specific
+exception types differently. So yes it's advanced but very powerful when
+you get the grip of it.
+
+To keep things simple we first look at the basic concept how Camel
+orchestrates the redelivery attempt. At any given node in the route
+graph Camel intercepts the current Exchange being routed and wraps it
+with the link:error-handler.adoc[Error Handler]. This ensures that the
+link:error-handler.adoc[Error Handler] can kick in, just as the AOP
+around concept. If the exchange can be routed without any problems then
+it's forwarded to the next node in the route graph, *But* if there was
+an exception thrown, then the link:error-handler.adoc[Error Handler]
+kicks in and decides what to do.
+
+An example illustrating this:
+
+[source,java]
+----
+errorHandler(deadLetterChannel("jms:queue:dead"));
+
+from("seda:newOrder")
+   .to("bean:validateOrder")
+   .to("bean:storeOrder")
+   .to("bean:confirmOrder");
+----
+
+In this route we have 3 nodes (the dots) where the
+link:error-handler.adoc[Error Handler] is watching us (The AOP around
+stuff). So when an order arrives on the seda queue we consume it and
+send it to the validateOrder bean. In case the validation bean processed
+ok, we move on to the next node. In case the storeOrder bean failed and
+throws an exception it's caught by the
+<<deadLetterChannel-eip,Dead Letter Channel>> that decides what to
+do next. Either it does a:
+
+* redeliver
+* or move it to dead letter queue
+
+It will continue to do redeliveries based on the policy configured. By
+default <<deadLetterChannel-eip,Dead Letter Channel>> will attempt
+at most 6 redeliveries with 1 second delay. So if the storeOrder bean
+did succeed at the 3rd attempt the routing will continue to the next
+node the confirmOrder bean. In case all redeliveries failed the Exchange
+is regarded as failed and is moved to the dead letter queue and the
+processing of this exchange stops. By default the dead letter queue is
+just a ERROR logger.
+
+[NOTE]
+====
+This applies to all kind of link:component.adoc[Components] in Camel.
+The sample above only uses <<bean-component,Bean>> but it's the same for
+<<file-component,File>>, <<mail-component,Mail>>,
+<<velocity-component,Velocity>> or whatever component you use.
+====
+
+[[ErrorhandlinginCamel-Transactional]]
+==== Transactional
+
+Camel leverages Spring transactions. Usually you can only use this with
+a limited number of transport types such as JMS or JDBC based, that yet
+again requires a transaction manager such as a Spring transaction, a
+J2EE server or a Message Broker.
+
+[[ErrorhandlinginCamel-Howdoesitwork]]
+==== How does it work
+
+*Camel 1.x*
+
+Camel does the same weaving as for the non-transactional type. The
+difference is that for transactional exchanges the
+link:error-handler.adoc[Error Handler] does *not* kick in. You can say
+the AOP around does not apply. Camel relies solely on the backing system
+to orchestrate the error handling. And as such the when the backing
+system does redeliver it will start all over again. For instance if the
+exchange was started by a JMS consumer then it's started again as the
+JMS message is rolled back on the JMS queue and Camel will re consume
+the JMS message again.
+
+*Camel 2.0*
+
+In Camel 2.0 we have empowered the
+link:transactionerrorhandler.adoc[TransactionErrorHandler] to build on
+top of the same base that
+link:defaulterrorhandler.adoc[DefaultErrorHandler] does. This allows you
+to use Camel redelivery with transactional routes as well. The Spring
+transaction manager is still in charge and have the last say. But you
+can use Camel to do some local redelivery, for instance to upload a file
+to a FTP server, in which Camel can do local redelivery. So this gives
+you the power from both worlds. In case Camel cannot redeliver the
+exchange will be failed and rolled back. By default the
+link:transactionerrorhandler.adoc[TransactionErrorHandler] does *not*
+attempt any local redeliveries. You have to configure it to do so, for
+instance to set a maximum redelivers to a number > 0.
+
+See <<transactionalClient-eip,Transactional Client>>
+for more.
+
+[[ErrorhandlinginCamel-Seealso]]
+==== See also
+
+* link:error-handler.adoc[Error Handler]
+* <<deadLetterChannel-eip,Dead Letter Channel>>
+* link:exception-clause.adoc[Exception Clause]
+* <<transactionalClient-eip,Transactional Client>>
+* link:transactionerrorhandler.adoc[TransactionErrorHandler]
+* link:defaulterrorhandler.adoc[DefaultErrorHandler]
+* link:try-catch-finally.adoc[Try Catch Finally]
+* <<loadBalance-eip,Failover Load Balancer>>

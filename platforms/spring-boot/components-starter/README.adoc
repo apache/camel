@@ -1,0 +1,29 @@
+= Camel Component Starters
+
+Starters are Apache Camel modules intended to be used in Spring Boot applications.
+There is a `camel-xxx-starter` module for each Camel component (with few exceptions listed below).
+
+Starters are created to meet the following requirements:
+
+* Allow the auto-configuration of the component through the native spring-boot configuration system (compatible with IDE tooling)
+* Manage transitive logging dependencies to better integrate with spring-boot logging system
+* Include additional dependencies and align transitive ones to minimize the effort of creating a working spring-boot application
+
+Each starter has its own integration test (in path `tests/camel-itest-spring-boot`) that verifies its compatibility with the current release of spring-boot.
+
+The following components do not have a starter because of compatibility issues:
+
+* **camel-blueprint** (intended for OSGi only)
+* **camel-cdi** (intended for CDI only)
+* **camel-core-osgi** (intended for OSGi only)
+* **camel-core-xml**
+* **camel-ejb**  (intended for JEE only)
+* **camel-eventadmin** (intended for OSGi only)
+* **camel-ibatis** (`camel-mybatis-starter` is included)
+* **camel-mina** (`camel-mina2-starter` is included)
+* **camel-paxlogging** (intended for OSGi only)
+* **camel-quartz** (`camel-quartz2-starter` is included)
+* **camel-scala**
+* **camel-scr** (intended for OSGi only)
+* **camel-spark-rest**
+* **camel-swagger** (`camel-swagger-java-starter` is included)

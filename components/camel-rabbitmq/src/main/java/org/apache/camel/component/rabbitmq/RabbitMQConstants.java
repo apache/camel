@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,12 +17,15 @@
 package org.apache.camel.component.rabbitmq;
 
 public final class RabbitMQConstants {
+
     // TODO need to change the constant which is start with camel
     public static final String ROUTING_KEY = "rabbitmq.ROUTING_KEY";
+    public static final String EXCHANGE_OVERRIDE_NAME = "rabbitmq.EXCHANGE_OVERRIDE_NAME";
     public static final String EXCHANGE_NAME = "rabbitmq.EXCHANGE_NAME";
     public static final String CONTENT_TYPE = "rabbitmq.CONTENT_TYPE";
     public static final String PRIORITY = "rabbitmq.PRIORITY";
     public static final String DELIVERY_TAG = "rabbitmq.DELIVERY_TAG";
+    public static final String REDELIVERY_TAG = "rabbitmq.REDELIVERY_TAG";
     public static final String CORRELATIONID = "rabbitmq.CORRELATIONID";
     public static final String MESSAGE_ID = "rabbitmq.MESSAGE_ID";
     public static final String DELIVERY_MODE = "rabbitmq.DELIVERY_MODE";
@@ -40,7 +43,14 @@ public final class RabbitMQConstants {
     public static final String IMMEDIATE = "rabbitmq.IMMEDIATE";
     public static final String RABBITMQ_DEAD_LETTER_EXCHANGE = "x-dead-letter-exchange";
     public static final String RABBITMQ_DEAD_LETTER_ROUTING_KEY = "x-dead-letter-routing-key";
+    public static final String RABBITMQ_DIRECT_REPLY_EXCHANGE = "";
+    public static final String RABBITMQ_DIRECT_REPLY_ROUTING_KEY = "amq.rabbitmq.reply-to";
+    public static final String RABBITMQ_QUEUE_LENGTH_LIMIT_KEY = "x-max-length";
+    public static final String RABBITMQ_QUEUE_MAX_PRIORITY_KEY = "x-max-priority";
+    public static final String RABBITMQ_QUEUE_MESSAGE_TTL_KEY = "x-message-ttl";
+    public static final String RABBITMQ_QUEUE_TTL_KEY = "x-expires";
     
+
     private RabbitMQConstants() {
         //Constants class
     }

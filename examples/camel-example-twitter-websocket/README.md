@@ -28,11 +28,6 @@ Then open a browser to see live twitter updates in the web page
 To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 
-### Documentation
-We have described this in more details at the Camel twitter documentation: <http://camel.apache.org/twitter>
-
-This example is documented at <http://camel.apache.org/twitter-websocket-example.html>
-
 ### Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums

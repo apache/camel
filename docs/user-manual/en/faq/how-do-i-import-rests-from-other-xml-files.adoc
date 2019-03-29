@@ -1,0 +1,87 @@
+[[HowdoIimportrestsfromotherXMLfiles-HowdoIimportrestsfromotherXMLfiles]]
+=== How do I import rests from other XML files?
+
+*Available as of Camel 2.14*
+
+When defining rests in Camel using link:../xml-configuration.adoc[Xml
+Configuration] you may want to define some rests in other XML files. For
+example you may have many rest services and it may help to maintain the
+application if some of the rests are in separate XML files. You may also
+want to store common and reusable rests in other XML files, which you
+can simply import when needed.
+
+This is possible to define rests outside `<camelContext/>` which you do
+in a new `<restContext/>` tag.
+
+[NOTE]
+====
+When you use `<restContext>` then they are separated, and cannot
+reuse existing `<onException>`, `<intercept>`, `<dataFormats>` and similar
+cross cutting functionality defined in the `<camelContext>`. In other
+words the `<restContext>` is currently isolated. This may change in Camel
+3.x.
+====
+
+For example we could have a file named `myCoolRests.xml` which contains
+a rest (can have more) as shown:
+
+[source,xml]
+----
+  <restContext id="myCoolRest" xmlns="http://camel.apache.org/schema/spring">
+    <rest uri="/say/hello">
+      <get>
+        <to uri="direct:hello"/>
+      </get>
+    </rest>
+  </restContext>
+----
+
+Then in your XML file which contains the CamelContext you can use Spring
+to import the `myCoolRests.xml` file.
+And then inside `<camelContext/>` you can refer to the
+`<restContext/>` using the `<restContextRef>` by its id as shown below:
+
+[source,xml]
+----
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+
+    <restContextRef ref="myCoolRest"/>
+
+    <rest uri="/say/bye">
+      <get consumes="application/json">
+        <to uri="direct:bye"/>
+      </get>
+      <post>
+        <to uri="mock:update"/>
+      </post>
+    </rest>
+
+    <route>
+      <from uri="direct:hello"/>
+      <transform>
+        <constant>Hello World</constant>
+      </transform>
+    </route>
+    <route>
+      <from uri="direct:bye"/>
+      <transform>
+        <constant>Bye World</constant>
+      </transform>
+    </route>
+  </camelContext>
+----
+
+Also notice that you can mix and match, having rests inside CamelContext
+and also externalized in RestContext.
+
+You can have as many `<restContextRef/>` as you like.
+
+[TIP]
+====
+**Reusable rests**
+
+The rests defined in `<restContext/>` can be reused by multiple
+`<camelContext/>`. However its only the definition which is reused. At
+runtime each CamelContext will create its own instance of the rest based
+on the definition.
+====

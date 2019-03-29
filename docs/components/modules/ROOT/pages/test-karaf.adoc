@@ -1,0 +1,10 @@
+## Test Karaf
+
+*Available since Camel 2.18*
+
+Camel testing using Apache Karaf with Pax-Exam.
+
+This component allows to perform integration testing by running Karaf containers using Pax-Exam.
+
+The component is in development and needs some more polish to be ready.
+In addition there is also need for documentation.

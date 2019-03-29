@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,7 +34,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @EnableAutoConfiguration
-@SpringBootTest(classes = { SimpleOgnlTest.class })
+@SpringBootTest
 public class SimpleOgnlTest {
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;
@@ -44,7 +44,7 @@ public class SimpleOgnlTest {
 
     @Test
     public void testSimpleOgnlListExpression() throws Exception {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("one");
         list.add("two");
 

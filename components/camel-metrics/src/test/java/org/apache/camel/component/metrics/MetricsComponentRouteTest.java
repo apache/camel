@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -58,7 +58,7 @@ public class MetricsComponentRouteTest extends CamelTestSupport {
         mock.expectedBodiesReceived(body);
         mock.expectedHeaderReceived(header1, value1);
         mock.expectedHeaderReceived(header2, value2);
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(header1, value1);
         headers.put(header2, value2);
         template1.sendBodyAndHeaders(body, headers);
@@ -75,7 +75,7 @@ public class MetricsComponentRouteTest extends CamelTestSupport {
         mock.expectedHeaderReceived("." + HEADER_PREFIX, "value");
         mock.expectedHeaderReceived("date", now);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(HEADER_METRIC_NAME, "a name");
         headers.put(HEADER_HISTOGRAM_VALUE, 34L);
         headers.put(HEADER_PREFIX + "notExistingHeader", "?");

@@ -14,7 +14,7 @@ The example is implemented in Spring XML only without using any kind of _applica
 * camel-core
 * camel-spring
 * camel-jms
-* activemq-camel
+* camel-activemq
 
 ### Build
 
@@ -65,11 +65,6 @@ The Camel application can be stopped pressing <kbd>ctrl</kbd>+<kbd>c</kbd> in th
 ### Configuration
 
 The Camel application is configured in the `src/main/resources/META-INF/spring/widget.xml` file.
-
-### Documentation
-
-This example is documented at
-	[http://camel.apache.org/widget-gadget.html](http://camel.apache.org/widget-gadget.html)
 
 ### Forum, Help, etc
 

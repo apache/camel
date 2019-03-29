@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,8 @@ import java.util.Arrays;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.QuoteMode;
 
@@ -36,6 +37,7 @@ import org.apache.commons.csv.QuoteMode;
  * Autogeneration can be disabled. In this case, only the fields defined in
  * csvConfig are written on the output.
  */
+@Dataformat("csv")
 public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     // CSV format options
     private CSVFormat format = CSVFormat.DEFAULT;
@@ -57,11 +59,17 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     private boolean recordSeparatorDisabled;
     private String recordSeparator;
     private Boolean skipHeaderRecord;
+    private Boolean trim;
+    private Boolean ignoreHeaderCase;
+    private Boolean trailingDelimiter;
 
     // Unmarshal options
     private boolean lazyLoad;
     private boolean useMaps;
+    private boolean useOrderedMaps;
     private CsvRecordConverter<?> recordConverter;
+
+    private CsvMarshallerFactory marshallerFactory = CsvMarshallerFactory.DEFAULT;
 
     private volatile CsvMarshaller marshaller;
     private volatile CsvUnmarshaller unmarshaller;
@@ -88,7 +96,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
 
     @Override
     protected void doStart() throws Exception {
-        marshaller = CsvMarshaller.create(getActiveFormat(), this);
+        marshaller = marshallerFactory.create(getActiveFormat(), this);
         unmarshaller = CsvUnmarshaller.create(getActiveFormat(), this);
     }
 
@@ -159,6 +167,18 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
         if (skipHeaderRecord != null) {
             answer = answer.withSkipHeaderRecord(skipHeaderRecord);
         }
+        
+        if (trim != null) {
+            answer = answer.withTrim(trim);
+        }
+        
+        if (ignoreHeaderCase != null) {
+            answer = answer.withIgnoreHeaderCase(ignoreHeaderCase);
+        }
+        
+        if (trailingDelimiter != null) {
+            answer = answer.withTrailingDelimiter(trailingDelimiter);
+        }
 
         return answer;
     }
@@ -187,6 +207,27 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     public CsvDataFormat setFormat(CSVFormat format) {
         this.format = (format == null) ? CSVFormat.DEFAULT : format;
         return this;
+    }
+
+    /**
+     * Sets the {@link CsvMarshaller} factory.
+     * If {@code null}, then {@link CsvMarshallerFactory#DEFAULT} is used instead.
+     *
+     * @param marshallerFactory
+     * @return Current {@code CsvDataFormat}, fluent API
+     */
+    public CsvDataFormat setMarshallerFactory(CsvMarshallerFactory marshallerFactory) {
+        this.marshallerFactory = (marshallerFactory == null) ? CsvMarshallerFactory.DEFAULT : marshallerFactory;
+        return this;
+    }
+
+    /**
+     * Returns the used {@link CsvMarshallerFactory}.
+     *
+     * @return never {@code null}.
+     */
+    public CsvMarshallerFactory getMarshallerFactory() {
+        return marshallerFactory;
     }
 
     /**
@@ -659,6 +700,26 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     }
 
     /**
+     * Indicates whether or not the unmarshalling should produce ordered maps instead of lists.
+     *
+     * @return {@code true} for maps, {@code false} for lists
+     */
+    public boolean isUseOrderedMaps() {
+        return useOrderedMaps;
+    }
+
+    /**
+     * Sets whether or not the unmarshalling should produce ordered maps instead of lists.
+     *
+     * @param useOrderedMaps {@code true} for maps, {@code false} for lists
+     * @return Current {@code CsvDataFormat}, fluent API
+     */
+    public CsvDataFormat setUseOrderedMaps(boolean useOrderedMaps) {
+        this.useOrderedMaps = useOrderedMaps;
+        return this;
+    }
+
+    /**
      * Gets the record converter to use. If {@code null} then it will use {@link CsvDataFormat#isUseMaps()} for finding
      * the proper converter.
      *
@@ -681,5 +742,80 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     }
 
     //endregion
+    /**
+     * Sets whether or not to trim leading and trailing blanks.
+     * <p>
+     * If {@code null} then the default value of the format used.
+     * </p>
+     * 
+     * @param trim whether or not to trim leading and trailing blanks.
+     *            <code>null</code> value allowed.
+     * @return Current {@code CsvDataFormat}, fluent API.
+     */
+    public CsvDataFormat setTrim(Boolean trim) {
+        this.trim = trim;
+        return this;
+    }
 
+    /**
+     * Indicates whether or not to trim leading and trailing blanks.
+     * 
+     * @return {@link Boolean#TRUE} if leading and trailing blanks should be
+     *         trimmed. {@link Boolean#FALSE} otherwise. Could return
+     *         <code>null</code> if value has NOT been set.
+     */
+    public Boolean getTrim() {
+        return trim;
+    }
+
+    /**
+     * Sets whether or not to ignore case when accessing header names.
+     * <p>
+     * If {@code null} then the default value of the format used.
+     * </p>
+     * 
+     * @param ignoreHeaderCase whether or not to ignore case when accessing header names.
+     *            <code>null</code> value allowed.
+     * @return Current {@code CsvDataFormat}, fluent API.
+     */
+    public CsvDataFormat setIgnoreHeaderCase(Boolean ignoreHeaderCase) {
+        this.ignoreHeaderCase = ignoreHeaderCase;
+        return this;
+    }
+
+    /**
+     * Indicates whether or not to ignore case when accessing header names.
+     * 
+     * @return {@link Boolean#TRUE} if case should be ignored when accessing
+     *         header name. {@link Boolean#FALSE} otherwise. Could return
+     *         <code>null</code> if value has NOT been set.
+     */
+    public Boolean getIgnoreHeaderCase() {
+        return ignoreHeaderCase;
+    }
+
+    /**
+     * Sets whether or not to add a trailing delimiter.
+     * <p>
+     * If {@code null} then the default value of the format used.
+     * </p>
+     * 
+     * @param trailingDelimiter whether or not to add a trailing delimiter.
+     * @return Current {@code CsvDataFormat}, fluent API.
+     */
+    public CsvDataFormat setTrailingDelimiter(Boolean trailingDelimiter) {
+        this.trailingDelimiter = trailingDelimiter;
+        return this;
+    }
+
+    /**
+     * Indicates whether or not to add a trailing delimiter.
+     * 
+     * @return {@link Boolean#TRUE} if a trailing delimiter should be added.
+     *         {@link Boolean#FALSE} otherwise. Could return <code>null</code>
+     *         if value has NOT been set.
+     */
+    public Boolean getTrailingDelimiter() {
+        return trailingDelimiter;
+    }
 }

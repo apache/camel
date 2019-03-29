@@ -3,7 +3,6 @@
 ### Introduction
 An example which uses code-first to expose a web service in Camel running on Apache Tomcat.
 
-
 ### Build
 It can be run using Maven.
 
@@ -55,11 +54,6 @@ soapUI, making sample SOAP requests such as the following:
 	        </ns1:statusIncident>
 	    </soap:Body>
 	</soap:Envelope>
-
-### Documentation
-
-This example is further documented at
-  [http://camel.apache.org/cxf-tomcat-example.html](http://camel.apache.org/cxf-tomcat-example.html)
 
 ### Forum, Help, etc
 

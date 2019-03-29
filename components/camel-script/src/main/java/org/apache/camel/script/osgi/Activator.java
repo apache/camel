@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.script.osgi;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
@@ -30,11 +31,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 
-import org.apache.camel.impl.osgi.tracker.BundleTracker;
-import org.apache.camel.impl.osgi.tracker.BundleTrackerCustomizer;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.util.IOHelper;
 import org.osgi.framework.Bundle;
@@ -46,6 +46,9 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.framework.wiring.BundleWiring;
+import org.osgi.util.tracker.BundleTracker;
+import org.osgi.util.tracker.BundleTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +62,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
     private ServiceRegistration<LanguageResolver> registration;
 
     private Map<Long, List<BundleScriptEngineResolver>> resolvers 
-        = new ConcurrentHashMap<Long, List<BundleScriptEngineResolver>>();
+        = new ConcurrentHashMap<>();
 
     public static BundleContext getBundleContext() {
         return context;
@@ -86,7 +89,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
     }
 
     public Object addingBundle(Bundle bundle, BundleEvent event) {
-        List<BundleScriptEngineResolver> r = new ArrayList<BundleScriptEngineResolver>();
+        List<BundleScriptEngineResolver> r = new ArrayList<>();
         registerScriptEngines(bundle, r);
         for (BundleScriptEngineResolver service : r) {
             service.register();
@@ -115,7 +118,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
 
     private String[] getAvailableScriptNames() {
         // use a set to avoid duplicate names
-        Set<String> names = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+        Set<String> names = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
         for (List<BundleScriptEngineResolver> list : resolvers.values()) {
             for (BundleScriptEngineResolver r : list) {
                 names.addAll(r.getScriptNames());
@@ -157,7 +160,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
             return null;
         }
         
-        LOG.debug("Found " + refs.length + " OSGi ScriptEngineResolver services");
+        LOG.debug("Found {} OSGi ScriptEngineResolver services", refs.length);
         
         for (ServiceReference<?> ref : refs) {
             ScriptEngineResolver resolver = (ScriptEngineResolver) context.getService(ref);
@@ -172,13 +175,14 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
     }
 
     protected void registerScriptEngines(Bundle bundle, List<BundleScriptEngineResolver> resolvers) {
-        URL configURL = null;
-        for (Enumeration<?> e = bundle.findEntries(META_INF_SERVICES_DIR, SCRIPT_ENGINE_SERVICE_FILE, false); e != null && e.hasMoreElements();) {
-            configURL = (URL) e.nextElement();
-        }
-        if (configURL != null) {
-            LOG.info("Found ScriptEngineFactory in bundle: {}", bundle.getSymbolicName());
-            resolvers.add(new BundleScriptEngineResolver(bundle, configURL));
+        try {
+            for (Enumeration<?> e = bundle.adapt(BundleWiring.class).getClassLoader().getResources(META_INF_SERVICES_DIR + "/" + SCRIPT_ENGINE_SERVICE_FILE); e != null && e.hasMoreElements();) {
+                URL configURL = (URL) e.nextElement();
+                LOG.info("Found ScriptEngineFactory in bundle: {}", bundle.getSymbolicName());
+                resolvers.add(new BundleScriptEngineResolver(bundle, configURL));
+            }
+        } catch (IOException e) {
+            LOG.info("Error loading script engine factory", e);
         }
     }
 
@@ -248,7 +252,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
                 }
                 return (ScriptEngineFactory) cls.newInstance();
             } catch (Exception e) {
-                LOG.warn("Cannot create the ScriptEngineFactory: " + e.getClass().getName(), e);
+                LOG.warn("Cannot create the ScriptEngineFactory: {}", e.getClass().getName(), e);
                 return null;
             }
         }
@@ -277,7 +281,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
                     return null;
                 }
             } catch (Exception e) {
-                LOG.warn("Cannot create ScriptEngineFactory: " + e.getClass().getName(), e);
+                LOG.warn("Cannot create ScriptEngineFactory: {}", e.getClass().getName(), e);
                 return null;
             }
 

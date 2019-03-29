@@ -1,0 +1,40 @@
+[[Camel2.22.3Release-Camel2.22.3Release]]
+== Camel 2.22.3 Release
+ 
+### New and Noteworthy
+
+Welcome to the Apache Camel 2.22.3 release which is a maintenance patch release and resolved
+44 issues.
+
+
+### Known Issues
+
+* See <<Camel2.22.0Release,Camel 2.22.0 Release>>
+
+### Important changes to consider when upgrading
+
+* See <<Camel2.22.0Release,Camel 2.22.0 Release>>
+
+### Getting the Binaries using Maven
+
+To use this release in your maven project, the proper dependency
+configuration that you should use in your
+http://maven.apache.org/guides/introduction/introduction-to-the-pom.html[Maven
+POM] is:
+
+[source,java]
+-------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-core</artifactId>
+  <version>2.22.3</version>
+</dependency>
+-------------------------------------
+
+### Changelog
+
+For a more detailed view of new features and bug fixes, see the:
+
+https://issues.apache.org/jira/secure/ReleaseNote.jspa?version=12344398&projectId=12311211[Release
+notes for 2.22.3]
+

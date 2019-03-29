@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,15 +22,22 @@ import org.apache.camel.component.sql.stored.template.ast.ParseRuntimeException;
 import org.apache.camel.component.sql.stored.template.ast.Template;
 import org.apache.camel.component.sql.stored.template.generated.ParseException;
 import org.apache.camel.component.sql.stored.template.generated.SSPTParser;
+import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.util.ObjectHelper;
 
 public class TemplateParser {
 
+    private final ClassResolver classResolver;
+
+    public TemplateParser(ClassResolver classResolver) {
+        ObjectHelper.notNull(classResolver, "classResolver");
+        this.classResolver = classResolver;
+    }
+
     public Template parseTemplate(String template) {
         try {
-            SSPTParser parser = new SSPTParser(new StringReader(template));
-            Template ret = validate(parser.parse());
-
-            return ret;
+            SSPTParser parser = new SSPTParser(new StringReader(template), classResolver);
+            return validate(parser.parse());
 
         } catch (ParseException parseException) {
             throw new ParseRuntimeException(parseException);

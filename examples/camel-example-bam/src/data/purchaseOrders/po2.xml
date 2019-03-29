@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<purchaseOrder id="p2">
-  <product>pizza</product>
-  <amount>2</amount>
-  <price>9.95</price>
-</purchaseOrder>

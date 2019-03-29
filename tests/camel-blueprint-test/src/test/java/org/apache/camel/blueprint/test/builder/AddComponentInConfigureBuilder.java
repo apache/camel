@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,20 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.blueprint.test.builder;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.timer.TimerComponent;
-import org.apache.camel.model.ModelCamelContext;
 
 public class AddComponentInConfigureBuilder extends RouteBuilder {
     @Override
     public void configure() throws Exception {
-        ModelCamelContext context = getContext();
-        TimerComponent timerComponent = new TimerComponent();
-
-        getContext().addComponent("my-timer", timerComponent);
+        getContext().addComponent("my-timer", new TimerComponent());
 
         from("my-timer://test-timer?period=1000")
                 .to("mock://result");

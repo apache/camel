@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,6 +24,7 @@ import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.script.Compilable;
 import javax.script.CompiledScript;
 import javax.script.ScriptContext;
@@ -38,18 +39,15 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A builder class for creating {@link Processor}, {@link Expression} and
  * {@link Predicate} objects using the JSR 223 scripting engine.
- *
- * @version
  */
 public class ScriptBuilder implements Expression, Predicate, Processor {
 
@@ -129,7 +127,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         try {
             // if we have camel context then load resources
             if (camelContext != null && scriptResource != null) {
-                reader = createScriptReader(camelContext.getClassResolver(), scriptResource);
+                reader = createScriptReader(camelContext, scriptResource);
             } else if (this.scriptText != null) {
                 reader = new StringReader(this.scriptText);
             }
@@ -194,7 +192,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
      */
     public ScriptBuilder attribute(String name, Object value) {
         if (attributes == null) {
-            attributes = new HashMap<String, Object>();
+            attributes = new HashMap<>();
         }
         attributes.put(name, value);
         return this;
@@ -361,7 +359,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
                     break;
                 }
             } catch (NoClassDefFoundError ex) {
-                LOG.warn("Cannot load ScriptEngine for " + name + ". Please ensure correct JARs is provided on classpath (stacktrace in DEBUG logging).");
+                LOG.warn("Cannot load ScriptEngine for {}. Please ensure correct JARs is provided on classpath (stacktrace in DEBUG logging).", name);
                 // include stacktrace in debug logging
                 LOG.debug("Cannot load ScriptEngine for " + name + ". Please ensure correct JARs is provided on classpath.", ex);
             }
@@ -410,7 +408,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
             }
         } catch (ScriptException e) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Script evaluation failed: " + e.getMessage(), e);
+                LOG.debug("Script evaluation failed: {}", e.getMessage(), e);
             }
             if (e.getCause() != null) {
                 throw createScriptEvaluationException(e.getCause());
@@ -450,7 +448,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     }
 
     private boolean getCamelContextProperty(CamelContext camelContext, String propertyKey) {
-        String propertyValue =  camelContext.getProperty(propertyKey);
+        String propertyValue =  camelContext.getGlobalOption(propertyKey);
         if (propertyValue != null) {
             return camelContext.getTypeConverter().convertTo(boolean.class, propertyValue);
         } else {
@@ -468,7 +466,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
                 LOG.trace("Evaluate script for context: {} on exchange: {}", context, exchange);
                 result = engine.eval(scriptText, context);
             } else if (scriptResource != null) {
-                Reader reader = createScriptReader(exchange.getContext().getClassResolver(), scriptResource);
+                Reader reader = createScriptReader(exchange.getContext(), scriptResource);
                 try {
                     LOG.trace("Evaluate script for context: {} on exchange: {}", context, exchange);
                     result = engine.eval(reader, context);
@@ -529,8 +527,8 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         }
     }
 
-    protected static InputStreamReader createScriptReader(ClassResolver classResolver, String resource) throws IOException {
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(classResolver, resource);
+    protected static InputStreamReader createScriptReader(CamelContext camelContext, String resource) throws IOException {
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, resource);
         return new InputStreamReader(is);
     }
 

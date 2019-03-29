@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,8 +24,8 @@ import org.apache.camel.component.linkedin.api.OAuthToken;
  */
 public class CachingOAuthSecureStorage implements OAuthSecureStorage {
 
+    protected OAuthToken token;
     private final OAuthSecureStorage secureStorage;
-    private OAuthToken token;
 
     public CachingOAuthSecureStorage(OAuthSecureStorage secureStorage) {
         this.secureStorage = secureStorage;

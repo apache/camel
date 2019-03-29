@@ -1,0 +1,49 @@
+== Hystrix Component
+
+*Available as of Camel version 2.18*
+
+The hystrix component integrates Netflix Hystrix circuit breaker in Camel routes.
+
+For more details see the Hystrix EIP documentation.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-hystrix</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-hystrix-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.hystrix.mapping.enabled* | Enables the automatic mapping of the hystrics metric servlet into the Spring web context. | true | Boolean
+| *camel.component.hystrix.mapping.path* | Endpoint for hystrix metrics servlet. | /hystrix.stream | String
+| *camel.component.hystrix.mapping.servlet-name* | Name of the Hystrix metrics servlet. | HystrixEventStreamServlet | String
+|===
+// spring-boot-auto-configure options: END

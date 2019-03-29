@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,14 +19,14 @@ package org.apache.camel.component.cxf.jaxrs;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+import javax.ws.rs.client.AsyncInvoker;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.cxf.message.Exchange;
 
 /**
  * Interface to bind between Camel and CXF exchange for RESTful resources.
- *
- * @version 
  */
 public interface CxfRsBinding {
 
@@ -104,4 +104,14 @@ public interface CxfRsBinding {
                                                           org.apache.camel.Exchange camelExchange)
         throws Exception;
 
+    /**
+     * Bind the Camel message to a request {@link Entity} that gets passed to {@link AsyncInvoker#method(java.lang.String, javax.ws.rs.client.Entity, javax.ws.rs.client.InvocationCallback)}.
+     *
+     * @param camelMessage  the source message
+     * @param camelExchange the Camel exchange
+     * @param body the message body
+     * @throws Exception can be thrown if error in the binding process
+     * @return the {@link Entity} to use
+     */
+    Entity<Object> bindCamelMessageToRequestEntity(Object body, org.apache.camel.Message camelMessage, org.apache.camel.Exchange camelExchange) throws Exception;
 }

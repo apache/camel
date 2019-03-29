@@ -1,0 +1,20 @@
+{
+  "compositeResponse" : [ {
+    "body" : [ {
+      "errorCode" : "PROCESSING_HALTED",
+      "message" : "The transaction was rolled back since another operation in the same transaction failed."
+    } ],
+    "httpHeaders" : { },
+    "httpStatusCode" : 400,
+    "referenceId" : "NewPayment1"
+  }, {
+    "body" : [ {
+      "message" : "Foreign key external ID: 0116 not found for field Invoice_External_Id__c in entity blng__Invoice__c",
+      "errorCode" : "INVALID_FIELD",
+      "fields" : [ ]
+    } ],
+    "httpHeaders" : { },
+    "httpStatusCode" : 400,
+    "referenceId" : "NewPayment2"
+  } ]
+}

@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.rest-swagger.enabled",
+      "description": "Enable rest-swagger component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

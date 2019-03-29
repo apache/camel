@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,10 +36,10 @@ import org.apache.camel.util.CollectionStringBuffer;
 @UriParams
 public class ZooKeeperConfiguration implements Cloneable {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String serverUrls;
     private List<String> servers;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String path;
     @UriParam(defaultValue = "5000")
     private int timeout = 5000;
@@ -61,7 +61,7 @@ public class ZooKeeperConfiguration implements Cloneable {
 
     public void addZookeeperServer(String server) {
         if (servers == null) {
-            servers = new ArrayList<String>();
+            servers = new ArrayList<>();
         }
         servers.add(server);
     }

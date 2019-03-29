@@ -1,0 +1,60 @@
+[[WhatisCamel-WhatisCamel]]
+=== What is Camel?
+Apache Camel (TM) is a versatile open-source integration framework based on
+known link:../enterprise-integration-patterns.adoc[Enterprise Integration
+Patterns].
+
+Camel empowers you to define routing and mediation rules in a variety of
+domain-specific languages, including a Java-based link:../dsl.adoc[Fluent
+API], link:../spring.adoc[Spring] or
+link:../using-osgi-blueprint-with-camel.adoc[Blueprint]
+link:../xml-configuration.adoc[XML Configuration] files, and a
+link:../scala-dsl.adoc[Scala DSL]. This means you get smart completion of
+routing rules in your IDE, whether in a Java, Scala or XML editor.
+
+Apache Camel uses link:../uris.adoc[URIs] to work directly with any kind of
+link:../transport.adoc[Transport] or messaging model such as
+<<http-component,HTTP>>, link:activemq.adoc[ActiveMQ], <<jms-component,JMS>>,
+JBI, SCA, <<mina-component,MINA>> or <<cxf-component,CXF>>, as
+well as pluggable link:../component.adoc[Components] and
+link:../data-format.adoc[Data Format] options. Apache Camel is a small
+library with minimal link:what-are-the-dependencies.adoc[dependencies]
+for easy embedding in any Java application. Apache Camel lets you work
+with the same link:../exchange.adoc[API] regardless which kind of
+link:../transport.adoc[Transport] is used -- so learn the API once and you
+can interact with all the link:components.adoc[Components] provided
+out-of-box.
+
+Apache Camel provides support for link:bean-binding.adoc[Bean Binding]
+and seamless integration with popular frameworks such as
+<<cdi-component,CDI>>, link:../spring.adoc[Spring],
+link:../using-osgi-blueprint-with-camel.adoc[Blueprint] and
+link:../guice.adoc[Guice]. Camel also has extensive support for
+link:../testing.adoc[unit testing] your routes.
+
+The following projects can leverage Apache Camel as a routing and
+mediation engine:
+
+* http://servicemix.apache.org/[Apache ServiceMix] -- a popular
+distributed open source ESB and JBI container
+* http://activemq.apache.org/[Apache ActiveMQ] -- a mature, widely used
+open source message broker
+* http://cxf.apache.org/[Apache CXF] -- a smart web services suite
+(JAX-WS and JAX-RS)
+* http://karaf.apache.org/[Apache Karaf] -- a small OSGi based runtime in
+which applications can be deployed
+* http://mina.apache.org/[Apache MINA] -- a high-performance
+http://en.wikipedia.org/wiki/New_I/O[NIO]-driven networking framework
+
+So don't get the hump -- try Camel today! :smile:
+
+[NOTE]
+====
+*Too many buzzwords -- what exactly is Camel?*
+
+Okay, so the description above is technology focused.
+There's a great discussion about Camel at
+http://stackoverflow.com/questions/8845186/what-exactly-is-apache-camel[Stack
+Overflow]. We suggest you view the post, read the comments, and browse
+the suggested links for more details.
+====

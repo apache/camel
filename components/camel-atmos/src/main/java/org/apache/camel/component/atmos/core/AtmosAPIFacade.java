@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -103,7 +103,7 @@ public final class AtmosAPIFacade {
                 throw new AtmosException(atmosPath + " exists on atmos and is not a folder!");
             }
             atmosPath = atmosPath + fileLocalPath.getName();
-            resultEntries = new HashMap<String, AtmosResultCode>(1);
+            resultEntries = new HashMap<>(1);
             try {
                 ObjectId uploadedFile = putSingleFile(fileLocalPath, atmosPath);
                 if (uploadedFile == null) {
@@ -131,7 +131,7 @@ public final class AtmosAPIFacade {
             if (listFiles == null || listFiles.isEmpty()) {
                 throw new AtmosException(localPath + " does not contain any files");
             }
-            resultEntries = new HashMap<String, AtmosResultCode>(listFiles.size());
+            resultEntries = new HashMap<>(listFiles.size());
             for (File file : listFiles) {
                 String absPath = file.getAbsolutePath();
                 int indexRemainingPath = localPath.length();
@@ -216,7 +216,7 @@ public final class AtmosAPIFacade {
     public AtmosResult get(String remotePath) throws AtmosException {
         AtmosResult result = new AtmosFileDownloadResult();
         //a map representing for each path the result of the baos
-        Map<String, ByteArrayOutputStream> resultEntries = new HashMap<String, ByteArrayOutputStream>();
+        Map<String, ByteArrayOutputStream> resultEntries = new HashMap<>();
         //iterate from the remotePath
         downloadFilesInFolder(remotePath, resultEntries);
         //put the map of baos as result
@@ -242,7 +242,7 @@ public final class AtmosAPIFacade {
                     //get the baos of the file
                     downloadSingleFile(atmosEntry.getPath().concat(entry.getFilename()), resultEntries);
                 } catch (AtmosException e) {
-                    LOG.warn("Cannot download from " + entry.getFilename());
+                    LOG.warn("Cannot download from {}", entry.getFilename());
                 }
             } else {
                 //iterate on folder

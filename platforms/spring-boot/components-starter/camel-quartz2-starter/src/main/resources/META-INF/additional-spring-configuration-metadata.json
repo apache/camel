@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.quartz2.enabled",
+      "description": "Enable quartz2 component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

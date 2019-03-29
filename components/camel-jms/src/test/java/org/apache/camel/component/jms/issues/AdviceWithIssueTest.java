@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,9 +18,12 @@ package org.apache.camel.component.jms.issues;
 
 import java.util.Collections;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -36,7 +39,7 @@ public class AdviceWithIssueTest extends CamelTestSupport {
 
     @Test
     public void testAdviceWith() throws Exception {
-        context.getRouteDefinition("starter").adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition("starter"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // when advicing then use wildcard as URI options cannot be matched
@@ -51,6 +54,14 @@ public class AdviceWithIssueTest extends CamelTestSupport {
         template.sendBody("direct:start", Collections.singletonMap("foo", "bar"));
 
         assertMockEndpointsSatisfied();
+    }
+    
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
+        JmsComponent activemq =
+            JmsComponent.jmsComponent();
+        camelContext.addComponent("activemq", activemq);
+        return camelContext;
     }
 
     @Override

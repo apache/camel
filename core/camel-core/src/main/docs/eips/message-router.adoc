@@ -1,0 +1,71 @@
+[[MessageRouter-MessageRouter]]
+== Message Router
+
+The
+http://www.enterpriseintegrationpatterns.com/MessageRouter.html[Message
+Router] from the link:enterprise-integration-patterns.html[EIP patterns]
+allows you to consume from an input destination, evaluate some predicate
+then choose the right output destination.
+
+image:http://www.enterpriseintegrationpatterns.com/img/MessageRouter.gif[image]
+
+The following example shows how to route a request from an input
+*queue:a* endpoint to either *queue:b*, *queue:c* or *queue:d* depending
+on the evaluation of various link:predicate.html[Predicate] expressions
+
+=== Examples
+
+The following example shows how to route a request from an input
+*seda:a* endpoint to either *seda:b*, *seda:c* or *seda:d* depending on
+the evaluation of various link:predicate.html[Predicate] expressions
+
+[source,java]
+----
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+        from("direct:a")
+            .choice()
+                .when(simple("${header.foo} == 'bar'"))
+                    .to("direct:b")
+                .when(simple("${header.foo} == 'cheese'"))
+                    .to("direct:c")
+                .otherwise()
+                    .to("direct:d");
+    }
+};
+----
+
+TIP: See link:why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.html[Why
+can I not use when or otherwise in a Java Camel route] if you have
+problems with the Java DSL, accepting using `when` or `otherwise`.
+
+And the same example using XML:
+
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:a"/>
+        <choice>
+            <when>
+                <simple>${header.foo} == 'bar'</simple>
+                <to uri="direct:b"/>
+            </when>
+            <when>
+                <simple>${header.foo} == 'cheese'</simple>
+                <to uri="direct:c"/>
+            </when>
+            <otherwise>
+                <to uri="direct:d"/>
+            </otherwise>
+        </choice>
+    </route>
+</camelContext>
+----
+
+[[MessageRouter-Choicewithoutotherwise]]
+=== Choice without otherwise
+
+If you use a `choice` without adding an `otherwise`, any unmatched
+exchanges will be dropped by default.
+

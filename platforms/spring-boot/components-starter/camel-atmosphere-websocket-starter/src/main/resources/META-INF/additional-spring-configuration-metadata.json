@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.atmosphere-websocket.enabled",
+      "description": "Enable atmosphere-websocket component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

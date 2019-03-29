@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,34 +16,61 @@
  */
 package org.apache.camel.component.asterisk;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
+import org.asteriskjava.manager.ManagerEventListener;
+import org.asteriskjava.manager.event.ManagerEvent;
 
 /**
  * The Asterisk consumer.
  */
 public class AsteriskConsumer extends DefaultConsumer {
     private final AsteriskEndpoint endpoint;
-    private final AsteriskListenerTask task;
+    private final AsteriskConnection connection;
+    private final ManagerEventListener listener;
 
     public AsteriskConsumer(AsteriskEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
+
         this.endpoint = endpoint;
-        this.task = new AsteriskListenerTask(endpoint, this);
+        this.connection = new AsteriskConnection(endpoint.getHostname(), endpoint.getUsername(), endpoint.getPassword());
+        this.listener = new EventListener();
     }
 
     @Override
     protected void doStart() throws Exception {
+        connection.connect();
+        connection.addListener(listener);
+        connection.login();
+
         super.doStart();
-        log.info("Starting Asterisk AMI Event Listener");
-        endpoint.addListener(task);
-        endpoint.login();
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        log.info("Stopping Asterisk AMI Event Listener");
-        endpoint.logoff();
+
+        connection.removeListener(listener);
+        connection.logoff();
+    }
+
+    // *******************************
+    //
+    // *******************************
+
+    private final class EventListener implements ManagerEventListener {
+        @Override
+        public void onManagerEvent(ManagerEvent event) {
+            Exchange exchange = endpoint.createExchange();
+            exchange.getIn().setHeader(AsteriskConstants.EVENT_NAME, event.getClass().getSimpleName());
+            exchange.getIn().setBody(event);
+
+            try {
+                getProcessor().process(exchange);
+            } catch (Exception e) {
+                getExceptionHandler().handleException("Error processing exchange.", exchange, e);
+            }
+        }
     }
 }

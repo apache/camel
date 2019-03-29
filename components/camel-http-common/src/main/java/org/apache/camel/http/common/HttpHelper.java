@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,12 +34,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeExchangeException;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.CamelObjectInputStream;
+import org.apache.camel.support.CamelObjectInputStream;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
@@ -86,14 +86,11 @@ public final class HttpHelper {
         return new int[]{major, minor};
     }
 
-    @SuppressWarnings("deprecation")
     public static void setCharsetFromContentType(String contentType, Exchange exchange) {
         if (contentType != null) {
-            // find the charset and set it to the Exchange
-            int index = contentType.indexOf("charset=");
-            if (index > 0) {
-                String charset = contentType.substring(index + 8);
-                exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(charset));
+            String charset = getCharsetFromContentType(contentType);
+            if (charset != null) {
+                exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(charset));
             }
         }
     }
@@ -106,7 +103,7 @@ public final class HttpHelper {
                 String charset = contentType.substring(index + 8);
                 // there may be another parameter after a semi colon, so skip that
                 if (charset.contains(";")) {
-                    charset = ObjectHelper.before(charset, ";");
+                    charset = StringHelper.before(charset, ";");
                 }
                 return IOHelper.normalizeCharset(charset);
             }
@@ -356,7 +353,7 @@ public final class HttpHelper {
             if (existing instanceof List) {
                 list = (List<Object>) existing;
             } else {
-                list = new ArrayList<Object>();
+                list = new ArrayList<>();
                 list.add(existing);
             }
             list.add(value);
@@ -389,7 +386,7 @@ public final class HttpHelper {
         if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
             // remove the [ ] markers
             trimmed = trimmed.substring(1, trimmed.length() - 1);
-            List<String> list = new ArrayList<String>();
+            List<String> list = new ArrayList<>();
             String[] values = trimmed.split(",");
             for (String s : values) {
                 list.add(s.trim());
@@ -420,7 +417,7 @@ public final class HttpHelper {
             relativeUrl = endpoint.getHttpUri().toASCIIString();
             // strip query parameters from relative url
             if (relativeUrl.contains("?")) {
-                relativeUrl = ObjectHelper.before(relativeUrl, "?");
+                relativeUrl = StringHelper.before(relativeUrl, "?");
             }
             if (url.startsWith(relativeUrl)) {
                 baseUrl = url.substring(0, relativeUrl.length());
@@ -512,18 +509,23 @@ public final class HttpHelper {
             queryString = endpoint.getHttpUri().getRawQuery();
         }
 
-        // compute what method to use either GET or POST
         HttpMethods answer;
-        HttpMethods m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, HttpMethods.class);
-        if (m != null) {
-            // always use what end-user provides in a header
-            answer = m;
-        } else if (queryString != null) {
-            // if a query string is provided then use GET
-            answer = HttpMethods.GET;
+        if (endpoint.getHttpMethod() != null) {
+            // endpoint configured take precedence
+            answer = endpoint.getHttpMethod();
         } else {
-            // fallback to POST if we have payload, otherwise GET
-            answer = hasPayload ? HttpMethods.POST : HttpMethods.GET;
+            // compute what method to use either GET or POST (header take precedence)
+            HttpMethods m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, HttpMethods.class);
+            if (m != null) {
+                // always use what end-user provides in a header
+                answer = m;
+            } else if (queryString != null) {
+                // if a query string is provided then use GET
+                answer = HttpMethods.GET;
+            } else {
+                // fallback to POST if we have payload, otherwise GET
+                answer = hasPayload ? HttpMethods.POST : HttpMethods.GET;
+            }
         }
 
         return answer;
@@ -537,9 +539,22 @@ public final class HttpHelper {
      * @return <tt>true</tt> if ok, <tt>false</tt> otherwise
      */
     public static boolean isStatusCodeOk(int statusCode, String okStatusCodeRange) {
-        int from = Integer.valueOf(ObjectHelper.before(okStatusCodeRange, "-"));
-        int to = Integer.valueOf(ObjectHelper.after(okStatusCodeRange, "-"));
-        return statusCode >= from && statusCode <= to;
+        String[] ranges = okStatusCodeRange.split(",");
+        for (String range : ranges) {
+            boolean ok;
+            if (range.contains("-")) {
+                int from = Integer.valueOf(StringHelper.before(range, "-"));
+                int to = Integer.valueOf(StringHelper.after(range, "-"));
+                ok =  statusCode >= from && statusCode <= to;
+            } else {
+                int exact = Integer.valueOf(range);
+                ok = exact == statusCode;
+            }
+            if (ok) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

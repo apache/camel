@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -37,6 +37,8 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     @UriParam(label = "security", secret = true)
     private String privateKeyFile;
     @UriParam(label = "security", secret = true)
+    private byte[] privateKeyBytes;
+    @UriParam(label = "security", secret = true)
     private String privateKeyFilePassphrase;
     @UriParam(enums = "no,yes", defaultValue = "no")
     private String strictHostKeyChecking;
@@ -68,6 +70,7 @@ public class ScpConfiguration extends RemoteFileConfiguration {
 
     /**
      * Sets the known_hosts file, so that the jsch endpoint can do host key verification.
+     * You can prefix with classpath: to load the file from classpath instead of file system.
      */
     public void setKnownHostsFile(String knownHostsFile) {
         this.knownHostsFile = knownHostsFile;
@@ -89,10 +92,23 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set the private key file to that the SFTP endpoint can do private key verification.
+     * Set the private key file to that the endpoint can do private key verification.
+     * You can prefix with classpath: to load the file from classpath instead of file system.
      */
     public void setPrivateKeyFile(String privateKeyFile) {
         this.privateKeyFile = privateKeyFile;
+    }    
+
+    public byte[] getPrivateKeyBytes() {
+        return privateKeyBytes;
+    }
+
+    /**
+     * Set the private key bytes to that the endpoint can do private key verification.
+     * This must be used only if privateKeyFile wasn't set. Otherwise the file will have the priority.
+     */
+    public void setPrivateKeyBytes(byte[] privateKeyBytes) {
+        this.privateKeyBytes = privateKeyBytes;
     }
 
     public String getPrivateKeyFilePassphrase() {
@@ -100,7 +116,7 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set the private key file passphrase to that the SFTP endpoint can do private key verification.
+     * Set the private key file passphrase to that the endpoint can do private key verification.
      */
     public void setPrivateKeyFilePassphrase(String privateKeyFilePassphrase) {
         this.privateKeyFilePassphrase = privateKeyFilePassphrase;

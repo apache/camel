@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -50,7 +50,7 @@ public class QuickfixjConfiguration {
 
     public void addSessionSetting(SessionID sessionID, Map<Object, Object> settings) {
         if (sessionSettings == null) {
-            sessionSettings = new HashMap<SessionID, Map<Object, Object>>();
+            sessionSettings = new HashMap<>();
         }
         sessionSettings.put(sessionID, settings);
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,15 +16,14 @@
  */
 package org.apache.camel.spring.postprocessor;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
-public class PlainSpringCustomPostProcessorOnRouteBuilderTest extends TestCase {
+public class PlainSpringCustomPostProcessorOnRouteBuilderTest extends Assert {
 
+    @Test
     public void testShouldProcessAnnotatedFields() {
 
         ApplicationContext context = new ClassPathXmlApplicationContext("classpath:/org/apache/camel/spring/postprocessor/plainSpringCustomPostProcessorOnRouteBuilderTest.xml");

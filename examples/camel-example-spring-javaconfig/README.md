@@ -25,9 +25,6 @@ To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 You can see the routing rules by looking at the java code in the
 `src/main/java directory`
 
-### Documentation
-This example is documented at <http://camel.apache.org/spring-java-config-example.html>
-
 ### Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums

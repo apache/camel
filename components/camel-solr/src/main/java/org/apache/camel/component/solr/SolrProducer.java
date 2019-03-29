@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,7 +25,7 @@ import javax.activation.MimetypesFileTypeMap;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;
@@ -137,6 +137,13 @@ public class SolrProducer extends DefaultProducer {
                 UpdateRequest updateRequest = new UpdateRequest(getRequestHandler());
                 updateRequest.add((SolrInputDocument) body);
 
+                for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
+                    if (entry.getKey().startsWith(SolrConstants.PARAM)) {
+                        String paramName = entry.getKey().substring(SolrConstants.PARAM.length());
+                        updateRequest.setParam(paramName, entry.getValue().toString());
+                    }
+                }
+
                 updateRequest.process(solrServer);
 
             } else if (body instanceof List<?>) {
@@ -145,6 +152,13 @@ public class SolrProducer extends DefaultProducer {
                 if (list.size() > 0 && list.get(0) instanceof SolrInputDocument) {
                     UpdateRequest updateRequest = new UpdateRequest(getRequestHandler());
                     updateRequest.add((List<SolrInputDocument>) list);
+
+                    for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
+                        if (entry.getKey().startsWith(SolrConstants.PARAM)) {
+                            String paramName = entry.getKey().substring(SolrConstants.PARAM.length());
+                            updateRequest.setParam(paramName, entry.getValue().toString());
+                        }
+                    }
 
                     updateRequest.process(solrServer);
                 } else {

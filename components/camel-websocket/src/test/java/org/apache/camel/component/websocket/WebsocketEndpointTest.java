@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,19 +25,16 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 
-/**
- *
- */
 @RunWith(MockitoJUnitRunner.class)
 public class WebsocketEndpointTest {
 
@@ -52,9 +49,6 @@ public class WebsocketEndpointTest {
 
     private WebsocketEndpoint websocketEndpoint;
 
-    /**
-     * @throws Exception
-     */
     @Before
     public void setUp() throws Exception {
         websocketEndpoint = new WebsocketEndpoint(component, URI, REMAINING, null);

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,8 +31,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Unit test for the <tt>transferExchange=true</tt> option.
- *
- * @version
  */
 public class Mina2TransferExchangeOptionTest extends BaseMina2Test {
 

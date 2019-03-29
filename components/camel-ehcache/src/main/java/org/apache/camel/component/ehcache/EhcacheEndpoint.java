@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,39 +19,40 @@ package org.apache.camel.component.ehcache;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The ehcache component enables you to perform caching operations using <a href="http://www.ehcache.org">Ehcache</a> as cache implementation.
  */
-@UriEndpoint(scheme = "ehcache", title = "Ehcache", syntax = "ehcache:cacheName", consumerClass = EhcacheConsumer.class, label = "cache,datagrid,clustering")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "ehcache", title = "Ehcache", syntax = "ehcache:cacheName", label = "cache,datagrid,clustering")
 public class EhcacheEndpoint extends DefaultEndpoint {
     @UriPath(description = "the cache name")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String cacheName;
-
+    @UriParam
     private final EhcacheConfiguration configuration;
     private final EhcacheManager cacheManager;
 
-    EhcacheEndpoint(String uri, EhcacheComponent component, EhcacheConfiguration configuration) throws Exception {
+    EhcacheEndpoint(String uri, EhcacheComponent component,  String cacheName, EhcacheManager cacheManager, EhcacheConfiguration configuration) throws Exception {
         super(uri, component);
 
-        this.cacheName = configuration.getCacheName();
+        this.cacheName = cacheName;
         this.configuration = configuration;
-        this.cacheManager = new EhcacheManager(configuration);
+        this.cacheManager = cacheManager;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new EhcacheProducer(this, configuration);
+        return new EhcacheProducer(this, this.cacheName, configuration);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new EhcacheConsumer(this, configuration, processor);
+        return new EhcacheConsumer(this, this.cacheName, configuration, processor);
     }
 
     @Override
@@ -71,11 +72,6 @@ public class EhcacheEndpoint extends DefaultEndpoint {
         cacheManager.stop();
     }
 
-    @Override
-    public EhcacheComponent getComponent() {
-        return (EhcacheComponent) super.getComponent();
-    }
-
     EhcacheManager getManager() {
         return cacheManager;
     }
@@ -83,5 +79,4 @@ public class EhcacheEndpoint extends DefaultEndpoint {
     EhcacheConfiguration getConfiguration() {
         return configuration;
     }
-
 }

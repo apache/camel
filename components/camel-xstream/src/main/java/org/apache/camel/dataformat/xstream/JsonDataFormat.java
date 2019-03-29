@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,25 +32,24 @@ import com.thoughtworks.xstream.io.json.JsonWriter;
 import com.thoughtworks.xstream.io.xml.QNameMap;
 import com.thoughtworks.xstream.io.xml.StaxReader;
 import com.thoughtworks.xstream.io.xml.StaxWriter;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.annotations.Dataformat;
 import org.codehaus.jettison.mapped.MappedXMLInputFactory;
 import org.codehaus.jettison.mapped.MappedXMLOutputFactory;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link org.apache.camel.spi.DataFormat}) using XStream and Jettison to marshal to and from JSON
- *
- * @version
  */
+@Dataformat("json-xstream")
 public class JsonDataFormat extends AbstractXStreamWrapper {
     private final MappedXMLOutputFactory mof;
     private final MappedXMLInputFactory mif;
     private boolean prettyPrint;
 
     public JsonDataFormat() {
-        final Map<?, ?> nstjsons = new HashMap<Object, Object>();
+        final Map<?, ?> nstjsons = new HashMap<>();
         mof = new MappedXMLOutputFactory(nstjsons);
         mif = new MappedXMLInputFactory(nstjsons);
     }
@@ -66,6 +65,19 @@ public class JsonDataFormat extends AbstractXStreamWrapper {
 
     public void setPrettyPrint(boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
+    }
+
+    @Override
+    public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
+        super.marshal(exchange, body, stream);
+
+        if (isContentTypeHeader()) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            }
+        }
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ package org.apache.camel.component.mail;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 
@@ -38,7 +39,7 @@ import org.jvnet.mock_javamail.Mailbox;
  */
 public class MailAttachmentRedeliveryTest extends CamelTestSupport {
 
-    private final List<String> names = new ArrayList<String>();
+    private final List<String> names = new ArrayList<>();
 
     @Test
     public void testSendAndReceiveMailWithAttachmentsRedelivery() throws Exception {
@@ -61,13 +62,10 @@ public class MailAttachmentRedeliveryTest extends CamelTestSupport {
         // and let it go (processes the exchange by sending the email)
         producer.process(exchange);
 
-        // need some time for the mail to arrive on the inbox (consumed and sent to the mock)
-        Thread.sleep(2000);
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        Exchange out = mock.assertExchangeReceived(0);
         mock.assertIsSatisfied();
+        Exchange out = mock.assertExchangeReceived(0);
 
         // plain text
         assertEquals("Hello World", out.getIn().getBody(String.class));
@@ -100,7 +98,7 @@ public class MailAttachmentRedeliveryTest extends CamelTestSupport {
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class).maximumRedeliveries(3).redeliveryDelay(0);
 
-                from("pop3://james@mymailserver.com?password=secret&consumer.delay=1000")
+                from("pop3://james@mymailserver.com?password=secret&consumer.initialDelay=100&consumer.delay=100")
                         .process(new Processor() {
                             private int counter;
                             @Override

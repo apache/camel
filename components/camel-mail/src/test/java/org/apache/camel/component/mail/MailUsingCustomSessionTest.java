@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ package org.apache.camel.component.mail;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.mail.Message;
 import javax.mail.Session;
 
@@ -84,7 +85,7 @@ public class MailUsingCustomSessionTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("pop3://james@localhost?session=#myCustomMailSession&consumer.delay=1000").to("mock:result");
+                from("pop3://james@localhost?session=#myCustomMailSession&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
             }
         };
     }

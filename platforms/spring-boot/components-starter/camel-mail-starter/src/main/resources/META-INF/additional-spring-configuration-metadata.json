@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.mail.enabled",
+      "description": "Enable mail component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.mime-multipart.enabled",
+      "description": "Enable mime-multipart dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

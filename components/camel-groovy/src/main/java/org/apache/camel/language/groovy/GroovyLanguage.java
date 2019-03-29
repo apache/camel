@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,17 +16,39 @@
  */
 package org.apache.camel.language.groovy;
 
-import groovy.lang.Script;
-import org.apache.camel.support.LanguageSupport;
-import org.apache.camel.util.LRUSoftCache;
+import java.util.Map;
 
-/**
- * @version
- */
+import groovy.lang.Script;
+import org.apache.camel.Service;
+import org.apache.camel.spi.annotations.Language;
+import org.apache.camel.support.LRUCacheFactory;
+import org.apache.camel.support.LanguageSupport;
+import org.codehaus.groovy.runtime.InvokerHelper;
+
+@Language("groovy")
 public class GroovyLanguage extends LanguageSupport {
 
     // Cache used to stores the compiled scripts (aka their classes)
-    private final LRUSoftCache<String, Class<Script>> scriptCache = new LRUSoftCache<String, Class<Script>>(1000);
+    private final Map<String, GroovyClassService> scriptCache = LRUCacheFactory.newLRUSoftCache(16, 1000, true);
+
+    private static final class GroovyClassService implements Service {
+
+        private final Class<Script> script;
+
+        private GroovyClassService(Class<Script> script) {
+            this.script = script;
+        }
+
+        @Override
+        public void start() throws Exception {
+        }
+
+        @Override
+        public void stop() throws Exception {
+            InvokerHelper.removeClass(script);
+        }
+
+    }
 
     public static GroovyExpression groovy(String expression) {
         return new GroovyLanguage().createExpression(expression);
@@ -42,11 +64,17 @@ public class GroovyLanguage extends LanguageSupport {
     }
 
     Class<Script> getScriptFromCache(String script) {
-        return scriptCache.get(script);
+        final GroovyClassService cached = scriptCache.get(script);
+
+        if (cached == null) {
+            return null;
+        }
+
+        return cached.script;
     }
 
     void addScriptToCache(String script, Class<Script> scriptClass) {
-        scriptCache.put(script, scriptClass);
+        scriptCache.put(script, new GroovyClassService(scriptClass));
     }
 
 }

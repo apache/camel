@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dataformat.barcode;
 
 import org.apache.camel.CamelContext;
@@ -36,7 +35,7 @@ public class BarcodeDataFormatSpringTest extends BarcodeDataFormatCamelTest {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/dataformat/barcode/barcodeDataformatSpring.xml");
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
 }

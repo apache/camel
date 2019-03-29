@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -112,7 +112,7 @@ public class SftpProducerMoveExistingTest extends SftpServerTestSupport {
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("Cannot moved existing file"));
+            assertTrue(cause.getMessage().startsWith("Cannot move existing file"));
         }
 
         // we could not write the new file so the previous context should be there

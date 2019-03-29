@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.scp.enabled",
+      "description": "Enable scp component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

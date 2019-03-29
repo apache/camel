@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,12 +17,14 @@
 package org.apache.camel.component.gora;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.gora.persistency.Persistent;
 import org.apache.gora.store.DataStore;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.atMost;
@@ -33,6 +35,7 @@ import static org.mockito.Mockito.when;
 /**
  * GORA Producer Tests
  */
+@RunWith(MockitoJUnitRunner.class)
 public class GoraProducerTest extends GoraTestSupport {
 
     // TODO: Query methods does not yet has tests
@@ -40,27 +43,32 @@ public class GoraProducerTest extends GoraTestSupport {
     /**
      * Mock CamelExchange
      */
+    @Mock
     private Exchange mockCamelExchange;
 
     /**
      * Mock Gora Endpoint
      */
+    @Mock
     private GoraEndpoint mockGoraEndpoint;
 
     /**
      * Mock Gora Configuration
      */
+    @Mock
     private GoraConfiguration mockGoraConfiguration;
 
     /**
      * Mock Camel Message
      */
+    @Mock
     private Message mockCamelMessage;
 
     /**
      * Mock Gora DataStore
      */
-    private DataStore mockDatastore;
+    @Mock
+    private DataStore<Object, Persistent> mockDatastore;
 
     @Before
     public void setUp()  {
@@ -69,11 +77,9 @@ public class GoraProducerTest extends GoraTestSupport {
         mockGoraEndpoint = mock(GoraEndpoint.class);
         mockGoraConfiguration = mock(GoraConfiguration.class);
         mockCamelMessage = mock(Message.class);
-        mockDatastore = mock(DataStore.class);
 
         //setup default conditions
         when(mockCamelExchange.getIn()).thenReturn(mockCamelMessage);
-        when(mockCamelExchange.getPattern()).thenReturn(ExchangePattern.InOnly);
     }
 
     @Test(expected = RuntimeException.class)

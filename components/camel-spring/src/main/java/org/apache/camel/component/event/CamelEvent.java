@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,8 +21,6 @@ import org.springframework.context.ApplicationEvent;
 
 /**
  * Represents a Spring {@link ApplicationEvent} which contains a Camel {@link Exchange}
- *
- * @version 
  */
 public class CamelEvent extends ApplicationEvent {
     private static final long serialVersionUID = 1L;

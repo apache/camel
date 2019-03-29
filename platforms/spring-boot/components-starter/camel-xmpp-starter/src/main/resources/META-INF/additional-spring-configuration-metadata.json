@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.xmpp.enabled",
+      "description": "Enable xmpp component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

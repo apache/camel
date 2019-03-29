@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,7 @@ package org.apache.camel.component.telegram;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.telegram.model.OutgoingMessage;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 /**
  * A producer that sends messages to Telegram through the bot API.
@@ -62,7 +62,10 @@ public class TelegramProducer extends DefaultProducer {
         log.debug("Message being sent is: {}", message);
         log.debug("Headers of message being sent are: {}", exchange.getIn().getHeaders());
 
-        service.sendMessage(config.getAuthorizationToken(), message);
+        Object receivedMessage = service.sendMessage(config.getAuthorizationToken(), message);
+        log.debug("Message being received is: {}", receivedMessage);
+
+        exchange.getOut().setBody(receivedMessage);
     }
 
     private String resolveChatId(TelegramConfiguration config, OutgoingMessage message, Exchange exchange) {

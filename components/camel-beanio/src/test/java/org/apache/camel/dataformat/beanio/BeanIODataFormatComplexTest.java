@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.beanio;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,11 +25,9 @@ import java.util.Locale;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.beanio.InvalidRecordException;
 import org.beanio.UnexpectedRecordException;
 import org.beanio.UnidentifiedRecordException;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -177,7 +174,7 @@ public class BeanIODataFormatComplexTest extends CamelTestSupport {
 
     private List<Object> createTestData(boolean skipB1header) throws ParseException {
         String source = "camel-beanio";
-        List<Object> body = new ArrayList<Object>();
+        List<Object> body = new ArrayList<>();
 
         Date date = new SimpleDateFormat("ddMMyy").parse("030808");
         Header hFirst = new Header("A1", date, "PRICE");
@@ -225,9 +222,9 @@ public class BeanIODataFormatComplexTest extends CamelTestSupport {
                 forgivingFormat.setIgnoreUnexpectedRecords(true);
                 forgivingFormat.setIgnoreUnidentifiedRecords(true);
 
-                from("direct:unmarshal").unmarshal(format).split(simple("body")).to("mock:beanio-unmarshal");
+                from("direct:unmarshal").unmarshal(format).split(simple("${body}")).to("mock:beanio-unmarshal");
 
-                from("direct:unmarshal-forgiving").unmarshal(forgivingFormat).split(simple("body")).to("mock:beanio-unmarshal");
+                from("direct:unmarshal-forgiving").unmarshal(forgivingFormat).split(simple("${body}")).to("mock:beanio-unmarshal");
 
                 from("direct:marshal").marshal(format).to("mock:beanio-marshal");
             }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -42,9 +42,12 @@ public class CouchDbChangesetTracker implements Runnable {
     }
 
     void initChanges() {
-        CouchDbInfo dbInfo = couchClient.context().info();
-        String since = dbInfo.getUpdateSeq(); // get latest update seq
-        LOG.debug("Last sequence [{}]", since);
+        String since = endpoint.getSince();
+        if (since == null) {
+            CouchDbInfo dbInfo = couchClient.context().info();
+            since = dbInfo.getUpdateSeq(); // get latest update seq
+            LOG.debug("Last sequence [{}]", since);
+        }
         changes = couchClient.changes().style(endpoint.getStyle()).includeDocs(true)
                 .since(since).heartBeat(endpoint.getHeartbeat()).continuousChanges();
     }
@@ -65,7 +68,7 @@ public class CouchDbChangesetTracker implements Runnable {
 
             Exchange exchange = endpoint.createExchange(seq, feed.getId(), doc, feed.isDeleted());
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Created exchange [exchange={}, _id={}, seq={}", new Object[]{exchange, feed.getId(), seq});
+                LOG.trace("Created exchange [exchange={}, _id={}, seq={}", exchange, feed.getId(), seq);
             }
 
             try {

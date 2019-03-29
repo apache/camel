@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.component.mail.security;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.net.ssl.SSLHandshakeException;
 
 import org.apache.camel.CamelExecutionException;
@@ -50,7 +51,7 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
             public void configure() {
                 
                 from("imaps://" + imapHost + "?username=" + username + "&password=" + password
-                        + "&delete=false&unseen=true&fetchSize=1&consumer.useFixedDelay=true&consumer.delay=1000")
+                        + "&delete=false&unseen=true&fetchSize=1&consumer.useFixedDelay=true&consumer.initialDelay=100&consumer.delay=100")
                      .to("mock:in");
                 
                 from("direct:in")
@@ -63,7 +64,7 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:in");
         resultEndpoint.expectedBodiesReceived("Test Email Body\r\n");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("To", email);
         headers.put("From", email);
         headers.put("Reply-to", email);
@@ -88,7 +89,7 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
         
         context.start();
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("To", email);
         headers.put("From", email);
         headers.put("Reply-to", email);

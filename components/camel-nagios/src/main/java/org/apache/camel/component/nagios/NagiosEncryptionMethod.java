@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,9 @@ package org.apache.camel.component.nagios;
 
 /**
  * Encryption methods supported by nagios.
+ * @deprecated use {@link com.googlecode.jsendnsca.encryption.Encryption} instead.
  */
+@Deprecated
 public enum NagiosEncryptionMethod {
 
     No, Xor, TripleDes

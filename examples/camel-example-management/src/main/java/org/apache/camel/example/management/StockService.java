@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,13 +24,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.language.XPath;
 
-/**
- * @version 
- */
 public class StockService {
 
-    private final List<String> symbols = new ArrayList<String>();
-    private Map<String, Integer> stat = new ConcurrentHashMap<String, Integer>();
+    private final List<String> symbols = new ArrayList<>();
+    private Map<String, Integer> stat = new ConcurrentHashMap<>();
 
     public StockService() {
         symbols.add("IBM");

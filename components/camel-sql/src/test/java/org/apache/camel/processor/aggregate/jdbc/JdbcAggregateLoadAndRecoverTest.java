@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -45,7 +45,7 @@ public class JdbcAggregateLoadAndRecoverTest extends AbstractJdbcAggregationTest
         for (int i = 0; i < SIZE; i++) {
             final int value = 1;
             char id = 'A';
-            Map<String, Object> headers = new HashMap<String, Object>();
+            Map<String, Object> headers = new HashMap<>();
             headers.put("id", id);
             headers.put("seq", i);
             LOG.debug("Sending {} with id {}", value, id);

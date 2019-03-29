@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,8 +29,8 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * The atom component is used for consuming Atom RSS feeds.
  */
-@UriEndpoint(scheme = "atom", title = "Atom", syntax = "atom:feedUri", consumerOnly = true,
-        consumerClass = FeedPollingConsumer.class, label = "rss", lenientProperties = true)
+@UriEndpoint(firstVersion = "1.2.0", scheme = "atom", title = "Atom", syntax = "atom:feedUri", consumerOnly = true,
+        label = "rss", lenientProperties = true)
 public class AtomEndpoint extends FeedEndpoint {
 
     public AtomEndpoint() {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,7 +29,7 @@ import org.apache.camel.component.netty4.NettyConstants;
 import org.apache.camel.component.netty4.NettyHelper;
 import org.apache.camel.component.netty4.NettyPayloadHelper;
 import org.apache.camel.component.netty4.NettyProducer;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +61,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Exception caught at Channel: " + ctx.channel(), cause);
+            LOG.trace("Exception caught at Channel: {}", ctx.channel(), cause);
         }
 
         if (exceptionHandled) {
@@ -75,8 +75,9 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             LOG.debug("Closing channel as an exception was thrown from Netty", cause);
         }
 
-        Exchange exchange = getExchange(ctx);
-        AsyncCallback callback = getAsyncCallback(ctx);
+        NettyCamelState state = getState(ctx, cause);
+        Exchange exchange = state != null ? state.getExchange() : null;
+        AsyncCallback callback = state != null ? state.getCallback() : null;
 
         // the state may not be set
         if (exchange != null && callback != null) {
@@ -102,35 +103,38 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             LOG.trace("Channel closed: {}", ctx.channel());
         }
 
-        Exchange exchange = getExchange(ctx);
-        AsyncCallback callback = getAsyncCallback(ctx);
+        NettyCamelState state = getState(ctx, null);
+        Exchange exchange = state != null ? state.getExchange() : null;
+        AsyncCallback callback = state != null ? state.getCallback() : null;
 
         // remove state
-        producer.removeState(ctx.channel());
+        producer.getCorrelationManager().removeState(ctx, ctx.channel());
 
         // to keep track of open sockets
         producer.getAllChannels().remove(ctx.channel());
 
-        // this channel is maybe closing graceful and the exchange is already done
-        // and if so we should not trigger an exception
-        boolean doneUoW = exchange.getUnitOfWork() == null;
+        if (exchange != null) {
+            // this channel is maybe closing graceful and the exchange is already done
+            // and if so we should not trigger an exception
+            boolean doneUoW = exchange.getUnitOfWork() == null;
 
-        NettyConfiguration configuration = producer.getConfiguration();
-        if (configuration.isSync() && !doneUoW && !messageReceived && !exceptionHandled) {
-            // To avoid call the callback.done twice
-            exceptionHandled = true;
-            // session was closed but no message received. This could be because the remote server had an internal error
-            // and could not return a response. We should count down to stop waiting for a response            
-            String address = configuration != null ? configuration.getAddress() : "";
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Channel closed but no message received from address: {}", address);
+            NettyConfiguration configuration = producer.getConfiguration();
+            if (configuration.isSync() && !doneUoW && !messageReceived && !exceptionHandled) {
+                // To avoid call the callback.done twice
+                exceptionHandled = true;
+                // session was closed but no message received. This could be because the remote server had an internal error
+                // and could not return a response. We should count down to stop waiting for a response
+                String address = configuration.getAddress();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Channel is inactive but no message received from address: {}", address);
+                }
+                // don't fail the exchange if we actually specify to disconnect
+                if (!configuration.isDisconnect()) {
+                    exchange.setException(new CamelExchangeException("No response received from remote server: " + address, exchange));
+                }
+                // signal callback
+                callback.done(false);
             }
-            // don't fail the exchange if we actually specify to disconnect
-            if (!configuration.isDisconnect()) {
-                exchange.setException(new CamelExchangeException("No response received from remote server: " + address, exchange));
-            }
-            // signal callback
-            callback.done(false);
         }
         
         // make sure the event can be processed by other handlers
@@ -151,12 +155,13 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             ctx.pipeline().remove(handler);
         }
 
-        Exchange exchange = getExchange(ctx);
+        NettyCamelState state = getState(ctx, msg);
+        Exchange exchange = state != null ? state.getExchange() : null;
         if (exchange == null) {
             // we just ignore the received message as the channel is closed
             return;
         }
-        AsyncCallback callback = getAsyncCallback(ctx);
+        AsyncCallback callback = state.getCallback();
 
         Message message;
         try {
@@ -228,7 +233,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
         Object body = message;
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Channel: {} received body: {}", new Object[]{ctx.channel(), body});
+            LOG.debug("Channel: {} received body: {}", ctx.channel(), body);
         }
 
         // if textline enabled then covert to a String which must be used for textline
@@ -246,14 +251,12 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
         }
     }
 
-    private Exchange getExchange(ChannelHandlerContext ctx) {
-        NettyCamelState state = producer.getState(ctx.channel());
-        return state != null ? state.getExchange() : null;
+    private NettyCamelState getState(ChannelHandlerContext ctx, Object msg) {
+        return producer.getCorrelationManager().getState(ctx, ctx.channel(), msg);
     }
 
-    private AsyncCallback getAsyncCallback(ChannelHandlerContext ctx) {
-        NettyCamelState state = producer.getState(ctx.channel());
-        return state != null ? state.getCallback() : null;
+    private NettyCamelState getState(ChannelHandlerContext ctx, Throwable cause) {
+        return producer.getCorrelationManager().getState(ctx, ctx.channel(), cause);
     }
 
 }

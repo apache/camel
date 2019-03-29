@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,16 +17,23 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
+import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 import static org.apache.camel.maven.packaging.StringHelper.indentCollection;
 import static org.apache.camel.maven.packaging.ValidateHelper.asName;
 import static org.apache.camel.maven.packaging.ValidateHelper.validate;
@@ -39,51 +46,43 @@ import static org.apache.camel.maven.packaging.ValidateHelper.validate;
  *     <li>languages</li>
  * </ul>
  * all contains the needed meta-data such as assigned labels, documentation for each option
- *
- * @goal validate-components
  */
+@Mojo(name = "validate-components", threadSafe = true)
 public class ValidateComponentMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * Whether to validate if the components, data formats, and languages are properly documented and have all the needed details.
      *
-     * @parameter default-value="true"
      */
+    @Parameter(defaultValue = "true")
     protected Boolean validate;
 
     /**
      * The output directory for generated components file
      *
-     * @parameter default-value="${project.build.directory}/classes/"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/")
     protected File outDir;
 
     /**
      * Maven ProjectHelper.
-     *
-     * @component
-     * @readonly
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
      * build context to check changed files and mark them for refresh
      * (used for m2e compatibility)
-     *
-     * @component
-     * @readonly
      */
+    @Component
     private BuildContext buildContext;
-    
+
     /**
      * Execute goal.
      *
@@ -95,9 +94,8 @@ public class ValidateComponentMojo extends AbstractMojo {
         if (!validate) {
             getLog().info("Validation disabled");
         } else {
-
-            final Set<File> jsonFiles = new TreeSet<File>();
-            PackageHelper.findJsonFiles(outDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+            final Set<File> jsonFiles = new TreeSet<>();
+            PackageHelper.findJsonFiles(outDir, jsonFiles, new CamelComponentsFileFilter());
             boolean failed = false;
 
             for (File file : jsonFiles) {
@@ -136,6 +134,28 @@ public class ValidateComponentMojo extends AbstractMojo {
             } else {
                 getLog().info("Validation complete");
             }
+        }
+    }
+
+    private class CamelComponentsFileFilter implements FileFilter {
+
+        @Override
+        public boolean accept(File pathname) {
+            if (pathname.isDirectory() && pathname.getName().equals("model")) {
+                // do not check the camel-core model packages as there is no components there
+                return false;
+            }
+
+            if (pathname.isFile() && pathname.getName().endsWith(".json")) {
+                // must be a components json file
+                try {
+                    String json = loadText(new FileInputStream(pathname));
+                    return json != null && json.contains("\"kind\": \"component\"");
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            return pathname.isDirectory() || (pathname.isFile() && pathname.getName().equals("component.properties"));
         }
     }
 

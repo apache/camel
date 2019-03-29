@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,7 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.transport.CamelDestination.ConsumerProcessor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.UnknownPersonFault;
 import org.apache.cxf.Bus;
@@ -47,8 +47,11 @@ import org.apache.cxf.transport.Conduit;
 import org.apache.cxf.transport.ConduitInitiator;
 import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.MessageObserver;
-import org.easymock.EasyMock;
 import org.junit.Test;
+
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.isA;
+import static org.mockito.Mockito.mock;
 
 public class CamelDestinationTest extends CamelTransportTestSupport {
     private Message destMessage;
@@ -89,7 +92,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
     }
 
     public CamelDestination setupCamelDestination(EndpointInfo endpointInfo, boolean send) throws IOException {
-        ConduitInitiator conduitInitiator = EasyMock.createMock(ConduitInitiator.class);
+        ConduitInitiator conduitInitiator = mock(ConduitInitiator.class);
         CamelDestination camelDestination = new CamelDestination(context, bus, conduitInitiator, endpointInfo);
         if (send) {
             // setMessageObserver
@@ -258,10 +261,8 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         final RuntimeException expectedException = new RuntimeException("We simulate an exception in CXF processing");
         
         DefaultCamelContext camelContext = new DefaultCamelContext();
-        CamelDestination dest = EasyMock.createMock(CamelDestination.class);
-        dest.incoming(EasyMock.isA(org.apache.camel.Exchange.class));
-        EasyMock.expectLastCall().andThrow(expectedException);
-        EasyMock.replay(dest);
+        CamelDestination dest = mock(CamelDestination.class);
+        doThrow(expectedException).when(dest).incoming(isA(org.apache.camel.Exchange.class));
         ConsumerProcessor consumerProcessor = dest.new ConsumerProcessor();
         
         // Send our dummy exchange and check that the exception that occurred on incoming is set
@@ -270,7 +271,6 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         Exception exc = exchange.getException();
         assertNotNull(exc);
         assertEquals(expectedException, exc);
-        EasyMock.verify(dest);
     }
     
     @Test

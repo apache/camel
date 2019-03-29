@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,7 +34,7 @@ public class JMXNotificationFilterTest extends SimpleBeanFixture {
     /**
      * we'll track the rejected messages so we know what got filtered
      */
-    private LinkedHashSet<Notification> mRejected = new LinkedHashSet<Notification>();
+    private LinkedHashSet<Notification> mRejected = new LinkedHashSet<>();
 
     @Test
     public void testNotificationFilter() throws Exception {
@@ -74,7 +74,7 @@ public class JMXNotificationFilterTest extends SimpleBeanFixture {
         super.initRegistry();
 
         // initialize the registry with our filter
-        getRegistry().put("myFilter", new NotificationFilter() {
+        getRegistry().bind("myFilter", new NotificationFilter() {
 
             private static final long serialVersionUID = 1L;
 

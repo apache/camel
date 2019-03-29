@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 
@@ -36,6 +36,11 @@ public class CMISQueryProducer extends DefaultProducer {
         super(endpoint);
         this.sessionFacadeFactory = sessionFacadeFactory;
         this.sessionFacade = null;
+    }
+
+    @Override
+    public CMISEndpoint getEndpoint() {
+        return (CMISEndpoint) super.getEndpoint();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -63,7 +68,7 @@ public class CMISQueryProducer extends DefaultProducer {
 
     private CMISSessionFacade getSessionFacade() throws Exception {
         if (sessionFacade == null) {
-            sessionFacade = sessionFacadeFactory.create();
+            sessionFacade = sessionFacadeFactory.create(getEndpoint());
             sessionFacade.initSession();
         }
 

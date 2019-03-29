@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -43,7 +43,7 @@ public class CalendarFreebusyIntegrationTest extends AbstractGoogleCalendarTestS
         // using com.google.api.services.calendar.model.FreeBusyRequest message
         // body for single parameter "content"
         com.google.api.services.calendar.model.FreeBusyRequest request = new FreeBusyRequest();
-        List<FreeBusyRequestItem> items = new ArrayList<FreeBusyRequestItem>();
+        List<FreeBusyRequestItem> items = new ArrayList<>();
         items.add(new FreeBusyRequestItem().setId(getCalendar().getId()));
         request.setItems(items);
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,11 +23,7 @@ import org.apache.camel.Converter;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 
-/**
- *
- * @version 
- */
-@Converter
+@Converter(loader = true)
 public final class RestletConverter {
 
     private RestletConverter() {
@@ -41,7 +37,7 @@ public final class RestletConverter {
     @Converter
     public static Method[] toMethods(String name) {
         String[] strings = name.split(",");
-        List<Method> methods = new ArrayList<Method>();
+        List<Method> methods = new ArrayList<>();
         for (String string : strings) {
             methods.add(toMethod(string));
         }
@@ -54,4 +50,17 @@ public final class RestletConverter {
         return MediaType.valueOf(name);
     }
 
+    @Converter
+    public static MediaType[] toMediaTypes(final String name) {
+        final String[] strings = name.split(",");
+        final List<MediaType> answer = new ArrayList<>(strings.length);
+        for (String string : strings) {
+            final MediaType mediaType = toMediaType(string);
+            if (mediaType != null) {
+                answer.add(mediaType);
+            }
+        }
+
+        return answer.toArray(new MediaType[answer.size()]);
+    }
 }

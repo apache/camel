@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.twitter.TwitterConstants;
 import org.apache.camel.component.twitter.TwitterEndpoint;
+import org.apache.camel.component.twitter.util.TwitterSorter;
 
 public enum TwitterEventType {
     STATUS,
@@ -70,6 +71,10 @@ public enum TwitterEventType {
             for (int i = 0; i < bodyList.size(); i++) {
                 exchanges.add(createExchange(endpoint, bodyList.get(i)));
             }
+        }
+
+        if (!exchanges.isEmpty() && endpoint.getProperties().isSortById()) {
+            exchanges = TwitterSorter.sortByStatusId(exchanges);
         }
 
         return exchanges;

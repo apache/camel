@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,28 +21,25 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.batch.core.JobExecution;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CamelJobExecutionListenerTest extends CamelTestSupport {
 
     // Fixtures
-
     @Mock
     JobExecution jobExecution;
 
     CamelJobExecutionListener jobExecutionListener;
 
     // Camel fixtures
-
     @Override
     protected void doPostSetup() throws Exception {
         jobExecutionListener = new CamelJobExecutionListener(template(), "seda:eventQueue");
     }
 
     // Tests
-
     @Test
     public void shouldSendBeforeJobEvent() throws Exception {
         // When

@@ -1,0 +1,9 @@
+[[CanIuseCamelonJava1.4-CanIuseCamelonJava1.4]]
+=== Can I use Camel on Java 1.4?
+
+Apache Camel was developed to run on Java 1.5 or later to take advantage
+of the new language features like generics and annotations together with
+using the Java 5 concurrency code. Starting with version 2.7.0, only
+Java 1.6 is supported.
+
+Starting with version 2.10.0, Java 1.7 is supported, but not required.

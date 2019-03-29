@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,8 +25,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.component.AbstractApiConsumer;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.component.AbstractApiConsumer;
 
 /**
  * The GoogleCalendar consumer.

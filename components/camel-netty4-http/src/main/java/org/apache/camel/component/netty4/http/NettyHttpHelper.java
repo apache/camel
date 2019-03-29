@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,9 +30,8 @@ import io.netty.handler.codec.http.HttpMethod;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeExchangeException;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
@@ -44,11 +43,10 @@ public final class NettyHttpHelper {
     private NettyHttpHelper() {
     }
 
-    @SuppressWarnings("deprecation")
     public static void setCharsetFromContentType(String contentType, Exchange exchange) {
         String charset = getCharsetFromContentType(contentType);
         if (charset != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(charset));
+            exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(charset));
         }
     }
 
@@ -60,7 +58,7 @@ public final class NettyHttpHelper {
                 String charset = contentType.substring(index + 8);
                 // there may be another parameter after a semi colon, so skip that
                 if (charset.contains(";")) {
-                    charset = ObjectHelper.before(charset, ";");
+                    charset = StringHelper.before(charset, ";");
                 }
                 return IOHelper.normalizeCharset(charset);
             }
@@ -86,7 +84,7 @@ public final class NettyHttpHelper {
             if (existing instanceof List) {
                 list = (List<Object>) existing;
             } else {
-                list = new ArrayList<Object>();
+                list = new ArrayList<>();
                 list.add(existing);
             }
             list.add(value);
@@ -110,6 +108,8 @@ public final class NettyHttpHelper {
         }
         String name = message.getHeader(Exchange.HTTP_METHOD, String.class);
         if (name != null) {
+            // must be in upper case
+            name = name.toUpperCase();
             return HttpMethod.valueOf(name);
         }
 
@@ -271,9 +271,22 @@ public final class NettyHttpHelper {
      * @return <tt>true</tt> if ok, <tt>false</tt> otherwise
      */
     public static boolean isStatusCodeOk(int statusCode, String okStatusCodeRange) {
-        int from = Integer.valueOf(ObjectHelper.before(okStatusCodeRange, "-"));
-        int to = Integer.valueOf(ObjectHelper.after(okStatusCodeRange, "-"));
-        return statusCode >= from && statusCode <= to;
+        String[] ranges = okStatusCodeRange.split(",");
+        for (String range : ranges) {
+            boolean ok;
+            if (range.contains("-")) {
+                int from = Integer.valueOf(StringHelper.before(range, "-"));
+                int to = Integer.valueOf(StringHelper.after(range, "-"));
+                ok =  statusCode >= from && statusCode <= to;
+            } else {
+                int exact = Integer.valueOf(range);
+                ok = exact == statusCode;
+            }
+            if (ok) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

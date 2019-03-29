@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,9 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.linkedin.internal.GroupsResourceApiMethod;
-import org.apache.camel.component.linkedin.internal.LinkedInApiCollection;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -45,7 +42,7 @@ public class GroupsResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testAddPost() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelLinkedIn.group_id", 0L);
         // parameter type is org.apache.camel.component.linkedin.api.model.Post
         headers.put("CamelLinkedIn.post", null);

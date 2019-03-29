@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,24 +18,16 @@ package org.apache.camel.component.etcd;
 
 import mousio.etcd4j.EtcdClient;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.support.ScheduledPollConsumer;
 
 /**
  * The etcd consumer.
  */
 public abstract class AbstractEtcdPollingConsumer extends ScheduledPollConsumer {
-    private final EtcdConfiguration configuration;
-    private final EtcdNamespace namespace;
-    private final String path;
-
     private EtcdClient client;
 
-    protected AbstractEtcdPollingConsumer(AbstractEtcdEndpoint endpoint, Processor processor, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
+    protected AbstractEtcdPollingConsumer(AbstractEtcdPollingEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-
-        this.configuration = configuration;
-        this.namespace = namespace;
-        this.path = path;
         this.client = null;
     }
 
@@ -50,21 +42,9 @@ public abstract class AbstractEtcdPollingConsumer extends ScheduledPollConsumer 
 
     protected EtcdClient getClient() throws Exception {
         if (client == null) {
-            client = ((AbstractEtcdEndpoint)getEndpoint()).createClient();
+            client = ((EtcdEndpoint)getEndpoint()).createClient();
         }
 
         return client;
-    }
-
-    protected EtcdConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    protected EtcdNamespace getNamespace() {
-        return namespace;
-    }
-
-    protected String getPath() {
-        return this.path;
     }
 }

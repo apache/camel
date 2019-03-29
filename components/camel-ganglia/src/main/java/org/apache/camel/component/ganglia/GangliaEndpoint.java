@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,15 +23,15 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * The ganglia component is used for sending metrics to the Ganglia monitoring system.
  */
-@UriEndpoint(scheme = "ganglia", title = "Ganglia", syntax = "ganglia:host:port", producerOnly = true, label = "monitoring")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "ganglia", title = "Ganglia", syntax = "ganglia:host:port", producerOnly = true, label = "monitoring")
 public class GangliaEndpoint extends DefaultEndpoint {
 
     private Publisher publisher;

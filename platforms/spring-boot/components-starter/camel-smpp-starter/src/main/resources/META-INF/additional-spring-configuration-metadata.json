@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.smpp.enabled",
+      "description": "Enable smpp component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

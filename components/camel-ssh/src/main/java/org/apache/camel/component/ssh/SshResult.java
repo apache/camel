@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,13 +36,13 @@ public class SshResult {
     
     private final String command;
     
-    private final int exitValue;
+    private final Integer exitValue;
 
     private final InputStream stdout;
 
     private final InputStream stderr;
     
-    public SshResult(String command, int exitValue, InputStream out, InputStream err) {
+    public SshResult(String command, Integer exitValue, InputStream out, InputStream err) {
         this.command = command;
         this.exitValue = exitValue;
         this.stdout = out;
@@ -53,7 +53,7 @@ public class SshResult {
         return command;
     }
 
-    public int getExitValue() {
+    public Integer getExitValue() {
         return exitValue;
     }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,12 +17,10 @@
 package org.apache.camel.spring.example;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringExpressionTrimTest extends SpringTestSupport {
 
     @Override
@@ -30,16 +28,19 @@ public class SpringExpressionTrimTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/example/expressionTrim.xml");
     }
 
+    @Test
     public void testDefault() throws Exception {
         String out = template.requestBody("direct:a", "World", String.class);
         assertEquals("Hello World", out);
     }
 
+    @Test
     public void testTrim() throws Exception {
         String out = template.requestBody("direct:b", "World", String.class);
         assertEquals("Hello World", out);
     }
 
+    @Test
     public void testNoTrim() throws Exception {
         String out = template.requestBody("direct:c", "World", String.class);
         // the xml has whitespace noise which is not trimmed

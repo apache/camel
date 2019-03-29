@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,13 +26,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.util.GZIPHelper;
+import org.apache.camel.support.GZIPHelper;
 
 /**
  * Some converter methods making it easy to convert the body of a message to servlet types or to switch between
  * the underlying {@link ServletInputStream} or {@link BufferedReader} payloads etc.
  */
-@Converter
+@Converter(loader = true)
 public final class HttpConverter {
 
     private HttpConverter() {

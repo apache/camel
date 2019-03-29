@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -45,7 +45,7 @@ public class DisruptorShouldNotUseSameThreadTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                final ThreadLocal<String> local = new ThreadLocal<String>();
+                final ThreadLocal<String> local = new ThreadLocal<>();
 
                 from("direct:start").process(new Processor() {
                     @Override

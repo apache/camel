@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,20 +18,19 @@ package org.apache.camel.component.mail;
 
 import java.io.IOException;
 import java.util.Map;
-import javax.activation.DataHandler;
+
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
 import org.apache.camel.Attachment;
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.DefaultMessage;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with Mail
- *
- * @version 
  */
 public class MailMessage extends DefaultMessage {
     // we need a copy of the original message in case we need to workaround a charset issue when extracting
@@ -40,14 +39,8 @@ public class MailMessage extends DefaultMessage {
     private Message mailMessage;
     private boolean mapMailMessage;
 
-    public MailMessage() {
-    }
-
-    public MailMessage(Message message) {
-        this(message, true);
-    }
-
-    public MailMessage(Message message, boolean mapMailMessage) {
+    public MailMessage(Exchange exchange, Message message, boolean mapMailMessage) {
+        super(exchange);
         this.originalMailMessage = this.mailMessage = message;
         this.mapMailMessage = mapMailMessage;
     }
@@ -95,7 +88,9 @@ public class MailMessage extends DefaultMessage {
 
     @Override
     public MailMessage newInstance() {
-        return new MailMessage(null, this.mapMailMessage);
+        MailMessage answer = new MailMessage(null, null, this.mapMailMessage);
+        answer.setCamelContext(getCamelContext());
+        return answer;
     }
 
     @Override
@@ -115,9 +110,7 @@ public class MailMessage extends DefaultMessage {
                 if (binding != null) {
                     map.putAll(binding.extractHeadersFromMail(mailMessage, getExchange()));
                 }
-            } catch (MessagingException e) {
-                throw new RuntimeCamelException("Error accessing headers due to: " + e.getMessage(), e);
-            } catch (IOException e) {
+            } catch (MessagingException | IOException e) {
                 throw new RuntimeCamelException("Error accessing headers due to: " + e.getMessage(), e);
             }
         }
@@ -152,6 +145,10 @@ public class MailMessage extends DefaultMessage {
             this.originalMailMessage = mailMessage.originalMailMessage;
             this.mailMessage = mailMessage.mailMessage;
             this.mapMailMessage = mailMessage.mapMailMessage;
+        }
+        // cover over exchange if none has been assigned
+        if (getExchange() == null) {
+            setExchange(that.getExchange());
         }
     }
 

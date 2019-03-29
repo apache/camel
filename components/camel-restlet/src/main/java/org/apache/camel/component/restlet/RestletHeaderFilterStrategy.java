@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,12 +17,10 @@
 package org.apache.camel.component.restlet;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 /**
  * Default header filtering strategy for Restlet
- * 
- * @version 
  */
 public class RestletHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.After;
@@ -68,7 +68,7 @@ public class HttpsSslContextParametersGetTest extends HttpsGetTest {
     public void httpsGet() throws Exception {
 
         Exchange exchange = template.request("https4://127.0.0.1:" + localServer.getLocalPort() 
-            + "/mail/?x509HostnameVerifier=x509HostnameVerifier&sslContextParametersRef=sslContextParameters", new Processor() {
+            + "/mail/?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters", new Processor() {
                 public void process(Exchange exchange) throws Exception {
                 }
             });

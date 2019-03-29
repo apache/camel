@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,27 +25,22 @@ import static org.mockito.Mockito.when;
 public class KafkaConsumerTest {
 
     private KafkaConfiguration configuration = mock(KafkaConfiguration.class);
+    private KafkaComponent component = mock(KafkaComponent.class);
     private KafkaEndpoint endpoint = mock(KafkaEndpoint.class);
     private Processor processor = mock(Processor.class);
 
     @Test(expected = IllegalArgumentException.class)
     public void consumerRequiresBootstrapServers() throws Exception {
+        when(endpoint.getComponent()).thenReturn(component);
         when(endpoint.getConfiguration()).thenReturn(configuration);
         when(endpoint.getConfiguration().getGroupId()).thenReturn("groupOne");
-        new KafkaConsumer(endpoint, processor);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void consumerRequiresGroupId() throws Exception {
-        when(endpoint.getConfiguration()).thenReturn(configuration);
-        when(endpoint.getConfiguration().getBrokers()).thenReturn("localhost:1234");
         new KafkaConsumer(endpoint, processor);
     }
 
     @Test
-    public void consumerOnlyRequiresBootstrapServersAndGroupId() throws Exception {
+    public void consumerOnlyRequiresBootstrapServers() throws Exception {
+        when(endpoint.getComponent()).thenReturn(component);
         when(endpoint.getConfiguration()).thenReturn(configuration);
-        when(endpoint.getConfiguration().getGroupId()).thenReturn("groupOne");
         when(endpoint.getConfiguration().getBrokers()).thenReturn("localhost:2181");
         new KafkaConsumer(endpoint, processor);
     }

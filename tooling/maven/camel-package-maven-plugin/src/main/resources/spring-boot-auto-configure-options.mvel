@@ -1,0 +1,27 @@
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>@{groupId}</groupId>
+  <artifactId>@{artifactId}</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+@if{options.isEmpty()}
+The component has no Spring Boot auto configuration options.
+@else{}
+The component supports @{options.size()} options, which are listed below.
+@end{}
+
+@if{!options.isEmpty()}
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+@foreach{row : options}| *@{row.name}* | @{row.description} | @{row.getShortDefaultValue(20)} | @{row.getShortJavaType(25)}
+@end{}|===
+@end{}

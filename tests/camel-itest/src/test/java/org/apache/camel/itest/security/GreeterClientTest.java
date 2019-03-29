@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -65,10 +64,10 @@ public class GreeterClientTest extends AbstractJUnit4SpringContextTests {
         final Greeter greeter = svc.getPort(PORT_QNAME, Greeter.class);
 
         Client client = ClientProxy.getClient(greeter);        
-        Map<String, Object> props = new HashMap<String, Object>();
+        Map<String, Object> props = new HashMap<>();
         props.put("action", "UsernameToken");
         props.put("user", username);
-        // Set the the password type to be plain text, 
+        // Set the password type to be plain text, 
         // so we can keep using the password to authenticate with spring security
         props.put("passwordType", "PasswordText");       
         WSS4JOutInterceptor wss4jOut = new WSS4JOutInterceptor(props);

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,7 +32,7 @@ public class DatagramPacketDecoder extends MessageToMessageDecoder<DatagramPacke
     protected void decode(ChannelHandlerContext ctx, DatagramPacket msg, List<Object> out) throws Exception {
         // decode the DatagramPackage to AddressedEnvelope
         DefaultAddressedEnvelope<Object, InetSocketAddress> addressEvelop = 
-            new DefaultAddressedEnvelope<Object, InetSocketAddress>(msg.content().retain(), msg.recipient(), msg.sender());
+            new DefaultAddressedEnvelope<>(msg.content().retain(), msg.recipient(), msg.sender());
         out.add(addressEvelop);
         
     }

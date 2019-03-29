@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,6 +38,13 @@ public @interface UriPath {
      * If this is not specified then the name of the field or property which has this annotation is used.
      */
     String name() default "";
+
+    /**
+     * A human display name of the parameter.
+     * <p/>
+     * This is used for documentation and tooling only.
+     */
+    String displayName() default "";
 
     /**
      * The default value of the parameter.

@@ -1,0 +1,73 @@
+[[choice-eip]]
+== Choice EIP
+
+The
+http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content
+Based Router] from the link:enterprise-integration-patterns.html[EIP
+patterns] allows you to route messages to the correct destination based
+on the contents of the message exchanges.
+
+image:http://www.enterpriseintegrationpatterns.com/img/ContentBasedRouter.gif[image]
+
+=== Choice options
+
+// eip options: START
+The Choice EIP supports 2 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *whenClauses* | Sets the when clauses |  | List
+| *otherwise* | Sets the otherwise node |  | OtherwiseDefinition
+|===
+// eip options: END
+
+=== Examples
+
+The following example shows how to route a request from an input
+*seda:a* endpoint to either *seda:b*, *seda:c* or *seda:d* depending on
+the evaluation of various link:predicate.html[Predicate] expressions
+
+[source,java]
+----
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+        from("direct:a")
+            .choice()
+                .when(simple("${header.foo} == 'bar'"))
+                    .to("direct:b")
+                .when(simple("${header.foo} == 'cheese'"))
+                    .to("direct:c")
+                .otherwise()
+                    .to("direct:d");
+    }
+};
+----
+
+TIP: See link:why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.html[Why
+can I not use when or otherwise in a Java Camel route] if you have
+problems with the Java DSL, accepting using `when` or `otherwise`.
+
+And the same example using XML:
+
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:a"/>
+        <choice>
+            <when>
+                <simple>${header.foo} == 'bar'</simple>
+                <to uri="direct:b"/>
+            </when>
+            <when>
+                <simple>${header.foo} == 'cheese'</simple>
+                <to uri="direct:c"/>
+            </when>
+            <otherwise>
+                <to uri="direct:d"/>
+            </otherwise>
+        </choice>
+    </route>
+</camelContext>
+----

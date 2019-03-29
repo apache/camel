@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -130,7 +130,6 @@ public class JCacheProducerGetTest extends JCacheComponentTestSupport {
         final Cache<Object, Object> cache = getCacheFromEndpoint("jcache://test-cache");
 
         final String key  = randomString();
-        final String val  = randomString();
         final String val2 = randomString();
 
         headers.clear();

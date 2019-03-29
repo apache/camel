@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,9 +20,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class QuartzStopRouteTest extends BaseQuartzTest {
 
     @Test
@@ -32,7 +29,7 @@ public class QuartzStopRouteTest extends BaseQuartzTest {
 
         assertMockEndpointsSatisfied();
 
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         int size = mock.getReceivedCounter();
 
@@ -46,7 +43,7 @@ public class QuartzStopRouteTest extends BaseQuartzTest {
         resetMocks();
         mock.expectedMinimumMessageCount(1);
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
     }

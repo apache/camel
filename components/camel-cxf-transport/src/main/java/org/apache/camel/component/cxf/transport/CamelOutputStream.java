@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -84,7 +84,7 @@ class CamelOutputStream extends CachedOutputStream {
             pattern = ExchangePattern.InOut;
         }
         LOG.debug("send the message to endpoint {}", this.targetCamelEndpointUri);
-        final org.apache.camel.Exchange exchange = this.producer.createExchange(pattern);
+        final org.apache.camel.Exchange exchange = this.producer.getEndpoint().createExchange(pattern);
 
         exchange.setProperty(Exchange.TO_ENDPOINT, this.targetCamelEndpointUri);
         CachedOutputStream outputStream = (CachedOutputStream) outMessage.getContent(OutputStream.class);

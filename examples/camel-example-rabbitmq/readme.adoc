@@ -1,0 +1,29 @@
+= Camel Example RabbitMQ
+
+This example shows how to work with a simple Apache Camel application that routes message to RabbitMQ.
+
+The example generates messages using timer trigger, routes them via RabbitMQ and logs to message.
+
+=== Configuring RabbitMQ
+
+The sample application uses `localhost:5672` to connect to the RabbitMQ broker.
+This can be configured in the `application.properties` file.
+
+The login information is the default `guest/guest` account, which can be configured
+in the `application.properties` file as well.
+
+== How to run
+
+The sample requires a RabbitMQ broker to be running.
+
+You can for example easily start RabbitMQ via Docker
+
+    docker run -it -p 5672:5672 --hostname my-rabbit --name some-rabbit rabbitmq:3
+
+Then you can run this example using
+
+    mvn spring-boot:run
+
+== More information
+
+You can find more information about Apache Camel at the website: http://camel.apache.org/

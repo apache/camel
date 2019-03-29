@@ -1,0 +1,13 @@
+{
+  "name": "@apache-camel/docs",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "del": "^3.0.0",
+    "gulp": "^4.0.0",
+    "gulp-cli": "^2.0.1",
+    "gulp-inject": "^5.0.2",
+    "gulp-rename": "^1.4.0",
+    "gulp-sort": "^2.0.0",
+    "map-stream": "^0.0.7"
+  }
+}

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,13 +16,11 @@
  */
 package org.apache.camel.itest.karaf;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-@Ignore("camel-docker do not work in OSGi")
 public class CamelDockerTest extends BaseKarafTest {
 
     public static final String COMPONENT = extractName(CamelDockerTest.class);

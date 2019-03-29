@@ -1,0 +1,152 @@
+[[wordpress-component]]
+== Wordpress Component
+
+*Available as of Camel version 2.21*
+
+Camel component for https://developer.wordpress.org/rest-api/reference/[Wordpress API].
+
+Currently only the **Posts** and **Users** operations are supported.
+
+=== Options
+
+// component options: START
+The Wordpress component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | Wordpress component configuration |  | WordpressComponent Configuration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The Wordpress endpoint is configured using URI syntax:
+
+----
+wordpress:operationDetail
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *operation* | *Required* The endpoint operation. |  | String
+| *operationDetail* | The second part of an endpoint operation. Needed only when endpoint semantic is not enough, like wordpress:post:delete |  | String
+|===
+
+
+==== Query Parameters (12 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *apiVersion* (common) | The Wordpress REST API version | 2 | String
+| *criteria* (common) | The criteria to use with complex searches. |  | Map
+| *force* (common) | Whether to bypass trash and force deletion. | false | Boolean
+| *id* (common) | The entity ID. Should be passed when the operation performed requires a specific entity, e.g. deleting a post |  | Integer
+| *password* (common) | Password from authorized user |  | String
+| *searchCriteria* (common) | Search criteria |  | SearchCriteria
+| *url* (common) | *Required* The Wordpress API URL from your site, e.g. http://myblog.com/wp-json/ |  | String
+| *user* (common) | Authorized user to perform writing operations |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-wordpress-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 9 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.wordpress.configuration.api-version* | The Wordpress REST API version | 2 | String
+| *camel.component.wordpress.configuration.force* | Whether to bypass trash and force deletion. | false | Boolean
+| *camel.component.wordpress.configuration.id* | The entity ID. Should be passed when the operation performed requires a specific entity, e.g. deleting a post |  | Integer
+| *camel.component.wordpress.configuration.password* | Password from authorized user |  | String
+| *camel.component.wordpress.configuration.search-criteria* | Search criteria |  | SearchCriteria
+| *camel.component.wordpress.configuration.url* | The Wordpress API URL from your site, e.g. http://myblog.com/wp-json/ |  | String
+| *camel.component.wordpress.configuration.user* | Authorized user to perform writing operations |  | String
+| *camel.component.wordpress.enabled* | Whether to enable auto configuration of the wordpress component. This is enabled by default. |  | Boolean
+| *camel.component.wordpress.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+Most of parameters needed when performing a read operation mirrors from the official https://developer.wordpress.org/rest-api/reference/[API]. When performing searches operations, the `criteria.` suffix is needed. Take the following `Consumer` as example:
+
+----
+wordpress:post?criteria.perPage=10&criteria.orderBy=author&criteria.categories=camel,dozer,json
+----
+
+==== Configuring Wordpress component
+
+The `WordpressConfiguration` class can be used to set initial properties configuration to the component instead of passing it as query parameter. The following listing shows how to set the component to be used in your routes.
+
+[source,java]
+----
+public void configure() {
+    final WordpressConfiguration configuration = new WordpressConfiguration();
+    final WordpressComponentConfiguration component = new WordpressComponentConfiguration();
+    configuration.setApiVersion("2");
+    configuration.setUrl("http://yoursite.com/wp-json/");
+    component.setConfiguration(configuration);
+    getContext().addComponent("wordpress", component);
+
+    from("wordpress:post?id=1")
+      .to("mock:result");
+}
+----
+
+==== Consumer Example
+
+Consumer polls from the API from time to time domain objects from Wordpress. Following, an example using the `Post` operation:
+
+- `wordpress:post` retrieves posts (defaults to 10 posts)    
+- `wordpress:post?id=1` search for a specific post
+
+==== Producer Example
+
+Producer performs write operations on Wordpress like adding a new user or update a post. To be able to write, you must have an authorized user credentials (see Authentication). 
+
+- `wordpress:post` creates a new post from the `org.apache.camel.component.wordpress.api.model.Post` class in the message body.  
+- `wordpress:post?id=1` updates a post based on data `org.apache.camel.component.wordpress.api.model.Post` from the message body.  
+- `wordpress:post:delete?id=1` deletes a specific post
+
+=== Authentication
+
+Producers that perform write operations (e.g. create a new post) https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/[must have an authenticated user] to do so. The standard authentication mechanism used by Wordpress is cookie. Unfortunately this method is not supported outside Wordpress environment because it's rely on https://codex.wordpress.org/WordPress_Nonces[nonce] internal function.
+
+There's some alternatives to use the Wordpress API without nonces, but requires specific plugin installations.
+
+At this time, `camel-wordpress` only supports Basic Authentication (more to come). To configure it, you must install the https://github.com/WP-API/Basic-Auth[Basic-Auth Wordpress plugin] and pass the credentials to the endpoint:
+
+`from("direct:deletePost").to("wordpress:post:delete?id=9&user=ben&password=password123").to("mock:resultDelete");`
+
+**It's not recommend to use Basic Authentication in production without TLS!!**

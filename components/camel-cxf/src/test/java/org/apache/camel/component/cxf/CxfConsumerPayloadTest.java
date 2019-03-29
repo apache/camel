@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,6 +24,7 @@ import javax.xml.transform.dom.DOMSource;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -66,7 +67,7 @@ public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
                     public void process(final Exchange exchange) throws Exception {
                         CxfPayload<SoapHeader> requestPayload = exchange.getIn().getBody(CxfPayload.class);
                         List<Source> inElements = requestPayload.getBodySources();
-                        List<Source> outElements = new ArrayList<Source>();
+                        List<Source> outElements = new ArrayList<>();
                         // You can use a customer toStringConverter to turn a CxfPayLoad message into String as you want                        
                         String request = exchange.getIn().getBody(String.class);
                         XmlConverter converter = new XmlConverter();
@@ -87,7 +88,7 @@ public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
                         Document outDocument = converter.toDOMDocument(documentString, exchange);
                         outElements.add(new DOMSource(outDocument.getDocumentElement()));
                         // set the payload header with null
-                        CxfPayload<SoapHeader> responsePayload = new CxfPayload<SoapHeader>(null, outElements, null);
+                        CxfPayload<SoapHeader> responsePayload = new CxfPayload<>(null, outElements, null);
                         exchange.getOut().setBody(responsePayload); 
                     }
                 });

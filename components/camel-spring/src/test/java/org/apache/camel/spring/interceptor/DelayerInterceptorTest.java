@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -31,6 +32,7 @@ public class DelayerInterceptorTest extends SpringTestSupport {
                 "/org/apache/camel/spring/interceptor/delayerInterceptorTest.xml");
     }
 
+    @Test
     public void testDelayer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(10);
@@ -39,13 +41,13 @@ public class DelayerInterceptorTest extends SpringTestSupport {
         for (int i = 0; i < 10; i++) {
             template.sendBody("direct:start", "Message #" + i);
         }
-        // add a little slack
-        long delta = System.currentTimeMillis() - start + 200;
+        long delta = System.currentTimeMillis() - start;
 
         assertMockEndpointsSatisfied();
 
-        assertTrue("Should be slower to run: " + delta, delta >= 2000);
-        assertTrue("Should not take that long to run: " + delta, delta <= 7000);
+        assertTrue("Should not be that fast to run: " + delta, delta > 100);
+        // some OS boxes are slow
+        assertTrue("Should not take that long to run: " + delta, delta < 5000);
     }
 
 }

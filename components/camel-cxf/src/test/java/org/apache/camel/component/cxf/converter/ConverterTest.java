@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,18 +33,20 @@ import org.w3c.dom.Node;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.cxf.message.MessageContentsList;
-import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 public class ConverterTest extends Assert {
     
     @Test
     public void testToArray() throws Exception {
-        List<String> testList = new ArrayList<String>();
+        List<String> testList = new ArrayList<>();
         testList.add("string 1");
         testList.add("string 2");
         
@@ -58,24 +60,18 @@ public class ConverterTest extends Assert {
         CamelContext context = new DefaultCamelContext();
         Exchange exchange = new DefaultExchange(context);
         
-        Response response = EasyMock.createMock(Response.class);
-        InputStream is = EasyMock.createMock(InputStream.class);
+        Response response = mock(Response.class);
+        InputStream is = mock(InputStream.class);
         
-        response.getEntity();
-        EasyMock.expectLastCall().andReturn(is);
+        when(response.getEntity()).thenReturn(is);
         
-        EasyMock.replay(response);
         InputStream result = CxfConverter.toInputStream(response, exchange);
         assertEquals("We should get the inputStream here ", is, result);
-        EasyMock.verify(response);
         
-        EasyMock.reset(response);
-        response.getEntity();
-        EasyMock.expectLastCall().andReturn("Hello World");
-        EasyMock.replay(response);
+        reset(response);
+        when(response.getEntity()).thenReturn("Hello World");
         result = CxfConverter.toInputStream(response, exchange);
         assertTrue("We should get the inputStream here ", result instanceof ByteArrayInputStream);
-        EasyMock.verify(response);
     }
     
     @Test
@@ -95,7 +91,7 @@ public class ConverterTest extends Assert {
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         Document document = documentBuilder.parse(file);
         document.getDocumentElement().normalize();
-        List<Element> elements = new ArrayList<Element>();
+        List<Element> elements = new ArrayList<>();
         elements.add(document.getDocumentElement());
         nl = new NodeListWrapper(elements);
         list.clear();

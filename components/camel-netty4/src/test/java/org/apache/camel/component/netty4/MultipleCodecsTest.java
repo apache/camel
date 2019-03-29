@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,7 +24,6 @@ import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -48,11 +47,11 @@ public class MultipleCodecsTest extends BaseNettyTest {
         registry.bind("length-encoder", lengthEncoder);
         registry.bind("string-encoder", stringEncoder);
 
-        List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
+        List<ChannelHandler> decoders = new ArrayList<>();
         decoders.add(lengthDecoder);
         decoders.add(stringDecoder);
 
-        List<ChannelHandler> encoders = new ArrayList<ChannelHandler>();
+        List<ChannelHandler> encoders = new ArrayList<>();
         encoders.add(lengthEncoder);
         encoders.add(stringEncoder);
 

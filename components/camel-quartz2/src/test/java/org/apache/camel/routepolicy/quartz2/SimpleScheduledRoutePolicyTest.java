@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,10 +22,11 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.quartz2.QuartzComponent;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.ServiceHelper;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,8 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
     public void testScheduledStartRoutePolicy() throws Exception {
         MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);        
         success.expectedMessageCount(1);
-        
+
+        context.getComponent("direct", DirectComponent.class).setBlock(false);
         context.getComponent("quartz2", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz2/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {   
@@ -59,10 +61,10 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
             }
         });
         context.start();
-        context.stopRoute("test", 1000, TimeUnit.MILLISECONDS);
+        context.getRouteController().stopRoute("test", 1000, TimeUnit.MILLISECONDS);
         
         Thread.sleep(5000);
-        assertTrue(context.getRouteStatus("test") == ServiceStatus.Started);
+        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Started);
         template.sendBody("direct:start", "Ready or not, Here, I come");
 
         context.getComponent("quartz2", QuartzComponent.class).stop();
@@ -71,6 +73,7 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
 
     @Test
     public void testScheduledStopRoutePolicy() throws Exception {
+        context.getComponent("direct", DirectComponent.class).setBlock(false);
         context.getComponent("quartz2", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz2/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -90,7 +93,7 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         
         Thread.sleep(4000);
 
-        assertTrue(context.getRouteStatus("test") == ServiceStatus.Stopped);
+        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Stopped);
 
         boolean consumerStopped = false;
         try {
@@ -104,6 +107,7 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
     
     @Test
     public void testScheduledSuspendRoutePolicy() throws Exception {
+        context.getComponent("direct", DirectComponent.class).setBlock(false);
         context.getComponent("quartz2", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz2/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -137,7 +141,8 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
     public void testScheduledResumeRoutePolicy() throws Exception {
         MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
         success.expectedMessageCount(1);
-        
+
+        context.getComponent("direct", DirectComponent.class).setBlock(false);
         context.getComponent("quartz2", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz2/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -174,7 +179,8 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
     public void testScheduledSuspendAndResumeRoutePolicy() throws Exception {
         MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
         success.expectedMessageCount(1);
-        
+
+        context.getComponent("direct", DirectComponent.class).setBlock(false);
         context.getComponent("quartz2", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz2/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -215,7 +221,8 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
     public void testScheduledSuspendAndRestartPolicy() throws Exception {
         MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
         success.expectedMessageCount(1);
-        
+
+        context.getComponent("direct", DirectComponent.class).setBlock(false);
         context.getComponent("quartz2", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz2/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {

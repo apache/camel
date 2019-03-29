@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.boon.enabled",
+      "description": "Enable boon dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

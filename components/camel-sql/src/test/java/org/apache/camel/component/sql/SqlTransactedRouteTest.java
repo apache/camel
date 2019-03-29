@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,9 +33,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-/**
- * @version 
- */
 public class SqlTransactedRouteTest extends CamelTestSupport {
     
     private EmbeddedDatabase db;
@@ -83,7 +80,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     public void testCommit() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start")
+                from("direct:start").routeId("commit")
                     .transacted("required")
                     .to(sqlEndpoint)
                     .process(new Processor() {
@@ -122,7 +119,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     public void testRollbackAfterExceptionInSecondStatement() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start")
+                from("direct:start").routeId("rollback")
                     .transacted("required")
                     .to(sqlEndpoint)
                     .process(new Processor() {
@@ -152,7 +149,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     public void testRollbackAfterAnException() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start")
+                from("direct:start").routeId("rollback2")
                     .transacted("required")
                     .to(sqlEndpoint)
                     .process(new Processor() {

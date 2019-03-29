@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jms;
+
+import java.util.Set;
 
 import javax.jms.ConnectionFactory;
 import javax.management.MBeanServer;
@@ -55,7 +57,10 @@ public class ManagedJmsEndpointTest extends CamelTestSupport {
     public void testJmsEndpoint() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"activemq://queue:start\"");
+        Set<ObjectName> objectNames = mbeanServer.queryNames(new ObjectName("org.apache.camel:context=camel-*,type=endpoints,name=\"activemq://queue:start\""), null);
+        assertEquals(1, objectNames.size());
+        ObjectName name = objectNames.iterator().next();
+
         String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("activemq://queue:start", uri);
 
@@ -76,7 +81,7 @@ public class ManagedJmsEndpointTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // stop route
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         // send a message to queue
         template.sendBody("activemq:queue:start", "Hi World");

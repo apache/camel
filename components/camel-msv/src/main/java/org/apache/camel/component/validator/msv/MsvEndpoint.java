@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,14 +20,15 @@ import javax.xml.XMLConstants;
 
 import org.apache.camel.Component;
 import org.apache.camel.component.validator.ValidatorEndpoint;
-import org.apache.camel.processor.validation.ValidatingProcessor;
+
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.support.processor.validation.ValidatingProcessor;
 import org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl;
 
 /**
  * Validates the payload of a message using the MSV Library.
  */
-@UriEndpoint(scheme = "msv", title = "MSV", syntax = "msv:resourceUri", producerOnly = true, label = "validation")
+@UriEndpoint(firstVersion = "1.1.0", scheme = "msv", title = "MSV", syntax = "msv:resourceUri", producerOnly = true, label = "validation")
 public class MsvEndpoint extends ValidatorEndpoint {
 
     public MsvEndpoint(String endpointUri, Component component, String resourceUri) {
@@ -38,8 +39,6 @@ public class MsvEndpoint extends ValidatorEndpoint {
     protected void configureValidator(ValidatingProcessor validator) throws Exception {
         super.configureValidator(validator);
         validator.setSchemaLanguage(XMLConstants.RELAXNG_NS_URI);
-        // must use Dom for Msv to work
-        validator.setUseDom(true);
     }
 
     @Override

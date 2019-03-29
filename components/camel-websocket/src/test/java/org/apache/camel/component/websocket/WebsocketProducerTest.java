@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.websocket;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -32,7 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -40,14 +37,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-/**
- *
- */
 @RunWith(MockitoJUnitRunner.class)
 public class WebsocketProducerTest {
 
@@ -73,8 +66,6 @@ public class WebsocketProducerTest {
     @Mock
     private Future<Void> future;
 
-    private IOException ioException = new IOException("BAD NEWS EVERYONE!");
-    private ExecutionException exception = new ExecutionException("Failure", ioException);
     private WebsocketProducer websocketProducer;
     private Collection<DefaultWebsocket> sockets;
 
@@ -122,7 +113,6 @@ public class WebsocketProducerTest {
         when(session.isOpen()).thenReturn(true);
         when(session.getRemote()).thenReturn(remoteEndpoint);
         when(remoteEndpoint.sendStringByFuture(MESSAGE)).thenReturn(future);
-        doThrow(exception).when(future).get(60000, TimeUnit.MILLISECONDS);
 
         try {
             websocketProducer.process(exchange);
@@ -178,7 +168,6 @@ public class WebsocketProducerTest {
     @Test
     public void testProcessSingleMessageNoConnectionKey() throws Exception {
         when(exchange.getIn()).thenReturn(inMessage);
-        when(inMessage.getBody(String.class)).thenReturn(MESSAGE);
         when(inMessage.getHeader(WebsocketConstants.SEND_TO_ALL, false, Boolean.class)).thenReturn(false);
         when(inMessage.getHeader(WebsocketConstants.CONNECTION_KEY, String.class)).thenReturn(null);
 
@@ -219,7 +208,6 @@ public class WebsocketProducerTest {
     public void testSendMessageConnetionIsClosed() throws Exception {
         when(defaultWebsocket1.getSession()).thenReturn(session);
         when(session.isOpen()).thenReturn(false);
-        when(session.getRemote()).thenReturn(remoteEndpoint);
 
         websocketProducer.sendMessage(defaultWebsocket1, MESSAGE);
 
@@ -282,7 +270,6 @@ public class WebsocketProducerTest {
         when(session.getRemote()).thenReturn(remoteEndpoint);
         when(session.isOpen()).thenReturn(true);
         when(remoteEndpoint.sendStringByFuture(MESSAGE)).thenReturn(future);
-        doThrow(exception).when(future).get(60000, TimeUnit.MILLISECONDS);
 
         try {
             websocketProducer.process(exchange);

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -41,18 +42,21 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimeUtility;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.camel.Attachment;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.converter.ObjectConverter;
-import org.apache.camel.impl.DefaultAttachment;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.DefaultAttachment;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.CollectionHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,7 +97,7 @@ public class MailBinding {
             replyTo = endpoint.getConfiguration().getReplyTo();
         }
         if (replyTo != null) {
-            List<InternetAddress> replyToAddresses = new ArrayList<InternetAddress>();
+            List<InternetAddress> replyToAddresses = new ArrayList<>();
             for (String reply : splitRecipients(replyTo)) {
                 replyToAddresses.add(asEncodedInternetAddress(reply.trim(), determineCharSet(endpoint.getConfiguration(), exchange)));
             }
@@ -109,7 +113,7 @@ public class MailBinding {
         // and headers the headers win.
         String subject = endpoint.getConfiguration().getSubject();
         if (subject != null) {
-            mimeMessage.setSubject(subject, IOHelper.getCharsetName(exchange, false));
+            mimeMessage.setSubject(subject, ExchangeHelper.getCharsetName(exchange, false));
         }
 
         // append the rest of the headers (no recipients) that could be subject, reply-to etc.
@@ -185,14 +189,14 @@ public class MailBinding {
                 } else if (!configuration.isIgnoreUnsupportedCharset()) {
                     return charset;
                 } else if (configuration.isIgnoreUnsupportedCharset()) {
-                    LOG.warn("Charset: " + charset + " is not supported and cannot be used as charset in Content-Type header.");
+                    LOG.warn("Charset: {} is not supported and cannot be used as charset in Content-Type header.", charset);
                     return null;
                 }
             }
         }
 
         // Using the charset header of exchange as a fall back
-        return IOHelper.getCharsetName(exchange, false);
+        return ExchangeHelper.getCharsetName(exchange, false);
     }
 
     protected String populateContentOnMimeMessage(MimeMessage part, MailConfiguration configuration, Exchange exchange)
@@ -252,15 +256,15 @@ public class MailBinding {
             return message; // raw message
         } catch (Exception e) {
             // try to fix message in case it has an unsupported encoding in the Content-Type header
-            UnsupportedEncodingException uee = ObjectHelper.getException(UnsupportedEncodingException.class, e);
+            UnsupportedEncodingException uee = org.apache.camel.util.ObjectHelper.getException(UnsupportedEncodingException.class, e);
             if (uee != null) {
-                LOG.debug("Unsupported encoding detected: " + uee.getMessage());
+                LOG.debug("Unsupported encoding detected: {}", uee.getMessage());
                 try {
                     String contentType = message.getContentType();
-                    String type = ObjectHelper.before(contentType, "charset=");
+                    String type = StringHelper.before(contentType, "charset=");
                     if (type != null) {
                         // try again with fixed content type
-                        LOG.debug("Trying to extract mail message again with fixed Content-Type: " + type);
+                        LOG.debug("Trying to extract mail message again with fixed Content-Type: {}", type);
                         // Since message is read-only, we need to use a copy
                         MimeMessage messageCopy = new MimeMessage((MimeMessage) message);
                         messageCopy.setHeader("Content-Type", type);
@@ -295,7 +299,7 @@ public class MailBinding {
         if (content instanceof Multipart) {
             extractAttachmentsFromMultipart((Multipart) content, map);
         } else if (content != null) {
-            LOG.trace("No attachments to extract as content is not Multipart: " + content.getClass().getName());
+            LOG.trace("No attachments to extract as content is not Multipart: {}", content.getClass().getName());
         }
 
         LOG.trace("Extracting attachments +++ done +++");
@@ -306,14 +310,14 @@ public class MailBinding {
 
         for (int i = 0; i < mp.getCount(); i++) {
             Part part = mp.getBodyPart(i);
-            LOG.trace("Part #" + i + ": " + part);
+            LOG.trace("Part #{}: {}", i, part);
 
             if (part.isMimeType("multipart/*")) {
-                LOG.trace("Part #" + i + ": is mimetype: multipart/*");
+                LOG.trace("Part #{}: is mimetype: multipart/*", i);
                 extractAttachmentsFromMultipart((Multipart) part.getContent(), map);
             } else {
                 String disposition = part.getDisposition();
-                String fileName = part.getFileName();
+                String fileName = FileUtil.stripPath(part.getFileName());
 
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Part #{}: Disposition: {}", i, disposition);
@@ -329,7 +333,11 @@ public class MailBinding {
                     LOG.debug("Mail contains file attachment: {}", fileName);
                     if (!map.containsKey(fileName)) {
                         // Parts marked with a disposition of Part.ATTACHMENT are clearly attachments
-                        DefaultAttachment camelAttachment = new DefaultAttachment(part.getDataHandler());
+                        final DataHandler dataHandler = part.getDataHandler();
+                        final DataSource dataSource = dataHandler.getDataSource();
+
+                        final DataHandler replacement = new DataHandler(new DelegatingDataSource(fileName, dataSource));
+                        DefaultAttachment camelAttachment = new DefaultAttachment(replacement);
                         @SuppressWarnings("unchecked")
                         Enumeration<Header> headers = part.getAllHeaders();
                         while (headers.hasMoreElements()) {
@@ -387,14 +395,14 @@ public class MailBinding {
                     }
 
                     // Mail messages can repeat the same header...
-                    if (ObjectConverter.isCollection(headerValue)) {
+                    if (isCollection(headerValue)) {
                         Iterator<?> iter = ObjectHelper.createIterator(headerValue);
                         while (iter.hasNext()) {
                             Object value = iter.next();
-                            mimeMessage.addHeader(headerName, asString(exchange, value));
+                            mimeMessage.addHeader(StringHelper.removeCRLF(headerName), asString(exchange, value));
                         }
                     } else {
-                        mimeMessage.setHeader(headerName, asString(exchange, headerValue));
+                        mimeMessage.setHeader(StringHelper.removeCRLF(headerName), asString(exchange, headerValue));
                     }
                 }
             }
@@ -407,14 +415,16 @@ public class MailBinding {
             Object headerValue = entry.getValue();
             if (headerValue != null && isRecipientHeader(headerName)) {
                 // special handling of recipients
-                if (ObjectConverter.isCollection(headerValue)) {
+                if (isCollection(headerValue)) {
                     Iterator<?> iter = ObjectHelper.createIterator(headerValue);
                     while (iter.hasNext()) {
                         Object recipient = iter.next();
-                        appendRecipientToMimeMessage(mimeMessage, configuration, exchange, headerName, asString(exchange, recipient));
+                        appendRecipientToMimeMessage(mimeMessage, configuration, exchange,
+                                                     StringHelper.removeCRLF(headerName), asString(exchange, recipient));
                     }
                 } else {
-                    appendRecipientToMimeMessage(mimeMessage, configuration, exchange, headerName, asString(exchange, headerValue));
+                    appendRecipientToMimeMessage(mimeMessage, configuration, exchange,
+                                                 StringHelper.removeCRLF(headerName), asString(exchange, headerValue));
                 }
             }
         }
@@ -502,15 +512,15 @@ public class MailBinding {
                         messageBodyPart.setFileName(attachmentFilename);
                     }
 
-                    LOG.trace("Attachment #" + i + ": ContentType: " + messageBodyPart.getContentType());
+                    LOG.trace("Attachment #{}: ContentType: {}", i, messageBodyPart.getContentType());
 
                     if (contentTypeResolver != null) {
                         String contentType = contentTypeResolver.resolveContentType(attachmentFilename);
-                        LOG.trace("Attachment #" + i + ": Using content type resolver: " + contentTypeResolver + " resolved content type as: " + contentType);
+                        LOG.trace("Attachment #{}: Using content type resolver: {} resolved content type as: {}", i, contentTypeResolver, contentType);
                         if (contentType != null) {
                             String value = contentType + "; name=" + attachmentFilename;
                             messageBodyPart.setHeader("Content-Type", value);
-                            LOG.trace("Attachment #" + i + ": ContentType: " + messageBodyPart.getContentType());
+                            LOG.trace("Attachment #{}: ContentType: {}", i, messageBodyPart.getContentType());
                         }
                     }
 
@@ -524,7 +534,7 @@ public class MailBinding {
                     LOG.trace("shouldAddAttachment: false");
                 }
             } else {
-                LOG.warn("Cannot add attachment: " + attachmentFilename + " as DataHandler is null");
+                LOG.warn("Cannot add attachment: {} as DataHandler is null", attachmentFilename);
             }
             i++;
         }
@@ -595,18 +605,24 @@ public class MailBinding {
     }
 
     protected Map<String, Object> extractHeadersFromMail(Message mailMessage, Exchange exchange) throws MessagingException, IOException {
-        Map<String, Object> answer = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
+        Map<String, Object> answer = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         Enumeration<?> names = mailMessage.getAllHeaders();
 
+        MailConfiguration mailConfiguration = ((MailEndpoint) exchange.getFromEndpoint()).getConfiguration();
         while (names.hasMoreElements()) {
             Header header = (Header) names.nextElement();
+
             String value = header.getValue();
+            if (value != null && mailConfiguration.isMimeDecodeHeaders()) {
+                value = MimeUtility.decodeText(MimeUtility.unfold(value));
+            }
+
             if (headerFilterStrategy != null && !headerFilterStrategy.applyFilterToExternalHeaders(header.getName(), value, exchange)) {
                 CollectionHelper.appendValue(answer, header.getName(), value);
             }
         }
         // if the message is a multipart message, do not set the content type to multipart/*
-        if (((MailEndpoint)exchange.getFromEndpoint()).getConfiguration().isMapMailMessage()) {
+        if (mailConfiguration.isMapMailMessage()) {
             Object content = mailMessage.getContent();
             if (content instanceof MimeMultipart) {
                 MimeMultipart multipart = (MimeMultipart)content;
@@ -635,11 +651,11 @@ public class MailBinding {
 
     private static void appendRecipientToMimeMessage(MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange,
                                                      String type, String recipient) throws MessagingException, IOException {
-        List<InternetAddress> recipientsAddresses = new ArrayList<InternetAddress>();
+        List<InternetAddress> recipientsAddresses = new ArrayList<>();
         for (String line : splitRecipients(recipient)) {
             String address = line.trim();
             // Only add the address which is not empty
-            if (ObjectHelper.isNotEmpty(address)) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(address)) {
                 recipientsAddresses.add(asEncodedInternetAddress(address, determineCharSet(configuration, exchange)));
             }
         }
@@ -707,7 +723,8 @@ public class MailBinding {
     }
 
     private static String asString(Exchange exchange, Object value) {
-        return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
+        String strValue = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
+        return StringHelper.removeCRLF(strValue);
     }
 
     /**
@@ -719,6 +736,10 @@ public class MailBinding {
         InternetAddress internetAddress = new InternetAddress(address);
         internetAddress.setPersonal(internetAddress.getPersonal(), charset);
         return internetAddress;
+    }
+
+    private static boolean isCollection(Object value) {
+        return value instanceof Collection || (value != null && value.getClass().isArray());
     }
 
 }

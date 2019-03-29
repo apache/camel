@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,8 +36,6 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
  */
 public class SharedQueueMessageListenerContainer extends DefaultJmsMessageListenerContainer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SharedQueueMessageListenerContainer.class);
-
     private String fixedMessageSelector;
     private MessageSelectorCreator creator;
 
@@ -72,7 +70,9 @@ public class SharedQueueMessageListenerContainer extends DefaultJmsMessageListen
         } else if (creator != null) {
             id = creator.get();
         }
-        LOG.trace("Using MessageSelector[{}]", id);
+        if (logger.isTraceEnabled()) {
+            logger.trace("Using MessageSelector[" + id + "]");
+        }
         return id;
     }
 

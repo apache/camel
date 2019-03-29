@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.lucene;
 
 import java.io.File;
@@ -26,8 +25,8 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.lucene.support.Hits;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
@@ -36,9 +35,9 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(LuceneIndexAndQueryProducerTest.class);
+
     private String[] humorousQuotes = {
         "I think, therefore I am. I think - George Carlin",
         "I have as much authority as the Pope. I just don't have as many people who believe it. - George Carlin",
@@ -48,10 +47,9 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
         "I tell ya when I was a kid, all I knew was rejection. My yo-yo, it never came back. - Rodney Dangerfield",
         "I worked in a pet store and people kept asking how big I'd get. - Rodney Dangerfield"
     };
-    
+
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = new JndiRegistry(createJndiContext());
+    protected void bindToRegistry(Registry registry) throws Exception {
         registry.bind("std", new File("target/stdindexDir"));
         registry.bind("load_dir", new File("src/test/resources/sources"));
         registry.bind("stdAnalyzer", new StandardAnalyzer());
@@ -59,7 +57,6 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
         registry.bind("simpleAnalyzer", new SimpleAnalyzer());
         registry.bind("whitespace", new File("target/whitespaceindexDir"));
         registry.bind("whitespaceAnalyzer", new WhitespaceAnalyzer());
-        return registry;
     }
     
     @Override
@@ -237,9 +234,9 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         Hits hits = exchange.getIn().getBody(Hits.class);
                         if (hits == null) {
-                            HashMap<String, String> map = new HashMap<String, String>();
+                            HashMap<String, String> map = new HashMap<>();
                             map.put("NO_LUCENE_DOCS_ERROR", "NO LUCENE DOCS FOUND");
-                            exchange.getContext().setProperties(map);
+                            exchange.getContext().setGlobalOptions(map);
                         }
                         LOG.debug("Number of hits: " + hits.getNumberOfHits());
                     }
@@ -251,7 +248,7 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
 
         sendQuery();
         mockSearchEndpoint.assertIsSatisfied();
-        Map<String, String> errorMap = mockSearchEndpoint.getCamelContext().getProperties();
+        Map<String, String> errorMap = mockSearchEndpoint.getCamelContext().getGlobalOptions();
         LOG.debug("------------Completed LuceneQueryProducer Wildcard with Return Lucene Docs Test---------------");
         context.stop();
         assertTrue(errorMap.get("NO_LUCENE_DOCS_ERROR") == null);

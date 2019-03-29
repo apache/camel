@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cxf;
 
 import java.util.ArrayList;
@@ -28,9 +27,6 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * 
- */
 public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
     private static int port = AvailablePortFinder.getNextAvailable();
     private static final String RESPONSE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
@@ -66,7 +62,7 @@ public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
     private Exchange sendSimpleMessage(String endpointUri) {
         Exchange exchange = template.send(endpointUri, new Processor() {
             public void process(final Exchange exchange) {
-                final List<String> params = new ArrayList<String>();
+                final List<String> params = new ArrayList<>();
                 params.add("Hello World!");
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "echo");

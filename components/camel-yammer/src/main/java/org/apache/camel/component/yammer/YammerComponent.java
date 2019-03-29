@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,16 +19,23 @@ package org.apache.camel.component.yammer;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * Represents the component that manages {@link YammerEndpoint}.
  */
+@Component("yammer")
 public class YammerComponent extends DefaultComponent {
 
+    @Metadata(label = "security", secret = true)
     private String consumerKey;
+    @Metadata(label = "security", secret = true)
     private String consumerSecret;
+    @Metadata(label = "security", secret = true)
     private String accessToken;
+    @Metadata(label = "advanced")
     private YammerConfiguration config;
     
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

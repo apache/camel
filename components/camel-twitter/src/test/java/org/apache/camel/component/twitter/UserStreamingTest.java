@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -40,7 +40,7 @@ public class UserStreamingTest extends CamelTwitterTestSupport  {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("twitter://streaming/user?type=event&" + getUriTokens())
+                from("twitter-streaming://user?type=event&" + getUriTokens())
                     .to("log:org.apache.camel.component.twitter?level=INFO&showHeaders=true")
                     .to("mock:user-streaming");
             }

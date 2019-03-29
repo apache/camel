@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 public class HomeTimeLinePollingTest extends CamelTwitterConsumerTestSupport {
     @Override
     protected String getUri() {
-        return "twitter://timeline/home?type=polling&";
+        return "twitter-timeline://home?type=polling&";
     }
 
     @Override

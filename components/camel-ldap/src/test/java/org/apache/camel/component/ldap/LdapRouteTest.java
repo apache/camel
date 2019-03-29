@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,7 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.directory.server.annotations.CreateLdapServer;
 import org.apache.directory.server.annotations.CreateTransport;
 import org.apache.directory.server.core.annotations.ApplyLdifFiles;
@@ -66,7 +66,7 @@ public class LdapRouteTest extends AbstractLdapTestUnit {
         LdapContext ctx = getWiredContext(ldapServer);
 
         SimpleRegistry reg = new SimpleRegistry();
-        reg.put("localhost:" + port, ctx);
+        reg.bind("localhost:" + port, ctx);
         camel = new DefaultCamelContext(reg);
         template = camel.createProducerTemplate();
     }

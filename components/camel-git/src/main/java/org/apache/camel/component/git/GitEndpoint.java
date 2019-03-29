@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,20 +24,20 @@ import org.apache.camel.component.git.consumer.GitCommitConsumer;
 import org.apache.camel.component.git.consumer.GitTagConsumer;
 import org.apache.camel.component.git.consumer.GitType;
 import org.apache.camel.component.git.producer.GitProducer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The git component is used for working with git repositories.
  */
-@UriEndpoint(scheme = "git", title = "Git", syntax = "git:localPath", label = "file")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "git", title = "Git", syntax = "git:localPath", label = "file")
 public class GitEndpoint extends DefaultEndpoint {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String localPath;
 
     @UriParam
@@ -57,11 +57,16 @@ public class GitEndpoint extends DefaultEndpoint {
 
     @UriParam
     private String remotePath;
-    
+
     @UriParam
     private String remoteName;
 
-    @UriParam(enums = "clone,init,add,remove,commit,commitAll,createBranch,deleteBranch,createTag,deleteTag,status,log,push,pull,showBranches,cherryPick", label = "producer")
+    // Set to true for backward compatibility , better to set to false (native git behavior)
+    @UriParam(defaultValue = "true")
+    @Metadata(label = "producer")
+    private boolean allowEmpty = true;
+
+    @UriParam(enums = "clone,init,add,remove,commit,commitAll,createBranch,deleteBranch,createTag,deleteTag,status,log,push,pull,showBranches,cherryPick,remoteAdd,remoteList", label = "producer")
     private String operation;
 
     public GitEndpoint(String uri, GitComponent component) {
@@ -178,7 +183,7 @@ public class GitEndpoint extends DefaultEndpoint {
     public void setTagName(String tagName) {
         this.tagName = tagName;
     }
-    
+
     /**
      * The remote repository name to use in particular operation like pull
      */
@@ -190,4 +195,14 @@ public class GitEndpoint extends DefaultEndpoint {
         this.remoteName = remoteName;
     }
 
+    /**
+     * The flag to manage empty git commits
+     */
+    public boolean isAllowEmpty() {
+        return allowEmpty;
+    }
+
+    public void setAllowEmpty(boolean allowEmpty) {
+        this.allowEmpty = allowEmpty;
+    }
 }

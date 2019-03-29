@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,8 +26,6 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * Unit test to verify using '#' notation to reference serviceClass.
- * 
- * @version 
  */
 @ContextConfiguration
 public class ServiceClassRefTest extends AbstractJUnit4SpringContextTests {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
+
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.BodyPart;
@@ -47,14 +48,16 @@ import org.apache.camel.Attachment;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.impl.DefaultAttachment;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.DefaultAttachment;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Dataformat("mime-multipart")
 public class MimeMultipartDataFormat implements DataFormat {
     private static final Logger LOG = LoggerFactory.getLogger(MimeMultipartDataFormat.class);
     private static final String MIME_VERSION = "MIME-Version";
@@ -139,7 +142,7 @@ public class MimeMultipartDataFormat implements DataFormat {
             }
             mm.saveChanges();
             Enumeration<?> hl = mm.getAllHeaders();
-            List<String> headers = new ArrayList<String>();
+            List<String> headers = new ArrayList<>();
             if (!headersInline) {
                 while (hl.hasMoreElements()) {
                     Object ho = hl.nextElement();
@@ -218,7 +221,7 @@ public class MimeMultipartDataFormat implements DataFormat {
                     return stream;
                 }
             } catch (ParseException e) {
-                LOG.warn("Invalid Content-Type " + contentType + " ignored");
+                LOG.warn("Invalid Content-Type {} ignored", contentType);
                 return stream;
             }
             camelMessage = exchange.getOut();

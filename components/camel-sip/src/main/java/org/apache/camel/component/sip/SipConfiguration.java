@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.sip.InvalidArgumentException;
 import javax.sip.ListeningPoint;
 import javax.sip.SipFactory;
@@ -63,7 +64,7 @@ public class SipConfiguration {
     private String protocol;
     private Map<String, Object> parameters;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private URI uri;
     @UriParam(label = "advanced")
     private AddressFactory addressFactory;
@@ -173,7 +174,7 @@ public class SipConfiguration {
             setTransport((String) settings.get("transport"));
         } 
         if (settings.containsKey("maxMessageSize")) {
-            setMaxMessageSize(Integer.valueOf((String) settings.get("maxMessageSize")));
+            setMaxMessageSize(Integer.parseInt((String) settings.get("maxMessageSize")));
         } 
         if (settings.containsKey("cacheConnections")) {
             setCacheConnections(Boolean.valueOf((String) settings.get("cacheConnections")));
@@ -185,10 +186,10 @@ public class SipConfiguration {
             setContentSubType((String) settings.get("contentSubType"));
         }
         if (settings.containsKey("maxForwards")) {
-            setMaxForwards(Integer.valueOf((String) settings.get("maxForwards")));
+            setMaxForwards(Integer.parseInt((String) settings.get("maxForwards")));
         }
         if (settings.containsKey("receiveTimeoutMillis")) {
-            setReceiveTimeoutMillis(Long.valueOf((String) settings.get("receiveTimeoutMillis")));
+            setReceiveTimeoutMillis(Long.parseLong((String) settings.get("receiveTimeoutMillis")));
         }
         if (settings.containsKey("eventHeaderName")) {
             setEventHeaderName((String) settings.get("eventHeaderName"));
@@ -200,7 +201,7 @@ public class SipConfiguration {
             setUseRouterForAllUris(Boolean.valueOf((String) settings.get("useRouterForAllUris")));
         }
         if (settings.containsKey("msgExpiration")) {
-            setMsgExpiration(Integer.valueOf((String) settings.get("msgExpiration")));
+            setMsgExpiration(Integer.parseInt((String) settings.get("msgExpiration")));
         }
         if (settings.containsKey("presenceAgent")) {
             setPresenceAgent(Boolean.valueOf((String) settings.get("presenceAgent")));
@@ -214,7 +215,7 @@ public class SipConfiguration {
                 setFromHost((String) settings.get("fromHost"));
             } 
             if (settings.containsKey("fromPort")) {
-                setFromPort(Integer.valueOf((String) settings.get("fromPort")));
+                setFromPort(Integer.parseInt((String) settings.get("fromPort")));
             } 
             setToUser(uri.getUserInfo());
             setToHost(uri.getHost());
@@ -231,7 +232,7 @@ public class SipConfiguration {
                     setToHost((String) settings.get("toHost"));
                 } 
                 if (settings.containsKey("toPort")) {
-                    setToPort(Integer.valueOf((String) settings.get("toPort")));
+                    setToPort(Integer.parseInt((String) settings.get("toPort")));
                 } 
             }
         }
@@ -357,7 +358,7 @@ public class SipConfiguration {
     }
 
     private void createViaHeaders() throws ParseException, InvalidArgumentException {
-        viaHeaders = new ArrayList<ViaHeader>();
+        viaHeaders = new ArrayList<>();
         ViaHeader viaHeader = headerFactory.createViaHeader(getFromHost(), getFromPort(),
                 getTransport(), null);
 

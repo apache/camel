@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,8 +20,6 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
  * The name space handler Spring Integration Camel Adapter
- *
- * @version 
  */
 public class NamespaceHandler extends NamespaceHandlerSupport {
 

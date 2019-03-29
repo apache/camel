@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,7 @@ import io.iron.ironmq.Client;
 import io.iron.ironmq.Queue;
 
 public class IronMQClientMock extends Client {
-    private final Map<String, Queue> memQueues = new ConcurrentHashMap<String, Queue>();
+    private final Map<String, Queue> memQueues = new ConcurrentHashMap<>();
     
     public IronMQClientMock(String projectId, String token) {
         super(projectId, token);

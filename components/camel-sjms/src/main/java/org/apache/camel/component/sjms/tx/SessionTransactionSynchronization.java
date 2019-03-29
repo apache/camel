@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,16 +20,19 @@ import javax.jms.Session;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sjms.TransactionCommitStrategy;
-import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * SessionTransactionSynchronization is called at the completion of each {@link org.apache.camel.Exhcnage}.
+ * SessionTransactionSynchronization is called at the completion of each {@link org.apache.camel.Exchange}.
+ * <p/>
+ * The commit or rollback on the {@link Session} must be performed from the same thread that consumed the message.
  */
-public class SessionTransactionSynchronization implements Synchronization {
-    private Logger log = LoggerFactory.getLogger(getClass());
-    private Session session;
+public class SessionTransactionSynchronization extends SynchronizationAdapter {
+    private static final Logger LOG = LoggerFactory.getLogger(SessionTransactionSynchronization.class);
+
+    private final Session session;
     private final TransactionCommitStrategy commitStrategy;
 
     public SessionTransactionSynchronization(Session session, TransactionCommitStrategy commitStrategy) {
@@ -41,42 +44,38 @@ public class SessionTransactionSynchronization implements Synchronization {
         }
     }
 
-    /**
-     * @param exchange
-     * @see org.apache.camel.spi.Synchronization#onFailure(org.apache.camel.Exchange)
-     */
     @Override
     public void onFailure(Exchange exchange) {
         try {
             if (commitStrategy.rollback(exchange)) {
-                log.debug("Processing failure of Exchange id:{}", exchange.getExchangeId());
+                LOG.debug("Processing failure of ExchangeId: {}", exchange.getExchangeId());
                 if (session != null && session.getTransacted()) {
                     session.rollback();
                 }
             }
         } catch (Exception e) {
-            log.warn("Failed to rollback the session: {}", e.getMessage());
+            LOG.warn("Failed to rollback the JMS session: {}", e.getMessage());
         }
     }
 
-    /**
-     * @param exchange
-     * @see org.apache.camel.spi.Synchronization#onComplete(org.apache.camel.Exchange
-     *)
-     */
     @Override
     public void onComplete(Exchange exchange) {
         try {
             if (commitStrategy.commit(exchange)) {
-                log.debug("Processing completion of Exchange id:{}", exchange.getExchangeId());
+                LOG.debug("Processing completion of ExchangeId: {}", exchange.getExchangeId());
                 if (session != null && session.getTransacted()) {
                     session.commit();
                 }
             }
         } catch (Exception e) {
-            log.warn("Failed to commit the session: {}", e.getMessage());
+            LOG.warn("Failed to commit the JMS session: {}", e.getMessage());
             exchange.setException(e);
         }
     }
 
+    @Override
+    public boolean allowHandover() {
+        // must not handover as we should be synchronous
+        return false;
+    }
 }

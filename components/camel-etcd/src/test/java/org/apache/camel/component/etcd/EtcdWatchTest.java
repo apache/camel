@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -59,7 +59,7 @@ public class EtcdWatchTest extends EtcdTestSupport {
             client.put(key, "v" + i).send().get();
         }
 
-        context().startRoute("watchRecovery");
+        context().getRouteController().startRoute("watchRecovery");
 
         testWatch("mock:watch-recovery", key, 10);
     }
@@ -102,7 +102,7 @@ public class EtcdWatchTest extends EtcdTestSupport {
                 from("etcd:watch/myKey1")
                     .process(NODE_TO_VALUE_IN)
                     .to("mock:watch-with-path");
-                fromF("etcd:watch/myKeyRecovery?timeout=%d&fromIndex=%d", 1000 * 60 * 5, 1)
+                fromF("etcd:watch/myKeyRecovery?timeout=%s&fromIndex=%s", 1000 * 60 * 5, 1)
                     .id("watchRecovery")
                     .autoStartup(false)
                     .process(NODE_TO_VALUE_IN)

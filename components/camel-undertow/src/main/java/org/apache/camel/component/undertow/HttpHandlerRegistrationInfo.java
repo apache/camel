@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,34 +17,55 @@
 package org.apache.camel.component.undertow;
 
 import java.net.URI;
+import java.util.Objects;
 
 public class HttpHandlerRegistrationInfo {
 
-    private Boolean matchOnUriPrefix;
-    private String methodRestrict;
-    private URI uri;
+    private final Boolean matchOnUriPrefix;
+    private final String methodRestrict;
+    private final URI uri;
+
+    public HttpHandlerRegistrationInfo(URI uri, String methodRestrict, Boolean matchOnUriPrefix) {
+        super();
+        this.matchOnUriPrefix = matchOnUriPrefix;
+        this.methodRestrict = methodRestrict;
+        this.uri = uri;
+    }
 
     public String getMethodRestrict() {
         return methodRestrict;
-    }
-
-    public void setMethodRestrict(String methodRestrict) {
-        this.methodRestrict = methodRestrict;
     }
 
     public URI getUri() {
         return uri;
     }
 
-    public void setUri(URI uri) {
-        this.uri = uri;
-    }
-
     public Boolean isMatchOnUriPrefix() {
         return matchOnUriPrefix;
     }
 
-    public void setMatchOnUriPrefix(Boolean matchOnUriPrefix) {
-        this.matchOnUriPrefix = matchOnUriPrefix;
+    @Override
+    public String toString() {
+        return uri + "?matchOnUriPrefix=" + matchOnUriPrefix + "&methodRestrict=" + methodRestrict;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        HttpHandlerRegistrationInfo that = (HttpHandlerRegistrationInfo) o;
+        return Objects.equals(matchOnUriPrefix, that.matchOnUriPrefix)
+            && Objects.equals(methodRestrict, that.methodRestrict)
+            && Objects.equals(uri, that.uri);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(matchOnUriPrefix, methodRestrict, uri);
+    }
+
 }

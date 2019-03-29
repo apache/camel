@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,9 +19,6 @@ package org.apache.camel.spring.issues.contextscan2;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
-/**
- * @version 
- */
 @Component("coolRoute")
 public class MyOtherRoute extends RouteBuilder {
 

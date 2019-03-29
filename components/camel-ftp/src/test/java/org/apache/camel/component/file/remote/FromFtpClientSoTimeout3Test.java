@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -44,7 +44,7 @@ public class FromFtpClientSoTimeout3Test extends CamelTestSupport {
         FtpEndpoint<FTPFile> ftpEndpoint = context.getEndpoint(getFtpUrl(), FtpEndpoint.class);
 
         // set "ftp://admin@localhost:21/timeout/?ftpClient.soTimeout=10"
-        Map<String, Object> ftpClientParameters = new HashMap<String, Object>();
+        Map<String, Object> ftpClientParameters = new HashMap<>();
         ftpClientParameters.put("soTimeout", "10");
         ftpEndpoint.setFtpClientParameters(ftpClientParameters);
 

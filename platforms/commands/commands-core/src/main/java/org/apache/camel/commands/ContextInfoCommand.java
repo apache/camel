@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,7 +24,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.camel.util.CamelContextStatDump;
+import org.apache.camel.support.dump.CamelContextStatDump;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 
@@ -80,6 +80,7 @@ public class ContextInfoCommand extends AbstractContextCommand {
         out.println(stringEscape.unescapeJava("\tAllow UseOriginalMessage: " + row.get("allowUseOriginalMessage")));
         out.println(stringEscape.unescapeJava("\tMessage History: " + row.get("messageHistory")));
         out.println(stringEscape.unescapeJava("\tTracing: " + row.get("tracing")));
+        out.println(stringEscape.unescapeJava("\tLog Mask: " + row.get("logMask")));
         out.println("");
         out.println(stringEscape.unescapeJava("\u001B[1mProperties\u001B[0m"));
         for (Map.Entry<String, Object> entry : row.entrySet()) {
@@ -96,6 +97,7 @@ public class ContextInfoCommand extends AbstractContextCommand {
             out.println(stringEscape.unescapeJava("\tClassResolver: " + row.get("classResolver")));
             out.println(stringEscape.unescapeJava("\tPackageScanClassResolver: " + row.get("packageScanClassResolver")));
             out.println(stringEscape.unescapeJava("\tApplicationContextClassLoader: " + row.get("applicationContextClassLoader")));
+            out.println(stringEscape.unescapeJava("\tHeadersMapFactory: " + row.get("headersMapFactory")));
 
             printStatistics(camelController, out);
 

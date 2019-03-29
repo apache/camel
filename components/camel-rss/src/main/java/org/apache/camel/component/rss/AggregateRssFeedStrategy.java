@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,9 +21,8 @@ import java.util.List;
 
 import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.feed.synd.SyndFeed;
-
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.CastUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,7 @@ public class AggregateRssFeedStrategy implements AggregationStrategy {
         if (oldFeed != null && newFeed != null) {                
             List<SyndEntryImpl> oldEntries = CastUtils.cast(oldFeed.getEntries());                  
             List<SyndEntryImpl> newEntries = CastUtils.cast(newFeed.getEntries());
-            List<SyndEntryImpl> mergedList = new ArrayList<SyndEntryImpl>(oldEntries.size() + newEntries.size());
+            List<SyndEntryImpl> mergedList = new ArrayList<>(oldEntries.size() + newEntries.size());
             mergedList.addAll(oldEntries);
             mergedList.addAll(newEntries);
             oldFeed.setEntries(mergedList);    

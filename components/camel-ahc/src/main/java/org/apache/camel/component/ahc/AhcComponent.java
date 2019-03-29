@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,45 +17,58 @@
 package org.apache.camel.component.ahc;
 
 import java.net.URI;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.HeaderFilterStrategyComponent;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.camel.util.jsse.SSLContextParameters;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.AsyncHttpClientConfig;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.Realm;
 import org.asynchttpclient.Realm.Builder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *  To call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>
  */
-public class AhcComponent extends HeaderFilterStrategyComponent {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(AhcComponent.class);
+@Component("ahc")
+public class AhcComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
     
     private static final String CLIENT_CONFIG_PREFIX = "clientConfig.";
-    private static final String CLIENT_REALM_CONFIG_PREFIX = "realm.";
+    private static final String CLIENT_REALM_CONFIG_PREFIX = "clientConfig.realm.";
 
+    @Metadata(label = "advanced")
     private AsyncHttpClient client;
+    @Metadata(label = "advanced")
     private AsyncHttpClientConfig clientConfig;
+    @Metadata(label = "advanced")
     private AhcBinding binding;
+    @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
+    @Metadata(label = "advanced")
     private boolean allowJavaSerializedObject;
 
     public AhcComponent() {
-        super(AhcEndpoint.class);
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String addressUri = createAddressUri(uri, remaining);
+
+        SSLContextParameters ssl = getSslContextParameters();
+        if (ssl == null) {
+            ssl = retrieveGlobalSslContextParameters();
+        }
 
         // Do not set the HTTP URI because we still have all of the Camel internal
         // parameters in the URI at this point.
@@ -64,21 +77,21 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
         endpoint.setClient(getClient());
         endpoint.setClientConfig(getClientConfig());
         endpoint.setBinding(getBinding());
-        endpoint.setSslContextParameters(getSslContextParameters());
+        endpoint.setSslContextParameters(ssl);
         
         setProperties(endpoint, parameters);
 
         if (IntrospectionSupport.hasProperties(parameters, CLIENT_CONFIG_PREFIX)) {
-            DefaultAsyncHttpClientConfig.Builder builder = endpoint.getClientConfig() == null 
+            DefaultAsyncHttpClientConfig.Builder builder = endpoint.getClientConfig() == null
                     ? new DefaultAsyncHttpClientConfig.Builder() : AhcComponent.cloneConfig(endpoint.getClientConfig());
             
             if (endpoint.getClient() != null) {
-                LOG.warn("The user explicitly set an AsyncHttpClient instance on the component or "
+                log.warn("The user explicitly set an AsyncHttpClient instance on the component or "
                          + "endpoint, but this endpoint URI contains client configuration parameters.  "
                          + "Are you sure that this is what was intended?  The AsyncHttpClient will be used"
                          + " and the URI parameters will be ignored.");
             } else if (endpoint.getClientConfig() != null) {
-                LOG.warn("The user explicitly set an AsyncHttpClientConfig instance on the component or "
+                log.warn("The user explicitly set an AsyncHttpClientConfig instance on the component or "
                          + "endpoint, but this endpoint URI contains client configuration parameters.  "
                          + "Are you sure that this is what was intended?  The URI parameters will be applied"
                          + " to a clone of the supplied AsyncHttpClientConfig in order to prevent unintended modification"
@@ -92,13 +105,31 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
 
                 // set and validate additional parameters on client config
                 Map<String, Object> realmParams = IntrospectionSupport.extractProperties(parameters, CLIENT_REALM_CONFIG_PREFIX);
-                realmBuilder = new Realm.Builder(realmParams.get("realm.principal").toString(), realmParams.get("realm.password").toString());
+
+                // copy the parameters for the endpoint to have
+                endpoint.setClientConfigRealmOptions(new LinkedHashMap<>(realmParams));
+
+                Object principal = realmParams.remove("principal");
+                Object password = realmParams.remove("password");
+
+                if (ObjectHelper.isEmpty(principal)) {
+                    throw new IllegalArgumentException(CLIENT_REALM_CONFIG_PREFIX + ".principal must be configured");
+                }
+                if (password == null) {
+                    password = "";
+                }
+
+                realmBuilder = new Realm.Builder(principal.toString(), password.toString());
                 setProperties(realmBuilder, realmParams);
                 validateParameters(uri, realmParams, null);
             }
             
             // set and validate additional parameters on client config
             Map<String, Object> clientParams = IntrospectionSupport.extractProperties(parameters, CLIENT_CONFIG_PREFIX);
+
+            // copy the parameters for the endpoint to have
+            endpoint.setClientConfigOptions(new LinkedHashMap<>(clientParams));
+
             setProperties(builder, clientParams);
             validateParameters(uri, clientParams, null);
 
@@ -157,7 +188,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
     }
 
     /**
-     * Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry.
+     * Reference to a org.apache.camel.support.jsse.SSLContextParameters in the Registry.
      * Note that configuring this option will override any SSL/TLS configuration options provided through the
      * clientConfig option at the endpoint or component level.
      */
@@ -177,6 +208,19 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
      */
     public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
         this.allowJavaSerializedObject = allowJavaSerializedObject;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     protected String createAddressUri(String uri, String remaining) {

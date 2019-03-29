@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -64,39 +64,11 @@ public class SalesforceException extends CamelException {
     }
 
     public List<RestError> getErrors() {
-        return errors != null ? Collections.unmodifiableList(errors) : null;
+        return errors == null ? Collections.emptyList() : Collections.unmodifiableList(errors);
     }
 
     public int getStatusCode() {
         return statusCode;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder("{");
-        appendFields(builder);
-        builder.append("}");
-        return builder.toString();
-    }
-
-    protected void appendFields(StringBuilder builder) {
-        // append message
-        builder.append("message:'");
-        builder.append(getMessage());
-        builder.append("',");
-
-        // check for error
-        if (errors != null) {
-            builder.append("errors:[");
-            for (RestError error : errors) {
-                builder.append(error.toString());
-            }
-            builder.append("],");
-
-        }
-        // append statusCode
-        builder.append("statusCode:");
-        builder.append(statusCode);
     }
 
     private static String toErrorMessage(List<RestError> errors, int statusCode) {

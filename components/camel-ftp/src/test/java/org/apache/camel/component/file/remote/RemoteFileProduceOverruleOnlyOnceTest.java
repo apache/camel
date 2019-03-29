@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.remote;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -31,7 +31,7 @@ public class RemoteFileProduceOverruleOnlyOnceTest extends FtpServerTestSupport 
 
     @Test
     public void testFileToFtp() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(Exchange.FILE_NAME, "/sub/hello.txt");
         headers.put(Exchange.OVERRULE_FILE_NAME, "/sub/ruled.txt");
         template.sendBodyAndHeaders("direct:input", "Hello World", headers);
@@ -45,6 +45,7 @@ public class RemoteFileProduceOverruleOnlyOnceTest extends FtpServerTestSupport 
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/out");
         super.setUp();

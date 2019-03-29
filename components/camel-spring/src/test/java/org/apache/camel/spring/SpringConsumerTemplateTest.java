@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,8 +26,6 @@ import org.springframework.test.context.ContextConfiguration;
 
 /**
  * Unit test using the ConsumerTemplate
- *
- * @version 
  */
 // START SNIPPET: e1
 @ContextConfiguration
@@ -39,7 +37,7 @@ public class SpringConsumerTemplateTest extends SpringRunWithTestSupport {
     @Autowired
     private ConsumerTemplate consumer;
 
-    @EndpointInject(ref = "result")
+    @EndpointInject(uri = "ref:result")
     private MockEndpoint mock;
 
     @Test

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,8 +27,6 @@ import org.apache.camel.language.LanguageAnnotation;
 /**
  * An annotation for injection of JavaScript expressions
  *  into method parameters, fields or properties
- *
- * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

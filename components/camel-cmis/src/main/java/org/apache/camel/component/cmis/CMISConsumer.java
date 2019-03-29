@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,16 +21,14 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The CMIS consumer.
  */
 public class CMISConsumer extends ScheduledPollConsumer {
-    private static final Logger LOG = LoggerFactory.getLogger(CMISConsumer.class);
+
     private final CMISSessionFacadeFactory sessionFacadeFactory;
     private CMISSessionFacade sessionFacade;
 
@@ -38,6 +36,11 @@ public class CMISConsumer extends ScheduledPollConsumer {
         super(cmisEndpoint, processor);
         this.sessionFacadeFactory = sessionFacadeFactory;
         this.sessionFacade = null;
+    }
+
+    @Override
+    public CMISEndpoint getEndpoint() {
+        return (CMISEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -54,17 +57,18 @@ public class CMISConsumer extends ScheduledPollConsumer {
         Exchange exchange = getEndpoint().createExchange();
         exchange.getIn().setHeaders(properties);
         exchange.getIn().setBody(inputStream);
-        LOG.debug("Polling node : {}", properties.get("cmis:name"));
+        log.debug("Polling node : {}", properties.get("cmis:name"));
         getProcessor().process(exchange);
         return 1;
     }
 
     private CMISSessionFacade getSessionFacade() throws Exception {
         if (sessionFacade == null) {
-            sessionFacade = sessionFacadeFactory.create();
+            sessionFacade = sessionFacadeFactory.create(getEndpoint());
             sessionFacade.initSession();
         }
 
         return sessionFacade;
     }
+
 }

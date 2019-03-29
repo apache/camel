@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,7 +32,7 @@ import javax.jcr.Value;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.jackrabbit.util.Text;
 
@@ -91,7 +91,7 @@ public class JcrProducer extends DefaultProducer {
     }
 
     private Map<String, Object> filterComponentHeaders(Map<String, Object> properties) {
-        Map<String, Object> result = new HashMap<String, Object>(properties.size());
+        Map<String, Object> result = new HashMap<>(properties.size());
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             String key = entry.getKey();
             if (!key.equals(JcrConstants.JCR_NODE_NAME) && !key.equals(JcrConstants.JCR_OPERATION) && !key.equals(JcrConstants.JCR_NODE_TYPE)) {

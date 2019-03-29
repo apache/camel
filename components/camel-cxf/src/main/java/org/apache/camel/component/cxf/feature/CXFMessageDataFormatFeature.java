@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cxf.feature;
 
 import java.util.ArrayList;
@@ -58,11 +57,11 @@ public class CXFMessageDataFormatFeature extends AbstractDataFormatFeature {
     private static final Collection<Class<?>> REMOVING_OUT_INTERCEPTORS;
    
     static {
-        REMOVING_IN_INTERCEPTORS = new ArrayList<Class<?>>();
+        REMOVING_IN_INTERCEPTORS = new ArrayList<>();
         REMOVING_IN_INTERCEPTORS.add(HolderInInterceptor.class);
         REMOVING_IN_INTERCEPTORS.add(WrapperClassInInterceptor.class);
         
-        REMOVING_OUT_INTERCEPTORS = new ArrayList<Class<?>>();
+        REMOVING_OUT_INTERCEPTORS = new ArrayList<>();
         REMOVING_OUT_INTERCEPTORS.add(HolderOutInterceptor.class);
         REMOVING_OUT_INTERCEPTORS.add(WrapperClassOutInterceptor.class);
     }

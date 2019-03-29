@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,10 +19,7 @@ package org.apache.camel.component.properties;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
-public class SpringPropertiesComponent3Test extends SpringPropertiesComponentTest {
+public class SpringPropertiesComponent3Test extends BaseSpringPropertiesComponentTest {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {

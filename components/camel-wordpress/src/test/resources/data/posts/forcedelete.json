@@ -1,0 +1,45 @@
+{
+    "deleted": true,
+    "previous": {
+        "id": 9,
+        "date": "2018-01-19T19:06:09",
+        "date_gmt": "2018-01-19T21:06:09",
+        "guid": {
+            "rendered": "http://wordpress4j.org/it/?p=9",
+            "raw": "http://wordpress4j.org/it/?p=9"
+        },
+        "modified": "2018-01-19T19:06:10",
+        "modified_gmt": "2018-01-19T21:06:10",
+        "password": "",
+        "slug": "__trashed",
+        "status": "trash",
+        "type": "post",
+        "link": "http://wordpress4j.org/it/__trashed/",
+        "title": {
+            "raw": "hello from postman 2 - update",
+            "rendered": "hello from postman 2 &#8211; update"
+        },
+        "content": {
+            "raw": "hello world",
+            "rendered": "<p>hello world</p>\n",
+            "protected": false
+        },
+        "excerpt": {
+            "raw": "",
+            "rendered": "<p>hello world</p>\n",
+            "protected": false
+        },
+        "author": 2,
+        "featured_media": 0,
+        "comment_status": "open",
+        "ping_status": "open",
+        "sticky": false,
+        "template": "",
+        "format": "standard",
+        "meta": [],
+        "categories": [
+            1
+        ],
+        "tags": []
+    }
+}

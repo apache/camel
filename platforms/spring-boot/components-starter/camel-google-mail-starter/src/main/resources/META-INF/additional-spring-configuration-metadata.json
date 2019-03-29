@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.google-mail.enabled",
+      "description": "Enable google-mail component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

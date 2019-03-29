@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,8 +25,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.cdi.Uri;
-import org.apache.camel.management.event.CamelContextStartedEvent;
-import org.apache.camel.management.event.CamelContextStoppingEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStoppingEvent;
 
 /**
  * Our CDI Camel application
@@ -40,7 +40,7 @@ public class Application {
         public void configure() {
             from("direct:message")
                 .routeId("route")
-                .log("${body} from ${camelContext.name} at ${date:now:hh:mm:ss a}!");
+                .log("${body} from ${camelContext.name}");
 
             from("direct:in").routeId("in»out").bean("bean").to("direct:out");
         }

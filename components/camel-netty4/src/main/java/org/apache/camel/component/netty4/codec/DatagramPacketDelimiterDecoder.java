@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,8 +24,13 @@ import io.netty.channel.AddressedEnvelope;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.DefaultAddressedEnvelope;
 import io.netty.handler.codec.MessageToMessageDecoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DatagramPacketDelimiterDecoder extends MessageToMessageDecoder<AddressedEnvelope<Object, InetSocketAddress>> {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(DatagramPacketDelimiterDecoder.class);
+    
     private final DelimiterBasedFrameDecoder delegateDecoder;
     
     public DatagramPacketDelimiterDecoder(int maxFrameLength, ByteBuf[] delimiters) {
@@ -43,10 +48,11 @@ public class DatagramPacketDelimiterDecoder extends MessageToMessageDecoder<Addr
             ByteBuf payload = (ByteBuf)msg.content();
             Object result = delegateDecoder.decode(ctx, payload);
             AddressedEnvelope<Object, InetSocketAddress> addressEvelop = 
-                new DefaultAddressedEnvelope<Object, InetSocketAddress>(result, msg.recipient(), msg.sender());
+                new DefaultAddressedEnvelope<>(result, msg.recipient(), msg.sender());
             out.add(addressEvelop);
+        } else {
+            LOG.debug("Ignoring message content as it is not an io.netty.buffer.ByteBuf instance.");
         }
-        
     }
 
 }

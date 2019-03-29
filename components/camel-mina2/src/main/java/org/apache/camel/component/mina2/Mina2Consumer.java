@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,8 +27,8 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.filterchain.IoFilter;
@@ -58,8 +58,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.apache.camel.Consumer Consumer} implementation for Apache MINA.
- *
- * @version
  */
 public class Mina2Consumer extends DefaultConsumer {
 
@@ -102,7 +100,7 @@ public class Mina2Consumer extends DefaultConsumer {
             ConnectFuture future = connector.connect(address);
             future.awaitUninterruptibly();
             session = future.getSession();
-            LOG.info("Connected to server address: {} using connector: {} timeout: {} millis.", new Object[]{address, connector, configuration.getTimeout()});
+            LOG.info("Connected to server address: {} using connector: {} timeout: {} millis.", address, connector, configuration.getTimeout());
         } else {
             acceptor.setHandler(new ReceiveHandler());
             acceptor.bind(address);
@@ -300,7 +298,7 @@ public class Mina2Consumer extends DefaultConsumer {
             codecFactory = new Mina2UdpProtocolCodecFactory(this.getEndpoint().getCamelContext());
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("{}: Using CodecFactory: {}", new Object[]{type, codecFactory});
+                LOG.debug("{}: Using CodecFactory: {}", type, codecFactory);
             }
         }
 
@@ -436,7 +434,7 @@ public class Mina2Consumer extends DefaultConsumer {
 
             if (response != null) {
                 LOG.debug("Writing body: {}", response);
-                Mina2Helper.writeBody(session, response, exchange);
+                Mina2Helper.writeBody(session, response, exchange, configuration.getWriteTimeout());
             } else {
                 LOG.debug("Writing no response");
                 disconnect = Boolean.TRUE;

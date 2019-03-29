@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,6 +31,7 @@ public class AbstractInfluxDbTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         applicationContext = new AnnotationConfigApplicationContext(MockedInfluxDbConfiguration.class);
         CamelContext ctx = new SpringCamelContext(applicationContext);
+        ctx.init();
         PropertiesComponent pc = new PropertiesComponent("classpath:influxdb.test.properties");
         ctx.addComponent("properties", pc);
         return ctx;

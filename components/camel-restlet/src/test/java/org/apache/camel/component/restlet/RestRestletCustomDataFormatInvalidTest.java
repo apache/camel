@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,9 +23,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RestRestletCustomDataFormatInvalidTest extends RestletTestSupport {
 
     @Override
@@ -62,7 +59,7 @@ public class RestRestletCustomDataFormatInvalidTest extends RestletTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (FailedToCreateRouteException e) {
-            assertEquals("JsonDataFormat name: bla must not be an existing bean instance from the registry", e.getCause().getMessage());
+            assertTrue(e.getCause().getMessage().contains("JsonDataFormat name: bla must not be an existing bean instance from the registry"));
         }
     }
 

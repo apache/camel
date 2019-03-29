@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,19 +19,17 @@ package org.apache.camel.component.ignite;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.component.ignite.events.IgniteEventsComponent;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.events.Event;
@@ -43,12 +41,22 @@ import static com.google.common.truth.Truth.assert_;
 
 public class IgniteEventsTest extends AbstractIgniteTest {
 
+    @Override
+    protected String getScheme() {
+        return "ignite-events";
+    }
+
+    @Override
+    protected AbstractIgniteComponent createComponent() {
+        return IgniteEventsComponent.fromConfiguration(createConfiguration());
+    }
+
     @Test
     public void testConsumeAllEvents() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ignite:events:abc").to("mock:test1");
+                from("ignite-events:abc").to("mock:test1");
             }
         });
 
@@ -77,12 +85,12 @@ public class IgniteEventsTest extends AbstractIgniteTest {
 
     @Test
     public void testConsumeFilteredEventsWithRef() throws Exception {
-        context.getRegistry(JndiRegistry.class).bind("filter", Sets.newHashSet(EventType.EVT_CACHE_OBJECT_PUT));
+        context.getRegistry().bind("filter", Sets.newHashSet(EventType.EVT_CACHE_OBJECT_PUT));
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ignite:events:abc?events=#filter").to("mock:test2");
+                from("ignite-events:abc?events=#filter").to("mock:test2");
             }
         });
 
@@ -109,7 +117,7 @@ public class IgniteEventsTest extends AbstractIgniteTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ignite:events:abc?events=EVT_CACHE_OBJECT_PUT").to("mock:test3");
+                from("ignite-events:abc?events=EVT_CACHE_OBJECT_PUT").to("mock:test3");
             }
         });
 
@@ -150,19 +158,19 @@ public class IgniteEventsTest extends AbstractIgniteTest {
     @After
     public void stopAllRoutes() throws Exception {
         for (Route route : context.getRoutes()) {
-            if (context.getRouteStatus(route.getId()) != ServiceStatus.Started) {
+            if (context.getRouteController().getRouteStatus(route.getId()) != ServiceStatus.Started) {
                 return;
             }
-            context.stopRoute(route.getId());
+            context.getRouteController().stopRoute(route.getId());
         }
         resetMocks();
     }
 
     @Override
-    protected IgniteComponent buildComponent() {
+    protected IgniteConfiguration createConfiguration() {
         IgniteConfiguration config = new IgniteConfiguration();
         config.setIncludeEventTypes(EventType.EVTS_ALL_MINUS_METRIC_UPDATE);
-        return IgniteComponent.fromConfiguration(config);
+        return config;
     }
 
 }

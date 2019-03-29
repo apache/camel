@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.disruptor;
 
 import java.util.ArrayList;
@@ -59,7 +58,7 @@ public class DisruptorWaitClaimStrategyComponentTest extends CamelTestSupport {
 
     @Parameters
     public static Collection<String[]> strategies() {
-        final List<String[]> strategies = new ArrayList<String[]>();
+        final List<String[]> strategies = new ArrayList<>();
 
         for (final DisruptorWaitStrategy waitStrategy : DisruptorWaitStrategy.values()) {
             for (final DisruptorProducerType producerType : DisruptorProducerType.values()) {

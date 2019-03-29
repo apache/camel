@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,9 +26,6 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 
-/**
- * @version 
- */
 public class QuartzEndpointConfigureTest extends BaseQuartzTest {
 
     @Test

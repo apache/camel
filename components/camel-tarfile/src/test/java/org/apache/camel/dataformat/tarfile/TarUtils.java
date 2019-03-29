@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -51,6 +51,27 @@ final class TarUtils {
             TarArchiveEntry entry = new TarArchiveEntry(entryName);
             entry.setSize(bais.available());
             tos.putArchiveEntry(entry);
+            IOHelper.copy(bais, tos);
+        } finally {
+            tos.closeArchiveEntry();
+            IOHelper.close(bais, tos);
+        }
+        return baos.toByteArray();
+    }
+
+    static byte[] getTaredTextInFolder(String folder, String file) throws IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(TEXT.getBytes("UTF-8"));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        TarArchiveOutputStream tos = new TarArchiveOutputStream(baos);
+        try {
+            TarArchiveEntry folderEntry = new TarArchiveEntry(folder);
+            folderEntry.setSize(0L);
+            tos.putArchiveEntry(folderEntry);
+
+            TarArchiveEntry fileEntry = new TarArchiveEntry(file);
+            fileEntry.setSize(bais.available());
+            tos.putArchiveEntry(fileEntry);
+
             IOHelper.copy(bais, tos);
         } finally {
             tos.closeArchiveEntry();

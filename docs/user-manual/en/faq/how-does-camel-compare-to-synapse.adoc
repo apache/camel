@@ -1,0 +1,32 @@
+[[HowdoesCamelcomparetoSynapse-HowdoesCamelcomparetoSynapse]]
+=== How does Camel compare to Synapse?
+
+We are Camel developers so take what you read here with a pinch of salt.
+If you want to read a less biased comparison
+http://rajith.2rlabs.com/2008/02/11/synapse-vs-camel/[try reading this
+review which has a slight Synapse bias since the author mostly uses
+Synapse] :smile:
+
+However we think the main differences are:
+
+* the Camel community is way more active according to the
+http://www.nabble.com/Camel-f22882.html[nabble statistics] (Synapse is
+inside the Apache Web Services bar) or by comparing
+http://apache.markmail.org/search/?q=camel[Camel] and
+http://apache.markmail.org/search/?q=synapse[Synapse] on markmail.
+* Camel is the default routing engine included in
+http://activemq.apache.org/[Apache ActiveMQ] for Message Orientated
+middleware with EIP and http://servicemix.apache.org/[Apache ServiceMix]
+the ESB based around OSGi and JBI at Apache - both of which are
+http://www.nabble.com/Apache-f90.html[very popular too].
+* Camel is designed from the ground up around
+link:../enterprise-integration-patterns.adoc[Enterprise Integration
+Patterns] -- having an EIP pattern language implemented in
+link:../dsl.adoc[Java], link:../spring.adoc[Spring XML],
+link:../scala-dsl.adoc[Scala] and link:../groovy-dsl.adoc[Groovy] as well as
+link:../visualisation.adoc[EIP Visualisations].
+* Camel is designed to work with pretty much all kinds of
+link:../transport.adoc[transport] as well as working with any
+link:../data-format.adoc[Data Format]. When we first looked at Synapse it
+was based around Axis 2 and WS-* though apparently thats no longer the
+case.

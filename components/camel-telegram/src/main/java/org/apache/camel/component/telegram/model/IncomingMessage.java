@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -49,6 +49,11 @@ public class IncomingMessage implements Serializable {
     private IncomingVideo video;
 
     private IncomingAudio audio;
+
+    private IncomingDocument document;
+
+    @JsonProperty("location")
+    private Location location;
 
     public IncomingMessage() {
     }
@@ -117,6 +122,21 @@ public class IncomingMessage implements Serializable {
         this.audio = audio;
     }
 
+    public IncomingDocument getDocument() {
+        return document;
+    }
+
+    public void setDocument(IncomingDocument document) {
+        this.document = document;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
 
     @Override
     public String toString() {
@@ -129,6 +149,8 @@ public class IncomingMessage implements Serializable {
         sb.append(", photo=").append(photo);
         sb.append(", video=").append(video);
         sb.append(", audio=").append(audio);
+        sb.append(", document=").append(document);
+        sb.append(", location=").append(location);
         sb.append('}');
         return sb.toString();
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,7 +29,7 @@ import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.LongString;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +37,8 @@ import org.slf4j.LoggerFactory;
 public class RabbitMQMessageConverter {
     protected static final Logger LOG = LoggerFactory.getLogger(RabbitMQMessageConverter.class);
 
+    private boolean allowNullHeaders;
+    
     /**
      * Will take an {@link Exchange} and add header values back to the {@link Exchange#getIn()}
      */
@@ -77,6 +79,9 @@ public class RabbitMQMessageConverter {
         }
         if (properties.getUserId() != null) {
             exchange.getIn().setHeader(RabbitMQConstants.USERID, properties.getUserId());
+        }
+        if (properties.getDeliveryMode() != null) {
+            exchange.getIn().setHeader(RabbitMQConstants.DELIVERY_MODE, properties.getDeliveryMode());
         }
     }
 
@@ -162,7 +167,8 @@ public class RabbitMQMessageConverter {
         for (Map.Entry<String, Object> header : headers.entrySet()) {
             // filter header values.
             Object value = getValidRabbitMQHeaderValue(header.getValue());
-            if (value != null) {
+            
+            if (value != null || isAllowNullHeaders()) {
                 filteredHeaders.put(header.getKey(), header.getValue());
             } else if (LOG.isDebugEnabled()) {
                 if (header.getValue() == null) {
@@ -230,7 +236,7 @@ public class RabbitMQMessageConverter {
                 // Use the existing message so we keep the headers
                 message = camelExchange.getIn();
             } else {
-                message = new DefaultMessage();
+                message = new DefaultMessage(camelExchange.getContext());
                 camelExchange.setIn(message);
             }
         }
@@ -247,6 +253,7 @@ public class RabbitMQMessageConverter {
             message.setHeader(RabbitMQConstants.ROUTING_KEY, envelope.getRoutingKey());
             message.setHeader(RabbitMQConstants.EXCHANGE_NAME, envelope.getExchange());
             message.setHeader(RabbitMQConstants.DELIVERY_TAG, envelope.getDeliveryTag());
+            message.setHeader(RabbitMQConstants.REDELIVERY_TAG, envelope.isRedeliver());
         }
     }
 
@@ -300,5 +307,13 @@ public class RabbitMQMessageConverter {
 
     private Object isSerializeHeaderEnabled(final AMQP.BasicProperties properties) {
         return properties.getHeaders().get(RabbitMQEndpoint.SERIALIZE_HEADER);
+    }
+
+    public boolean isAllowNullHeaders() {
+        return allowNullHeaders;
+    }
+
+    public void setAllowNullHeaders(boolean allowNullHeaders) {
+        this.allowNullHeaders = allowNullHeaders;
     }
 }

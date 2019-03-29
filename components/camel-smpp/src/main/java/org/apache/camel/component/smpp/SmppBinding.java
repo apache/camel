@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.Alphabet;
@@ -44,8 +45,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and
  * {@link SmppMessage} to and from a SMPP {@link Command}
- * 
- * @version 
  */
 public class SmppBinding {
 
@@ -76,8 +75,8 @@ public class SmppBinding {
     /**
      * Create a new SmppMessage from the inbound alert notification
      */
-    public SmppMessage createSmppMessage(AlertNotification alertNotification) {
-        SmppMessage smppMessage = new SmppMessage(alertNotification, configuration);
+    public SmppMessage createSmppMessage(CamelContext camelContext, AlertNotification alertNotification) {
+        SmppMessage smppMessage = new SmppMessage(camelContext, alertNotification, configuration);
 
         smppMessage.setHeader(SmppConstants.MESSAGE_TYPE, SmppMessageType.AlertNotification.toString());
         smppMessage.setHeader(SmppConstants.SEQUENCE_NUMBER, alertNotification.getSequenceNumber());
@@ -96,8 +95,8 @@ public class SmppBinding {
     /**
      * Create a new SmppMessage from the inbound deliver sm or deliver receipt
      */
-    public SmppMessage createSmppMessage(DeliverSm deliverSm) throws Exception {
-        SmppMessage smppMessage = new SmppMessage(deliverSm, configuration);
+    public SmppMessage createSmppMessage(CamelContext camelContext, DeliverSm deliverSm) throws Exception {
+        SmppMessage smppMessage = new SmppMessage(camelContext, deliverSm, configuration);
 
         String messagePayload = null;
 
@@ -181,7 +180,7 @@ public class SmppBinding {
     private Map<String, Object> createOptionalParameterByName(DeliverSm deliverSm) {
         List<OptionalParameter> oplist = Arrays.asList(deliverSm.getOptionalParameters());
 
-        Map<String, Object> optParams = new HashMap<String, Object>();
+        Map<String, Object> optParams = new HashMap<>();
         for (OptionalParameter optPara : oplist) {
             try {
                 Tag valueOfTag = OptionalParameter.Tag.valueOf(optPara.tag);
@@ -200,10 +199,10 @@ public class SmppBinding {
                         optParams.put(valueOfTag.toString(), null);
                     }
                 } else {
-                    LOG.debug("Skipping optional parameter with tag {} because it was not recogized", optPara.tag);
+                    LOG.debug("Skipping optional parameter with tag {} because it was not recognized", optPara.tag);
                 }
             } catch (IllegalArgumentException e) {
-                LOG.debug("Skipping optional parameter with tag {} due " + e.getMessage(), optPara.tag);
+                LOG.debug("Skipping optional parameter with tag {} due to {}", optPara.tag, e.getMessage());
             }
         }
 
@@ -213,7 +212,7 @@ public class SmppBinding {
     private Map<Short, Object> createOptionalParameterByCode(DeliverSm deliverSm) {
         List<OptionalParameter> oplist = Arrays.asList(deliverSm.getOptionalParameters());
 
-        Map<Short, Object> optParams = new HashMap<Short, Object>();
+        Map<Short, Object> optParams = new HashMap<>();
         for (OptionalParameter optPara : oplist) {
             if (COctetString.class.isInstance(optPara)) {
                 optParams.put(Short.valueOf(optPara.tag), ((COctetString) optPara).getValueAsString());
@@ -233,8 +232,8 @@ public class SmppBinding {
         return optParams;
     }
 
-    public SmppMessage createSmppMessage(DataSm dataSm, String smppMessageId) {
-        SmppMessage smppMessage = new SmppMessage(dataSm, configuration);
+    public SmppMessage createSmppMessage(CamelContext camelContext, DataSm dataSm, String smppMessageId) {
+        SmppMessage smppMessage = new SmppMessage(camelContext, dataSm, configuration);
 
         smppMessage.setHeader(SmppConstants.MESSAGE_TYPE, SmppMessageType.DataSm.toString());
         smppMessage.setHeader(SmppConstants.ID, smppMessageId);

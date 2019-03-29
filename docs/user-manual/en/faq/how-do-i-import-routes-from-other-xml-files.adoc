@@ -1,0 +1,44 @@
+[[HowDoIImportRoutesFromOtherXMLFiles-HowDoIImportRoutesFromOtherXMLFiles]]
+=== How Do I Import Routes From Other XML Files?
+
+*Available as of Camel 2.3*
+
+When defining routes in Camel using link:../xml-configuration.adoc[XML Configuration]
+you may want to define some routes in other XML files.
+For example you may have many routes and it may help to maintain the
+application if some of the routes are in separate XML files. You may
+also want to store common and reusable routes in other XML files, which
+you can simply import when needed.
+
+In *Camel 2.3* it is now possible to define routes outside
+`<camelContext/>` which you do in a new `<routeContext/>` tag.
+
+NOTE: When you use `<routeContext>` then they are separated, and
+cannot reuse existing `<onException>`,
+`<intercept>`, `<dataFormats>` and similar cross cutting
+functionality defined in the `<camelContext>`. In other words
+the `<routeContext>` is currently isolated. This may change in Camel
+3.x.
+
+For example we could have a file named `myCoolRoutes.xml` which
+contains a couple of routes as shown:
+
+https://github.com/apache/camel/tree/master/components/camel-spring/src/test/resources/org/apache/camel/spring/config/myCoolRoutes.xml
+
+Then in your XML file which contains the CamelContext you can use Spring to
+import the `myCoolRoute.xml` file. And then inside `<camelContext/>`
+you can refer to the `<routeContext/>` by its `id` as shown below:
+
+https://github.com/apache/camel/tree/master/components/camel-spring/src/test/resources/org/apache/camel/spring/config/RouteRefIncludeXmlFileTest.xml
+
+Also notice that you can mix and match, having routes inside `CamelContext`
+and also externalized in `RouteContext`.
+
+You can have as many `<routeContextRef/>` as you like.
+
+==== Reusable routes
+
+The routes defined in `<routeContext/>` can be reused by multiple
+`<camelContext/>`. However its only the definition which is reused. At
+runtime each `CamelContext` will create its own instance of the route
+based on the definition.

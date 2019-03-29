@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,11 +23,11 @@ import java.net.URLDecoder;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
@@ -35,13 +35,13 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 /**
  * The solr component allows you to interface with an Apache Lucene Solr server.
  */
-@UriEndpoint(scheme = "solr,solrs,solrCloud", title = "Solr", syntax = "solr:url", producerOnly = true, label = "monitoring,search")
+@UriEndpoint(firstVersion = "2.9.0", scheme = "solr,solrs,solrCloud", title = "Solr", syntax = "solr:url", producerOnly = true, label = "monitoring,search")
 public class SolrEndpoint extends DefaultEndpoint {
 
     private String scheme = "http://";
 
     @UriPath(description = "Hostname and port for the solr server")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String url;
     @UriParam(defaultValue = "" + SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE)
     private int streamingQueueSize = SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE;
@@ -108,7 +108,7 @@ public class SolrEndpoint extends DefaultEndpoint {
     private CloudSolrClient getCloudServer() {
         CloudSolrClient rVal = null;
         if (this.getZkHost() != null && this.getCollection() != null) {
-            rVal = new CloudSolrClient(zkHost);
+            rVal = new CloudSolrClient.Builder().withZkHost(zkHost).build();
             rVal.setDefaultCollection(this.getCollection());
         }
         return rVal;
@@ -123,31 +123,19 @@ public class SolrEndpoint extends DefaultEndpoint {
             ref = new SolrComponent.SolrServerReference();
             CloudSolrClient cloudServer = getCloudServer();
             if (cloudServer == null) {
-                HttpSolrClient solrServer = new HttpSolrClient(url);
-                ConcurrentUpdateSolrClient solrStreamingServer = new ConcurrentUpdateSolrClient(url, streamingQueueSize, streamingThreadCount);
-
-                // set the properties on the solr server
-                if (maxRetries != null) {
-                    solrServer.setMaxRetries(maxRetries);
-                }
+                HttpSolrClient solrServer = new HttpSolrClient.Builder(url).build();                
+                ConcurrentUpdateSolrClient solrStreamingServer = new ConcurrentUpdateSolrClient.Builder(url).withQueueSize(streamingQueueSize).withThreadCount(streamingThreadCount).build();
+                
+                // set the properties on the solr server               
                 if (soTimeout != null) {
                     solrServer.setSoTimeout(soTimeout);
                 }
                 if (connectionTimeout != null) {
                     solrServer.setConnectionTimeout(connectionTimeout);
-                }
-                if (defaultMaxConnectionsPerHost != null) {
-                    solrServer.setDefaultMaxConnectionsPerHost(defaultMaxConnectionsPerHost);
-                }
-                if (maxTotalConnections != null) {
-                    solrServer.setMaxTotalConnections(maxTotalConnections);
-                }
+                }                
                 if (followRedirects != null) {
                     solrServer.setFollowRedirects(followRedirects);
-                }
-                if (allowCompression != null) {
-                    solrServer.setAllowCompression(allowCompression);
-                }
+                }                
                 ref.setSolrServer(solrServer);
                 ref.setUpdateSolrServer(solrStreamingServer);
             }

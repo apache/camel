@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,8 +27,6 @@ import org.apache.http.protocol.HttpProcessor;
 /**
  * Abstract base class for unit testing using a http server.
  * This class contains an empty configuration to be used.
- *
- * @version
  */
 public abstract class HttpServerTestSupport extends CamelTestSupport {
 

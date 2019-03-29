@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,8 +25,6 @@ import org.apache.camel.Exchange;
 /**
  * Holder which contains the {@link Exchange} and {@link org.apache.camel.AsyncCallback} to be used
  * when the reply arrives, so we can set the reply on the {@link Exchange} and continue routing using the callback.
- *
- * @version 
  */
 public class ReplyHolder {
 

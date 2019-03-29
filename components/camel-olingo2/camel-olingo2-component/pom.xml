@@ -1,333 +1,373 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         http://www.apache.org/licenses/LICENSE-2.0
 
-  <modelVersion>4.0.0</modelVersion>
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-olingo2-parent</artifactId>
-    <version>2.19.0-SNAPSHOT</version>
-  </parent>
+-->
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <artifactId>camel-olingo2</artifactId>
-  <packaging>jar</packaging>
-  <name>Camel :: Olingo2 :: Component</name>
-  <description>Camel Olingo2 component</description>
+    <modelVersion>4.0.0</modelVersion>
 
-  <properties>
-    <schemeName>olingo2</schemeName>
-    <componentName>Olingo2</componentName>
-    <componentPackage>org.apache.camel.component.olingo2</componentPackage>
-    <outPackage>org.apache.camel.component.olingo2.internal</outPackage>
-
-    <camel.osgi.export.pkg>${componentPackage}</camel.osgi.export.pkg>
-    <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
-    <maven.exe.file.extension></maven.exe.file.extension>
-  </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-olingo2-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>${commons-lang-version}</version>
-    </dependency>
-
-    <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>spi-annotations</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- Component API javadoc in provided scope to read API signatures -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-olingo2-api</artifactId>
-      <version>${project.version}</version>
-      <classifier>javadoc</classifier>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- logging -->   
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- testing -->
-    <dependency>
-      <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-odata2-api-annotation</artifactId>
-      <version>${olingo2-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-odata2-annotation-processor-api</artifactId>
-      <version>${olingo2-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-odata2-annotation-processor-core</artifactId>
-      <version>${olingo2-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-      <version>${cxf-version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-servlet</artifactId>
-      <version>${jetty-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-server</artifactId>
-      <version>${jetty-version}</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.eclipse.jetty.orbit</groupId>
-          <artifactId>javax.servlet</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-webapp</artifactId>
-      <version>${jetty-version}</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <defaultGoal>install</defaultGoal>
-
-    <plugins>
-      
-      <!-- generate Component source and test source -->
-      <plugin>
+    <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-api-component-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>generate-test-component-classes</id>
-            <goals>
-              <goal>fromApis</goal>
-            </goals>
-            <configuration>
-              <apis>
-                <api>
-                  <apiName />
-                  <proxyClass>org.apache.camel.component.olingo2.api.Olingo2App</proxyClass>
-                  <fromSignatureFile>src/signatures/olingo-api-signature.txt</fromSignatureFile>
-                  <excludeConfigNames>edm|responseHandler</excludeConfigNames>
-                  <extraOptions>
-                    <extraOption>
-                      <name>keyPredicate</name>
-                      <type>java.lang.String</type>
-                    </extraOption>
-                  </extraOptions>
-                  <nullableOptions>
-                    <nullableOption>queryParams</nullableOption>
-                  </nullableOptions>
-                </api>
-              </apis>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+        <artifactId>camel-olingo2-parent</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-      <!-- add generated source and test source to build -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>add-generated-sources</id>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${project.build.directory}/generated-sources/camel-component</source>
-              </sources>
-            </configuration>
-          </execution>
-          <execution>
-            <id>add-generated-test-sources</id>
-            <goals>
-              <goal>add-test-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${project.build.directory}/generated-test-sources/camel-component</source>
-              </sources>
-            </configuration>
-          </execution>
-          <!-- add the olingo odata2 sample service source. See profile get-olingo2-sample below -->
-          <execution>
-            <id>add-test-source</id>
-            <phase>generate-test-sources</phase>
-            <goals>
-              <goal>add-test-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${basedir}/target/olingo2-my-car-service/src/main/java</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+    <artifactId>camel-olingo2</artifactId>
+    <packaging>jar</packaging>
+    <name>Camel :: Olingo2 :: Component</name>
+    <description>Camel Olingo2 component</description>
 
-    </plugins>
+    <properties>
+        <schemeName>olingo2</schemeName>
+        <componentName>Olingo2</componentName>
+        <componentPackage>org.apache.camel.component.olingo2</componentPackage>
+        <outPackage>org.apache.camel.component.olingo2.internal</outPackage>
 
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-api-component-maven-plugin</artifactId>
-          <version>${project.version}</version>
-          <configuration>
-            <scheme>${schemeName}</scheme>
-            <componentName>${componentName}</componentName>
-            <componentPackage>${componentPackage}</componentPackage>
-            <outPackage>${outPackage}</outPackage>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
+        <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
+        <maven.exe.file.extension/>
+    </properties>
 
-  </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-olingo2-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>${commons-lang-version}</version>
+        </dependency>
 
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-api-component-maven-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <scheme>${schemeName}</scheme>
-          <componentName>${componentName}</componentName>
-          <componentPackage>${componentPackage}</componentPackage>
-          <outPackage>${outPackage}</outPackage>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
+        <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>spi-annotations</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-  <profiles>
-    <profile>
-      <id>Windows</id>
-      <activation>
-        <os>
-          <family>Windows</family>
-        </os>
-      </activation>
-      <properties>
-        <maven.exe.file.extension>.cmd</maven.exe.file.extension>
-      </properties>
-    </profile>
-    <profile>
-      <!-- REVISIT as of now, the olingo odata2 sample service that is used in the tests 
-           is not available in nexus and needs to be generated and built using its architype plugin.
-           If the sample service jar becomes available, we can use it directly -->
-      <id>get-olingo2-sample</id>
-      <activation>
-        <file>
-          <missing>${basedir}/target/olingo2-my-car-service</missing>
-        </file>
-        <!-- the above condition is evaluated prior to the mvn execution and consequently
-             it evaluates to false when "mvn clean install" is invoked while the folder exists,
-             which is correct, yet unfortunate, as the clean phase will remove the folder and
-             subsequently the source folder is not created.
-             So, we need activate this profle by default and set -fn option to the mvn below to
-             ignore the duplicate error ;-((
-        -->
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
+        <!-- Component API javadoc in provided scope to read API signatures -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-olingo2-api</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- logging -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- testing -->
+        <dependency>
+            <groupId>org.apache.olingo</groupId>
+            <artifactId>olingo-odata2-api-annotation</artifactId>
+            <version>${olingo2-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.olingo</groupId>
+            <artifactId>olingo-odata2-annotation-processor-api</artifactId>
+            <version>${olingo2-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.olingo</groupId>
+            <artifactId>olingo-odata2-annotation-processor-core</artifactId>
+            <version>${olingo2-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>${jetty-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>${jetty-version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty.orbit</groupId>
+                    <artifactId>javax.servlet</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+            <version>${jetty-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-ant</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+
         <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>${exec-maven-plugin-version}</version>
-            <executions>
-              <execution>
-                <id>generate-sources</id>
-                <phase>generate-test-sources</phase>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <executable>mvn${maven.exe.file.extension}</executable>
-              <workingDirectory>${basedir}/target</workingDirectory>
-              <arguments>
-                <argument>archetype:generate</argument>
-                <argument>-q</argument>
-                <argument>-fn</argument>
-                <argument>-DinteractiveMode=false</argument>
-                <argument>-Dversion=${project.version}</argument>
-                <argument>-DgroupId=org.apache.camel</argument>
-                <argument>-DartifactId=olingo2-my-car-service</argument>
-                <argument>-DarchetypeGroupId=org.apache.olingo</argument>
-                <argument>-DarchetypeArtifactId=olingo-odata2-sample-cars-annotation-archetype</argument>
-                <argument>-DarchetypeVersion=${olingo2-version}</argument>
-              </arguments>
-            </configuration>
-          </plugin>
+
+            <!-- generate Component source and test source -->
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-api-component-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-test-component-classes</id>
+                        <goals>
+                            <goal>fromApis</goal>
+                        </goals>
+                        <configuration>
+                            <apis>
+                                <api>
+                                    <apiName/>
+                                    <proxyClass>org.apache.camel.component.olingo2.api.Olingo2App</proxyClass>
+                                    <fromSignatureFile>src/signatures/olingo-api-signature.txt</fromSignatureFile>
+                                    <extraOptions>
+                                        <extraOption>
+                                            <name>keyPredicate</name>
+                                            <type>java.lang.String</type>
+                                        </extraOption>
+                                    </extraOptions>
+                                    <nullableOptions>
+                                        <nullableOption>queryParams</nullableOption>
+                                        <nullableOption>endpointHttpHeaders</nullableOption>
+                                        <nullableOption>edm</nullableOption>
+                                        <nullableOption>responseHandler</nullableOption>
+                                    </nullableOptions>
+                                </api>
+                            </apis>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- add generated source and test source to build -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-generated-sources</id>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/camel-component</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-generated-test-sources</id>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-test-sources/camel-component</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <!-- add the olingo odata2 sample service source. See profile get-olingo2-sample below -->
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${basedir}/target/olingo2-my-car-service/src/main/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
-      </build>
-    </profile>
-  </profiles>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-api-component-maven-plugin</artifactId>
+                    <version>${project.version}</version>
+                    <configuration>
+                        <scheme>${schemeName}</scheme>
+                        <componentName>${componentName}</componentName>
+                        <componentPackage>${componentPackage}</componentPackage>
+                        <outPackage>${outPackage}</outPackage>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-api-component-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <scheme>${schemeName}</scheme>
+                    <componentName>${componentName}</componentName>
+                    <componentPackage>${componentPackage}</componentPackage>
+                    <outPackage>${outPackage}</outPackage>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <profiles>
+        <profile>
+            <id>Windows</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <properties>
+                <maven.exe.file.extension>.cmd</maven.exe.file.extension>
+            </properties>
+        </profile>
+        <profile>
+            <!-- REVISIT as of now, the olingo odata2 sample service that is used in the tests
+                 is not available in nexus and needs to be generated and built using its architype plugin.
+                 If the sample service jar becomes available, we can use it directly -->
+            <id>get-olingo2-sample</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>clean-olingo2-sample</id>
+                                <phase>generate-test-sources</phase>
+                                <goals>
+                                    <goal>clean</goal>
+                                </goals>
+                                <configuration>
+                                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                                    <filesets>
+                                        <fileset>
+                                            <directory>${project.build.directory}/olingo2-my-car-service</directory>
+                                        </fileset>
+                                    </filesets>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.gmavenplus</groupId>
+                        <artifactId>gmavenplus-plugin</artifactId>
+                        <version>${gmavenplus-plugin-version}</version>
+                        <executions>
+                            <execution>
+                                <id>define-archetype-properties</id>
+                                <phase>generate-test-sources</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <scripts>
+                                        <script><![CDATA[
+                      session.userProperties['version'] = project.version
+                      session.userProperties['groupId'] = 'org.apache.camel'
+                      session.userProperties['artifactId'] = 'olingo2-my-car-service'
+                      ]]></script>
+                                    </scripts>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.codehaus.groovy</groupId>
+                                <artifactId>groovy</artifactId>
+                                <version>${groovy-version}</version>
+                                <scope>runtime</scope>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-archetype-plugin</artifactId>
+                        <version>${maven-archetype-plugin-version}</version>
+                        <executions>
+                            <execution>
+                                <id>generate-my-car-service</id>
+                                <phase>generate-test-sources</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <basedir>${project.build.directory}</basedir>
+                                    <interactiveMode>false</interactiveMode>
+                                    <archetypeGroupId>org.apache.olingo</archetypeGroupId>
+                                    <archetypeArtifactId>olingo-odata2-sample-cars-annotation-archetype
+                                    </archetypeArtifactId>
+                                    <archetypeVersion>${olingo2-version}</archetypeVersion>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,6 @@ package org.apache.camel.component.hazelcast.seda;
 
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.spi.UriPath;
 
 /**
  * Hazelcast SEDA Component configuration.
@@ -33,6 +32,8 @@ public class HazelcastSedaConfiguration {
     private int concurrentConsumers = 1;
     @UriParam(label = "seda", defaultValue = "1000")
     private int pollTimeout = 1000;
+    @UriParam(label = "seda", defaultValue = "1000")
+    private int onErrorDelay = 1000;
     @UriParam(label = "seda")
     private boolean transferExchange;
     @UriParam(label = "seda")
@@ -90,6 +91,20 @@ public class HazelcastSedaConfiguration {
 
     public boolean isTransferExchange() {
         return transferExchange;
+    }
+
+    /**
+     * Milliseconds before consumer continues polling after an error has occurred.
+     */
+    public void setOnErrorDelay(int onErrorDelay) {
+        if (onErrorDelay < 0) {
+            throw new IllegalArgumentException("Property onErrorDelay must be a positive number, was " + onErrorDelay);
+        }
+        this.onErrorDelay = onErrorDelay;
+    }
+
+    public int getOnErrorDelay() {
+        return onErrorDelay;
     }
 
     /**

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,9 +23,6 @@ import org.apache.camel.Producer;
 /**
  * Extended {@link UrlRewrite} which leverages {@link HttpServletRequest}
  * during the rewrite process.
- * <p/>
- * For example the camel-urlrewrite component supports
- * {@link HttpServletUrlRewrite} implementations.
  */
 public interface HttpServletUrlRewrite extends UrlRewrite {
 

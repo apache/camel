@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,13 +30,13 @@ import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Transforms the message using a FreeMarker template.
  */
-@UriEndpoint(scheme = "freemarker", title = "Freemarker", syntax = "freemarker:resourceUri", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "freemarker", title = "Freemarker", syntax = "freemarker:resourceUri", producerOnly = true, label = "transformation")
 public class FreemarkerEndpoint extends ResourceEndpoint {
 
     @UriParam

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ package org.apache.camel.component.jms.issues;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -43,8 +44,6 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 
 /**
  * Unit test using a fixed replyTo specified on the JMS endpoint
- * 
- * @version 
  */
 public class JmsJMSReplyToEndpointUsingInOutTest extends CamelTestSupport {
     private JmsComponent amq;

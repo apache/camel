@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -89,7 +89,7 @@ public class ITestConfigBuilder {
 
     public ITestConfigBuilder resource(String file, String dest) {
         if (config.getResources() == null) {
-            config.setResources(new HashMap<String, String>());
+            config.setResources(new HashMap<>());
         }
         config.getResources().put(file, dest);
         return this;
@@ -97,7 +97,7 @@ public class ITestConfigBuilder {
 
     public ITestConfigBuilder dependency(String dependencyCanonicalForm) {
         if (config.getAdditionalDependencies() == null) {
-            config.setAdditionalDependencies(new HashSet<String>());
+            config.setAdditionalDependencies(new HashSet<>());
         }
         config.getAdditionalDependencies().add(dependencyCanonicalForm);
         return this;
@@ -152,6 +152,21 @@ public class ITestConfigBuilder {
             config.setTestLibraryVersions(new HashMap<>());
         }
         config.getTestLibraryVersions().put(groupIdArtifactId, version);
+        return this;
+    }
+
+    public ITestConfigBuilder includeTestDependencies(Boolean includeTestDependencies) {
+        config.setIncludeTestDependencies(includeTestDependencies);
+        return this;
+    }
+
+    public ITestConfigBuilder unitTestsEnabled(Boolean unitTestsEnabled) {
+        config.setUnitTestEnabled(unitTestsEnabled);
+        return this;
+    }
+
+    public ITestConfigBuilder springBootVersion(String springBootVersion) {
+        config.setSpringBootVersion(springBootVersion);
         return this;
     }
 
@@ -243,6 +258,10 @@ public class ITestConfigBuilder {
             config.setTestLibraryVersions(new HashMap<>());
         }
 
+        if (config.getSpringBootVersion() == null) {
+            config.setSpringBootVersion(propertyOr("springBootVersion", null));
+        }
+
         return config;
     }
 
@@ -263,6 +282,16 @@ public class ITestConfigBuilder {
         Boolean res = defaultVal;
         if (prop != null) {
             res = Boolean.valueOf(prop);
+        }
+
+        return res;
+    }
+
+    private Integer integerPropertyOr(String name, Integer defaultVal) {
+        String prop = propertyOr(name, null);
+        Integer res = defaultVal;
+        if (prop != null) {
+            res = Integer.valueOf(prop);
         }
 
         return res;

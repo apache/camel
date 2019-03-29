@@ -1,0 +1,22 @@
+[[IfIuseServiceMixwhenshouldIuseCamel-IfIuseServiceMixwhenshouldIuseCamel]]
+=== If I use ServiceMix when should I use Camel?
+
+Camel is a routing and mediation engine which works great inside JBI.
+
+So if you are already using http://servicemix.apache.org/[ServiceMix]
+then you can use Camel implement the
+link:../enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
+inside JBI such as
+<<contentBasedRouter-eip,Content Based Router>>, routing messages
+between your existing JBI endpoints.
+
+You can also reuse any of the Camel link:../component.adoc[Components]
+within JBI or expose Camel endpoints as JBI endpoints.
+
+[[IfIuseServiceMixwhenshouldIuseCamel-SeeAlso]]
+==== See Also
+
+* link:how-does-camel-compare-to-servicemix.adoc[How does Camel compare
+to ServiceMix]
+* link:how-does-camel-compare-to-servicemix-eip.adoc[How does Camel
+compare to ServiceMix EIP]

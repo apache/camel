@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -54,7 +54,7 @@ public class CuratorMultiMasterLeaderElection implements ConnectionStateListener
     private static final Logger LOG = LoggerFactory.getLogger(CuratorMultiMasterLeaderElection.class);
 
     private final String candidateName;
-    private final List<ElectionWatcher> watchers = new ArrayList<ElectionWatcher>();
+    private final List<ElectionWatcher> watchers = new ArrayList<>();
     private final int desiredActiveNodes;
     private AtomicBoolean activeNode = new AtomicBoolean(false);
     private UuidGenerator uuidGenerator = new JavaUuidGenerator();

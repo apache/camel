@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,27 +17,23 @@
 package org.apache.camel.component.file.remote.sftp;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.io.FileUtils;
-import org.apache.sshd.SshServer;
-import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
-import org.apache.sshd.server.Command;
-import org.apache.sshd.server.PublickeyAuthenticator;
-import org.apache.sshd.server.command.ScpCommandFactory;
-import org.apache.sshd.server.session.ServerSession;
-import org.apache.sshd.server.sftp.SftpSubsystem;
+import org.apache.sshd.common.session.helpers.AbstractSession;
+import org.apache.sshd.server.SshServer;
+import org.apache.sshd.server.scp.ScpCommandFactory;
+import org.apache.sshd.server.subsystem.sftp.SftpSubsystemFactory;
 import org.junit.After;
 import org.junit.Before;
 
-/**
- * @version 
- */
 public class SftpServerTestSupport extends BaseServerTestSupport {
 
     protected static final String FTP_ROOT_DIR = "target/res/home";
@@ -72,18 +68,11 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
         try {
             sshd = SshServer.setUpDefaultServer();
             sshd.setPort(getPort());
-            sshd.setKeyPairProvider(new FileKeyPairProvider(new String[]{"src/test/resources/hostkey.pem"}));
-            sshd.setSubsystemFactories(Arrays.<NamedFactory<Command>>asList(new SftpSubsystem.Factory()));
+            sshd.setKeyPairProvider(new FileKeyPairProvider(Paths.get("src/test/resources/hostkey.pem")));
+            sshd.setSubsystemFactories(Collections.singletonList(new SftpSubsystemFactory()));
             sshd.setCommandFactory(new ScpCommandFactory());
-            sshd.setPasswordAuthenticator(new MyPasswordAuthenticator());
-            PublickeyAuthenticator publickeyAuthenticator = new PublickeyAuthenticator() {
-                // consider all keys as authorized for all users
-                @Override
-                public boolean authenticate(String username, PublicKey key, ServerSession session) {
-                    return true;
-                }
-            };
-            sshd.setPublickeyAuthenticator(publickeyAuthenticator);
+            sshd.setPasswordAuthenticator((username, password, session) -> true);
+            sshd.setPublickeyAuthenticator((username, password, session) -> true);
             sshd.start();
         } catch (Exception e) {
             // ignore if algorithm is not on the OS
@@ -131,5 +120,13 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
 
     protected boolean canTest() {
         return canTest;
+    }
+
+    // disconnect all existing SSH sessions to test reconnect functionality
+    protected void disconnectAllSessions() throws IOException {
+        List<AbstractSession> sessions = sshd.getActiveSessions();
+        for (AbstractSession session : sessions) {
+            session.disconnect(4, "dummy");
+        }
     }
 }

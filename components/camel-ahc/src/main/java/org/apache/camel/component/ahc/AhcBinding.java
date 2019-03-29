@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,8 +18,8 @@ package org.apache.camel.component.ahc;
 
 import java.io.ByteArrayOutputStream;
 
+import io.netty.handler.codec.http.HttpHeaders;
 import org.apache.camel.Exchange;
-import org.asynchttpclient.HttpResponseHeaders;
 import org.asynchttpclient.HttpResponseStatus;
 import org.asynchttpclient.Request;
 
@@ -66,7 +66,7 @@ public interface AhcBinding {
      * @param headers  the HTTP headers
      * @throws Exception is thrown if error occurred in the callback
      */
-    void onHeadersReceived(AhcEndpoint endpoint, Exchange exchange, HttpResponseHeaders headers) throws Exception;
+    void onHeadersReceived(AhcEndpoint endpoint, Exchange exchange, HttpHeaders headers) throws Exception;
 
     /**
      * Callback from the {@link com.ning.http.client.AsyncHttpClient} when complete and all the response has been received.

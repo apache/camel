@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -70,6 +70,23 @@ public class HipchatProducerIntegrationTest extends CamelTestSupport {
         assertResponseMessage(exchange1.getIn());
         assertResponseMessage(exchange2.getIn());
 
+    }
+
+    @Test
+    public void sendToUriUnsafeRoomName() throws Exception {
+        result.expectedMessageCount(1);
+
+        Exchange exchange1 = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(HipchatConstants.TO_ROOM, "Camel Test");
+                exchange.getIn().setHeader(HipchatConstants.TO_USER, "@ShreyasPurohit");
+                exchange.getIn().setBody("A room with spaces");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        assertResponseMessage(exchange1.getIn());
     }
 
     private void assertResponseMessage(Message message) {

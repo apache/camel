@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,16 +22,17 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.StringHelper;
 
 public class DummyRestProducerFactory implements RestProducerFactory {
 
     @Override
     public Producer createProducer(CamelContext camelContext, String host,
                             String verb, String basePath, final String uriTemplate, String queryParameters,
-                            String consumes, String produces, Map<String, Object> parameters) throws Exception {
+                            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
 
         // use a dummy endpoint
         Endpoint endpoint = camelContext.getEndpoint("stub:dummy");
@@ -41,7 +42,7 @@ public class DummyRestProducerFactory implements RestProducerFactory {
             public void process(Exchange exchange) throws Exception {
                 String query = exchange.getIn().getHeader(Exchange.REST_HTTP_QUERY, String.class);
                 if (query != null) {
-                    String name = ObjectHelper.after(query, "name=");
+                    String name = StringHelper.after(query, "name=");
                     exchange.getIn().setBody("Bye " + name);
                 }
                 String uri = exchange.getIn().getHeader(Exchange.REST_HTTP_URI, String.class);

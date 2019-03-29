@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,10 +38,10 @@ public class XmlToJsonTest {
     private static final String ABC_ORDER_PATH = "org/apache/camel/component/dozer/abc-order.xml";
     private static final String XYZ_ORDER_PATH = "org/apache/camel/component/dozer/xyz-order.json";
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
     
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private ProducerTemplate startEndpoint;
     
     @Autowired

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,6 +31,11 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.TYPE})
 public @interface UriEndpoint {
+
+    /**
+     * The first version this endpoint was added to Apache Camel.
+     */
+    String firstVersion() default "";
 
     /**
      * Represents the URI scheme name of this endpoint.
@@ -86,6 +91,7 @@ public @interface UriEndpoint {
     /**
      * Represents the consumer class which is injected and created by consumers
      */
+    @Deprecated
     Class<?> consumerClass() default Object.class;
 
     /**

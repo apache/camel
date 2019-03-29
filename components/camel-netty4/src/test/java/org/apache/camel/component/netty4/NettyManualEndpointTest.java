@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,6 @@ import java.util.List;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.Delimiters;
 import io.netty.util.CharsetUtil;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -56,7 +55,7 @@ public class NettyManualEndpointTest extends BaseNettyTest {
 
                 // need to add encoders and decoders manually
                 nettyConfig.setEncoder(ChannelHandlerFactories.newStringEncoder(CharsetUtil.UTF_8, "tcp"));
-                List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
+                List<ChannelHandler> decoders = new ArrayList<>();
                 decoders.add(ChannelHandlerFactories.newDelimiterBasedFrameDecoder(1000, Delimiters.lineDelimiter(), "tcp"));
                 decoders.add(ChannelHandlerFactories.newStringDecoder(CharsetUtil.UTF_8, "tcp"));
                 nettyConfig.setDecoders(decoders);

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -77,7 +77,7 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
         };
     }
 
-    public class MyIdempotentRepository implements IdempotentRepository<String> {
+    public class MyIdempotentRepository implements IdempotentRepository {
 
         public boolean add(String messageId) {
             // will return true 1st time, and false 2nd time

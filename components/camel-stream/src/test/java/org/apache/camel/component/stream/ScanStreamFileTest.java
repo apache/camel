@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -54,11 +54,15 @@ public class ScanStreamFileTest extends CamelTestSupport {
         // a scanStream=true is never finished
         mock.message(1).header(StreamConstants.STREAM_COMPLETE).isEqualTo(false);
 
+        context.getRouteController().startAllRoutes();
+
         FileOutputStream fos = new FileOutputStream(file);
         try {
             fos.write("Hello\n".getBytes());
             Thread.sleep(150);
             fos.write("World\n".getBytes());
+            // ensure it does not read the file again
+            Thread.sleep(1000);
         } finally {
             fos.close();
         }
@@ -69,20 +73,42 @@ public class ScanStreamFileTest extends CamelTestSupport {
     @Test
     public void testScanRefreshedFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(3);
+        mock.expectedMessageCount(5);
+
+        // write file during started route
 
         FileOutputStream fos = refreshFile(null);
         try {
-            fos.write("Hello\n".getBytes());
+            fos.write("Hello\nWorld\n".getBytes());
             Thread.sleep(150);
+
+            context.getRouteController().startAllRoutes();
+
+            // roll-over file
+            Thread.sleep(1500);
             fos = refreshFile(fos);
-            fos.write("there\n".getBytes());
-            Thread.sleep(150);
-            fos = refreshFile(fos);
-            fos.write("World\n".getBytes());
-            Thread.sleep(150);
-            fos = refreshFile(fos);
+            fos.write("Bye\nWorld\n".getBytes());
             fos.write("!\n".getBytes());
+            // ensure it does not read the file again
+            Thread.sleep(1500);
+        } finally {
+            fos.close();
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testScanFileAlreadyWritten() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(4);
+
+        FileOutputStream fos = refreshFile(null);
+        try {
+            fos.write("Hello\nthere\nWorld\n!\n".getBytes());
+            context.getRouteController().startAllRoutes();
+            // ensure it does not read the file again
+            Thread.sleep(1000);
         } finally {
             fos.close();
         }
@@ -102,7 +128,10 @@ public class ScanStreamFileTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("stream:file?fileName=target/stream/scanstreamfile.txt&scanStream=true&scanStreamDelay=200&retry=true").to("mock:result");
+                from("stream:file?fileName=target/stream/scanstreamfile.txt&scanStream=true&scanStreamDelay=200&retry=true&fileWatcher=true")
+                    .routeId("foo").noAutoStartup()
+                    .to("log:line")
+                    .to("mock:result");
             }
         };
     }

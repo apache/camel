@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,17 +18,18 @@ package org.apache.camel.converter.dozer;
 
 import java.util.Arrays;
 
+import com.github.dozermapper.core.Mapper;
+import org.apache.camel.CamelContext;
 import org.apache.camel.converter.dozer.dto.AddressDTO;
 import org.apache.camel.converter.dozer.dto.CustomerDTO;
 import org.apache.camel.converter.dozer.model.Address;
 import org.apache.camel.converter.dozer.service.Customer;
-import org.dozer.DozerBeanMapper;
 
 public final class DozerTestArtifactsFactory {
-    
+
     private DozerTestArtifactsFactory() {
     }
-    
+
     public static Customer createServiceCustomer() {
         return new Customer("Bob", "Roberts", "12345", "1 main st");
     }
@@ -41,13 +42,17 @@ public final class DozerTestArtifactsFactory {
         return new CustomerDTO("Bob", "Roberts", new AddressDTO("12345", "1 main st"));
     }
 
-    public static DozerBeanMapper createMapper() {
-        return new DozerBeanMapper(Arrays.asList(new String[]{"mapping.xml"}));
+    public static Mapper createMapper(CamelContext camelContext) {
+        DozerBeanMapperConfiguration config = new DozerBeanMapperConfiguration();
+        config.setMappingFiles(Arrays.asList("mapping.xml"));
+
+        MapperFactory factory = new MapperFactory(camelContext, config);
+        return factory.create();
     }
 
-    public static DozerBeanMapper createCleanMapper() {
-        return new DozerBeanMapper();
+    public static Mapper createCleanMapper(CamelContext camelContext) {
+        MapperFactory factory = new MapperFactory(camelContext, null);
+        return factory.create();
     }
-
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,10 +25,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- *
- * @version 
- */
 public class HttpSOTimeoutTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -77,4 +73,25 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
         Exception e = reply.getException();
         assertNotNull("Should have thrown an exception", e);
     }
+
+    @Test
+    public void httpGetUriOption() throws Exception {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?socketTimeout=5000", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+            }
+        });
+
+        assertExchange(exchange);
+    }
+
+    @Test
+    public void httpGetUriOptionShouldThrowASocketTimeoutException() throws Exception {
+        Exchange reply = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?socketTimeout=1000", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+            }
+        });
+        Exception e = reply.getException();
+        assertNotNull("Should have thrown an exception", e);
+    }
+
 }

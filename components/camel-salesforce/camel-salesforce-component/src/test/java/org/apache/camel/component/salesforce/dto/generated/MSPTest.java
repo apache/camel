@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.salesforce.dto.generated;
 
-import org.apache.camel.component.salesforce.api.MultiSelectPicklistConverter;
-import org.apache.camel.component.salesforce.api.MultiSelectPicklistDeserializer;
-import org.apache.camel.component.salesforce.api.MultiSelectPicklistSerializer;
-import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -30,6 +25,11 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
+
+import org.apache.camel.component.salesforce.api.MultiSelectPicklistConverter;
+import org.apache.camel.component.salesforce.api.MultiSelectPicklistDeserializer;
+import org.apache.camel.component.salesforce.api.MultiSelectPicklistSerializer;
+import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 
 /**
  * Sample POJO for MSP tests.

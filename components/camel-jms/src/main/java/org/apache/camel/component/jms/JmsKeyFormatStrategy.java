@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,8 +18,6 @@ package org.apache.camel.component.jms;
 
 /**
  * Strategy for applying encoding and decoding of JMS headers so they apply to the JMS spec.
- *
- * @version 
  */
 public interface JmsKeyFormatStrategy {
 

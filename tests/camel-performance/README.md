@@ -1,9 +1,0 @@
-Camel Performance Tests
------------------------
-
-## Overview
-
-This module is where you should add performance tests.
-
-All tests should be disabled by default to not run on the CI server because
-we expect performance test are time and CPU consuming.

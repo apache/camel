@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,6 @@
 package org.apache.camel.itest.springboot;
 
 import org.apache.camel.itest.springboot.util.ArquillianPackager;
-import org.apache.camel.itest.springboot.util.DependencyResolver;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -37,8 +36,6 @@ public class CamelInfinispanTest extends AbstractSpringBootTestSupport {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelInfinispanTest.class))
                 .disableJmx("org.infinispan:*")
-                // arquillian fails, but the tests pass
-                .dependency("org.apache.logging.log4j:log4j-jcl:" + DependencyResolver.resolveParentProperty("${log4j2-version}"))
                 .build();
     }
 

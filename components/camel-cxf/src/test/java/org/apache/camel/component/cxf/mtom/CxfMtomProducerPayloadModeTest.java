@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -56,10 +56,8 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 
 /**
-* Unit test for exercising MTOM feature of a CxfProducer in PAYLOAD mode
-* 
-* @version 
-*/
+ * Unit test for exercising MTOM feature of a CxfProducer in PAYLOAD mode
+ */
 @ContextConfiguration
 public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextTests {
     static int port = CXFTestSupport.getPort1();
@@ -96,9 +94,9 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
 
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
-                List<Source> elements = new ArrayList<Source>();
+                List<Source> elements = new ArrayList<>();
                 elements.add(new DOMSource(StaxUtils.read(new StringReader(MtomTestHelper.REQ_MESSAGE)).getDocumentElement()));
-                CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
+                CxfPayload<SoapHeader> body = new CxfPayload<>(new ArrayList<SoapHeader>(),
                     elements, null);
                 exchange.getIn().setBody(body);
                 exchange.getIn().addAttachment(MtomTestHelper.REQ_PHOTO_CID, 
@@ -116,7 +114,7 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
         CxfPayload<SoapHeader> out = exchange.getOut().getBody(CxfPayload.class);
         Assert.assertEquals(1, out.getBody().size());
         
-        Map<String, String> ns = new HashMap<String, String>();
+        Map<String, String> ns = new HashMap<>();
         ns.put("ns", MtomTestHelper.SERVICE_TYPES_NS);
         ns.put("xop", MtomTestHelper.XOP_NS);
         

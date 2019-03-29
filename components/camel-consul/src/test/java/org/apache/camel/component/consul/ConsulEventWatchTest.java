@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,7 +38,6 @@ public class ConsulEventWatchTest extends ConsulTestSupport {
         List<String> values = generateRandomListOfStrings(3);
 
         MockEndpoint mock = getMockEndpoint("mock:event-watch");
-        mock.expectedMessageCount(values.size());
         mock.expectedBodiesReceived(values);
         mock.expectedHeaderReceived(ConsulConstants.CONSUL_RESULT, true);
 
@@ -51,9 +50,9 @@ public class ConsulEventWatchTest extends ConsulTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                fromF("consul:event?key=%s", key)
+                fromF("consul:event?key=%s&blockSeconds=1", key)
                     .to("log:org.apache.camel.component.consul?level=INFO&showAll=true")
-                        .to("mock:event-watch");
+                    .to("mock:event-watch");
             }
         };
     }

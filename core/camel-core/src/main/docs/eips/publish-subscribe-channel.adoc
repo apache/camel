@@ -1,0 +1,54 @@
+[[PublishSubscribeChannel-PublishSubscribeChannel]]
+== Publish Subscribe Channel
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/PublishSubscribeChannel.html[Publish
+Subscribe Channel] from the
+link:enterprise-integration-patterns.html[EIP patterns] using for
+example the following components:
+
+* <<jms-component,JMS>> for working with JMS Topics for high performance,
+clustering and load balancing
+* <<xmpp-component,XMPP>> when using rooms for group communication
+* <<seda-component,SEDA>> for working with SEDA in the same
+link:camelcontext.html[CamelContext] which can work in pub-sub, but
+allowing multiple consumers.
+* <<vm-component,VM>> as SEDA but for intra-JVM.
+
+image:http://www.enterpriseintegrationpatterns.com/img/PublishSubscribeSolution.gif[image]
+
+[[PublishSubscribeChannel-Samples]]
+=== Samples
+
+Another option is to explicitly list the publish-subscribe relationship
+in your routing logic; this keeps the producer and consumer decoupled
+but lets you control the fine grained routing configuration using the
+link:dsl.html[DSL] or link:xml-configuration.html[Xml Configuration].
+
+In Java code:
+
+[source,java]
+----
+from("direct:a")
+    .multicast()
+      .to("direct:b")
+      .to("direct:c")
+      .to("direct:d")
+    .end() // end multicast
+----
+
+And in XML:
+
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:a"/>
+        <multicast>
+            <to uri="direct:b"/>
+            <to uri="direct:c"/>
+            <to uri="direct:d"/>
+        </multicast>
+    </route>
+</camelContext>
+----

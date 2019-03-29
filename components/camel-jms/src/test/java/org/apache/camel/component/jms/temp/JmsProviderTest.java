@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,22 +16,22 @@
  */
 package org.apache.camel.component.jms.temp;
 
+import javax.jms.ConnectionFactory;
 import javax.jms.TemporaryQueue;
 import javax.jms.TemporaryTopic;
-import javax.naming.Context;
 
-import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.activemq.command.ActiveMQTempQueue;
 import org.apache.activemq.command.ActiveMQTempTopic;
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.JmsProviderMetadata;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+
 public class JmsProviderTest extends CamelTestSupport {
     @Test
     public void testTemporaryDestinationTypes() throws Exception {
@@ -53,10 +53,12 @@ public class JmsProviderTest extends CamelTestSupport {
         assertEquals("topicType", ActiveMQTempTopic.class, topicType);
     }
 
-    @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind("activemq", ActiveMQComponent.activeMQComponent("vm://localhost"));
-        return context;
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
+
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
+
+        return camelContext;
     }
 }

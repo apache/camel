@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,8 @@ package org.apache.camel.component.twitter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -72,6 +74,16 @@ public class CamelTwitterTestSupport extends CamelTestSupport {
             + "&consumerSecret=" + consumerSecret
             + "&accessToken=" + accessToken
             + "&accessTokenSecret=" + accessTokenSecret;
+    }
+
+    protected Map<String, Object> getParameters() {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("consumerKey", this.consumerKey);
+        parameters.put("consumerSecret", this.consumerSecret);
+        parameters.put("accessToken", this.accessToken);
+        parameters.put("accessTokenSecret", this.accessTokenSecret);
+
+        return parameters;
     }
 
     protected void addProperty(Properties properties, String name, String envName) {

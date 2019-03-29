@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,11 +28,11 @@ import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.TimeoutException;
 import javax.activation.DataHandler;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -46,10 +46,12 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.util.GZIPHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.GZIPHelper;
+import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +83,7 @@ public class DefaultHttpBinding implements HttpBinding {
     private boolean mapHttpMessageHeaders = true;
     private boolean mapHttpMessageFormUrlEncodedBody = true;
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
+    private String fileNameExtWhitelist;
 
     public DefaultHttpBinding() {
     }
@@ -256,7 +259,7 @@ public class DefaultHttpBinding implements HttpBinding {
 
                 // Push POST form params into the headers to retain compatibility with DefaultHttpBinding
                 String text = message.getBody(String.class);
-                if (ObjectHelper.isNotEmpty(text)) {
+                if (org.apache.camel.util.ObjectHelper.isNotEmpty(text)) {
                     for (String param : text.split("&")) {
                         String[] pair = param.split("=", 2);
                         if (pair.length == 2) {
@@ -300,7 +303,23 @@ public class DefaultHttpBinding implements HttpBinding {
             LOG.trace("HTTP attachment {} = {}", name, object);
             if (object instanceof File) {
                 String fileName = request.getParameter(name);
-                message.addAttachment(fileName, new DataHandler(new CamelFileDataSource((File)object, fileName)));
+                // is the file name accepted
+                boolean accepted = true;
+                if (fileNameExtWhitelist != null) {
+                    String ext = FileUtil.onlyExt(fileName);
+                    if (ext != null) {
+                        ext = ext.toLowerCase(Locale.US);
+                        fileNameExtWhitelist = fileNameExtWhitelist.toLowerCase(Locale.US);
+                        if (!fileNameExtWhitelist.equals("*") && !fileNameExtWhitelist.contains(ext)) {
+                            accepted = false;
+                        }
+                    }
+                }
+                if (accepted) {
+                    message.addAttachment(fileName, new DataHandler(new CamelFileDataSource((File) object, fileName)));
+                } else {
+                    LOG.debug("Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}", fileName, fileNameExtWhitelist);
+                }
             }
         }
     }
@@ -334,23 +353,28 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException {
-        // 500 for internal server error
-        response.setStatus(500);
-
-        if (isTransferException()) {
-            // transfer the exception as a serialized java object
-            HttpHelper.writeObjectToServletResponse(response, exception);
-        } else {
-            // write stacktrace as plain text
+        if (exception instanceof TimeoutException) {
+            response.setStatus(HttpServletResponse.SC_GATEWAY_TIMEOUT);
             response.setContentType("text/plain");
-            PrintWriter pw = response.getWriter();
-            exception.printStackTrace(pw);
-            pw.flush();
+            response.getWriter().write("Timeout error");
+        } else {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+            if (isTransferException()) {
+                // transfer the exception as a serialized java object
+                HttpHelper.writeObjectToServletResponse(response, exception);
+            } else {
+                // write stacktrace as plain text
+                response.setContentType("text/plain");
+                PrintWriter pw = response.getWriter();
+                exception.printStackTrace(pw);
+                pw.flush();
+            }
         }
     }
 
     public void doWriteFaultResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
-        message.setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
+        message.setHeader(Exchange.HTTP_RESPONSE_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         doWriteResponse(message, response, exchange);
     }
 
@@ -372,7 +396,7 @@ public class DefaultHttpBinding implements HttpBinding {
             String key = entry.getKey();
             Object value = entry.getValue();
             // use an iterator as there can be multiple values. (must not use a delimiter)
-            final Iterator<?> it = ObjectHelper.createIterator(value, null);
+            final Iterator<?> it = ObjectHelper.createIterator(value, null, true);
             while (it.hasNext()) {
                 String headerValue = convertHeaderValueToString(exchange, it.next());
                 if (headerValue != null && headerFilterStrategy != null
@@ -495,7 +519,7 @@ public class DefaultHttpBinding implements HttpBinding {
             String data = message.getBody(String.class);
             if (data != null) {
                 // set content length and encoding before we write data
-                String charset = IOHelper.getCharsetName(exchange, true);
+                String charset = ExchangeHelper.getCharsetName(exchange, true);
                 final int dataByteLength = data.getBytes(charset).length;
                 response.setCharacterEncoding(charset);
                 response.setContentLength(dataByteLength);
@@ -530,7 +554,7 @@ public class DefaultHttpBinding implements HttpBinding {
         try {
             bytes = message.getMandatoryBody(byte[].class);
         } catch (InvalidPayloadException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
         byte[] data = GZIPHelper.compressGZIP(bytes);
@@ -635,6 +659,14 @@ public class DefaultHttpBinding implements HttpBinding {
 
     public void setMapHttpMessageFormUrlEncodedBody(boolean mapHttpMessageFormUrlEncodedBody) {
         this.mapHttpMessageFormUrlEncodedBody = mapHttpMessageFormUrlEncodedBody;
+    }
+
+    public String getFileNameExtWhitelist() {
+        return fileNameExtWhitelist;
+    }
+
+    public void setFileNameExtWhitelist(String fileNameExtWhitelist) {
+        this.fileNameExtWhitelist = fileNameExtWhitelist;
     }
 
     protected static SimpleDateFormat getHttpDateFormat() {

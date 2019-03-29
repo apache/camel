@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,6 +35,7 @@ public class AllRedisProcessorsCreator implements RedisProcessorsCreator {
         this.processors.putAll(new SortedSetsRedisProcessorsCreator().getProcessors(redisClient, exchangeConverter));
         this.processors.putAll(new StringsRedisProcessorsCreator().getProcessors(redisClient, exchangeConverter));
         this.processors.putAll(new TransactionRedisProcessorsCreator().getProcessors(redisClient, exchangeConverter));
+        this.processors.putAll(new GeoRedisProcessorsCreator().getProcessors(redisClient, exchangeConverter));
     }
 
     public Map<Command, Processor> getRedisProcessors() {

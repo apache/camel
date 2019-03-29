@@ -35,6 +35,12 @@
             }
         },
         {
+          "operation": "modify-overwrite-beta",
+          "spec": {
+            "b": "^contextB"
+          }
+        },
+        {
             // last operation is to sort the JSON
             "operation": "sort"
         }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.ehcache.processor.aggregate;
-
 import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.ehcache.EhcacheTestSupport;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultExchangeHolder;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.DefaultExchangeHolder;
+import org.junit.After;
 import org.junit.Test;
 
 public class EhcacheAggregationRepositoryOperationTest extends EhcacheTestSupport {
@@ -36,6 +36,7 @@ public class EhcacheAggregationRepositoryOperationTest extends EhcacheTestSuppor
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         aggregationRepository.stop();
         super.tearDown();

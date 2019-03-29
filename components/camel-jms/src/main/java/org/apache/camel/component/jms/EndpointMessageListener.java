@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,7 +29,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,15 +37,13 @@ import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.jms.listener.SessionAwareMessageListener;
 
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 /**
  * A JMS {@link MessageListener} which can be used to delegate processing to a
  * Camel endpoint.
  *
  * Note that instance of this object has to be thread safe (reentrant)
- *
- * @version 
  */
 public class EndpointMessageListener implements SessionAwareMessageListener {
     private static final Logger LOG = LoggerFactory.getLogger(EndpointMessageListener.class);
@@ -86,6 +84,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
 
             final Exchange exchange = createExchange(message, session, replyDestination);
             if (eagerLoadingOfProperties) {
+                exchange.getIn().getBody();
                 exchange.getIn().getHeaders();
             }
             String correlationId = message.getJMSCorrelationID();
@@ -246,7 +245,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
         Exchange exchange = endpoint.createExchange();
         JmsBinding binding = getBinding();
         exchange.setProperty(Exchange.BINDING, binding);
-        exchange.setIn(new JmsMessage(message, session, binding));
+        exchange.setIn(new JmsMessage(exchange, message, session, binding));
 
         // lets set to an InOut if we have some kind of reply-to destination
         if (replyDestination != null && !disableReplyTo) {
@@ -373,7 +372,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
                 reply.setJMSCorrelationID(correlationID);
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", new Object[]{endpoint, correlationID, reply});
+                    LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", endpoint, correlationID, reply);
                 }
                 return reply;
             }
@@ -393,7 +392,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
                 reply.setJMSCorrelationID(correlationID);
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", new Object[]{endpoint, correlationID, reply});
+                    LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", endpoint, correlationID, reply);
                 }
                 return reply;
             }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,86 +16,79 @@
  */
 package org.apache.camel.component.mllp;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
-public class MllpWriteExceptionTest {
-    static final String EXCEPTION_MESSAGE = "Test Write Exception";
+/**
+ * Tests for the  class.
+ */
+public class MllpWriteExceptionTest extends MllpExceptionTestSupport {
+    static final String TEST_EXCEPTION_MESSAGE = "Write Exception Message";
 
-    static final String HL7_MESSAGE =
-            "MSH|^~\\&|APP_A|FAC_A|^org^sys||||ADT^A04^ADT_A04|||2.6" + '\r'
-                    + "PID|1||1100832^^^^PI||TEST^FIG||98765432|U||R|435 MAIN STREET^^LONGMONT^CO^80503||123-456-7890|||S" + '\r'
-                    + '\r' + '\n';
+    MllpWriteException instance;
 
-    static final String EXCEPTION_MESSAGE_WITH_LOG_PHI_DISABLED = EXCEPTION_MESSAGE;
-    static final String EXCEPTION_MESSAGE_WITH_LOG_PHI_ENABLED =
-            String.format(String.format("%s:\n\tMLLP Payload: %s",
-                    EXCEPTION_MESSAGE,
-                    new String(HL7_MESSAGE).replaceAll("\r", "<CR>").replaceAll("\n", "<LF>"))
-            );
-
-    Exception exception;
-
-    @Before
-    public void setUp() throws Exception {
-        exception = new MllpWriteException(EXCEPTION_MESSAGE, HL7_MESSAGE.getBytes());
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        System.clearProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY);
-    }
-
+    /**
+     * Description of test.
+     *
+     * @throws Exception in the event of a test error.
+     */
     @Test
-    public void testLogPhiDefault() throws Exception {
-        String exceptionMessage = exception.getMessage();
+    public void testConstructorOne() throws Exception {
+        instance = new MllpWriteException(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES);
 
-        assertEquals(EXCEPTION_MESSAGE_WITH_LOG_PHI_ENABLED, exceptionMessage);
+        assertNull(instance.getCause());
+        assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));
+        assertArrayEquals(HL7_MESSAGE_BYTES, instance.hl7MessageBytes);
+        assertNull(instance.hl7AcknowledgementBytes);
     }
 
+    /**
+     * Description of test.
+     *
+     * @throws Exception in the event of a test error.
+     */
     @Test
-    public void testLogPhiDisabled() throws Exception {
-        System.setProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "false");
+    public void testConstructorTwo() throws Exception {
+        instance = new MllpWriteException(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
 
-        String exceptionMessage = exception.getMessage();
-
-        assertEquals(EXCEPTION_MESSAGE_WITH_LOG_PHI_DISABLED, exceptionMessage);
+        assertNull(instance.getCause());
+        assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));
+        assertArrayEquals(HL7_MESSAGE_BYTES, instance.hl7MessageBytes);
+        assertArrayEquals(HL7_ACKNOWLEDGEMENT_BYTES, instance.hl7AcknowledgementBytes);
     }
 
+    /**
+     * Description of test.
+     *
+     * @throws Exception in the event of a test error.
+     */
     @Test
-    public void testLogPhiEnabled() throws Exception {
-        System.setProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true");
+    public void testConstructorThree() throws Exception {
+        instance = new MllpWriteException(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE);
 
-        String exceptionMessage = exception.getMessage();
-
-        assertEquals(EXCEPTION_MESSAGE_WITH_LOG_PHI_ENABLED, exceptionMessage);
+        assertSame(CAUSE, instance.getCause());
+        assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));
+        assertArrayEquals(HL7_MESSAGE_BYTES, instance.hl7MessageBytes);
+        assertNull(instance.hl7AcknowledgementBytes);
     }
 
+    /**
+     * Description of test.
+     *
+     * @throws Exception in the event of a test error.
+     */
     @Test
-    public void testNullPayload() throws Exception {
-        final String expectedMessage = String.format("%s:\n\tMLLP Payload: null", EXCEPTION_MESSAGE);
+    public void testConstructorFour() throws Exception {
+        instance = new MllpWriteException(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
 
-        exception = new MllpWriteException(EXCEPTION_MESSAGE, null);
-
-        System.setProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true");
-        String exceptionMessage = exception.getMessage();
-
-        assertEquals(expectedMessage, exceptionMessage);
-    }
-
-    @Test
-    public void testToString() throws Exception {
-        final String expectedString =
-                "org.apache.camel.component.mllp.MllpWriteException: "
-                        + "{mllpPayload="
-                        +      "MSH|^~\\&|APP_A|FAC_A|^org^sys||||ADT^A04^ADT_A04|||2.6<CR>"
-                        +      "PID|1||1100832^^^^PI||TEST^FIG||98765432|U||R|435 MAIN STREET^^LONGMONT^CO^80503||123-456-7890|||S<CR><CR><LF>"
-                        + "}";
-
-        assertEquals(expectedString, exception.toString());
+        assertSame(CAUSE, instance.getCause());
+        assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));
+        assertArrayEquals(HL7_MESSAGE_BYTES, instance.hl7MessageBytes);
+        assertArrayEquals(HL7_ACKNOWLEDGEMENT_BYTES, instance.hl7AcknowledgementBytes);
     }
 
 }

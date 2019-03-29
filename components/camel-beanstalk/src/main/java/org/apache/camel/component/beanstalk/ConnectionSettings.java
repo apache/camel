@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -49,7 +49,7 @@ public class ConnectionSettings {
 
         final Scanner scanner = new Scanner(tube);
         scanner.useDelimiter("\\+");
-        final ArrayList<String> buffer = new ArrayList<String>();
+        final ArrayList<String> buffer = new ArrayList<>();
         while (scanner.hasNext()) {
             final String tubeRaw = scanner.next();
             try {

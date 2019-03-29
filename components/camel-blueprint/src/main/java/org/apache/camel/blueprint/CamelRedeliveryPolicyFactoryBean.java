@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,8 +28,6 @@ import org.osgi.service.blueprint.container.BlueprintContainer;
 
 /**
  * A factory which instantiates {@link org.apache.camel.processor.RedeliveryPolicy} objects
- *
- * @version 
  */
 @XmlRootElement(name = "redeliveryPolicyProfile")
 @XmlAccessorType(XmlAccessType.FIELD)

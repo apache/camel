@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.yaml-snakeyaml.enabled",
+      "description": "Enable yaml-snakeyaml dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

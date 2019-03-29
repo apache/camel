@@ -1,0 +1,217 @@
+[[web3j-component]]
+== Web3j Ethereum Blockchain Component
+
+*Available as of Camel version 2.22*
+
+The *Ethereum* blockchain component uses the
+https://github.com/web3j/web3j[web3j] client
+API and allows you to interact with Ethereum compatible nodes such as https://github.com/ethereum/go-ethereum/wiki/geth[Geth], https://github.com/paritytech/parity[Parity], https://github.com/jpmorganchase/quorum/wiki[Quorum], https://infura.io[Infura], etc.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-web3j</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+=== URI Format
+
+[source,text]
+----
+web3j://<local/remote host:port or local IPC path>[?options]
+----
+
+=== Web3j Options
+
+
+// component options: START
+The Web3j Ethereum Blockchain component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (common) | Default configuration |  | Web3jConfiguration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+// endpoint options: START
+The Web3j Ethereum Blockchain endpoint is configured using URI syntax:
+
+----
+web3j:nodeAddress
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *nodeAddress* | *Required* Sets the node address used to communicate |  | String
+|===
+
+
+==== Query Parameters (38 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *addresses* (common) | Contract address or a list of addresses. |  | List
+| *fromAddress* (common) | The address the transaction is send from |  | String
+| *fromBlock* (common) | The block number, or the string latest for the last mined block or pending, earliest for not yet mined transactions. | latest | DefaultBlockParameter
+| *fullTransactionObjects* (common) | If true it returns the full transaction objects, if false only the hashes of the transactions. | false | boolean
+| *gasLimit* (common) | The maximum gas allowed in this block. |  | BigInteger
+| *privateFor* (common) | A transaction privateFor nodes with public keys in a Quorum network |  | List
+| *quorumAPI* (common) | If true, this will support Quorum API. | false | boolean
+| *toAddress* (common) | The address the transaction is directed to. |  | String
+| *toBlock* (common) | The block number, or the string latest for the last mined block or pending, earliest for not yet mined transactions. | latest | DefaultBlockParameter
+| *topics* (common) | Topics are order-dependent. Each topic can also be a list of topics. Specify multiple topics separated by comma. |  | String
+| *web3j* (common) | The preconfigured Web3j object. |  | Web3j
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *address* (producer) | Contract address. |  | String
+| *atBlock* (producer) | The block number, or the string latest for the last mined block or pending, earliest for not yet mined transactions. | latest | DefaultBlockParameter
+| *blockHash* (producer) | Hash of the block where this transaction was in. |  | String
+| *clientId* (producer) | A random hexadecimal(32 bytes) ID identifying the client. |  | String
+| *data* (producer) | The compiled code of a contract OR the hash of the invoked method signature and encoded parameters. |  | String
+| *databaseName* (producer) | The local database name. |  | String
+| *filterId* (producer) | The filter id to use. |  | BigInteger
+| *gasPrice* (producer) | Gas price used for each paid gas. |  | BigInteger
+| *hashrate* (producer) | A hexadecimal string representation (32 bytes) of the hash rate. |  | String
+| *headerPowHash* (producer) | The header's pow-hash (256 bits) used for submitting a proof-of-work solution. |  | String
+| *index* (producer) | The transactions/uncle index position in the block. |  | BigInteger
+| *keyName* (producer) | The key name in the database. |  | String
+| *mixDigest* (producer) | The mix digest (256 bits) used for submitting a proof-of-work solution. |  | String
+| *nonce* (producer) | The nonce found (64 bits) used for submitting a proof-of-work solution. |  | String
+| *operation* (producer) | Operation to use. | transaction | String
+| *position* (producer) | The transaction index position withing a block. |  | BigInteger
+| *priority* (producer) | The priority of a whisper message. |  | BigInteger
+| *sha3HashOfDataToSign* (producer) | Message to sign by calculating an Ethereum specific signature. |  | String
+| *signedTransactionData* (producer) | The signed transaction data for a new message call transaction or a contract creation for signed transactions. |  | String
+| *sourceCode* (producer) | The source code to compile. |  | String
+| *transactionHash* (producer) | The information about a transaction requested by transaction hash. |  | String
+| *ttl* (producer) | The time to live in seconds of a whisper message. |  | BigInteger
+| *value* (producer) | The value sent within a transaction. |  | BigInteger
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-web3j-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 36 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.web3j.configuration.address* | Contract address. |  | String
+| *camel.component.web3j.configuration.addresses* | Contract address or a list of addresses. |  | List
+| *camel.component.web3j.configuration.at-block* | The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions. | latest | String
+| *camel.component.web3j.configuration.block-hash* | Hash of the block where this transaction was in. |  | String
+| *camel.component.web3j.configuration.client-id* | A random hexadecimal(32 bytes) ID identifying the client. |  | String
+| *camel.component.web3j.configuration.data* | The compiled code of a contract OR the hash of the invoked method signature and encoded parameters. |  | String
+| *camel.component.web3j.configuration.database-name* | The local database name. |  | String
+| *camel.component.web3j.configuration.filter-id* | The filter id to use. |  | BigInteger
+| *camel.component.web3j.configuration.from-address* | The address the transaction is send from |  | String
+| *camel.component.web3j.configuration.from-block* | The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions. | latest | String
+| *camel.component.web3j.configuration.full-transaction-objects* | If true it returns the full transaction objects, if false only the hashes of the transactions. | false | Boolean
+| *camel.component.web3j.configuration.gas-limit* | The maximum gas allowed in this block. |  | BigInteger
+| *camel.component.web3j.configuration.gas-price* | Gas price used for each paid gas. |  | BigInteger
+| *camel.component.web3j.configuration.hashrate* | A hexadecimal string representation (32 bytes) of the hash rate. |  | String
+| *camel.component.web3j.configuration.header-pow-hash* | The header's pow-hash (256 bits) used for submitting a proof-of-work solution. |  | String
+| *camel.component.web3j.configuration.index* | The transactions/uncle index position in the block. |  | BigInteger
+| *camel.component.web3j.configuration.key-name* | The key name in the database. |  | String
+| *camel.component.web3j.configuration.mix-digest* | The mix digest (256 bits) used for submitting a proof-of-work solution. |  | String
+| *camel.component.web3j.configuration.nonce* | The nonce found (64 bits) used for submitting a proof-of-work solution. |  | String
+| *camel.component.web3j.configuration.operation* | Operation to use. | transaction | String
+| *camel.component.web3j.configuration.position* | The transaction index position withing a block. |  | BigInteger
+| *camel.component.web3j.configuration.priority* | The priority of a whisper message. |  | BigInteger
+| *camel.component.web3j.configuration.private-for* | A transaction privateFor nodes with public keys in a Quorum network |  | List
+| *camel.component.web3j.configuration.quorum-a-p-i* | If true, this will support Quorum API. | false | Boolean
+| *camel.component.web3j.configuration.sha3-hash-of-data-to-sign* | Message to sign by calculating an Ethereum specific signature. |  | String
+| *camel.component.web3j.configuration.signed-transaction-data* | The signed transaction data for a new message call transaction or a contract creation for signed transactions. |  | String
+| *camel.component.web3j.configuration.source-code* | The source code to compile. |  | String
+| *camel.component.web3j.configuration.to-address* | The address the transaction is directed to. |  | String
+| *camel.component.web3j.configuration.to-block* | The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions. | latest | String
+| *camel.component.web3j.configuration.topics* | Topics are order-dependent. Each topic can also be a list of topics. Specify multiple topics separated by comma. |  | List
+| *camel.component.web3j.configuration.transaction-hash* | The information about a transaction requested by transaction hash. |  | String
+| *camel.component.web3j.configuration.ttl* | The time to live in seconds of a whisper message. |  | BigInteger
+| *camel.component.web3j.configuration.value* | The value sent within a transaction. |  | BigInteger
+| *camel.component.web3j.configuration.web3j* | The preconfigured Web3j object. |  | Web3j
+| *camel.component.web3j.enabled* | Enable web3j component | true | Boolean
+| *camel.component.web3j.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+
+### Message Headers
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Header |Description
+
+|`All URI options` |All URI options can also be set as exchange headers.
+
+|=======================================================================
+
+
+
+### Samples
+
+Listen for new mined blocks and send the block hash to a jms queue:
+
+[source,java]
+---------------------------------------------------------------------------------------------
+from("web3j://http://127.0.0.1:7545?operation=ETH_BLOCK_HASH_OBSERVABLE")
+    .to("jms:queue:blocks");
+---------------------------------------------------------------------------------------------
+
+Use the block hash code to retrieve the block and full transaction details:
+
+[source,java]
+---------------------------------------------------------
+from("jms:queue:blocks")
+    .setHeader(BLOCK_HASH, body())
+    .to("web3j://http://127.0.0.1:7545?operation=ETH_GET_BLOCK_BY_HASH&fullTransactionObjects=true");
+---------------------------------------------------------
+
+Read the balance of an address at a specific block number:
+
+[source,java]
+--------------------------------------------------------
+from("direct:start")
+    .to("web3j://http://127.0.0.1:7545?operation=ETH_GET_BALANCE&address=0xc8CDceCE5d006dAB638029EBCf6Dd666efF5A952&atBlock=10");
+--------------------------------------------------------

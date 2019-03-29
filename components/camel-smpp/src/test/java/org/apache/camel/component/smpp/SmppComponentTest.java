@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
@@ -37,8 +37,6 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppComponent</code>
- * 
- * @version 
  */
 public class SmppComponentTest {
     
@@ -71,7 +69,7 @@ public class SmppComponentTest {
     public void createEndpointStringStringMapShouldReturnASmppEndpoint() throws Exception {
         CamelContext context = new DefaultCamelContext();
         component = new SmppComponent(context);
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put("password", "secret");
         Endpoint endpoint = component.createEndpoint("smpp://smppclient@localhost:2775", "?password=secret", parameters);
         SmppEndpoint smppEndpoint = (SmppEndpoint) endpoint;
@@ -91,7 +89,7 @@ public class SmppComponentTest {
     public void createEndpointStringStringMapShouldReturnASmppsEndpoint() throws Exception {
         CamelContext context = new DefaultCamelContext();
         component = new SmppComponent(context);
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put("password", "secret");
         Endpoint endpoint = component.createEndpoint("smpps://smppclient@localhost:2775", "?password=secret", parameters);
         SmppEndpoint smppEndpoint = (SmppEndpoint) endpoint;
@@ -109,7 +107,7 @@ public class SmppComponentTest {
     
     @Test
     public void createEndpointStringStringMapWithoutACamelContextShouldReturnASmppEndpoint() throws Exception {
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put("password", "secret");
         Endpoint endpoint = component.createEndpoint("smpp://smppclient@localhost:2775", "?password=secret", parameters);
         SmppEndpoint smppEndpoint = (SmppEndpoint) endpoint;
@@ -127,14 +125,14 @@ public class SmppComponentTest {
 
     @Test
     public void allowEmptySystemTypeAndServiceTypeOption() throws Exception {
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put("systemType", null);
         parameters.put("serviceType", null);
         Endpoint endpoint = component.createEndpoint("smpp://smppclient@localhost:2775", "?systemType=&serviceType=", parameters);
         SmppEndpoint smppEndpoint = (SmppEndpoint) endpoint;
 
-        assertEquals("", smppEndpoint.getConfiguration().getSystemType());
-        assertEquals("", smppEndpoint.getConfiguration().getServiceType());
+        assertEquals(null, smppEndpoint.getConfiguration().getSystemType());
+        assertEquals(null, smppEndpoint.getConfiguration().getServiceType());
     }
 
     @Test
@@ -180,7 +178,7 @@ public class SmppComponentTest {
     @Test
     public void createEndpointWithSessionStateListener() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("sessionStateListener", new SessionStateListener() {
+        registry.bind("sessionStateListener", new SessionStateListener() {
             @Override
             public void onStateChange(SessionState arg0, SessionState arg1, Session arg2) {
             }

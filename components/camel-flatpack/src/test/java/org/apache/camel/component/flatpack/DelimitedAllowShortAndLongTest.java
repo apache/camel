@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.flatpack;
 
 import java.util.List;
@@ -38,13 +37,13 @@ import static org.junit.Assert.assertNotNull;
 public class DelimitedAllowShortAndLongTest extends AbstractJUnit4SpringContextTests {
     private static final Logger LOG = LoggerFactory.getLogger(DelimitedAllowShortAndLongTest.class);
 
-    @EndpointInject(uri = "mock:results")
+    @EndpointInject("mock:results")
     protected MockEndpoint results;
 
-    @EndpointInject(uri = "mock:results-df")
+    @EndpointInject("mock:results-df")
     protected MockEndpoint resultsdf;
 
-    @EndpointInject(uri = "mock:results-xml")
+    @EndpointInject("mock:results-xml")
     protected MockEndpoint resultsxml;
 
     protected String[] expectedItemDescriptions = {"SOME VALVE", "AN ENGINE", "A BELT", "A BOLT"};

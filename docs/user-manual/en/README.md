@@ -1,4 +1,4 @@
-![Apache Camel Logo](images/camel-logo.jpg)
+![Apache Camel Logo](images/camel-logo.png)
 
 Apache Camel User Manual
 ====================

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,9 +27,10 @@ public class EipModel {
     private String label;
     private String description;
     private boolean deprecated;
+    private String deprecationNote;
     private boolean input;
     private boolean output;
-    private final List<EipOptionModel> eipOptions = new ArrayList<EipOptionModel>();
+    private final List<EipOptionModel> eipOptions = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -77,6 +78,14 @@ public class EipModel {
 
     public void setDeprecated(boolean deprecated) {
         this.deprecated = deprecated;
+    }
+
+    public String getDeprecationNote() {
+        return deprecationNote;
+    }
+
+    public void setDeprecationNote(String deprecationNote) {
+        this.deprecationNote = deprecationNote;
     }
 
     public boolean isInput() {

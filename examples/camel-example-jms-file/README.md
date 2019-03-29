@@ -21,10 +21,6 @@ The example should run if you type
 After the example is complete, then there should be 10 files written
 in the test directory.
 
-### Documentation
-
-This example is documented at [http://camel.apache.org/walk-through-an-example.html](http://camel.apache.org/walk-through-an-example.html)
-
 ### Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums

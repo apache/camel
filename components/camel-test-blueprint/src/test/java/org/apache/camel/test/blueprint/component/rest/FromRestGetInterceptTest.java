@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,7 +30,7 @@ public class FromRestGetInterceptTest extends CamelBlueprintTestSupport {
     public void testFromRestModel() throws Exception {
         getMockEndpoint("mock:hello").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
-        getMockEndpoint("mock:intercept").expectedMessageCount(4);
+        getMockEndpoint("mock:intercept").expectedMessageCount(3);
 
         String out = template.requestBody("seda:get-say-hello", "I was here", String.class);
         assertEquals("Bye World", out);

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,17 +18,8 @@ package org.apache.camel.component.weather;
 
 import org.apache.camel.component.weather.geolocation.GeoLocation;
 import org.apache.camel.component.weather.geolocation.GeoLocationProvider;
-import org.apache.commons.codec.binary.StringUtils;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-
 import static org.apache.camel.component.weather.WeatherMode.JSON;
-import static org.apache.camel.component.weather.WeatherUnits.METRIC;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Logic for determining the query based on the provided
@@ -48,12 +39,9 @@ public class WeatherQuery {
 
     public String getQuery(String location) throws Exception {
         String answer = "http://api.openweathermap.org/data/2.5/";
-        boolean point = false;
-
         if (weatherConfiguration.getLat() != null && weatherConfiguration.getLon() != null
                 && weatherConfiguration.getRightLon() == null && weatherConfiguration.getTopLat() == null) {
             location = createLatLonQueryString();
-            point = true;
         } else if (weatherConfiguration.getLat() != null && weatherConfiguration.getLon() != null
                 && weatherConfiguration.getRightLon() != null && weatherConfiguration.getTopLat() != null) {
             location = "bbox=" + weatherConfiguration.getLon() + ","

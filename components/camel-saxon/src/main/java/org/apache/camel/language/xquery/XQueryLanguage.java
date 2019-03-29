@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,11 +19,10 @@ package org.apache.camel.language.xquery;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.component.xquery.XQueryBuilder;
+import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LanguageSupport;
 
-/**
- * @version 
- */
+@Language("xquery")
 public class XQueryLanguage extends LanguageSupport {
 
     public Predicate createPredicate(String expression) {

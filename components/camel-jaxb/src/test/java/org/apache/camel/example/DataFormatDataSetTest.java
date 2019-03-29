@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,18 +16,14 @@
  */
 package org.apache.camel.example;
 
-import javax.naming.Context;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dataset.SimpleDataSet;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class DataFormatDataSetTest extends CamelTestSupport {
 
     @Test
@@ -36,7 +32,7 @@ public class DataFormatDataSetTest extends CamelTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
+    protected void bindToRegistry(Registry registry) throws Exception {
         PurchaseOrder bean = new PurchaseOrder();
         bean.setName("Beer");
         bean.setAmount(23);
@@ -46,9 +42,7 @@ public class DataFormatDataSetTest extends CamelTestSupport {
         ds.setDefaultBody(bean);
         ds.setSize(200);
 
-        Context context = super.createJndiContext();
-        context.bind("beer", ds);
-        return context;
+        registry.bind("beer", ds);
     }
 
     protected RouteBuilder createRouteBuilder() {

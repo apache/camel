@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,8 +19,8 @@ package org.apache.camel.component.http4;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.After;
@@ -60,7 +60,7 @@ public class HttpsTwoDifferentSslContextParametersGetTest extends BaseHttpsTest 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        registry.bind("x509HostnameVerifier", new AllowAllHostnameVerifier());
+        registry.bind("x509HostnameVerifier", new NoopHostnameVerifier());
         registry.bind("sslContextParameters", new SSLContextParameters());
         registry.bind("sslContextParameters2", new SSLContextParameters());
 
@@ -78,10 +78,10 @@ public class HttpsTwoDifferentSslContextParametersGetTest extends BaseHttpsTest 
             @Override
             public void configure() throws Exception {
                 from("direct:foo")
-                        .to("https4://127.0.0.1:" + localServer.getLocalPort() + "/mail?x509HostnameVerifier=x509HostnameVerifier&sslContextParametersRef=sslContextParameters");
+                        .to("https4://127.0.0.1:" + localServer.getLocalPort() + "/mail?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters");
 
                 from("direct:bar")
-                        .to("https4://127.0.0.1:" + localServer.getLocalPort() + "/mail?x509HostnameVerifier=x509HostnameVerifier&sslContextParametersRef=sslContextParameters2");
+                        .to("https4://127.0.0.1:" + localServer.getLocalPort() + "/mail?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters2");
             }
         });
         try {

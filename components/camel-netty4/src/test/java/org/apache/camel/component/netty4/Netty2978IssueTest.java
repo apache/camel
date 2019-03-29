@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,9 +35,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- * @version 
- */
 @Ignore("This test can cause CI servers to hang")
 public class Netty2978IssueTest extends BaseNettyTest {
 
@@ -58,7 +55,7 @@ public class Netty2978IssueTest extends BaseNettyTest {
     public void testNetty2978Concurrent() throws Exception {
         final CamelClient client = new CamelClient(context);
         try {
-            final List<Callable<String>> callables = new ArrayList<Callable<String>>();
+            final List<Callable<String>> callables = new ArrayList<>();
             for (int count = 0; count < 1000; count++) {
                 final int i = count;
                 callables.add(new Callable<String>() {
@@ -70,7 +67,7 @@ public class Netty2978IssueTest extends BaseNettyTest {
 
             final ExecutorService executorService = Executors.newFixedThreadPool(10);
             final List<Future<String>> results = executorService.invokeAll(callables);
-            final Set<String> replies = new HashSet<String>();
+            final Set<String> replies = new HashSet<>();
             for (Future<String> future : results) {
                 // wait at most 60 sec to not hang test
                 String reply = future.get(60, TimeUnit.SECONDS);

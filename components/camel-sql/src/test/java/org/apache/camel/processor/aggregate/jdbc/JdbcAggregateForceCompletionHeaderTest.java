@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -67,7 +67,7 @@ public class JdbcAggregateForceCompletionHeaderTest extends AbstractJdbcAggregat
         getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "force");
 
         //now send a message to trigger completion of all groups, message should be aggregated
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("id", "3");
         headers.put(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE, true);
         template.sendBodyAndHeaders("direct:start", "test5", headers);

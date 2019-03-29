@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,61 +16,31 @@
  */
 package org.apache.camel.zipkin.scribe;
 
-import com.github.kristofa.brave.scribe.ScribeSpanCollector;
-import org.apache.camel.CamelContext;
-import org.apache.camel.RoutesBuilder;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.zipkin.ZipkinOneRouteFallbackTest;
 import org.apache.camel.zipkin.ZipkinTracer;
-import org.junit.Test;
+import zipkin2.reporter.AsyncReporter;
+import zipkin2.reporter.libthrift.LibthriftSender;
 
 /**
  * Integration test requires running Zipkin/Scribe running
  *
- * The easiest way is to run using zipkin-docker: https://github.com/openzipkin/docker-zipkin
+ * <p>The easiest way to run is locally:
+ * <pre>{@code
+ * curl -sSL https://zipkin.io/quickstart.sh | bash -s
+ * curl -sSL https://zipkin.io/quickstart.sh | bash -s io.zipkin.java:zipkin-autoconfigure-collector-scribe:LATEST:module scribe.jar
+ * SCRIBE_ENABLED=true \
+ *     java \
+ *     -Dloader.path='scribe.jar,scribe.jar!/lib' \
+ *     -Dspring.profiles.active=scribe \
+ *     -cp zipkin.jar \
+ *     org.springframework.boot.loader.PropertiesLauncher
+ * }</pre>
  *
- * Adjust the IP address to what IP docker-machines have assigned, you can use
- * <tt>docker-machines ls</tt>
+ * <p>Note: the scribe transport is deprecated. Most use out-of-box defaults, such as Http, RabbitMQ
+ * or Kafka.
  */
-public class ZipkinOneRouteFallbackScribe extends CamelTestSupport {
-
-    private String ip = "192.168.99.100";
-    private ZipkinTracer zipkin;
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-
-        zipkin = new ZipkinTracer();
-        // no service so should use fallback naming style
-        // we do not want to trace any direct endpoints
-        zipkin.addExcludePattern("direct:*");
-        zipkin.setIncludeMessageBody(true);
-        zipkin.setSpanCollector(new ScribeSpanCollector(ip, 9410));
-
-        // attaching ourself to CamelContext
-        zipkin.init(context);
-
-        return context;
-    }
-
-    @Test
-    public void testZipkinRoute() throws Exception {
-        template.requestBody("direct:start", "Hello Goofy");
-        template.requestBody("direct:start", "Hello again Goofy");
-    }
-
-    @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("seda:goofy");
-
-                from("seda:goofy").routeId("goofy")
-                        .log("routing at ${routeId}")
-                        .delay(simple("${random(1000,2000)}"));
-            }
-        };
+public class ZipkinOneRouteFallbackScribe extends ZipkinOneRouteFallbackTest {
+    @Override protected void setSpanReporter(ZipkinTracer zipkin) {
+        zipkin.setSpanReporter(AsyncReporter.create(LibthriftSender.create("127.0.0.1")));
     }
 }

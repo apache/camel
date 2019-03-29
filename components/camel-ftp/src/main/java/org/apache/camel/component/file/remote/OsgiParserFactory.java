@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,6 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 import org.apache.camel.spi.ClassResolver;
-
 import org.apache.commons.net.ftp.Configurable;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFileEntryParser;
@@ -40,7 +39,7 @@ import org.apache.commons.net.ftp.parser.VMSVersioningFTPEntryParser;
  * OsgiParserFactory
  * 
  * commons-net DefaultFTPFileEntryParserFactory uses Class.forName, and fails
- * to load custom ParserFactories in OSGI.   This class is an alternative ParserFactory
+ * to load custom ParserFactories in OSGI. This class is an alternative ParserFactory
  * that can be used when Camel is used in an OSGI environment.
  */
 public class OsgiParserFactory extends DefaultFTPFileEntryParserFactory {
@@ -63,7 +62,7 @@ public class OsgiParserFactory extends DefaultFTPFileEntryParserFactory {
      * @param ocr Class Resolver
      */
     public void setClassResolver(ClassResolver ocr) {
-        ocr = ocr;
+        this.ocr = ocr;
     }
     
     @Override

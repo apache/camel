@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.http4;
 
 import java.io.IOException;
@@ -36,7 +35,7 @@ import org.junit.Test;
 
 public class HttpProducerContentTypeTest extends BaseHttpTest {
 
-    private static final String CONTENT_TYPE = "multipart/form-data;boundary=---------------------------j2radvtrk";
+    private static final String CONTENT_TYPE = "multipart/form-data boundary=---------------------------j2radvtrk";
     
     private HttpServer localServer;
     

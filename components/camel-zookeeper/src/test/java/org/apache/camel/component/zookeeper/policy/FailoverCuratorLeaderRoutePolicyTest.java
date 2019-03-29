@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,11 +25,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import static org.hamcrest.CoreMatchers.is;
 
@@ -76,8 +74,8 @@ public class FailoverCuratorLeaderRoutePolicyTest extends ZooKeeperTestSupport {
         });
         context.start();
         // this check verifies that a route marked as autostartable is not started automatically. It will be the policy responsibility to eventually start it.
-        assertThat(context.getRouteStatus("single_route").isStarted(), is(false));
-        assertThat(context.getRouteStatus("single_route").isStarting(), is(false));
+        assertThat(context.getRouteController().getRouteStatus("single_route").isStarted(), is(false));
+        assertThat(context.getRouteController().getRouteStatus("single_route").isStarting(), is(false));
 
         context.shutdown();
     }
@@ -112,9 +110,9 @@ public class FailoverCuratorLeaderRoutePolicyTest extends ZooKeeperTestSupport {
         }
 
         public void shutdown() throws Exception {
-            LogFactory.getLog(getClass()).debug("stopping");
+            LoggerFactory.getLogger(getClass()).debug("stopping");
             controlledContext.stop();
-            LogFactory.getLog(getClass()).debug("stopped");
+            LoggerFactory.getLogger(getClass()).debug("stopped");
         }
     }
 

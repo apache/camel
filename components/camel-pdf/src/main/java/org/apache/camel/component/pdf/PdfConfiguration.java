@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
@@ -42,21 +41,21 @@ import static org.apache.camel.component.pdf.PdfPageSizeConstant.PAGE_SIZE_LETTE
  */
 @UriParams
 public class PdfConfiguration {
-    private static final Map<String, PDRectangle> PAGE_MAP = new HashMap<String, PDRectangle>();
+    private static final Map<String, PDRectangle> PAGE_MAP = new HashMap<>();
 
     static {
-        PAGE_MAP.put(PAGE_SIZE_A0, PDPage.PAGE_SIZE_A0);
-        PAGE_MAP.put(PAGE_SIZE_A1, PDPage.PAGE_SIZE_A1);
-        PAGE_MAP.put(PAGE_SIZE_A2, PDPage.PAGE_SIZE_A2);
-        PAGE_MAP.put(PAGE_SIZE_A3, PDPage.PAGE_SIZE_A3);
-        PAGE_MAP.put(PAGE_SIZE_A4, PDPage.PAGE_SIZE_A4);
-        PAGE_MAP.put(PAGE_SIZE_A5, PDPage.PAGE_SIZE_A5);
-        PAGE_MAP.put(PAGE_SIZE_A6, PDPage.PAGE_SIZE_A6);
-        PAGE_MAP.put(PAGE_SIZE_LETTER, PDPage.PAGE_SIZE_LETTER);
+        PAGE_MAP.put(PAGE_SIZE_A0, PDRectangle.A0);
+        PAGE_MAP.put(PAGE_SIZE_A1, PDRectangle.A1);
+        PAGE_MAP.put(PAGE_SIZE_A2, PDRectangle.A2);
+        PAGE_MAP.put(PAGE_SIZE_A3, PDRectangle.A3);
+        PAGE_MAP.put(PAGE_SIZE_A4, PDRectangle.A4);
+        PAGE_MAP.put(PAGE_SIZE_A5, PDRectangle.A5);
+        PAGE_MAP.put(PAGE_SIZE_A6, PDRectangle.A6);
+        PAGE_MAP.put(PAGE_SIZE_LETTER, PDRectangle.LETTER);
     }
 
     @UriPath(description = "Operation type")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private PdfOperation operation;
     @UriParam(defaultValue = "20")
     private int marginTop = 20;
@@ -68,8 +67,8 @@ public class PdfConfiguration {
     private int marginRight = 40;
     @UriParam(defaultValue = "14")
     private float fontSize = 14;
-    @UriParam(defaultValue = "PAGE_SIZE_A4", enums = "PAGE_SIZE_A0,PAGE_SIZE_A1,PAGE_SIZE_A2,PAGE_SIZE_A3,PAGE_SIZE_A4,PAGE_SIZE_A5,PAGE_SIZE_A6,PAGE_SIZE_LETTER")
-    private PDRectangle pageSize = PDPage.PAGE_SIZE_A4;
+    @UriParam(defaultValue = "A4", enums = "LETTER,LEGAL,A0,A1,A2,A3,A4,A5,A6")
+    private PDRectangle pageSize = PDRectangle.A4;
     @UriParam(defaultValue = "Helvetica")
     private PDFont font = PDType1Font.HELVETICA;
     @UriParam(defaultValue = "lineTermination")
@@ -169,7 +168,7 @@ public class PdfConfiguration {
     }
 
     public void setFont(String font) {
-        setFont(PDType1Font.getStandardFont(font));
+        setFont(Standard14Fonts.getByName(font));
     }
 
     public TextProcessingFactory getTextProcessingFactory() {

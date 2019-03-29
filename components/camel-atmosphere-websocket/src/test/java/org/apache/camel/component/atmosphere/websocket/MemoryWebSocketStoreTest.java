@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,9 +19,9 @@ package org.apache.camel.component.atmosphere.websocket;
 import java.util.UUID;
 
 import org.atmosphere.websocket.WebSocket;
-import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 
 public class MemoryWebSocketStoreTest extends Assert {
@@ -29,8 +29,8 @@ public class MemoryWebSocketStoreTest extends Assert {
     @Test
     public void testAddAndRemove() throws Exception {
         MemoryWebSocketStore store = new MemoryWebSocketStore();
-        WebSocket webSocket1 = EasyMock.createMock(WebSocket.class);
-        WebSocket webSocket2 = EasyMock.createMock(WebSocket.class);
+        WebSocket webSocket1 = Mockito.mock(WebSocket.class);
+        WebSocket webSocket2 = Mockito.mock(WebSocket.class);
         
         String connectionKey1 = UUID.randomUUID().toString();
         String connectionKey2 = UUID.randomUUID().toString();

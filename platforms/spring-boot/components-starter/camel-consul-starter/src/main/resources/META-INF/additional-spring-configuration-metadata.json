@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.consul.enabled",
+      "description": "Enable consul component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.lumberjack.io;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.Inflater;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -55,11 +56,10 @@ final class LumberjackFrameDecoder extends ByteToMessageDecoder {
     private static final Logger LOG = LoggerFactory.getLogger(LumberjackFrameDecoder.class);
 
     private final LumberjackSessionHandler sessionHandler;
-    private final Gson gson;
+    private final ObjectMapper jackson = new ObjectMapper();
 
     LumberjackFrameDecoder(LumberjackSessionHandler sessionHandler) {
         this.sessionHandler = sessionHandler;
-        gson = new Gson();
     }
 
     @Override
@@ -104,7 +104,7 @@ final class LumberjackFrameDecoder extends ByteToMessageDecoder {
         }
     }
 
-    private boolean handleJsonFrame(ByteBuf in, List<Object> out) {
+    private boolean handleJsonFrame(ByteBuf in, List<Object> out) throws IOException {
         if (!in.isReadable(FRAME_JSON_HEADER_LENGTH)) {
             return false;
         }
@@ -117,7 +117,7 @@ final class LumberjackFrameDecoder extends ByteToMessageDecoder {
             return false;
         }
 
-        Object jsonMessage = gson.fromJson(jsonStr, Object.class);
+        Object jsonMessage = jackson.readValue(jsonStr, Object.class);
 
         // put message in the pipeline
         out.add(new LumberjackMessage(sequenceNumber, jsonMessage));

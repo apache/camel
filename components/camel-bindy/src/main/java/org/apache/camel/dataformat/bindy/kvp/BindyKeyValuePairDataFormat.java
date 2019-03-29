@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.bindy.kvp;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -23,10 +24,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
@@ -34,10 +36,13 @@ import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
 import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyKeyValuePairFactory;
 import org.apache.camel.dataformat.bindy.FormatFactory;
+import org.apache.camel.dataformat.bindy.WrappedException;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +50,7 @@ import org.slf4j.LoggerFactory;
  * A <a href="http://camel.apache.org/data-format.html">data format</a> (
  * {@link DataFormat}) using Bindy to marshal to and from CSV files
  */
+@Dataformat("bindy-kvp")
 public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
 
     private static final Logger LOG = LoggerFactory.getLogger(BindyKeyValuePairDataFormat.class);
@@ -69,9 +75,7 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
 
         // the body may not be a prepared list of map that bindy expects so help
         // a bit here and create one if needed
-        final Iterator<Object> it = ObjectHelper.createIterator(body);
-        while (it.hasNext()) {
-            Object model = it.next();
+        for (Object model : ObjectHelper.createIterable(body)) {
 
             Map<String, Object> row;
             if (model instanceof Map) {
@@ -80,7 +84,7 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
                 row = Collections.singletonMap(model.getClass().getName(), model);
             }
 
-            String result = factory.unbind(row);
+            String result = factory.unbind(getCamelContext(), row);
 
             outputStream.write(converter.convertTo(byte[].class, exchange, result));
             outputStream.write(crlf);
@@ -88,64 +92,29 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        BindyKeyValuePairFactory factory = (BindyKeyValuePairFactory)getFactory();
+        BindyKeyValuePairFactory factory = (BindyKeyValuePairFactory) getFactory();
 
         // List of Pojos
-        List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> models = new ArrayList<>();
 
-        // Pojos of the model
-        Map<String, Object> model;
-        
         // Map to hold the model @OneToMany classes while binding
-        Map<String, List<Object>> lists = new HashMap<String, List<Object>>();
+        Map<String, List<Object>> lists = new HashMap<>();
 
-        InputStreamReader in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
+        InputStreamReader in = new InputStreamReader(inputStream, ExchangeHelper.getCharsetName(exchange));
 
-        // Scanner is used to read big file
-        Scanner scanner = new Scanner(in);
+        // Use a Stream to stream a file across
+        try (Stream<String> lines = new BufferedReader(in).lines()) {
+            // Retrieve the pair separator defined to split the record
+            org.apache.camel.util.ObjectHelper.notNull(factory.getPairSeparator(), "The pair separator property of the annotation @Message");
+            String separator = factory.getPairSeparator();
+            AtomicInteger count = new AtomicInteger(0);
 
-        // Retrieve the pair separator defined to split the record
-        ObjectHelper.notNull(factory.getPairSeparator(), "The pair separator property of the annotation @Message");
-        String separator = factory.getPairSeparator();
-
-        int count = 0;
-        try {
-            while (scanner.hasNextLine()) {
-                // Read the line
-                String line = scanner.nextLine().trim();
-
-                if (ObjectHelper.isEmpty(line)) {
-                    // skip if line is empty
-                    continue;
-                }
-
-                // Increment counter
-                count++;
-
-                // Create POJO
-                model = factory.factory();
-
-                // Split the message according to the pair separator defined in
-                // annotated class @Message
-                List<String> result = Arrays.asList(line.split(separator));
-
-                if (result.size() == 0 || result.isEmpty()) {
-                    throw new java.lang.IllegalArgumentException("No records have been defined in the KVP");
-                }
-
-                if (result.size() > 0) {
-                    // Bind data from message with model classes
-                    // Counter is used to detect line where error occurs
-                    factory.bind(result, model, count, lists);
-
-                    // Link objects together
-                    factory.link(model);
-
-                    // Add objects graph to the list
-                    models.add(model);
-
-                    LOG.debug("Graph of objects created: {}", model);
-                }
+            try {
+                lines.forEachOrdered(line -> {
+                    consumeFile(factory, models, lists, separator, count, line);
+                });
+            } catch (WrappedException e) {
+                throw e.getWrappedException();
             }
 
             // BigIntegerFormatFactory if models list is empty or not
@@ -157,8 +126,54 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
             }
 
         } finally {
-            scanner.close();
             IOHelper.close(in, "in", LOG);
+        }
+    }
+
+    private void consumeFile(BindyKeyValuePairFactory factory, List<Map<String, Object>> models, Map<String, List<Object>> lists, String separator, AtomicInteger count, String line) {
+        try {
+            // Trim the line coming in to remove any trailing whitespace
+            String trimmedLine = line.trim();
+
+            if (!org.apache.camel.util.ObjectHelper.isEmpty(trimmedLine)) {
+                // Increment counter
+                count.incrementAndGet();
+                // Pojos of the model
+                Map<String, Object> model;
+
+                // Create POJO
+                model = factory.factory();
+
+                // Split the message according to the pair separator defined in
+                // annotated class @Message
+                // Explicitly replace any occurrence of the Unicode new line character.
+                // Simply reading the line in with the File stream doesn't get us around the fact
+                // that this character is still present in the data set, and we don't wish for it
+                // to be present when storing the actual data in the model.
+                List<String> result = Arrays.stream(line.split(separator))
+                        .map(x -> x.replace("\u0085", ""))
+                        .collect(Collectors.toList());
+
+                if (result.size() == 0 || result.isEmpty()) {
+                    throw new IllegalArgumentException("No records have been defined in the KVP");
+                }
+
+                if (result.size() > 0) {
+                    // Bind data from message with model classes
+                    // Counter is used to detect line where error occurs
+                    factory.bind(getCamelContext(), result, model, count.get(), lists);
+
+                    // Link objects together
+                    factory.link(model);
+
+                    // Add objects graph to the list
+                    models.add(model);
+
+                    LOG.debug("Graph of objects created: {}", model);
+                }
+            }
+        } catch (Exception e) {
+            throw new WrappedException(e);
         }
     }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,23 +17,26 @@
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.InputStream;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.salesforce.api.SalesforceException;
 
 /**
- * Thin wrapper to handle callbacks for {@link RestClient.ResponseCallback} and allow waiting for results
+ * Thin wrapper to handle callback for {@link RestClient.ResponseCallback} and allow waiting for results
  */
 public class SyncResponseCallback implements RestClient.ResponseCallback {
 
     private InputStream response;
     private SalesforceException exception;
+    private Map<String, String> headers;
     private CountDownLatch latch = new CountDownLatch(1);
 
     @Override
-    public void onResponse(InputStream response, SalesforceException exception) {
+    public void onResponse(InputStream response, Map<String, String> headers, SalesforceException exception) {
         this.response = response;
+        this.headers = headers;
         this.exception = exception;
         latch.countDown();
     }
@@ -54,4 +57,7 @@ public class SyncResponseCallback implements RestClient.ResponseCallback {
         return exception;
     }
 
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
 }

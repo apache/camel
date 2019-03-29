@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -99,8 +99,8 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
             return;
         }
 
-        Holder<byte[]> photo = new Holder<byte[]>("RequestFromCXF".getBytes("UTF-8"));
-        Holder<Image> image = new Holder<Image>(getImage("/java.jpg"));
+        Holder<byte[]> photo = new Holder<>("RequestFromCXF".getBytes("UTF-8"));
+        Holder<Image> image = new Holder<>(getImage("/java.jpg"));
 
         Hello port = getPort();
 

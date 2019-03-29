@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,15 +31,13 @@ import org.apache.camel.component.facebook.config.FacebookEndpointConfiguration;
 import org.apache.camel.component.facebook.config.FacebookNameStyle;
 import org.apache.camel.component.facebook.data.FacebookMethodsType;
 import org.apache.camel.component.facebook.data.FacebookPropertiesHelper;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.convertToGetMethod;
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.convertToSearchMethod;
@@ -53,14 +51,12 @@ import static org.apache.camel.component.facebook.data.FacebookPropertiesHelper.
  * It allows producing messages to retrieve, add, and delete posts, likes, comments, photos, albums, videos, photos,
  * checkins, locations, links, etc. It also supports APIs that allow polling for posts, users, checkins, groups, locations, etc.
  */
-@UriEndpoint(scheme = "facebook", title = "Facebook", syntax = "facebook:methodName", consumerClass = FacebookConsumer.class, label = "social")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "facebook", title = "Facebook", syntax = "facebook:methodName", label = "social")
 public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstants {
-
-    private static final Logger LOG = LoggerFactory.getLogger(FacebookEndpoint.class);
 
     private FacebookNameStyle nameStyle;
 
-    @UriPath(name = "methodName", description = "What operation to perform") @Metadata(required = "true")
+    @UriPath(name = "methodName", description = "What operation to perform") @Metadata(required = true)
 
     private String method;
     private FacebookMethodsType methodName;
@@ -124,7 +120,7 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
 
     private void initState() {
         // get endpoint property names
-        final Set<String> arguments = new HashSet<String>();
+        final Set<String> arguments = new HashSet<>();
         arguments.addAll(getEndpointPropertyNames(configuration));
         // add inBody argument for producers
         if (inBody != null) {
@@ -132,7 +128,7 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
         }
         final String[] argNames = arguments.toArray(new String[arguments.size()]);
 
-        candidates = new ArrayList<FacebookMethodsType>();
+        candidates = new ArrayList<>();
         candidates.addAll(getCandidateMethods(method, argNames));
         if (!candidates.isEmpty()) {
             // found an exact name match, allows disambiguation if needed
@@ -165,10 +161,10 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
         }
 
         // log missing/extra properties for debugging
-        if (LOG.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             final Set<String> missing = getMissingProperties(method, nameStyle, arguments);
             if (!missing.isEmpty()) {
-                LOG.debug("Method {} could use one or more properties from {}", method, missing);
+                log.debug("Method {} could use one or more properties from {}", method, missing);
             }
         }
     }
@@ -203,6 +199,15 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
             throw new IllegalArgumentException("Unknown property " + inBody);
         }
         this.inBody = inBody;
+    }
+
+    /**
+     * Sets the {@link FacebookEndpointConfiguration} to use
+     * 
+     * @param configuration the {@link FacebookEndpointConfiguration} to use
+     */
+    public void setConfiguration(FacebookEndpointConfiguration configuration) {
+        this.configuration = configuration;
     }
 
 }

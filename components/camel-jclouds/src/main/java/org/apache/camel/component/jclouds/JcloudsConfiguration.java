@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,9 +24,9 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class JcloudsConfiguration {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private JcloudsCommand command;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String providerId;
 
     // compute options

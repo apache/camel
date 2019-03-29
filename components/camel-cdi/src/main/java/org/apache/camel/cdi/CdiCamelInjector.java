@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -40,7 +40,8 @@ final class CdiCamelInjector implements Injector {
     }
 
     @Override
-    public <T> T newInstance(Class<T> type, Object instance) {
-        return injector.newInstance(type, instance);
+    public boolean supportsAutoWiring() {
+        // TODO: cdi to support some kind of @Inject on constructors?
+        return false;
     }
 }

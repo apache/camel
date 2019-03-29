@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,11 +36,9 @@ import org.junit.Assert;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
-* Unit test for exercising SOAP with Attachment (SwA) feature of a CxfConsumer in PAYLOAD mode.  
-* That is, testing attachment with MTOM optimization off.
-* 
-* @version 
-*/
+ * Unit test for exercising SOAP with Attachment (SwA) feature of a CxfConsumer in PAYLOAD mode.
+ * That is, testing attachment with MTOM optimization off.
+ */
 @ContextConfiguration
 public class CxfMtomDisabledConsumerPayloadModeTest extends CxfMtomConsumerPayloadModeTest {
     static int port = CXFTestSupport.getPort1();
@@ -68,9 +66,9 @@ public class CxfMtomDisabledConsumerPayloadModeTest extends CxfMtomConsumerPaylo
             MtomTestHelper.assertEquals(MtomTestHelper.requestJpeg, IOUtils.readBytesFromStream(dr.getInputStream()));
 
             // create response
-            List<Source> elements = new ArrayList<Source>();
+            List<Source> elements = new ArrayList<>();
             elements.add(new DOMSource(StaxUtils.read(new StringReader(MtomTestHelper.MTOM_DISABLED_RESP_MESSAGE)).getDocumentElement()));
-            CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
+            CxfPayload<SoapHeader> body = new CxfPayload<>(new ArrayList<SoapHeader>(),
                 elements, null);
             exchange.getOut().setBody(body);
             exchange.getOut().addAttachment(MtomTestHelper.RESP_PHOTO_CID, 

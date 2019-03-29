@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,9 +24,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.docker.headers.BaseDockerHeaderTest;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Validates Remove Image Request URI parameters are applied properly
@@ -61,14 +62,11 @@ public class RemoveImageCmdUriTest extends BaseDockerHeaderTest<RemoveImageCmd> 
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).removeImageCmd(imageId);
-//        Mockito.verify(mockObject, Mockito.times(0)).withNoPrune();
-//        Mockito.verify(mockObject, Mockito.times(1)).withForce();
-
     }
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.removeImageCmd(Matchers.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.removeImageCmd(anyString())).thenReturn(mockObject);
     }
 
     @Override

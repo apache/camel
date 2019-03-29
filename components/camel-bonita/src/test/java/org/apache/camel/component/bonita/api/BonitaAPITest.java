@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.bonita.api;
 
 import java.io.Serializable;
@@ -35,7 +34,7 @@ public class BonitaAPITest {
 
     @Test(
             expected = IllegalArgumentException.class)
-    public void testStartCaseEmptyProcessDefinitionId() {
+    public void testStartCaseEmptyProcessDefinitionId() throws Exception {
         BonitaAPI bonitaApi = BonitaAPIBuilder
                 .build(new BonitaAPIConfig("hostname", "port", "username", "password"));
         bonitaApi.startCase(null, new HashMap<String, Serializable>());
@@ -43,7 +42,7 @@ public class BonitaAPITest {
 
     @Test(
             expected = IllegalArgumentException.class)
-    public void testStartCaseNUllContractInput() {
+    public void testStartCaseNUllContractInput() throws Exception {
         BonitaAPI bonitaApi = BonitaAPIBuilder
                 .build(new BonitaAPIConfig("hostname", "port", "username", "password"));
         ProcessDefinitionResponse processDefinition = new ProcessDefinitionResponse();

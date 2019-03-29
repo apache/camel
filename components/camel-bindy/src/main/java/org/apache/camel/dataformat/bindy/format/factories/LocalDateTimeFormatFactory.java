@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,10 +20,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+
 import org.apache.camel.dataformat.bindy.Format;
 import org.apache.camel.dataformat.bindy.FormattingOptions;
 import org.apache.camel.dataformat.bindy.PatternFormat;
-import org.apache.camel.dataformat.bindy.format.FormatException;
 import org.apache.camel.util.ObjectHelper;
 
 public class LocalDateTimeFormatFactory extends AbstractFormatFactory {
@@ -66,18 +66,8 @@ public class LocalDateTimeFormatFactory extends AbstractFormatFactory {
             DateTimeFormatter df = this.getDateFormat();
 
             ObjectHelper.notNull(this.pattern, "pattern");
-
-            if (doesStringFitLengthOfPattern(string)) {
-                date = LocalDateTime.parse(string, df);
-                return date;
-            } else {
-                throw new FormatException("Date provided does not fit the pattern defined");
-            }
-
-        }
-
-        private boolean doesStringFitLengthOfPattern(String string) {
-            return string.length() <= this.pattern.length();
+            date = LocalDateTime.parse(string, df);
+            return date;
         }
 
         DateTimeFormatter getDateFormat() {

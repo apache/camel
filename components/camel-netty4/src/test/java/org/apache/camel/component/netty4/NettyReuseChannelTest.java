@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,16 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class NettyReuseChannelTest extends BaseNettyTest {
 
     private final List<Channel> channels = new ArrayList<>();

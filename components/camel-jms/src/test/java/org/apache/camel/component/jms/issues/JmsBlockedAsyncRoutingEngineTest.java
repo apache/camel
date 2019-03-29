@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -125,7 +125,6 @@ public class JmsBlockedAsyncRoutingEngineTest extends CamelTestSupport {
         };
     }
     
-    @SuppressWarnings("unchecked")
     private class DelayerBrokerPlugin extends BrokerPluginSupport {
         int i;
 

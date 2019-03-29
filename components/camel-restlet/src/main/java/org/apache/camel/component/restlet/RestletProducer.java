@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,13 +23,20 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.net.ssl.SSLContext;
+
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.URISupport;
+
 import org.restlet.Client;
 import org.restlet.Context;
 import org.restlet.Request;
@@ -37,18 +44,33 @@ import org.restlet.Response;
 import org.restlet.Uniform;
 import org.restlet.data.Cookie;
 import org.restlet.data.CookieSetting;
+import org.restlet.data.Parameter;
+import org.restlet.engine.ssl.SslContextFactory;
 import org.restlet.util.Series;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A Camel producer that acts as a client to Restlet server.
- *
- * @version 
  */
 public class RestletProducer extends DefaultAsyncProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(RestletProducer.class);
-    private static final Pattern PATTERN = Pattern.compile("\\(([\\w\\.]*)\\)");
+    private static final class PredefinedSslContextFactory extends SslContextFactory {
+        private final SSLContext sslContext;
+
+        private PredefinedSslContextFactory(SSLContext sslContext) {
+            this.sslContext = sslContext;
+        }
+
+        @Override
+        public void init(Series<Parameter> parameters) {
+            // nop
+        }
+
+        @Override
+        public SSLContext createSslContext() throws Exception {
+            return sslContext;
+        }
+    }
+
+    private static final Pattern PATTERN = Pattern.compile("\\{([\\w\\.]*)\\}");
     private Client client;
     private boolean throwException;
 
@@ -56,17 +78,27 @@ public class RestletProducer extends DefaultAsyncProducer {
         super(endpoint);
         this.throwException = endpoint.isThrowExceptionOnFailure();
         client = new Client(endpoint.getProtocol());
-        client.setContext(new Context());
-        client.getContext().getParameters().add("socketTimeout", String.valueOf(endpoint.getSocketTimeout()));
-        client.getContext().getParameters().add("socketConnectTimeoutMs", String.valueOf(endpoint.getSocketTimeout()));
+        final Context context = new Context();
+        final Series<Parameter> parameters = context.getParameters();
+        parameters.add("socketTimeout", String.valueOf(endpoint.getSocketTimeout()));
+        parameters.add("socketConnectTimeoutMs", String.valueOf(endpoint.getSocketTimeout()));
 
         RestletComponent component = (RestletComponent) endpoint.getComponent();
         if (component.getMaxConnectionsPerHost() != null && component.getMaxConnectionsPerHost() > 0) {
-            client.getContext().getParameters().add("maxConnectionsPerHost", String.valueOf(component.getMaxConnectionsPerHost()));
+            parameters.add("maxConnectionsPerHost", String.valueOf(component.getMaxConnectionsPerHost()));
         }
         if (component.getMaxTotalConnections() != null && component.getMaxTotalConnections() > 0) {
-            client.getContext().getParameters().add("maxTotalConnections", String.valueOf(component.getMaxTotalConnections()));
+            parameters.add("maxTotalConnections", String.valueOf(component.getMaxTotalConnections()));
         }
+        final ConcurrentMap<String, Object> attributes = context.getAttributes();
+        final CamelContext camelContext = endpoint.getCamelContext();
+        final SSLContextParameters sslContextParameters = endpoint.getSslContextParameters();
+        if (sslContextParameters != null) {
+            final SSLContext sslContext = sslContextParameters.createSSLContext(camelContext);
+            attributes.put("sslContextFactory", new PredefinedSslContextFactory(sslContext));
+        }
+
+        client.setContext(context);
     }
 
     @Override
@@ -93,9 +125,9 @@ public class RestletProducer extends DefaultAsyncProducer {
         binding.populateRestletRequestFromExchange(request, exchange);
         loadCookies(exchange, uri, request);
 
-        LOG.debug("Sending request synchronously: {} for exchangeId: {}", request, exchange.getExchangeId());
+        log.debug("Sending request synchronously: {} for exchangeId: {}", request, exchange.getExchangeId());
         Response response = client.handle(request);
-        LOG.debug("Received response synchronously: {} for exchangeId: {}", response, exchange.getExchangeId());
+        log.debug("Received response synchronously: {} for exchangeId: {}", response, exchange.getExchangeId());
         if (response != null) {
             Integer respCode = response.getStatus().getCode();
             storeCookies(exchange, uri, response);
@@ -156,7 +188,7 @@ public class RestletProducer extends DefaultAsyncProducer {
             return true;
         }
 
-        LOG.trace("Processing asynchronously");
+        log.trace("Processing asynchronously");
 
         final RestletBinding binding = endpoint.getRestletBinding();
         Request request;
@@ -174,11 +206,11 @@ public class RestletProducer extends DefaultAsyncProducer {
         }
 
         // process the request asynchronously
-        LOG.debug("Sending request asynchronously: {} for exchangeId: {}", request, exchange.getExchangeId());
+        log.debug("Sending request asynchronously: {} for exchangeId: {}", request, exchange.getExchangeId());
         client.handle(request, new Uniform() {
             @Override
             public void handle(Request request, Response response) {
-                LOG.debug("Received response asynchronously: {} for exchangeId: {}", response, exchange.getExchangeId());
+                log.debug("Received response asynchronously: {} for exchangeId: {}", response, exchange.getExchangeId());
                 try {
                     if (response != null) {
                         String resourceUri = buildUri(endpoint, exchange);
@@ -203,7 +235,7 @@ public class RestletProducer extends DefaultAsyncProducer {
         return false;
     }
 
-    private static String buildUri(RestletEndpoint endpoint, Exchange exchange) throws CamelExchangeException {
+    private String buildUri(RestletEndpoint endpoint, Exchange exchange) throws Exception {
         // rest producer may provide an override url to be used which we should discard if using (hence the remove)
         String uri = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_URI);
 
@@ -212,7 +244,7 @@ public class RestletProducer extends DefaultAsyncProducer {
         }
 
         // substitute { } placeholders in uri and use mandatory headers
-        LOG.trace("Substituting '(value)' placeholders in uri: {}", uri);
+        log.trace("Substituting '{value}' placeholders in uri: {}", uri);
         Matcher matcher = PATTERN.matcher(uri);
         while (matcher.find()) {
             String key = matcher.group(1);
@@ -222,13 +254,18 @@ public class RestletProducer extends DefaultAsyncProducer {
                 throw new CamelExchangeException("Header with key: " + key + " not found in Exchange", exchange);
             }
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Replacing: {} with header value: {}", matcher.group(0), header);
+            if (log.isTraceEnabled()) {
+                log.trace("Replacing: {} with header value: {}", matcher.group(0), header);
             }
 
             uri = matcher.replaceFirst(header);
             // we replaced uri so reset and go again
             matcher.reset(uri);
+        }
+        
+        // include any query parameters if needed
+        if (endpoint.getQueryParameters() != null) {
+            uri = URISupport.appendParametersToURI(uri, endpoint.getQueryParameters());
         }
 
         // rest producer may provide an override query string to be used which we should discard if using (hence the remove)
@@ -237,11 +274,11 @@ public class RestletProducer extends DefaultAsyncProducer {
             query = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
         }
         if (query != null) {
-            LOG.trace("Adding query: {} to uri: {}", query, uri);
+            log.trace("Adding query: {} to uri: {}", query, uri);
             uri = addQueryToUri(uri, query);
         }
 
-        LOG.trace("Using uri: {}", uri);
+        log.trace("Using uri: {}", uri);
         return uri;
     }
 
@@ -303,13 +340,13 @@ public class RestletProducer extends DefaultAsyncProducer {
     }
 
     protected Map<String, String> parseResponseHeaders(Object response, Exchange camelExchange) {
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         if (response instanceof Response) {
 
             for (Map.Entry<String, Object> entry : ((Response) response).getAttributes().entrySet()) {
                 String key = entry.getKey();
                 Object value = entry.getValue();
-                LOG.trace("Parse external header {}={}", key, value);
+                log.trace("Parse external header {}={}", key, value);
                 answer.put(key, value.toString());
             }
         }

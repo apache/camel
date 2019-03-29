@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -46,6 +46,7 @@ public class JacksonMarshalUnmarshalTypeHeaderTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 JacksonDataFormat format = new JacksonDataFormat();
+                format.setAllowUnmarshallType(true);
 
                 from("direct:backPojo").unmarshal(format).to("mock:reversePojo");
 

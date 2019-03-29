@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,29 +18,13 @@ package org.apache.camel.spring.file;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.FileConsumerPreMoveTest;
-import org.apache.camel.spring.SpringCamelContext;
 
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringFileConsumerPreMoveTest extends FileConsumerPreMoveTest {
-    private AbstractXmlApplicationContext applicationContext;
 
     protected CamelContext createCamelContext() throws Exception {
-        applicationContext =  new ClassPathXmlApplicationContext("org/apache/camel/spring/file/SpringFileConsumerPreMoveTest.xml");
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return createSpringCamelContext(this, "org/apache/camel/spring/file/SpringFileConsumerPreMoveTest.xml");
     }
-    
-    @Override
-    protected void tearDown() throws Exception {
-        if (applicationContext != null) {
-            applicationContext.stop();
-        }
-        super.tearDown();
-    }
-    
 
 }

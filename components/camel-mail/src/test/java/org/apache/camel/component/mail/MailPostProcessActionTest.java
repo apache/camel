@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
-
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Store;
@@ -25,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 import org.slf4j.Logger;
@@ -39,6 +39,7 @@ public class MailPostProcessActionTest extends CamelTestSupport {
     private TestPostProcessAction action;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         prepareMailbox();
         action = new TestPostProcessAction();
@@ -100,7 +101,7 @@ public class MailPostProcessActionTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://bill@localhost?password=secret&postProcessAction=#postProcessAction").to("mock:result");
+                from("pop3://bill@localhost?password=secret&postProcessAction=#postProcessAction&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
             }
         };
     }

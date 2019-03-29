@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -43,7 +43,7 @@ public final class SparkHelper {
             if (existing instanceof List) {
                 list = (List<Object>) existing;
             } else {
-                list = new ArrayList<Object>();
+                list = new ArrayList<>();
                 list.add(existing);
             }
             list.add(value);

@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.mllp.enabled",
+      "description": "Enable mllp component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

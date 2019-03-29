@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.syslog.enabled",
+      "description": "Enable syslog dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

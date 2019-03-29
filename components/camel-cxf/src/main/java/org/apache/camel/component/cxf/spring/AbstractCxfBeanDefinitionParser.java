@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,9 @@ package org.apache.camel.component.cxf.spring;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.w3c.dom.Element;
+
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.configuration.spring.AbstractBeanDefinitionParser;
 import org.springframework.beans.PropertyValue;
@@ -88,7 +90,7 @@ public abstract class AbstractCxfBeanDefinitionParser extends AbstractBeanDefini
         Map<String, Object> map = null;
         if (propertyValue == null) {
             if (lazyInstantiation) {
-                map = new HashMap<String, Object>();
+                map = new HashMap<>();
                 bean.addPropertyValue("properties", map);
             }
         } else {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -43,7 +43,7 @@ public class HBaseConvertionsTest extends CamelHBaseTestSupport {
     public void testPutMultiRows() throws Exception {
         if (systemReady) {
             ProducerTemplate template = context.createProducerTemplate();
-            Map<String, Object> headers = new HashMap<String, Object>();
+            Map<String, Object> headers = new HashMap<>();
             headers.put(HBaseAttribute.HBASE_ROW_ID.asHeader(), key[0]);
             headers.put(HBaseAttribute.HBASE_FAMILY.asHeader(), INFO_FAMILY);
             headers.put(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[0]);

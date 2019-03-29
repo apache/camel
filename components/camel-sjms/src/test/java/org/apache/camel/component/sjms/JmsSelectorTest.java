@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,12 +19,8 @@ package org.apache.camel.component.sjms;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
-
 import org.junit.Test;
 
-/**
- * @version
- */
 public class JmsSelectorTest extends JmsTestSupport {
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -85,7 +85,7 @@ public class UnsharableCodecsConflicts2Test extends BaseNettyTest {
             public void configure() throws Exception {
                 port = getPort();
 
-                from("netty4:tcp://localhost:{{port}}?decoder=#length-decoder&sync=false")
+                from("netty4:tcp://localhost:{{port}}?decoders=#length-decoder&sync=false")
                         .process(processor)
                         .to("mock:result");
             }

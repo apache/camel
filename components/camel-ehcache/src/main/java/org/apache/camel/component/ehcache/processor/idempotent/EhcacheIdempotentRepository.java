@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,12 +21,12 @@ import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.ehcache.EhcacheManager;
 import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 
 @ManagedResource(description = "Ehcache based message id repository")
-public class EhcacheIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
+public class EhcacheIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 
     private String cacheName;
     private Cache<String, Boolean> cache;
@@ -38,7 +38,7 @@ public class EhcacheIdempotentRepository extends ServiceSupport implements Idemp
 
     public EhcacheIdempotentRepository(CacheManager cacheManager, String repositoryName) {
         this.cacheName = repositoryName;
-        this.cacheManager = new EhcacheManager(cacheManager);
+        this.cacheManager = new EhcacheManager(cacheManager, false, null);
     }
 
     @ManagedAttribute(description = "The processor name")

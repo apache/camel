@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,13 +27,11 @@ import java.rmi.server.UnicastRemoteObject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.bean.BeanInvocation;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 
 /**
  * A {@link org.apache.camel.Consumer Consumer} which uses RMI's {@link UnicastRemoteObject} to consume
  * method invocations.
- * 
- * @version 
  */
 public class RmiConsumer extends DefaultConsumer implements InvocationHandler {
 
@@ -108,7 +106,7 @@ public class RmiConsumer extends DefaultConsumer implements InvocationHandler {
                     break;
                 }
             }
-            if (match != null && match instanceof Throwable) {
+            if (match instanceof Throwable) {
                 // we have a match
                 throw (Throwable) match;
             } else {

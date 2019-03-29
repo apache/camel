@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,6 +25,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.support.RoutePolicySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +58,7 @@ public class CuratorMultiMasterLeaderRoutePolicy extends RoutePolicySupport impl
     private static final Logger LOG = LoggerFactory.getLogger(CuratorMultiMasterLeaderRoutePolicy.class);
     private final String uri;
     private final Lock lock = new ReentrantLock();
-    private final Set<Route> suspendedRoutes = new CopyOnWriteArraySet<Route>();
+    private final Set<Route> suspendedRoutes = new CopyOnWriteArraySet<>();
     private final AtomicBoolean shouldProcessExchanges = new AtomicBoolean();
     private volatile boolean shouldStopRoute = true;
     private final int enabledCount;
@@ -79,7 +80,8 @@ public class CuratorMultiMasterLeaderRoutePolicy extends RoutePolicySupport impl
     public void onInit(Route route) {
         ensureElectionIsCreated();
         LOG.info("Route managed by {}. Setting route [{}] AutoStartup flag to false.", this.getClass(), route.getId());
-        route.getRouteContext().getRoute().setAutoStartup("false");
+        RouteDefinition definition = (RouteDefinition) route.getRouteContext().getRoute();
+        definition.setAutoStartup("false");
 
 
         if (election.isMaster()) {

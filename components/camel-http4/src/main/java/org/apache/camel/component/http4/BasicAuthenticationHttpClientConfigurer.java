@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,8 +30,8 @@ public class BasicAuthenticationHttpClientConfigurer implements HttpClientConfig
     private final String host;
 
     public BasicAuthenticationHttpClientConfigurer(String user, String pwd, String domain, String host) {
-        username = user;
-        password = pwd;
+        this.username = user;
+        this.password = pwd;
         this.domain = domain;
         this.host = host;
     }

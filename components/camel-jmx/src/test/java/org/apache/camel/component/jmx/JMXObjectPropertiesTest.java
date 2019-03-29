@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -41,9 +41,9 @@ public class JMXObjectPropertiesTest extends SimpleBeanFixture {
 
     @Override
     protected void initRegistry() {
-        Map<String, String> ht = new Hashtable<String, String>();
+        Map<String, String> ht = new Hashtable<>();
         ht.put("name", "simpleBean");
-        getRegistry().put("myTable", ht);
+        getRegistry().bind("myTable", ht);
     }
 
 }

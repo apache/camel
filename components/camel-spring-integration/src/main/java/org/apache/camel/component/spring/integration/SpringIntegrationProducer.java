@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,9 +18,10 @@ package org.apache.camel.component.spring.integration;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.support.channel.BeanFactoryChannelResolver;
 import org.springframework.messaging.Message;
@@ -34,7 +35,6 @@ import org.springframework.messaging.core.DestinationResolver;
  * Please specify the outputChannel in the endpoint url for this producer.
  * If the message pattern is inOut, the inputChannel property
  * should be set for receiving the response message.
- * @version 
  */
 public class SpringIntegrationProducer extends DefaultProducer implements Processor {    
     private final DestinationResolver<MessageChannel> destinationResolver;
@@ -61,7 +61,7 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
                 outputChannelName = getEndpoint().getInputChannel();
             }
 
-            ObjectHelper.notEmpty(outputChannelName, "OutputChannelName", getEndpoint());
+            StringHelper.notEmpty(outputChannelName, "OutputChannelName", getEndpoint());
             outputChannel = destinationResolver.resolveDestination(outputChannelName);
         } else {
             outputChannel = getEndpoint().getMessageChannel();
@@ -74,7 +74,7 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
         // if we do in-out we need to setup the input channel as well
         if (getEndpoint().isInOut()) {
             // we need to setup right inputChannel for further processing
-            ObjectHelper.notEmpty(getEndpoint().getInputChannel(), "InputChannel", getEndpoint());
+            StringHelper.notEmpty(getEndpoint().getInputChannel(), "InputChannel", getEndpoint());
             inputChannel = (DirectChannel)destinationResolver.resolveDestination(getEndpoint().getInputChannel());
 
             if (inputChannel == null) {

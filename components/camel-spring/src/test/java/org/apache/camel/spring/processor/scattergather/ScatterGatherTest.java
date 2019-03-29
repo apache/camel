@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,11 +22,13 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class ScatterGatherTest extends ContextTestSupport {
 
+    @Test
     public void testScatterAndGather() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -35,7 +37,7 @@ public class ScatterGatherTest extends ContextTestSupport {
         // END SNIPPET: e1
 
         // START SNIPPET: e2
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("listOfVendors", "bean:vendor1, bean:vendor2, bean:vendor3");
         headers.put("quoteRequestId", "quoteRequest-1");
         template.sendBodyAndHeaders("direct:start", "<quote_request item=\"beer\"/>", headers);

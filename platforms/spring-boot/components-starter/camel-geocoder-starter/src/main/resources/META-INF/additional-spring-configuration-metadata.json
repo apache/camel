@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.geocoder.enabled",
+      "description": "Enable geocoder component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

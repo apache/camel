@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,15 +22,19 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.hazelcast.HazelcastCommand;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
 
 /**
- * Hazelcast Set {@link Endpoint} implementation.
+ * The camel {@link Endpoint} to access <a href="http://www.hazelcast.com/">Hazelcast</a> distributed set.
  */
+@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-set", title = "Hazelcast Set", syntax = "hazelcast-set:cacheName", label = "cache,datagrid")
 public class HazelcastSetEndpoint extends HazelcastDefaultEndpoint {
 
     public HazelcastSetEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component, String cacheName) {
         super(hazelcastInstance, endpointUri, component, cacheName);
+        setCommand(HazelcastCommand.set);
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,17 +20,14 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EventAdminConsumer extends DefaultConsumer implements EventHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EventAdminConsumer.class);
     private final EventAdminEndpoint endpoint;
     private ServiceRegistration<?> registration;
 
@@ -44,7 +41,7 @@ public class EventAdminConsumer extends DefaultConsumer implements EventHandler 
         // TODO: populate exchange headers
         exchange.getIn().setBody(event);
 
-        LOG.trace("EventAdmin {} is firing", endpoint.getTopic());
+        log.trace("EventAdmin {} is firing", endpoint.getTopic());
         try {
             getProcessor().process(exchange);
             // log exception if an exception occurred and was not handled
@@ -59,7 +56,7 @@ public class EventAdminConsumer extends DefaultConsumer implements EventHandler 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        Dictionary<String, String> props = new Hashtable<String, String>();
+        Dictionary<String, String> props = new Hashtable<>();
         props.put(EventConstants.EVENT_TOPIC, endpoint.getTopic());
         registration = endpoint.getComponent().getBundleContext().registerService(EventHandler.class.getName(), this, props);
     }

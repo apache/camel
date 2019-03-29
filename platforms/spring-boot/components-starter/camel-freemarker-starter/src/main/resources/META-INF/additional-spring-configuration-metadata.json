@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.freemarker.enabled",
+      "description": "Enable freemarker component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

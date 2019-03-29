@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import org.apache.camel.component.facebook.config.FacebookConfiguration;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.IntrospectionSupport;
 
 public abstract class CamelFacebookTestSupport extends CamelTestSupport {
 
@@ -50,7 +50,7 @@ public abstract class CamelFacebookTestSupport extends CamelTestSupport {
             throw new IllegalAccessError("test-options.properties could not be found");
         }
 
-        Map<String, Object> options = new HashMap<String, Object>();
+        Map<String, Object> options = new HashMap<>();
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             options.put(entry.getKey().toString(), entry.getValue());
         }

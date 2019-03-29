@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,7 @@ import org.eclipse.jetty.client.HttpClient;
 
 public interface JettyContentExchange {
 
-    void init(Exchange exchange, JettyHttpBinding jettyBinding, final HttpClient client, AsyncCallback callback);
+    void init(Exchange exchange, JettyHttpBinding jettyBinding, HttpClient client, AsyncCallback callback);
 
     // Methods to prepare the request
     void setRequestContentType(String contentType);
@@ -44,6 +44,8 @@ public interface JettyContentExchange {
     void setRequestContent(String data, String charset) throws UnsupportedEncodingException;
 
     void setRequestContent(InputStream ins);
+    
+    void setRequestContent(InputStream ins, int contentLength);
 
     void addRequestHeader(String key, String s);
 

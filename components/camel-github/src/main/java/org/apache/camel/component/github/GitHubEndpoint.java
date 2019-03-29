@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,12 +29,12 @@ import org.apache.camel.component.github.producer.GetCommitFileProducer;
 import org.apache.camel.component.github.producer.PullRequestCommentProducer;
 import org.apache.camel.component.github.producer.PullRequestFilesProducer;
 import org.apache.camel.component.github.producer.PullRequestStateProducer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.StringHelper;
 
 /**
  * The github component is used for integrating Camel with github.
@@ -59,10 +59,10 @@ import org.apache.camel.util.ObjectHelper;
  * - the types of payloads we're polling aren't typically large (plus, paging is available in the API)
  * - need to support apps running somewhere not publicly accessible where a webhook would fail
  */
-@UriEndpoint(scheme = "github", title = "GitHub", syntax = "github:type/branchName", label = "api,file")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "github", title = "GitHub", syntax = "github:type/branchName", label = "api,file")
 public class GitHubEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private GitHubType type;
     @UriPath(label = "consumer")
     private String branchName;
@@ -72,9 +72,9 @@ public class GitHubEndpoint extends DefaultEndpoint {
     private String password;
     @UriParam
     private String oauthToken;
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = true)
     private String repoOwner;
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = true)
     private String repoName;
     @UriParam(label = "producer", enums = "error,failure,pending,success")
     private String state;
@@ -106,7 +106,7 @@ public class GitHubEndpoint extends DefaultEndpoint {
 
     public Consumer createConsumer(Processor processor) throws Exception {
         if (type == GitHubType.COMMIT) {
-            ObjectHelper.notEmpty(branchName, "branchName", this);
+            StringHelper.notEmpty(branchName, "branchName", this);
             return new CommitConsumer(this, processor, branchName);
         } else if (type == GitHubType.PULLREQUEST) {
             return new PullRequestConsumer(this, processor);

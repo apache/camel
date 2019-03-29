@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,8 +22,8 @@ import java.io.InputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.spi.Language;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ResourceHelper;
 
 /**
  * Provides support for mapping a Camel expression to a target field in a 
@@ -34,7 +34,7 @@ import org.apache.camel.util.ResourceHelper;
  */
 public class ExpressionMapper extends BaseConverter {
     
-    private ThreadLocal<Exchange> currentExchange = new ThreadLocal<Exchange>();
+    private ThreadLocal<Exchange> currentExchange = new ThreadLocal<>();
     
     @Override
     public Object convert(Object existingDestinationFieldValue, 

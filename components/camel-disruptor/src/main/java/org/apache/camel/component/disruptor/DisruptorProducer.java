@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,21 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.disruptor;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import com.lmax.disruptor.InsufficientCapacityException;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.WaitForTaskToComplete;
-import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.apache.camel.util.ExchangeHelper;
 
 /**
  * A Producer for the Disruptor component.

@@ -1,126 +1,150 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>tooling</artifactId>
-    <version>2.19.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>tooling</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>tooling-parent</artifactId>
-  <name>Camel :: Tooling Parent</name>
-  <description>Camel Tooling Parent POM</description>
-  <packaging>pom</packaging>
+    <artifactId>tooling-parent</artifactId>
+    <packaging>pom</packaging>
 
-  <properties>
+    <name>Camel :: Tooling Parent</name>
+    <description>Camel Tooling Parent POM</description>
 
-    <maven-version>2.2.1</maven-version>
-    <maven-maven-plugin-descriptor-version>2.2.1</maven-maven-plugin-descriptor-version>
-    <maven-project-version>2.2.1</maven-project-version>
-    <maven-dependency-tree-version>2.2</maven-dependency-tree-version>
-    <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
-    <maven-reporting-impl-version>2.4</maven-reporting-impl-version>
-    <plexus-build-api-version>0.0.7</plexus-build-api-version>
-    <plexus-container-default-version>1.6</plexus-container-default-version>
-    <plexus-utils-version>3.0.22</plexus-utils-version>
-  </properties>
+    <properties>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.apache.maven</groupId>
-        <artifactId>maven-core</artifactId>
-        <version>${maven-version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-nop</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven</groupId>
-        <artifactId>maven-artifact</artifactId>
-        <version>${maven-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven</groupId>
-        <artifactId>maven-plugin-api</artifactId>
-        <version>${maven-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven</groupId>
-        <artifactId>maven-plugin-descriptor</artifactId>
-        <version>${maven-maven-plugin-descriptor-version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven</groupId>
-        <artifactId>maven-project</artifactId>
-        <version>${maven-project-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven.shared</groupId>
-        <artifactId>maven-dependency-tree</artifactId>
-        <version>${maven-dependency-tree-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven.reporting</groupId>
-        <artifactId>maven-reporting-api</artifactId>
-        <version>${maven-reporting-api-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven.reporting</groupId>
-        <artifactId>maven-reporting-impl</artifactId>
-        <version>${maven-reporting-impl-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-container-default</artifactId>
-        <version>${plexus-container-default-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-utils</artifactId>
-        <version>${plexus-utils-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.sonatype.plexus</groupId>
-        <artifactId>plexus-build-api</artifactId>
-        <version>${plexus-build-api-version}</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
+        <maven-version>3.1.1</maven-version>
+        <maven-maven-plugin-descriptor-version>2.2.1</maven-maven-plugin-descriptor-version>
+        <maven-project-version>2.2.1</maven-project-version>
+        <maven-dependency-tree-version>2.2</maven-dependency-tree-version>
+        <maven-plugin-annotations-version>3.6.0</maven-plugin-annotations-version>
+        <maven-reporting-api-version>3.0</maven-reporting-api-version>
+        <maven-reporting-impl-version>2.4</maven-reporting-impl-version>
+        <maven-resolver-version>1.0.3</maven-resolver-version>
+        <plexus-build-api-version>0.0.7</plexus-build-api-version>
+        <plexus-container-default-version>1.6</plexus-container-default-version>
+        <plexus-utils-version>3.0.22</plexus-utils-version>
+    </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-core</artifactId>
+                <version>${maven-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-jdk14</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>jcl-over-slf4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-nop</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-artifact</artifactId>
+                <version>${maven-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-plugin-api</artifactId>
+                <version>${maven-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-compat</artifactId>
+                <version>${maven-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.plugin-tools</groupId>
+                <artifactId>maven-plugin-annotations</artifactId>
+                <version>${maven-plugin-annotations-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-plugin-descriptor</artifactId>
+                <version>${maven-maven-plugin-descriptor-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-project</artifactId>
+                <version>${maven-project-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.shared</groupId>
+                <artifactId>maven-dependency-tree</artifactId>
+                <version>${maven-dependency-tree-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.reporting</groupId>
+                <artifactId>maven-reporting-api</artifactId>
+                <version>${maven-reporting-api-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.reporting</groupId>
+                <artifactId>maven-reporting-impl</artifactId>
+                <version>${maven-reporting-impl-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-api</artifactId>
+                <version>${maven-resolver-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-util</artifactId>
+                <version>${maven-resolver-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-container-default</artifactId>
+                <version>${plexus-container-default-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>${plexus-utils-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.sonatype.plexus</groupId>
+                <artifactId>plexus-build-api</artifactId>
+                <version>${plexus-build-api-version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

@@ -1,0 +1,44 @@
+{
+    "id": 4,
+    "username": "bmarsh",
+    "name": "Beverly Marsh",
+    "first_name": "Beverly",
+    "last_name": "Marsh",
+    "email": "beverly.marsh@derry.com",
+    "url": "",
+    "description": "",
+    "link": "http://wordpress4j.org/it/author/bmarsh/",
+    "locale": "en_US",
+    "nickname": "Bevs",
+    "slug": "bmarsh",
+    "roles": [
+        "subscriber"
+    ],
+    "registered_date": "2018-01-22T18:37:30+00:00",
+    "capabilities": {
+        "read": true,
+        "level_0": true,
+        "subscriber": true
+    },
+    "extra_capabilities": {
+        "subscriber": true
+    },
+    "avatar_urls": {
+        "24": "http://2.gravatar.com/avatar/59f4cb30904bb00e7de35f85087ee98e?s=24&d=mm&r=g",
+        "48": "http://2.gravatar.com/avatar/59f4cb30904bb00e7de35f85087ee98e?s=48&d=mm&r=g",
+        "96": "http://2.gravatar.com/avatar/59f4cb30904bb00e7de35f85087ee98e?s=96&d=mm&r=g"
+    },
+    "meta": [],
+    "_links": {
+        "self": [
+            {
+                "href": "http://wordpress4j.org/it/wp-json/wp/v2/users/4"
+            }
+        ],
+        "collection": [
+            {
+                "href": "http://wordpress4j.org/it/wp-json/wp/v2/users"
+            }
+        ]
+    }
+}

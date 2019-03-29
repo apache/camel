@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,7 +30,7 @@ import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Producer;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * A factory to create a Proxy to a a Camel Pojo Endpoint.

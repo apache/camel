@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 public class CompositeHttpConfigurer implements HttpClientConfigurer {
 
-    private final List<HttpClientConfigurer> configurers = new ArrayList<HttpClientConfigurer>();
+    private final List<HttpClientConfigurer> configurers = new ArrayList<>();
 
     public void addConfigurer(HttpClientConfigurer configurer) {
         if (configurer != null) {

@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.jolt.enabled",
+      "description": "Enable jolt component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

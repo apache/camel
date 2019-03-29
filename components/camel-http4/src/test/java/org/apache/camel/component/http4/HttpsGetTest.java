@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,17 +20,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- *
- * @version 
- */
 public class HttpsGetTest extends BaseHttpsTest {
 
     private HttpServer localServer;
@@ -63,7 +59,7 @@ public class HttpsGetTest extends BaseHttpsTest {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        registry.bind("x509HostnameVerifier", new AllowAllHostnameVerifier());
+        registry.bind("x509HostnameVerifier", new NoopHostnameVerifier());
 
         return registry;
     }
@@ -71,7 +67,7 @@ public class HttpsGetTest extends BaseHttpsTest {
     @Test
     public void httpsGet() throws Exception {
 
-        Exchange exchange = template.request("https4://127.0.0.1:" + localServer.getLocalPort() + "/mail/?x509HostnameVerifier=x509HostnameVerifier", new Processor() {
+        Exchange exchange = template.request("https4://127.0.0.1:" + localServer.getLocalPort() + "/mail/?x509HostnameVerifier=#x509HostnameVerifier", new Processor() {
             public void process(Exchange exchange) throws Exception {
             }
         });

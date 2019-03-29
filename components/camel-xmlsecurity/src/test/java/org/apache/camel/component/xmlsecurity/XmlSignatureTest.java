@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -66,7 +66,9 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
 import org.xml.sax.SAXException;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -96,8 +98,9 @@ import org.apache.camel.component.xmlsecurity.util.ValidationFailedHandlerIgnore
 import org.apache.camel.component.xmlsecurity.util.XmlSignature2Message2MessageWithTimestampProperty;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.processor.validation.SchemaValidationException;
+import org.apache.camel.support.processor.validation.SchemaValidationException;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -108,8 +111,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     private KeyPair keyPair;
     
     static {
-        if (System.getProperty("java.version") != null
-            && System.getProperty("java.version").startsWith("1.9")) {
+        if (TestSupport.getJavaMajorVersion() >= 9) {
             includeNewLine = false;
         }
         payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -407,7 +409,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     public void testEnvelopingSignatureWithPlainTextSetByHeaders() throws Exception {
         String text = "plain test text";
         setupMock(text);
-        Map<String, Object> headers = new TreeMap<String, Object>();
+        Map<String, Object> headers = new TreeMap<>();
         headers.put(XmlSignatureConstants.HEADER_MESSAGE_IS_PLAIN_TEXT, Boolean.TRUE);
         headers.put(XmlSignatureConstants.HEADER_PLAIN_TEXT_ENCODING, "UTF-8");
         sendBody("direct:enveloping", text, headers);
@@ -418,7 +420,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     public void testExceptionSignatureForPlainTextWithWrongEncoding() throws Exception {
         String text = "plain test text";
         MockEndpoint mock = setupExceptionMock();
-        Map<String, Object> headers = new TreeMap<String, Object>();
+        Map<String, Object> headers = new TreeMap<>();
         headers.put(XmlSignatureConstants.HEADER_MESSAGE_IS_PLAIN_TEXT, Boolean.TRUE);
         headers.put(XmlSignatureConstants.HEADER_PLAIN_TEXT_ENCODING, "wrongEncoding");
         sendBody("direct:enveloping", text, headers);
@@ -450,7 +452,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         // payload root element renamed to a -> parent name in route definition
         // does not fit
         String payload = "plain text Message";
-        Map<String, Object> headers = new HashMap<String, Object>(1);
+        Map<String, Object> headers = new HashMap<>(1);
         headers.put(XmlSignatureConstants.HEADER_MESSAGE_IS_PLAIN_TEXT, Boolean.TRUE);
         MockEndpoint mock = setupExceptionMock();
         sendBody("direct:enveloped", payload, headers);
@@ -466,7 +468,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     public void testOmitXmlDeclarationViaHeader() throws Exception {
         String payloadOut = "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
         setupMock(payloadOut);
-        Map<String, Object> headers = new TreeMap<String, Object>();
+        Map<String, Object> headers = new TreeMap<>();
         headers.put(XmlSignatureConstants.HEADER_OMIT_XML_DECLARATION, Boolean.TRUE);
         InputStream payload = XmlSignatureTest.class
                 .getResourceAsStream("/org/apache/camel/component/xmlsecurity/ExampleEnvelopedXmlSig.xml");
@@ -871,7 +873,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         mockVerified.expectedBodiesReceived(detachedPayload);
         sendBody("direct:detached", detachedPayload, headers);
         assertMockEndpointsSatisfied();
-        Map<String, String> namespaceMap = new TreeMap<String, String>();
+        Map<String, String> namespaceMap = new TreeMap<>();
         namespaceMap.put("ns", "http://test");
         namespaceMap.put("ds", XMLSignature.XMLNS);
         Object obj = checkXpath(mock, "ns:root/ds:Signature", namespaceMap);
@@ -909,21 +911,21 @@ public class XmlSignatureTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         MockEndpoint mockVerified = getMockEndpoint("mock:verified");
         mockVerified.expectedBodiesReceived(detachedPayload);
-        Map<String, Object> headers = new TreeMap<String, Object>();
+        Map<String, Object> headers = new TreeMap<>();
         headers.put(XmlSignatureConstants.HEADER_SCHEMA_RESOURCE_URI, "org/apache/camel/component/xmlsecurity/TestComplex.xsd");
-        Map<String, String> namespaceMap = new TreeMap<String, String>();
+        Map<String, String> namespaceMap = new TreeMap<>();
         namespaceMap.put("ns", "http://test");
         namespaceMap.put("ns1", "http://testB");
         XPathFilterParameterSpec xpath1 = XmlSignatureHelper.getXpathFilter(xpath1exp, namespaceMap);
         XPathFilterParameterSpec xpath2 = XmlSignatureHelper.getXpathFilter(xpath2exp, namespaceMap);
 
-        List<XPathFilterParameterSpec> xpaths = new ArrayList<XPathFilterParameterSpec>();
+        List<XPathFilterParameterSpec> xpaths = new ArrayList<>();
         xpaths.add(xpath1);
         xpaths.add(xpath2);
         headers.put(XmlSignatureConstants.HEADER_XPATHS_TO_ID_ATTRIBUTES, xpaths);
         sendBody("direct:detached", detachedPayload, headers);
         assertMockEndpointsSatisfied();
-        Map<String, String> namespaceMap2 = new TreeMap<String, String>();
+        Map<String, String> namespaceMap2 = new TreeMap<>();
         namespaceMap2.put("ns", "http://test");
         namespaceMap2.put("ds", XMLSignature.XMLNS);
         namespaceMap2.put("nsB", "http://testB");
@@ -1424,28 +1426,28 @@ public class XmlSignatureTest extends CamelTestSupport {
     }
 
     private AlgorithmMethod getCanonicalizationMethod() {
-        List<String> inclusivePrefixes = new ArrayList<String>(1);
+        List<String> inclusivePrefixes = new ArrayList<>(1);
         inclusivePrefixes.add("ds");
         return XmlSignatureHelper.getCanonicalizationMethod(CanonicalizationMethod.EXCLUSIVE, inclusivePrefixes);
     }
 
     private List<AlgorithmMethod> getTransformsXPath2() {
 
-        List<XPathAndFilter> list = new ArrayList<XPathAndFilter>(3);
+        List<XPathAndFilter> list = new ArrayList<>(3);
         XPathAndFilter xpath1 = new XPathAndFilter("//n0:ToBeSigned", XPathType.Filter.INTERSECT.toString());
         list.add(xpath1);
         XPathAndFilter xpath2 = new XPathAndFilter("//n0:NotToBeSigned", XPathType.Filter.SUBTRACT.toString());
         list.add(xpath2);
         XPathAndFilter xpath3 = new XPathAndFilter("//n0:ReallyToBeSigned", XPathType.Filter.UNION.toString());
         list.add(xpath3);
-        List<AlgorithmMethod> result = new ArrayList<AlgorithmMethod>(2);
+        List<AlgorithmMethod> result = new ArrayList<>(2);
         result.add(XmlSignatureHelper.getCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE));
         result.add(XmlSignatureHelper.getXPath2Transform(list, getNamespaceMap()));
         return result;
     }
 
     private Map<String, String> getNamespaceMap() {
-        Map<String, String> result = new HashMap<String, String>(1);
+        Map<String, String> result = new HashMap<>(1);
         result.put("n0", "http://test/test");
         return result;
     }
@@ -1453,13 +1455,13 @@ public class XmlSignatureTest extends CamelTestSupport {
     private List<AlgorithmMethod> getTransformsXsltXpath() {
         try {
             AlgorithmMethod transformXslt = XmlSignatureHelper.getXslTransform("/org/apache/camel/component/xmlsecurity/xslt_test.xsl");
-            Map<String, String> namespaceMap = new HashMap<String, String>(1);
+            Map<String, String> namespaceMap = new HashMap<>(1);
             namespaceMap.put("n0", "https://org.apache/camel/xmlsecurity/test");
             AlgorithmMethod transformXpath = XmlSignatureHelper.getXPathTransform("//n0:XMLSecurity/n0:Content", namespaceMap);
             // I removed base 64 transform because the JDK implementation does
             // not correctly support this transformation
             // AlgorithmMethod transformBase64 = helper.getBase64Transform();
-            List<AlgorithmMethod> result = new ArrayList<AlgorithmMethod>(3);
+            List<AlgorithmMethod> result = new ArrayList<>(3);
             result.add(XmlSignatureHelper.getCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE));
             result.add(transformXslt);
             result.add(transformXpath);

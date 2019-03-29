@@ -1,0 +1,177 @@
+[[DataFormat-DataFormat]]
+=== Data Format
+
+Camel supports a pluggable DataFormat to allow messages to be marshalled
+to and from binary or text formats to support a kind of
+<<messageTranslator-eip,Message Translator>>.
+
+The following data formats are currently supported:
+
+* Standard JVM object marshalling
+** <<serialization-dataformat,Serialization>>
+** <<string-dataformat,String>>
+
+* Object marshalling
+** <<avro-dataformat,Avro>>
+** <<boon-dataformat,Boon>>
+** <<hessian-dataformat,Hessian>>
+** link:json.adoc[JSON]
+** <<protobuf-dataformat,Protobuf>>
+** <<yaml-snakeyaml-dataformat,YAML>>
+
+* Object/XML marshalling
+** <<castor-dataformat,Castor>>
+** <<jaxb-dataformat,JAXB>>
+** <<xmlBeans-dataformat,XmlBeans>>
+** <<xstream-dataformat,XStream>>
+** <<jibx-dataformat,JiBX>>
+** <<jacksonxml-dataformat,Jackson XML>>
+
+* Object/XML/Webservice marshalling
+** <<soap-dataformat,SOAP>>
+
+* Direct JSON / XML marshalling
+** <<xmljson-dataformat,XmlJson>>
+
+* Flat data structure marshalling
+** <<beanio-dataformat,BeanIO>>
+** <<bindy-dataformat,Bindy>>
+** <<csv-dataformat,CSV>>
+** <<edi-dataformat,EDI>>
+** <<flatpack-dataformat,Flatpack DataFormat>>
+** uniVocity DataFormats <<univocity-csv-dataformat,CSV>> / <<univocity-tsv-dataformat,TSV>> / <<univocity-fixed-dataformat,Fixed Length>>
+
+* Domain specific marshalling
+** <<hl7-dataformat,HL7 DataFormat>>
+
+* Compression
+** <<gzip-dataformat,GZip DataFormat>>
+** <<zip-dataformat,Zip DataFormat>>
+** <<zipfile-dataformat,Zip File DataFormat>>
+** <<lzf-dataformat,LZF Data Format>>
+** <<tar-dataformat,Tar DataFormat>>
+
+* Security
+** <<crypto-component,Crypto>>
+** <<crypto-component,PGP>>
+** <<secureXML-dataformat,XMLSecurity DataFormat>>
+
+* Misc.
+** <<base64-dataformat,Base64>>
+** <<custom-dataformat,Custom DataFormat>> -- to use your own
+custom implementation
+** <<mime-multipart-dataformat,MIME-Multipart>>
+** <<rss-dataformat,RSS>>
+** <<tidymarkup-dataformat,TidyMarkup>>
+** <<syslog-dataformat,Syslog>>
+** <<ical-dataformat,ICal>>
+** <<barcode-dataformat,Barcode>> -- to read and generate barcodes
+(QR-Code, PDF417, ...)
+
+And related is the following:
+
+* <<dataformat-component,DataFormat Component>> for working with
+  Data Formats as if it was a regular link:component.adoc[Component]
+  supporting link:endpoint.adoc[Endpoints] and link:uris.adoc[URIs].
+* link:dozer-type-conversion.adoc[Dozer Type Conversion] using Dozer for
+  type converting POJOs
+
+[[DataFormat-Unmarshalling]]
+==== Unmarshalling
+
+If you receive a message from one of the Camel
+link:component.adoc[Components] such as <<file-component,File>>,
+<<http-component,HTTP>> or <<jms-component,JMS>> you often want to unmarshal
+the payload into some bean so that you can process it using some
+link:bean-integration.adoc[Bean Integration] or perform
+link:predicate.adoc[Predicate] evaluation and so forth. To do this use
+the `unmarshal` word in the link:dsl.adoc[DSL] in Java or the
+link:xml-configuration.adoc[XML Configuration].
+
+For example:
+
+[source,java]
+----
+DataFormat jaxb = new JaxbDataFormat("com.acme.model");
+
+from("activemq:My.Queue").
+  unmarshal(jaxb).
+  to("mqseries:Another.Queue");
+----
+
+The above uses a named DataFormat of `jaxb` which is configured with a
+number of Java package names. You can if you prefer use a named
+reference to a data format which can then be defined in your
+link:registry.adoc[Registry] such as via your link:spring.adoc[Spring]
+XML file.
+
+You can also use the DSL itself to define the data format as you use it.
+For example the following uses Java serialization to unmarshal a binary
+file then send it as an ObjectMessage to link:activemq.adoc[ActiveMQ]
+
+[source,java]
+----
+from("file://foo/bar").
+  unmarshal().serialization().
+  to("activemq:Some.Queue");
+----
+
+[[DataFormat-Marshalling]]
+==== Marshalling
+
+Marshalling is the opposite of unmarshalling, where a bean is marshalled
+into some binary or textual format for transmission over some transport
+via a Camel link:component.adoc[Component]. Marshalling is used in the
+same way as unmarshalling above; in the link:dsl.adoc[DSL] you can use a
+DataFormat instance, you can configure the DataFormat dynamically using
+the DSL or you can refer to a named instance of the format in the
+link:registry.adoc[Registry].
+
+The following example unmarshals via serialization then marshals using a
+named JAXB data format to perform a kind of
+<<messageTranslator-eip,Message Translator>>:
+
+[source,java]
+----
+from("file://foo/bar").
+  unmarshal().serialization(). 
+  marshal("jaxb").
+  to("activemq:Some.Queue");
+----
+
+[[DataFormat-UsingSpringXML]]
+==== Using Spring XML
+
+This example shows how to configure the data type just once and reuse it
+on multiple routes:
+
+[source,xml]
+----
+<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+  <dataFormats>
+    <jaxb id="myJaxb" prettyPrint="true" contextPath="org.apache.camel.example"/>
+  </dataFormats>
+
+  <route>
+    <from uri="direct:start"/>
+    <marshal ref="myJaxb"/>
+    <to uri="direct:marshalled"/>
+  </route>
+  <route>
+    <from uri="direct:marshalled"/>
+    <unmarshal ref="myJaxb"/>
+    <to uri="mock:result"/>
+  </route>
+
+</camelContext>
+----
+
+You can also define reusable data formats as Spring beans:
+
+[source,xml]
+----
+<bean id="myJaxb" class="org.apache.camel.model.dataformat.JaxbDataFormat">
+  <property name="prettyPrint" value="true"/>
+  <property name="contextPath" value="org.apache.camel.example"/>
+</bean>  
+----

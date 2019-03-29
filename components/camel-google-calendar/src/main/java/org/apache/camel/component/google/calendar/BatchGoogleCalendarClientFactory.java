@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,6 +26,7 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.calendar.Calendar;
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,11 +45,18 @@ public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFac
     public Calendar makeClient(String clientId, String clientSecret,
                                Collection<String> scopes, String applicationName, String refreshToken,
                                String accessToken, String emailAddress, String p12FileName, String user) {
+        boolean serviceAccount = false;
+        // if emailAddress and p12FileName values are present, assume Google Service Account
+        if (null != emailAddress && !"".equals(emailAddress) && null != p12FileName && !"".equals(p12FileName)) {
+            serviceAccount = true;
+        }
+        if (!serviceAccount && (clientId == null || clientSecret == null)) {
+            throw new IllegalArgumentException("clientId and clientSecret are required to create Google Calendar client.");
+        }
 
-        Credential credential;
         try {
-            // if emailAddress and p12FileName values are present, assume Google Service Account
-            if (null != emailAddress && !"".equals(emailAddress) && null != p12FileName && !"".equals(p12FileName)) {
+            Credential credential;
+            if (serviceAccount) {
                 credential = authorizeServiceAccount(emailAddress, p12FileName, scopes, user);
             } else {
                 credential = authorize(clientId, clientSecret, scopes);
@@ -61,9 +69,8 @@ public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFac
             }
             return new Calendar.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
         } catch (Exception e) {
-            LOG.error("Could not create Google Drive client.", e);
+            throw new RuntimeCamelException("Could not create Google Calendar client.", e);
         }
-        return null;
     }
 
     // Authorizes the installed application to access user's protected data.

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,6 +29,17 @@ public class CamelAwsTest extends BaseKarafTest {
     public void test() throws Exception {
         testComponent(COMPONENT, "aws-cw");
         testComponent(COMPONENT, "aws-ddb");
+        testComponent(COMPONENT, "aws-ddbstream");
+        testComponent(COMPONENT, "aws-ec2");
+        testComponent(COMPONENT, "aws-ecs");
+        testComponent(COMPONENT, "aws-eks");
+        testComponent(COMPONENT, "aws-iam");
+        testComponent(COMPONENT, "aws-kinesis");
+        testComponent(COMPONENT, "aws-kinesis-firehose");
+        testComponent(COMPONENT, "aws-kms");
+        testComponent(COMPONENT, "aws-lambda");
+        testComponent(COMPONENT, "aws-mq");
+        testComponent(COMPONENT, "aws-msk");
         testComponent(COMPONENT, "aws-s3");
         testComponent(COMPONENT, "aws-sdb");
         testComponent(COMPONENT, "aws-ses");

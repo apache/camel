@@ -1,0 +1,141 @@
+[[class-component]]
+== Class Component
+
+*Available as of Camel version 2.4*
+
+The *class:* component binds beans to Camel message exchanges. It works
+in the same way as the <<bean-component,Bean>> component but instead of
+looking up beans from a Registry it creates the bean
+based on the class name.
+
+=== URI format
+
+[source]
+----
+class:className[?options]
+----
+
+Where *className* is the fully qualified class name to create and use as
+bean.
+
+=== Options
+
+
+// component options: START
+The Class component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *cache* (advanced) | If enabled, Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope. |  | Boolean
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+// endpoint options: START
+The Class endpoint is configured using URI syntax:
+
+----
+class:beanName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *beanName* | *Required* Sets the name of the bean to invoke |  | String
+|===
+
+
+==== Query Parameters (4 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *method* (producer) | Sets the name of the method to invoke on the bean |  | String
+| *cache* (advanced) | If enabled, Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope. |  | Boolean
+| *parameters* (advanced) | Used for configuring additional properties on the bean |  | Map
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+
+=== Using
+
+You simply use the *class* component just as the <<bean-component,Bean>>
+component but by specifying the fully qualified classname instead. +
+ For example to use the `MyFooBean` you have to do as follows:
+
+[source,java]
+-------------------------------------------------------------------------------------------------
+    from("direct:start").to("class:org.apache.camel.component.bean.MyFooBean").to("mock:result");
+-------------------------------------------------------------------------------------------------
+
+You can also specify which method to invoke on the `MyFooBean`, for
+example `hello`:
+
+[source,java]
+--------------------------------------------------------------------------------------------------------------
+    from("direct:start").to("class:org.apache.camel.component.bean.MyFooBean?method=hello").to("mock:result");
+--------------------------------------------------------------------------------------------------------------
+
+=== Setting properties on the created instance
+
+In the endpoint uri you can specify properties to set on the created
+instance, for example if it has a `setPrefix` method:
+
+[source,java]
+---------------------------------------------------------------------------------
+   // Camel 2.17 onwards
+   from("direct:start")
+        .to("class:org.apache.camel.component.bean.MyPrefixBean?bean.prefix=Bye")
+        .to("mock:result");
+ 
+   // Camel 2.16 and older 
+   from("direct:start")
+        .to("class:org.apache.camel.component.bean.MyPrefixBean?prefix=Bye")
+        .to("mock:result");
+---------------------------------------------------------------------------------
+
+And you can also use the `#` syntax to refer to properties to be looked
+up in the Registry.
+
+[source,java]
+--------------------------------------------------------------------------------
+    // Camel 2.17 onwards
+    from("direct:start")
+        .to("class:org.apache.camel.component.bean.MyPrefixBean?bean.cool=#foo")
+        .to("mock:result");
+
+    // Camel 2.16 and older
+    from("direct:start")
+        .to("class:org.apache.camel.component.bean.MyPrefixBean?cool=#foo")
+        .to("mock:result");
+--------------------------------------------------------------------------------
+
+Which will lookup a bean from the Registry with the
+id `foo` and invoke the `setCool` method on the created instance of the
+`MyPrefixBean` class.
+
+TIP:See more details at the <<bean-component,Bean>> component as the *class*
+component works in much the same way.
+
+=== See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+
+* <<bean-component,Bean>>
+* Bean Binding
+* Bean Integration

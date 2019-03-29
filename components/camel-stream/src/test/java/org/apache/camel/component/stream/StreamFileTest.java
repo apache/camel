@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -92,7 +92,7 @@ public class StreamFileTest extends CamelTestSupport {
                 from("direct:start").routeId("produce")
                     .to("stream:file?fileName=target/stream/StreamFileTest.txt&autoCloseCount=2");
                 from("file://target/stream?fileName=StreamFileTest.txt&noop=true").routeId("consume").autoStartup(false)
-                    .split().tokenize(System.lineSeparator()).to("mock:result");
+                    .split().tokenize(LS).to("mock:result");
             }
         });
         context.start();
@@ -101,7 +101,7 @@ public class StreamFileTest extends CamelTestSupport {
         template.sendBody("direct:start", "Apache");
         template.sendBody("direct:start", "Camel");
         
-        context.startRoute("consume");
+        context.getRouteController().startRoute("consume");
         assertMockEndpointsSatisfied();
         context.stop();
     }

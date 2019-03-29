@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,9 +23,6 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 
-/**
- * @version 
- */
 public class InjectedBean {
     @EndpointInject(uri = "direct:fieldInjectedEndpoint")
     private Endpoint fieldInjectedEndpoint;
@@ -53,7 +50,7 @@ public class InjectedBean {
         return propertyInjectedEndpoint;
     }
 
-    @EndpointInject(ref = "namedEndpoint1")
+    @EndpointInject(uri = "ref:namedEndpoint1")
     public void setPropertyInjectedEndpoint(Endpoint propertyInjectedEndpoint) {
         this.propertyInjectedEndpoint = propertyInjectedEndpoint;
     }

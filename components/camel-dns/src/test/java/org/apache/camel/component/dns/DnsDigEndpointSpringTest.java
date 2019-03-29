@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -43,10 +43,10 @@ public class DnsDigEndpointSpringTest extends CamelSpringTestSupport {
         + "of monkeys: any of the smaller longer-tailed catarrhine or " + "platyrrhine primates as contrasted with the apes.\" "
         + "\" http://en.wikipedia.org/wiki/Monkey\"";
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     @Override
@@ -64,7 +64,7 @@ public class DnsDigEndpointSpringTest extends CamelSpringTestSupport {
                 return RESPONSE_MONKEY.equals(str);
             }
         });
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("dns.name", "monkey.wp.dg.cx");
         headers.put("dns.type", "TXT");
         template.sendBodyAndHeaders(null, headers);

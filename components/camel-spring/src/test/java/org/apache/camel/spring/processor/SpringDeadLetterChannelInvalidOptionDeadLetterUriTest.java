@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,29 +15,31 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.processor;
-
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringDeadLetterChannelInvalidOptionDeadLetterUriTest extends SpringTestSupport {
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringDeadLetterChannelInvalidOptionDeadLetterUriTest.xml");
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         try {
             super.setUp();
             fail("Should have thrown an exception");
-        } catch (Exception e) {
-            ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause().getCause());
+        } catch (RuntimeCamelException e) {
+            FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e.getCause());
+            ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, ftcre.getCause());
             assertTrue(cause.getMessage().endsWith("Unknown parameters=[{foo=bar}]"));
         }
     }

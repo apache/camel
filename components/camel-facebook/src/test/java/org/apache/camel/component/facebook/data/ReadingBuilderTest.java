@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -64,7 +64,7 @@ public class ReadingBuilderTest {
     public void testSetProperties() throws Exception {
         final Reading reading = new Reading();
 
-        Map<String, Object> properties = new HashMap<String, Object>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put("fields", "field1,field2");
         properties.put("filter", "testFilter");
         properties.put("limit", "100");

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,8 +19,10 @@ package org.apache.camel.jsonpath;
 import com.jayway.jsonpath.Option;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LanguageSupport;
 
+@Language("jsonpath")
 public class JsonPathLanguage extends LanguageSupport {
 
     private Class<?> resultType;
@@ -58,6 +60,7 @@ public class JsonPathLanguage extends LanguageSupport {
     @Override
     public Predicate createPredicate(final String predicate) {
         JsonPathExpression answer = new JsonPathExpression(predicate);
+        answer.setPredicate(true);
         answer.setResultType(resultType);
         answer.setSuppressExceptions(suppressExceptions);
         answer.setOptions(options);
@@ -68,6 +71,7 @@ public class JsonPathLanguage extends LanguageSupport {
     @Override
     public Expression createExpression(final String expression) {
         JsonPathExpression answer = new JsonPathExpression(expression);
+        answer.setPredicate(false);
         answer.setResultType(resultType);
         answer.setSuppressExceptions(suppressExceptions);
         answer.setOptions(options);

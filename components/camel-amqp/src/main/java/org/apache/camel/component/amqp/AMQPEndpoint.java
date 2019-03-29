@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,8 +27,8 @@ import org.apache.camel.spi.UriEndpoint;
  * This class extends JmsEndpoint because it uses Apache Qpid JMS-compatible client for
  * performing the AMQP connectivity.
  */
-@UriEndpoint(scheme = "amqp", extendsScheme = "jms", title = "AMQP",
-        syntax = "amqp:destinationType:destinationName", consumerClass = JmsConsumer.class, label = "messaging")
+@UriEndpoint(firstVersion = "1.2.0", scheme = "amqp", extendsScheme = "jms", title = "AMQP",
+        syntax = "amqp:destinationType:destinationName", label = "messaging")
 public class AMQPEndpoint extends JmsEndpoint implements AsyncEndpoint {
 
 }

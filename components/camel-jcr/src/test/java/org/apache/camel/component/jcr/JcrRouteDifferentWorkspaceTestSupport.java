@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,13 +26,13 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.Workspace;
 import javax.naming.Context;
 
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.jackrabbit.core.TransientRepository;
 import org.junit.Before;
 
 /**
  * JcrRouteDifferentWorkspaceTestSupport
- * 
  */
 public abstract class JcrRouteDifferentWorkspaceTestSupport extends CamelTestSupport {
 
@@ -65,15 +65,13 @@ public abstract class JcrRouteDifferentWorkspaceTestSupport extends CamelTestSup
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
+    protected void bindToRegistry(Registry registry) throws Exception {
         File config = new File(CONFIG_FILE);
         if (!config.exists()) {
             throw new FileNotFoundException("Missing config file: " + config.getPath());
         }
         
-        Context context = super.createJndiContext();
         repository = new TransientRepository(CONFIG_FILE, REPO_PATH);
-        context.bind("repository", repository);
-        return context;
+        registry.bind("repository", repository);
     }
 }

@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.spring-batch.enabled",
+      "description": "Enable spring-batch component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

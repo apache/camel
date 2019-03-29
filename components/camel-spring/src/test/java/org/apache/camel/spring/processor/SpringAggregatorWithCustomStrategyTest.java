@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,13 +19,13 @@ package org.apache.camel.spring.processor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
+
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringAggregatorWithCustomStrategyTest extends ContextTestSupport {
 
+    @Test
     public void testSendingMessagesWithCustomAggregator() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
 

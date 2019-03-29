@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,21 +15,22 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.config;
-
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- *
- */
 public class SpringRouteNoOutputTest extends SpringTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         createApplicationContext();
     }
 
+    @Test
     public void testRouteNoOutput() {
         // noop
     }
@@ -40,9 +41,9 @@ public class SpringRouteNoOutputTest extends SpringTestSupport {
         try {
             answer = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringRouteNoOutputTest.xml");
             fail("Should have thrown exception");
-        } catch (Exception e) {
-            IllegalArgumentException iae = (IllegalArgumentException) e.getCause();
-            assertEquals("Route myRoute has no outputs: Route(myRoute)[[From[direct:start]] -> []]", iae.getMessage());
+        } catch (RuntimeCamelException e) {
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertEquals("Route myRoute has no outputs: Route(myRoute)[From[direct:start] -> []]", iae.getMessage());
             return null;
         }
 

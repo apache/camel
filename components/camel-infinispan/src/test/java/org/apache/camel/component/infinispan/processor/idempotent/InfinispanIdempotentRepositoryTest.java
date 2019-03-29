@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,8 @@ package org.apache.camel.component.infinispan.processor.idempotent;
 
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.api.BasicCacheContainer;
+import org.infinispan.configuration.cache.Configuration;
+import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.configuration.global.GlobalConfiguration;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
@@ -30,15 +32,17 @@ import static org.jgroups.util.Util.assertTrue;
 
 public class InfinispanIdempotentRepositoryTest {
 
-    public static final GlobalConfiguration GLOBAL_CONFIGURATION = new GlobalConfigurationBuilder().globalJmxStatistics().allowDuplicateDomains(true).build();
+    public static final GlobalConfiguration GLOBAL_CONFIGURATION = new GlobalConfigurationBuilder().build();
 
     protected BasicCacheContainer basicCacheContainer;
     protected InfinispanIdempotentRepository idempotentRepository;
-    protected String cacheName = "test";
+    protected String cacheName = "default";
 
     @Before
     public void setUp() throws Exception {
-        basicCacheContainer = new DefaultCacheManager(GLOBAL_CONFIGURATION);
+        GlobalConfiguration global = new GlobalConfigurationBuilder().globalJmxStatistics().allowDuplicateDomains(true).build();
+        Configuration conf = new ConfigurationBuilder().build();
+        basicCacheContainer = new DefaultCacheManager(global, conf);
         basicCacheContainer.start();
         idempotentRepository = InfinispanIdempotentRepository.infinispanIdempotentRepository(basicCacheContainer, cacheName);
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,9 +19,6 @@ package org.apache.camel.component.restlet;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 
-/**
- * @version 
- */
 public class RestRestletCustomDataFormatTest extends RestRestletPojoInOutCustomErrorResponseTest {
 
     @Override

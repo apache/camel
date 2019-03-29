@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.dozer;
 
-import org.dozer.ConfigurableCustomConverter;
+import com.github.dozermapper.core.ConfigurableCustomConverter;
 
 /**
  * Configurable converters in Dozer are not thread-safe if a single converter 
@@ -33,7 +33,7 @@ import org.dozer.ConfigurableCustomConverter;
  */
 public abstract class BaseConverter implements ConfigurableCustomConverter {
     
-    private ThreadLocal<String> localParameter = new ThreadLocal<String>();
+    private ThreadLocal<String> localParameter = new ThreadLocal<>();
     
     @Override
     public void setParameter(String parameter) {

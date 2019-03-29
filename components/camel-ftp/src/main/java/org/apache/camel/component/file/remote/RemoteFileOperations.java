@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -47,6 +47,13 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
      * @throws GenericFileOperationFailedException can be thrown
      */
     void disconnect() throws GenericFileOperationFailedException;
+
+    /**
+     * Forces a hard disconnect from the remote server and cause the client to be re-created on next poll.
+     *
+     * @throws GenericFileOperationFailedException can be thrown
+     */
+    void forceDisconnect() throws GenericFileOperationFailedException;
 
     /**
      * Sends a noop command to the remote server

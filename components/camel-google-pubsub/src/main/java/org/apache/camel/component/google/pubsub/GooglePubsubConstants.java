@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,6 +22,7 @@ public final class GooglePubsubConstants {
     public static final String ACK_ID = "CamelGooglePubsub.MsgAckId";
     public static final String PUBLISH_TIME = "CamelGooglePubsub.PublishTime";
     public static final String ATTRIBUTES = "CamelGooglePubsub.Attributes";
+    public static final String ACK_DEADLINE = "CamelGooglePubsub.AckDeadline";
 
     public enum AckMode {
         AUTO, NONE

@@ -1,0 +1,43 @@
+[[HowdoesCamelcomparetoServiceMix-HowdoesCamelcomparetoServiceMix]]
+=== How does Camel compare to ServiceMix?
+
+Camel is smart routing and mediation engine which implements the
+link:../enterprise-integration-patterns.adoc[Enterprise Integration
+Patterns] and is designed to be used either inside an ESB like
+ServiceMix, in a Message Broker like ActiveMQ or in a smart endpoint or
+web services framework like CXF. ServiceMix is an ESB, a JBI container
+and an integration platform. So they both address different needs though
+they are both designed to work great together.
+
+Camel can be deployed as a component within ServiceMix to provide
+link:../enterprise-integration-patterns.adoc[EIP routing and mediation]
+between existing JBI components together with communicating with any of
+the other Camel link:../component.adoc[Components] along with defining new
+JBI components on the NMR. So Camel is similar to the
+link:how-does-camel-compare-to-servicemix-eip.adoc[ServiceMix EIP
+component].
+
+To work with Camel and ServiceMix you take your Camel
+link:../spring.adoc[Spring] configuration and turn it into a JBI Service
+Unit using the maven plugin or archetype. For more details see
+http://incubator.apache.org/servicemix/servicemix-camel.html[ServiceMix
+Camel plugin].
+
+So you could start out using Camel routing inside your application via
+link:../dsl.adoc[Java] or link:../spring.adoc[Spring]; then later on if you
+choose to you could wrap up your routing and mediation rules as a JBI
+deployment unit and drop it into your ServiceMix ESB. This provides a
+nice agile approach to integration; start small & simple on an endpoint
+then as and when you need to migrate your integration components into
+your ESB for more centralised management, governance and operational
+monitoring etc.
+
+[[HowdoesCamelcomparetoServiceMix-SeeAlso]]
+==== See Also
+
+* link:how-does-camel-work-with-servicemix.adoc[How does Camel work with
+ServiceMix]
+* link:how-does-camel-compare-to-servicemix-eip.adoc[How does Camel
+compare to ServiceMix EIP]
+* http://incubator.apache.org/servicemix/servicemix-camel.html[ServiceMix
+Camel plugin]

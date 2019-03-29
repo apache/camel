@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,31 +19,33 @@ package org.apache.camel.component.file.remote;
 import java.net.URI;
 import java.util.Map;
 
-import com.jcraft.jsch.ChannelSftp;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.file.FileProcessStrategy;
 import org.apache.camel.component.file.GenericFileEndpoint;
+import org.apache.camel.component.file.remote.strategy.SftpProcessStrategyFactory;
+import org.apache.camel.spi.annotations.Component;
 
 /**
  * Secure FTP Component
  */
-public class SftpComponent extends RemoteFileComponent<ChannelSftp.LsEntry> {
+@Component("sftp")
+@FileProcessStrategy(SftpProcessStrategyFactory.class)
+public class SftpComponent extends RemoteFileComponent<SftpRemoteFile> {
 
     public SftpComponent() {
-        setEndpointClass(SftpEndpoint.class);
     }
 
     public SftpComponent(CamelContext context) {
         super(context);
-        setEndpointClass(SftpEndpoint.class);
     }
 
     @Override
-    protected GenericFileEndpoint<ChannelSftp.LsEntry> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected GenericFileEndpoint<SftpRemoteFile> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // get the base uri part before the options as they can be non URI valid such as the expression using $ chars
         // and the URI constructor will regard $ as an illegal character and we dont want to enforce end users to
         // to escape the $ for the expression (file language)
         String baseUri = uri;
-        if (uri.indexOf("?") != -1) {
+        if (uri.contains("?")) {
             baseUri = uri.substring(0, uri.indexOf("?"));
         }
 
@@ -56,7 +58,7 @@ public class SftpComponent extends RemoteFileComponent<ChannelSftp.LsEntry> {
         return new SftpEndpoint(uri, this, config);
     }
 
-    protected void afterPropertiesSet(GenericFileEndpoint<ChannelSftp.LsEntry> endpoint) throws Exception {
+    protected void afterPropertiesSet(GenericFileEndpoint<SftpRemoteFile> endpoint) throws Exception {
         // noop
     }
 

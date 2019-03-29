@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.spring;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,8 +31,6 @@ import org.springframework.beans.factory.FactoryBean;
 
 /**
  * Configuration of routes using XML
- *
- * @version
  */
 @Metadata(label = "spring,configuration,routing")
 @XmlRootElement(name = "routeContext")
@@ -39,7 +38,7 @@ import org.springframework.beans.factory.FactoryBean;
 public class CamelRouteContextFactoryBean extends IdentifiedType implements FactoryBean<List<RouteDefinition>> {
 
     @XmlElement(name = "route", required = true)
-    private List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
+    private List<RouteDefinition> routes = new ArrayList<>();
 
     public List<RouteDefinition> getObject() throws Exception {
         return routes;

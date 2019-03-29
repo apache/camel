@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
-
 import java.util.Date;
 
 import javax.mail.Folder;
@@ -24,11 +23,11 @@ import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 
 import com.sun.mail.imap.SortTerm;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
@@ -39,6 +38,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailSortTermTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
@@ -62,7 +62,7 @@ public class MailSortTermTest extends CamelTestSupport {
         MockEndpoint mockAsc = getMockEndpoint("mock:resultAscending");
         mockAsc.expectedBodiesReceived("Earlier date", "Later date");
 
-        context.startAllRoutes();
+        context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
     }
@@ -106,7 +106,7 @@ public class MailSortTermTest extends CamelTestSupport {
             public void configure() throws Exception {
                 context.setAutoStartup(false);
 
-                from("pop3://bill@localhost?password=secret&searchTerm=#searchTerm&sortTerm=#sortAscendingDate").to("mock:resultAscending");
+                from("pop3://bill@localhost?password=secret&searchTerm=#searchTerm&sortTerm=#sortAscendingDate&consumer.initialDelay=100&consumer.delay=100").to("mock:resultAscending");
             }
         };
     }

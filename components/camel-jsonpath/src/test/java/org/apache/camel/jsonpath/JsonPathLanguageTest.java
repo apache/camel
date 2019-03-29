@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,14 +17,16 @@
 package org.apache.camel.jsonpath;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.jayway.jsonpath.Option;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.Language;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -59,6 +61,27 @@ public class JsonPathLanguageTest extends CamelTestSupport {
     public void testExpressionField() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new File("src/test/resources/type.json"));
+
+        Language lan = context.resolveLanguage("jsonpath");
+        Expression exp = lan.createExpression("$.kind");
+        String kind = exp.evaluate(exchange, String.class);
+
+        assertNotNull(kind);
+        assertEquals("full", kind);
+
+        exp = lan.createExpression("$.type");
+        String type = exp.evaluate(exchange, String.class);
+        assertNotNull(type);
+        assertEquals("customer", type);
+    }
+
+    @Test
+    public void testExpressionPojo() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        Map pojo = new HashMap();
+        pojo.put("kind", "full");
+        pojo.put("type", "customer");
+        exchange.getIn().setBody(pojo);
 
         Language lan = context.resolveLanguage("jsonpath");
         Expression exp = lan.createExpression("$.kind");

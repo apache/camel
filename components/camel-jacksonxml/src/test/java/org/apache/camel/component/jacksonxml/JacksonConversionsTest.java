@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,14 +30,14 @@ public class JacksonConversionsTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         // enable jackson type converter by setting this property on CamelContext
-        context.getProperties().put(JacksonXMLConstants.ENABLE_TYPE_CONVERTER, "true");
+        context.getGlobalOptions().put(JacksonXMLConstants.ENABLE_TYPE_CONVERTER, "true");
         return context;
     }
 
     @Test
     public void shouldConvertMapToPojo() {
         String name = "someName";
-        Map<String, String> pojoAsMap = new HashMap<String, String>();
+        Map<String, String> pojoAsMap = new HashMap<>();
         pojoAsMap.put("name", name);
 
         TestPojo testPojo = (TestPojo) template.requestBody("direct:test", pojoAsMap);

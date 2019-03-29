@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.bean-validator.enabled",
+      "description": "Enable bean-validator component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

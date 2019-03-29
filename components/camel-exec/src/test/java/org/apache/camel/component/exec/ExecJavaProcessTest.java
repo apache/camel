@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,6 +31,7 @@ import org.apache.camel.component.exec.impl.ProvokeExceptionExecCommandExecutor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -68,10 +69,10 @@ public class ExecJavaProcessTest extends CamelTestSupport {
 
     private static final String EXECUTABLE_PROGRAM_ARG = ExecutableJavaProgram.class.getName();
 
-    @Produce(uri = "direct:input")
+    @Produce("direct:input")
     ProducerTemplate producerTemplate;
 
-    @EndpointInject(uri = "mock:output")
+    @EndpointInject("mock:output")
     MockEndpoint output;
 
     @Override
@@ -401,7 +402,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
      */
     @Test
     public void testExecJavaProcessWithThrownExecException() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveByToString(".*java.*").replace().to("exec:java?commandExecutor=#executorMock");
@@ -450,7 +451,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
 
     List<String> buildArgs(Object commandArgument) {
         String classpath = System.getProperty("java.class.path");
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         args.add("-cp");
         args.add(classpath);
         args.add(EXECUTABLE_PROGRAM_ARG);
@@ -463,7 +464,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
      */
     List<String> buildFailArgs(Object commandArgument) {
         String classpath = System.getProperty("java.class.path");
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         args.add("-failArg");
         args.add(classpath);
         args.add(EXECUTABLE_PROGRAM_ARG);

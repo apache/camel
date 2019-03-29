@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,22 +15,22 @@
  * limitations under the License.
  */
 package org.apache.camel.component.rest;
-
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version
- */
 public class SpringFromRestDuplicateTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
+        System.setProperty("CamelSedaPollTimeout", "10");
         try {
             new ClassPathXmlApplicationContext("org/apache/camel/component/rest/SpringFromRestDuplicateTest.xml");
             fail("Should throw exception");
-        } catch (Exception e) {
+        } catch (RuntimeCamelException e) {
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("Duplicate verb detected in rest-dsl: get:{id}", iae.getMessage());
         }
@@ -38,11 +38,13 @@ public class SpringFromRestDuplicateTest extends SpringTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // must override as there is no valid spring xml file
         createApplicationContext();
     }
 
+    @Test
     public void testDuplicate() throws Exception {
         // noop
     }

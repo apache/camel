@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,21 +21,21 @@ import java.net.URI;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 import org.eclipse.californium.core.CoapServer;
 
 /**
  * The coap component is used for sending and receiving messages from COAP capable devices.
  */
-@UriEndpoint(scheme = "coap", title = "CoAP", syntax = "coap:uri", consumerClass = CoAPConsumer.class, label = "iot")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "coap", title = "CoAP", syntax = "coap:uri", label = "iot")
 public class CoAPEndpoint extends DefaultEndpoint {
     @UriPath
     private URI uri;
-    @UriParam(defaultValue = "*")
-    private String coapMethod = "*";
+    @UriParam(label = "consumer")
+    private String coapMethodRestrict;
         
     private CoAPComponent component;
     
@@ -49,17 +49,17 @@ public class CoAPEndpoint extends DefaultEndpoint {
         this.component = component;
     }
 
-    public void setCoapMethod(String m) {
-        coapMethod = m;
+    public void setCoapMethodRestrict(String coapMethodRestrict) {
+        this.coapMethodRestrict = coapMethodRestrict;
     }
+
     /**
-     * The CoAP method this endpoint binds to. Default is to bind to all ("*") but can
-     * be restricted to GET, POST, PUT, DELETE, PING 
-     * @return
+     * Comma separated list of methods that the CoAP consumer will bind to. The default is to bind to all methods (DELETE, GET, POST, PUT).
      */
-    public String getCoapMethod() {
-        return coapMethod;
+    public String getCoapMethodRestrict() {
+        return this.coapMethodRestrict;
     }
+
     public Producer createProducer() throws Exception {
         return new CoAPProducer(this);
     }

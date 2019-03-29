@@ -13,7 +13,7 @@ The example is implemented in plain Java without using any kind of _application 
 
 * camel-core
 * camel-jms
-* activemq-camel
+* camel-activemq
 
 ### Build
 
@@ -64,11 +64,6 @@ The Camel application can be stopped pressing <kbd>ctrl</kbd>+<kbd>c</kbd> in th
 ### Configuration
 
 The Camel application is configured in the `src/main/java/org/apache/camel/example/widget/WidgetMain.java` file.
-
-### Documentation
-
-This example is documented at
-	[http://camel.apache.org/widget-gadget.html](http://camel.apache.org/widget-gadget.html)
 
 ### Forum, Help, etc
 

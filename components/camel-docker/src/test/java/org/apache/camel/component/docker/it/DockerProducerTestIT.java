@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,16 +20,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Integration test listing images on Docker Platform
  */
-public class DockerProducerTestIT extends CamelTestSupport {
-
-    private String host = "192.168.59.103";
-    private String port = "2376";
+public class DockerProducerTestIT extends DockerITTestSupport {
 
     @Test
     public void testDocker() throws Exception {
@@ -46,9 +42,9 @@ public class DockerProducerTestIT extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:in")
-                        .to("docker://imagelist?host=" + host + "&port=" + port + "&certPath=/Users/cameluser/.docker/boot2docker-vm&secure=true")
-                        .log("${body}")
-                        .to("mock:result");
+                    .to("docker://imagelist?maxTotalConnections=10")
+                    .log("${body}")
+                    .to("mock:result");
             }
         };
     }

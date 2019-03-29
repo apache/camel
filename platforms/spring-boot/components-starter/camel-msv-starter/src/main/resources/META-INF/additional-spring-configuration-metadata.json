@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.msv.enabled",
+      "description": "Enable msv component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

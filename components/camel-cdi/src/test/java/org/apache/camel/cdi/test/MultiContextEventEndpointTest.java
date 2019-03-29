@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -101,7 +101,7 @@ public class MultiContextEventEndpointTest {
     @Test
     @InSequence(1)
     public void configureCamelContexts(@ContextName("second") CamelContext secondContext) throws Exception {
-        secondContext.startAllRoutes();
+        secondContext.getRouteController().startAllRoutes();
     }
 
     @Test

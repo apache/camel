@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,8 +32,8 @@ public class JdbcAggregateDiscardOnTimeoutTest extends AbstractJdbcAggregationTe
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
 
-        // wait 4 seconds
-        Thread.sleep(4000);
+        // wait 2 seconds
+        Thread.sleep(2000);
 
         mock.assertIsSatisfied();
 
@@ -57,8 +57,8 @@ public class JdbcAggregateDiscardOnTimeoutTest extends AbstractJdbcAggregationTe
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
                         .completionSize(3).aggregationRepository(repo)
-                        // use a 2 second timeout
-                        .completionTimeout(2000)
+                        // use a 1 second timeout
+                        .completionTimeout(1000)
                         // and if timeout occurred then just discard the aggregated message
                         .discardOnCompletionTimeout()
                         .to("mock:aggregated");

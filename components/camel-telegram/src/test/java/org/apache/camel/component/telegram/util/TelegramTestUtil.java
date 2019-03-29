@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -58,4 +58,8 @@ public final class TelegramTestUtil {
         return video;
     }
 
+    public static byte[] createSampleDocument() throws IOException {
+        byte[] document = IOUtils.readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.txt"));
+        return document;
+    }
 }

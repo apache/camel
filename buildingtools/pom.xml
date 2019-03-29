@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Licensed to the Apache Software Foundation (ASF) under one
-  or more contributor license agreements. See the NOTICE file
-  distributed with this work for additional information
-  regarding copyright ownership. The ASF licenses this file
-  to you under the Apache License, Version 2.0 (the
-  "License"); you may not use this file except in compliance
-  with the License. You may obtain a copy of the License at
- 
-  http://www.apache.org/licenses/LICENSE-2.0
- 
-  Unless required by applicable law or agreed to in writing,
-  software distributed under the License is distributed on an
-  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-  KIND, either express or implied. See the License for the
-  specific language governing permissions and limitations
-  under the License.
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel</artifactId>
-        <version>2.19.0-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-buildtools</artifactId>
+
     <name>Camel :: Buildtools</name>
     <description>The build tools for the Apache Camel project</description>
 
@@ -34,4 +36,116 @@
         <maven.test.skip>true</maven.test.skip>
     </properties>
 
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin><!--
+                     This updates header-*.txt with the content of
+                     header.txt and the appropriate formatting for
+                     the specific style.
+                     So edit header.txt (if you must) and header-*
+                     files in src/main/resources will be updated.
+                -->
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${mycila-license-version}</version>
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                        <configuration>
+                            <header>src/main/resources/header.txt</header>
+                            <includes>
+                                <include>**/header-java.txt</include>
+                                <include>**/header-properties.txt</include>
+                                <include>**/header-xml.txt</include>
+                            </includes>
+                            <mapping>
+                                <header-java.txt>SLASHSTAR_STYLE</header-java.txt>
+                                <header-properties.txt>CAMEL_PROPERTIES_STYLE</header-properties.txt>
+                                <header-xml.txt>XML_STYLE</header-xml.txt>
+                            </mapping>
+                            <headerDefinitions>
+                                <!-- custom style for properties files -->
+                                <headerDefinition>src/main/resources/license-properties-headerdefinition.xml
+                                </headerDefinition>
+                            </headerDefinitions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin><!--
+                     This loads the content of header-*.txt into
+                     header-* Maven properties to be included for
+                     resource filtering below.
+                -->
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>${gmavenplus-plugin-version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <scripts>
+                                <script><![CDATA[
+                                    import groovy.xml.XmlUtil
+                                    project.properties['header-java'] = XmlUtil.escapeXml(new File(project.basedir, 'src/main/resources/header-java.txt').text.replace('\r', '').replace('\n', '\\n'))
+                                    project.properties['header-properties'] = XmlUtil.escapeXml(new File(project.basedir, 'src/main/resources/header-properties.txt').text.replace('\r', '').replace('\n', '\\n'))
+                                    project.properties['header-xml'] = XmlUtil.escapeXml(new File(project.basedir, 'src/main/resources/header-xml.txt').text.replace('\r', '').replaceAll('(.*)\n', '^\\\\Q$1\\\\E\\$\\\\n'))
+                                    ]]></script>
+                            </scripts>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-ant</artifactId>
+                        <version>${groovy-version}</version>
+                        <scope>runtime</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-xml</artifactId>
+                        <version>${groovy-version}</version>
+                        <scope>runtime</scope>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin><!--
+                     This is needed so that the camel-checkstyle.xml is
+                     filltered so that the header values are updated
+                     with header-* Maven properties.
+                     The Maven Checkstyle plugin does not provide a way
+                     to reference more than one header file, so we need
+                     to put the headers as concrete values in the
+                     checkstyle rules.
+                -->
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <delimiters>
+                        <delimiter>${*}</delimiter>
+                    </delimiters>
+                    <useDefaultDelimiters>false</useDefaultDelimiters>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

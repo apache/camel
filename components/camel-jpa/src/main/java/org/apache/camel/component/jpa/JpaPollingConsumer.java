@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,13 +27,13 @@ import java.util.concurrent.TimeoutException;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.LockModeType;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.PollingConsumerSupport;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.PollingConsumerSupport;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -42,13 +42,13 @@ import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 
 public class JpaPollingConsumer extends PollingConsumerSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JpaProducer.class);
     private transient ExecutorService executorService;
     private final EntityManagerFactory entityManagerFactory;
     private final TransactionTemplate transactionTemplate;
     private String query;
     private String namedQuery;
     private String nativeQuery;
+    private LockModeType lockModeType = LockModeType.PESSIMISTIC_WRITE;
     private Class<?> resultClass;
     private QueryFactory queryFactory;
     private Map<String, Object> parameters;
@@ -86,6 +86,14 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
 
     public void setNativeQuery(String nativeQuery) {
         this.nativeQuery = nativeQuery;
+    }
+
+    public LockModeType getLockModeType() {
+        return lockModeType;
+    }
+
+    public void setLockModeType(LockModeType lockModeType) {
+        this.lockModeType = lockModeType;
     }
 
     public Class<?> getResultClass() {
@@ -126,24 +134,40 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
 
                 Query query = getQueryFactory().createQuery(entityManager);
                 configureParameters(query);
-                LOG.trace("Created query {}", query);
 
-                Object answer;
-                List<?> results = query.getResultList();
-
-                if (results != null && results.size() == 1) {
-                    // we only have 1 entity so return that
-                    answer = results.get(0);
-                } else {
-                    // we have more data so return a list
-                    answer = results;
+                if (getEndpoint().isConsumeLockEntity()) {
+                    query.setLockMode(getLockModeType());
                 }
 
-                // commit
-                LOG.debug("Flushing EntityManager");
-                entityManager.flush();
-                // must clear after flush
-                entityManager.clear();
+                log.trace("Created query {}", query);
+
+                Object answer;
+
+                try {
+                    List<?> results = query.getResultList();
+
+                    if (results != null && results.size() == 1) {
+                        // we only have 1 entity so return that
+                        answer = results.get(0);
+                    } else {
+                        // we have more data so return a list
+                        answer = results;
+                    }
+
+                    // commit
+                    log.debug("Flushing EntityManager");
+                    entityManager.flush();
+
+                    // must clear after flush
+                    entityManager.clear();
+
+                } catch (PersistenceException e) {
+                    log.info("Disposing EntityManager {} on {} due to coming transaction rollback", entityManager, this);
+
+                    entityManager.close();
+
+                    throw e;
+                }
 
                 return answer;
             }
@@ -173,7 +197,7 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
         try {
             return future.get(timeout, TimeUnit.MILLISECONDS);
         } catch (ExecutionException | InterruptedException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } catch (TimeoutException e) {
             // ignore as we hit timeout then return null
         }

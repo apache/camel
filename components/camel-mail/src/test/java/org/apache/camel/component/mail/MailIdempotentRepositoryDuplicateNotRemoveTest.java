@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,7 +34,7 @@ public class MailIdempotentRepositoryDuplicateNotRemoveTest extends MailIdempote
         // no 3 is already in the idempotent repo
         mock.expectedBodiesReceived("Message 0", "Message 1", "Message 2", "Message 4");
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 
@@ -50,7 +50,8 @@ public class MailIdempotentRepositoryDuplicateNotRemoveTest extends MailIdempote
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("imap://jones@localhost?password=secret&idempotentRepository=#myRepo&idempotentRepositoryRemoveOnCommit=false").routeId("foo").noAutoStartup()
+                from("imap://jones@localhost?password=secret&idempotentRepository=#myRepo&idempotentRepositoryRemoveOnCommit=false&consumer.initialDelay=100&consumer.delay=100")
+                    .routeId("foo").noAutoStartup()
                         .to("mock:result");
             }
         };

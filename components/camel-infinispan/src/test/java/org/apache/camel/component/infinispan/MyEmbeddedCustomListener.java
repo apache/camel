@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,6 +20,7 @@ import org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedCustomLi
 import org.infinispan.notifications.Listener;
 import org.infinispan.notifications.cachelistener.annotation.CacheEntryCreated;
 import org.infinispan.notifications.cachelistener.event.CacheEntryEvent;
+
 import static org.junit.Assert.assertEquals;
 
 @Listener(sync = true)

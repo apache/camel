@@ -20,10 +20,6 @@ To run the example type
 
 To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
-### Documentation
-
-This example is documented at
-  <http://camel.apache.org/pojo-messaging-example.html>
 
 ### Forum, Help, etc
 

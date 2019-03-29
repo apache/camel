@@ -1,0 +1,8 @@
+void read(org.apache.olingo.commons.api.edm.Edm edm, String resourcePath, java.util.Map<String, String> queryParams, java.util.Map<String, String> endpointHttpHeaders, org.apache.camel.component.olingo4.api.Olingo4ResponseHandler responseHandler);
+void uread(org.apache.olingo.commons.api.edm.Edm edm, String resourcePath, java.util.Map<String, String> queryParams, java.util.Map<String, String> endpointHttpHeaders, org.apache.camel.component.olingo4.api.Olingo4ResponseHandler responseHandler);
+void delete(String resourcePath, java.util.Map<String, String> endpointHttpHeaders, org.apache.camel.component.olingo4.api.Olingo4ResponseHandler responseHandler);
+void create(org.apache.olingo.commons.api.edm.Edm edm, String resourcePath, java.util.Map<String, String> endpointHttpHeaders, Object data, org.apache.camel.component.olingo4.api.Olingo4ResponseHandler responseHandler);
+void update(org.apache.olingo.commons.api.edm.Edm edm, String resourcePath, java.util.Map<String, String> endpointHttpHeaders, Object data, org.apache.camel.component.olingo4.api.Olingo4ResponseHandler responseHandler);
+void patch(org.apache.olingo.commons.api.edm.Edm edm, String resourcePath, java.util.Map<String, String> endpointHttpHeaders, Object data, org.apache.camel.component.olingo4.api.Olingo4ResponseHandler responseHandler);
+void merge(org.apache.olingo.commons.api.edm.Edm edm, String resourcePath, java.util.Map<String, String> endpointHttpHeaders, Object data, org.apache.camel.component.olingo4.api.Olingo4ResponseHandler responseHandler);
+void batch(org.apache.olingo.commons.api.edm.Edm edm, java.util.Map<String, String> endpointHttpHeaders, Object data, org.apache.camel.component.olingo4.api.Olingo4ResponseHandler responseHandler);

@@ -11,15 +11,15 @@ The example assumes you have a running Cassandra Cluster in your environment. We
 As first step we will need to run a single node cluster:
 
 ```
-docker run --name master_node -dt oscerd/cassandra
-docker run --name node1 -d -e SEED="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' master_node)" oscerd/cassandra
-docker run --name node2 -d -e SEED="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' master_node)" oscerd/cassandra
+$ docker run --name master_node -dt oscerd/cassandra
+$ docker run --name node1 -d -e SEED="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' master_node)" oscerd/cassandra
+$ docker run --name node2 -d -e SEED="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' master_node)" oscerd/cassandra
 ```
 
 We now have three nodes in our cluster.
 
 ```
-docker exec -ti master_node /opt/cassandra/bin/nodetool status
+$ docker exec -ti master_node /opt/cassandra/bin/nodetool status
 Datacenter: datacenter1
 =======================
 Status=Up/Down

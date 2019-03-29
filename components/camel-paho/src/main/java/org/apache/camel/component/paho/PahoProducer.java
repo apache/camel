@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,7 @@
 package org.apache.camel.component.paho;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
@@ -30,16 +30,17 @@ public class PahoProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         MqttClient client = getEndpoint().getClient();
-        String topic = getEndpoint().getTopic();
-        
+
+        String topic = exchange.getIn().getHeader(PahoConstants.CAMEL_PAHO_OVERRIDE_TOPIC, getEndpoint().getTopic(), String.class);
         int qos = exchange.getIn().getHeader(PahoConstants.CAMEL_PAHO_MSG_QOS, getEndpoint().getQos(), Integer.class);
         boolean retained = exchange.getIn().getHeader(PahoConstants.CAMEL_PAHO_MSG_RETAINED, getEndpoint().isRetained(), Boolean.class);
-        
         byte[] payload = exchange.getIn().getBody(byte[].class);
 
         MqttMessage message = new MqttMessage(payload);
         message.setQos(qos);
         message.setRetained(retained);
+
+        log.debug("Publishing to topic: {}, qos: {}, retrained: {}", topic, qos, retained);
         client.publish(topic, message);
     }
 

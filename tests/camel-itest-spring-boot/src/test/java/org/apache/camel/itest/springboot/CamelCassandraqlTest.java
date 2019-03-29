@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,6 @@
 package org.apache.camel.itest.springboot;
 
 import org.apache.camel.itest.springboot.util.ArquillianPackager;
-import org.apache.camel.itest.springboot.util.DependencyResolver;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -36,13 +35,9 @@ public class CamelCassandraqlTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelCassandraqlTest.class))
-                .dependency("io.netty:netty-all:" + DependencyResolver.resolveParentProperty("${cassandra-netty-version-testing}"))
-                //.dependency(DependencyResolver.withVersion("io.netty:netty-all"))
-//                .dependency(DependencyResolver.withVersion("io.dropwizard.metrics:metrics-core"))
-//                .exclusion("com.codahale.metrics:*")
                 .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|CassandraComponentProducerTest$|CassandraComponentBeanRefTest$|CassandraComponentConsumerTest$)")
-                //.unitTestInclusionPattern(".*NamedCassandraAggregationRepositoryTest$")
-                // excluded tests have been checked manually (they need to run on their own JVM)
+                .includeTestDependencies(false)
+                .unitTestsEnabled(false)
                 .build();
     }
 

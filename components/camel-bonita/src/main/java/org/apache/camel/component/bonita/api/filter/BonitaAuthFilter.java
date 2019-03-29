@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.bonita.api.filter;
 
 import java.io.IOException;
@@ -49,6 +48,7 @@ public class BonitaAuthFilter implements ClientRequestFilter {
         if (requestContext.getCookies().get("JSESSIONID") == null) {
             String username = bonitaApiConfig.getUsername();
             String password = bonitaApiConfig.getPassword();
+            String bonitaApiToken = null;
             if (ObjectHelper.isEmpty(username)) {
                 throw new IllegalArgumentException("Username provided is null or empty.");
             }
@@ -59,7 +59,7 @@ public class BonitaAuthFilter implements ClientRequestFilter {
             Client client = clientBuilder.build();
             WebTarget webTarget =
                     client.target(bonitaApiConfig.getBaseBonitaURI()).path("loginservice");
-            MultivaluedMap<String, String> form = new MultivaluedHashMap<String, String>();
+            MultivaluedMap<String, String> form = new MultivaluedHashMap<>();
             form.add("username", username);
             form.add("password", password);
             form.add("redirect", "false");
@@ -68,9 +68,14 @@ public class BonitaAuthFilter implements ClientRequestFilter {
             Map<String, NewCookie> cr = response.getCookies();
             ArrayList<Object> cookies = new ArrayList<>();
             for (NewCookie cookie : cr.values()) {
-                cookies.add(cookie.toCookie());
+                if ("X-Bonita-API-Token".equals(cookie.getName())) {
+                    bonitaApiToken = cookie.getValue();
+                    requestContext.getHeaders().add("X-Bonita-API-Token", bonitaApiToken);
+                }
+                cookies.add(cookie.toString());
             }
             requestContext.getHeaders().put("Cookie", cookies);
+
         }
     }
 

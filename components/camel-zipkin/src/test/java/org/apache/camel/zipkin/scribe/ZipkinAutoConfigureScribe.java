@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,10 +26,17 @@ import org.junit.Test;
 /**
  * Integration test requires running Zipkin/Scribe running
  *
- * The easiest way is to run using zipkin-docker: https://github.com/openzipkin/docker-zipkin
+ * <p>The easiest way to run is locally:
+ * <pre>{@code
+ * curl -sSL https://zipkin.io/quickstart.sh | bash -s
+ * SCRIBE_ENABLED=true java -jar zipkin.jar
+ * }</pre>
  *
- * Adjust the IP address to what IP docker-machines have assigned, you can use
- * <tt>docker-machines ls</tt>
+ * <p>This test has to be run with environment variables set. For example:
+ * <pre>{@code
+ * ZIPKIN_COLLECTOR_THRIFT_SERVICE_HOST=localhost
+ * ZIPKIN_COLLECTOR_THRIFT_SERVICE_PORT=9410
+ * }</pre>
  */
 public class ZipkinAutoConfigureScribe extends CamelTestSupport {
 
@@ -43,7 +50,7 @@ public class ZipkinAutoConfigureScribe extends CamelTestSupport {
         // we have one route as service
         zipkin.addClientServiceMapping("seda:cat", "cat");
         zipkin.addServerServiceMapping("seda:cat", "cat");
-        // should auto configure as we have not setup a spanCollector
+        // should auto configure as we have not setup a span reporter
 
         // attaching ourself to CamelContext
         zipkin.init(context);

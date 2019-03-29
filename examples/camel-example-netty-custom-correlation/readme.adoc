@@ -1,0 +1,30 @@
+== Camel Example Netty Custom Correlation
+
+This example shows how to use TCP communication with Netty using a custom codec
+to encode and decode the data over the wire.
+
+The example also uses a single shared connection between the client and the server
+to multiplex concurrent messages over the same connection. A custom correlation manager
+is implemented to be able to correlate the request and response message pairs so you
+do not mix-data to wrong replies.
+
+=== How to run
+
+You can run this example using two JVMs.
+
+To start the server run:
+
+    mvn compile exec:java -P server
+
+To start the client run:
+
+    mvn compile exec:java -P client
+
+In the client output you should see it logs request/response pairs.
+For requests that contains the word `beer` is delayed on the server side, and you
+should notice that its corresponding reply is correlated correclty to its beloing request thread.
+Also the messages can be inter-leaved when some messages are faster than others.
+
+=== More information
+
+You can find more information about Apache Camel at the website: http://camel.apache.org/

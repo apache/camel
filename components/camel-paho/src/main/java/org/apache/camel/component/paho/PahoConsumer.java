@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,16 +20,13 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PahoConsumer extends DefaultConsumer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(PahoConsumer.class);
 
     public PahoConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -39,16 +36,28 @@ public class PahoConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         String topic = getEndpoint().getTopic();
-        getEndpoint().getClient().subscribe(topic);
-        getEndpoint().getClient().setCallback(new MqttCallback() {
+        getEndpoint().getClient().subscribe(topic, getEndpoint().getQos());
+        getEndpoint().getClient().setCallback(new MqttCallbackExtended() {
+
+            @Override
+            public void connectComplete(boolean reconnect, String serverURI) {
+                if (reconnect) {
+                    try {
+                        getEndpoint().getClient().subscribe(topic, getEndpoint().getQos());
+                    } catch (MqttException e) {
+                        log.error("MQTT resubscribe failed {}", e.getMessage(), e);
+                    }
+                }
+            }
+
             @Override
             public void connectionLost(Throwable cause) {
-                LOG.debug("MQTT broker connection lost due " + cause.getMessage(), cause);
+                log.debug("MQTT broker connection lost due {}", cause.getMessage(), cause);
             }
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                LOG.debug("Message arrived on topic: {} -> {}", topic, message);
+                log.debug("Message arrived on topic: {} -> {}", topic, message);
                 Exchange exchange = getEndpoint().createExchange(message, topic);
 
                 getAsyncProcessor().process(exchange, new AsyncCallback() {
@@ -61,7 +70,7 @@ public class PahoConsumer extends DefaultConsumer {
 
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {
-                LOG.debug("Delivery complete. Token: {}", token);
+                log.debug("Delivery complete. Token: {}", token);
             }
         });
     }

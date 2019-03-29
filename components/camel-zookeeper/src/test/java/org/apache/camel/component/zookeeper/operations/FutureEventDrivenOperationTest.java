@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,8 +19,8 @@ package org.apache.camel.component.zookeeper.operations;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher.Event.EventType;
 import org.apache.zookeeper.data.Stat;
-
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 
 
@@ -38,7 +38,7 @@ public class FutureEventDrivenOperationTest {
 
             @Override
             public OperationResult<String> getResult() {
-                return new OperationResult<String>(data, statistics);
+                return new OperationResult<>(data, statistics);
             }
         };
 

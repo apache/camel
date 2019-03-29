@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,17 +30,21 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.support.DefaultConversionService;
 
 @Configuration
-@ConditionalOnProperty(value = "camel.springboot.typeConversion", matchIfMissing = true)
+@ConditionalOnProperty(value = "camel.springboot.type-conversion", matchIfMissing = true)
 public class TypeConversionConfiguration {
 
-    @Bean(initMethod = "", destroyMethod = "")
+    // We explicitly declare the destroyMethod to be "" as the Spring @Bean
+    // annotation defaults to AbstractBeanDefinition.INFER_METHOD otherwise
+    // and in that case ShutdownableService::shutdown/Service::close
+    // (BaseTypeConverterRegistry extends ServiceSupport) would be used for
+    // bean destruction. And we want Camel to handle the lifecycle.
+    @Bean(destroyMethod = "")
     // Camel handles the lifecycle of this bean
     TypeConverter typeConverter(CamelContext camelContext) {
         return camelContext.getTypeConverter();
     }
 
-    @Bean(initMethod = "", destroyMethod = "")
-    // Camel handles the lifecycle of this bean
+    @Bean
     SpringTypeConverter springTypeConverter(CamelContext camelContext, ConversionService[] conversionServices) {
         SpringTypeConverter springTypeConverter = new SpringTypeConverter(asList(conversionServices));
         camelContext.getTypeConverterRegistry().addFallbackTypeConverter(springTypeConverter, true);

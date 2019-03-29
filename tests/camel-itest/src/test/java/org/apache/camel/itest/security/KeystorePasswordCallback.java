@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,8 +27,7 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 public class KeystorePasswordCallback implements CallbackHandler {
     
-    private Map<String, String> passwords = 
-        new HashMap<String, String>();
+    private Map<String, String> passwords = new HashMap<>();
     
     public KeystorePasswordCallback() {
         passwords.put("alice", "password");

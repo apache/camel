@@ -1,0 +1,49 @@
+== LRA Component
+
+*Available as of Camel version 2.21.0*
+
+The LRA module provides bindings of the Saga EIP with any https://github.com/eclipse/microprofile-sandbox/tree/master/proposals/0009-LRA[Microprofile compatible LRA Coordinator (sandbox)].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-lra</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-lra-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.service.lra.coordinator-context-path* | The context path of the LRA coordinator service |  | String
+| *camel.service.lra.coordinator-url* | The base URL of the LRA coordinator service (e.g. http://lra-host:8080) |  | String
+| *camel.service.lra.enabled* | Global option to enable/disable component auto-configuration, default is true. | true | Boolean
+| *camel.service.lra.local-participant-context-path* | The context path of the local participant callback services |  | String
+| *camel.service.lra.local-participant-url* | The local URL where the coordinator should send callbacks to (e.g. http://my-host-name:8080) |  | String
+|===
+// spring-boot-auto-configure options: END

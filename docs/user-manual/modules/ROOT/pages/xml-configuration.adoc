@@ -1,0 +1,25 @@
+[[XMLConfiguration-XMLConfiguration]]
+=== XML Configuration
+
+We recommend developers use the Java link:dsl.adoc[Domain Specific
+Language] when writing routing rules as this provides maximum IDE
+completion and functionality while being the most expressive. However if
+you wish to put your routing rules in XML you can via the Camel XML
+language.
+
+Camel XML uses link:spring.adoc[Spring] 2 namespaces; so that you can
+configure your routing rules within your link:spring.adoc[Spring XML
+configuration file]; you can also use
+link:faq/how-do-i-configure-endpoints.adoc[Java code to configure components
+and endpoints].
+
+For examples on how to use Camel XML, see the
+link:enterprise-integration-patterns.adoc[Enterprise Integration
+Patterns] or refer to the link:spring.adoc[Spring Support].
+
+[[XMLConfiguration-SeeAlso]]
+=== See Also
+
+* link:xml-reference.adoc[XML Reference]
+* link:faq/how-do-i-use-spring-property-placeholder-with-camel-xml.adoc[How
+do I use Spring Property Placeholder with Camel XML]

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,18 +29,17 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.xml.QNameMap;
 import com.thoughtworks.xstream.io.xml.StaxReader;
 import com.thoughtworks.xstream.io.xml.StaxWriter;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.util.IOHelper;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) using XStream to marshal to and from XML
- *
- * @version 
  */
+@Dataformat("xstream")
 public class XStreamDataFormat extends AbstractXStreamWrapper  {
     private String encoding;
     
@@ -64,9 +63,23 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
         return encoding;
     }
 
+    @Override
+    public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
+        super.marshal(exchange, body, stream);
+
+        if (isContentTypeHeader()) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            }
+        }
+    }
+
     /**
      * A factory method which takes a collection of types to be annotated
      */
+    @Deprecated
     public static XStreamDataFormat processAnnotations(ClassResolver resolver, Iterable<Class<?>> types) {
         XStreamDataFormat answer = new XStreamDataFormat();
         XStream xstream = answer.getXStream(resolver);
@@ -79,6 +92,7 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
     /**
      * A factory method which takes a number of types to be annotated
      */
+    @Deprecated
     public static XStreamDataFormat processAnnotations(ClassResolver resolver, Class<?>... types) {
         XStreamDataFormat answer = new XStreamDataFormat();
         XStream xstream = answer.getXStream(resolver);

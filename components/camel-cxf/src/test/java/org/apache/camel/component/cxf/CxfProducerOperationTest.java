@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,9 +24,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class CxfProducerOperationTest extends CxfProducerTest {
     private static final String NAMESPACE = "http://apache.org/hello_world_soap_http";
 
@@ -51,7 +48,7 @@ public class CxfProducerOperationTest extends CxfProducerTest {
     private Exchange sendSimpleMessage(String endpointUri) {
         Exchange exchange = template.send(endpointUri, new Processor() {
             public void process(final Exchange exchange) {
-                final List<String> params = new ArrayList<String>();
+                final List<String> params = new ArrayList<>();
                 params.add(TEST_MESSAGE);
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(Exchange.FILE_NAME, "testFile");
@@ -65,7 +62,7 @@ public class CxfProducerOperationTest extends CxfProducerTest {
     protected Exchange sendJaxWsMessage() {
         Exchange exchange = template.send(getJaxwsEndpointUri(), new Processor() {
             public void process(final Exchange exchange) {
-                final List<String> params = new ArrayList<String>();
+                final List<String> params = new ArrayList<>();
                 params.add(TEST_MESSAGE);
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(Exchange.FILE_NAME, "testFile");
@@ -79,11 +76,11 @@ public class CxfProducerOperationTest extends CxfProducerTest {
         Exchange exchange = template.send(getSimpleEndpointUri(), new Processor() {
             public void process(final Exchange exchange) {
                 // we need to override the operation name first                
-                final List<String> para1 = new ArrayList<String>();
+                final List<String> para1 = new ArrayList<>();
                 para1.add("para1");
-                final List<String> para2 = new ArrayList<String>();
+                final List<String> para2 = new ArrayList<>();
                 para2.add("para2");                
-                List<List<String>> parameters = new ArrayList<List<String>>();
+                List<List<String>> parameters = new ArrayList<>();
                 parameters.add(para1);
                 parameters.add(para2);
                 // The object array version is working too

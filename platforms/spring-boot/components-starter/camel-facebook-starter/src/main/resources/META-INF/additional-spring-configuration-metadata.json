@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.facebook.enabled",
+      "description": "Enable facebook component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

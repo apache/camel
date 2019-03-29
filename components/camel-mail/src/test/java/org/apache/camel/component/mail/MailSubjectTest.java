@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -53,7 +53,7 @@ public class MailSubjectTest extends CamelTestSupport {
                 from("direct:a").setHeader("subject", constant(subject)).to("smtp://james2@localhost");
                 // END SNIPPET: e1
 
-                from("pop3://localhost?username=james2&password=secret&consumer.delay=1000").to("mock:result");
+                from("pop3://localhost?username=james2&password=secret&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
             }
         };
     }

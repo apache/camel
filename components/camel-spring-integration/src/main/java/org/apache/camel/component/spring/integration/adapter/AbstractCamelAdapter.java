@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,8 +20,6 @@ import org.apache.camel.CamelContext;
 
 /**
  * The Abstract class for the Spring Integration Camel Adapter
- *
- * @version 
  */
 public abstract class AbstractCamelAdapter {
     private CamelContext camelContext;

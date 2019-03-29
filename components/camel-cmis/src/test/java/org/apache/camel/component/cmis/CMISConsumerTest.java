@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,14 +31,14 @@ import org.junit.Test;
 
 public class CMISConsumerTest extends CMISTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     @Test
     public void getAllContentFromServerOrderedFromRootToLeaves() throws Exception {
         resultEndpoint.expectedMessageCount(5);
 
-        Consumer treeBasedConsumer = createConsumerFor(getUrl());
+        Consumer treeBasedConsumer = createConsumerFor(getUrl() + "?pageSize=50");
         treeBasedConsumer.start();
 
         resultEndpoint.assertIsSatisfied();

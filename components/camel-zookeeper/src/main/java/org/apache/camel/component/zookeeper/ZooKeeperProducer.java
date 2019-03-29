@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,9 +25,8 @@ import org.apache.camel.component.zookeeper.operations.DeleteOperation;
 import org.apache.camel.component.zookeeper.operations.GetChildrenOperation;
 import org.apache.camel.component.zookeeper.operations.OperationResult;
 import org.apache.camel.component.zookeeper.operations.SetDataOperation;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ExchangeHelper;
-
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.zookeeper.AsyncCallback.StatCallback;
 import org.apache.zookeeper.AsyncCallback.VoidCallback;
 import org.apache.zookeeper.CreateMode;
@@ -137,7 +136,7 @@ public class ZooKeeperProducer extends DefaultProducer {
     }
 
     private void updateExchangeWithResult(ProductionContext context, OperationResult result) {
-        ZooKeeperMessage out = new ZooKeeperMessage(context.node, result.getStatistics(), context.in.getHeaders());
+        ZooKeeperMessage out = new ZooKeeperMessage(getEndpoint().getCamelContext(), context.node, result.getStatistics(), context.in.getHeaders());
         if (result.isOk()) {
             out.setBody(result.getResult());
         } else {

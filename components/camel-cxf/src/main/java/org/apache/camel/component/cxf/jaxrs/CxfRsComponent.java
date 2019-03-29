@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,12 +22,15 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.cxf.blueprint.BlueprintSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.impl.HeaderFilterStrategyComponent;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,16 +38,19 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines the <a href="http://camel.apache.org/cxfrs.html">CXF RS Component</a> 
  */
-public class CxfRsComponent extends HeaderFilterStrategyComponent {
+@Component("cxfrs")
+public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsComponent.class);
 
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
+
     public CxfRsComponent() {
-        super(CxfRsEndpoint.class);
     }
     
     public CxfRsComponent(CamelContext context) {
-        super(context, CxfRsEndpoint.class);
+        super(context);
     }
 
     @Override
@@ -80,7 +86,7 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent {
             // The super class (DefaultComponent) will invoke "setProperties" after this method 
             // with to apply properties defined by URI query. 
             if (bean.getProperties() != null) {
-                Map<String, Object> copy = new HashMap<String, Object>();
+                Map<String, Object> copy = new HashMap<>();
                 copy.putAll(bean.getProperties());     
                 setProperties(answer, copy);      
             }
@@ -111,6 +117,12 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent {
         Map<String, String> params = CastUtils.cast(parameters);
         answer.setParameters(params);
         setEndpointHeaderFilterStrategy(answer);
+
+        // use global ssl config if set
+        if (answer.getSslContextParameters() == null) {
+            answer.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
+
         return answer;
     }
     
@@ -118,5 +130,18 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent {
     protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters) throws Exception {
         CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) endpoint;
         cxfRsEndpoint.updateEndpointUri(uri);
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 }

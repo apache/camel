@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,8 +17,8 @@
 package org.apache.camel.component.jgroups;
 
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
-import org.jgroups.Channel;
+import org.apache.camel.support.DefaultConsumer;
+import org.jgroups.JChannel;
 
 /**
  * Consumes messages from the JGroups channels ({@code org.jgroups.Channel}). Received messages
@@ -26,13 +26,13 @@ import org.jgroups.Channel;
  */
 public class JGroupsConsumer extends DefaultConsumer {
 
-    private final Channel channel;
+    private final JChannel channel;
     private final String clusterName;
 
     private final CamelJGroupsReceiver receiver;
     private final JGroupsEndpoint endpoint;
 
-    public JGroupsConsumer(JGroupsEndpoint endpoint, Processor processor, Channel channel, String clusterName) {
+    public JGroupsConsumer(JGroupsEndpoint endpoint, Processor processor, JChannel channel, String clusterName) {
         super(endpoint, processor);
 
         this.endpoint = endpoint;

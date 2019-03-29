@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,9 +20,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class Mina2SslContextParametersTcpTest extends BaseMina2Test {
 
     @Test
@@ -31,8 +28,7 @@ public class Mina2SslContextParametersTcpTest extends BaseMina2Test {
         Object body = "Hello there!";
         endpoint.expectedBodiesReceived(body);
 
-        template.sendBodyAndHeader(String.format("mina2:tcp://localhost:%1$s?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters",
-                getPort()), body, "cheese", 123);
+        template.sendBodyAndHeader("mina2:tcp://localhost:" + getPort() + "?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters", body, "cheese", 123);
 
         assertMockEndpointsSatisfied();
     }
@@ -46,7 +42,7 @@ public class Mina2SslContextParametersTcpTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() {
-                fromF("mina2:tcp://localhost:%1$s?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters", getPort())
+                fromF("mina2:tcp://localhost:%s?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters", getPort())
                         .to("log:before?showAll=true")
                         .to("mock:result").to("log:after?showAll=true");
             }

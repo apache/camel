@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 
+// TODO: camel-consul does not work in OSGi
 @RunWith(PaxExam.class)
+@Ignore("camel-consul does not work in OSGi")
 public class CamelConsulTest extends BaseKarafTest {
 
     public static final String COMPONENT = extractName(CamelConsulTest.class);

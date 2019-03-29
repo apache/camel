@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,7 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * The ejb component is for invoking EJB Java beans from Camel.
  */
-@UriEndpoint(scheme = "ejb", title = "EJB", syntax = "ejb:beanName", producerOnly = true, label = "endpoint,java")
+@UriEndpoint(firstVersion = "2.4.0", scheme = "ejb", title = "EJB", syntax = "ejb:beanName", producerOnly = true, label = "endpoint,java")
 public class EjbEndpoint extends BeanEndpoint {
 
     public EjbEndpoint(String endpointUri, Component component) {

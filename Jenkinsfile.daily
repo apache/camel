@@ -1,0 +1,149 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+def LOCAL_REPOSITORY = env.LOCAL_REPOSITORY ?: '/home/jenkins/jenkins-slave/maven-repositories/0'
+def AGENT_LABEL = env.AGENT_LABEL ?: 'ubuntu'
+def BUILD_JDK_NAME = env.JDK_NAME ?: 'JDK 1.8 (latest)'
+
+def MAVEN_PARAMS = "-U -B -e -fae -V -Dmaven.repo.local=${LOCAL_REPOSITORY} -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2"
+
+def jdk9_result, jdk10_result, jdk11_result, karaf_itests_result, spring_boot_itests_result
+
+pipeline {
+
+    agent {
+        label AGENT_LABEL
+    }
+
+    triggers {
+        cron('@daily')
+    }
+
+    options {
+        buildDiscarder(
+            logRotator(artifactNumToKeepStr: '5', numToKeepStr: '10')
+        )
+        disableConcurrentBuilds()
+    }
+
+    stages {
+
+        stage('Build') {
+            tools {
+                jdk BUILD_JDK_NAME
+            }
+            steps {
+                sh "./mvnw $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean install"
+            }
+        }
+
+        stage('karaf-itests') {
+            tools {
+                jdk BUILD_JDK_NAME
+            }
+            steps {
+                dir("tests/camel-itest-karaf/") {
+                    sh "./kill-karaf.sh"
+                    script {
+                        karaf_itests_result = sh script: "./run-tests.sh", returnStatus: true
+                    }
+                }
+            }
+        }
+
+        stage('spring-boot-itests') {
+            tools {
+                jdk BUILD_JDK_NAME
+            }
+            steps {
+                dir("tests/camel-itest-spring-boot/") {
+                    script {
+                        spring_boot_itests_result = sh script: "../../mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: true
+                    }
+                }
+            }
+        }
+
+        stage('Test JDK 9') {
+            tools {
+                jdk 'JDK 1.9 (latest)'
+            }
+            steps {
+                script {
+                    jdk9_result = sh script: "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: true
+                }
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+                    junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/*.xml'
+                    sh "find . -path '*/target/surefire-reports/*' -delete -o -path '*/target/failsafe-reports/*' -delete" 
+                }
+            }
+        }
+
+        stage('Test JDK 10') {
+            tools {
+                jdk 'JDK 10 (latest)'
+            }
+            steps {
+                script {
+                    jdk10_result = sh script: "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: true
+                }
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+                    junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/*.xml'
+                    sh "find . -path '*/target/surefire-reports/*' -delete -o -path '*/target/failsafe-reports/*' -delete" 
+                }
+            }
+        }
+
+        stage('Test JDK 11') {
+            tools {
+                jdk 'JDK 11 (latest)'
+            }
+            steps {
+                script {
+                    jdk11_result = sh script: "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: true
+                }
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+                    junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/*.xml'
+                    sh "find . -path '*/target/surefire-reports/*' -delete -o -path '*/target/failsafe-reports/*' -delete"
+                }
+            }
+        }
+
+    }
+
+    post {
+        always {
+            script {
+                echo "Karaf Itests result is ${karaf_itests_result}"
+                echo "Spring-boot Itests result is ${spring_boot_itests_result}"
+                currentBuild.result = jdk9_result == 0 && jdk10_result == 0 && jdk11_result == 0 ? 'SUCCESS' : 'FAILURE'
+            }
+        }
+    }
+}
+

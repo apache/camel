@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<invoice purchaseOrderId="p1">
-  <description>This invoice should tie up with purchase order p1</description>
-</invoice>

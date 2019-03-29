@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,8 +33,8 @@ import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
 import static org.apache.camel.cdi.BeanManagerHelper.getReference;
 import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByName;
 import static org.apache.camel.component.bean.ProxyHelper.createProxy;
+import static org.apache.camel.support.service.ServiceHelper.startService;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
-import static org.apache.camel.util.ServiceHelper.startService;
 
 final class XmlProxyFactoryBean<T> extends SyntheticBean<T> {
 

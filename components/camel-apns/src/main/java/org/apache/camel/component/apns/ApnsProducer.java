@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,7 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.apns.model.ApnsConstants;
 import org.apache.camel.component.apns.model.MessageType;
 import org.apache.camel.component.apns.util.StringUtils;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
 public class ApnsProducer extends DefaultProducer {
@@ -82,7 +82,7 @@ public class ApnsProducer extends DefaultProducer {
             if (hasTokensHeader(exchange)) {
                 throw new IllegalArgumentException("Tokens already configured on endpoint " + ApnsConstants.HEADER_TOKENS);
             }
-            tokens = new ArrayList<String>(tokenList);
+            tokens = new ArrayList<>(tokenList);
         } else {
             String tokensHeader = getHeaderTokens(exchange);
             tokens = extractTokensFromString(tokensHeader);

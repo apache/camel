@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -92,7 +92,7 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION, "mustBeRemoved");
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI, "mustBeRemoved");
 
-        exchange.getOut().getHeaders().put("BreadcrumbId", "mustBeRemoved");
+        exchange.getOut().getHeaders().put("breadcrumbId", "mustBeRemoved");
 
         filter.filterConsumer(exchange, message);
 

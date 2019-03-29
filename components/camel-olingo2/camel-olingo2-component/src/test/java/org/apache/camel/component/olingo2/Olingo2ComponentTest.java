@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,8 +21,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchChangeRequest;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchQueryRequest;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchRequest;
@@ -44,16 +44,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Test class for {@link org.apache.camel.component.olingo2.api.Olingo2App} APIs.
+ * Test class for {@link org.apache.camel.component.olingo2.api.Olingo2App}
+ * APIs.
  * <p>
- * The integration test runs against Apache Olingo 2.0 sample server
- * which is dynamically installed and started during the test.
+ * The integration test runs against Apache Olingo 2.0 sample server which is
+ * dynamically installed and started during the test.
  * </p>
  */
 public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(Olingo2ComponentTest.class);
-    private static final int PORT = AvailablePortFinder.getNextAvailable();  
+    private static final int PORT = AvailablePortFinder.getNextAvailable();
     private static final String ID_PROPERTY = "Id";
     private static final String MANUFACTURERS = "Manufacturers";
     private static final String TEST_MANUFACTURER = "Manufacturers('1')";
@@ -92,21 +93,21 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
 
     @Test
     public void testRead() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
 
         // read ServiceDocument
-        final ServiceDocument document = requestBodyAndHeaders("direct://READSERVICEDOC", null, headers);
+        final ServiceDocument document = requestBodyAndHeaders("direct:READSERVICEDOC", null, headers);
         assertNotNull(document);
         assertFalse("ServiceDocument entity sets", document.getEntitySetsInfo().isEmpty());
         LOG.info("Service document has {} entity sets", document.getEntitySetsInfo().size());
 
         // parameter type is java.util.Map
-        final HashMap<String, String> queryParams = new HashMap<String, String>();
+        final HashMap<String, String> queryParams = new HashMap<>();
         queryParams.put(SystemQueryOption.$top.name(), "5");
         headers.put("CamelOlingo2.queryParams", queryParams);
 
         // read ODataFeed
-        final ODataFeed manufacturers = requestBodyAndHeaders("direct://READFEED", null, headers);
+        final ODataFeed manufacturers = requestBodyAndHeaders("direct:READFEED", null, headers);
         assertNotNull(manufacturers);
         final List<ODataEntry> manufacturersEntries = manufacturers.getEntries();
         assertFalse("Manufacturers empty entries", manufacturersEntries.isEmpty());
@@ -115,11 +116,11 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
         // read ODataEntry
         headers.clear();
         headers.put(Olingo2Constants.PROPERTY_PREFIX + "keyPredicate", "'1'");
-        final ODataEntry manufacturer = requestBodyAndHeaders("direct://READENTRY", null, headers);
+        final ODataEntry manufacturer = requestBodyAndHeaders("direct:READENTRY", null, headers);
         assertNotNull(manufacturer);
         final Map<String, Object> properties = manufacturer.getProperties();
         assertEquals("Manufacturer Id", "1", properties.get(ID_PROPERTY));
-        LOG.info("Manufacturer: {}", properties.toString());
+        LOG.info("Manufacturer: {}", properties);
     }
 
     @Test
@@ -127,7 +128,7 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
         final Map<String, Object> data = getEntityData();
         Map<String, Object> address;
 
-        final ODataEntry manufacturer = requestBody("direct://CREATE", data);
+        final ODataEntry manufacturer = requestBody("direct:CREATE", data);
         assertNotNull("Created Manufacturer", manufacturer);
         final Map<String, Object> properties = manufacturer.getProperties();
         assertEquals("Created Manufacturer Id", "123", properties.get(ID_PROPERTY));
@@ -138,24 +139,24 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
         address = (Map<String, Object>)data.get("Address");
         address.put("Street", "Main Street");
 
-        HttpStatusCodes status = requestBody("direct://UPDATE", data);
+        HttpStatusCodes status = requestBody("direct:UPDATE", data);
         assertNotNull("Update status", status);
         assertEquals("Update status", HttpStatusCodes.NO_CONTENT.getStatusCode(), status.getStatusCode());
         LOG.info("Update status: {}", status);
 
         // delete
-        status = requestBody("direct://DELETE", null);
+        status = requestBody("direct:DELETE", null);
         assertNotNull("Delete status", status);
         assertEquals("Delete status", HttpStatusCodes.NO_CONTENT.getStatusCode(), status.getStatusCode());
         LOG.info("Delete status: {}", status);
     }
 
     private Map<String, Object> getEntityData() {
-        final Map<String, Object> data = new HashMap<String, Object>();
+        final Map<String, Object> data = new HashMap<>();
         data.put("Id", "123");
         data.put("Name", "MyCarManufacturer");
         data.put("Founded", new Date());
-        Map<String, Object> address = new HashMap<String, Object>();
+        Map<String, Object> address = new HashMap<>();
         address.put("Street", "Main");
         address.put("ZipCode", "42421");
         address.put("City", "Fairy City");
@@ -166,7 +167,7 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
 
     @Test
     public void testBatch() throws Exception {
-        final List<Olingo2BatchRequest> batchParts = new ArrayList<Olingo2BatchRequest>();
+        final List<Olingo2BatchRequest> batchParts = new ArrayList<>();
 
         // 1. Edm query
         batchParts.add(Olingo2BatchQueryRequest.resourcePath(Olingo2AppImpl.METADATA).build());
@@ -178,27 +179,23 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
         batchParts.add(Olingo2BatchQueryRequest.resourcePath(TEST_MANUFACTURER).build());
 
         // 4. read with expand
-        final HashMap<String, String> queryParams = new HashMap<String, String>();
+        final HashMap<String, String> queryParams = new HashMap<>();
         queryParams.put(SystemQueryOption.$expand.toString(), CARS);
         batchParts.add(Olingo2BatchQueryRequest.resourcePath(TEST_MANUFACTURER).queryParams(queryParams).build());
 
         // 5. create
         final Map<String, Object> data = getEntityData();
-        batchParts.add(Olingo2BatchChangeRequest.resourcePath(MANUFACTURERS).
-            contentId(TEST_RESOURCE_CONTENT_ID).operation(Operation.CREATE).body(data).build());
+        batchParts.add(Olingo2BatchChangeRequest.resourcePath(MANUFACTURERS).contentId(TEST_RESOURCE_CONTENT_ID).operation(Operation.CREATE).body(data).build());
 
         // 6. update address in created entry
-        @SuppressWarnings("unchecked")
-        final Map<String, Object> updateData = new HashMap<String, Object>(data);
-        Map<String, Object> address = (Map<String, Object>) updateData.get(ADDRESS);
+        final Map<String, Object> updateData = new HashMap<>(data);
+        Map<String, Object> address = (Map<String, Object>)updateData.get(ADDRESS);
         address.put("Street", "Main Street");
-        batchParts.add(
-            Olingo2BatchChangeRequest.resourcePath(TEST_RESOURCE_ADDRESS).operation(Operation.UPDATE).body(address).build());
+        batchParts.add(Olingo2BatchChangeRequest.resourcePath(TEST_RESOURCE_ADDRESS).operation(Operation.UPDATE).body(address).build());
 
         // 7. update
         updateData.put("Name", "MyCarManufacturer Renamed");
-        batchParts.add(Olingo2BatchChangeRequest.resourcePath(TEST_RESOURCE).operation(Operation.UPDATE)
-            .body(updateData).build());
+        batchParts.add(Olingo2BatchChangeRequest.resourcePath(TEST_RESOURCE).operation(Operation.UPDATE).body(updateData).build());
 
         // 8. delete
         batchParts.add(Olingo2BatchChangeRequest.resourcePath(TEST_RESOURCE).operation(Operation.DELETE).build());
@@ -207,27 +204,27 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
         batchParts.add(Olingo2BatchQueryRequest.resourcePath(TEST_CREATE_MANUFACTURER).build());
 
         // execute batch request
-        final List<Olingo2BatchResponse> responseParts = requestBody("direct://BATCH", batchParts);
+        final List<Olingo2BatchResponse> responseParts = requestBody("direct:BATCH", batchParts);
         assertNotNull("Batch response", responseParts);
         assertEquals("Batch responses expected", 9, responseParts.size());
 
-        final Edm edm = (Edm) responseParts.get(0).getBody();
+        final Edm edm = (Edm)responseParts.get(0).getBody();
         assertNotNull(edm);
         LOG.info("Edm entity sets: {}", edm.getEntitySets());
 
-        final ODataFeed feed = (ODataFeed) responseParts.get(1).getBody();
+        final ODataFeed feed = (ODataFeed)responseParts.get(1).getBody();
         assertNotNull(feed);
         LOG.info("Read feed: {}", feed.getEntries());
 
-        ODataEntry dataEntry = (ODataEntry) responseParts.get(2).getBody();
+        ODataEntry dataEntry = (ODataEntry)responseParts.get(2).getBody();
         assertNotNull(dataEntry);
         LOG.info("Read entry: {}", dataEntry.getProperties());
 
-        dataEntry = (ODataEntry) responseParts.get(3).getBody();
+        dataEntry = (ODataEntry)responseParts.get(3).getBody();
         assertNotNull(dataEntry);
         LOG.info("Read entry with $expand: {}", dataEntry.getProperties());
 
-        dataEntry = (ODataEntry) responseParts.get(4).getBody();
+        dataEntry = (ODataEntry)responseParts.get(4).getBody();
         assertNotNull(dataEntry);
         LOG.info("Created entry: {}", dataEntry.getProperties());
 
@@ -244,9 +241,214 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
         LOG.info("Delete status: {}", statusCode);
 
         assertEquals(HttpStatusCodes.NOT_FOUND.getStatusCode(), responseParts.get(8).getStatusCode());
-        final Exception exception = (Exception) responseParts.get(8).getBody();
+        final Exception exception = (Exception)responseParts.get(8).getBody();
         assertNotNull(exception);
         LOG.info("Read deleted entry exception: {}", exception);
+    }
+
+    /**
+     * Read entity set of the People object and filter already seen items on
+     * subsequent exchanges Use a delay since the mock endpoint does not always
+     * get the correct number of exchanges before being satisfied.
+     *
+     * Note:
+     * - consumer.splitResults is set to false since this ensures the first returned message
+     *   contains all the results. This is preferred for the purposes of this test. The default
+     *   will mean the first n messages contain the results (where n is the result total) then
+     *   subsequent messages will be empty
+     */
+    @Test
+    public void testConsumerReadFilterAlreadySeen() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        String endpoint = "olingo2://read/Manufacturers?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&consumer.splitResult=false";
+
+        int expectedMsgCount = 3;
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-alreadyseen");
+        mockEndpoint.expectedMessageCount(expectedMsgCount);
+        mockEndpoint.setResultWaitTime(60000);
+
+        final ODataFeed manufacturers = (ODataFeed)requestBodyAndHeaders(endpoint, null, headers);
+        assertNotNull(manufacturers);
+        int expectedManufacturers = manufacturers.getEntries().size();
+
+        mockEndpoint.assertIsSatisfied();
+
+        for (int i = 0; i < expectedMsgCount; ++i) {
+            Object body = mockEndpoint.getExchanges().get(i).getIn().getBody();
+
+            if (i == 0) {
+                //
+                // First polled messages contained all the manufacturers
+                //
+                assertTrue(body instanceof ODataFeed);
+                ODataFeed set = (ODataFeed)body;
+                assertEquals(expectedManufacturers, set.getEntries().size());
+            } else {
+                //
+                // Subsequent polling messages should be empty
+                // since the filterAlreadySeen property is true
+                //
+                assertNull(body);
+            }
+        }
+    }
+
+    /**
+     * Read value of the People object and split the results
+     * into individual messages
+     */
+    @Test
+    public void testConsumerReadClientValuesSplitResults() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        String endpoint = "olingo2://read/Manufacturers('1')/Address?consumer.splitResult=true";
+
+        this.context.setTracing(true);
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-value");
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(60000);
+
+        final Map<String, Object> resultValue = requestBodyAndHeaders(endpoint, null, headers);
+        assertNotNull(resultValue);
+
+        mockEndpoint.assertIsSatisfied();
+        //
+        // 1 individual message in the exchange
+        //
+        Object body = mockEndpoint.getExchanges().get(0).getIn().getBody();
+        assertIsInstanceOf(Map.class, body);
+        Map<String, Object> value = (Map<String, Object>) body;
+        Object addrObj = value.get("Address");
+        assertIsInstanceOf(Map.class, addrObj);
+        Map<String, Object> addrMap = (Map<String, Object>) addrObj;
+        assertEquals("70173", addrMap.get("ZipCode"));
+        assertEquals("Star Street 137", addrMap.get("Street"));
+        assertEquals("Germany", addrMap.get("Country"));
+        assertEquals("Stuttgart", addrMap.get("City"));
+    }
+
+    /**
+     * Read entity set of the People object and with no filter already seen, all
+     * items should be present in each message
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testProducerReadNoFilterAlreadySeen() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        String endpoint = "direct:read-people-nofilterseen";
+        int expectedMsgCount = 3;
+
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:producer-noalreadyseen");
+        mockEndpoint.expectedMessageCount(expectedMsgCount);
+
+        int expectedEntities = -1;
+        for (int i = 0; i < expectedMsgCount; ++i) {
+            final ODataFeed manufacturers = (ODataFeed)requestBodyAndHeaders(endpoint, null, headers);
+            assertNotNull(manufacturers);
+            if (i == 0) {
+                expectedEntities = manufacturers.getEntries().size();
+            }
+        }
+
+        mockEndpoint.assertIsSatisfied();
+
+        for (int i = 0; i < expectedMsgCount; ++i) {
+            Object body = mockEndpoint.getExchanges().get(i).getIn().getBody();
+            assertTrue(body instanceof ODataFeed);
+            ODataFeed set = (ODataFeed)body;
+
+            //
+            // All messages contained all the manufacturers
+            //
+            assertEquals(expectedEntities, set.getEntries().size());
+        }
+    }
+
+    /**
+     * Read entity set of the People object and filter already seen items on
+     * subsequent exchanges
+     */
+    @Test
+    public void testProducerReadFilterAlreadySeen() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        String endpoint = "direct:read-people-filterseen";
+        int expectedMsgCount = 3;
+
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:producer-alreadyseen");
+        mockEndpoint.expectedMessageCount(expectedMsgCount);
+
+        int expectedEntities = -1;
+        for (int i = 0; i < expectedMsgCount; ++i) {
+            final ODataFeed manufacturers = (ODataFeed)requestBodyAndHeaders(endpoint, null, headers);
+            assertNotNull(manufacturers);
+            if (i == 0) {
+                expectedEntities = manufacturers.getEntries().size();
+            }
+        }
+
+        mockEndpoint.assertIsSatisfied();
+
+        for (int i = 0; i < expectedMsgCount; ++i) {
+            Object body = mockEndpoint.getExchanges().get(i).getIn().getBody();
+            assertTrue(body instanceof ODataFeed);
+            ODataFeed set = (ODataFeed)body;
+
+            if (i == 0) {
+                //
+                // First polled messages contained all the manufacturers
+                //
+                assertEquals(expectedEntities, set.getEntries().size());
+            } else {
+                //
+                // Subsequent messages should be empty
+                // since the filterAlreadySeen property is true
+                //
+                assertEquals(0, set.getEntries().size());
+            }
+        }
+    }
+
+    /**
+     * Read entity set of the Manufacturers object and split the results
+     * into individual messages
+     */
+    @Test
+    public void testConsumerReadSplitResults() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        String endpoint = "olingo2://read/Manufacturers?consumer.splitResult=true";
+
+        int expectedMsgCount = 2;
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-splitresult");
+        mockEndpoint.expectedMessageCount(expectedMsgCount);
+
+        final ODataFeed odataFeed = (ODataFeed)requestBodyAndHeaders(endpoint, null, headers);
+        assertNotNull(odataFeed);
+
+        mockEndpoint.assertIsSatisfied();
+
+        //
+        // 2 individual messages in the exchange,
+        // each containing a different entity.
+        //
+        for (int i = 0; i < expectedMsgCount; ++i) {
+            Object body = mockEndpoint.getExchanges().get(i).getIn().getBody();
+            assertTrue(body instanceof ODataEntry);
+            ODataEntry entry = (ODataEntry)body;
+            Map<String, Object> properties = entry.getProperties();
+            assertNotNull(properties);
+
+            Object name = properties.get("Name");
+            assertNotNull(name);
+            switch(i) {
+            case 0:
+                assertEquals("Star Powered Racing", name);
+                break;
+            case 1:
+                assertEquals("Horse Powered Racing", name);
+                break;
+            default:
+            }
+        }
     }
 
     @Override
@@ -254,41 +456,45 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test routes for read
-                from("direct://READSERVICEDOC")
-                    .to("olingo2://read/");
+                from("direct:READSERVICEDOC").to("olingo2://read/");
 
-                from("direct://READFEED")
-                    .to("olingo2://read/Manufacturers?$orderBy=Name%20asc");
+                from("direct:READFEED").to("olingo2://read/Manufacturers?$orderBy=Name%20asc");
 
-                from("direct://READENTRY")
-                    .to("olingo2://read/DefaultContainer.Manufacturers");
+                from("direct:READENTRY").to("olingo2://read/DefaultContainer.Manufacturers");
 
                 // test route for create
-                from("direct://CREATE")
-                    .to("olingo2://create/Manufacturers");
+                from("direct:CREATE").to("olingo2://create/Manufacturers");
 
                 // test route for update
-                from("direct://UPDATE")
-                    .to("olingo2://update/Manufacturers('123')");
+                from("direct:UPDATE").to("olingo2://update/Manufacturers('123')");
 
                 // test route for delete
-                from("direct://DELETE")
-                    .to("olingo2://delete/Manufacturers('123')");
+                from("direct:DELETE").to("olingo2://delete/Manufacturers('123')");
 
-/*
-                // test route for merge
-                from("direct://MERGE")
-                    .to("olingo2://merge");
-
-                // test route for patch
-                from("direct://PATCH")
-                    .to("olingo2://patch");
-*/
+                /*
+                 * // test route for merge from("direct:MERGE")
+                 * .to("olingo2://merge"); // test route for patch
+                 * from("direct:PATCH") .to("olingo2://patch");
+                 */
 
                 // test route for batch
-                from("direct://BATCH")
-                    .to("olingo2://batch");
+                from("direct:BATCH").to("olingo2://batch");
 
+                from("direct:read-people-nofilterseen").to("olingo2://read/Manufacturers").to("mock:producer-noalreadyseen");
+
+                from("direct:read-people-filterseen").to("olingo2://read/Manufacturers?filterAlreadySeen=true").to("mock:producer-alreadyseen");
+
+                //
+                // Consumer endpoint
+                //
+                from("olingo2://read/Manufacturers?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&consumer.splitResult=false")
+                    .to("mock:consumer-alreadyseen");
+
+                from("olingo2://read/Manufacturers?consumer.splitResult=true")
+                    .to("mock:consumer-splitresult");
+
+                from("olingo2://read/Manufacturers('1')/Address?consumer.splitResult=true")
+                    .to("mock:consumer-value");
             }
         };
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,6 +21,7 @@ import javax.xml.ws.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+
 import org.junit.After;
 import org.junit.Test;
 
@@ -63,4 +64,19 @@ public class JaxWSCamelDestinationTest extends JaxWSCamelTestSupport {
         assertTrue(exchange.getOut().getBody(String.class).indexOf("something!") > 0);
     }
 
+    @Test
+    public void testDestinationWithGzip() {
+        // publish the endpoint
+        endpoint = publishSampleWSWithGzipEnabled("direct:endpoint");
+        Exchange exchange = template.request("direct:start", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody(REQUEST);
+                exchange.getIn().setHeader("Accept-Encoding", "gzip");
+            }
+            
+        });
+        assertThat(exchange.getOut().getHeader(Exchange.CONTENT_ENCODING, String.class), is("gzip"));
+    }
 }

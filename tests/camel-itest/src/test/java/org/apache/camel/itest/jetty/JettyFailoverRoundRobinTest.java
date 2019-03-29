@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,9 +23,6 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JettyFailoverRoundRobinTest extends CamelTestSupport {
     private static int port1 = AvailablePortFinder.getNextAvailable(23021);
     private static int port2 = AvailablePortFinder.getNextAvailable(23022);

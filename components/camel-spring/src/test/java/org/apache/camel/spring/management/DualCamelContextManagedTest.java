@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,16 +17,15 @@
 package org.apache.camel.spring.management;
 
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class DualCamelContextManagedTest extends SpringTestSupport {
 
     @Override
@@ -38,6 +37,7 @@ public class DualCamelContextManagedTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/dualCamelContextManagedTest.xml");
     }
 
+    @Test
     public void testDualCamelContextManaged() throws Exception {
         
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();

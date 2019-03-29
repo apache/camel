@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -273,5 +273,10 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
             notifier.forwardFailureComplete(conversation.getResponseListeners(), request, requestFailure,
                 response, responseFailure);
         }
+    }
+
+    // no @Override annotation here to keep it compatible with Jetty 9.2, getName was added in 9.3
+    public String getName() {
+        return "CamelSalesforceSecurityHandler";
     }
 }
