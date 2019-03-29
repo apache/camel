@@ -16,6 +16,8 @@
  */
 package org.apache.camel.blueprint;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.TypeConverter;
 import org.apache.camel.blueprint.handler.CamelNamespaceHandler;
 import org.apache.camel.core.osgi.OsgiBeanRepository;
@@ -38,8 +40,6 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.BlueprintEvent;
 import org.osgi.service.blueprint.container.BlueprintListener;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * OSGi Blueprint based {@link org.apache.camel.CamelContext}.
