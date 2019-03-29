@@ -19,7 +19,6 @@
 org.apache.camel.tools.apt.ModelAnnotationProcessor
 org.apache.camel.tools.apt.EndpointAnnotationProcessor
 org.apache.camel.tools.apt.SpiProcessor
-org.apache.camel.tools.apt.CoreTypeConverterProcessor
 org.apache.camel.tools.apt.TypeConverterProcessor
 org.apache.camel.tools.apt.TypeConverterLoaderGenerator
 

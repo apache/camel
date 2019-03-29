@@ -23,7 +23,7 @@ import org.apache.camel.util.TimeUtils;
  * Converter from String syntax to milli seconds.
  * Code is copied to org.apache.camel.catalog.TimePatternConverter in camel-catalog
  */
-@Converter
+@Converter(loader = true)
 public final class TimePatternConverter {   
 
     /**
