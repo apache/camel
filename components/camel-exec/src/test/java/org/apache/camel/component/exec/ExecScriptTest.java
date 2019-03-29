@@ -46,7 +46,7 @@ import static org.junit.Assert.assertTrue;
 @ContextConfiguration
 public class ExecScriptTest extends AbstractJUnit4SpringContextTests {
 
-    @Produce(uri = "direct:input")
+    @Produce("direct:input")
     private ProducerTemplate producerTemplate;
 
     /**

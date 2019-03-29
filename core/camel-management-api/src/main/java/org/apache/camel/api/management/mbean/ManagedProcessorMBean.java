@@ -16,8 +16,6 @@
  */
 package org.apache.camel.api.management.mbean;
 
-import javax.management.openmbean.TabularData;
-
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
@@ -52,12 +50,6 @@ public interface ManagedProcessorMBean extends ManagedPerformanceCounterMBean {
 
     @ManagedOperation(description = "Stop Processor")
     void stop() throws Exception;
-
-    @ManagedOperation(description = "Processor information as JSon")
-    String informationJson();
-
-    @ManagedOperation(description = "Explain how this processor is configured")
-    TabularData explain(boolean allOptions);
 
     @ManagedOperation(description = "Dumps the processor as XML")
     String dumpProcessorAsXml() throws Exception;

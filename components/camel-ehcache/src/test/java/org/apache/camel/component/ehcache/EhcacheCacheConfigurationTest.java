@@ -34,13 +34,13 @@ import org.ehcache.config.units.MemoryUnit;
 import org.junit.Test;
 
 public class EhcacheCacheConfigurationTest extends CamelTestSupport {
-    @EndpointInject(uri = "ehcache:myProgrammaticCacheConf?configuration=#myProgrammaticConfiguration")
+    @EndpointInject("ehcache:myProgrammaticCacheConf?configuration=#myProgrammaticConfiguration")
     private EhcacheEndpoint ehcacheProgrammaticConf;
-    @EndpointInject(uri = "ehcache:myFileCacheConf?keyType=java.lang.String&valueType=java.lang.String&configurationUri=classpath:ehcache/ehcache-file-config.xml")
+    @EndpointInject("ehcache:myFileCacheConf?keyType=java.lang.String&valueType=java.lang.String&configurationUri=classpath:ehcache/ehcache-file-config.xml")
     private EhcacheEndpoint ehcacheFileConf;
-    @EndpointInject(uri = "ehcache:myUserCacheConf")
+    @EndpointInject("ehcache:myUserCacheConf")
     private EhcacheEndpoint ehcacheUserConf;
-    @EndpointInject(uri = "ehcache:myCache?cacheManager=#myCacheManager&keyType=java.lang.String&valueType=java.lang.String")
+    @EndpointInject("ehcache:myCache?cacheManager=#myCacheManager&keyType=java.lang.String&valueType=java.lang.String")
     private EhcacheEndpoint ehcacheCacheManager;
 
     @Override

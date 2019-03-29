@@ -18,7 +18,9 @@ package org.apache.camel.component.leveldb;
 
 import java.io.File;
 import java.io.IOException;
-
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.apache.camel.Service;
 import org.apache.camel.util.IOHelper;
 import org.iq80.leveldb.CompressionType;
@@ -28,6 +30,11 @@ import org.iq80.leveldb.Options;
 import org.iq80.leveldb.WriteOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
+
+import static org.fusesource.leveldbjni.JniDBFactory.factory;
+
 
 /**
  * Manages access to a shared <a href="https://github.com/fusesource/leveldbjni/">LevelDB</a> file.
@@ -55,20 +62,20 @@ public class LevelDBFile implements Service {
         return db;
     }
 
-    public void setFile(File file) throws IOException {
-        this.file = file;
-    }
-
     public File getFile() {
         return file;
     }
 
-    public void setFileName(String fileName) {
-        this.file = new File(fileName);
+    public void setFile(File file) throws IOException {
+        this.file = file;
     }
 
     public String getFileName() throws IOException {
         return file.getCanonicalPath();
+    }
+
+    public void setFileName(String fileName) {
+        this.file = new File(fileName);
     }
 
     public int getWriteBufferSize() {
@@ -170,8 +177,8 @@ public class LevelDBFile implements Service {
 
         options.createIfMissing(true);
         try {
-            getFile().getParentFile().mkdirs();
-            DBFactory factory = getFactory();
+            final Path dbFile = Paths.get(this.getFileName());
+            Files.createDirectories(dbFile.getParent());
             db = factory.open(getFile(), options);
         } catch (IOException ioe) {
             throw new RuntimeException("Error opening LevelDB with file " + getFile(), ioe);

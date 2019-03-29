@@ -37,7 +37,7 @@ import static org.junit.Assert.assertNotNull;
 public class HeaderAndTrailerTest extends AbstractJUnit4SpringContextTests {
     private static final Logger LOG = LoggerFactory.getLogger(HeaderAndTrailerTest.class);
 
-    @EndpointInject(uri = "mock:results")
+    @EndpointInject("mock:results")
     protected MockEndpoint results;
 
     protected String[] expectedFirstName = {"JOHN", "JIMMY", "JANE", "FRED"};

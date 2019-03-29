@@ -33,9 +33,9 @@ import org.ehcache.core.Ehcache;
 import org.junit.Test;
 
 public class EhcacheConfigurationTest extends CamelTestSupport {
-    @EndpointInject(uri = "ehcache:globalConfig")
+    @EndpointInject("ehcache:globalConfig")
     EhcacheEndpoint globalConfig;
-    @EndpointInject(uri = "ehcache:customConfig")
+    @EndpointInject("ehcache:customConfig")
     EhcacheEndpoint customConfig;
 
     @Override

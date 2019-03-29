@@ -39,7 +39,6 @@ import com.thoughtworks.xstream.security.WildcardTypePermission;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
@@ -56,7 +55,6 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
     private CamelContext camelContext;
     private XStream xstream;
     private HierarchicalStreamDriver xstreamDriver;
-    private StaxConverter staxConverter;
     private List<String> converters;
     private Map<String, String> aliases;
     private Map<String, String[]> omitFields;
@@ -261,17 +259,6 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
             throw new IllegalArgumentException("Unknown mode : " + modeString);
         }
         return result;
-    }
-
-    public StaxConverter getStaxConverter() {
-        if (staxConverter == null) {
-            staxConverter = new StaxConverter();
-        }
-        return staxConverter;
-    }
-
-    public void setStaxConverter(StaxConverter staxConverter) {
-        this.staxConverter = staxConverter;
     }
 
     public List<String> getConverters() {

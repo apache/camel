@@ -16,10 +16,7 @@
  */
 package org.apache.camel.api.management.mbean;
 
-import javax.management.openmbean.TabularData;
-
 import org.apache.camel.api.management.ManagedAttribute;
-import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedEndpointMBean {
 
@@ -37,11 +34,5 @@ public interface ManagedEndpointMBean {
 
     @ManagedAttribute(description = "Endpoint State")
     String getState();
-
-    @ManagedOperation(description = "Endpoint information as JSon")
-    String informationJson();
-
-    @ManagedOperation(description = "Explain how this endpoint is configured")
-    TabularData explain(boolean allOptions);
 
 }

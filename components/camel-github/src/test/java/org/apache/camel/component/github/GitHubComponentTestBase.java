@@ -33,7 +33,7 @@ public abstract class GitHubComponentTestBase extends CamelTestSupport {
     protected MockPullRequestService pullRequestService;
     protected MockIssueService issueService;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
 
     @Override

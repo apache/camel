@@ -18,7 +18,6 @@ package org.apache.camel.management;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.management.openmbean.TabularData;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -42,13 +41,6 @@ public class ManagedEndpointExplainTest extends ManagementTestSupport {
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"log://foo\\?groupDelay=2000&groupSize=5&level=WARN\"");
         assertTrue(mbeanServer.isRegistered(on));
-
-        // there should be 3 parameters + 1 path = 4
-        TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
-        assertEquals(4, data.size());
-
-        data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
-        assertEquals(27, data.size());
     }
 
     @Override

@@ -16,12 +16,8 @@
  */
 package org.apache.camel.blueprint;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.camel.LoadPropertiesException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.blueprint.handler.CamelNamespaceHandler;
 import org.apache.camel.core.osgi.OsgiBeanRepository;
@@ -142,11 +138,6 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
 
         // must stop Camel
         stop();
-    }
-
-    @Override
-    public Map<String, Properties> findComponents() throws LoadPropertiesException, IOException {
-        return BundleContextUtils.findComponents(bundleContext, this);
     }
 
     @Override

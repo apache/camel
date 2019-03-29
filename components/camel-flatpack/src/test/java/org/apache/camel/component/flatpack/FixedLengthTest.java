@@ -36,7 +36,7 @@ import static org.junit.Assert.assertNotNull;
 public class FixedLengthTest extends AbstractJUnit4SpringContextTests {
     private static final Logger LOG = LoggerFactory.getLogger(FixedLengthTest.class);
 
-    @EndpointInject(uri = "mock:results")
+    @EndpointInject("mock:results")
     protected MockEndpoint results;
 
     protected String[] expectedFirstName = {"JOHN", "JIMMY", "JANE", "FRED"};

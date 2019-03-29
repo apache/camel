@@ -63,6 +63,9 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Message History")
     Boolean getMessageHistory();
 
+    @ManagedAttribute(description = "Whether security mask for Logging is enabled")
+    Boolean getLogMask();
+
     @ManagedAttribute(description = "Route Policy List")
     String getRoutePolicyList();
 
@@ -86,20 +89,6 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
 
     @ManagedOperation(description = "Stop route, abort stop after timeout (in seconds)")
     boolean stop(Long timeout, Boolean abortAfterTimeout) throws Exception;
-
-    /**
-     * @deprecated will be removed in the near future. Use stop and remove instead
-     */
-    @ManagedOperation(description = "Shutdown route")
-    @Deprecated
-    void shutdown() throws Exception;
-
-    /**
-     * @deprecated will be removed in the near future. Use stop and remove instead
-     */
-    @ManagedOperation(description = "Shutdown route (using timeout in seconds)")
-    @Deprecated
-    void shutdown(long timeout) throws Exception;
 
     @ManagedOperation(description = "Remove route (must be stopped)")
     boolean remove() throws Exception;
@@ -130,12 +119,6 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
 
     @ManagedOperation(description = "Reset counters")
     void reset(boolean includeProcessors) throws Exception;
-
-    @ManagedOperation(description = "Returns the JSON representation of all the static and dynamic endpoints defined in this route")
-    String createRouteStaticEndpointJson();
-
-    @ManagedOperation(description = "Returns the JSON representation of all the static endpoints (and possible dynamic) defined in this route")
-    String createRouteStaticEndpointJson(boolean includeDynamic);
 
     @ManagedAttribute(description = "Oldest inflight exchange duration")
     Long getOldestInflightDuration();

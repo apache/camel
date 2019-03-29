@@ -49,7 +49,7 @@ public class ExecOutFileTest extends AbstractJUnit4SpringContextTests {
 
     private static final File FILE = new File("target/outfiletest.xml");
 
-    @Produce(uri = "direct:input")
+    @Produce("direct:input")
     private ProducerTemplate producerTemplate;
 
     @Before

@@ -37,6 +37,7 @@
 
     <dependencies>
 
+        <!-- requires camel-core bean component -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>

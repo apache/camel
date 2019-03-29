@@ -23,7 +23,6 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -31,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.jooq.Query;
 import org.jooq.ResultQuery;
 
-@UriEndpoint(firstVersion = "3.0.0", scheme = "jooq", syntax = "jooq://entityType/operation", title = "JOOQ", label = "jooq")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "jooq", syntax = "jooq:entityType/operation", title = "JOOQ", label = "jooq")
 public class JooqEndpoint extends ScheduledPollEndpoint {
 
     private Expression producerExpression;
@@ -105,9 +104,13 @@ public class JooqEndpoint extends ScheduledPollEndpoint {
         }
 
         if (type == null) {
-            return ExpressionBuilder.bodyExpression();
+            return new Expression() {
+                @Override
+                public <T> T evaluate(Exchange exchange, Class<T> type) {
+                    return exchange.getMessage().getBody(type);
+                };
+            };
         } else {
-            EndpointAnnotationProcessor:
             return new Expression() {
                 public Object evaluate(Exchange exchange, Class asType) {
                     Object answer = exchange.getIn().getBody(type);

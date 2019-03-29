@@ -17,7 +17,6 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -58,16 +57,6 @@ public class RuntimeEndpointRegistryTest extends ContextTestSupport {
         assertEquals(6, registry.getAllEndpoints(true).size());
         assertEquals(3, registry.getEndpointsPerRoute("foo", true).size());
         assertEquals(3, registry.getEndpointsPerRoute("bar", true).size());
-
-        // lets check the json
-        String json = context.adapt(CatalogCamelContext.class).createRouteStaticEndpointJson(null);
-        assertNotNull(json);
-        log.info(json);
-
-        assertTrue("Should have outputs", json.contains(" { \"uri\": \"mock://foo\" }"));
-        assertTrue("Should have outputs", json.contains(" { \"uri\": \"mock://foo2\" }"));
-        assertTrue("Should have outputs", json.contains(" { \"uri\": \"mock://bar\" }"));
-        assertTrue("Should have outputs", json.contains(" { \"uri\": \"mock://bar2\" }"));
     }
 
     @Override
