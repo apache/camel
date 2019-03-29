@@ -571,6 +571,22 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
     }   
     
     @Test
+    public void computeAsyncOperation() throws Exception {
+        currentCache().put(KEY_ONE, "existing value");
+
+        Exchange exchange = template.request("direct:computeAsync", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
+                exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.COMPUTEASYNC);
+            }
+        });
+
+        CompletableFuture result = exchange.getIn().getBody(CompletableFuture.class);
+        assertEquals("existing valuereplay", result.get().toString());
+    }  
+    
+    @Test
     public void retrievesAValueByKey() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
 
@@ -1103,6 +1119,8 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                     .to("infinispan?cacheContainer=#cacheContainer&operation=STATS");
                 from("direct:compute")
                     .to("infinispan?cacheContainer=#cacheContainer&operation=COMPUTE&remappingFunction=#mappingFunction");
+                from("direct:computeAsync")
+                    .to("infinispan?cacheContainer=#cacheContainer&operation=COMPUTEASYNC&remappingFunction=#mappingFunction");
             }
         };
     }
