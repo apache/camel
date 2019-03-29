@@ -16,14 +16,14 @@
  */
 package org.apache.camel.commands;
 
-import org.apache.camel.util.URISupport;
-
 import java.io.PrintStream;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.camel.util.URISupport;
 
 /**
  * List the Camel endpoints available in the JVM.
