@@ -39,6 +39,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
@@ -51,8 +52,10 @@ import org.apache.camel.component.properties.ServicePortPropertiesFunction;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.PatternHelper;
@@ -70,8 +73,6 @@ import zipkin2.reporter.AsyncReporter;
 import zipkin2.reporter.Reporter;
 import zipkin2.reporter.libthrift.LibthriftSender;
 import zipkin2.reporter.urlconnection.URLConnectionSender;
-
-import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
 
 /**
  * To use Zipkin with Camel then setup this {@link ZipkinTracer} in your Camel
@@ -814,6 +815,25 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
                 serverResponse(brave, serviceName, exchange);
             }
         }
+    }
+
+    private static Expression routeIdExpression() {
+        return new Expression() {
+            @Override
+            public <T> T evaluate(Exchange exchange, Class<T> type) {
+                String answer = null;
+                UnitOfWork uow = exchange.getUnitOfWork();
+                RouteContext rc = uow != null ? uow.getRouteContext() : null;
+                if (rc != null) {
+                    answer = rc.getRoute().getId();
+                }
+                if (answer == null) {
+                    // fallback and get from route id on the exchange
+                    answer = exchange.getFromRouteId();
+                }
+                return type.cast(answer);
+            }
+        };
     }
 
 }

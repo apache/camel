@@ -16,13 +16,6 @@
  */
 package org.apache.camel.dataformat.xstream;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
@@ -34,6 +27,12 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.util.IOHelper;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a>
@@ -114,7 +113,7 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
         if (getXstreamDriver() != null) {
             return getXstreamDriver().createWriter(stream);
         }
-        XMLStreamWriter xmlWriter = getStaxConverter().createXMLStreamWriter(stream, exchange);
+        XMLStreamWriter xmlWriter = exchange.getContext().getTypeConverter().convertTo(XMLStreamWriter.class, exchange, stream);
         return new StaxWriter(new QNameMap(), xmlWriter);
     }
 
@@ -123,7 +122,7 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
         if (getXstreamDriver() != null) {
             return getXstreamDriver().createReader(stream);
         }
-        XMLStreamReader xmlReader = getStaxConverter().createXMLStreamReader(stream, exchange);
+        XMLStreamReader xmlReader = exchange.getContext().getTypeConverter().convertTo(XMLStreamReader.class, exchange, stream);
         return new StaxReader(new QNameMap(), xmlReader);
     }
 }
