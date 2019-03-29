@@ -1043,7 +1043,7 @@ Number of Languages: 18 in 9 JAR artifacts (1 deprecated)
 ==== Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 30 in 30 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 31 in 31 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1054,6 +1054,8 @@ Number of Miscellaneous Components: 30 in 30 JAR artifacts (0 deprecated)
 | link:camel-cdi/src/main/docs/cdi.adoc[CDI] (camel-cdi) | 2.10 | Using Camel with CDI
 
 | link:camel-cxf-transport/src/main/docs/cxf-transport.adoc[CXF Transport] (camel-cxf-transport) | 2.8 | Camel Transport for Apache CXF
+
+| link:camel-dropbox/src/main/docs/dropbox.adoc[Dropbox] (camel-dropbox) |  | Camel Dropbox support
 
 | link:camel-hystrix/src/main/docs/hystrix.adoc[Hystrix] (camel-hystrix) | 2.18 | Circuit Breaker EIP using Netflix Hystrix
 

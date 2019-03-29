@@ -32,10 +32,10 @@ import org.apache.http.StatusLine;
 import org.junit.Test;
 
 public class HipchatComponentProducerTest extends CamelTestSupport {
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
     private PostCallback callback = new PostCallback();
