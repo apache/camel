@@ -757,7 +757,6 @@
     <zookeeper-guava-version>16.0</zookeeper-guava-version>
     <zxing-version>3.3.3</zxing-version>
     <zxing-bundle-version>3.3.3_1</zxing-bundle-version>
-    <pulsar-client-version>2.2.1</pulsar-client-version>
 
     <!-- OSGi bundles properties -->
     <camel.osgi.import.camel.version>version="[$(version;==;${camel.osgi.version.clean}),$(version;=+;${camel.osgi.version.clean}))"</camel.osgi.import.camel.version>

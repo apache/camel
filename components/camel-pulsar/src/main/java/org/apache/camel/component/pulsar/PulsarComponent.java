@@ -18,7 +18,7 @@ package org.apache.camel.component.pulsar;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.pulsar.configuration.PulsarEndpointConfiguration;
+import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.pulsar.client.api.PulsarClient;
@@ -38,7 +38,7 @@ public class PulsarComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(final String uri, final String path, final Map<String, Object> parameters) throws Exception {
-        final PulsarEndpointConfiguration configuration = new PulsarEndpointConfiguration();
+        final PulsarConfiguration configuration = new PulsarConfiguration();
 
         setProperties(configuration, parameters);
         if (autoConfiguration != null) {

@@ -19,7 +19,7 @@ package org.apache.camel.component.pulsar.utils.consumers;
 import org.apache.camel.component.pulsar.PulsarConsumer;
 import org.apache.camel.component.pulsar.PulsarEndpoint;
 import org.apache.camel.component.pulsar.PulsarMessageListener;
-import org.apache.camel.component.pulsar.configuration.PulsarEndpointConfiguration;
+import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
 import org.apache.pulsar.client.api.ConsumerBuilder;
 
 // does this need to be called *Utils? It lives in a utils package after all
@@ -28,7 +28,7 @@ public final class CommonCreationStrategyUtils {
     public static ConsumerBuilder<byte[]> create(final String name,
                                                  final PulsarEndpoint pulsarEndpoint,
                                                  final PulsarConsumer pulsarConsumer) {
-        final PulsarEndpointConfiguration endpointConfiguration = pulsarEndpoint.getConfiguration();
+        final PulsarConfiguration endpointConfiguration = pulsarEndpoint.getConfiguration();
 
         return pulsarEndpoint
             .getPulsarClient()

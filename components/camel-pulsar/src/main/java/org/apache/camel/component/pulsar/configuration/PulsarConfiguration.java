@@ -23,7 +23,7 @@ import org.apache.camel.spi.UriParams;
 import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.EXCLUSIVE;
 
 @UriParams
-public class PulsarEndpointConfiguration {
+public class PulsarConfiguration {
 
     @UriParam(label = "consumer", description = "Name of the subscription to use", defaultValue = "subscription")
     private String subscriptionName = "subs";

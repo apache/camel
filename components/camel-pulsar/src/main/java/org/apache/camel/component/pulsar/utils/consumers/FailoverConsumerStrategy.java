@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import org.apache.camel.component.pulsar.PulsarConsumer;
 import org.apache.camel.component.pulsar.PulsarEndpoint;
-import org.apache.camel.component.pulsar.configuration.PulsarEndpointConfiguration;
+import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
 import org.apache.camel.component.pulsar.utils.retry.PulsarClientRetryPolicy;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.ConsumerBuilder;
@@ -48,7 +48,7 @@ public class FailoverConsumerStrategy implements ConsumerCreationStrategy {
 
     private Collection<Consumer<byte[]>> createMultipleConsumers(final PulsarEndpoint pulsarEndpoint) {
         final Collection<Consumer<byte[]>> consumers = new LinkedList<>();
-        final PulsarEndpointConfiguration configuration = pulsarEndpoint.getConfiguration();
+        final PulsarConfiguration configuration = pulsarEndpoint.getConfiguration();
 
         for (int i = 0; i < configuration.getNumberOfConsumers(); i++) {
             final String consumerName = configuration.getConsumerNamePrefix() + i;
