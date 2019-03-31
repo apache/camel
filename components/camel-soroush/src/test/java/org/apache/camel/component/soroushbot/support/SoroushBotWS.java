@@ -18,7 +18,7 @@
 package org.apache.camel.component.soroushbot.support;
 
 import org.apache.camel.component.soroushbot.IOUtils;
-import org.apache.camel.component.soroushbot.models.MessageModel;
+import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.models.response.SoroushResponse;
 import org.apache.camel.component.soroushbot.models.response.UploadFileResponse;
 import org.apache.logging.log4j.LogManager;
@@ -53,7 +53,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SoroushBotWS {
     static Random random = new Random(System.currentTimeMillis());
     static Map<String, Integer> tokenCount = new ConcurrentHashMap<>();
-    static List<MessageModel> receivedMessages = new ArrayList<>();
+    static List<SoroushMessage> receivedMessages = new ArrayList<>();
     static Map<String, String> fileIdToContent = new ConcurrentHashMap<>();
     List<String> userIds = new ArrayList<>();
     String botId = "botId";
@@ -65,7 +65,7 @@ public class SoroushBotWS {
         }
     }
 
-    public static List<MessageModel> getReceivedMessages() {
+    public static List<SoroushMessage> getReceivedMessages() {
         return receivedMessages;
     }
 
@@ -92,7 +92,7 @@ public class SoroushBotWS {
                     final OutboundEvent.Builder eventBuilder
                             = new OutboundEvent.Builder();
                     eventBuilder.id(UUID.randomUUID().toString());
-                    eventBuilder.data(MessageModel.class, getMessageModel(i, withFile));
+                    eventBuilder.data(SoroushMessage.class, getSoroushMessage(i, withFile));
                     eventBuilder.mediaType(MediaType.APPLICATION_JSON_TYPE);
                     final OutboundEvent event = eventBuilder.build();
                     sink.send(event);
@@ -125,7 +125,7 @@ public class SoroushBotWS {
 
     @POST
     @Path("{token}/sendMessage")
-    public Response sendMessage(MessageModel messageModel, @PathParam("token") String token) {
+    public Response sendMessage(SoroushMessage soroushMessage, @PathParam("token") String token) {
         String tokenLower = token.toLowerCase();
         Scanner s = new Scanner(tokenLower);
         if (s.next().equals("retry")) {
@@ -137,7 +137,7 @@ public class SoroushBotWS {
             }
 
         }
-        receivedMessages.add(messageModel);
+        receivedMessages.add(soroushMessage);
         return Response.ok(new SoroushResponse(200, "OK")).build();
     }
 
@@ -187,8 +187,8 @@ public class SoroushBotWS {
         return 10;
     }
 
-    private MessageModel getMessageModel(int i, boolean withFile) {
-        MessageModel message = new MessageModel();
+    private SoroushMessage getSoroushMessage(int i, boolean withFile) {
+        SoroushMessage message = new SoroushMessage();
         message.setFrom(userIds.get(i % 4));
         message.setTo(botId);
         message.setBody("message body " + i);

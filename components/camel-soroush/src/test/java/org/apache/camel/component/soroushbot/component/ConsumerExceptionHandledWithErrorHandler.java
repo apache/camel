@@ -22,7 +22,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.soroushbot.models.ConnectionType;
-import org.apache.camel.component.soroushbot.models.MessageModel;
+import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.camel.component.soroushbot.utils.CongestionException;
 import org.junit.Test;
@@ -34,8 +34,8 @@ public class ConsumerExceptionHandledWithErrorHandler extends SoroushBotTestSupp
             @Override
             public void configure() {
                 onException(CongestionException.class).process(exchange -> {
-                    MessageModel originalMessage = exchange.getProperty("OriginalMessage", MessageModel.class);
-                    if (originalMessage == null || exchange.getIn().getBody(MessageModel.class) != null) {
+                    SoroushMessage originalMessage = exchange.getProperty("OriginalMessage", SoroushMessage.class);
+                    if (originalMessage == null || exchange.getIn().getBody(SoroushMessage.class) != null) {
                         exchange.setProperty(Exchange.ROUTE_STOP, true);
                     }
                 }).handled(true).to("mock:exceptionRoute");

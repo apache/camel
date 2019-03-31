@@ -21,7 +21,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.soroushbot.models.ConnectionType;
-import org.apache.camel.component.soroushbot.models.MessageModel;
+import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.logging.log4j.LogManager;
 import org.junit.Assert;
@@ -48,7 +48,7 @@ public class ConsumerTest extends SoroushBotTestSupport {
                 from("soroush://" + ConnectionType.getMessage + "/5")
                         .process(exchange -> {
                             LogManager.getLogger().info("get a message");
-                            if (exchange.getIn().getBody(MessageModel.class).getBody()
+                            if (exchange.getIn().getBody(SoroushMessage.class).getBody()
                                     .contains(messageCount + "")) {
                                 successMessageCount++;
                             }

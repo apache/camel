@@ -19,7 +19,7 @@ package org.apache.camel.component.soroushbot.component;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.soroushbot.models.ConnectionType;
-import org.apache.camel.component.soroushbot.models.MessageModel;
+import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.service.SoroushService;
 import org.apache.camel.component.soroushbot.utils.MaximumConnectionRetryReachedException;
 import org.apache.camel.component.soroushbot.utils.SoroushException;
@@ -52,7 +52,7 @@ public class SoroushBotSendMessageProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        MessageModel message = exchange.getIn().getBody(MessageModel.class);
+        SoroushMessage message = exchange.getIn().getBody(SoroushMessage.class);
         // if autoUploadFile is true try to upload files inside the message
         if (endpoint.autoUploadFile) {
             endpoint.handleFileUpload(message);
@@ -65,7 +65,7 @@ public class SoroushBotSendMessageProducer extends DefaultProducer {
      * @throws MaximumConnectionRetryReachedException if can not connect to soroush after retry {@link SoroushBotEndpoint#maxConnectionRetry} times
      * @throws SoroushException                       if soroush response code wasn't 200
      */
-    private void sendMessage(MessageModel message) throws SoroushException {
+    private void sendMessage(SoroushMessage message) throws SoroushException {
         Response response;
         // this for is responsible to handle maximum connection retry.
         for (int count = 0; count <= endpoint.maxConnectionRetry; count++) {

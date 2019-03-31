@@ -19,7 +19,7 @@ package org.apache.camel.component.soroushbot.component;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.soroushbot.models.ConnectionType;
-import org.apache.camel.component.soroushbot.models.MessageModel;
+import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.support.DefaultProducer;
 
 /**
@@ -37,7 +37,7 @@ public class SoroushBotUploadFileProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        MessageModel message = exchange.getIn().getBody(MessageModel.class);
+        SoroushMessage message = exchange.getIn().getBody(SoroushMessage.class);
         endpoint.handleFileUpload(message);
     }
 }

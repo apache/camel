@@ -17,10 +17,10 @@
 
 package org.apache.camel.component.soroushbot.utils;
 
-import org.apache.camel.component.soroushbot.models.MessageModel;
+import org.apache.camel.component.soroushbot.models.SoroushMessage;
 
 public class CongestionException extends RuntimeException {
-    private MessageModel body;
+    private SoroushMessage body;
 
     public CongestionException() {
     }
@@ -41,35 +41,35 @@ public class CongestionException extends RuntimeException {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 
-    public CongestionException(MessageModel body) {
+    public CongestionException(SoroushMessage body) {
         this.body = body;
     }
 
-    public CongestionException(String message, MessageModel body) {
+    public CongestionException(String message, SoroushMessage body) {
         super(message);
         this.body = body;
     }
 
-    public CongestionException(String message, Throwable cause, MessageModel body) {
+    public CongestionException(String message, Throwable cause, SoroushMessage body) {
         super(message, cause);
         this.body = body;
     }
 
-    public CongestionException(Throwable cause, MessageModel body) {
+    public CongestionException(Throwable cause, SoroushMessage body) {
         super(cause);
         this.body = body;
     }
 
-    public CongestionException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, MessageModel body) {
+    public CongestionException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, SoroushMessage body) {
         super(message, cause, enableSuppression, writableStackTrace);
         this.body = body;
     }
 
-    public MessageModel getBody() {
+    public SoroushMessage getBody() {
         return body;
     }
 
-    public void setBody(MessageModel body) {
+    public void setBody(SoroushMessage body) {
         this.body = body;
     }
 }

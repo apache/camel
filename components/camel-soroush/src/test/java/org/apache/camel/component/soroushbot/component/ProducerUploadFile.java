@@ -23,8 +23,8 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.soroushbot.models.ConnectionType;
-import org.apache.camel.component.soroushbot.models.MessageModel;
 import org.apache.camel.component.soroushbot.models.MinorType;
+import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.camel.component.soroushbot.support.SoroushBotWS;
 import org.junit.Assert;
@@ -53,7 +53,7 @@ public class ProducerUploadFile extends SoroushBotTestSupport {
             public void configure() throws Exception {
                 from("direct:soroush").to("soroush://" + ConnectionType.uploadFile + "/token")
                         .process(exchange -> {
-                            MessageModel body = exchange.getIn().getBody(MessageModel.class);
+                            SoroushMessage body = exchange.getIn().getBody(SoroushMessage.class);
                             if (body.getFileUrl() == null) {
                                 throw new AssertionError("file url is null");
                             }
@@ -68,7 +68,7 @@ public class ProducerUploadFile extends SoroushBotTestSupport {
 
     @Test
     public void autoUploadTest() throws Exception {
-        MessageModel body = new MessageModel();
+        SoroushMessage body = new SoroushMessage();
         body.setType(MinorType.TEXT);
         body.setFrom("b1");
         body.setTo("u1");
@@ -81,7 +81,7 @@ public class ProducerUploadFile extends SoroushBotTestSupport {
         mockEndpoint.setExpectedMessageCount(1);
         mockEndpoint.assertIsSatisfied();
         Assert.assertEquals("no message sent.", SoroushBotWS.getReceivedMessages().size(), 0);
-        MessageModel mockedMessage = mockEndpoint.getExchanges().get(0).getIn().getBody(MessageModel.class);
+        SoroushMessage mockedMessage = mockEndpoint.getExchanges().get(0).getIn().getBody(SoroushMessage.class);
         Map<String, String> fileIdToContent = SoroushBotWS.getFileIdToContent();
         Assert.assertEquals("file uploaded successfully", fileIdToContent.size(), 2);
         Assert.assertEquals(fileIdToContent.get(mockedMessage.getFileUrl()), fileContent);

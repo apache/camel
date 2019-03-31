@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.soroushbot.models.ConnectionType;
-import org.apache.camel.component.soroushbot.models.MessageModel;
+import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
@@ -48,7 +48,7 @@ public class ConsumerAutoDownloadFile extends SoroushBotTestSupport {
         List<Exchange> exchanges = mockEndpoint.getExchanges();
         Assert.assertEquals(exchanges.size(), 4);
         exchanges.forEach(exchange -> {
-            MessageModel body = exchange.getIn().getBody(MessageModel.class);
+            SoroushMessage body = exchange.getIn().getBody(SoroushMessage.class);
             Assert.assertTrue("if fileUrl is not null file may not be null and visa versa", body.getFile() == null ^ body.getFileUrl() != null);
             Assert.assertTrue("if and only if thumbnail url is null thumbnail may be null", body.getThumbnail() == null ^ body.getThumbnailUrl() != null);
         });
