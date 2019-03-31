@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.soroushbot.models.ConnectionType;
-import org.apache.camel.component.soroushbot.models.MessageModel;
+import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.service.SoroushService;
 import org.apache.camel.support.DefaultConsumer;
 import org.glassfish.jersey.client.ClientProperties;
@@ -95,19 +95,19 @@ abstract public class SoroushBotAbstractConsumer extends DefaultConsumer {
                         //if read the message successfully then we reset the retry count to 0.
                         retry = 0;
                         Exchange exchange = endpoint.createExchange();
-                        MessageModel messageModel = objectMapper.readValue(inboundEvent.getRawData(), MessageModel.class);
+                        SoroushMessage soroushMessage = objectMapper.readValue(inboundEvent.getRawData(), SoroushMessage.class);
                         try {
-                            exchange.getIn().setBody(messageModel);
+                            exchange.getIn().setBody(soroushMessage);
                             if (log.isDebugEnabled())
                                 log.debug("event data is: " + new String(inboundEvent.getRawData()));
                             // if autoDownload is true, download the resource if provided in the message
                             if (endpoint.autoDownload) {
-                                endpoint.handleDownloadFiles(messageModel);
+                                endpoint.handleDownloadFiles(soroushMessage);
                             }
                             //let each subclass decide how to start processing of each exchange
                             sendExchange(exchange);
                         } catch (Exception ex) {
-                            handleExceptionThrownWhileCreatingOrProcessingExchange(exchange, messageModel, ex);
+                            handleExceptionThrownWhileCreatingOrProcessingExchange(exchange, soroushMessage, ex);
                         }
                     }
                 } catch (Exception ex) {
@@ -124,9 +124,9 @@ abstract public class SoroushBotAbstractConsumer extends DefaultConsumer {
         thread.setName("Soroush Receiver");
     }
 
-    final protected void handleExceptionThrownWhileCreatingOrProcessingExchange(Exchange exchange, MessageModel messageModel, Exception ex) {
-        //set originalMessage property to the created messageModel to let  Error Handler access the message
-        exchange.setProperty("OriginalMessage", messageModel);
+    final protected void handleExceptionThrownWhileCreatingOrProcessingExchange(Exchange exchange, SoroushMessage soroushMessage, Exception ex) {
+        //set originalMessage property to the created soroushMessage to let  Error Handler access the message
+        exchange.setProperty("OriginalMessage", soroushMessage);
         //use this instead of handleException() to manually set the exchange.
         getExceptionHandler().handleException("message can not be processed due to :" + ex.getMessage(), exchange, ex);
 

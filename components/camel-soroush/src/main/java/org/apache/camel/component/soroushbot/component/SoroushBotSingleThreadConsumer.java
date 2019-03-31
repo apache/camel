@@ -33,7 +33,11 @@ public class SoroushBotSingleThreadConsumer extends SoroushBotAbstractConsumer {
     @Override
     protected void sendExchange(Exchange exchange) {
         try {
-            getAsyncProcessor().process(exchange);
+            if (endpoint.isSynchronous()) {
+                getProcessor().process(exchange);
+            } else {
+                getAsyncProcessor().process(exchange);
+            }
         } catch (Exception e) {
             if (exchange.getException() != null) {
                 getExceptionHandler().handleException("Error processing exchange",

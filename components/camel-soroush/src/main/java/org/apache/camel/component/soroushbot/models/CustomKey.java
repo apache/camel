@@ -17,8 +17,11 @@
 
 package org.apache.camel.component.soroushbot.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.Objects;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomKey {
 
     private String command;

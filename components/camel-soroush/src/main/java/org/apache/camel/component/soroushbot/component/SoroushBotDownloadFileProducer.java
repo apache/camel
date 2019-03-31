@@ -19,7 +19,7 @@ package org.apache.camel.component.soroushbot.component;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.soroushbot.models.ConnectionType;
-import org.apache.camel.component.soroushbot.models.MessageModel;
+import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
  * this producer is responsible for uri of type {@link ConnectionType#downloadFile}
  * e.g. "soroush:downloadFile/[token]"
  * if you pass a message to this endpoint, it tries to download the resource
- * ({@link MessageModel#fileUrl} and {@link MessageModel#thumbnailUrl})
+ * ({@link SoroushMessage#fileUrl} and {@link SoroushMessage#thumbnailUrl})
  * if provided and store them in
- * {@link MessageModel#file} or {@link MessageModel#thumbnail}.
+ * {@link SoroushMessage#file} or {@link SoroushMessage#thumbnail}.
  */
 public class SoroushBotDownloadFileProducer extends DefaultProducer {
     static Logger log = LoggerFactory.getLogger(SoroushBotDownloadFileProducer.class);
@@ -43,7 +43,7 @@ public class SoroushBotDownloadFileProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        MessageModel body = exchange.getIn().getBody(MessageModel.class);
+        SoroushMessage body = exchange.getIn().getBody(SoroushMessage.class);
         endpoint.handleDownloadFiles(body);
     }
 }

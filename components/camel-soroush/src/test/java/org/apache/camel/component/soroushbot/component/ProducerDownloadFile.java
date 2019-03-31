@@ -24,8 +24,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.soroushbot.IOUtils;
 import org.apache.camel.component.soroushbot.models.ConnectionType;
-import org.apache.camel.component.soroushbot.models.MessageModel;
 import org.apache.camel.component.soroushbot.models.MinorType;
+import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.camel.component.soroushbot.support.SoroushBotWS;
 import org.junit.Assert;
@@ -56,7 +56,7 @@ public class ProducerDownloadFile extends SoroushBotTestSupport {
             public void configure() throws Exception {
                 from("direct:soroush").to("soroush://" + ConnectionType.sendMessage + "/token")
                         .process(exchange -> {
-                            MessageModel body = exchange.getIn().getBody(MessageModel.class);
+                            SoroushMessage body = exchange.getIn().getBody(SoroushMessage.class);
                             body.setFile((InputStream) null);
                             body.setThumbnail((InputStream) null);
                         })
@@ -68,7 +68,7 @@ public class ProducerDownloadFile extends SoroushBotTestSupport {
 
     @Test
     public void checkDownloadFile() throws InterruptedException, IOException {
-        MessageModel body = new MessageModel();
+        SoroushMessage body = new SoroushMessage();
         body.setType(MinorType.TEXT);
         body.setFrom("b1");
         body.setTo("u1");
@@ -80,7 +80,7 @@ public class ProducerDownloadFile extends SoroushBotTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:soroush");
         mockEndpoint.setExpectedMessageCount(1);
         mockEndpoint.assertIsSatisfied();
-        MessageModel mockedMessage = mockEndpoint.getExchanges().get(0).getIn().getBody(MessageModel.class);
+        SoroushMessage mockedMessage = mockEndpoint.getExchanges().get(0).getIn().getBody(SoroushMessage.class);
         Assert.assertEquals("download file successfully", new String(IOUtils.readFully(mockedMessage.getFile(), 1000, false)), fileContent);
         Assert.assertEquals("download thumbnail successfully", new String(IOUtils.readFully(mockedMessage.getThumbnail(), 1000, false)), thumbContent);
     }

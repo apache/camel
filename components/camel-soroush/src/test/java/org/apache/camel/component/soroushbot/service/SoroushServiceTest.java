@@ -19,8 +19,8 @@ package org.apache.camel.component.soroushbot.service;
 
 import org.apache.camel.component.soroushbot.IOUtils;
 import org.apache.camel.component.soroushbot.models.ConnectionType;
-import org.apache.camel.component.soroushbot.models.MessageModel;
 import org.apache.camel.component.soroushbot.models.MinorType;
+import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.models.response.UploadFileResponse;
 import org.apache.camel.component.soroushbot.utils.SoroushException;
 import org.glassfish.jersey.client.ClientProperties;
@@ -88,7 +88,7 @@ public class SoroushServiceTest {
     @Test
     public void sendMessageToAPerson() throws IOException, SoroushException {
         WebTarget target = soroushService.createSendMessageTarget(authorizationToken, 2000);
-        MessageModel message = new MessageModel();
+        SoroushMessage message = new SoroushMessage();
         message.setBody("content");
         message.setTo(receiverId);
         message.setType(MinorType.TEXT);

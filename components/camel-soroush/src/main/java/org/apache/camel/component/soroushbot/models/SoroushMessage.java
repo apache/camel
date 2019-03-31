@@ -32,7 +32,7 @@ import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class MessageModel {
+public class SoroushMessage {
     private String to;
     private String from;
     private String body;
@@ -66,11 +66,11 @@ public class MessageModel {
      * it to the soroush server by sending this message to {@code uploadFile} or {@code sendMessage} endpoint.
      * auto upload file is working in the following condition:
      * for {@code sendMessage} endpoint:
-     * {@link MessageModel#file}{@code !=null && }{@link SoroushBotEndpoint#autoUploadFile} {@code  && (}
-     * {@link MessageModel#fileUrl}{@code ==null || }{@link SoroushBotEndpoint#forceUpload}{@code )}
+     * {@link SoroushMessage#file}{@code !=null && }{@link SoroushBotEndpoint#autoUploadFile} {@code  && (}
+     * {@link SoroushMessage#fileUrl}{@code ==null || }{@link SoroushBotEndpoint#forceUpload}{@code )}
      * for {@code uploadFile} endpoint:
-     * {@link MessageModel#file}{@code !=null && (}
-     * {@link MessageModel#fileUrl}{@code ==null || }{@link SoroushBotEndpoint#forceUpload}{@code )}
+     * {@link SoroushMessage#file}{@code !=null && (}
+     * {@link SoroushMessage#fileUrl}{@code ==null || }{@link SoroushBotEndpoint#forceUpload}{@code )}
      *
      * @param file to be uploaded
      * @throws FileNotFoundException if file not found
@@ -88,11 +88,11 @@ public class MessageModel {
      * it to the soroush server by sending this message to {@code uploadFile} or {@code sendMessage} endpoint.
      * auto upload thumbnail is working in the following condition:
      * for {@code sendMessage} endpoint:
-     * {@link MessageModel#thumbnail}{@code !=null && }{@link SoroushBotEndpoint#autoUploadFile} {@code  && (}
-     * {@link MessageModel#thumbnailUrl}{@code ==null || }{@link SoroushBotEndpoint#forceUpload}{@code )}
+     * {@link SoroushMessage#thumbnail}{@code !=null && }{@link SoroushBotEndpoint#autoUploadFile} {@code  && (}
+     * {@link SoroushMessage#thumbnailUrl}{@code ==null || }{@link SoroushBotEndpoint#forceUpload}{@code )}
      * for {@code uploadFile} endpoint:
-     * {@link MessageModel#thumbnail}{@code !=null && (}
-     * {@link MessageModel#thumbnailUrl}{@code ==null || }{@link SoroushBotEndpoint#forceUpload}{@code )}
+     * {@link SoroushMessage#thumbnail}{@code !=null && (}
+     * {@link SoroushMessage#thumbnailUrl}{@code ==null || }{@link SoroushBotEndpoint#forceUpload}{@code )}
      *
      * @param thumbnail to be uploaded
      * @throws FileNotFoundException if file not found
@@ -298,7 +298,7 @@ public class MessageModel {
 
     @Override
     public String toString() {
-        return "MessageModel{" +
+        return "SoroushMessage{" +
                 "to='" + to + '\'' +
                 ", from='" + from + '\'' +
                 ", body='" + body + '\'' +
@@ -327,8 +327,8 @@ public class MessageModel {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MessageModel)) return false;
-        MessageModel that = (MessageModel) o;
+        if (!(o instanceof SoroushMessage)) return false;
+        SoroushMessage that = (SoroushMessage) o;
         return Objects.equals(getTo(), that.getTo()) &&
                 Objects.equals(getFrom(), that.getFrom()) &&
                 Objects.equals(getBody(), that.getBody()) &&

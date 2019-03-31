@@ -30,7 +30,7 @@ import java.util.Map;
 @Component("soroush")
 public class SoroushBotComponent extends DefaultComponent {
 
-    @Metadata(label = "security")
+    @Metadata(label = "security", description = "The default Soroush authorization token to be used when the information is not provided in the endpoints.")
     private String authorizationToken = null;
 
     @Override
@@ -46,11 +46,6 @@ public class SoroushBotComponent extends DefaultComponent {
         return authorizationToken;
     }
 
-    /**
-     * The default Soroush authorization token to be used when the information is not provided in the endpoints.
-     *
-     * @param authorizationToken
-     */
     public void setAuthorizationToken(String authorizationToken) {
         this.authorizationToken = authorizationToken;
     }

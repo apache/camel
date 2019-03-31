@@ -19,7 +19,7 @@ package org.apache.camel.component.soroushbot.component;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.soroushbot.models.MessageModel;
+import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.utils.CongestionException;
 import org.apache.camel.component.soroushbot.utils.MultiQueueWithTopicThreadPool;
 
@@ -40,15 +40,19 @@ public class SoroushBotMultiThreadConsumer extends SoroushBotAbstractConsumer {
     @Override
     protected void sendExchange(Exchange exchange) {
         try {
-            threadPool.execute(exchange.getIn().getBody(MessageModel.class).getFrom(), () -> {
+            threadPool.execute(exchange.getIn().getBody(SoroushMessage.class).getFrom(), () -> {
                 try {
-                    getAsyncProcessor().process(exchange);
+                    if (endpoint.isSynchronous()) {
+                        getProcessor().process(exchange);
+                    } else {
+                        getAsyncProcessor().process(exchange);
+                    }
                 } catch (Exception ex) {
                     log.error("internal error occurs", ex);
                 }
             });
         } catch (IllegalStateException ex) {
-            throw new CongestionException(ex, exchange.getIn().getBody(MessageModel.class));
+            throw new CongestionException(ex, exchange.getIn().getBody(SoroushMessage.class));
         }
     }
 }

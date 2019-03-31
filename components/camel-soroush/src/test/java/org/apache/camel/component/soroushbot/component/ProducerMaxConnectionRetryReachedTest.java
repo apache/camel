@@ -24,8 +24,8 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.soroushbot.models.ConnectionType;
-import org.apache.camel.component.soroushbot.models.MessageModel;
 import org.apache.camel.component.soroushbot.models.MinorType;
+import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.camel.component.soroushbot.support.SoroushBotWS;
 import org.junit.Assert;
@@ -56,7 +56,7 @@ public class ProducerMaxConnectionRetryReachedTest extends SoroushBotTestSupport
 
     @Test
     public void retryOnFailure() throws Exception {
-        MessageModel body = new MessageModel();
+        SoroushMessage body = new SoroushMessage();
         body.setType(MinorType.TEXT);
         body.setFrom("b1");
         body.setTo("u1");
