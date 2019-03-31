@@ -1,0 +1,82 @@
+[[soroush-component]]
+== SoroushBot Component
+
+*Available as of Camel version 3.0.0-SNAPSHOT*
+
+The *Soroush* component provide access to the https://soroush-app.ir/developer.html[Soroush Bot API].
+It allows a Camel-based application to send and receive message by acting as a Bot, i.e. participate in direct conversation with normal users and send and receive message and files
+
+A Soroush Bot must be created before using this component, following the
+instruction at the
+link:https://soroush-app.ir/developer.html[Soroush Bot Developers home].
+when a new Bot is created, the link:https://sapp.ir/mrbot[MrBot] provides
+an **authorization token** corresponding to the Bot. The authorization token is a mandatory parameter for camel-soroush endpoint.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-soroush</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+
+// component options: START
+The SoroushBot component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *authorizationToken* (security) | The default Soroush authorization token to be used when the information is not provided in the endpoints. |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The SoroushBot endpoint is configured using URI syntax:
+
+----
+soroush:ConnectionType/[authorizationToken]
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *type* | *Required* The endpoint type. Currently, only the 'getMessages' type is supported. |  | ConnectionType
+|===
+
+
+==== Query Parameters (14 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *authorizationToken* (security) | *Required* The authorization token for using the bot (ask the mrbot), eg. 9yDv09nqKvP9CkBGKNmKQHir1dj2qLpN-YWa8hP7Rm3LK3MqQXYdXZIA5W4e0agPiUb-3eUKX69ozUNdY9yZBMlJiwnlksslkjWjsxcARo5cYtDnKTElig0xae1Cjt1Bexz2cw-t6cJ7t1f |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *autoDownload* (getMessage) | automatically download fileUrl and thumbnailUrl if exists for the message and store them in MessageModel.file and MessageModel.thumbnail field | false | Boolean
+| *concurrentConsumers* (getMessage) | number of thread created by consumer in the route. if you use this method for parallelism, it is guaranteed that message from same user always execute in the same thread. |  | Integer
+| *queueCapacityPerThread* (getMessage) | maximum capacity of each queue when $concurrentConsumers is greater than 1. if a queue become full, every message that should goes to that queue will be dropped and for each message java.lang.IllegalStateException will throw |  | Integer
+| *downloadThumbnail* (downloadFile) | if true, when downloading attached file, it also download the thumbnail if provided in the message. | true | Boolean
+| *forceDownload* (downloadFile) | force to download fileUrl(thumbnailUrl) if exists, even if the file(thumbnail) exists in the message | false | Boolean
+| *connectionTimeout* (global) | connection timeout in ms when connecting to soroush API | 30000 | Integer
+| *maxConnectionRetry* (global) | maximum connection retry when fail to connect to soroush API | 4 | Integer
+| *autoUploadFile* (sendMessage) | automatically upload when message goes to the sendMessage endpoint and message file(thumbnail) has been set and fileUrl(thumbnailUrl) is null | true | Boolean
+| *forceUpload* (uploadFile) | force to upload file(thumbnail) if exists, even if the fileUrl(thumbnailUrl) is not null in the message | false | Boolean
+|===
+// endpoint options: END
