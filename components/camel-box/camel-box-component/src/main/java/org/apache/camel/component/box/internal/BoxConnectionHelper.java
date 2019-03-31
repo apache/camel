@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,18 +16,17 @@
  */
 package org.apache.camel.component.box.internal;
 
-import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.SocketAddress;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.net.ssl.SSLContext;
 
 import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxAPIException;
@@ -35,34 +34,22 @@ import com.box.sdk.BoxDeveloperEditionAPIConnection;
 import com.box.sdk.IAccessTokenCache;
 import com.box.sdk.InMemoryLRUAccessTokenCache;
 import com.box.sdk.JWTEncryptionPreferences;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.ProxyConfig;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebClientOptions;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.WebResponse;
-import com.gargoylesoftware.htmlunit.html.HtmlButton;
-import com.gargoylesoftware.htmlunit.html.HtmlDivision;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.gargoylesoftware.htmlunit.util.WebConnectionWrapper;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.box.BoxConfiguration;
-import org.apache.camel.support.jsse.SSLContextParameters;
-import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
-import org.apache.http.HttpStatus;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.FormElement;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * BoxConnectionHelper
- * 
+ *
  * <p>
  * Utility class for creating Box API Connections
  */
@@ -71,7 +58,7 @@ public final class BoxConnectionHelper {
     private static final Logger LOG = LoggerFactory.getLogger(BoxConnectionHelper.class);
 
     private static final Pattern QUERY_PARAM_PATTERN = Pattern.compile("&?([^=]+)=([^&]+)");
-    
+
     private BoxConnectionHelper() {
         // hide utility class constructor
     }
@@ -96,97 +83,79 @@ public final class BoxConnectionHelper {
 
     public static BoxAPIConnection createStandardAuthenticatedConnection(BoxConfiguration configuration) {
 
-        // Create web client for first leg of OAuth2
-        //
-        final WebClient webClient = new WebClient();
-        final WebClientOptions options = webClient.getOptions();
-        options.setRedirectEnabled(true);
-        options.setJavaScriptEnabled(false);
-        options.setThrowExceptionOnFailingStatusCode(true);
-        options.setThrowExceptionOnScriptError(true);
-        options.setPrintContentOnFailingStatusCode(LOG.isDebugEnabled());
-        try {
-            // use default SSP to create supported non-SSL protocols list
-            final SSLContext sslContext = new SSLContextParameters().createSSLContext(null);
-            options.setSSLClientProtocols(sslContext.createSSLEngine().getEnabledProtocols());
-        } catch (GeneralSecurityException e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        } catch (IOException e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        } finally {
-            if (webClient != null) {
-                webClient.close();
-            }
-        }
-
-        // disable default gzip compression, as htmlunit does not negotiate
-        // pages sent with no compression
-        new WebConnectionWrapper(webClient) {
-            @Override
-            public WebResponse getResponse(WebRequest request) throws IOException {
-                request.setAdditionalHeader(HttpHeaders.ACCEPT_ENCODING, "identity");
-                return super.getResponse(request);
-            }
-        };
-
-        // add HTTP proxy if set
-        final Map<String, Object> httpParams = configuration.getHttpParams();
-        if (httpParams != null && httpParams.get("http.route.default-proxy") != null) {
-            final HttpHost proxyHost = (HttpHost) httpParams.get("http.route.default-proxy");
-            final Boolean socksProxy = (Boolean) httpParams.get("http.route.socks-proxy");
-            final ProxyConfig proxyConfig = new ProxyConfig(proxyHost.getHostName(), proxyHost.getPort(),
-                    socksProxy != null ? socksProxy : false);
-            options.setProxyConfig(proxyConfig);
-        }
-
         // authorize application on user's behalf
         try {
+            //prepare proxy parameter
+            final Proxy proxy;
+            final Map<String, Object> httpParams = configuration.getHttpParams();
+            if (httpParams != null && httpParams.get("http.route.default-proxy") != null) {
+                final HttpHost proxyHost = (HttpHost) httpParams.get("http.route.default-proxy");
+                final Boolean socksProxy = (Boolean) httpParams.get("http.route.socks-proxy");
+                SocketAddress proxyAddr = new InetSocketAddress(proxyHost.getHostName(), proxyHost.getPort());
+                if (socksProxy != null && socksProxy) {
+                    proxy = new Proxy(Proxy.Type.SOCKS, proxyAddr);
+                } else {
+                    proxy = new Proxy(Proxy.Type.HTTP, proxyAddr);
+                }
+            } else {
+                proxy = null;
+            }
 
             // generate anti-forgery token to prevent/detect CSRF attack
             final String csrfToken = String.valueOf(new SecureRandom().nextLong());
 
-            final HtmlPage authPage = webClient.getPage(authorizationUrl(configuration.getClientId(), csrfToken));
+            final String authorizeUrl = authorizationUrl(configuration.getClientId(), csrfToken);
 
-            // look for <div role="error_message">
-            final HtmlDivision div = authPage
-                    .getFirstByXPath("//div[contains(concat(' ', @class, ' '), ' error_message ')]");
-            if (div != null) {
-                final String errorMessage = div.getTextContent().replaceAll("\\s+", " ")
-                        .replaceAll(" Show Error Details", ":").trim();
-                throw new IllegalArgumentException("Error authorizing application: " + errorMessage);
+            //load loginPage
+            final Connection.Response loginPageResponse = addProxy(Jsoup.connect(authorizeUrl), proxy).method(Connection.Method.GET).execute();
+            final Document loginPage = loginPageResponse.parse();
+
+            validatePage(loginPage);
+
+            //fill login form
+            final FormElement loginForm = (FormElement)loginPage.select("form[name=login_form]").first();
+
+            final Element loginField = loginForm.select("input[name=login]").first();
+            loginField.val(configuration.getUserName());
+
+            final Element passwordField = loginForm.select("input[name=password]").first();
+            passwordField.val(configuration.getUserPassword());
+
+            //submit loginPage
+            final Map<String, String> cookies = new HashMap();
+            cookies.putAll(loginPageResponse.cookies());
+
+            Connection.Response response = addProxy(loginForm.submit(), proxy)
+                    .cookies(cookies)
+                    .execute();
+            cookies.putAll(response.cookies());
+
+            final Document consentPage = response.parse();
+
+            //possible invalid credentials error
+            validatePage(consentPage);
+
+            final FormElement consentForm = (FormElement)consentPage.select("form[name=consent_form]").first();
+
+            //remove reject input
+            consentForm.elements().removeIf(e -> e.attr("name").equals("consent_reject"));
+            //parse request_token from javascript from head, it is the first script in the header
+            final String requestTokenScript = consentPage.select("script").first().html();
+            final Matcher m = Pattern.compile("var\\s+request_token\\s+=\\s+'([^'].+)'.*").matcher(requestTokenScript);
+            if (m.find()) {
+                final String requestToken = m.group(1);
+                response = addProxy(consentForm.submit(), proxy)
+                        .data("request_token", requestToken)
+                        .followRedirects(false)
+                        .cookies(cookies)
+                        .execute();
+            } else {
+                throw new IllegalArgumentException("Error authorizing application: Can not parse request token.");
             }
+            final String location = response.header("Location");
 
-            // submit login credentials
-            final HtmlForm loginForm = authPage.getFormByName("login_form");
-            final HtmlTextInput login = loginForm.getInputByName("login");
-            login.setText(configuration.getUserName());
-            final HtmlPasswordInput password = loginForm.getInputByName("password");
-            password.setText(configuration.getUserPassword());
-            final HtmlSubmitInput submitInput = loginForm.getInputByName("login_submit");
-
-            // submit consent
-            final HtmlPage consentPage = submitInput.click();
-            final HtmlForm consentForm = consentPage.getFormByName("consent_form");
-            final HtmlButton consentAccept = consentForm.getButtonByName("consent_accept");
-
-            // disable redirect to avoid loading redirect URL
-            webClient.getOptions().setRedirectEnabled(false);
-
-            // validate CSRF and get authorization code
-            String redirectQuery;
-            try {
-                final Page redirectPage = consentAccept.click();
-                redirectQuery = redirectPage.getUrl().getQuery();
-            } catch (FailingHttpStatusCodeException e) {
-                // escalate non redirect errors
-                if (e.getStatusCode() != HttpStatus.SC_MOVED_TEMPORARILY) {
-                    throw e;
-                }
-                final String location = e.getResponse().getResponseHeaderValue("Location");
-                redirectQuery = new URL(location).getQuery();
-            }
             final Map<String, String> params = new HashMap<>();
-            final Matcher matcher = QUERY_PARAM_PATTERN.matcher(redirectQuery);
+            final Matcher matcher = QUERY_PARAM_PATTERN.matcher(new URL(location).getQuery());
             while (matcher.find()) {
                 params.put(matcher.group(1), matcher.group(2));
             }
@@ -210,6 +179,46 @@ public final class BoxConnectionHelper {
         } catch (Exception e) {
             throw new RuntimeCamelException(String.format("Box API connection failed: %s", e.getMessage()), e);
         }
+    }
+
+    /**
+     * Validation of page:
+     * - detects CAPTCHA test
+     * - detects invalid credentials error
+     * - detects wrong clientId error
+     */
+    private static void validatePage(Document page) {
+        Elements captchaDivs = page.select("div[class*=g-recaptcha]");
+        if (!captchaDivs.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Authentication requires CAPTCHA test. First you need to authenticate the account manually via web to unlock CAPTCHA.");
+        }
+
+        Elements errorDivs = page.select("div[class*=error_message]");
+        String errorMessage = null;
+        if (!errorDivs.isEmpty()) {
+            errorMessage = errorDivs.first().text().replaceAll("\\s+", " ")
+                    .replaceAll(" Show Error Details", ":").trim();
+        } else {
+            errorDivs = page.select("div[class*=message]");
+            if (!errorDivs.isEmpty()) {
+                errorMessage = errorDivs.first().text();
+            }
+        }
+
+        if (!errorDivs.isEmpty()) {
+            throw new IllegalArgumentException("Error authorizing application: " + errorMessage);
+        }
+    }
+
+    /**
+     * Helper method to add proxy into JSoup connection
+     */
+    private static Connection addProxy(Connection connection, Proxy proxy) {
+        if (proxy != null) {
+            return connection.proxy(proxy);
+        }
+        return  connection;
     }
 
     public static BoxAPIConnection createAppUserAuthenticatedConnection(BoxConfiguration configuration) {

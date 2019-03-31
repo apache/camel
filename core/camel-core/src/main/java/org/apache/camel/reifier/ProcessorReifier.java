@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -81,6 +81,7 @@ import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.SetPropertyDefinition;
 import org.apache.camel.model.SortDefinition;
 import org.apache.camel.model.SplitDefinition;
+import org.apache.camel.model.StepDefinition;
 import org.apache.camel.model.StopDefinition;
 import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.model.ThrottleDefinition;
@@ -164,6 +165,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
         map.put(SetPropertyDefinition.class, SetPropertyReifier::new);
         map.put(SortDefinition.class, SortReifier::new);
         map.put(SplitDefinition.class, SplitReifier::new);
+        map.put(StepDefinition.class, StepReifier::new);
         map.put(StopDefinition.class, StopReifier::new);
         map.put(ThreadsDefinition.class, ThreadsReifier::new);
         map.put(ThrottleDefinition.class, ThrottleReifier::new);

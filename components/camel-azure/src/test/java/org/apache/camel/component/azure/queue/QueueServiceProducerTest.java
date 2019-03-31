@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,24 +16,17 @@
  */
 package org.apache.camel.component.azure.queue;
 
-import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Properties;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
 
 import com.microsoft.azure.storage.OperationContext;
 import com.microsoft.azure.storage.StorageCredentials;
 import com.microsoft.azure.storage.StorageCredentialsAccountAndKey;
 import com.microsoft.azure.storage.queue.CloudQueue;
 import com.microsoft.azure.storage.queue.CloudQueueMessage;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
@@ -98,14 +91,9 @@ public class QueueServiceProducerTest {
     }
 
     private CamelContext createCamelContext(StorageCredentials credentials) throws Exception {
-        JndiRegistry registry = new JndiRegistry(createJndiContext());
-        registry.bind("creds", credentials);
-        return new DefaultCamelContext(registry);
+        CamelContext context = new DefaultCamelContext();
+        context.getRegistry().bind("creds", credentials);
+        return context;
     }
 
-    private Context createJndiContext() throws Exception {
-        Properties properties = new Properties();
-        properties.put("java.naming.factory.initial", "org.apache.camel.support.jndi.CamelInitialContextFactory");
-        return new InitialContext(new Hashtable<>(properties));
-    }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,6 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.component.jackson.JacksonConstants;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -34,7 +33,7 @@ import org.apache.camel.spi.TypeConverterRegistry;
 /**
  * Jackson {@link org.apache.camel.TypeConverter} that allows converting json to/from POJOs and other types.
  * <br/>
- * This implementation uses a {@link FallbackConverter}.
+ * This implementation uses a fallback converter.
  * <p/>
  * The converter is disabled by default. To enable then set the property
  * {@link JacksonConstants#ENABLE_TYPE_CONVERTER} to <tt>true</tt> on {@link CamelContext#getGlobalOptions()}.
@@ -43,7 +42,7 @@ import org.apache.camel.spi.TypeConverterRegistry;
  * default the converter only attempts to convert to primitive types such as String and numbers. To convert to any kind, then
  * enable this by setting {@link JacksonConstants#TYPE_CONVERTER_TO_POJO} to <tt>true</tt> on {@link CamelContext#getGlobalOptions()}.
  */
-@Converter
+@Converter(loader = true)
 public final class JacksonTypeConverters {
 
     private final ObjectMapper defaultMapper;
@@ -58,7 +57,7 @@ public final class JacksonTypeConverters {
         defaultMapper.registerModule(module);
     }
 
-    @FallbackConverter
+    @Converter(fallback = true)
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) throws Exception {
 
         // only do this if enabled (disabled by default)

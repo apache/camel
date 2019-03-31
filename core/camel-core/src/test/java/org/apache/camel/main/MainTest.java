@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,8 +16,6 @@
  */
 package org.apache.camel.main;
 
-import java.util.List;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -32,13 +30,12 @@ public class MainTest extends Assert {
         Main main = new Main();
         main.addRouteBuilder(new MyRouteBuilder());
         main.enableTrace();
-        main.bind("foo", new Integer(31));
+        main.bind("foo", 31);
         main.start();
 
-        List<CamelContext> contextList = main.getCamelContexts();
-        assertNotNull(contextList);
-        assertEquals("Did not get the expected count of Camel contexts", 1, contextList.size());
-        CamelContext camelContext = contextList.get(0);
+        CamelContext camelContext = main.getCamelContext();
+
+        assertNotNull(camelContext);
         assertEquals("Could not find the registry bound object", 31, camelContext.getRegistry().lookupByName("foo"));
 
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
@@ -58,13 +55,11 @@ public class MainTest extends Assert {
         main.addRouteBuilder(new MyRouteBuilder());
         main.disableHangupSupport();
         main.enableTrace();
-        main.bind("foo", new Integer(31));
+        main.bind("foo", 31);
         main.start();
 
-        List<CamelContext> contextList = main.getCamelContexts();
-        assertNotNull(contextList);
-        assertEquals("Did not get the expected count of Camel contexts", 1, contextList.size());
-        CamelContext camelContext = contextList.get(0);
+        CamelContext camelContext = main.getCamelContext();
+
         assertEquals("Could not find the registry bound object", 31, camelContext.getRegistry().lookupByName("foo"));
 
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
@@ -84,11 +79,8 @@ public class MainTest extends Assert {
         main.parseArguments(new String[]{"-r", "org.apache.camel.main.MainTest$MyRouteBuilder"});
         main.start();
 
-        List<CamelContext> contextList = main.getCamelContexts();
-        assertNotNull(contextList);
-        assertEquals("Did not get the expected count of Camel contexts", 1, contextList.size());
-        CamelContext camelContext = contextList.get(0);
-        
+        CamelContext camelContext = main.getCamelContext();
+
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
         endpoint.expectedMinimumMessageCount(1);
 
@@ -97,7 +89,21 @@ public class MainTest extends Assert {
         endpoint.assertIsSatisfied();
         main.stop();
     }
-    
+
+    @Test
+    public void testOptionalProperties() throws Exception {
+        // lets make a simple route
+        Main main = new Main();
+        main.addRouteBuilder(new MyRouteBuilder());
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        // should load application.properties from classpath
+        assertEquals("World", camelContext.resolvePropertyPlaceholders("{{hello}}"));
+
+        main.stop();
+    }
+
     public static class MyRouteBuilder extends RouteBuilder {
         @Override
         public void configure() throws Exception {

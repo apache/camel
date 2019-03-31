@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -56,7 +56,7 @@ import org.codehaus.plexus.util.StringUtils;
  * Generates documentation for API Component.
  */
 @Mojo(name = "document", requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true,
-        defaultPhase = LifecyclePhase.SITE)
+        defaultPhase = LifecyclePhase.SITE, threadSafe = true)
 public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements MavenReport {
 
     // document output directory

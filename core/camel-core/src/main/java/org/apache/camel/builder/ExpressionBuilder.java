@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -728,10 +728,20 @@ public final class ExpressionBuilder {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 String text = simpleExpression(propertyName).evaluate(exchange, String.class);
-                String answer = System.getenv(text.toUpperCase());
+                String answer = null;
+                if (text != null) {
+                    // lookup OS env with upper case key
+                    text = text.toUpperCase();
+                    answer = System.getenv(text);
+                    // some OS do not support dashes in keys, so replace with underscore
+                    if (answer == null) {
+                        String noDashKey = text.replace('-', '_');
+                        answer = System.getenv(noDashKey);
+                    }
+                }
+
                 if (answer == null) {
-                    String text2 = simpleExpression(defaultValue).evaluate(exchange, String.class);
-                    answer = text2;
+                    answer = simpleExpression(defaultValue).evaluate(exchange, String.class);
                 }
                 return answer;
             }
@@ -1195,6 +1205,22 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "threadName";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the current step id (if any)
+     */
+    public static Expression stepIdExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getProperty(Exchange.STEP_ID);
+            }
+
+            @Override
+            public String toString() {
+                return "stepId";
             }
         };
     }

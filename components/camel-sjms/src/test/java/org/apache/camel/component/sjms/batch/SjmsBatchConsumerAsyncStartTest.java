@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.MockConnectionFactory;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 
 public class SjmsBatchConsumerAsyncStartTest extends SjmsBatchConsumerTest {
 
@@ -31,7 +31,7 @@ public class SjmsBatchConsumerAsyncStartTest extends SjmsBatchConsumerTest {
     @Override
     public CamelContext createCamelContext() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("testStrategy", new ListAggregationStrategy());
+        registry.bind("testStrategy", new ListAggregationStrategy());
         ConnectionFactory connectionFactory = new MockConnectionFactory(broker.getTcpConnectorUri());
 
         SjmsComponent sjmsComponent = new SjmsComponent();

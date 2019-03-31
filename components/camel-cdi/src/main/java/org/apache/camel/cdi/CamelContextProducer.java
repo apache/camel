@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,6 +36,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
 import org.apache.camel.spi.CamelContextNameStrategy;
+import org.apache.camel.support.DefaultRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +76,7 @@ final class CamelContextProducer<T extends CamelContext> extends DelegateProduce
         // Add bean registry and Camel injector
         if (context instanceof DefaultCamelContext) {
             DefaultCamelContext adapted = context.adapt(DefaultCamelContext.class);
-            adapted.setRegistry(new CdiCamelRegistry(manager));
+            adapted.setRegistry(new DefaultRegistry(new CdiCamelBeanRepository(manager)));
             adapted.setInjector(new CdiCamelInjector(context.getInjector(), manager));
         } else {
             // Fail fast for the time being to avoid side effects by the time these two methods get declared on the CamelContext interface

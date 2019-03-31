@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,7 +32,7 @@ public class SpringFileAntPathMatcherFileFilterTest extends SpringRunWithTestSup
     protected String expectedBody = "Godday World";
     @Autowired
     protected ProducerTemplate template;
-    @EndpointInject(ref = "myFileEndpoint")
+    @EndpointInject(uri = "ref:myFileEndpoint")
     protected Endpoint inputFile;
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint result;

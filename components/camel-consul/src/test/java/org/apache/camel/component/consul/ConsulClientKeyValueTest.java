@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,14 +26,6 @@ import org.junit.Test;
 
 public class ConsulClientKeyValueTest extends ConsulTestSupport {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("consulClient", getConsul());
-
-        return registry;
-    }
-
     @Test
     public void testKeyPut() throws Exception {
         String key = generateKey();
@@ -58,6 +50,14 @@ public class ConsulClientKeyValueTest extends ConsulTestSupport {
         assertTrue(keyVal.isPresent());
         assertEquals(val, keyVal.get());
     }
+    
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+        registry.bind("consulClient", getConsul());
+        return registry;
+    }
+
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

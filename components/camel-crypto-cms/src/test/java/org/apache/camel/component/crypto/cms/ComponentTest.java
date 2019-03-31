@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,7 @@ import org.apache.camel.component.crypto.cms.util.TestAttributesGeneratorProvide
 import org.apache.camel.component.crypto.cms.util.TestOriginatorInformationProvider;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -120,10 +120,10 @@ public class ComponentTest extends CamelTestSupport {
                 signerInfo2.setPrivateKeyAlias("dsa");
                 signerInfo2.setKeyStoreParameters(keystore);
 
-                simpleReg.put("keyStoreParameters", keystore);
-                simpleReg.put("signer1", signerInfo);
-                simpleReg.put("signer2", signerInfo2);
-                simpleReg.put("recipient1", recipient);
+                simpleReg.bind("keyStoreParameters", keystore);
+                simpleReg.bind("signer1", signerInfo);
+                simpleReg.bind("signer2", signerInfo2);
+                simpleReg.bind("recipient1", recipient);
 
                 onException(CryptoCmsVerifierCertificateNotValidException.class).handled(false).to("mock:exception");
 
@@ -138,7 +138,7 @@ public class ComponentTest extends CamelTestSupport {
                 signerOutdated.setSignatureAlgorithm("SHA1withRSA");
                 signerOutdated.setPrivateKeyAlias("outdated");
                 signerOutdated.setKeyStoreParameters(keystore);
-                simpleReg.put("signerOutdated", signerOutdated);
+                simpleReg.bind("signerOutdated", signerOutdated);
 
                 from("direct:outdated").to("crypto-cms:sign://outdated?signer=#signerOutdated&includeContent=true")
                     .to("crypto-cms:verify://outdated?keyStoreParameters=#keyStoreParameters").to("mock:result");
@@ -148,8 +148,8 @@ public class ComponentTest extends CamelTestSupport {
 
                 TestOriginatorInformationProvider originatorInformationProvider = new TestOriginatorInformationProvider();
                 TestAttributesGeneratorProvider attributesGeneratorProvider = new TestAttributesGeneratorProvider();
-                simpleReg.put("originatorInformationProvider1", originatorInformationProvider);
-                simpleReg.put("attributesGeneratorProvider1", attributesGeneratorProvider);
+                simpleReg.bind("originatorInformationProvider1", originatorInformationProvider);
+                simpleReg.bind("attributesGeneratorProvider1", attributesGeneratorProvider);
 
                 from("direct:encryptDecryptOriginatorAttributes")
                     .to("crypto-cms:encrypt://testencrpyt?toBase64=true&recipient=#recipient1&contentEncryptionAlgorithm=DESede/CBC/PKCS5Padding&secretKeyLength=128&"

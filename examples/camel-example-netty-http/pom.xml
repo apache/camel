@@ -17,71 +17,73 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel.example</groupId>
-    <artifactId>examples</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>org.apache.camel.example</groupId>
+        <artifactId>examples</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>camel-example-netty-http</artifactId>
-  <packaging>pom</packaging>
-  <name>Camel :: Example :: Netty HTTP</name>
-  <description>An example showing how to use a shared Netty HTTP server with multiple Camel applications in OSGi container</description>
+    <artifactId>camel-example-netty-http</artifactId>
+    <packaging>pom</packaging>
+    <name>Camel :: Example :: Netty HTTP</name>
+    <description>An example showing how to use a shared Netty HTTP server with multiple Camel applications in OSGi
+        container
+    </description>
 
-  <properties>
-    <category>OSGi</category>
-    <title>Netty HTTP</title>
+    <properties>
+        <category>OSGi</category>
+        <title>Netty HTTP</title>
 
-    <camel.osgi.export.pkg>org.apache.camel.example.netty.*</camel.osgi.export.pkg>
-  </properties>
+        <camel.osgi.export.pkg>org.apache.camel.example.netty.*</camel.osgi.export.pkg>
+    </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-blueprint</artifactId>
-    </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-blueprint</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-netty4-http</artifactId>
-    </dependency>
-    
-    <!-- logging -->
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <scope>runtime</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-netty4-http</artifactId>
+        </dependency>
 
-    <!-- for testing -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
+        <!-- logging -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
-  </dependencies>
+        <!-- for testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-  <modules>
-    <module>shared-netty-http-server</module>
-    <module>myapp-one</module>
-    <module>myapp-two</module>
-    <module>myapp-cdi</module>
-  </modules>
+    </dependencies>
+
+    <modules>
+        <module>shared-netty-http-server</module>
+        <module>myapp-one</module>
+        <module>myapp-two</module>
+        <module>myapp-cdi</module>
+    </modules>
 
 </project>

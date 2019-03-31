@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinitionConstants;
 import org.apache.camel.model.cloud.ServiceCallExpressionConfiguration;
@@ -137,10 +136,7 @@ public class ServiceCallConfigurationTest {
         conf.setServiceDiscovery(sd);
         conf.serviceFilter(sf);
 
-        SimpleRegistry reg = new SimpleRegistry();
-        reg.put(ServiceCallDefinitionConstants.DEFAULT_SERVICE_CALL_CONFIG_ID, conf);
-
-        CamelContext context = new DefaultCamelContext(reg);
+        CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -152,6 +148,8 @@ public class ServiceCallConfigurationTest {
                         .end();
             }
         });
+
+        context.getRegistry().bind(ServiceCallDefinitionConstants.DEFAULT_SERVICE_CALL_CONFIG_ID, conf);
 
         context.start();
 
@@ -181,10 +179,7 @@ public class ServiceCallConfigurationTest {
         conf.setServiceDiscovery(sd);
         conf.serviceFilter(sf);
 
-        SimpleRegistry reg = new SimpleRegistry();
-        reg.put(UUID.randomUUID().toString(), conf);
-
-        CamelContext context = new DefaultCamelContext(reg);
+        CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -196,6 +191,8 @@ public class ServiceCallConfigurationTest {
                         .end();
             }
         });
+
+        context.getRegistry().bind(UUID.randomUUID().toString(), conf);
 
         context.start();
 

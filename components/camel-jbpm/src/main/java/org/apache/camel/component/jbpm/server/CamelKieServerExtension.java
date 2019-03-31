@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,6 +29,7 @@ import org.apache.camel.component.jbpm.JBPMConstants;
 import org.apache.camel.component.jbpm.config.CamelContextBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.jbpm.services.api.service.ServiceRegistry;
@@ -97,9 +98,7 @@ public class CamelKieServerExtension implements KieServerExtension {
 
             try (InputStream is = this.getClass().getResourceAsStream("/global-camel-routes.xml")) {
                 if (is != null) {
-
-                    RoutesDefinition routes = camelContext.loadRoutesDefinition(is);
-                    camelContext.addRouteDefinitions(routes.getRoutes());
+                    camelContext.addRouteDefinitions(is);
                 }
             } catch (Exception e) {
                 LOGGER.error("Error while adding Camel context for KIE Server", e);
@@ -132,7 +131,7 @@ public class CamelKieServerExtension implements KieServerExtension {
                 DefaultCamelContext context = (DefaultCamelContext)buildDeploymentContext(id, classloader);
                 context.setName("KIE Server Camel context for container " + kieContainerInstance.getContainerId());
 
-                RoutesDefinition routes = context.loadRoutesDefinition(is);
+                RoutesDefinition routes = ModelHelper.loadRoutesDefinition(context, is);
                 annotateKJarRoutes(routes, id);
                 context.addRouteDefinitions(routes.getRoutes());
                 
@@ -229,23 +228,20 @@ public class CamelKieServerExtension implements KieServerExtension {
 
     protected void annotateKJarRoutes(RoutesDefinition routes, String deploymentId) {
         for (RouteDefinition route : routes.getRoutes()) {
+            FromDefinition from = route.getInput();
+            if (from.getUri().startsWith("jbpm:events") && !from.getUri().contains("deploymentId")) {
+                StringBuilder uri = new StringBuilder(from.getUri());
 
-            for (FromDefinition from : route.getInputs()) {
-
-                if (from.getUri().startsWith("jbpm:events") && !from.getUri().contains("deploymentId")) {
-                    StringBuilder uri = new StringBuilder(from.getUri());
-
-                    String[] split = from.getUri().split("\\?");
-                    if (split.length == 1) {
-                        // no query given
-                        uri.append("?");
-                    } else {
-                        // already query params exist
-                        uri.append("&");
-                    }
-                    uri.append("deploymentId=").append(deploymentId);
-                    from.setUri(uri.toString());
+                String[] split = from.getUri().split("\\?");
+                if (split.length == 1) {
+                    // no query given
+                    uri.append("?");
+                } else {
+                    // already query params exist
+                    uri.append("&");
                 }
+                uri.append("deploymentId=").append(deploymentId);
+                from.setUri(uri.toString());
             }
         }
     }

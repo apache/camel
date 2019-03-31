@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.amqp.artemis;
+
 import org.apache.activemq.artemis.api.core.RoutingType;
 import org.apache.activemq.artemis.core.config.Configuration;
 import org.apache.activemq.artemis.core.config.CoreAddressConfiguration;
@@ -26,8 +27,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.amqp.AMQPComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
@@ -44,7 +43,7 @@ public class AMQPEmbeddedBrokerTest extends CamelTestSupport {
     
     static EmbeddedActiveMQ server = new EmbeddedActiveMQ();
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     MockEndpoint resultEndpoint;
 
     String expectedBody = "Hello there!";
@@ -86,16 +85,9 @@ public class AMQPEmbeddedBrokerTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
     
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        return registry;
-    }
-
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        JndiRegistry registry = (JndiRegistry)((PropertyPlaceholderDelegateRegistry)camelContext.getRegistry()).getRegistry();
-        registry.bind("amqpConnection", discoverAMQP(camelContext));
+        camelContext.getRegistry().bind("amqpConnection", discoverAMQP(camelContext));
         camelContext.addComponent("amqp-customized", new AMQPComponent());
         return camelContext;
     }

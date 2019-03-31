@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -160,9 +160,12 @@ public class CamelRoutesEndpoint {
 
     private void resetRoute(String id) {
         try {
-            ManagedRouteMBean managedRouteMBean = camelContext.getExtension(ManagedCamelContext.class).getManagedRoute(id);
-            if (managedRouteMBean != null) {
-                managedRouteMBean.reset(true);
+            ManagedCamelContext mc = camelContext.getExtension(ManagedCamelContext.class);
+            if (mc != null) {
+                ManagedRouteMBean managedRouteMBean = mc.getManagedRoute(id);
+                if (managedRouteMBean != null) {
+                    managedRouteMBean.reset(true);
+                }
             }
         } catch (Exception e) {
             throw new RuntimeCamelException(e);

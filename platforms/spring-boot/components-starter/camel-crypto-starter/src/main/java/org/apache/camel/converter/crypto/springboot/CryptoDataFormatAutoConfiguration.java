@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -79,8 +79,7 @@ public class CryptoDataFormatAutoConfiguration {
 
     @Bean(name = "crypto-dataformat-factory")
     @ConditionalOnMissingBean(CryptoDataFormat.class)
-    public DataFormatFactory configureCryptoDataFormatFactory()
-            throws Exception {
+    public DataFormatFactory configureCryptoDataFormatFactory() throws Exception {
         return new DataFormatFactory() {
             @Override
             public DataFormat newInstance() {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,8 +28,6 @@ import com.microsoft.azure.storage.core.Base64;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -41,8 +39,7 @@ public class BlobServiceComponentConfigurationTest extends CamelTestSupport {
             new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"),
                                newAccountKeyCredentials());
         
-        JndiRegistry registry = (JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
-        registry.bind("azureBlobClient", client);
+        context.getRegistry().bind("azureBlobClient", client);
         
         BlobServiceComponent component = new BlobServiceComponent(context);
         BlobServiceEndpoint endpoint = 
@@ -95,8 +92,7 @@ public class BlobServiceComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void testCreateEndpointWithMaxConfig() throws Exception {
         registerCredentials();
-        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry())
-            .bind("metadata", Collections.emptyMap());
+        context.getRegistry().bind("metadata", Collections.emptyMap());
         
         BlobServiceComponent component = new BlobServiceComponent(context);
         BlobServiceEndpoint endpoint = 
@@ -165,8 +161,7 @@ public class BlobServiceComponentConfigurationTest extends CamelTestSupport {
         CloudBlockBlob client = 
             new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
         
-        JndiRegistry registry = (JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
-        registry.bind("azureBlobClient", client);
+        context.getRegistry().bind("azureBlobClient", client);
         
         BlobServiceComponent component = new BlobServiceComponent(context);
         BlobServiceEndpoint endpoint = 
@@ -174,8 +169,7 @@ public class BlobServiceComponentConfigurationTest extends CamelTestSupport {
         assertTrue(endpoint.getConfiguration().isPublicForRead());
     }
     private void doTestClientWithoutCredentials(CloudBlob client) throws Exception {
-        JndiRegistry registry = (JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
-        registry.bind("azureBlobClient", client);
+        context.getRegistry().bind("azureBlobClient", client);
         
         BlobServiceComponent component = new BlobServiceComponent(context);
         try {
@@ -256,8 +250,7 @@ public class BlobServiceComponentConfigurationTest extends CamelTestSupport {
     }
     
     private void registerCredentials() {
-        JndiRegistry registry = (JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
-        registry.bind("creds", newAccountKeyCredentials());
+        context.getRegistry().bind("creds", newAccountKeyCredentials());
     }
     private StorageCredentials newAccountKeyCredentials() {
         return new StorageCredentialsAccountAndKey("camelazure", 

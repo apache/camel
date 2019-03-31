@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,150 +16,46 @@
  */
 package org.apache.camel.impl;
 
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
-
 import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameClassPair;
-import javax.naming.NameNotFoundException;
-import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 
-import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.jndi.CamelInitialContextFactory;
+import org.apache.camel.support.jndi.JndiBeanRepository;
 
 /**
  * A {@link Registry} implementation which looks up the objects in JNDI
+ *
+ * @deprecated use {@link JndiBeanRepository} instead.
  */
-public class JndiRegistry implements Registry {
-    private Context context;
-    private Map environment;
-    private final boolean standalone;
+@Deprecated
+public class JndiRegistry extends JndiBeanRepository implements Registry {
 
     public JndiRegistry() {
-        this.standalone = false;
+        super();
     }
 
     public JndiRegistry(Map environment) {
-        this.environment = environment;
-        this.standalone = false;
+        super(environment);
     }
 
     public JndiRegistry(Context context) {
-        this.context = context;
-        this.standalone = false;
+        super(context);
     }
 
-    /**
-     * Whether to use standalone mode, where the JNDI initial context factory is using
-     * {@link CamelInitialContextFactory}.
-     */
     public JndiRegistry(boolean standalone) {
-        this.standalone = true;
+        super(standalone);
     }
 
-    public <T> T lookupByNameAndType(String name, Class<T> type) {
-        Object answer = lookupByName(name);
-
-        // just to be safe
-        if (answer == null) {
-            return null;
-        }
-
+    @Override
+    public void bind(String id, Class<?> type, Object bean) throws RuntimeCamelException {
         try {
-            return type.cast(answer);
-        } catch (Throwable e) {
-            String msg = "Found bean: " + name + " in JNDI Context: " + context
-                    + " of type: " + answer.getClass().getName() + " expected type was: " + type;
-            throw new NoSuchBeanException(name, msg, e);
-        }
-    }
-
-    public Object lookupByName(String name) {
-        try {
-            return getContext().lookup(name);
-        } catch (NameNotFoundException e) {
-            return null;
-        } catch (NamingException e) {
-            return null;
-        }
-    }
-
-    public <T> Map<String, T> findByTypeWithName(Class<T> type) {
-        Map<String, T> answer = new LinkedHashMap<>();
-        try {
-            NamingEnumeration<NameClassPair> list = getContext().list("");
-            while (list.hasMore()) {
-                NameClassPair pair = list.next();
-                Object instance = context.lookup(pair.getName());
-                if (type.isInstance(instance)) {
-                    answer.put(pair.getName(), type.cast(instance));
-                }
-            }
-        } catch (NamingException e) {
-            // ignore
-        }
-
-        return answer;
-    }
-
-    public <T> Set<T> findByType(Class<T> type) {
-        Set<T> answer = new LinkedHashSet<>();
-        try {
-            NamingEnumeration<NameClassPair> list = getContext().list("");
-            while (list.hasMore()) {
-                NameClassPair pair = list.next();
-                Object instance = context.lookup(pair.getName());
-                if (type.isInstance(instance)) {
-                    answer.add(type.cast(instance));
-                }
-            }
-        } catch (NamingException e) {
-            // ignore
-        }
-        return answer;
-    }
-
-    public void bind(String name, Object object) {
-        try {
-            getContext().bind(name, object);
+            Object object = wrap(bean);
+            getContext().bind(id, object);
         } catch (NamingException e) {
             throw new RuntimeCamelException(e);
         }
     }
 
-    public void close() throws NamingException {
-        if (context != null) {
-            context.close();
-        }
-    }
-
-    public Context getContext() throws NamingException {
-        if (context == null) {
-            context = createContext();
-        }
-        return context;
-    }
-
-    public void setContext(Context context) {
-        this.context = context;
-    }
-
-    protected Context createContext() throws NamingException {
-        Hashtable<Object, Object> properties = new Hashtable<>(System.getProperties());
-        if (environment != null) {
-            properties.putAll(environment);
-        }
-        // must include a factory if none provided in standalone mode
-        if (standalone && !properties.containsKey("java.naming.factory.initial")) {
-            properties.put("java.naming.factory.initial", "org.apache.camel.support.jndi.CamelInitialContextFactory");
-        }
-        return new InitialContext(properties);
-    }
 }

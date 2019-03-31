@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -77,8 +77,7 @@ public class GoogleDriveComponentAutoConfiguration {
     @Lazy
     @Bean(name = "google-drive-component")
     @ConditionalOnMissingBean(GoogleDriveComponent.class)
-    public GoogleDriveComponent configureGoogleDriveComponent()
-            throws Exception {
+    public GoogleDriveComponent configureGoogleDriveComponent() throws Exception {
         GoogleDriveComponent component = new GoogleDriveComponent();
         component.setCamelContext(camelContext);
         Map<String, Object> parameters = new HashMap<>();

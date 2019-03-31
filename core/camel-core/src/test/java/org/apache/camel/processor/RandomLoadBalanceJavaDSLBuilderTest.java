@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -63,7 +63,7 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
         RouteDefinition route = context.getRouteDefinitions().get(0);
 
         // the start of the route
-        sb.append("from(\"" + route.getInputs().get(0).getUri() + "\")");
+        sb.append("from(\"" + route.getInput().getUri() + "\")");
 
         // navigate the route and add Java DSL to the sb
         navigateDefinition(route, sb);

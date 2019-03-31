@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -75,8 +75,7 @@ public class HttpComponentAutoConfiguration {
     }
 
     @Lazy
-    @Bean(name = {"http-component", "http4-component", "https-component",
-            "https4-component"})
+    @Bean({"http-component", "http4-component", "https-component", "https4-component"})
     @ConditionalOnMissingBean(HttpComponent.class)
     public HttpComponent configureHttpComponent() throws Exception {
         HttpComponent component = new HttpComponent();

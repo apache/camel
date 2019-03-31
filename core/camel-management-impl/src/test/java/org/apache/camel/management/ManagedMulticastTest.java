@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,6 @@ package org.apache.camel.management;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.management.openmbean.TabularData;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -59,18 +58,6 @@ public class ManagedMulticastTest extends ManagementTestSupport {
 
         Boolean parallel = (Boolean) mbeanServer.getAttribute(name, "ParallelProcessing");
         assertEquals(false, parallel.booleanValue());
-
-        TabularData data = (TabularData) mbeanServer.invoke(name, "explain", new Object[]{false}, new String[]{"boolean"});
-        assertNotNull(data);
-        assertEquals(1, data.size());
-
-        data = (TabularData) mbeanServer.invoke(name, "explain", new Object[]{true}, new String[]{"boolean"});
-        assertNotNull(data);
-        assertEquals(15, data.size());
-
-        String json = (String) mbeanServer.invoke(name, "informationJson", null, null);
-        assertNotNull(json);
-        assertTrue(json.contains("\"description\": \"Routes the same message to multiple paths either sequentially or in parallel."));
     }
 
     @Override

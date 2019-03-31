@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -109,7 +109,14 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
         Path jaxbIndexDir = jaxbIndexOutDir.toPath();
         int count = 0;
         for (Map.Entry<String, Set<String>> entry : byPackage.entrySet()) {
-            Path file = jaxbIndexDir.resolve(entry.getKey().replace('.', '/')).resolve("jaxb.index");
+            String fn = entry.getKey().replace('.', '/') + "/jaxb.index";
+            if (project.getCompileSourceRoots().stream()
+                    .map(Paths::get)
+                    .map(p -> p.resolve(fn))
+                    .anyMatch(Files::isRegularFile)) {
+                continue;
+            }
+            Path file = jaxbIndexDir.resolve(fn);
             StringBuilder sb = new StringBuilder();
             sb.append("# " + GENERATED_MSG + NL);
             for (String s : entry.getValue()) {

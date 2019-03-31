@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,19 +35,19 @@ public class GroupedExchangeRoundtripTest extends PubsubTestSupport {
     private static final String TOPIC_NAME = "groupTopic";
     private static final String SUBSCRIPTION_NAME = "groupSubscription";
 
-    @EndpointInject(uri = "direct:aggregator")
+    @EndpointInject("direct:aggregator")
     private Endpoint aggregator;
 
-    @EndpointInject(uri = "google-pubsub:{{project.id}}:" + TOPIC_NAME)
+    @EndpointInject("google-pubsub:{{project.id}}:" + TOPIC_NAME)
     private Endpoint topic;
 
-    @EndpointInject(uri = "mock:sendResult")
+    @EndpointInject("mock:sendResult")
     private MockEndpoint sendResult;
 
-    @EndpointInject(uri = "google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME)
+    @EndpointInject("google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME)
     private Endpoint pubsubSubscription;
 
-    @EndpointInject(uri = "mock:receiveResult")
+    @EndpointInject("mock:receiveResult")
     private MockEndpoint receiveResult;
 
     @Produce(uri = "direct:aggregator")

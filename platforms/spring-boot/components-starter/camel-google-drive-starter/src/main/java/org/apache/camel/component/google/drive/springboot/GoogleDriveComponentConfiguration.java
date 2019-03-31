@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -113,7 +113,7 @@ public class GoogleDriveComponentConfiguration
         private String refreshToken;
         /**
          * Google drive application name. Example would be
-         * camel-google-drive/1.0
+         * "camel-google-drive/1.0"
          */
         private String applicationName;
         /**

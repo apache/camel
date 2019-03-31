@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -166,7 +166,6 @@ public final class PackageHelper {
             boolean special = "camel-core-osgi".equals(name)
                 || "camel-core-xml".equals(name)
                 || "camel-http-common".equals(name)
-                || "camel-jetty".equals(name)
                 || "camel-jetty-common".equals(name);
             boolean special2 = "camel-as2".equals(name)
                 || "camel-box".equals(name)

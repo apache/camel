@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -61,7 +61,7 @@ public class AS2Configuration {
     private String targetHostname;
 
     @UriParam
-    private Integer targetPortNumber;
+    private Integer targetPortNumber = 80;
 
     @UriParam(defaultValue = "camel.apache.org")
     private String clientFqdn = "camel.apache.org";
@@ -193,7 +193,7 @@ public class AS2Configuration {
      * Used in message ids sent by endpoint.
      */
     public void setServerFqdn(String serverFqdn) {
-        if (clientFqdn == null) {
+        if (serverFqdn == null) {
             throw new RuntimeCamelException("Parameter 'serverFqdn' can not be null");
         }
         this.serverFqdn = serverFqdn;
@@ -207,6 +207,9 @@ public class AS2Configuration {
      * The host name (IP or DNS name) of target host.
      */
     public void setTargetHostname(String targetHostname) {
+        if (targetHostname == null) {
+            throw new RuntimeCamelException("Parameter 'targetHostname' can not be null");
+        }
         this.targetHostname = targetHostname;
     }
 
@@ -249,17 +252,6 @@ public class AS2Configuration {
 
     public Integer getServerPortNumber() {
         return serverPortNumber;
-    }
-
-    /**
-     * The port number of server.
-     */
-    public void setServerPortNumber(String serverPortNumber) {
-        try {
-            this.serverPortNumber = Integer.valueOf(serverPortNumber);
-        } catch (NumberFormatException e) {
-            throw new RuntimeCamelException(String.format("Invalid target port number: %s", targetPortNumber));
-        }
     }
 
     /**

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,8 +26,8 @@ public class InterceptFromEndpointRefFixedTest extends InterceptFromEndpointRefT
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                reg.put("start", context.getEndpoint("direct:start"));
-                reg.put("bar", context.getEndpoint("seda:bar"));
+                context.getRegistry().bind("start", context.getEndpoint("direct:start"));
+                context.getRegistry().bind("bar", context.getEndpoint("seda:bar"));
 
                 interceptFrom("ref:start").to("mock:intercepted");
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -115,9 +115,7 @@ public class MiloServerComponentConfiguration
     private String certificateManager;
     /**
      * Validator for client certificates. The option is a
-     * java.util.function.Supplier
-     * <org.eclipse.milo.opcua.stack.core.application.CertificateValidator>
-     * type.
+     * java.util.function.Supplier<org.eclipse.milo.opcua.stack.core.application.CertificateValidator> type.
      */
     private String certificateValidator;
     /**

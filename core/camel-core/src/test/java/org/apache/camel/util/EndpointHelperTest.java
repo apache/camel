@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,8 +25,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.support.EndpointHelper;
 import org.junit.Test;
 
@@ -72,14 +70,13 @@ public class EndpointHelperTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        SimpleRegistry reg = new SimpleRegistry();
-        CamelContext context = new DefaultCamelContext(reg);
-
+        CamelContext context = super.createCamelContext();
         foo = context.getEndpoint("mock:foo");
         bar = context.getEndpoint("mock:bar");
-        reg.put("foo", foo);
-        reg.put("coolbar", bar);
-        reg.put("numbar", "12345");
+
+        context.getRegistry().bind("foo", foo);
+        context.getRegistry().bind("coolbar", bar);
+        context.getRegistry().bind("numbar", "12345");
 
         return context;
     }

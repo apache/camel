@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ package org.apache.camel.runtimecatalog.impl;
 import java.io.IOException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.runtimecatalog.JSonSchemaResolver;
 
 /**
@@ -26,10 +27,10 @@ import org.apache.camel.runtimecatalog.JSonSchemaResolver;
  */
 public class CamelContextJSonSchemaResolver implements JSonSchemaResolver {
 
-    private final CamelContext camelContext;
+    private final CatalogCamelContext camelContext;
 
     public CamelContextJSonSchemaResolver(CamelContext camelContext) {
-        this.camelContext = camelContext;
+        this.camelContext = camelContext.adapt(CatalogCamelContext.class);
     }
 
     @Override

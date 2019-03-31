@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -55,6 +55,12 @@ public class MailComponentConfiguration
      */
     private Boolean useGlobalSslContextParameters = false;
     /**
+     * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+     * header to and from Camel message. The option is a
+     * org.apache.camel.spi.HeaderFilterStrategy type.
+     */
+    private String headerFilterStrategy;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -87,6 +93,14 @@ public class MailComponentConfiguration
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
+    public String getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(String headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
+    }
+
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;
     }
@@ -99,8 +113,8 @@ public class MailComponentConfiguration
     public static class MailConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.mail.MailConfiguration.class;
         /**
-         * To use a custom org.apache.camel.component.mail.JavaMailSender for
-         * sending emails.
+         * To use a custom {@link
+         * org.apache.camel.component.mail.JavaMailSender} for sending emails.
          */
         private JavaMailSender javaMailSender;
         /**
@@ -283,17 +297,17 @@ public class MailComponentConfiguration
         /**
          * If the mail consumer cannot retrieve a given mail message, then this
          * option allows to skip the message and move on to retrieve the next
-         * mail message. The default behavior would be the consumer throws an
-         * exception and no mails from the batch would be able to be routed by
-         * Camel.
+         * mail message. <p/> The default behavior would be the consumer throws
+         * an exception and no mails from the batch would be able to be routed
+         * by Camel.
          */
         private Boolean skipFailedMessage = false;
         /**
          * If the mail consumer cannot retrieve a given mail message, then this
          * option allows to handle the caused exception by the consumer's error
          * handler. By enable the bridge error handler on the consumer, then the
-         * Camel routing error handler can handle the exception instead. The
-         * default behavior would be the consumer throws an exception and no
+         * Camel routing error handler can handle the exception instead. <p/>
+         * The default behavior would be the consumer throws an exception and no
          * mails from the batch would be able to be routed by Camel.
          */
         private Boolean handleFailedMessage = false;

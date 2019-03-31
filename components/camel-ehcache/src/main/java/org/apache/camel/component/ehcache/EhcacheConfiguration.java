@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
@@ -95,6 +96,7 @@ public class EhcacheConfiguration implements Cloneable {
      * @deprecated use {@link #setConfigurationUri(String)} instead
      */
     @Deprecated
+    @Metadata(deprecationNote = "use configurationUri instead")
     public void setConfigUri(String configUri) {
         setConfigurationUri(configUri);
     }

@@ -60,12 +60,6 @@
         <ref bean="patient"/>
       </list>
     </property>
-    <property name="encodeElementsAppliesToResourceTypes">
-      <set>
-        <value>foo</value>
-        <value>bar</value>
-      </set>
-    </property>
     <property name="encodeElements">
       <set>
         <value>foo</value>
@@ -102,12 +96,6 @@
       <list>
         <ref bean="patient"/>
       </list>
-    </property>
-    <property name="encodeElementsAppliesToResourceTypes">
-      <set>
-        <value>foo</value>
-        <value>bar</value>
-      </set>
     </property>
     <property name="encodeElements">
       <set>

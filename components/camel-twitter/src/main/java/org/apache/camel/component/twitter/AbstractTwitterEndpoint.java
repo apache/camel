@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,6 +38,7 @@ public abstract class AbstractTwitterEndpoint extends DefaultPollingEndpoint imp
 
     public AbstractTwitterEndpoint(String uri, AbstractTwitterComponent component, TwitterConfiguration properties) {
         super(uri, component);
+        setDelay(DEFAULT_CONSUMER_DELAY);
         this.properties = properties;
     }
 

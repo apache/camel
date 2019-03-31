@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -56,24 +56,36 @@ public class MDCTest extends ContextTestSupport {
                 context.setUseMDCLogging(true);
 
                 from("direct:a").routeId("route-a")
+                    .step("step-a")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 assertEquals("route-a", MDC.get("camel.routeId"));
                                 assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
                                 assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
+                                assertEquals("step-a", MDC.get("camel.stepId"));
 
                                 MDC.put("custom.id", "1");
                             }
                         })
                         .to("log:foo")
-                        .to("direct:b");
+                        .to("direct:b")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                assertEquals("route-a", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                                assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
+                                assertEquals("step-a", MDC.get("camel.stepId"));
+                            }
+                        });
 
                 from("direct:b").routeId("route-b")
+                    .step("step-b")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 assertEquals("route-b", MDC.get("camel.routeId"));
                                 assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
                                 assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
+                                assertEquals("step-b", MDC.get("camel.stepId"));
                                 assertEquals("1", MDC.get("custom.id"));
                             }
                         })

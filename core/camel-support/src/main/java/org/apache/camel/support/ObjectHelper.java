@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -171,12 +171,37 @@ public final class ObjectHelper {
      */
     public static Object invokeMethod(Method method, Object instance, Object... parameters) {
         try {
-            return method.invoke(instance, parameters);
+            if (parameters != null) {
+                return method.invoke(instance, parameters);
+            } else {
+                return method.invoke(instance);
+            }
         } catch (IllegalAccessException e) {
             throw new RuntimeCamelException(e);
         } catch (InvocationTargetException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e.getCause());
         }
+    }
+
+    /**
+     * A helper method to invoke a method via reflection in a safe way by allowing to invoke
+     * methods that are not accessible by default and wrap any exceptions
+     * as {@link RuntimeCamelException} instances
+     *
+     * @param method the method to invoke
+     * @param instance the object instance (or null for static methods)
+     * @param parameters the parameters to the method
+     * @return the result of the method invocation
+     */
+    public static Object invokeMethodSafe(Method method, Object instance, Object... parameters) throws InvocationTargetException, IllegalAccessException {
+        Object answer;
+        method.setAccessible(true);
+        if (parameters != null) {
+            answer = method.invoke(instance, parameters);
+        } else {
+            answer = method.invoke(instance);
+        }
+        return answer;
     }
 
     /**

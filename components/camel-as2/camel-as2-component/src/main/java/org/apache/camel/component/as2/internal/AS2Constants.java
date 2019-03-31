@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,4 +26,7 @@ public interface AS2Constants {
 
     // thread profile name for this component
     String THREAD_PROFILE_NAME = "CamelAS2";
+    
+    // header property containing the AS2 Interchange. 
+    String AS2_INTERCHANGE = PROPERTY_PREFIX + "interchange";
 }

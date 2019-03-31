@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -75,7 +75,7 @@ public class NettyComponentAutoConfiguration {
     }
 
     @Lazy
-    @Bean(name = {"netty-component", "netty4-component"})
+    @Bean({"netty-component", "netty4-component"})
     @ConditionalOnMissingBean(NettyComponent.class)
     public NettyComponent configureNettyComponent() throws Exception {
         NettyComponent component = new NettyComponent();

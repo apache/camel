@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,6 @@ package org.apache.camel.management;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.management.openmbean.TabularData;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
@@ -67,18 +66,6 @@ public class ManagedSplitterTest extends ManagementTestSupport {
         assertTrue(xml.contains("<split"));
         assertTrue(xml.contains("</split>"));
         assertTrue(xml.contains("<simple>${body}</simple>"));
-
-        TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
-        assertNotNull(data);
-        assertEquals(3, data.size());
-
-        data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
-        assertNotNull(data);
-        assertEquals(16, data.size());
-
-        String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
-        assertNotNull(json);
-        assertTrue(json.contains("\"description\": \"Splits a single message into many sub-messages."));
     }
 
     @Override

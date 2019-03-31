@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.language.simple.SimpleLanguage;
 import org.springframework.jdbc.core.namedparam.AbstractSqlParameterSource;
 
 /**
@@ -69,7 +68,7 @@ public class ElsqlSqlMapSource extends AbstractSqlParameterSource {
             // so we have to use # instead and replace them back
             paramName = paramName.replace('#', ':');
 
-            answer = SimpleLanguage.expression(paramName).evaluate(exchange, Object.class);
+            answer = exchange.getContext().resolveLanguage("simple").createExpression(paramName).evaluate(exchange, Object.class);
         } else {
             answer = bodyMap.get(paramName);
             if (answer == null) {

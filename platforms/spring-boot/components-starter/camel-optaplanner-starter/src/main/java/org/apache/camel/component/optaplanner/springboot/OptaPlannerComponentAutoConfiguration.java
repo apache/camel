@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -77,8 +77,7 @@ public class OptaPlannerComponentAutoConfiguration {
     @Lazy
     @Bean(name = "optaplanner-component")
     @ConditionalOnMissingBean(OptaPlannerComponent.class)
-    public OptaPlannerComponent configureOptaPlannerComponent()
-            throws Exception {
+    public OptaPlannerComponent configureOptaPlannerComponent() throws Exception {
         OptaPlannerComponent component = new OptaPlannerComponent();
         component.setCamelContext(camelContext);
         Map<String, Object> parameters = new HashMap<>();

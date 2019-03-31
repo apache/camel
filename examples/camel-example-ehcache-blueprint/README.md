@@ -49,8 +49,7 @@ But then the data will be cached, so it will be quick afterward.
 
 
 ### Configuration
-This example is implemented in XML DSL in the `src/main/resources/OSGI-INF/bluepring/camel-context.xml` file.
-
+This example is implemented in XML DSL in the `src/main/resources/OSGI-INF/blueprint/camel-context.xml` file.
 
 ### Forum, Help, etc
 

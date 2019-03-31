@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,12 +25,12 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
+import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
-import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EventNotifier;

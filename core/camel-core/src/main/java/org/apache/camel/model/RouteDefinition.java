@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -48,12 +48,12 @@ import org.apache.camel.support.CamelContextHelper;
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "route")
-@XmlType(propOrder = {"inputs", "inputType", "outputType", "outputs", "routeProperties"})
+@XmlType(propOrder = {"input", "inputType", "outputType", "outputs", "routeProperties"})
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY as there is some custom logic needed to be executed in the setter methods
 public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private final AtomicBoolean prepared = new AtomicBoolean(false);
-    private List<FromDefinition> inputs = new ArrayList<>();
+    private FromDefinition input;
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     private String group;
     private String streamCache;
@@ -135,9 +135,9 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     @Override
     public String toString() {
         if (getId() != null) {
-            return "Route(" + getId() + ")[" + inputs + " -> " + outputs + "]";
+            return "Route(" + getId() + ")[" + (input != null ? input : "") + " -> " + outputs + "]";
         } else {
-            return "Route[" + inputs + " -> " + outputs + "]";
+            return "Route[" + input + " -> " + outputs + "]";
         }
     }
 
@@ -191,7 +191,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @return the builder
      */
     public RouteDefinition from(@AsEndpointUri String uri) {
-        getInputs().add(new FromDefinition(uri));
+        setInput(new FromDefinition(uri));
         return this;
     }
 
@@ -202,33 +202,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @return the builder
      */
     public RouteDefinition from(Endpoint endpoint) {
-        getInputs().add(new FromDefinition(endpoint));
-        return this;
-    }
-
-    /**
-     * Creates inputs to the route
-     *
-     * @param uris the from uris
-     * @return the builder
-     */
-    public RouteDefinition from(@AsEndpointUri String... uris) {
-        for (String uri : uris) {
-            getInputs().add(new FromDefinition(uri));
-        }
-        return this;
-    }
-
-    /**
-     * Creates inputs to the route
-     *
-     * @param endpoints the from endpoints
-     * @return the builder
-     */
-    public RouteDefinition from(Endpoint... endpoints) {
-        for (Endpoint endpoint : endpoints) {
-            getInputs().add(new FromDefinition(endpoint));
-        }
+        setInput(new FromDefinition(endpoint));
         return this;
     }
 
@@ -711,16 +685,18 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     // Properties
     // -----------------------------------------------------------------------
 
-    public List<FromDefinition> getInputs() {
-        return inputs;
+    public FromDefinition getInput() {
+        return input;
     }
 
     /**
      * Input to the route.
      */
-    @XmlElementRef
-    public void setInputs(List<FromDefinition> inputs) {
-        this.inputs = inputs;
+    @XmlElementRef(required = false)
+    public void setInput(FromDefinition input) {
+        // required = false: in rest-dsl you can embed an in-lined route which
+        // does not have a <from> as its implied to be the rest endpoint
+        this.input = input;
     }
 
     public List<ProcessorDefinition<?>> getOutputs() {

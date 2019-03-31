@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,6 @@ import javax.annotation.Generated;
 import io.atomix.catalyst.transport.Address;
 import org.apache.camel.component.atomix.client.messaging.AtomixMessaging.Action;
 import org.apache.camel.component.atomix.client.messaging.AtomixMessaging.BroadcastType;
-import org.apache.camel.component.atomix.client.messaging.AtomixMessagingComponent;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

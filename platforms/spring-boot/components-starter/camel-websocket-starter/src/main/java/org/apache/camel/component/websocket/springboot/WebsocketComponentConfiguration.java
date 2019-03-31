@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -102,8 +102,7 @@ public class WebsocketComponentConfiguration
      * To configure a map which contains custom WebSocketFactory for sub
      * protocols. The key in the map is the sub protocol. The default key is
      * reserved for the default implementation. The option is a
-     * java.util.Map<java
-     * .lang.String,org.apache.camel.component.websocket.WebSocketFactory> type.
+     * java.util.Map<java.lang.String,org.apache.camel.component.websocket.WebSocketFactory> type.
      */
     private String socketFactory;
     /**

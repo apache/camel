@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -85,8 +85,10 @@ public class BeanInvocation implements Externalizable {
      */
     public void invoke(Object pojo, Exchange exchange) {
         try {
-            LOG.trace("Invoking method: {} with args: {}", getMethod(), getArgs());
-            Object response = getMethod().invoke(pojo, getArgs());
+            Method method = getMethod();
+            Object[] args = getArgs();
+            LOG.trace("Invoking method: {} with args: {}", method, args);
+            Object response = org.apache.camel.support.ObjectHelper.invokeMethodSafe(method, pojo, args);
             LOG.trace("Got response: {}", response);
             exchange.getOut().setBody(response);
         } catch (InvocationTargetException e) {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,6 +20,7 @@ import java.io.InputStream;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RoutesDefinition;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -39,7 +40,7 @@ public class CamelLoadRoutesFromXMLTest extends SpringTestSupport {
 
         // load routes from xml file
         InputStream is = this.getClass().getResourceAsStream("myRoutes.xml");
-        RoutesDefinition routes = camel.loadRoutesDefinition(is);
+        RoutesDefinition routes = ModelHelper.loadRoutesDefinition(camel, is);
         camel.addRouteDefinitions(routes.getRoutes());
 
         assertEquals(2, camel.getRoutes().size());
@@ -76,7 +77,7 @@ public class CamelLoadRoutesFromXMLTest extends SpringTestSupport {
 
         // load updated xml
         is = this.getClass().getResourceAsStream("myUpdatedRoutes.xml");
-        routes = camel.loadRoutesDefinition(is);
+        routes = ModelHelper.loadRoutesDefinition(camel, is);
         camel.addRouteDefinitions(routes.getRoutes());
 
         assertEquals(2, camel.getRoutes().size());

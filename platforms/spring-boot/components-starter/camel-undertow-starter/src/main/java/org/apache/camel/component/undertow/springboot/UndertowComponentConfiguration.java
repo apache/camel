@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -109,19 +109,19 @@ public class UndertowComponentConfiguration
     public static class UndertowHostOptionsNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.undertow.UndertowHostOptions.class;
         /**
-         * The number of worker threads to use in a Undertow host.
+         * Set if the Undertow host should use http2 protocol.
          */
         private Integer workerThreads;
         /**
-         * The number of io threads to use in a Undertow host.
+         * Set if the Undertow host should use http2 protocol.
          */
         private Integer ioThreads;
         /**
-         * The buffer size of the Undertow host.
+         * Set if the Undertow host should use http2 protocol.
          */
         private Integer bufferSize;
         /**
-         * Set if the Undertow host should use direct buffers.
+         * Set if the Undertow host should use http2 protocol.
          */
         private Boolean directBuffers;
         /**

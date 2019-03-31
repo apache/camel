@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,8 +23,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
-import org.apache.camel.spi.Registry;
 
 public final class CamelSimpleExpressionPerfTestRunner {
     private static final int MESSAGE_LOOP_COUNT = 1000;
@@ -35,17 +33,17 @@ public final class CamelSimpleExpressionPerfTestRunner {
     }
 
     public static void main(String[] args) throws Exception {
-        long bodyOnly = executePerformanceTest(new SimpleRegistry(), "${body}");
-        long bodyProperty = executePerformanceTest(new SimpleRegistry(), "${body[p]}");
-        long bodyPropertyWithCache = executePerformanceTest(new SimpleRegistry(), "${body[p]}");
+        long bodyOnly = executePerformanceTest("${body}");
+        long bodyProperty = executePerformanceTest("${body[p]}");
+        long bodyPropertyWithCache = executePerformanceTest("${body[p]}");
 
         System.out.printf("${body}: %dms%n", bodyOnly);
         System.out.printf("${body[p]} : %dms%n", bodyProperty);
         System.out.printf("${body[p]} with cache : %dms%n", bodyPropertyWithCache);
     }
 
-    private static long executePerformanceTest(Registry registry, final String simpleExpression) throws Exception {
-        CamelContext ctx = new DefaultCamelContext(registry);
+    private static long executePerformanceTest(final String simpleExpression) throws Exception {
+        CamelContext ctx = new DefaultCamelContext();
 
         ctx.addRoutes(new RouteBuilder() {
             @Override

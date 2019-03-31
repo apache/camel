@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -243,10 +243,14 @@ public class BoxConfiguration {
 
     /**
      * The maximum number of access tokens in cache.
-     * 
+     *
      * @param maxCacheEntries
      *            the maxCacheEntries to set
      */
+    public void setMaxCacheEntries(int maxCacheEntries) {
+        this.maxCacheEntries = maxCacheEntries;
+    }
+
     public void setMaxCacheEntries(String maxCacheEntries) {
         try {
             this.maxCacheEntries = Integer.decode(maxCacheEntries);
@@ -278,6 +282,10 @@ public class BoxConfiguration {
      * @param encryptionAlgorithm
      *            the encryptionAlgorithm to set
      */
+    public void setEncryptionAlgorithm(EncryptionAlgorithm encryptionAlgorithm) {
+        this.encryptionAlgorithm = encryptionAlgorithm;
+    }
+
     public void setEncryptionAlgorithm(String encryptionAlgorithm) {
         switch (encryptionAlgorithm) {
         case RSA_SHA_256:

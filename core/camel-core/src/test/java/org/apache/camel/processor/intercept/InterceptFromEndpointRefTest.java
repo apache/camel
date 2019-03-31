@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,24 +16,14 @@
  */
 package org.apache.camel.processor.intercept;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
 import org.junit.Test;
 
 /**
  * Testing intercept from can intercept when endpoint is an instance
  */
 public class InterceptFromEndpointRefTest extends ContextTestSupport {
-
-    SimpleRegistry reg = new SimpleRegistry();
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return new DefaultCamelContext(reg);
-    }
 
     @Test
     public void testIntercept() throws Exception {
@@ -49,8 +39,8 @@ public class InterceptFromEndpointRefTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                reg.put("start", context.getEndpoint("direct:start"));
-                reg.put("bar", context.getEndpoint("seda:bar"));
+                context.getRegistry().bind("start", context.getEndpoint("direct:start"));
+                context.getRegistry().bind("bar", context.getEndpoint("seda:bar"));
 
                 // ref:start -> direct:start so we should intercept that as well
                 interceptFrom("direct*").to("mock:intercepted");

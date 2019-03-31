@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,6 @@ import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MicAlgorithm;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptions;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptionsParser;
-import org.apache.camel.component.as2.api.entity.EntityParser;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
@@ -93,7 +92,7 @@ public final class MicUtils {
             return null;
         }
 
-        HttpEntity entity = EntityParser.extractEdiPayload(request, decryptingPrivateKey);
+        HttpEntity entity = HttpMessageUtils.extractEdiPayload(request, decryptingPrivateKey);
 
         byte[] content = EntityUtils.getContent(entity);
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -79,8 +79,7 @@ public class Base64DataFormatAutoConfiguration {
 
     @Bean(name = "base64-dataformat-factory")
     @ConditionalOnMissingBean(Base64DataFormat.class)
-    public DataFormatFactory configureBase64DataFormatFactory()
-            throws Exception {
+    public DataFormatFactory configureBase64DataFormatFactory() throws Exception {
         return new DataFormatFactory() {
             @Override
             public DataFormat newInstance() {

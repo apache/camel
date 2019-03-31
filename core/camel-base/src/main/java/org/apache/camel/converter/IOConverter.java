@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,14 +36,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.util.Properties;
-import java.util.function.Supplier;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -56,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * Some core java.io based <a
  * href="http://camel.apache.org/type-converter.html">Type Converters</a>
  */
-@Converter
+@Converter(loader = true)
 public final class IOConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(IOConverter.class);

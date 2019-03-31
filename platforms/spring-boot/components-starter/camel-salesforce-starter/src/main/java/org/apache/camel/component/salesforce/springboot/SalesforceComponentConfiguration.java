@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -453,6 +453,133 @@ public class SalesforceComponentConfiguration
         this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
+    public static class SalesforceLoginConfigNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.salesforce.SalesforceLoginConfig.class;
+        /**
+         * Configuration object for Salesforce login properties
+         */
+        private String instanceUrl;
+        /**
+         * Salesforce login URL, defaults to https://login.salesforce.com
+         */
+        private String loginUrl = "https://login.salesforce.com";
+        /**
+         * Salesforce connected application Consumer Key
+         */
+        private String clientId;
+        /**
+         * Salesforce connected application Consumer Secret
+         */
+        private String clientSecret;
+        /**
+         * Keystore parameters for keystore containing certificate and private
+         * key needed for OAuth 2.0 JWT Bearer Token Flow.
+         */
+        private KeyStoreParameters keystore;
+        /**
+         * Salesforce connected application Consumer token
+         */
+        private String refreshToken;
+        /**
+         * Salesforce connected application Consumer token
+         */
+        private AuthenticationType type;
+        /**
+         * Salesforce account user name
+         */
+        private String userName;
+        /**
+         * Salesforce account password
+         */
+        private String password;
+        /**
+         * Flag to enable/disable lazy OAuth, default is false. When enabled,
+         * OAuth token retrieval or generation is not done until the first API
+         * call
+         */
+        private Boolean lazyLogin = false;
+
+        public String getInstanceUrl() {
+            return instanceUrl;
+        }
+
+        public void setInstanceUrl(String instanceUrl) {
+            this.instanceUrl = instanceUrl;
+        }
+
+        public String getLoginUrl() {
+            return loginUrl;
+        }
+
+        public void setLoginUrl(String loginUrl) {
+            this.loginUrl = loginUrl;
+        }
+
+        public String getClientId() {
+            return clientId;
+        }
+
+        public void setClientId(String clientId) {
+            this.clientId = clientId;
+        }
+
+        public String getClientSecret() {
+            return clientSecret;
+        }
+
+        public void setClientSecret(String clientSecret) {
+            this.clientSecret = clientSecret;
+        }
+
+        public KeyStoreParameters getKeystore() {
+            return keystore;
+        }
+
+        public void setKeystore(KeyStoreParameters keystore) {
+            this.keystore = keystore;
+        }
+
+        public String getRefreshToken() {
+            return refreshToken;
+        }
+
+        public void setRefreshToken(String refreshToken) {
+            this.refreshToken = refreshToken;
+        }
+
+        public AuthenticationType getType() {
+            return type;
+        }
+
+        public void setType(AuthenticationType type) {
+            this.type = type;
+        }
+
+        public String getUserName() {
+            return userName;
+        }
+
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public Boolean getLazyLogin() {
+            return lazyLogin;
+        }
+
+        public void setLazyLogin(Boolean lazyLogin) {
+            this.lazyLogin = lazyLogin;
+        }
+    }
+
     public static class SalesforceEndpointConfigNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.salesforce.SalesforceEndpointConfig.class;
         /**
@@ -461,8 +588,9 @@ public class SalesforceComponentConfiguration
          */
         private PayloadFormat format;
         /**
-         * Use raw payload String for request and response (either JSON or XML
-         * depending on format), instead of DTOs, false by default
+         * Use raw payload {@link String} for request and response (either JSON
+         * or XML depending on {@code format}), instead of DTOs, false by
+         * default
          */
         private Boolean rawPayload = false;
         /**
@@ -526,8 +654,6 @@ public class SalesforceComponentConfiguration
         private Map apexQueryParams;
         /**
          * The approval request for Approval API.
-         * 
-         * @param approval
          */
         private ApprovalRequest approval;
         /**
@@ -557,23 +683,23 @@ public class SalesforceComponentConfiguration
         private NotifyForFieldsEnum notifyForFields;
         /**
          * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API
-         * version 29.0)
+         * version < 29.0)
          */
         private NotifyForOperationsEnum notifyForOperations;
         /**
-         * Notify for create operation, defaults to false (API version = 29.0)
+         * Notify for create operation, defaults to false (API version >= 29.0)
          */
         private Boolean notifyForOperationCreate;
         /**
-         * Notify for update operation, defaults to false (API version = 29.0)
+         * Notify for update operation, defaults to false (API version >= 29.0)
          */
         private Boolean notifyForOperationUpdate;
         /**
-         * Notify for delete operation, defaults to false (API version = 29.0)
+         * Notify for delete operation, defaults to false (API version >= 29.0)
          */
         private Boolean notifyForOperationDelete;
         /**
-         * Notify for un-delete operation, defaults to false (API version =
+         * Notify for un-delete operation, defaults to false (API version >=
          * 29.0)
          */
         private Boolean notifyForOperationUndelete;
@@ -598,11 +724,6 @@ public class SalesforceComponentConfiguration
          */
         private SalesforceHttpClient httpClient;
         /**
-         * Custom Jackson ObjectMapper to use when serializing/deserializing
-         * Salesforce objects.
-         */
-        private ObjectMapper objectMapper;
-        /**
          * Backoff interval increment for Streaming connection restart attempts
          * for failures beyond CometD auto-reconnect.
          */
@@ -613,7 +734,13 @@ public class SalesforceComponentConfiguration
          */
         private Long maxBackoff;
         /**
-         * Default replayId setting if no value is found in initialReplayIdMap
+         * Custom Jackson ObjectMapper to use when serializing/deserializing
+         * Salesforce objects.
+         */
+        private ObjectMapper objectMapper;
+        /**
+         * Default replayId setting if no value is found in {@link
+         * #initialReplayIdMap}
          */
         private Long defaultReplayId;
         /**
@@ -627,39 +754,27 @@ public class SalesforceComponentConfiguration
         private Integer limit;
         /**
          * Represents the kind of action to take: Submit, Approve, or Reject.
-         * 
-         * @param actionType
          */
         private Action approvalActionType;
         /**
          * The comment to add to the history step associated with this request.
-         * 
-         * @param comments
          */
         private String approvalComments;
         /**
          * The ID of the submitter who’s requesting the approval record.
-         * 
-         * @param contextActorId
          */
         private String approvalContextActorId;
         /**
          * The ID of the item that is being acted upon.
-         * 
-         * @param contextId
          */
         private String approvalContextId;
         /**
          * If the process requires specification of the next approval, the ID of
          * the user to be assigned the next request.
-         * 
-         * @param nextApproverIds
          */
         private List approvalNextApproverIds;
         /**
          * The developer name or ID of the process definition.
-         * 
-         * @param processDefinitionNameOrId
          */
         private String approvalProcessDefinitionNameOrId;
         /**
@@ -669,15 +784,13 @@ public class SalesforceComponentConfiguration
          * argument is ignored, and standard evaluation is followed based on
          * process order. By default, the entry criteria isn’t skipped if it’s
          * not set by this request.
-         * 
-         * @param skipEntryCriteria
          */
         private Boolean approvalSkipEntryCriteria;
         /**
          * Sets the behaviour of 404 not found status received from Salesforce
-         * API. Should the body be set to NULL NotFoundBehaviour#NULL or should
-         * a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION -
-         * the default.
+         * API. Should the body be set to NULL {@link NotFoundBehaviour#NULL} or
+         * should a exception be signaled on the exchange {@link
+         * NotFoundBehaviour#EXCEPTION} - the default.
          */
         private NotFoundBehaviour notFoundBehaviour;
 
@@ -947,14 +1060,6 @@ public class SalesforceComponentConfiguration
             this.httpClient = httpClient;
         }
 
-        public ObjectMapper getObjectMapper() {
-            return objectMapper;
-        }
-
-        public void setObjectMapper(ObjectMapper objectMapper) {
-            this.objectMapper = objectMapper;
-        }
-
         public Long getBackoffIncrement() {
             return backoffIncrement;
         }
@@ -969,6 +1074,14 @@ public class SalesforceComponentConfiguration
 
         public void setMaxBackoff(Long maxBackoff) {
             this.maxBackoff = maxBackoff;
+        }
+
+        public ObjectMapper getObjectMapper() {
+            return objectMapper;
+        }
+
+        public void setObjectMapper(ObjectMapper objectMapper) {
+            this.objectMapper = objectMapper;
         }
 
         public Long getDefaultReplayId() {
@@ -1059,127 +1172,6 @@ public class SalesforceComponentConfiguration
 
         public void setNotFoundBehaviour(NotFoundBehaviour notFoundBehaviour) {
             this.notFoundBehaviour = notFoundBehaviour;
-        }
-    }
-
-    public static class SalesforceLoginConfigNestedConfiguration {
-        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.salesforce.SalesforceLoginConfig.class;
-        private String instanceUrl;
-        /**
-         * Salesforce login URL, defaults to https://login.salesforce.com
-         */
-        private String loginUrl;
-        /**
-         * Salesforce connected application Consumer Key
-         */
-        private String clientId;
-        /**
-         * Salesforce connected application Consumer Secret
-         */
-        private String clientSecret;
-        /**
-         * Keystore parameters for keystore containing certificate and private
-         * key needed for OAuth 2.0 JWT Bearer Token Flow.
-         */
-        private KeyStoreParameters keystore;
-        /**
-         * Salesforce connected application Consumer token
-         */
-        private String refreshToken;
-        private AuthenticationType type;
-        /**
-         * Salesforce account user name
-         */
-        private String userName;
-        /**
-         * Salesforce account password
-         */
-        private String password;
-        /**
-         * Flag to enable/disable lazy OAuth, default is false. When enabled,
-         * OAuth token retrieval or generation is not done until the first API
-         * call
-         */
-        private Boolean lazyLogin;
-
-        public String getInstanceUrl() {
-            return instanceUrl;
-        }
-
-        public void setInstanceUrl(String instanceUrl) {
-            this.instanceUrl = instanceUrl;
-        }
-
-        public String getLoginUrl() {
-            return loginUrl;
-        }
-
-        public void setLoginUrl(String loginUrl) {
-            this.loginUrl = loginUrl;
-        }
-
-        public String getClientId() {
-            return clientId;
-        }
-
-        public void setClientId(String clientId) {
-            this.clientId = clientId;
-        }
-
-        public String getClientSecret() {
-            return clientSecret;
-        }
-
-        public void setClientSecret(String clientSecret) {
-            this.clientSecret = clientSecret;
-        }
-
-        public KeyStoreParameters getKeystore() {
-            return keystore;
-        }
-
-        public void setKeystore(KeyStoreParameters keystore) {
-            this.keystore = keystore;
-        }
-
-        public String getRefreshToken() {
-            return refreshToken;
-        }
-
-        public void setRefreshToken(String refreshToken) {
-            this.refreshToken = refreshToken;
-        }
-
-        public AuthenticationType getType() {
-            return type;
-        }
-
-        public void setType(AuthenticationType type) {
-            this.type = type;
-        }
-
-        public String getUserName() {
-            return userName;
-        }
-
-        public void setUserName(String userName) {
-            this.userName = userName;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-
-        public Boolean getLazyLogin() {
-            return lazyLogin;
-        }
-
-        public void setLazyLogin(Boolean lazyLogin) {
-            this.lazyLogin = lazyLogin;
         }
     }
 }

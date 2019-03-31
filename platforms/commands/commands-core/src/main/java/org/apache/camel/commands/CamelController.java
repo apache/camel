@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -191,6 +191,17 @@ public interface CamelController {
     String getRouteStatsAsXml(String routeId, String camelContextName, boolean fullStats, boolean includeProcessors) throws Exception;
 
     /**
+     * Returns detailed step statistics as XML identified by a ID and a Camel context.
+     *
+     * @param routeId           the route ID.
+     * @param camelContextName  the Camel context.
+     * @param fullStats         whether to include verbose stats
+     * @return the step statistics as XML
+     * @throws java.lang.Exception can be thrown
+     */
+    String getStepStatsAsXml(String routeId, String camelContextName, boolean fullStats) throws Exception;
+
+    /**
      * Return the endpoints
      *
      * @param camelContextName the Camel context.
@@ -234,37 +245,6 @@ public interface CamelController {
      * @throws java.lang.Exception can be thrown
      */
     List<Map<String, String>> getRestServices(String camelContextName) throws Exception;
-
-    /**
-     * Explains an endpoint uri
-     *
-     * @param camelContextName the Camel context.
-     * @param uri              the endpoint uri
-     * @param allOptions       whether to explain all options, or only the explicit configured options from the uri
-     * @return a JSON schema with explanation of the options
-     * @throws java.lang.Exception can be thrown
-     */
-    String explainEndpointAsJSon(String camelContextName, String uri, boolean allOptions) throws Exception;
-
-    /**
-     * Explains an EIP
-     *
-     * @param camelContextName the Camel context.
-     * @param nameOrId         the name of the EIP ({@link org.apache.camel.NamedNode#getShortName()} or a node id to refer to a specific node from the routes.
-     * @param allOptions       whether to explain all options, or only the explicit configured options from the uri
-     * @return a JSON schema with explanation of the options
-     * @throws java.lang.Exception can be thrown
-     */
-    String explainEipAsJSon(String camelContextName, String nameOrId, boolean allOptions) throws Exception;
-
-    /**
-     * Lists Components which are in use or available on the classpath and include information
-     *
-     * @param camelContextName the Camel context.
-     * @return a list of key/value pairs with component information
-     * @throws java.lang.Exception can be thrown
-     */
-    List<Map<String, String>> listComponents(String camelContextName) throws Exception;
 
     /**
      * Return the transformers

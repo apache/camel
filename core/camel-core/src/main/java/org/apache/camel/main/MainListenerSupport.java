@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,11 +23,11 @@ import org.apache.camel.CamelContext;
  */
 public class MainListenerSupport implements MainListener {
 
-    public void beforeStart(MainSupport main) {
+    public void configure(CamelContext context) {
         // noop
     }
 
-    public void configure(CamelContext context) {
+    public void beforeStart(MainSupport main) {
         // noop
     }
 

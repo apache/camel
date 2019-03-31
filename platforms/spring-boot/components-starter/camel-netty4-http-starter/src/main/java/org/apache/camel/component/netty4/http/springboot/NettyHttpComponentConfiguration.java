@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -194,7 +194,7 @@ public class NettyHttpComponentConfiguration
          * as a application/x-java-serialized-object content type. On the
          * producer side the exception will be deserialized and thrown as is,
          * instead of the HttpOperationFailedException. The caused exception is
-         * required to be serialized. This is by default turned off. If you
+         * required to be serialized. <p/> This is by default turned off. If you
          * enable this then be aware that Java will deserialize the incoming
          * data from the request to Java and that can be a potential security
          * risk.
@@ -253,8 +253,8 @@ public class NettyHttpComponentConfiguration
          * the reader index on the Netty raw stream. Also Netty will auto-close
          * the Netty stream when the Netty HTTP server/HTTP client is done
          * processing, which means that if the asynchronous routing engine is in
-         * use then any asynchronous thread that may continue routing the
-         * org.apache.camel.Exchange may not be able to read the Netty stream,
+         * use then any asynchronous thread that may continue routing the {@link
+         * org.apache.camel.Exchange} may not be able to read the Netty stream,
          * because Netty has closed it.
          */
         private Boolean disableStreamCache = false;
@@ -271,16 +271,16 @@ public class NettyHttpComponentConfiguration
         private Integer chunkedMaxContentLength = 1048576;
         /**
          * The maximum length of all headers. If the sum of the length of each
-         * header exceeds this value, a
-         * io.netty.handler.codec.TooLongFrameException will be raised.
+         * header exceeds this value, a {@link
+         * io.netty.handler.codec.TooLongFrameException} will be raised.
          */
         private Integer maxHeaderSize = 8192;
-        private Boolean allowDefaultCodec;
         /**
          * The status codes which are considered a success response. The values
          * are inclusive. Multiple ranges can be defined, separated by comma,
-         * e.g. 200-204,209,301-304. Each range must be a single number or
-         * from-to with the dash included. The default range is 200-299
+         * e.g. <tt>200-204,209,301-304</tt>. Each range must be a single number
+         * or from-to with the dash included. <p/> The default range is
+         * <tt>200-299</tt>
          */
         private String okStatusCodeRange = "200-299";
         /**
@@ -408,14 +408,6 @@ public class NettyHttpComponentConfiguration
             this.maxHeaderSize = maxHeaderSize;
         }
 
-        public Boolean getAllowDefaultCodec() {
-            return allowDefaultCodec;
-        }
-
-        public void setAllowDefaultCodec(Boolean allowDefaultCodec) {
-            this.allowDefaultCodec = allowDefaultCodec;
-        }
-
         public String getOkStatusCodeRange() {
             return okStatusCodeRange;
         }
@@ -436,15 +428,11 @@ public class NettyHttpComponentConfiguration
     public static class NettyHttpSecurityConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration.class;
         /**
-         * Whether to enable authentication
-         * <p/>
-         * This is by default enabled.
+         * Whether to enable authentication <p/> This is by default enabled.
          */
         private Boolean authenticate;
         /**
-         * The supported restricted.
-         * <p/>
-         * Currently only Basic is supported.
+         * The supported restricted. <p/> Currently only Basic is supported.
          */
         private String constraint;
         /**
@@ -453,24 +441,24 @@ public class NettyHttpComponentConfiguration
         private String realm;
         /**
          * Sets a {@link SecurityConstraint} to use for checking if a web
-         * resource is restricted or not
-         * <p/>
-         * By default this is <tt>null</tt>, which means all resources is
-         * restricted.
+         * resource is restricted or not <p/> By default this is <tt>null</tt>,
+         * which means all resources is restricted.
          */
         private SecurityConstraint securityConstraint;
         /**
          * Sets the {@link SecurityAuthenticator} to use for authenticating the
-         * {@link HttpPrincipal} .
+         * {@link HttpPrincipal}.
          */
         private SecurityAuthenticator securityAuthenticator;
         /**
          * Sets a logging level to use for logging denied login attempts (incl
-         * stacktraces)
-         * <p/>
-         * This level is by default DEBUG.
+         * stacktraces) <p/> This level is by default DEBUG.
          */
         private LoggingLevel loginDeniedLoggingLevel;
+        /**
+         * Sets a logging level to use for logging denied login attempts (incl
+         * stacktraces) <p/> This level is by default DEBUG.
+         */
         private String roleClassName;
 
         public Boolean getAuthenticate() {

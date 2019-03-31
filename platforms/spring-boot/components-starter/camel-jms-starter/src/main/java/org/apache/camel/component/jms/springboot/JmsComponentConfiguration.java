@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -1301,9 +1301,9 @@ public class JmsComponentConfiguration
         private ConsumerType consumerType = ConsumerType.Default;
         /**
          * Sets the default connection factory to be used if a connection
-         * factory is not specified for either
-         * setTemplateConnectionFactory(ConnectionFactory) or
-         * setListenerConnectionFactory(ConnectionFactory)
+         * factory is not specified for either {@link
+         * #setTemplateConnectionFactory(ConnectionFactory)} or {@link
+         * #setListenerConnectionFactory(ConnectionFactory)}
          */
         private ConnectionFactory connectionFactory;
         /**
@@ -1322,8 +1322,8 @@ public class JmsComponentConfiguration
         private ConnectionFactory listenerConnectionFactory;
         /**
          * Sets the connection factory to be used for sending messages via the
-         * {@link JmsTemplate} via
-         * {@link #createInOnlyTemplate(JmsEndpoint,boolean,String)}
+         * {@link JmsTemplate} via {@link #createInOnlyTemplate(JmsEndpoint,
+         * boolean, String)}
          */
         private ConnectionFactory templateConnectionFactory;
         /**
@@ -1342,21 +1342,22 @@ public class JmsComponentConfiguration
          */
         private Boolean acceptMessagesWhileStopping = false;
         /**
-         * Whether the DefaultMessageListenerContainer used in the reply
-         * managers for request-reply messaging allow the
-         * DefaultMessageListenerContainer#runningAllowed() flag to quick stop
-         * in case JmsConfiguration#isAcceptMessagesWhileStopping() is enabled,
-         * and org.apache.camel.CamelContext is currently being stopped. This
-         * quick stop ability is enabled by default in the regular JMS consumers
-         * but to enable for reply managers you must enable this flag.
+         * Whether the {@link DefaultMessageListenerContainer} used in the reply
+         * managers for request-reply messaging allow the {@link
+         * DefaultMessageListenerContainer#runningAllowed()} flag to quick stop
+         * in case {@link JmsConfiguration#isAcceptMessagesWhileStopping()} is
+         * enabled, and {@link org.apache.camel.CamelContext} is currently being
+         * stopped. This quick stop ability is enabled by default in the regular
+         * JMS consumers but to enable for reply managers you must enable this
+         * flag.
          */
         private Boolean allowReplyManagerQuickStop = false;
         /**
          * Sets the JMS client ID to use. Note that this value, if specified,
          * must be unique and can only be used by a single JMS connection
          * instance. It is typically only required for durable topic
-         * subscriptions. If using Apache ActiveMQ you may prefer to use Virtual
-         * Topics instead.
+         * subscriptions. <p> If using Apache ActiveMQ you may prefer to use
+         * Virtual Topics instead.
          */
         private String clientId;
         /**
@@ -1412,7 +1413,7 @@ public class JmsComponentConfiguration
          * Specifies the default number of concurrent consumers when consuming
          * from JMS (not for request/reply over JMS). See also the
          * maxMessagesPerTask option to control dynamic scaling up/down of
-         * threads. When doing request/reply over JMS then the option
+         * threads. <p> When doing request/reply over JMS then the option
          * replyToConcurrentConsumers is used to control number of concurrent
          * consumers on the reply message listener.
          */
@@ -1425,7 +1426,7 @@ public class JmsComponentConfiguration
         private Integer replyToConcurrentConsumers = 1;
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min max), then this option can be used
+         * for concurrent consumers (eg min < max), then this option can be used
          * to set a value to eg 100 to control how fast the consumers will
          * shrink when less work is required.
          */
@@ -1494,7 +1495,7 @@ public class JmsComponentConfiguration
          * Specifies the maximum number of concurrent consumers when consuming
          * from JMS (not for request/reply over JMS). See also the
          * maxMessagesPerTask option to control dynamic scaling up/down of
-         * threads. When doing request/reply over JMS then the option
+         * threads. <p> When doing request/reply over JMS then the option
          * replyToMaxConcurrentConsumers is used to control number of concurrent
          * consumers on the reply message listener.
          */
@@ -1510,6 +1511,15 @@ public class JmsComponentConfiguration
          * routing when timeout occurred when using request/reply over JMS.
          */
         private Integer replyToOnTimeoutMaxConcurrentConsumers = 1;
+        /**
+         * Set if the deliveryMode, priority or timeToLive qualities of service
+         * should be used when sending messages. This option is based on
+         * Spring's JmsTemplate. The deliveryMode, priority and timeToLive
+         * options are applied to the current endpoint. This contrasts with the
+         * preserveMessageQos option, which operates at message granularity,
+         * reading QoS properties exclusively from the Camel In message headers.
+         */
+        private Boolean explicitQosEnabled = false;
         /**
          * Specifies whether persistent delivery is used by default.
          */
@@ -1630,9 +1640,9 @@ public class JmsComponentConfiguration
          */
         private JmsProviderMetadata providerMetadata;
         /**
-         * Sets the {@link JmsOperations} used to deduce the
-         * {@link JmsProviderMetadata} details which if none is customized one
-         * is lazily created on demand
+         * Sets the {@link JmsOperations} used to deduce the {@link
+         * JmsProviderMetadata} details which if none is customized one is
+         * lazily created on demand
          */
         private JmsOperations metadataJmsOperations;
         /**
@@ -1652,7 +1662,7 @@ public class JmsComponentConfiguration
         /**
          * The timeout for waiting for a reply when using the InOut Exchange
          * Pattern (in milliseconds). The default is 20 seconds. You can include
-         * the header CamelJmsRequestTimeout to override this endpoint
+         * the header "CamelJmsRequestTimeout" to override this endpoint
          * configured timeout value, and thus have per message individual
          * timeout values. See also the requestTimeoutCheckerInterval option.
          */
@@ -1723,9 +1733,9 @@ public class JmsComponentConfiguration
         private Boolean transferExchange = false;
         /**
          * Controls whether or not to include serialized headers. Applies only
-         * when isTransferExchange() is true. This requires that the objects are
-         * serializable. Camel will exclude any non-serializable objects and log
-         * it at WARN level.
+         * when {@link #isTransferExchange()} is {@code true}. This requires
+         * that the objects are serializable. Camel will exclude any
+         * non-serializable objects and log it at WARN level.
          */
         private Boolean allowSerializedHeaders = false;
         /**
@@ -1744,13 +1754,13 @@ public class JmsComponentConfiguration
         /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed with a SOAP fault (not exception) on the consumer
-         * side, then the fault flag on org.apache.camel.Message#isFault() will
-         * be send back in the response as a JMS header with the key
-         * JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned
-         * fault flag will be set on the
-         * org.apache.camel.Message#setFault(boolean). You may want to enable
-         * this when using Camel components that support faults such as SOAP
-         * based such as cxf or spring-ws.
+         * side, then the fault flag on {@link
+         * org.apache.camel.Message#isFault()} will be send back in the response
+         * as a JMS header with the key {@link JmsConstants#JMS_TRANSFER_FAULT}.
+         * If the client is Camel, the returned fault flag will be set on the
+         * {@link org.apache.camel.Message#setFault(boolean)}. <p> You may want
+         * to enable this when using Camel components that support faults such
+         * as SOAP based such as cxf or spring-ws.
          */
         private Boolean transferFault = false;
         /**
@@ -1863,8 +1873,8 @@ public class JmsComponentConfiguration
          * ThreadPoolTaskExecutor with optimal values - cached threadpool-like).
          * If not set, it defaults to the previous behaviour, which uses a
          * cached thread pool for consumer endpoints and SimpleAsync for reply
-         * consumers. The use of ThreadPool is recommended to reduce thread
-         * trash in elastic configurations with dynamically increasing and
+         * consumers. The use of ThreadPool is recommended to reduce "thread
+         * trash" in elastic configurations with dynamically increasing and
          * decreasing concurrent consumers.
          */
         private DefaultTaskExecutorType defaultTaskExecutorType;
@@ -1877,8 +1887,8 @@ public class JmsComponentConfiguration
         private Boolean includeAllJMSXProperties = false;
         /**
          * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of javax.jms.Message objects when Camel is
-         * sending a JMS message.
+         * creates new instances of <tt>javax.jms.Message</tt> objects when
+         * Camel is sending a JMS message.
          */
         private MessageCreatedStrategy messageCreatedStrategy;
         /**
@@ -1897,44 +1907,44 @@ public class JmsComponentConfiguration
         private String correlationProperty;
         /**
          * This option is used to allow additional headers which may have values
-         * that are invalid according to JMS specification. For example some
+         * that are invalid according to JMS specification. + For example some
          * message systems such as WMQ do this with header names using prefix
          * JMS_IBM_MQMD_ containing values with byte array or other invalid
-         * types. You can specify multiple header names separated by comma, and
-         * use as suffix for wildcard matching.
+         * types. + You can specify multiple header names separated by comma,
+         * and use * as suffix for wildcard matching.
          */
         private String allowAdditionalHeaders;
         /**
          * Set whether to make the subscription durable. The durable
          * subscription name to be used can be specified through the
-         * subscriptionName property. Default is false. Set this to true to
-         * register a durable subscription, typically in combination with a
-         * subscriptionName value (unless your message listener class name is
-         * good enough as subscription name). Only makes sense when listening to
-         * a topic (pub-sub domain), therefore this method switches the
-         * pubSubDomain flag as well.
+         * "subscriptionName" property. <p>Default is "false". Set this to
+         * "true" to register a durable subscription, typically in combination
+         * with a "subscriptionName" value (unless your message listener class
+         * name is good enough as subscription name). <p>Only makes sense when
+         * listening to a topic (pub-sub domain), therefore this method switches
+         * the "pubSubDomain" flag as well.
          */
         private Boolean subscriptionDurable = false;
         /**
          * Set whether to make the subscription shared. The shared subscription
-         * name to be used can be specified through the subscriptionName
-         * property. Default is false. Set this to true to register a shared
-         * subscription, typically in combination with a subscriptionName value
-         * (unless your message listener class name is good enough as
-         * subscription name). Note that shared subscriptions may also be
-         * durable, so this flag can (and often will) be combined with
-         * subscriptionDurable as well. Only makes sense when listening to a
-         * topic (pub-sub domain), therefore this method switches the
-         * pubSubDomain flag as well. Requires a JMS 2.0 compatible message
-         * broker.
+         * name to be used can be specified through the "subscriptionName"
+         * property. <p>Default is "false". Set this to "true" to register a
+         * shared subscription, typically in combination with a
+         * "subscriptionName" value (unless your message listener class name is
+         * good enough as subscription name). Note that shared subscriptions may
+         * also be durable, so this flag can (and often will) be combined with
+         * "subscriptionDurable" as well. <p>Only makes sense when listening to
+         * a topic (pub-sub domain), therefore this method switches the
+         * "pubSubDomain" flag as well. <p><b>Requires a JMS 2.0 compatible
+         * message broker.</b>
          */
         private Boolean subscriptionShared = false;
         /**
          * Set the name of a subscription to create. To be applied in case of a
-         * topic (pub-sub domain) with a shared or durable subscription. The
+         * topic (pub-sub domain) with a shared or durable subscription. <p>The
          * subscription name needs to be unique within this client's JMS client
          * id. Default is the class name of the specified message listener.
-         * Note: Only 1 concurrent consumer (which is the default of this
+         * <p>Note: Only 1 concurrent consumer (which is the default of this
          * message listener container) is allowed for each subscription, except
          * for a shared subscription (which requires JMS 2.0).
          */
@@ -2253,6 +2263,14 @@ public class JmsComponentConfiguration
         public void setReplyToOnTimeoutMaxConcurrentConsumers(
                 Integer replyToOnTimeoutMaxConcurrentConsumers) {
             this.replyToOnTimeoutMaxConcurrentConsumers = replyToOnTimeoutMaxConcurrentConsumers;
+        }
+
+        public Boolean getExplicitQosEnabled() {
+            return explicitQosEnabled;
+        }
+
+        public void setExplicitQosEnabled(Boolean explicitQosEnabled) {
+            this.explicitQosEnabled = explicitQosEnabled;
         }
 
         public Boolean getDeliveryPersistent() {

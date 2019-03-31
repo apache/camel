@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Produce;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.Before;
@@ -31,7 +32,7 @@ public class CamelProduceInterfaceEventNotifierTest extends ContextTestSupport {
 
     private static List<CamelEvent> events = new ArrayList<>();
 
-    private DefaultCamelBeanPostProcessor postProcessor;
+    private CamelBeanPostProcessor postProcessor;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -75,7 +76,7 @@ public class CamelProduceInterfaceEventNotifierTest extends ContextTestSupport {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        postProcessor = new DefaultCamelBeanPostProcessor(context);
+        postProcessor = context.getBeanPostProcessor();
     }
 
     interface FooService {
@@ -85,7 +86,7 @@ public class CamelProduceInterfaceEventNotifierTest extends ContextTestSupport {
 
     class MySender {
 
-        @Produce(uri = "mock:result")
+        @Produce("mock:result")
         FooService hello;
 
     }

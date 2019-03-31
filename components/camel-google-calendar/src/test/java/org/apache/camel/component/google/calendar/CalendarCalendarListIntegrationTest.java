@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
  */
 public class CalendarCalendarListIntegrationTest extends AbstractGoogleCalendarTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CalendarCalendarListIntegrationTest.class);
     private static final String PATH_PREFIX = GoogleCalendarApiCollection.getCollection().getApiName(CalendarCalendarListApiMethod.class).getName();
 
     @Test

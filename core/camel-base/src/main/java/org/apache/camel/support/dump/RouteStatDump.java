@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -110,6 +110,12 @@ public final class RouteStatDump {
             @XmlElement(type = ProcessorStatDump.class, name = "processorStat")
         })
     private List<ProcessorStatDump> processorStats;
+
+    @XmlElementWrapper(name = "stepStats")
+    @XmlElements({
+            @XmlElement(type = StepStatDump.class, name = "stepStat")
+        })
+    private List<StepStatDump> stepStats;
 
     public String getId() {
         return id;
@@ -311,4 +317,11 @@ public final class RouteStatDump {
         this.processorStats = processorStats;
     }
 
+    public List<StepStatDump> getStepStats() {
+        return stepStats;
+    }
+
+    public void setStepStats(List<StepStatDump> stepStats) {
+        this.stepStats = stepStats;
+    }
 }

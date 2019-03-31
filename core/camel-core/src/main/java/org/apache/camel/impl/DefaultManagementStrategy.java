@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,13 +38,13 @@ import org.apache.camel.util.ObjectHelper;
  * A default management strategy that does <b>not</b> manage.
  * <p/>
  * This is default only used if Camel detects that it cannot use the JMX capable
- * {@link org.apache.camel.management.ManagedManagementStrategy} strategy. Then Camel will
+ * {@link org.apache.camel.management.JmxManagementStrategy} strategy. Then Camel will
  * fallback to use this instead that is basically a simple and <tt>noop</tt> strategy.
  * <p/>
  * This class can also be used to extend your custom management implement. In fact the JMX capable
  * provided by Camel extends this class as well.
  *
- * @see org.apache.camel.management.ManagedManagementStrategy
+ * @see org.apache.camel.management.JmxManagementStrategy
  */
 public class DefaultManagementStrategy extends ServiceSupport implements ManagementStrategy, CamelContextAware {
 
@@ -148,7 +148,7 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     }
 
     public void notify(CamelEvent event) throws Exception {
-        if (eventNotifiers != null && !eventNotifiers.isEmpty()) {
+        if (!eventNotifiers.isEmpty()) {
             for (EventNotifier notifier : eventNotifiers) {
                 if (notifier.isEnabled(event)) {
                     notifier.notify(event);
@@ -165,17 +165,15 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     protected void doStartManagementStrategy() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
 
-        if (eventNotifiers != null) {
-            for (EventNotifier notifier : eventNotifiers) {
+        for (EventNotifier notifier : eventNotifiers) {
 
-                // inject CamelContext if the service is aware
-                if (notifier instanceof CamelContextAware) {
-                    CamelContextAware aware = (CamelContextAware) notifier;
-                    aware.setCamelContext(camelContext);
-                }
-
-                ServiceHelper.startService(notifier);
+            // inject CamelContext if the service is aware
+            if (notifier instanceof CamelContextAware) {
+                CamelContextAware aware = (CamelContextAware) notifier;
+                aware.setCamelContext(camelContext);
             }
+
+            ServiceHelper.startService(notifier);
         }
 
         if (managementAgent != null) {

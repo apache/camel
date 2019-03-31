@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,8 +16,6 @@
  */
 package org.apache.camel.management;
 
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import javax.management.MBeanServer;
@@ -28,19 +26,14 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
-import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 public class ManagedRefProducerTest extends ManagementTestSupport {
 
-    private Map registry = new SimpleRegistry();
-
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext((Registry) registry);
-        registry.put("foo", new MockEndpoint("mock://foo", new MockComponent(context)));
+        CamelContext context = super.createCamelContext();
+        context.getRegistry().bind("foo", new MockEndpoint("mock://foo", new MockComponent(context)));
         return context;
     }
 

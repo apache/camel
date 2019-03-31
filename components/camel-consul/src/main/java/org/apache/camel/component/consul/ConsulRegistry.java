@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,6 +38,7 @@ import com.orbitz.consul.SessionClient;
 import com.orbitz.consul.model.session.ImmutableSession;
 import com.orbitz.consul.model.session.SessionCreatedResponse;
 import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Registry;
 
 /**
@@ -154,6 +155,11 @@ public class ConsulRegistry implements Registry {
             }
         }
         return result;
+    }
+
+    @Override
+    public void bind(String id, Class type, Object bean) throws RuntimeCamelException {
+        put(id, bean);
     }
 
     public void remove(String key) {

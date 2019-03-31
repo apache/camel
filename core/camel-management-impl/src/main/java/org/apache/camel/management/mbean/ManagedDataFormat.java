@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,27 +16,15 @@
  */
 package org.apache.camel.management.mbean;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.management.openmbean.CompositeData;
-import javax.management.openmbean.CompositeDataSupport;
-import javax.management.openmbean.CompositeType;
-import javax.management.openmbean.TabularData;
-import javax.management.openmbean.TabularDataSupport;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedDataFormatMBean;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.support.JSonSchemaHelper;
 
 @ManagedResource(description = "Managed DataFormat")
 public class ManagedDataFormat implements ManagedInstance, ManagedDataFormatMBean {
@@ -88,54 +76,6 @@ public class ManagedDataFormat implements ManagedInstance, ManagedDataFormatMBea
 
         // assume started if not a ServiceSupport instance
         return ServiceStatus.Started.name();
-    }
-
-    @Override
-    public String informationJson() {
-        String dataFormatName = getName();
-        if (dataFormatName != null) {
-            return camelContext.explainDataFormatJson(dataFormatName, dataFormat, true);
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public TabularData explain(boolean allOptions) {
-        String dataFormatName = getName();
-        if (dataFormatName != null) {
-            try {
-                TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.explainDataFormatTabularType());
-
-                String json = camelContext.explainDataFormatJson(dataFormatName, dataFormat, allOptions);
-                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
-
-                for (Map<String, String> row : rows) {
-                    String name = row.get("name");
-                    String kind = row.get("kind");
-                    String label = row.get("label") != null ? row.get("label") : "";
-                    String type = row.get("type");
-                    String javaType = row.get("javaType");
-                    String deprecated = row.get("deprecated") != null ? row.get("deprecated") : "";
-                    String secret = row.get("secret") != null ? row.get("secret") : "";
-                    String value = row.get("value") != null ? row.get("value") : "";
-                    String defaultValue = row.get("defaultValue") != null ? row.get("defaultValue") : "";
-                    String description = row.get("description") != null ? row.get("description") : "";
-
-                    CompositeType ct = CamelOpenMBeanTypes.explainDataFormatsCompositeType();
-                    CompositeData data = new CompositeDataSupport(ct,
-                            new String[]{"option", "kind", "label", "type", "java type", "deprecated", "secret", "value", "default value", "description"},
-                            new Object[]{name, kind, label, type, javaType, deprecated, secret, value, defaultValue, description});
-                    answer.put(data);
-                }
-
-                return answer;
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        } else {
-            return null;
-        }
     }
 
     @Override

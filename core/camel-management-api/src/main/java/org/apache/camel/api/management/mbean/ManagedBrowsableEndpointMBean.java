@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,13 +28,6 @@ public interface ManagedBrowsableEndpointMBean extends ManagedEndpointMBean {
 
     @ManagedOperation(description = "Get message body from queue by index")
     String browseMessageBody(Integer index);
-
-    /**
-     * @deprecated use {@link #browseAllMessagesAsXml(Boolean)} instead
-     */
-    @ManagedOperation(description = "Get message as XML from queue by index")
-    @Deprecated
-    String browseMessageAsXml(Integer index);
 
     @ManagedOperation(description = "Get message as XML from queue by index")
     String browseMessageAsXml(Integer index, Boolean includeBody);

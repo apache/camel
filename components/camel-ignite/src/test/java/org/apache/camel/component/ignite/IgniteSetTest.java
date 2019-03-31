@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,11 +24,9 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import org.apache.camel.component.ignite.set.IgniteSetComponent;
 import org.apache.camel.component.ignite.set.IgniteSetEndpoint;
 import org.apache.camel.component.ignite.set.IgniteSetOperation;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.ignite.cache.CacheMode;
 import org.apache.ignite.configuration.CollectionConfiguration;
 import org.junit.After;
@@ -163,7 +161,7 @@ public class IgniteSetTest extends AbstractIgniteTest {
         CollectionConfiguration configuration = new CollectionConfiguration();
         configuration.setCacheMode(CacheMode.PARTITIONED);
 
-        context.getRegistry(JndiRegistry.class).bind("config", configuration);
+        context.getRegistry().bind("config", configuration);
 
         IgniteSetEndpoint igniteEndpoint = context.getEndpoint("ignite-"
             + "set:abc?operation=ADD&configuration=#config", IgniteSetEndpoint.class);

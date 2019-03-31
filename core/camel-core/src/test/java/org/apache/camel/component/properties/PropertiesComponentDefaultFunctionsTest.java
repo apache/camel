@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import java.util.Map;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -27,25 +29,33 @@ public class PropertiesComponentDefaultFunctionsTest extends ContextTestSupport 
         return false;
     }
 
+    private static Map.Entry<String, String> anyNonEmptyEnvironmentVariable() {
+        for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
+            if (entry.getValue() != null && !"".equals(entry.getValue())) {
+                return entry;
+            }
+        }
+        throw new IllegalStateException();
+    }
+
     @Test
     public void testFunction() throws Exception {
         System.setProperty("FOO", "mock:foo");
+        Map.Entry<String, String> env = anyNonEmptyEnvironmentVariable();
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
                         .to("{{sys:FOO}}")
-                        .transform().constant("{{env:JAVA_HOME}}")
+                        .transform().constant("{{env:" + env.getKey() + "}}")
                         .to("mock:bar");
             }
         });
         context.start();
 
-        String body = System.getenv("JAVA_HOME");
-
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:bar").expectedBodiesReceived(body);
+        getMockEndpoint("mock:bar").expectedBodiesReceived(env.getValue());
 
         template.sendBody("direct:start", "Hello World");
 

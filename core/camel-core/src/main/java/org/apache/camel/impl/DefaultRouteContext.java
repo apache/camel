@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,7 +39,6 @@ import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.CamelInternalProcessorAdvice;
 import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.processor.Pipeline;
-import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.reifier.rest.RestBindingReifier;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.InterceptStrategy;
@@ -114,7 +113,7 @@ public class DefaultRouteContext implements RouteContext {
     }
 
     public Endpoint resolveEndpoint(String uri) {
-        return new RouteReifier(route).resolveEndpoint(getCamelContext(), uri);
+        return CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
     }
 
     public Endpoint resolveEndpoint(String uri, String ref) {

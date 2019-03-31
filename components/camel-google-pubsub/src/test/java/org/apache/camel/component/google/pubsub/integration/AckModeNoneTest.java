@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,13 +35,13 @@ public class AckModeNoneTest extends PubsubTestSupport {
     private static final String TOPIC_NAME = "ackNoneTopic";
     private static final String SUBSCRIPTION_NAME = "ackNoneSub";
 
-    @EndpointInject(uri = "direct:in")
+    @EndpointInject("direct:in")
     private Endpoint directIn;
 
-    @EndpointInject(uri = "google-pubsub:{{project.id}}:" + TOPIC_NAME)
+    @EndpointInject("google-pubsub:{{project.id}}:" + TOPIC_NAME)
     private Endpoint pubsubTopic;
 
-    @EndpointInject(uri = "google-pubsub:{{project.id}}:"
+    @EndpointInject("google-pubsub:{{project.id}}:"
             + SUBSCRIPTION_NAME
             + "?ackMode=NONE")
     private Endpoint pubsubSub;

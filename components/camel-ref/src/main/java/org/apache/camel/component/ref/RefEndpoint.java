@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -71,14 +71,16 @@ public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     @Override
     public Endpoint getEndpoint() {
+        if (endpoint == null) {
+            endpoint = CamelContextHelper.mandatoryLookup(getCamelContext(), name, Endpoint.class);
+        }
         return endpoint;
     }
 
     @Override
     protected void doStart() throws Exception {
-        endpoint = CamelContextHelper.mandatoryLookup(getCamelContext(), name, Endpoint.class);
         // add the endpoint to the endpoint registry
-        getCamelContext().addEndpoint(endpoint.getEndpointUri(), endpoint);
+        getCamelContext().addEndpoint(getEndpoint().getEndpointUri(), getEndpoint());
         super.doStart();
     }
 

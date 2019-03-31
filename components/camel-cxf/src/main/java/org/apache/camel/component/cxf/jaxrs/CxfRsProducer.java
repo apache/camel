@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,7 +39,6 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -48,9 +47,9 @@ import org.apache.camel.component.cxf.CxfOperationException;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.support.DefaultAsyncProducer;
-import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.support.LRUSoftCache;
+import org.apache.camel.support.LRUCache;
+import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
@@ -843,14 +842,16 @@ public class CxfRsProducer extends DefaultAsyncProducer {
      * Cache contains {@link org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean}
      */
     class ClientFactoryBeanCache {
-        private LRUSoftCache<String, JAXRSClientFactoryBean> cache;    
+        private Map<String, JAXRSClientFactoryBean> cache;
         
         ClientFactoryBeanCache(final int maxCacheSize) {
-            this.cache = new LRUSoftCache<>(maxCacheSize);
+            this.cache = LRUCacheFactory.newLRUSoftCache(maxCacheSize);
         }
         
         public void start() throws Exception {
-            cache.resetStatistics();
+            if (cache instanceof LRUCache) {
+                ((LRUCache) cache).resetStatistics();
+            }
         }
         
         public void stop() throws Exception {

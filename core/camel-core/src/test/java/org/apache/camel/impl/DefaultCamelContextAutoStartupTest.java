@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,6 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
     @Test
     public void testAutoStartupFalseContextStart() throws Exception {
         DefaultCamelContext camel = new DefaultCamelContext(false);
-        camel.setRegistry(new SimpleRegistry());
         camel.disableJMX();
         camel.setAutoStartup(false);
 
@@ -63,7 +62,6 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
     @Test
     public void testAutoStartupFalseRouteStart() throws Exception {
         DefaultCamelContext camel = new DefaultCamelContext(false);
-        camel.setRegistry(new SimpleRegistry());
         camel.disableJMX();
         camel.setAutoStartup(false);
 
@@ -98,7 +96,6 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
     @Test
     public void testAutoStartupTrue() throws Exception {
         DefaultCamelContext camel = new DefaultCamelContext(false);
-        camel.setRegistry(new SimpleRegistry());
         camel.disableJMX();
         camel.setAutoStartup(true);
 
@@ -127,7 +124,6 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
     @Test
     public void testAutoStartupFalseRouteOverride() throws Exception {
         DefaultCamelContext camel = new DefaultCamelContext(false);
-        camel.setRegistry(new SimpleRegistry());
         camel.disableJMX();
         camel.setAutoStartup(false);
 

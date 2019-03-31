@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -82,8 +82,7 @@ public class ExchangePropertyLanguageAutoConfiguration {
     public ExchangePropertyLanguage configureExchangePropertyLanguage()
             throws Exception {
         ExchangePropertyLanguage language = new ExchangePropertyLanguage();
-        if (CamelContextAware.class
-                .isAssignableFrom(ExchangePropertyLanguage.class)) {
+        if (CamelContextAware.class.isAssignableFrom(ExchangePropertyLanguage.class)) {
             CamelContextAware contextAware = CamelContextAware.class
                     .cast(language);
             if (contextAware != null) {

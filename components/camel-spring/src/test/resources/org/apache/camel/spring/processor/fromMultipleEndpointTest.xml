@@ -28,6 +28,9 @@
         <!-- START SNIPPET: e1 -->
         <route>
             <from uri="direct:foo"/>
+            <to uri="mock:results"/>
+        </route>
+        <route>
             <from uri="seda:bar"/>
             <to uri="mock:results"/>
         </route>

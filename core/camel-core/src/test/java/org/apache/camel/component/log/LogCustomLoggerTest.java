@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,8 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
-import org.apache.camel.impl.SimpleRegistry;
 import org.apache.logging.log4j.Level;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,15 +82,15 @@ public class LogCustomLoggerTest extends ContextTestSupport {
 
     @Test
     public void testEndpointURIParametrizedLogger() throws Exception {
-        getRegistry().put("logger1", LoggerFactory.getLogger("provided.logger1.name"));
-        getRegistry().put("logger2", LoggerFactory.getLogger("provided.logger2.name"));
+        context.getRegistry().bind("logger1", LoggerFactory.getLogger("provided.logger1.name"));
+        context.getRegistry().bind("logger2", LoggerFactory.getLogger("provided.logger2.name"));
         template.requestBody("log:irrelevant.logger.name?logger=#logger2", "hello");
         assertThat(sw1.toString(), equalTo("provided.logger2.name"));
     }
 
     @Test
     public void testEndpointURIParametrizedNotResolvableLogger() {
-        getRegistry().put("logger1", LoggerFactory.getLogger("provided.logger1.name"));
+        context.getRegistry().bind("logger1", LoggerFactory.getLogger("provided.logger1.name"));
         try {
             template.requestBody("log:irrelevant.logger.name?logger=#logger2", "hello");
         } catch (ResolveEndpointFailedException e) {
@@ -102,15 +100,15 @@ public class LogCustomLoggerTest extends ContextTestSupport {
 
     @Test
     public void testDefaultRegistryLogger() throws Exception {
-        getRegistry().put("logger", LoggerFactory.getLogger("provided.logger1.name"));
+        context.getRegistry().bind("logger", LoggerFactory.getLogger("provided.logger1.name"));
         template.requestBody("log:irrelevant.logger.name", "hello");
         assertThat(sw1.toString(), equalTo("provided.logger1.name"));
     }
 
     @Test
     public void testTwoRegistryLoggers() throws Exception {
-        getRegistry().put("logger1", LoggerFactory.getLogger("provided.logger1.name"));
-        getRegistry().put("logger2", LoggerFactory.getLogger("provided.logger2.name"));
+        context.getRegistry().bind("logger1", LoggerFactory.getLogger("provided.logger1.name"));
+        context.getRegistry().bind("logger2", LoggerFactory.getLogger("provided.logger2.name"));
         template.requestBody("log:irrelevant.logger.name", "hello");
         assertThat(sw1.toString(), equalTo("irrelevant.logger.name"));
         assertThat(sw2.toString(), equalTo(LogComponent.class.getName()));
@@ -118,17 +116,7 @@ public class LogCustomLoggerTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return new DefaultCamelContext(new SimpleRegistry());
-    }
-
-    private SimpleRegistry getRegistry() {
-        SimpleRegistry registry = null;
-        if (context.getRegistry() instanceof PropertyPlaceholderDelegateRegistry) {
-            registry = (SimpleRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
-        } else {
-            fail("Could not determine Registry type");
-        }
-        return registry;
+        return new DefaultCamelContext();
     }
 
 }

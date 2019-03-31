@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,14 +15,15 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.config;
+
 import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
-import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
 import org.junit.After;

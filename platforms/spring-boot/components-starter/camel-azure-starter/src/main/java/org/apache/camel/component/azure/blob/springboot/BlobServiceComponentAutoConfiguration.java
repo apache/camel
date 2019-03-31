@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -77,8 +77,7 @@ public class BlobServiceComponentAutoConfiguration {
     @Lazy
     @Bean(name = "azure-blob-component")
     @ConditionalOnMissingBean(BlobServiceComponent.class)
-    public BlobServiceComponent configureBlobServiceComponent()
-            throws Exception {
+    public BlobServiceComponent configureBlobServiceComponent() throws Exception {
         BlobServiceComponent component = new BlobServiceComponent();
         component.setCamelContext(camelContext);
         Map<String, Object> parameters = new HashMap<>();

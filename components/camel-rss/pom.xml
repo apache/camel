@@ -17,7 +17,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -30,10 +31,10 @@
     <packaging>jar</packaging>
     <name>Camel :: RSS</name>
     <description>Camel RSS support</description>
-  
+
     <properties>
     </properties>
- 
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -47,7 +48,7 @@
                     <groupId>org.apache.abdera</groupId>
                     <artifactId>abdera-extensions-main</artifactId>
                 </exclusion>
-            </exclusions>      
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>rome</groupId>
@@ -58,9 +59,9 @@
         <!-- test dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>      
+            <artifactId>camel-test</artifactId>
             <scope>test</scope>
-        </dependency>          
+        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -99,5 +100,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    
+
 </project>

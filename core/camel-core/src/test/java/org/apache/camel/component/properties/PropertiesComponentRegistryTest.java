@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.bean.MyDummyBean;
 import org.apache.camel.component.bean.MyFooBean;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultRegistry;
 import org.junit.Test;
 
 public class PropertiesComponentRegistryTest extends ContextTestSupport {
@@ -35,19 +36,17 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    protected CamelContext createCamelContext() throws Exception {
+        DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
+
         foo = new MyFooBean();
         bar = new MyDummyBean();
 
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("foo", foo);
-        jndi.bind("bar", bar);
-        return jndi;
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
+        // re-create context
+        DefaultRegistry reg = new DefaultRegistry();
+        reg.bind("foo", foo);
+        reg.bind("bar", bar);
+        context.setRegistry(reg);
 
         PropertiesComponent pc = new PropertiesComponent();
         pc.setLocation("classpath:org/apache/camel/component/properties/cheese.properties");

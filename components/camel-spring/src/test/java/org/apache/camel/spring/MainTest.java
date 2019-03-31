@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -43,10 +43,7 @@ public class MainTest extends Assert {
         });
         main.start();
 
-        List<CamelContext> contextList = main.getCamelContexts();
-        assertNotNull(contextList);
-        assertEquals("size", 1, contextList.size());
-        CamelContext camelContext = contextList.get(0);
+        CamelContext camelContext = main.getCamelContext();
 
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
         // in case we add more files in src/test/data
@@ -57,6 +54,5 @@ public class MainTest extends Assert {
         LOG.debug("Received: " + list);
 
         main.stop();
-
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -54,8 +54,7 @@ public class QuickfixjComponentConfiguration
     /**
      * To use the given map of pre configured QuickFix configurations mapped to
      * the key. The option is a
-     * java.util.Map<java.lang.String,org.apache.camel.component
-     * .quickfixj.QuickfixjConfiguration> type.
+     * java.util.Map<java.lang.String,org.apache.camel.component.quickfixj.QuickfixjConfiguration> type.
      */
     private String configurations;
     /**

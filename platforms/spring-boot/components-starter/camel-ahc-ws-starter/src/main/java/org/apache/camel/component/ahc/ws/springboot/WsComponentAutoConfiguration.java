@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -75,7 +75,7 @@ public class WsComponentAutoConfiguration {
     }
 
     @Lazy
-    @Bean(name = {"ahc-ws-component", "ahc-wss-component"})
+    @Bean({"ahc-ws-component", "ahc-wss-component"})
     @ConditionalOnMissingBean(WsComponent.class)
     public WsComponent configureWsComponent() throws Exception {
         WsComponent component = new WsComponent();

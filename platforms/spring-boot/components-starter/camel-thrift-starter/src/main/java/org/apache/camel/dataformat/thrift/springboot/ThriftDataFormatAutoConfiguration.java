@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -79,8 +79,7 @@ public class ThriftDataFormatAutoConfiguration {
 
     @Bean(name = "thrift-dataformat-factory")
     @ConditionalOnMissingBean(ThriftDataFormat.class)
-    public DataFormatFactory configureThriftDataFormatFactory()
-            throws Exception {
+    public DataFormatFactory configureThriftDataFormatFactory() throws Exception {
         return new DataFormatFactory() {
             @Override
             public DataFormat newInstance() {

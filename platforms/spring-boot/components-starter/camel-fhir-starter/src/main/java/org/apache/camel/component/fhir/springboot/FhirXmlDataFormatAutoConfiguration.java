@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -79,8 +79,7 @@ public class FhirXmlDataFormatAutoConfiguration {
 
     @Bean(name = "fhirXml-dataformat-factory")
     @ConditionalOnMissingBean(FhirXmlDataFormat.class)
-    public DataFormatFactory configureFhirXmlDataFormatFactory()
-            throws Exception {
+    public DataFormatFactory configureFhirXmlDataFormatFactory() throws Exception {
         return new DataFormatFactory() {
             @Override
             public DataFormat newInstance() {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,8 +33,9 @@ public class RouteDetailsInfo extends RouteInfo {
     public RouteDetailsInfo(final CamelContext camelContext, final Route route) {
         super(route);
 
-        if (camelContext.getManagementStrategy().getManagementAgent() != null) {
-            this.routeDetails = new RouteDetails(camelContext.getExtension(ManagedCamelContext.class).getManagedRoute(route.getId()));
+        ManagedCamelContext mc = camelContext.getExtension(ManagedCamelContext.class);
+        if (mc != null) {
+            this.routeDetails = new RouteDetails(mc.getManagedRoute(route.getId()));
         }
     }
 

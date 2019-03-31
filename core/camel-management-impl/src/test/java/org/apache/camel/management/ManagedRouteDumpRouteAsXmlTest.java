@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,11 +16,13 @@
  */
 package org.apache.camel.management;
 
+import java.util.Properties;
 import java.util.Set;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
@@ -54,11 +56,12 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
 
         assertTrue(xml.contains("route"));
         assertTrue(xml.contains("myRoute"));
-        assertTrue(xml.contains("mock:result"));
+        assertTrue(xml.contains("ref:bar"));
+        assertTrue(xml.contains("{{result}}"));
     }
 
     @Test
-    public void testCreateRouteStaticEndpointJson() throws Exception {
+    public void testDumpAsXmlResolvePlaceholder() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
             return;
@@ -67,14 +70,57 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getRouteObjectName(mbeanServer);
 
-        // get the json
-        String json = (String) mbeanServer.invoke(on, "createRouteStaticEndpointJson", null, null);
-        assertNotNull(json);
-        assertTrue(json.contains("\"myRoute\""));
-        assertTrue(json.contains("{ \"uri\": \"direct://start\" }"));
-        assertTrue(json.contains("{ \"uri\": \"mock://result\" }"));
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        // should be started
+        String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
+        assertEquals("myRoute", routeId);
+
+        String xml = (String) mbeanServer.invoke(on, "dumpRouteAsXml", new Object[]{true}, new String[]{"boolean"});
+        assertNotNull(xml);
+        log.info(xml);
+
+        assertTrue(xml.contains("route"));
+        assertTrue(xml.contains("myRoute"));
+        assertTrue(xml.contains("ref:bar"));
+        assertTrue(xml.contains("mock:result"));
     }
 
+    @Test
+    public void testDumpAsXmlResolvePlaceholderDelegateEndpoint() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = getRouteObjectName(mbeanServer);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        // should be started
+        String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
+        assertEquals("myRoute", routeId);
+
+        String xml = (String) mbeanServer.invoke(on, "dumpRouteAsXml", new Object[]{true, true}, new String[]{"boolean", "boolean"});
+        assertNotNull(xml);
+        log.info(xml);
+
+        assertTrue(xml.contains("route"));
+        assertTrue(xml.contains("myRoute"));
+        assertTrue(xml.contains("mock://bar"));
+        assertTrue(xml.contains("mock:result"));
+    }
 
     static ObjectName getRouteObjectName(MBeanServer mbeanServer) throws Exception {
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
@@ -88,9 +134,18 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                Properties props = new Properties();
+                props.put("result", "mock:result");
+                context.getPropertiesComponent().setOverrideProperties(props);
+
+                Endpoint bar = context.getEndpoint("mock:bar");
+                bindToRegistry("bar", bar);
+
+
                 from("direct:start").routeId("myRoute")
                     .log("Got ${body}")
-                    .to("mock:result");
+                    .to("ref:bar")
+                    .to("{{result}}");
             }
         };
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,8 +34,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
+
 /**
- * A selector-based produced which uses an header value to determine which processor
+ * A selector-based producer which uses a header value to determine which processor
  * should be invoked.
  */
 public class HeaderSelectorProducer extends BaseSelectorProducer {
@@ -172,17 +174,15 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
 
     private void bind(InvokeOnHeader handler, final Method method) {
         if (handler != null && method.getParameterCount() == 1) {
-            method.setAccessible(true);
-
             final Class<?> type = method.getParameterTypes()[0];
 
             LOGGER.debug("bind key={}, class={}, method={}, type={}",
                 handler.value(), this.getClass(), method.getName(), type);
 
             if (Message.class.isAssignableFrom(type)) {
-                bind(handler.value(), e -> method.invoke(target, e.getIn()));
+                bind(handler.value(), e -> invokeMethodSafe(method, target, e.getIn()));
             } else {
-                bind(handler.value(), e -> method.invoke(target, e));
+                bind(handler.value(), e -> invokeMethodSafe(method, target, e));
             }
         }
     }

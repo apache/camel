@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -241,6 +241,7 @@ public class SshConfiguration implements Cloneable {
      * @deprecated As of version 2.11, replaced by {@link #setCertResource(String)}
      */
     @Deprecated
+    @Metadata(deprecationNote = "As of version 2.11, replaced by certResource.")
     public void setCertFilename(String certFilename) {
         this.certResource = "file:" + certFilename;
     }
@@ -268,7 +269,7 @@ public class SshConfiguration implements Cloneable {
     /**
      * Sets the resource path for a known_hosts file
      *
-     * @param knownHosts
+     * @param knownHostsResource
      *            String file, classpath, or http url for the certificate
      */
     public void setKnownHostsResource(String knownHostsResource) {
@@ -283,7 +284,7 @@ public class SshConfiguration implements Cloneable {
      * Specifies whether a connection to an unknown host should fail or not. This
      * value is only checked when the property knownHosts is set.
      *
-     * @param boolean
+     * @param failOnUnknownHost
      *            boolean flag, whether a connection to an unknown host should fail
      */
     public void setFailOnUnknownHost(boolean failOnUnknownHost) {

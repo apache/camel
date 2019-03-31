@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -66,10 +66,6 @@ public abstract class FhirDataformat extends DataFormatDefinition {
 
     @XmlAttribute
     @Metadata(label = "advanced")
-    private Set<String> encodeElementsAppliesToResourceTypes;
-
-    @XmlAttribute
-    @Metadata(label = "advanced")
     private Boolean encodeElementsAppliesToChildResourcesOnly;
 
     @XmlAttribute
@@ -129,9 +125,6 @@ public abstract class FhirDataformat extends DataFormatDefinition {
         }
         if (ObjectHelper.isNotEmpty(getEncodeElements())) {
             setProperty(camelContext, dataFormat, "encodeElements", getEncodeElements());
-        }
-        if (ObjectHelper.isNotEmpty(getEncodeElementsAppliesToResourceTypes())) {
-            setProperty(camelContext, dataFormat, "encodeElementsAppliesToResourceTypes", getEncodeElementsAppliesToResourceTypes());
         }
         if (ObjectHelper.isNotEmpty(getServerBaseUrl())) {
             setProperty(camelContext, dataFormat, "serverBaseUrl", getServerBaseUrl());
@@ -295,20 +288,6 @@ public abstract class FhirDataformat extends DataFormatDefinition {
      */
     public void setOmitResourceId(Boolean omitResourceId) {
         this.omitResourceId = omitResourceId;
-    }
-
-    public Set<String> getEncodeElementsAppliesToResourceTypes() {
-        return encodeElementsAppliesToResourceTypes;
-    }
-
-    /**
-     * If provided, tells the parse which resource types to apply {@link #setEncodeElements(Set) encode elements} to. Any
-     * resource types not specified here will be encoded completely, with no elements excluded.
-     *
-     * @param encodeElementsAppliesToResourceTypes resouce types
-     */
-    public void setEncodeElementsAppliesToResourceTypes(Set<String> encodeElementsAppliesToResourceTypes) {
-        this.encodeElementsAppliesToResourceTypes = encodeElementsAppliesToResourceTypes;
     }
 
     public Boolean isEncodeElementsAppliesToChildResourcesOnly() {

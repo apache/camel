@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,7 +35,7 @@ public class CometdProducerConsumerInOutInteractiveMain {
     private static final String URI = "cometd://127.0.0.1:9091/service/test?baseResource=file:./src/test/resources/webapp&"
             + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
-    private static final String URIS = "cometds://127.0.0.1:9443/service/test?baseResource=file:./src/test/resources/webapp&"
+    private static final String URI2 = "cometds://127.0.0.1:9443/service/test?baseResource=file:./src/test/resources/webapp&"
         + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
     private CamelContext context;
@@ -63,7 +63,14 @@ public class CometdProducerConsumerInOutInteractiveMain {
                 URI keyStoreUrl = file.toURI();
                 component.setSslKeystore(keyStoreUrl.getPath());
 
-                from(URI, URIS).setExchangePattern(ExchangePattern.InOut).process(new Processor() {
+                from(URI).setExchangePattern(ExchangePattern.InOut).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        Message out = new DefaultMessage(exchange.getContext());
+                        out.setBody("reply: " + exchange.getIn().getBody());
+                        exchange.setOut(out);
+                    }
+                });
+                from(URI2).setExchangePattern(ExchangePattern.InOut).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Message out = new DefaultMessage(exchange.getContext());
                         out.setBody("reply: " + exchange.getIn().getBody());

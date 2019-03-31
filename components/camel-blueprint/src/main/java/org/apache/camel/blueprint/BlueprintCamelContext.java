@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,14 +16,11 @@
  */
 package org.apache.camel.blueprint;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.camel.LoadPropertiesException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.blueprint.handler.CamelNamespaceHandler;
+import org.apache.camel.core.osgi.OsgiBeanRepository;
 import org.apache.camel.core.osgi.OsgiCamelContextHelper;
 import org.apache.camel.core.osgi.OsgiCamelContextPublisher;
 import org.apache.camel.core.osgi.OsgiFactoryFinderResolver;
@@ -31,10 +28,11 @@ import org.apache.camel.core.osgi.OsgiTypeConverter;
 import org.apache.camel.core.osgi.utils.BundleContextUtils;
 import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.ModelJAXBContextFactory;
-import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
@@ -53,7 +51,6 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     private BundleContext bundleContext;
     private BlueprintContainer blueprintContainer;
     private ServiceRegistration<?> registration;
-
     private BlueprintCamelStateService bundleStateService;
 
     public BlueprintCamelContext(BundleContext bundleContext, BlueprintContainer blueprintContainer) {
@@ -65,6 +62,12 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
         OsgiCamelContextHelper.osgiUpdate(this, bundleContext);
 
         // and these are blueprint specific
+        BeanRepository repo1 = new BlueprintContainerBeanRepository(getBlueprintContainer());
+        OsgiBeanRepository repo2 = new OsgiBeanRepository(bundleContext);
+        setRegistry(new DefaultRegistry(repo1, repo2));
+        // Need to clean up the OSGi service when camel context is closed.
+        addLifecycleStrategy(repo2);
+
         setComponentResolver(new BlueprintComponentResolver(bundleContext));
         setLanguageResolver(new BlueprintLanguageResolver(bundleContext));
         setDataFormatResolver(new BlueprintDataFormatResolver(bundleContext));
@@ -135,11 +138,6 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
 
         // must stop Camel
         stop();
-    }
-
-    @Override
-    public Map<String, Properties> findComponents() throws LoadPropertiesException, IOException {
-        return BundleContextUtils.findComponents(bundleContext, this);
     }
 
     @Override
@@ -235,12 +233,6 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
         return new OsgiTypeConverter(ctx, this, getInjector(), finder);
     }
 
-    @Override
-    protected Registry createRegistry() {
-        Registry reg = new BlueprintContainerRegistry(getBlueprintContainer());
-        return OsgiCamelContextHelper.wrapRegistry(this, reg, bundleContext);
-    }
-    
     @Override
     public void start() throws Exception {
         final ClassLoader original = Thread.currentThread().getContextClassLoader();

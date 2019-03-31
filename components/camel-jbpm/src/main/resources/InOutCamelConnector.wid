@@ -4,7 +4,7 @@
             "displayName" : "InOutCamelConnector",
             "category" : "Camel",
             "description" : "",
-            "defaultHandler" : "mvel: new org.apache.camel.component.jbpm.workitem.InOutCamelWorkitemHandler()",
+            "defaultHandler" : "mvel: new org.apache.camel.component.jbpm.workitem.InOutCamelWorkItemHandler()",
             "documentation" : "camel-jbpm/index.html",
 
             "parameters" : [

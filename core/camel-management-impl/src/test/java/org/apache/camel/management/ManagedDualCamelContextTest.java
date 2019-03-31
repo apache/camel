@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -51,8 +51,8 @@ public class ManagedDualCamelContextTest extends TestSupport {
 
         // Ensure JMX is enabled for this test so the ManagedManagementStrategy.class
         // If other tests cleaned up the environment properly the following assertions will be true with the default settings
-        assertIsInstanceOf(ManagedManagementStrategy.class, camel1.getManagementStrategy());
-        assertIsInstanceOf(ManagedManagementStrategy.class, camel2.getManagementStrategy());
+        assertIsInstanceOf(JmxManagementStrategy.class, camel1.getManagementStrategy());
+        assertIsInstanceOf(JmxManagementStrategy.class, camel2.getManagementStrategy());
 
         MBeanServer mbeanServer1 = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
         Set<ObjectName> set = mbeanServer1.queryNames(new ObjectName("*:context=camel-1,type=components,*"), null);

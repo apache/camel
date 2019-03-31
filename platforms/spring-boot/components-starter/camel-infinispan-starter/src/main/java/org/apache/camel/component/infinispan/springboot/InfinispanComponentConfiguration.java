@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,8 +18,8 @@ package org.apache.camel.component.infinispan.springboot;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 import javax.annotation.Generated;
-import org.apache.camel.component.infinispan.InfinispanComponent;
 import org.apache.camel.component.infinispan.InfinispanCustomListener;
 import org.apache.camel.component.infinispan.InfinispanOperation;
 import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
@@ -117,8 +117,8 @@ public class InfinispanComponentConfiguration
         private Boolean clusteredListener = false;
         /**
          * Specifies the set of event types to register by the consumer.
-         * Multiple event can be separated by comma. The possible event types
-         * are: CACHE_ENTRY_ACTIVATED, CACHE_ENTRY_PASSIVATED,
+         * Multiple event can be separated by comma. <p/> The possible event
+         * types are: CACHE_ENTRY_ACTIVATED, CACHE_ENTRY_PASSIVATED,
          * CACHE_ENTRY_VISITED, CACHE_ENTRY_LOADED, CACHE_ENTRY_EVICTED,
          * CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED, CACHE_ENTRY_MODIFIED,
          * TRANSACTION_COMPLETED, TRANSACTION_REGISTERED,
@@ -166,6 +166,10 @@ public class InfinispanComponentConfiguration
          * named: CamelInfinispanOperationResultHeader
          */
         private Object resultHeader;
+        /**
+         * Set a specific remappingFunction to use in a compute operation
+         */
+        private BiFunction remappingFunction;
 
         @Deprecated
         @DeprecatedConfigurationProperty
@@ -281,6 +285,14 @@ public class InfinispanComponentConfiguration
 
         public void setResultHeader(Object resultHeader) {
             this.resultHeader = resultHeader;
+        }
+
+        public BiFunction getRemappingFunction() {
+            return remappingFunction;
+        }
+
+        public void setRemappingFunction(BiFunction remappingFunction) {
+            this.remappingFunction = remappingFunction;
         }
     }
 }

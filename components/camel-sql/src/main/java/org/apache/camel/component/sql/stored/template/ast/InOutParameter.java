@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,7 +19,6 @@ package org.apache.camel.component.sql.stored.template.ast;
 import java.util.Map;
 
 import org.apache.camel.Expression;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.component.sql.stored.template.generated.SSPTParserConstants;
 import org.apache.camel.component.sql.stored.template.generated.Token;
 
@@ -45,8 +44,10 @@ public class InOutParameter {
 
     private void parseValueExpression(Token valueSrcToken) {
         if (SSPTParserConstants.SIMPLE_EXP_TOKEN == valueSrcToken.kind) {
-            final Expression exp = ExpressionBuilder.simpleExpression(valueSrcToken.toString());
-            this.valueExtractor = (exchange, container) -> exp.evaluate(exchange, Object.class);
+            this.valueExtractor = (exchange, container) -> {
+                Expression exp = exchange.getContext().resolveLanguage("simple").createExpression(valueSrcToken.toString());
+                return exp.evaluate(exchange, Object.class);
+            };
         } else if (SSPTParserConstants.PARAMETER_POS_TOKEN == valueSrcToken.kind) {
             //remove leading :#
             final String mapKey = valueSrcToken.toString().substring(2);

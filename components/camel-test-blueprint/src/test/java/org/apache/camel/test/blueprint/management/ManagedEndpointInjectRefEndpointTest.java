@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -78,9 +78,9 @@ public class ManagedEndpointInjectRefEndpointTest extends CamelBlueprintTestSupp
         }
 
         set = mbeanServer.queryNames(new ObjectName("*:type=endpoints,*"), null);
-        assertEquals(3, set.size());
+        assertEquals(4, set.size());
 
-        uris = new HashSet<>(Arrays.asList("direct://start", "mock://foo", "mock://result"));
+        uris = new HashSet<>(Arrays.asList("direct://start", "mock://foo", "mock://result", "ref://foo"));
         for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
             assertTrue("Should be registered", registered);

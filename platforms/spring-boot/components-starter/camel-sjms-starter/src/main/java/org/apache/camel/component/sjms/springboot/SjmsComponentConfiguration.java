@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -79,9 +79,10 @@ public class SjmsComponentConfiguration
      */
     private String destinationCreationStrategy;
     /**
-     * To use a custom TimedTaskManager
+     * To use a custom TimedTaskManager. The option is a
+     * org.apache.camel.component.sjms.taskmanager.TimedTaskManager type.
      */
-    private TimedTaskManagerNestedConfiguration timedTaskManager;
+    private String timedTaskManager;
     /**
      * To use the given MessageCreatedStrategy which are invoked when Camel
      * creates new instances of javax.jms.Message objects when Camel is sending
@@ -179,12 +180,11 @@ public class SjmsComponentConfiguration
         this.destinationCreationStrategy = destinationCreationStrategy;
     }
 
-    public TimedTaskManagerNestedConfiguration getTimedTaskManager() {
+    public String getTimedTaskManager() {
         return timedTaskManager;
     }
 
-    public void setTimedTaskManager(
-            TimedTaskManagerNestedConfiguration timedTaskManager) {
+    public void setTimedTaskManager(String timedTaskManager) {
         this.timedTaskManager = timedTaskManager;
     }
 
@@ -251,9 +251,5 @@ public class SjmsComponentConfiguration
     public void setResolvePropertyPlaceholders(
             Boolean resolvePropertyPlaceholders) {
         this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
-    }
-
-    public static class TimedTaskManagerNestedConfiguration {
-        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.sjms.taskmanager.TimedTaskManager.class;
     }
 }

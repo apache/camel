@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -597,6 +597,123 @@ public class PropertiesComponentTest extends ContextTestSupport {
         System.clearProperty("cool.result");
         System.clearProperty("beer");
     }
+
+    @Test
+    public void testPropertiesComponentEnvOverride() throws Exception {
+        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        pc.setEnvironmentVariableMode(PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_OVERRIDE);
+        pc.setLocation("org/apache/camel/component/properties/env.properties");
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:foo").to("mock:{{FOO_SERVICE_HOST}}");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:hello").expectedMessageCount(0);
+        getMockEndpoint("mock:myserver").expectedMessageCount(1);
+
+        template.sendBody("direct:foo", "Hello Foo");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPropertiesComponentEnvOverrideIfDash() throws Exception {
+        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        pc.setEnvironmentVariableMode(PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_OVERRIDE);
+        pc.setLocation("org/apache/camel/component/properties/env.properties");
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                // will fallback and lookup as FOO_SERVICE_HOST
+                from("direct:foo").to("mock:{{FOO-SERVICE_host}}");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:hello").expectedMessageCount(0);
+        getMockEndpoint("mock:myserver").expectedMessageCount(1);
+
+        template.sendBody("direct:foo", "Hello Foo");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPropertiesComponentEnvFallback() throws Exception {
+        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        pc.setEnvironmentVariableMode(PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_FALLBACK);
+        pc.setLocation("org/apache/camel/component/properties/env.properties");
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:foo").to("mock:{{FOO_SERVICE_PORT}}");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:8081").expectedMessageCount(1);
+        getMockEndpoint("mock:hello").expectedMessageCount(0);
+        getMockEndpoint("mock:myserver").expectedMessageCount(0);
+
+        template.sendBody("direct:foo", "Hello Foo");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPropertiesComponentEnvNever() throws Exception {
+        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        pc.setEnvironmentVariableMode(PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_NEVER);
+        pc.setLocation("org/apache/camel/component/properties/env.properties");
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:foo").to("mock:{{UNKNOWN}}");
+            }
+        });
+        try {
+            context.start();
+            fail("Should have thrown exception");
+        } catch (FailedToCreateRouteException e) {
+            assertEquals("Property with key [UNKNOWN] not found in properties from text: mock:{{UNKNOWN}}", e.getCause().getMessage());
+        }
+    }
+
+    @Test
+    public void testPropertiesComponentEnvFallbackJvmOverride() throws Exception {
+        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        pc.setEnvironmentVariableMode(PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_FALLBACK);
+        pc.setLocation("org/apache/camel/component/properties/env.properties");
+
+        // lets override the OS environment variable by setting a JVM system property
+        System.setProperty("FOO_SERVICE_PORT", "hello");
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:foo").to("mock:{{FOO_SERVICE_PORT}}");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:8081").expectedMessageCount(0);
+        getMockEndpoint("mock:hello").expectedMessageCount(1);
+        getMockEndpoint("mock:myserver").expectedMessageCount(0);
+
+        template.sendBody("direct:foo", "Hello Foo");
+
+        assertMockEndpointsSatisfied();
+
+        System.clearProperty("FOO_SERVICE_PORT");
+    }
+
 
     @Test
     public void testCamelProperties() throws Exception {

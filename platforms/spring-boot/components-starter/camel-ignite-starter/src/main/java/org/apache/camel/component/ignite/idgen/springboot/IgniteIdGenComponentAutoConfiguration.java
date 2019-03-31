@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -77,8 +77,7 @@ public class IgniteIdGenComponentAutoConfiguration {
     @Lazy
     @Bean(name = "ignite-idgen-component")
     @ConditionalOnMissingBean(IgniteIdGenComponent.class)
-    public IgniteIdGenComponent configureIgniteIdGenComponent()
-            throws Exception {
+    public IgniteIdGenComponent configureIgniteIdGenComponent() throws Exception {
         IgniteIdGenComponent component = new IgniteIdGenComponent();
         component.setCamelContext(camelContext);
         Map<String, Object> parameters = new HashMap<>();

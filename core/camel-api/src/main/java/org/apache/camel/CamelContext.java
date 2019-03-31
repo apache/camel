@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,16 +16,15 @@
  */
 package org.apache.camel;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
@@ -100,7 +99,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Adapts this {@link org.apache.camel.CamelContext} to the specialized type.
      * <p/>
-     * For example to adapt to {@link org.apache.camel.model.ModelCamelContext},
+     * For example to adapt to <tt>ModelCamelContext</tt>,
      * or <tt>SpringCamelContext</tt>, or <tt>CdiCamelContext</tt>, etc.
      *
      * @param type the type to adapt to
@@ -108,7 +107,20 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     <T extends CamelContext> T adapt(Class<T> type);
 
+    /**
+     * Gets the extension of the given type.
+     *
+     * @param type  the type of the extension
+     * @return the extension, or <tt>null</tt> if no extension has been installed.
+     */
     <T> T getExtension(Class<T> type);
+
+    /**
+     * Allows to install custom extensions to the Camel context.
+     *
+     * @param type   the type of the extension
+     * @param module the instance of the extension
+     */
     <T> void setExtension(Class<T> type, T module);
 
     /**
@@ -677,8 +689,15 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     TypeConverterRegistry getTypeConverterRegistry();
 
     /**
-     * Returns the registry used to lookup components by name and type such as the Spring ApplicationContext,
-     * JNDI or the OSGi Service Registry
+     * Configures the type converter registry to use, where type converters can be added or looked up.
+     *
+     * @param typeConverterRegistry the registry to use
+     */
+    void setTypeConverterRegistry(TypeConverterRegistry typeConverterRegistry);
+
+    /**
+     * Returns the registry used to lookup components by name and type such as SimpleRegistry, Spring ApplicationContext,
+     * JNDI, or the OSGi Service Registry.
      *
      * @return the registry
      */
@@ -687,7 +706,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Returns the registry used to lookup components by name and as the given type
      *
-     * @param type the registry type such as {@link org.apache.camel.impl.JndiRegistry}
+     * @param type the registry type such as org.apache.camel.impl.JndiRegistry
      * @return the registry, or <tt>null</tt> if the given type was not found as a registry implementation
      */
     <T> T getRegistry(Class<T> type);
@@ -698,6 +717,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the injector
      */
     Injector getInjector();
+
+    /**
+     * Returns the bean post processor used to do any bean customization.
+     *
+     * @return the bean post processor.
+     */
+    CamelBeanPostProcessor getBeanPostProcessor();
 
     /**
      * Returns the management mbean assembler
@@ -1113,6 +1139,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void disableJMX() throws IllegalStateException;
 
     /**
+     * Setup management according to whether JMX is enabled or disabled.
+     *
+     * @param options optional parameters to configure {@link org.apache.camel.spi.ManagementAgent}.
+     */
+    void setupManagement(Map<String, Object> options);
+
+    /**
      * Gets the inflight repository
      *
      * @return the repository
@@ -1239,22 +1272,22 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setUuidGenerator(UuidGenerator uuidGenerator);
 
     /**
-     * Sets whether to load custom type converters by scanning classpath.
-     * This can be turned off if you are only using Camel components
-     * that does not provide type converters which is needed at runtime.
-     * In such situations setting this option to false, can speedup starting
-     * Camel.
+     * Whether to load custom type converters by scanning classpath.
+     * This is used for backwards compatibility with Camel 2.x.
+     * Its recommended to migrate to use fast type converter loading
+     * by setting <tt>@Converter(loader = true)</tt> on your custom
+     * type converter classes.
      */
     Boolean isLoadTypeConverters();
 
     /**
-     * Sets whether to load custom type converters by scanning classpath.
-     * This can be turned off if you are only using Camel components
-     * that does not provide type converters which is needed at runtime.
-     * In such situations setting this option to false, can speedup starting
-     * Camel.
+     * Whether to load custom type converters by scanning classpath.
+     * This is used for backwards compatibility with Camel 2.x.
+     * Its recommended to migrate to use fast type converter loading
+     * by setting <tt>@Converter(loader = true)</tt> on your custom
+     * type converter classes.
      *
-     * @param loadTypeConverters whether to load custom type converters.
+     * @param loadTypeConverters whether to load custom type converters using classpath scanning.
      */
     void setLoadTypeConverters(Boolean loadTypeConverters);
 
@@ -1329,116 +1362,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param useBreadcrumb <tt>true</tt> to enable breadcrumb, <tt>false</tt> to disable
      */
     void setUseBreadcrumb(Boolean useBreadcrumb);
-
-    /**
-     * Resolves a component's default name from its java type.
-     * <p/>
-     * A component may be used with a non default name such as <tt>activemq</tt>, <tt>wmq</tt> for the JMS component.
-     * This method can resolve the default component name by its java type.
-     *
-     * @param javaType the FQN name of the java type
-     * @return the default component name.
-     */
-    String resolveComponentDefaultName(String javaType);
-
-    /**
-     * Find information about all the Camel components available in the classpath and {@link org.apache.camel.spi.Registry}.
-     *
-     * @return a map with the component name, and value with component details.
-     * @throws LoadPropertiesException is thrown if error during classpath discovery of the components
-     * @throws IOException is thrown if error during classpath discovery of the components
-     */
-    Map<String, Properties> findComponents() throws LoadPropertiesException, IOException;
-
-    /**
-     * Find information about all the EIPs from camel-core.
-     *
-     * @return a map with node id, and value with EIP details.
-     * @throws LoadPropertiesException is thrown if error during classpath discovery of the EIPs
-     * @throws IOException is thrown if error during classpath discovery of the EIPs
-     */
-    Map<String, Properties> findEips() throws LoadPropertiesException, IOException;
-
-    /**
-     * Returns the JSON schema representation of the component and endpoint parameters for the given component name.
-     *
-     * @return the json or <tt>null</tt> if the component is <b>not</b> built with JSon schema support
-     */
-    String getComponentParameterJsonSchema(String componentName) throws IOException;
-
-    /**
-     * Returns the JSON schema representation of the {@link DataFormat} parameters for the given data format name.
-     *
-     * @return the json or <tt>null</tt> if the data format does not exist
-     */
-    String getDataFormatParameterJsonSchema(String dataFormatName) throws IOException;
-
-    /**
-     * Returns the JSON schema representation of the {@link Language} parameters for the given language name.
-     *
-     * @return the json or <tt>null</tt> if the language does not exist
-     */
-    String getLanguageParameterJsonSchema(String languageName) throws IOException;
-
-    /**
-     * Returns the JSON schema representation of the EIP parameters for the given EIP name.
-     *
-     * @return the json or <tt>null</tt> if the EIP does not exist
-     */
-    String getEipParameterJsonSchema(String eipName) throws IOException;
-
-    /**
-     * Returns a JSON schema representation of the EIP parameters for the given EIP by its id.
-     *
-     * @param nameOrId the name of the EIP ({@link NamedNode#getShortName()} or a node id to refer to a specific node from the routes.
-     * @param includeAllOptions whether to include non configured options also (eg default options)
-     * @return the json or <tt>null</tt> if the eipName or the id was not found
-     */
-    String explainEipJson(String nameOrId, boolean includeAllOptions);
-
-    /**
-     * Returns a JSON schema representation of the component parameters (not endpoint parameters) for the given component by its id.
-     *
-     * @param componentName the name of the component.
-     * @param includeAllOptions whether to include non configured options also (eg default options)
-     * @return the json or <tt>null</tt> if the component was not found
-     */
-    String explainComponentJson(String componentName, boolean includeAllOptions);
-
-    /**
-     * Returns a JSON schema representation of the component parameters (not endpoint parameters) for the given component by its id.
-     *
-     * @param dataFormat the data format instance.
-     * @param includeAllOptions whether to include non configured options also (eg default options)
-     * @return the json
-     */
-    String explainDataFormatJson(String dataFormatName, DataFormat dataFormat, boolean includeAllOptions);
-
-    /**
-     * Returns a JSON schema representation of the endpoint parameters for the given endpoint uri.
-     *
-     * @param uri the endpoint uri
-     * @param includeAllOptions whether to include non configured options also (eg default options)
-     * @return the json or <tt>null</tt> if uri parameters is invalid, or the component is <b>not</b> built with JSon schema support
-     */
-    String explainEndpointJson(String uri, boolean includeAllOptions);
-
-    /**
-     * Creates a JSON representation of all the <b>static</b> and <b>dynamic</b> configured endpoints defined in the given route(s).
-     *
-     * @param routeId for a particular route, or <tt>null</tt> for all routes
-     * @return a JSON string
-     */
-    String createRouteStaticEndpointJson(String routeId);
-
-    /**
-     * Creates a JSON representation of all the <b>static</b> (and possible <b>dynamic</b>) configured endpoints defined in the given route(s).
-     *
-     * @param routeId for a particular route, or <tt>null</tt> for all routes
-     * @param includeDynamic whether to include dynamic endpoints
-     * @return a JSON string
-     */
-    String createRouteStaticEndpointJson(String routeId, boolean includeDynamic);
 
     /**
      * Gets the {@link StreamCachingStrategy} to use.

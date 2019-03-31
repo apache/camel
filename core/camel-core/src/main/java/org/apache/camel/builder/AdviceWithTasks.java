@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -390,7 +390,7 @@ public final class AdviceWithTasks {
     public static AdviceWithTask replaceFromWith(final RouteDefinition route, final String uri) {
         return new AdviceWithTask() {
             public void task() throws Exception {
-                FromDefinition from = route.getInputs().get(0);
+                FromDefinition from = route.getInput();
                 LOG.info("AdviceWith replace input from [{}] --> [{}]", from.getUri(), uri);
                 from.setEndpoint(null);
                 from.setUri(uri);
@@ -401,7 +401,7 @@ public final class AdviceWithTasks {
     public static AdviceWithTask replaceFrom(final RouteDefinition route, final Endpoint endpoint) {
         return new AdviceWithTask() {
             public void task() throws Exception {
-                FromDefinition from = route.getInputs().get(0);
+                FromDefinition from = route.getInput();
                 LOG.info("AdviceWith replace input from [{}] --> [{}]", from.getUri(), endpoint.getEndpointUri());
                 from.setUri(null);
                 from.setEndpoint(endpoint);

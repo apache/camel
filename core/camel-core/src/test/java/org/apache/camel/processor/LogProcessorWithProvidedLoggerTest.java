@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,8 +23,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.log.ConsumingAppender;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
 import org.apache.logging.log4j.Level;
 import org.junit.Before;
 import org.junit.Test;
@@ -75,9 +73,8 @@ public class LogProcessorWithProvidedLoggerTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("mylogger1", LoggerFactory.getLogger("org.apache.camel.customlogger"));
-        CamelContext context = new DefaultCamelContext(registry);
+        CamelContext context = super.createCamelContext();
+        context.getRegistry().bind("mylogger1", LoggerFactory.getLogger("org.apache.camel.customlogger"));
         return context;
     }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
@@ -48,29 +49,28 @@ public class DefaultCamelContextResolverTest {
 
     @BeforeClass
     public static void createContext() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        context = new DefaultCamelContext(registry);
+        context = new DefaultCamelContext();
 
         // Add a component using its fallback name
-        registry.put("green-component", new SampleComponent(true));
+        context.getRegistry().bind("green-component", new SampleComponent(true));
 
         // Add a data format using its fallback name
-        registry.put("green-dataformat", new SampleDataFormat(true));
+        context.getRegistry().bind("green-dataformat", new SampleDataFormat(true));
 
         // Add a language using its fallback name
-        registry.put("green-language", new SampleLanguage(true));
+        context.getRegistry().bind("green-language", new SampleLanguage(true));
 
         // Add a component using both names
-        registry.put("yellow", new SampleComponent(false));
-        registry.put("yellow-component", new SampleComponent(true));
+        context.getRegistry().bind("yellow", new SampleComponent(false));
+        context.getRegistry().bind("yellow-component", new SampleComponent(true));
 
         // Add a data format using both names
-        registry.put("red", new SampleDataFormat(false));
-        registry.put("red-dataformat", new SampleDataFormat(true));
+        context.getRegistry().bind("red", new SampleDataFormat(false));
+        context.getRegistry().bind("red-dataformat", new SampleDataFormat(true));
 
         // Add a language using both names
-        registry.put("blue", new SampleLanguage(false));
-        registry.put("blue-language", new SampleLanguage(true));
+        context.getRegistry().bind("blue", new SampleLanguage(false));
+        context.getRegistry().bind("blue-language", new SampleLanguage(true));
 
         context.start();
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,9 +16,19 @@
  */
 package org.apache.camel.impl.converter;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -48,13 +58,18 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.DoubleMap;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Base implementation of a type converter registry used for
  * <a href="http://camel.apache.org/type-converter.html">type converters</a> in Camel.
  */
-public abstract class BaseTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry, CamelContextAware {
+public abstract class BaseTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry {
+
+    public static final String META_INF_SERVICES_TYPE_CONVERTER_LOADER = "META-INF/services/org/apache/camel/TypeConverterLoader";
 
     protected static final TypeConverter MISS_CONVERTER = new TypeConverterSupport() {
         @Override
@@ -66,8 +81,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected final DoubleMap<Class<?>, Class<?>, TypeConverter> typeMappings = new DoubleMap<>(200);
     protected final List<TypeConverterLoader> typeConverterLoaders = new ArrayList<>();
     protected final List<FallbackTypeConverter> fallbackConverters = new CopyOnWriteArrayList<>();
-    protected final PackageScanClassResolver resolver;
     protected CamelContext camelContext;
+    protected PackageScanClassResolver resolver;
     protected Injector injector;
     protected final FactoryFinder factoryFinder;
     protected TypeConverterExists typeConverterExists = TypeConverterExists.Override;
@@ -76,32 +91,14 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected final LongAdder noopCounter = new LongAdder();
     protected final LongAdder attemptCounter = new LongAdder();
     protected final LongAdder missCounter = new LongAdder();
-    protected final LongAdder baseHitCounter = new LongAdder();
     protected final LongAdder hitCounter = new LongAdder();
     protected final LongAdder failedCounter = new LongAdder();
 
-    public BaseTypeConverterRegistry(PackageScanClassResolver resolver, Injector injector, FactoryFinder factoryFinder) {
-        this.resolver = resolver;
+    public BaseTypeConverterRegistry(CamelContext camelContext, PackageScanClassResolver resolver, Injector injector, FactoryFinder factoryFinder) {
+        this.camelContext = camelContext;
         this.injector = injector;
         this.factoryFinder = factoryFinder;
-        this.typeConverterLoaders.add(new AnnotationTypeConverterLoader(resolver));
-
-        List<FallbackTypeConverter> fallbacks = new ArrayList<>();
-        // add to string first as it will then be last in the last as to string can nearly
-        // always convert something to a string so we want it only as the last resort
-        // ToStringTypeConverter should NOT allow to be promoted
-        addCoreFallbackTypeConverterToList(new ToStringTypeConverter(), false, fallbacks);
-        // enum is okay to be promoted
-        addCoreFallbackTypeConverterToList(new EnumTypeConverter(), true, fallbacks);
-        // arrays is okay to be promoted
-        addCoreFallbackTypeConverterToList(new ArrayTypeConverter(), true, fallbacks);
-        // and future should also not allowed to be promoted
-        addCoreFallbackTypeConverterToList(new FutureTypeConverter(this), false, fallbacks);
-        // add sync processor to async processor converter is to be promoted
-        addCoreFallbackTypeConverterToList(new AsyncProcessorTypeConverter(), true, fallbacks);
-
-        // add all core fallback converters at once which is faster (profiler)
-        fallbackConverters.addAll(fallbacks);
+        this.resolver = resolver;
     }
 
     @Override
@@ -402,6 +399,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         // add in top of fallback as the toString() fallback will nearly always be able to convert
         // the last one which is add to the FallbackTypeConverter will be called at the first place
         fallbackConverters.add(0, new FallbackTypeConverter(typeConverter, canPromote));
+
+        // TODO: Remove this in the near future as this is no longer needed (you can use exchange as parameter)
         if (typeConverter instanceof TypeConverterAware) {
             TypeConverterAware typeConverterAware = (TypeConverterAware) typeConverter;
             typeConverterAware.setTypeConverter(this);
@@ -420,6 +419,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         // add in top of fallback as the toString() fallback will nearly always be able to convert
         // the last one which is add to the FallbackTypeConverter will be called at the first place
         converters.add(0, new FallbackTypeConverter(typeConverter, canPromote));
+
+        // TODO: Remove this in the near future as this is no longer needed (you can use exchange as parameter)
         if (typeConverter instanceof TypeConverterAware) {
             TypeConverterAware typeConverterAware = (TypeConverterAware) typeConverter;
             typeConverterAware.setTypeConverter(this);
@@ -444,6 +445,10 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     @Override
     public void setInjector(Injector injector) {
         this.injector = injector;
+    }
+
+    public PackageScanClassResolver getResolver() {
+        return resolver;
     }
 
     protected <T> TypeConverter getOrFindTypeConverter(Class<?> toType, Class<?> fromType) {
@@ -525,8 +530,55 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
      * Loads the core type converters which is mandatory to use Camel
      */
     public void loadCoreTypeConverters() throws Exception {
-        // load all the type converters from camel-core
-        CoreStaticTypeConverterLoader.INSTANCE.load(this);
+        Collection<String> names = findTypeConverterLoaderClasses();
+        for (String name : names) {
+            log.debug("Resolving TypeConverterLoader: {}", name);
+            Class clazz = getResolver().getClassLoaders().stream()
+                    .map(cl -> ObjectHelper.loadClass(name, cl))
+                    .filter(Objects::nonNull)
+                    .findAny().orElseThrow(() -> new ClassNotFoundException(name));
+            Object obj = getInjector().newInstance(clazz);
+            if (obj instanceof TypeConverterLoader) {
+                TypeConverterLoader loader = (TypeConverterLoader) obj;
+                log.debug("TypeConverterLoader: {} loading converters", name);
+                loader.load(this);
+            }
+        }
+    }
+
+    /**
+     * Finds the type converter loader classes from the classpath looking
+     * for text files on the classpath at the {@link #META_INF_SERVICES_TYPE_CONVERTER_LOADER} location.
+     */
+    protected Collection<String> findTypeConverterLoaderClasses() throws IOException {
+        Set<String> loaders = new LinkedHashSet<>();
+        Collection<URL> loaderResources = getLoaderUrls();
+        for (URL url : loaderResources) {
+            log.debug("Loading file {} to retrieve list of type converters, from url: {}", META_INF_SERVICES_TYPE_CONVERTER_LOADER, url);
+            BufferedReader reader = IOHelper.buffered(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
+            try {
+                reader.lines()
+                        .map(String::trim)
+                        .filter(l -> !l.isEmpty())
+                        .filter(l -> !l.startsWith("#"))
+                        .forEach(loaders::add);
+            } finally {
+                IOHelper.close(reader, url.toString(), log);
+            }
+        }
+        return loaders;
+    }
+
+    protected Collection<URL> getLoaderUrls() throws IOException {
+        List<URL> loaderResources = new ArrayList<>();
+        for (ClassLoader classLoader : resolver.getClassLoaders()) {
+            Enumeration<URL> resources = classLoader.getResources(META_INF_SERVICES_TYPE_CONVERTER_LOADER);
+            while (resources.hasMoreElements()) {
+                URL url = resources.nextElement();
+                loaderResources.add(url);
+            }
+        }
+        return loaderResources;
     }
 
     /**
@@ -546,9 +598,11 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     }
 
     protected void loadFallbackTypeConverters() throws IOException, ClassNotFoundException {
-        List<TypeConverter> converters = factoryFinder.newInstances("FallbackTypeConverter", getInjector(), TypeConverter.class);
-        for (TypeConverter converter : converters) {
-            addFallbackTypeConverter(converter, false);
+        if (factoryFinder != null) {
+            List<TypeConverter> converters = factoryFinder.newInstances("FallbackTypeConverter", getInjector(), TypeConverter.class);
+            for (TypeConverter converter : converters) {
+                addFallbackTypeConverter(converter, false);
+            }
         }
     }
 
@@ -593,6 +647,40 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
     public void setTypeConverterExists(TypeConverterExists typeConverterExists) {
         this.typeConverterExists = typeConverterExists;
+    }
+
+    @Override
+    protected void doInit() {
+        if (injector == null && camelContext != null) {
+            injector = camelContext.getInjector();
+        }
+        if (resolver == null && camelContext != null) {
+            resolver = camelContext.getPackageScanClassResolver();
+        }
+        initTypeConverterLoaders();
+
+        List<FallbackTypeConverter> fallbacks = new ArrayList<>();
+        // add to string first as it will then be last in the last as to string can nearly
+        // always convert something to a string so we want it only as the last resort
+        // ToStringTypeConverter should NOT allow to be promoted
+        addCoreFallbackTypeConverterToList(new ToStringTypeConverter(), false, fallbacks);
+        // enum is okay to be promoted
+        addCoreFallbackTypeConverterToList(new EnumTypeConverter(), true, fallbacks);
+        // arrays is okay to be promoted
+        addCoreFallbackTypeConverterToList(new ArrayTypeConverter(), true, fallbacks);
+        // and future should also not allowed to be promoted
+        addCoreFallbackTypeConverterToList(new FutureTypeConverter(this), false, fallbacks);
+        // add sync processor to async processor converter is to be promoted
+        addCoreFallbackTypeConverterToList(new AsyncProcessorTypeConverter(), true, fallbacks);
+
+        // add all core fallback converters at once which is faster (profiler)
+        fallbackConverters.addAll(fallbacks);
+    }
+
+    protected void initTypeConverterLoaders() {
+        if (resolver != null) {
+            typeConverterLoaders.add(new AnnotationTypeConverterLoader(resolver));
+        }
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -57,16 +57,6 @@ public class RuntimeEndpointRegistryTest extends ContextTestSupport {
         assertEquals(6, registry.getAllEndpoints(true).size());
         assertEquals(3, registry.getEndpointsPerRoute("foo", true).size());
         assertEquals(3, registry.getEndpointsPerRoute("bar", true).size());
-
-        // lets check the json
-        String json = context.createRouteStaticEndpointJson(null);
-        assertNotNull(json);
-        log.info(json);
-
-        assertTrue("Should have outputs", json.contains(" { \"uri\": \"mock://foo\" }"));
-        assertTrue("Should have outputs", json.contains(" { \"uri\": \"mock://foo2\" }"));
-        assertTrue("Should have outputs", json.contains(" { \"uri\": \"mock://bar\" }"));
-        assertTrue("Should have outputs", json.contains(" { \"uri\": \"mock://bar2\" }"));
     }
 
     @Override

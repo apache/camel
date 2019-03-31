@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -54,7 +54,7 @@ public class JacksonXMLDataFormatConfiguration
      * from the JSON output. With Jackson you can use JSON views to accomplish
      * this. This option is to refer to the class which has JsonView annotations
      */
-    private Class jsonView;
+    private Class<?> jsonView;
     /**
      * If you want to marshal a pojo to JSON, and the pojo has some fields with
      * null values. And you want to skip these null values, you can set this
@@ -150,11 +150,11 @@ public class JacksonXMLDataFormatConfiguration
         this.unmarshalTypeName = unmarshalTypeName;
     }
 
-    public Class getJsonView() {
+    public Class<?> getJsonView() {
         return jsonView;
     }
 
-    public void setJsonView(Class jsonView) {
+    public void setJsonView(Class<?> jsonView) {
         this.jsonView = jsonView;
     }
 

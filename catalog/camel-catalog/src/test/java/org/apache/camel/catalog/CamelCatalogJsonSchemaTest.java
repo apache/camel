@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,11 +19,15 @@ package org.apache.camel.catalog;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class CamelCatalogJsonSchemaTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CamelCatalogJsonSchemaTest.class);
 
     private CamelCatalog catalog = new DefaultCamelCatalog();
 
@@ -31,6 +35,8 @@ public class CamelCatalogJsonSchemaTest {
     public void testValidateJsonComponent() throws Exception {
         for (String name : catalog.findComponentNames()) {
             String json = catalog.componentJSonSchema(name);
+            LOG.info("Validating {} component", name);
+            LOG.debug("with JSon: {}", json);
 
             // validate we can parse the json
             ObjectMapper mapper = new ObjectMapper();
@@ -47,6 +53,8 @@ public class CamelCatalogJsonSchemaTest {
     public void testValidateJsonDataFormats() throws Exception {
         for (String name : catalog.findDataFormatNames()) {
             String json = catalog.dataFormatJSonSchema(name);
+            LOG.info("Validating {} dataformat", name);
+            LOG.debug("with JSon: {}", json);
 
             // validate we can parse the json
             ObjectMapper mapper = new ObjectMapper();
@@ -62,6 +70,8 @@ public class CamelCatalogJsonSchemaTest {
     public void testValidateJsonLanguages() throws Exception {
         for (String name : catalog.findLanguageNames()) {
             String json = catalog.languageJSonSchema(name);
+            LOG.info("Validating {} language", name);
+            LOG.debug("with JSon: {}", json);
 
             // validate we can parse the json
             ObjectMapper mapper = new ObjectMapper();
@@ -77,6 +87,8 @@ public class CamelCatalogJsonSchemaTest {
     public void testValidateJsonModels() throws Exception {
         for (String name : catalog.findModelNames()) {
             String json = catalog.modelJSonSchema(name);
+            LOG.info("Validating {} model", name);
+            LOG.debug("with JSon: {}", json);
 
             // validate we can parse the json
             ObjectMapper mapper = new ObjectMapper();

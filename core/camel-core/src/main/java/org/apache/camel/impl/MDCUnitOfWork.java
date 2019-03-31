@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -37,6 +37,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     private final String originalMessageId;
     private final String originalCorrelationId;
     private final String originalRouteId;
+    private final String originalStepId;
     private final String originalCamelContextId;
     private final String originalTransactionKey;
 
@@ -49,6 +50,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
         this.originalBreadcrumbId = MDC.get(MDC_BREADCRUMB_ID);
         this.originalCorrelationId = MDC.get(MDC_CORRELATION_ID);
         this.originalRouteId = MDC.get(MDC_ROUTE_ID);
+        this.originalStepId = MDC.get(MDC_STEP_ID);
         this.originalCamelContextId = MDC.get(MDC_CAMEL_CONTEXT_ID);
         this.originalTransactionKey = MDC.get(MDC_TRANSACTION_KEY);
 
@@ -119,11 +121,22 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
 
     @Override
     public AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback) {
+        // add optional step id
+        String stepId = exchange.getProperty(Exchange.STEP_ID, String.class);
+        if (stepId != null) {
+            MDC.put(MDC_STEP_ID, stepId);
+        }
         return new MDCCallback(callback);
     }
 
     @Override
     public void afterProcess(Processor processor, Exchange exchange, AsyncCallback callback, boolean doneSync) {
+        // if we are no longer under step then remove it
+        String stepId = exchange.getProperty(Exchange.STEP_ID, String.class);
+        if (stepId == null) {
+            MDC.remove(MDC_STEP_ID);
+        }
+
         /*
         if (!doneSync) {
             // must clear MDC on current thread as the exchange is being processed asynchronously
@@ -163,6 +176,11 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
         } else {
             MDC.remove(MDC_ROUTE_ID);
         }
+        if (this.originalStepId != null) {
+            MDC.put(MDC_STEP_ID, originalStepId);
+        } else {
+            MDC.remove(MDC_STEP_ID);
+        }
         if (this.originalCamelContextId != null) {
             MDC.put(MDC_CAMEL_CONTEXT_ID, originalCamelContextId);
         } else {
@@ -192,6 +210,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
         private final String messageId;
         private final String correlationId;
         private final String routeId;
+        private final String stepId;
         private final String camelContextId;
 
         private MDCCallback(AsyncCallback delegate) {
@@ -202,6 +221,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
             this.correlationId = MDC.get(MDC_CORRELATION_ID);
             this.camelContextId = MDC.get(MDC_CAMEL_CONTEXT_ID);
             this.routeId = MDC.get(MDC_ROUTE_ID);
+            this.stepId = MDC.get(MDC_STEP_ID);
         }
 
         public void done(boolean doneSync) {
@@ -228,7 +248,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
                 if (routeId != null) {
                     MDC.put(MDC_ROUTE_ID, routeId);
                 }
-                
+
             } finally {
                 // muse ensure delegate is invoked
                 delegate.done(doneSync);

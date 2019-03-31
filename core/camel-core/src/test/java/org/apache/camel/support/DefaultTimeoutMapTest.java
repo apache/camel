@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,6 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.TimeoutMap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -71,15 +72,15 @@ public class DefaultTimeoutMapTest extends Assert {
     @Test
     public void testDefaultTimeoutMapForcePurge() throws Exception {
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<>(executor, 100);
-        map.start();
+        // map.start(); // Do not start background purge
         assertTrue(map.currentTime() > 0);
 
         assertEquals(0, map.size());
 
-        map.put("A", 123, 50);
+        map.put("A", 123, 10);
         assertEquals(1, map.size());
 
-        Thread.sleep(250);
+        Thread.sleep(50);
 
         // will purge and remove old entries
         map.purge();
@@ -106,23 +107,6 @@ public class DefaultTimeoutMapTest extends Assert {
         assertEquals(0, map.size());
 
         map.stop();
-    }
-
-    @Test
-    public void testDefaultTimeoutMapGetKeys() throws Exception {
-        DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<>(executor, 100);
-        map.start();
-        assertTrue(map.currentTime() > 0);
-
-        assertEquals(0, map.size());
-
-        map.put("A", 123, 50);
-        map.put("B", 456, 50);
-        assertEquals(2, map.size());
-
-        Object[] keys = map.getKeys();
-        assertNotNull(keys);
-        assertEquals(2, keys.length);
     }
 
     @Test
@@ -155,14 +139,13 @@ public class DefaultTimeoutMapTest extends Assert {
         final List<String> keys = new ArrayList<>();
         final List<Integer> values = new ArrayList<>();
 
-        DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(executor, 100) {
-            @Override
-            public boolean onEviction(String key, Integer value) {
+        DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<>(executor, 100);
+        map.addListener((type, key, value) -> {
+            if (type == TimeoutMap.Listener.Type.Evict) {
                 keys.add(key);
                 values.add(value);
-                return true;
             }
-        };
+        });
         map.start();
         assertEquals(0, map.size());
 
@@ -176,9 +159,6 @@ public class DefaultTimeoutMapTest extends Assert {
 
         Thread.sleep(250);
 
-        // force purge
-        map.purge();
-
         assertEquals("D", keys.get(0));
         assertEquals(4, values.get(0).intValue());
         assertEquals("B", keys.get(1));
@@ -191,50 +171,6 @@ public class DefaultTimeoutMapTest extends Assert {
         assertEquals(1, values.get(4).intValue());
 
         assertEquals(1, map.size());
-
-        map.stop();
-    }
-
-    @Test
-    public void testExpiredNotEvicted() throws Exception {
-        final List<String> keys = new ArrayList<>();
-        final List<Integer> values = new ArrayList<>();
-
-        DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(executor, 100) {
-            @Override
-            public boolean onEviction(String key, Integer value) {
-                // do not evict special key
-                if ("gold".equals(key)) {
-                    return false;
-                }
-                keys.add(key);
-                values.add(value);
-                return true;
-            }
-        };
-        map.start();
-        assertEquals(0, map.size());
-
-        map.put("A", 1, 90);
-        map.put("B", 2, 100);
-        map.put("gold", 9, 110);
-        map.put("C", 3, 120);
-
-        Thread.sleep(250);
-
-        // force purge
-        map.purge();
-
-        assertEquals("A", keys.get(0));
-        assertEquals(1, values.get(0).intValue());
-        assertEquals("B", keys.get(1));
-        assertEquals(2, values.get(1).intValue());
-        assertEquals("C", keys.get(2));
-        assertEquals(3, values.get(2).intValue());
-
-        // and keep the gold in the map
-        assertEquals(1, map.size());
-        assertEquals(Integer.valueOf(9), map.get("gold"));
 
         map.stop();
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -80,6 +80,9 @@ public class LuceneComponentConfiguration
          * Operation to do such as insert or query.
          */
         private LuceneOperation operation;
+        /**
+         * Operation to do such as insert or query.
+         */
         private String authority;
         /**
          * An optional directory containing files to be used to be analyzed and
@@ -103,6 +106,9 @@ public class LuceneComponentConfiguration
          * An integer value that limits the result set of the search operation
          */
         private Integer maxHits;
+        /**
+         * An integer value that limits the result set of the search operation
+         */
         private Version luceneVersion;
 
         public URI getUri() {

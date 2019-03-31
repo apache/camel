@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -367,7 +367,7 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     protected void assertFrom(RouteDefinition route, String uri) {
-        FromDefinition from = assertOneElement(route.getInputs());
+        FromDefinition from = route.getInput();
         assertEquals("From URI", uri, from.getUri());
     }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -419,11 +419,21 @@ public abstract class TestSupport extends Assert {
     }
 
     /**
+     * To be used to check is a directory is found in the file system
+     */
+    public static void assertDirectoryExists(String filename) {
+        File file = new File(filename);
+        assertTrue("Directory " + filename + " should exist", file.exists());
+        assertTrue("Directory " + filename + " should be a directory", file.isDirectory());
+    }
+
+    /**
      * To be used to check is a file is found in the file system
      */
     public static void assertFileExists(String filename) {
         File file = new File(filename);
         assertTrue("File " + filename + " should exist", file.exists());
+        assertTrue("File " + filename + " should be a file", file.isFile());
     }
 
     /**

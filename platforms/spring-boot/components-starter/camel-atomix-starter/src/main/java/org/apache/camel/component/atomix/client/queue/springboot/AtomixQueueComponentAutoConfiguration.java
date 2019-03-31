@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -77,8 +77,7 @@ public class AtomixQueueComponentAutoConfiguration {
     @Lazy
     @Bean(name = "atomix-queue-component")
     @ConditionalOnMissingBean(AtomixQueueComponent.class)
-    public AtomixQueueComponent configureAtomixQueueComponent()
-            throws Exception {
+    public AtomixQueueComponent configureAtomixQueueComponent() throws Exception {
         AtomixQueueComponent component = new AtomixQueueComponent();
         component.setCamelContext(camelContext);
         Map<String, Object> parameters = new HashMap<>();

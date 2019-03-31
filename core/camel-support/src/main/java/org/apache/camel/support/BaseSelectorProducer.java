@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
  * A base class for selector-based producers.
  */
 public abstract class BaseSelectorProducer extends DefaultProducer {
+
     protected BaseSelectorProducer(Endpoint endpoint) {
         super(endpoint);
     }
@@ -43,15 +44,13 @@ public abstract class BaseSelectorProducer extends DefaultProducer {
      *
      * @param exchange the message exchange
      * @return the processor to processes the message exchange
-     * @throws Exception
      */
     protected abstract Processor getProcessor(Exchange exchange) throws Exception;
 
     /**
-     * Invoked when no processor has been defined to process the message exchnage.
+     * Invoked when no processor has been defined to process the message exchange.
      *
      * @param exchange the message exchange
-     * @throws Exception
      */
     protected abstract void onMissingProcessor(Exchange exchange) throws Exception;
 }

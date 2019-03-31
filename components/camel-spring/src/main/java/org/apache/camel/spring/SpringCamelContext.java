@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,13 +21,14 @@ import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.event.EventComponent;
 import org.apache.camel.component.event.EventEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.Injector;
-import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spring.spi.ApplicationContextRegistry;
+import org.apache.camel.spring.spi.ApplicationContextBeanRepository;
 import org.apache.camel.spring.spi.SpringInjector;
 import org.apache.camel.spring.spi.SpringManagementMBeanAssembler;
+import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
@@ -255,7 +256,8 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
 
     @Override
     protected Registry createRegistry() {
-        return new ApplicationContextRegistry(getApplicationContext());
+        BeanRepository repository = new ApplicationContextBeanRepository(getApplicationContext());
+        return new DefaultRegistry(repository);
     }
 
     @Override

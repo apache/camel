@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,17 +16,12 @@
  */
 package org.apache.camel.component.activemq;
 
-import java.util.Hashtable;
-
-import javax.naming.Context;
-
 import org.apache.activemq.EmbeddedBrokerTestSupport;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.jndi.JndiContext;
 
 /**
  * A helper class for test cases which use an embedded broker and use Camel to
@@ -61,12 +56,7 @@ public abstract class CamelEmbeddedBrokerTestSupport extends EmbeddedBrokerTestS
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        return new DefaultCamelContext(createJndiContext());
-    }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    protected Context createJndiContext() throws Exception {
-        return new JndiContext(new Hashtable());
+        return new DefaultCamelContext();
     }
 
     protected void addCamelRoutes(CamelContext camelContext) throws Exception {

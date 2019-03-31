@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -41,7 +41,7 @@ public class JmsToHttpTXTest extends AbstractJUnit4SpringContextTests {
     // use the spring id to refer to the endpoint we should send data to
     // notice using this id we can setup the actual endpoint in spring XML
     // and we can even use spring ${ } property in the spring XML
-    @EndpointInject(ref = "data")
+    @EndpointInject(uri = "ref:data")
     private ProducerTemplate template;
 
     // the ok response to expect

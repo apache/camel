@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -75,14 +75,14 @@ public class ManagedEndpointInjectRefEndpointTest extends SpringTestSupport {
         }
 
         set = mbeanServer.queryNames(new ObjectName("*:type=endpoints,*"), null);
-        assertEquals(3, set.size());
+        assertEquals(4, set.size());
 
         for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
             assertEquals("Should be registered", true, registered);
 
             String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-            assertTrue(uri, uri.equals("direct://start") || uri.equals("mock://foo") || uri.equals("mock://result"));
+            assertTrue(uri, uri.equals("direct://start") || uri.equals("mock://foo") || uri.equals("mock://result") || uri.equals("ref://foo"));
         }
     }
 

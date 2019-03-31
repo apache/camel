@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -49,7 +49,7 @@ import org.springframework.context.ApplicationContextAware;
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "beanPostProcessor")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware {
+public class CamelBeanPostProcessor implements org.apache.camel.spi.CamelBeanPostProcessor, BeanPostProcessor, ApplicationContextAware {
     private static final Logger LOG = LoggerFactory.getLogger(CamelBeanPostProcessor.class);
     @XmlTransient
     Set<String> prototypeBeans = new LinkedHashSet<>();

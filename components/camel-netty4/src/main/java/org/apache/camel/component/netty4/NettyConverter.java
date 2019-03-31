@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,7 +38,7 @@ import org.apache.camel.Exchange;
 /**
  * A set of converter methods for working with Netty types
  */
-@Converter
+@Converter(loader = true)
 public final class NettyConverter {
 
     private NettyConverter() {

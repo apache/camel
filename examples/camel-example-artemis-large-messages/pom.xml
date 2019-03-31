@@ -17,128 +17,130 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.apache.camel.example</groupId>
-    <artifactId>examples</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
-  </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache.camel.example</groupId>
+        <artifactId>examples</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>camel-example-artemis-large-messages</artifactId>
-  <packaging>jar</packaging>
-  <name>Camel :: Example :: ActiveMQ Artemis :: Large messages</name>
-  <description>Demonstrates sending large messages (handles GBs in size) between Apache Camel and ActiveMQ Artemis in streaming mode</description>
+    <artifactId>camel-example-artemis-large-messages</artifactId>
+    <packaging>jar</packaging>
+    <name>Camel :: Example :: ActiveMQ Artemis :: Large messages</name>
+    <description>Demonstrates sending large messages (handles GBs in size) between Apache Camel and ActiveMQ Artemis in
+        streaming mode
+    </description>
 
-  <properties>
-    <category>Messaging</category>
-  </properties>
+    <properties>
+        <category>Messaging</category>
+    </properties>
 
-  <dependencies>
+    <dependencies>
 
-    <!-- camel -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jms</artifactId>
-    </dependency>
+        <!-- camel -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jms</artifactId>
+        </dependency>
 
-    <!-- activemq artemis -->
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>artemis-spring-integration</artifactId>
-      <version>${activemq-artemis-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jms_2.0_spec</artifactId>
-    </dependency>
-
-    <!-- logging -->
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-    </dependency>
-
-  </dependencies>
-
-
-  <build>
-    <plugins>
-      <!-- Allows the routes to be run via 'mvn camel:run' -->
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
-      </plugin>
-    </plugins>
-  </build>
-  
-  <profiles>
-    <profile>
-      <id>artemis</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>download-artemis-broker</id>
-                <goals>
-                  <goal>unpack</goal>
-                </goals>
-                <configuration>
-                  <artifactItems>
-                    <artifactItem>
-                      <groupId>org.apache.activemq</groupId>
-                      <artifactId>apache-artemis</artifactId>
-                      <version>${activemq-artemis-version}</version>
-                      <classifier>bin</classifier>
-                      <type>zip</type>
-                      <overWrite>false</overWrite>
-                      <outputDirectory>${project.build.directory}/</outputDirectory>
-                    </artifactItem>
-                  </artifactItems>
-                  <overWriteReleases>false</overWriteReleases>
-                  <overWriteSnapshots>true</overWriteSnapshots>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
+        <!-- activemq artemis -->
+        <dependency>
             <groupId>org.apache.activemq</groupId>
-            <artifactId>artemis-maven-plugin</artifactId>
+            <artifactId>artemis-spring-integration</artifactId>
             <version>${activemq-artemis-version}</version>
-            <executions>
-              <execution>
-                <id>create</id>
-                <goals>
-                  <goal>create</goal>
-                </goals>
-                <configuration>
-                  <home>${project.build.directory}/apache-artemis-${activemq-artemis-version}</home>
-                  <instance>${project.build.directory}/artemis-instance</instance>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jms_2.0_spec</artifactId>
+        </dependency>
+
+        <!-- logging -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+        </dependency>
+
+    </dependencies>
+
+
+    <build>
+        <plugins>
+            <!-- Allows the routes to be run via 'mvn camel:run' -->
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-maven-plugin</artifactId>
+                <version>${project.version}</version>
+            </plugin>
         </plugins>
-      </build>
-    </profile>
-  </profiles>
-  
+    </build>
+
+    <profiles>
+        <profile>
+            <id>artemis</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>download-artemis-broker</id>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.apache.activemq</groupId>
+                                            <artifactId>apache-artemis</artifactId>
+                                            <version>${activemq-artemis-version}</version>
+                                            <classifier>bin</classifier>
+                                            <type>zip</type>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>${project.build.directory}/</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                    <overWriteReleases>false</overWriteReleases>
+                                    <overWriteSnapshots>true</overWriteSnapshots>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.activemq</groupId>
+                        <artifactId>artemis-maven-plugin</artifactId>
+                        <version>${activemq-artemis-version}</version>
+                        <executions>
+                            <execution>
+                                <id>create</id>
+                                <goals>
+                                    <goal>create</goal>
+                                </goals>
+                                <configuration>
+                                    <home>${project.build.directory}/apache-artemis-${activemq-artemis-version}</home>
+                                    <instance>${project.build.directory}/artemis-instance</instance>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>

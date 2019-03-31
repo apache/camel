@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * and <tt>parallelProcessing</tt> is used. You can work around this behavior using the <tt>stopOnAggregateException</tt> option.
  * <p/>
  * It is possible that <tt>newExchange</tt> is <tt>null</tt> which could happen if there was no data possible
- * to acquire. Such as when using a {@link org.apache.camel.processor.PollEnricher} to poll from a JMS queue which
+ * to acquire. Such as when using a <tt>PollEnricher</tt> to poll from a JMS queue which
  * is empty and a timeout was set.
  * <p/>
  * Possible implementations include performing some kind of combining or delta processing, such as adding line items
@@ -125,7 +125,6 @@ public interface AggregationStrategy {
      */
     default void onOptimisticLockFailure(Exchange oldExchange, Exchange newExchange) {
         LoggerFactory.getLogger(getClass()).trace("onOptimisticLockFailure with AggregationStrategy: {}, oldExchange: {}, newExchange: {}", this, oldExchange, newExchange);
-
     }
 
 }

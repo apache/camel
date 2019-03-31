@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Test;
 
@@ -28,8 +29,8 @@ public class BlueprintComponentResolverTest extends TestSupport {
 
     @Test
     public void testOsgiResolverFindComponentFallbackTest() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("allstar-component", new SampleComponent(true));
+        Registry registry = new DefaultRegistry();
+        registry.bind("allstar-component", new SampleComponent(true));
 
         CamelContext camelContext = new DefaultCamelContext(registry);
 
@@ -41,9 +42,9 @@ public class BlueprintComponentResolverTest extends TestSupport {
 
     @Test
     public void testOsgiResolverFindLanguageDoubleFallbackTest() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("allstar", new SampleComponent(false));
-        registry.put("allstar-component", new SampleComponent(true));
+        Registry registry = new DefaultRegistry();
+        registry.bind("allstar", new SampleComponent(false));
+        registry.bind("allstar-component", new SampleComponent(true));
 
         CamelContext camelContext = new DefaultCamelContext(registry);
 

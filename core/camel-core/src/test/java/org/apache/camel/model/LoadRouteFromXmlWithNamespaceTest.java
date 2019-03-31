@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,9 +27,8 @@ public class LoadRouteFromXmlWithNamespaceTest extends ContextTestSupport {
 
     @Test
     public void testLoadRouteWithNamespaceFromXml() throws Exception {
-        InputStream inputStream = getClass().getResourceAsStream("routeWithNamespace.xml");
-        RoutesDefinition routes = context.loadRoutesDefinition(inputStream);
-        context.addRouteDefinitions(routes.getRoutes());
+        InputStream is = getClass().getResourceAsStream("routeWithNamespace.xml");
+        context.addRouteDefinitions(is);
         context.start();
 
         Route routeWithNamespace = context.getRoute("routeWithNamespace");

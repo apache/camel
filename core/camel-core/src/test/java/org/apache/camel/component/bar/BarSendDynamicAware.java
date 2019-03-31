@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -43,13 +43,13 @@ public class BarSendDynamicAware implements SendDynamicAware {
     }
 
     @Override
-    public DynamicAwareEntry prepare(Exchange exchange, String uri) throws Exception {
+    public DynamicAwareEntry prepare(Exchange exchange, String uri, String originalUri) throws Exception {
         String query = StringHelper.after(uri, "?");
         if (query != null) {
             Map<String, String> map = new LinkedHashMap(URISupport.parseQuery(query));
-            return new DynamicAwareEntry(uri, map, null);
+            return new DynamicAwareEntry(uri, originalUri, map, null);
         } else {
-            return new DynamicAwareEntry(uri, null, null);
+            return new DynamicAwareEntry(uri, originalUri, null, null);
         }
     }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -276,6 +276,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             }
             if (beanPostProcessor instanceof CamelBeanPostProcessor) {
                 ((CamelBeanPostProcessor) beanPostProcessor).setCamelContext(getContext());
+            }
+            // register the bean post processor on camel context
+            if (beanPostProcessor instanceof org.apache.camel.spi.CamelBeanPostProcessor) {
+                context.setBeanPostProcessor((org.apache.camel.spi.CamelBeanPostProcessor) beanPostProcessor);
             }
         }
     }

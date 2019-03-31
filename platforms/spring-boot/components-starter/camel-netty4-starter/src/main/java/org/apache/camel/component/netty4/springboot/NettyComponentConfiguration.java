@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,7 +27,6 @@ import io.netty.handler.ssl.SslHandler;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.netty4.ClientInitializerFactory;
 import org.apache.camel.component.netty4.NettyCamelStateCorrelationManager;
-import org.apache.camel.component.netty4.NettyComponent;
 import org.apache.camel.component.netty4.NettyServerBootstrapFactory;
 import org.apache.camel.component.netty4.ServerInitializerFactory;
 import org.apache.camel.component.netty4.TextLineDelimiter;
@@ -253,9 +252,6 @@ public class NettyComponentConfiguration
          * first element in the filter chain.
          */
         private Boolean allowDefaultCodec = true;
-        /**
-         * @deprecated use #setClientInitializerFactory
-         */
         @Deprecated
         private ClientInitializerFactory clientPipelineFactory;
         /**
@@ -279,7 +275,7 @@ public class NettyComponentConfiguration
          */
         private Integer producerPoolMinIdle;
         /**
-         * Sets the cap on the number of idle instances in the pool.
+         * Sets the cap on the number of "idle" instances in the pool.
          */
         private Integer producerPoolMaxIdle = 100;
         /**
@@ -296,10 +292,10 @@ public class NettyComponentConfiguration
          * Therefore you need to have a correlation id in both the request and
          * reply messages so you can properly correlate the replies to the Camel
          * callback that is responsible for continue processing the message in
-         * Camel. To do this you need to implement
-         * NettyCamelStateCorrelationManager as correlation manager and
-         * configure it via the correlationManager option. See also the
-         * correlationManager option for more details.
+         * Camel. To do this you need to implement {@link
+         * NettyCamelStateCorrelationManager} as correlation manager and
+         * configure it via the <tt>correlationManager</tt> option. <p/> See
+         * also the <tt>correlationManager</tt> option for more details.
          */
         private Boolean producerPoolEnabled = true;
         /**
@@ -315,7 +311,7 @@ public class NettyComponentConfiguration
         private Boolean clientMode = false;
         /**
          * If the useByteBuf is true, netty producer will turn the message body
-         * into ByteBuf before sending it out.
+         * into {@link ByteBuf} before sending it out.
          */
         private Boolean useByteBuf = false;
         /**
@@ -325,14 +321,15 @@ public class NettyComponentConfiguration
         private Boolean udpByteArrayCodec = false;
         /**
          * This option allows producers and consumers (in client mode) to reuse
-         * the same Netty Channel for the lifecycle of processing the Exchange.
-         * This is useful if you need to call a server multiple times in a Camel
-         * route and want to use the same network connection. When using this,
-         * the channel is not returned to the connection pool until the Exchange
-         * is done; or disconnected if the disconnect option is set to true. The
-         * reused Channel is stored on the Exchange as an exchange property with
-         * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
-         * channel during routing and use it as well.
+         * the same Netty {@link Channel} for the lifecycle of processing the
+         * {@link Exchange}. This is useful if you need to call a server
+         * multiple times in a Camel route and want to use the same network
+         * connection. When using this, the channel is not returned to the
+         * connection pool until the {@link Exchange} is done; or disconnected
+         * if the disconnect option is set to true. <p/> The reused {@link
+         * Channel} is stored on the {@link Exchange} as an exchange property
+         * with the key {@link NettyConstants#NETTY_CHANNEL} which allows you to
+         * obtain the channel during routing and use it as well.
          */
         private Boolean reuseChannel = false;
         /**
@@ -344,11 +341,11 @@ public class NettyComponentConfiguration
          * concurrent messages on the same channel (aka connection) in netty.
          * When doing this you must have a way to correlate the request and
          * reply messages so you can store the right reply on the inflight Camel
-         * Exchange before its continued routed. We recommend extending the
-         * TimeoutCorrelationManagerSupport when you build custom correlation
-         * managers. This provides support for timeout and other complexities
-         * you otherwise would need to implement as well. See also the
-         * producerPoolEnabled option for more details.
+         * Exchange before its continued routed. <p/> We recommend extending the
+         * {@link TimeoutCorrelationManagerSupport} when you build custom
+         * correlation managers. This provides support for timeout and other
+         * complexities you otherwise would need to implement as well. <p/> See
+         * also the <tt>producerPoolEnabled</tt> option for more details.
          */
         private NettyCamelStateCorrelationManager correlationManager;
         /**
@@ -356,8 +353,9 @@ public class NettyComponentConfiguration
          */
         private String protocol;
         /**
-         * The hostname. For the consumer the hostname is localhost or 0.0.0.0.
-         * For the producer the hostname is the remote host to connect to
+         * The hostname. <p/> For the consumer the hostname is localhost or
+         * 0.0.0.0. For the producer the hostname is the remote host to connect
+         * to
          */
         private String host;
         /**
@@ -416,7 +414,7 @@ public class NettyComponentConfiguration
          * Allows to configure a backlog for netty consumer (server). Note the
          * backlog is just a best effort depending on the OS. Setting this
          * option to a value such as 200, 500 or 1000, tells the TCP stack how
-         * long the accept queue can be If this option is not configured, then
+         * long the "accept" queue can be If this option is not configured, then
          * the backlog depends on OS setting.
          */
         private Integer backlog;
@@ -456,24 +454,24 @@ public class NettyComponentConfiguration
         private File trustStoreFile;
         /**
          * Client side certificate keystore to be used for encryption. Is loaded
-         * by default from classpath, but you can prefix with classpath:, file:,
-         * or http: to load the resource from different systems.
+         * by default from classpath, but you can prefix with "classpath:",
+         * "file:", or "http:" to load the resource from different systems.
          */
         private String keyStoreResource;
         /**
          * Server side certificate keystore to be used for encryption. Is loaded
-         * by default from classpath, but you can prefix with classpath:, file:,
-         * or http: to load the resource from different systems.
+         * by default from classpath, but you can prefix with "classpath:",
+         * "file:", or "http:" to load the resource from different systems.
          */
         private String trustStoreResource;
         /**
-         * Keystore format to be used for payload encryption. Defaults to JKS if
-         * not set
+         * Keystore format to be used for payload encryption. Defaults to "JKS"
+         * if not set
          */
         private String keyStoreFormat;
         /**
          * Security provider to be used for payload encryption. Defaults to
-         * SunX509 if not set.
+         * "SunX509" if not set.
          */
         private String securityProvider;
         /**
@@ -481,9 +479,6 @@ public class NettyComponentConfiguration
          * using SSH
          */
         private String passphrase;
-        /**
-         * @deprecated use #setServerInitializerFactory
-         */
         @Deprecated
         private ServerInitializerFactory serverPipelineFactory;
         /**
@@ -495,10 +490,10 @@ public class NettyComponentConfiguration
          */
         private NettyServerBootstrapFactory nettyServerBootstrapFactory;
         /**
-         * Allows to configure additional netty options using option. as prefix.
-         * For example option.child.keepAlive=false to set the netty option
-         * child.keepAlive=false. See the Netty documentation for possible
-         * options that can be used.
+         * Allows to configure additional netty options using "option." as
+         * prefix. For example "option.child.keepAlive=false" to set the netty
+         * option "child.keepAlive=false". See the Netty documentation for
+         * possible options that can be used.
          */
         private Map options;
         /**

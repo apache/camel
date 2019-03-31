@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -98,7 +98,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
     public static final String COMPLETED_BY_TIMEOUT = "timeout";
     public static final String COMPLETED_BY_FORCE = "force";
 
-    private Lock lock;
+    private volatile Lock lock;
     private final AtomicBoolean aggregateRepositoryWarned = new AtomicBoolean();
     private final CamelContext camelContext;
     private final AsyncProcessor processor;
@@ -1112,27 +1112,33 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         private AggregationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
             // do NOT use locking on the timeout map as this aggregator has its own shared lock we will use instead
             super(executor, requestMapPollTimeMillis, optimisticLocking);
+            addListener(this::onEviction);
         }
 
         @Override
-        public void purge() {
-            // must acquire the shared aggregation lock to be able to purge
-            lock.lock();
-            try {
-                super.purge();
-            } finally {
-                lock.unlock();
+        protected void purge() {
+            // wait for lock to be created
+            if (lock != null) {
+                // must acquire the shared aggregation lock to be able to purge
+                lock.lock();
+                try {
+                    super.purge();
+                } finally {
+                    lock.unlock();
+                }
             }
         }
 
-        @Override
-        public boolean onEviction(String key, String exchangeId) {
+        private void onEviction(Listener.Type type, String key, String exchangeId) {
+            if (type != Listener.Type.Evict) {
+                return;
+            }
             log.debug("Completion timeout triggered for correlation key: {}", key);
 
             boolean inProgress = inProgressCompleteExchanges.contains(exchangeId);
             if (inProgress) {
                 log.trace("Aggregated exchange with id: {} is already in progress.", exchangeId);
-                return true;
+                return;
             }
 
             // get the aggregated exchange
@@ -1157,7 +1163,6 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                 log.debug("Another Camel instance has already successfully correlated or processed this timeout eviction "
                           + "for exchange with id: {} and correlation id: {}", exchangeId, key);
             }
-            return true;
         }
     }
 
@@ -1399,7 +1404,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         if (getCompletionInterval() > 0) {
             log.info("Using CompletionInterval to run every {} millis.", getCompletionInterval());
             if (getTimeoutCheckerExecutorService() == null) {
-                setTimeoutCheckerExecutorService(camelContext.getExecutorServiceManager().newScheduledThreadPool(this, AGGREGATE_TIMEOUT_CHECKER, 1));
+                setTimeoutCheckerExecutorService(camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, AGGREGATE_TIMEOUT_CHECKER));
                 shutdownTimeoutCheckerExecutorService = true;
             }
             // trigger completion based on interval
@@ -1410,7 +1415,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         if (getCompletionTimeout() > 0 || getCompletionTimeoutExpression() != null) {
             log.info("Using CompletionTimeout to trigger after {} millis of inactivity.", getCompletionTimeout());
             if (getTimeoutCheckerExecutorService() == null) {
-                setTimeoutCheckerExecutorService(camelContext.getExecutorServiceManager().newScheduledThreadPool(this, AGGREGATE_TIMEOUT_CHECKER, 1));
+                setTimeoutCheckerExecutorService(camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, AGGREGATE_TIMEOUT_CHECKER));
                 shutdownTimeoutCheckerExecutorService = true;
             }
             // check for timed out aggregated messages once every second
@@ -1427,7 +1432,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         aggregateController.onStart(this);
 
         if (optimisticLocking) {
-            lock = new NoLock();
+            lock = NoLock.INSTANCE;
             if (getOptimisticLockingExecutorService() == null) {
                 setOptimisticLockingExecutorService(camelContext.getExecutorServiceManager().newScheduledThreadPool(this, AGGREGATE_OPTIMISTIC_LOCKING_EXECUTOR, 1));
                 shutdownOptimisticLockingExecutorService = true;

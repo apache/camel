@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -86,6 +86,7 @@ import org.apache.camel.management.mbean.ManagedSetExchangePattern;
 import org.apache.camel.management.mbean.ManagedSetHeader;
 import org.apache.camel.management.mbean.ManagedSetProperty;
 import org.apache.camel.management.mbean.ManagedSplitter;
+import org.apache.camel.management.mbean.ManagedStep;
 import org.apache.camel.management.mbean.ManagedStickyLoadBalancer;
 import org.apache.camel.management.mbean.ManagedStop;
 import org.apache.camel.management.mbean.ManagedSuspendableRoute;
@@ -137,6 +138,7 @@ import org.apache.camel.processor.SetBodyProcessor;
 import org.apache.camel.processor.SetHeaderProcessor;
 import org.apache.camel.processor.SetPropertyProcessor;
 import org.apache.camel.processor.Splitter;
+import org.apache.camel.processor.StepProcessor;
 import org.apache.camel.processor.StopProcessor;
 import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.ThreadsProcessor;
@@ -372,6 +374,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedSetExchangePattern(context, (ExchangePatternProcessor) target, definition);
             } else if (target instanceof ScriptProcessor) {
                 answer = new ManagedScript(context, (ScriptProcessor) target, (org.apache.camel.model.ScriptDefinition) definition);
+            } else if (target instanceof StepProcessor) {
+                answer = new ManagedStep(context, (StepProcessor) target, definition);
             } else if (target instanceof StopProcessor) {
                 answer = new ManagedStop(context, (StopProcessor) target, definition);
             } else if (target instanceof ThreadsProcessor) {

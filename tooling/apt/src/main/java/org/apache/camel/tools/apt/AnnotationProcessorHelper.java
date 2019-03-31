@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -379,7 +381,7 @@ public final class AnnotationProcessorHelper {
     }
 
     public static void dumpExceptionToErrorFile(String fileName, String message, Throwable e) {
-        try (BufferedWriter w = Files.newBufferedWriter(Paths.get(fileName))) {
+        try (BufferedWriter w = Files.newBufferedWriter(Paths.get(fileName), StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
             w.append(message);
             w.append("\n\n");
             PrintWriter pw = new PrintWriter(w);

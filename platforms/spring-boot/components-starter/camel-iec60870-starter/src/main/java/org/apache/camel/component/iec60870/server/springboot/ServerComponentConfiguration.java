@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.component.iec60870.server.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
+import org.eclipse.neoscada.protocol.iec60870.server.data.DataModuleOptions;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -70,35 +71,49 @@ public class ServerComponentConfiguration
     public static class ServerOptionsNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.iec60870.server.ServerOptions.class;
         /**
-         * A time period in "ms" the protocol layer will buffer change events in
-         * order to send out aggregated change messages
+         * The period in "ms" between background transmission cycles. <p> If
+         * this is set to zero or less, background transmissions will be
+         * disabled. </p>
+         */
+        private DataModuleOptions dataModuleOptions;
+        /**
+         * The period in "ms" between background transmission cycles. <p> If
+         * this is set to zero or less, background transmissions will be
+         * disabled. </p>
          */
         private Integer bufferingPeriod;
         /**
-         * Send booleans with timestamps
+         * The period in "ms" between background transmission cycles. <p> If
+         * this is set to zero or less, background transmissions will be
+         * disabled. </p>
          */
         private Boolean booleansWithTimestamp;
         /**
-         * Send floats with timestamps
+         * The period in "ms" between background transmission cycles. <p> If
+         * this is set to zero or less, background transmissions will be
+         * disabled. </p>
          */
         private Boolean floatsWithTimestamp;
         /**
-         * Number of spontaneous events to keep in the buffer.
-         * <p>
-         * When there are more than this number of spontaneous in events in the
-         * buffer, then events will be dropped in order to maintain the buffer
-         * size.
-         * </p>
+         * The period in "ms" between background transmission cycles. <p> If
+         * this is set to zero or less, background transmissions will be
+         * disabled. </p>
          */
         private Integer spontaneousDuplicates;
         /**
-         * The period in "ms" between background transmission cycles.
-         * <p>
-         * If this is set to zero or less, background transmissions will be
-         * disabled.
-         * </p>
+         * The period in "ms" between background transmission cycles. <p> If
+         * this is set to zero or less, background transmissions will be
+         * disabled. </p>
          */
         private Integer backgroundScanPeriod;
+
+        public DataModuleOptions getDataModuleOptions() {
+            return dataModuleOptions;
+        }
+
+        public void setDataModuleOptions(DataModuleOptions dataModuleOptions) {
+            this.dataModuleOptions = dataModuleOptions;
+        }
 
         public Integer getBufferingPeriod() {
             return bufferingPeriod;

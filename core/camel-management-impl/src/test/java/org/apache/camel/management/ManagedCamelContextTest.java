@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,9 +17,7 @@
 package org.apache.camel.management;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -29,7 +27,6 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.StringHelper;
 import org.junit.Test;
 
 public class ManagedCamelContextTest extends ManagementTestSupport {
@@ -55,10 +52,6 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         assertEquals("camel-1", client.getCamelId());
         assertEquals("Started", client.getState());
-
-        List<String> names = client.findComponentNames();
-        assertNotNull(names);
-        assertTrue(names.contains("mock"));
     }
 
     @Test
@@ -216,197 +209,6 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertNull(context.hasEndpoint("seda:bar"));
         registered = mbeanServer.isRegistered(seda);
         assertFalse("Should not be registered " + seda, registered);
-    }
-
-    @Test
-    public void testFindComponentsInClasspath() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
-        MBeanServer mbeanServer = getMBeanServer();
-
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
-
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
-
-        @SuppressWarnings("unchecked")
-        Map<String, Properties> info = (Map<String, Properties>) mbeanServer.invoke(on, "findComponents", null, null);
-        assertNotNull(info);
-
-        assertTrue(info.size() > 20);
-        Properties prop = info.get("seda");
-        assertNotNull(prop);
-        assertEquals("seda", prop.get("name"));
-        assertEquals("org.apache.camel", prop.get("groupId"));
-        assertEquals("camel-seda", prop.get("artifactId"));
-    }
-
-    @Test
-    public void testManagedCamelContextCreateRouteStaticEndpointJson() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
-        MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
-
-        // get the json
-        String json = (String) mbeanServer.invoke(on, "createRouteStaticEndpointJson", null, null);
-        assertNotNull(json);
-        assertEquals(7, StringHelper.countChar(json, '{'));
-        assertEquals(7, StringHelper.countChar(json, '}'));
-        assertTrue(json.contains("{ \"uri\": \"direct://start\" }"));
-        assertTrue(json.contains("{ \"uri\": \"direct://foo\" }"));
-    }
-
-    @Test
-    public void testManagedCamelContextExplainEndpointUriFalse() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
-        MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
-
-        // get the json
-        String json = (String) mbeanServer.invoke(on, "explainEndpointJson", new Object[]{"log:foo?groupDelay=2000&groupSize=5", false},
-                new String[]{"java.lang.String", "boolean"});
-        assertNotNull(json);
-
-        // the loggerName option should come before the groupDelay option
-        int pos = json.indexOf("loggerName");
-        int pos2 = json.indexOf("groupDelay");
-        assertTrue("LoggerName should come before groupDelay", pos < pos2);
-
-        assertEquals(6, StringHelper.countChar(json, '{'));
-        assertEquals(6, StringHelper.countChar(json, '}'));
-
-        assertTrue(json.contains("\"scheme\": \"log\""));
-        assertTrue(json.contains("\"label\": \"core,monitoring\""));
-
-        assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
-        assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"group\": \"producer\", \"required\": \"false\", \"type\": \"integer\","
-                + " \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"secret\": \"false\", \"value\": \"5\""));
-
-        // and we should also have the javadoc documentation
-        assertTrue(json.contains("Set the initial delay for stats (in millis)"));
-    }
-
-    @Test
-    public void testManagedCamelContextExplainEndpointUriTrue() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
-        MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
-
-        // get the json
-        String json = (String) mbeanServer.invoke(on, "explainEndpointJson", new Object[]{"log:foo?groupDelay=2000&groupSize=5", true},
-                new String[]{"java.lang.String", "boolean"});
-        assertNotNull(json);
-
-        // the loggerName option should come before the groupDelay option
-        int pos = json.indexOf("loggerName");
-        int pos2 = json.indexOf("groupDelay");
-        assertTrue("LoggerName should come before groupDelay", pos < pos2);
-
-        assertEquals(30, StringHelper.countChar(json, '{'));
-        assertEquals(30, StringHelper.countChar(json, '}'));
-
-        assertTrue(json.contains("\"scheme\": \"log\""));
-        assertTrue(json.contains("\"label\": \"core,monitoring\""));
-
-        assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
-        assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"group\": \"producer\", \"required\": \"false\", \"type\": \"integer\","
-                + " \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"secret\": \"false\", \"value\": \"5\""));
-        // and we should also have the javadoc documentation
-        assertTrue(json.contains("Set the initial delay for stats (in millis)"));
-    }
-
-    @Test
-    public void testManagedCamelContextExplainEipFalse() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
-        MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
-
-        // get the json
-        String json = (String) mbeanServer.invoke(on, "explainEipJson", new Object[]{"myTransform", false}, new String[]{"java.lang.String", "boolean"});
-        assertNotNull(json);
-
-        assertTrue(json.contains("\"label\": \"eip,transformation\""));
-        assertTrue(json.contains("\"expression\": { \"kind\": \"expression\", \"required\": \"true\", \"type\": \"object\""));
-        // we should see the constant value
-        assertTrue(json.contains("Bye World"));
-    }
-
-    @Test
-    public void testManagedCamelContextExplainEipTrue() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
-        MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
-
-        // get the json
-        String json = (String) mbeanServer.invoke(on, "explainEipJson", new Object[]{"myTransform", true}, new String[]{"java.lang.String", "boolean"});
-        assertNotNull(json);
-
-        assertTrue(json.contains("\"label\": \"eip,transformation\""));
-        assertTrue(json.contains("\"expression\": { \"kind\": \"expression\", \"required\": \"true\", \"type\": \"object\""));
-        // and now we have the description option also
-        assertTrue(json.contains("\"description\": { \"kind\": \"element\", \"required\": \"false\", \"type\": \"object\", \"javaType\""));
-        // we should see the constant value
-        assertTrue(json.contains("Bye World"));
-    }
-
-    @Test
-    public void testManagedCamelContextExplainEipModel() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
-        MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
-
-        // get the json
-        String json = (String) mbeanServer.invoke(on, "explainEipJson", new Object[]{"aggregate", false}, new String[]{"java.lang.String", "boolean"});
-        assertNotNull(json);
-
-        assertTrue(json.contains("\"description\": \"Aggregates many messages into a single message\""));
-        assertTrue(json.contains("\"label\": \"eip,routing\""));
-        assertTrue(json.contains("\"correlationExpression\": { \"kind\": \"expression\", \"displayName\": \"Correlation Expression\", \"required\": true, \"type\": \"object\""));
-        assertTrue(json.contains("\"discardOnCompletionTimeout\": { \"kind\": \"attribute\", \"displayName\": \"Discard On Completion Timeout\", \"required\": false, \"type\": \"boolean\""));
-    }
-
-    @Test
-    public void testManagedCamelContextExplainComponentModel() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
-        MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
-
-        // get the json
-        String json = (String) mbeanServer.invoke(on, "explainComponentJson", new Object[]{"seda", false}, new String[]{"java.lang.String", "boolean"});
-        assertNotNull(json);
-
-        assertTrue(json.contains("\"label\": \"core,endpoint\""));
-        assertTrue(json.contains("\"queueSize\": { \"kind\": \"property\", \"group\": \"advanced\", \"label\": \"advanced\""));
     }
 
     @Override

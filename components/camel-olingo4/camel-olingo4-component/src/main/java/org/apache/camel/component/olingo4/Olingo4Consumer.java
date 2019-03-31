@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.olingo4;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import org.apache.camel.Exchange;
@@ -26,7 +28,12 @@ import org.apache.camel.component.olingo4.api.Olingo4ResponseHandler;
 import org.apache.camel.component.olingo4.internal.Olingo4ApiName;
 import org.apache.camel.support.component.AbstractApiConsumer;
 import org.apache.camel.support.component.ApiConsumerHelper;
+import org.apache.olingo.client.api.domain.ClientCollectionValue;
+import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
+import org.apache.olingo.client.api.domain.ClientValue;
+import org.apache.olingo.client.core.domain.ClientPrimitiveValueImpl;
+import org.apache.olingo.client.core.domain.ClientPropertyImpl;
 
 /**
  * The Olingo4 consumer.
@@ -129,5 +136,36 @@ public class Olingo4Consumer extends AbstractApiConsumer<Olingo4ApiName, Olingo4
         }
 
         resultIndex.index(result);
+    }
+
+    @Override
+    public Object splitResult(Object result) {
+        List<Object> splitResult = new ArrayList<>();
+
+        if (result instanceof ClientEntitySet) {
+            ClientEntitySet entitySet = (ClientEntitySet) result;
+            for (ClientEntity entity : entitySet.getEntities()) {
+                //
+                // If $count has been set to true then this value is left behind
+                // on the ClientEntitySet. Therefore, append it to each result.
+                //
+                if (entitySet.getCount() != null) {
+                    ClientValue value = new ClientPrimitiveValueImpl.BuilderImpl()
+                                                            .buildInt32(entitySet.getCount());
+                    entity.getProperties().add(new ClientPropertyImpl("ResultCount", value));
+                }
+                splitResult.add(entity);
+            }
+        } else if (result instanceof ClientValue && ((ClientValue) result).isCollection()) {
+            ClientValue value = (ClientValue) result;
+            ClientCollectionValue<ClientValue> collection = value.asCollection();
+            collection.forEach(v -> {
+                splitResult.add(v);
+            });
+        } else {
+            splitResult.add(result);
+        }
+
+        return splitResult;
     }
 }

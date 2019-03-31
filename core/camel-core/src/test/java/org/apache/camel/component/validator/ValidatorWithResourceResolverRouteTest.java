@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.validator;
+
 import java.net.URL;
 
 import org.w3c.dom.ls.LSResourceResolver;
@@ -23,8 +24,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.processor.validation.CatalogLSResourceResolver;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.xml.resolver.CatalogManager;
@@ -82,8 +81,7 @@ public class ValidatorWithResourceResolverRouteTest extends ContextTestSupport {
         URL catalogUrl = ResourceHelper.resolveMandatoryResourceAsUrl(context.getClassResolver(), "org/apache/camel/component/validator/catalog.cat");
         catalogResolver.getCatalog().parseCatalog(catalogUrl);
         LSResourceResolver resourceResolver = new CatalogLSResourceResolver(catalogResolver);
-        JndiRegistry registry = (JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
-        registry.bind("resourceResolver", resourceResolver);
+        context.getRegistry().bind("resourceResolver", resourceResolver);
 
         return new RouteBuilder() {
             @Override

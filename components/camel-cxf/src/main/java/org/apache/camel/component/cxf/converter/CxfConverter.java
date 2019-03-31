@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,6 @@ import javax.xml.soap.SOAPMessage;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.cxf.DataFormat;
 import org.apache.camel.converter.stream.CachedOutputStream;
@@ -42,7 +41,7 @@ import static org.apache.camel.TypeConverter.MISS_VALUE;
  * The <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  * for CXF related types' converting .
  */
-@Converter
+@Converter(loader = true)
 public final class CxfConverter {
 
     private CxfConverter() {
@@ -135,7 +134,7 @@ public final class CxfConverter {
      * @return the converted value of the desired type or null if no suitable converter found
      */
     @SuppressWarnings("unchecked")
-    @FallbackConverter
+    @Converter(fallback = true)
     public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, 
             TypeConverterRegistry registry) {
 

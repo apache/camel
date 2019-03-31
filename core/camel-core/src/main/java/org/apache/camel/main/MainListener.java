@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,43 +19,40 @@ package org.apache.camel.main;
 import org.apache.camel.CamelContext;
 
 /**
- * A lifecycle listener to receive callbacks when the main is started and stopped.
+ * A lifecycle listener to receive callbacks when the Main is started and stopped.
  */
 public interface MainListener {
 
     /**
-     * Callback before the CamelContext(s) is being created and started.
-     *
-     * @param main  the main instance
-     */
-    void beforeStart(MainSupport main);
-
-    /**
-     * Callback to configure <b>each</b> created CamelContext.
-     * <p/>
-     * Notice this callback will be invoked for <b>each</b> CamelContext and therefore can be invoked
-     * multiple times if there is 2 or more CamelContext's being created.
+     * Callback to configure the created CamelContext.
      *
      * @param context the created CamelContext
      */
     void configure(CamelContext context);
 
     /**
-     * Callback after the CamelContext(s) has been started.
+     * Callback before the CamelContext is being created and started.
+     *
+     * @param main  the main instance
+     */
+    void beforeStart(MainSupport main);
+
+    /**
+     * Callback after the CamelContext has been started.
      *
      * @param main  the main instance
      */
     void afterStart(MainSupport main);
 
     /**
-     * Callback before the CamelContext(s) is being stopped.
+     * Callback before the CamelContext is being stopped.
      *
      * @param main  the main instance
      */
     void beforeStop(MainSupport main);
 
     /**
-     * Callback after the CamelContext(s) has been stopped.
+     * Callback after the CamelContext has been stopped.
      *
      * @param main  the main instance
      */

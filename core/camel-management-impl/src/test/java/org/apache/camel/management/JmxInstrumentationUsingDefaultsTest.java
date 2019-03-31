@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.Iterator;
@@ -27,12 +28,12 @@ import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.awaitility.Awaitility.await;
 
 /**

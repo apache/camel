@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,8 +19,6 @@ package org.apache.camel.component.log;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,8 +60,7 @@ public class LogCustomFormatterTest extends ContextTestSupport {
         context.stop();
         
         exchangeFormatter = new TestExchangeFormatter();
-        JndiRegistry registry = getRegistryAsJndi();
-        registry.bind("logFormatter", exchangeFormatter);
+        context.getRegistry().bind("logFormatter", exchangeFormatter);
         
         context.start();
         
@@ -81,8 +78,7 @@ public class LogCustomFormatterTest extends ContextTestSupport {
         context.stop();
 
         exchangeFormatter = new TestExchangeFormatter();
-        JndiRegistry registry = getRegistryAsJndi();
-        registry.bind("logFormatter", exchangeFormatter);
+        context.getRegistry().bind("logFormatter", exchangeFormatter);
         assertEquals("", exchangeFormatter.getPrefix());
 
         context.start();
@@ -100,8 +96,7 @@ public class LogCustomFormatterTest extends ContextTestSupport {
         context.stop();
 
         exchangeFormatter = new TestExchangeFormatter();
-        JndiRegistry registry = getRegistryAsJndi();
-        registry.bind("logFormatter", exchangeFormatter);
+        context.getRegistry().bind("logFormatter", exchangeFormatter);
         assertEquals("", exchangeFormatter.getPrefix());
 
         context.start();
@@ -122,8 +117,7 @@ public class LogCustomFormatterTest extends ContextTestSupport {
         context.stop();
         
         exchangeFormatter = new TestExchangeFormatter();
-        JndiRegistry registry = getRegistryAsJndi();
-        registry.bind("anotherFormatter", exchangeFormatter);
+        context.getRegistry().bind("anotherFormatter", exchangeFormatter);
         
         context.start();
         
@@ -135,19 +129,7 @@ public class LogCustomFormatterTest extends ContextTestSupport {
         
         assertEquals(0, exchangeFormatter.getCounter());
     }
-    
-    private JndiRegistry getRegistryAsJndi() {
-        JndiRegistry registry = null;
-        if (context.getRegistry() instanceof PropertyPlaceholderDelegateRegistry) {
-            registry = (JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
-        } else if (context.getRegistry() instanceof JndiRegistry) {
-            registry = (JndiRegistry) context.getRegistry();
-        } else {
-            fail("Could not determine Registry type");
-        }
-        return registry;
-    }
-    
+
     public static class TestExchangeFormatter implements ExchangeFormatter {
         private int counter;
         private boolean addTen;

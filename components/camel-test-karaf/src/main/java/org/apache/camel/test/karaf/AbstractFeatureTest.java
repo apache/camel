@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -343,6 +343,9 @@ public abstract class AbstractFeatureTest {
 
             // Disable the Karaf shutdown port
             editConfigurationFilePut("etc/custom.properties", "karaf.shutdown.port", "-1"),
+
+            // log config
+            editConfigurationFilePut("etc/custom.properties", "karaf.log", "${karaf.data}/log"),
 
             // Assign unique ports for Karaf
 //            editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port", Integer.toString(AvailablePortFinder.getNextAvailable())),

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -111,7 +111,7 @@ public class GoogleSheetsComponentConfiguration
         private String refreshToken;
         /**
          * Google Sheets application name. Example would be
-         * camel-google-sheets/1.0
+         * "camel-google-sheets/1.0"
          */
         private String applicationName;
 

@@ -37,7 +37,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>properties-maven-plugin</artifactId>
-        <version>1.0-alpha-2</version>
+        <version>${properties-maven-plugin-version}</version>
         <executions>
           <execution>
             <phase>initialize</phase>

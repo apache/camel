@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -101,18 +101,16 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             definition.setErrorHandlerBuilderIfNull(handler);
         }
 
-        for (FromDefinition fromType : definition.getInputs()) {
-            RouteContext routeContext;
-            try {
-                routeContext = addRoutes(camelContext, routes, fromType);
-            } catch (FailedToCreateRouteException e) {
-                throw e;
-            } catch (Exception e) {
-                // wrap in exception which provide more details about which route was failing
-                throw new FailedToCreateRouteException(definition.getId(), definition.toString(), e);
-            }
-            answer.add(routeContext);
+        RouteContext routeContext;
+        try {
+            routeContext = addRoutes(camelContext, routes, definition.getInput());
+        } catch (FailedToCreateRouteException e) {
+            throw e;
+        } catch (Exception e) {
+            // wrap in exception which provide more details about which route was failing
+            throw new FailedToCreateRouteException(definition.getId(), definition.toString(), e);
         }
+        answer.add(routeContext);
         return answer;
     }
 

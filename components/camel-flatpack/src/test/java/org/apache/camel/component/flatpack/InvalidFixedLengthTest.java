@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,10 +27,10 @@ import org.springframework.util.Assert;
 @ContextConfiguration
 public class InvalidFixedLengthTest extends AbstractJUnit4SpringContextTests {
 
-    @EndpointInject(uri = "mock:results")
+    @EndpointInject("mock:results")
     protected MockEndpoint results;
 
-    @EndpointInject(uri = "mock:error")
+    @EndpointInject("mock:error")
     protected MockEndpoint error;
 
     @Test

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -59,7 +59,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     private static final String[] EXCLUDE_DOC_FILES = {
         "camel-core-osgi", "camel-core-xml",
-        "camel-http-common", "camel-jetty", "camel-jetty-common"
+        "camel-http-common", "camel-jetty-common"
     };
 
     private static final Pattern LABEL_PATTERN = Pattern.compile("\\\"label\\\":\\s\\\"([\\w,]+)\\\"");
@@ -221,9 +221,16 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         for (File file : jsonFiles) {
             File to = new File(modelsOutDir, file.getName());
-            if (warnDups && to.exists()) {
-                duplicateJsonFiles.add(to);
-                getLog().warn("Duplicate model name detected: " + to);
+            if (to.exists()) {
+                if (warnDups) {
+                    duplicateJsonFiles.add(to);
+                    getLog().warn("Duplicate model name detected: " + to);
+                } else if (file.lastModified() < to.lastModified()) {
+                    getLog().debug("Skipping generated file: " + to);
+                    continue;
+                } else {
+                    getLog().warn("Stale file: " + to);
+                }
             }
             try {
                 copyFile(file, to);
@@ -245,12 +252,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         String label = matcher.group(1);
                         String[] labels = label.split(",");
                         for (String s : labels) {
-                            Set<String> models = usedLabels.get(s);
-                            if (models == null) {
-                                models = new TreeSet<>();
-                                usedLabels.put(s, models);
-                            }
-                            models.add(name);
+                            usedLabels.computeIfAbsent(s, k -> new TreeSet<>()).add(name);
                         }
                     }
                 }
@@ -394,9 +396,16 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         for (File file : jsonFiles) {
             File to = new File(componentsOutDir, file.getName());
-            if (warnDups && to.exists()) {
-                duplicateJsonFiles.add(to);
-                getLog().warn("Duplicate component name detected: " + to);
+            if (to.exists()) {
+                if (warnDups) {
+                    duplicateJsonFiles.add(to);
+                    getLog().warn("Duplicate component name detected: " + to);
+                } else if (file.lastModified() < to.lastModified()) {
+                    getLog().debug("Skipping generated file: " + to);
+                    continue;
+                } else {
+                    getLog().warn("Stale file: " + to);
+                }
             }
             try {
                 copyFile(file, to);
@@ -577,9 +586,16 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         for (File file : jsonFiles) {
             File to = new File(dataFormatsOutDir, file.getName());
-            if (warnDups && to.exists()) {
-                duplicateJsonFiles.add(to);
-                getLog().warn("Duplicate dataformat name detected: " + to);
+            if (to.exists()) {
+                if (warnDups) {
+                    duplicateJsonFiles.add(to);
+                    getLog().warn("Duplicate dataformat name detected: " + to);
+                } else if (file.lastModified() < to.lastModified()) {
+                    getLog().debug("Skipping generated file: " + to);
+                    continue;
+                } else {
+                    getLog().warn("Stale file: " + to);
+                }
             }
             try {
                 copyFile(file, to);
@@ -702,9 +718,16 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         for (File file : jsonFiles) {
             File to = new File(languagesOutDir, file.getName());
-            if (warnDups && to.exists()) {
-                duplicateJsonFiles.add(to);
-                getLog().warn("Duplicate language name detected: " + to);
+            if (to.exists()) {
+                if (warnDups) {
+                    duplicateJsonFiles.add(to);
+                    getLog().warn("Duplicate language name detected: " + to);
+                } else if (file.lastModified() < to.lastModified()) {
+                    getLog().debug("Skipping generated file: " + to);
+                    continue;
+                } else {
+                    getLog().warn("Stale file: " + to);
+                }
             }
             try {
                 copyFile(file, to);
@@ -844,9 +867,16 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         for (File file : jsonFiles) {
             File to = new File(othersOutDir, file.getName());
-            if (warnDups && to.exists()) {
-                duplicateJsonFiles.add(to);
-                getLog().warn("Duplicate other name detected: " + to);
+            if (to.exists()) {
+                if (warnDups) {
+                    duplicateJsonFiles.add(to);
+                    getLog().warn("Duplicate other name detected: " + to);
+                } else if (file.lastModified() < to.lastModified()) {
+                    getLog().debug("Skipping generated file: " + to);
+                    continue;
+                } else {
+                    getLog().warn("Stale file: " + to);
+                }
             }
             try {
                 copyFile(file, to);
@@ -1043,9 +1073,16 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         for (File file : adocFiles) {
             File to = new File(documentsOutDir, file.getName());
-            if (warnDups && to.exists()) {
-                duplicateAdocFiles.add(to);
-                getLog().warn("Duplicate document name detected: " + to);
+            if (to.exists()) {
+                if (warnDups) {
+                    duplicateAdocFiles.add(to);
+                    getLog().warn("Duplicate document name detected: " + to);
+                } else if (file.lastModified() < to.lastModified()) {
+                    getLog().debug("Skipping generated file: " + to);
+                    continue;
+                } else {
+                    getLog().warn("Stale file: " + to);
+                }
             }
             try {
                 copyFile(file, to);

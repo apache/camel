@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -110,7 +110,8 @@ public class GoogleMailComponentConfiguration
          */
         private String refreshToken;
         /**
-         * Google mail application name. Example would be camel-google-mail/1.0
+         * Google mail application name. Example would be
+         * "camel-google-mail/1.0"
          */
         private String applicationName;
 

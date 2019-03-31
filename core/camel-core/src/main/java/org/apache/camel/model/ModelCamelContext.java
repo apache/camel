@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,7 +24,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 
@@ -49,23 +48,17 @@ public interface ModelCamelContext extends CamelContext {
     RouteDefinition getRouteDefinition(String id);
 
     /**
-     * Loads a collection of route definitions from the given {@link java.io.InputStream}.
+     * Adds a collection of route definitions to the context
+     * <p/>
+     * <b>Important: </b> Each route in the same {@link org.apache.camel.CamelContext} must have an <b>unique</b> route id.
+     * If you use the API from {@link org.apache.camel.CamelContext} or {@link org.apache.camel.model.ModelCamelContext} to add routes, then any
+     * new routes which has a route id that matches an old route, then the old route is replaced by the new route.
      *
      * @param is input stream with the route(s) definition to add
-     * @return the route definitions
-     * @throws Exception if the route definitions could not be loaded for whatever reason
+     * @throws Exception if the route definitions could not be created for whatever reason
      */
-    RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception;
+    void addRouteDefinitions(InputStream is) throws Exception;
 
-    /**
-     * Loads a collection of rest definitions from the given {@link java.io.InputStream}.
-     *
-     * @param is input stream with the rest(s) definition to add
-     * @return the rest definitions
-     * @throws Exception if the rest definitions could not be loaded for whatever reason
-     */
-    RestsDefinition loadRestsDefinition(InputStream is) throws Exception;
-    
     /**
      * Adds a collection of route definitions to the context
      * <p/>
@@ -118,10 +111,20 @@ public interface ModelCamelContext extends CamelContext {
     /**
      * Adds a collection of rest definitions to the context
      *
-     * @param restDefinitions the rest(s) definition to add
+     * @param is input stream with the rest(s) definition to add
+     * @param addToRoutes whether the rests should also automatically be added as routes
      * @throws Exception if the rest definitions could not be created for whatever reason
      */
-    void addRestDefinitions(Collection<RestDefinition> restDefinitions) throws Exception;
+    void addRestDefinitions(InputStream is, boolean addToRoutes) throws Exception;
+
+    /**
+     * Adds a collection of rest definitions to the context
+     *
+     * @param restDefinitions the rest(s) definition to add
+     * @param addToRoutes whether the rests should also automatically be added as routes
+     * @throws Exception if the rest definitions could not be created for whatever reason
+     */
+    void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes) throws Exception;
 
     /**
      * Sets the data formats that can be referenced in the routes.

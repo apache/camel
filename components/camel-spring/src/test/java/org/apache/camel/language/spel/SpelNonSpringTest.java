@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,11 +16,8 @@
  */
 package org.apache.camel.language.spel;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.LanguageTestSupport;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.language.spel.bean.Dummy;
 import org.junit.Test;
 
@@ -29,15 +26,10 @@ import org.junit.Test;
  */
 public class SpelNonSpringTest extends LanguageTestSupport {
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("myDummy", new Dummy());
-        return new DefaultCamelContext(registry);
-    }
-
     @Test
     public void testSpelBeanExpressions() throws Exception {
+        context.getRegistry().bind("myDummy", new Dummy());
+
         assertExpression("#{@myDummy.foo == 'xyz'}", true);
         assertExpression("#{@myDummy.bar == 789}", true);
         assertExpression("#{@myDummy.bar.toString()}", "789");
@@ -50,6 +42,8 @@ public class SpelNonSpringTest extends LanguageTestSupport {
     
     @Test
     public void testSpelBeanPredicates() throws Exception {
+        context.getRegistry().bind("myDummy", new Dummy());
+        
         assertPredicate("@myDummy.foo == 'xyz'");
         assertPredicate("@myDummy.bar == 789");
         assertPredicate("@myDummy.bar instanceof T(Integer)");

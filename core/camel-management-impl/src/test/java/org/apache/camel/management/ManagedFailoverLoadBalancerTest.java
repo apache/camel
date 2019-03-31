@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -90,18 +90,6 @@ public class ManagedFailoverLoadBalancerTest extends ManagementTestSupport {
         TabularData data = (TabularData) mbeanServer.invoke(on, "exceptionStatistics", null, null);
         assertNotNull(data);
         assertEquals(2, data.size());
-
-        data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
-        assertNotNull(data);
-        assertEquals(3, data.size());
-
-        data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
-        assertNotNull(data);
-        assertEquals(5, data.size());
-
-        String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
-        assertNotNull(json);
-        assertTrue(json.contains("\"description\": \"Balances message processing among a number of nodes"));
     }
 
     @Override

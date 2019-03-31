@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,14 +17,13 @@
 package org.apache.camel.component.jcr;
 
 import java.io.File;
-
 import javax.jcr.Repository;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.security.AccessControlList;
 import javax.jcr.security.AccessControlManager;
 import javax.jcr.security.AccessControlPolicyIterator;
-import javax.naming.Context;
 
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.jackrabbit.api.security.user.User;
 import org.apache.jackrabbit.api.security.user.UserManager;
@@ -52,9 +51,7 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        
+    protected void bindToRegistry(Registry registry) throws Exception {
         repository = new TransientRepository(new File(REPO_PATH));
 
         // set up a user to authenticate
@@ -83,8 +80,7 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
         session.save();
         session.logout();
 
-        context.bind("repository", repository);
-        return context;
+        registry.bind("repository", repository);
     }
 
     protected Repository getRepository() {

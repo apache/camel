@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.TimeoutMap;
+import org.apache.camel.TimeoutMap.Listener.Type;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.DefaultTimeoutMap;
 import org.apache.camel.support.service.ServiceHelper;
@@ -180,7 +181,8 @@ public abstract class TimeoutCorrelationManagerSupport extends ServiceSupport im
             workerPool = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, "NettyTimeoutWorkerPool");
         }
 
-        map = new NettyStateTimeoutMap(scheduledExecutorService);
+        map = new DefaultTimeoutMap<>(scheduledExecutorService, timeoutChecker);
+        map.addListener(this::onEviction);
 
         ServiceHelper.startService(map);
     }
@@ -213,31 +215,25 @@ public abstract class TimeoutCorrelationManagerSupport extends ServiceSupport im
         }
     }
 
-    private final class NettyStateTimeoutMap extends DefaultTimeoutMap<String, NettyCamelState> {
-
-        NettyStateTimeoutMap(ScheduledExecutorService executor) {
-            super(executor, timeoutChecker);
+    private void onEviction(Type type, String key, NettyCamelState value) {
+        if (type != Type.Evict) {
+            return;
         }
 
-        @Override
-        public boolean onEviction(String key, NettyCamelState value) {
-            timeoutLogger.log("Timeout of correlation id: " + key);
+        timeoutLogger.log("Timeout of correlation id: " + key);
 
-            workerPool.submit(() -> {
-                Exchange exchange = value.getExchange();
-                AsyncCallback callback = value.getCallback();
-                if (exchange != null && callback != null) {
-                    Object timeoutBody = getTimeoutResponse(key, exchange.getMessage().getBody());
-                    if (timeoutBody != null) {
-                        exchange.getMessage().setBody(timeoutBody);
-                    } else {
-                        exchange.setException(new ExchangeTimedOutException(exchange, timeout));
-                    }
-                    callback.done(false);
+        workerPool.submit(() -> {
+            Exchange exchange = value.getExchange();
+            AsyncCallback callback = value.getCallback();
+            if (exchange != null && callback != null) {
+                Object timeoutBody = getTimeoutResponse(key, exchange.getMessage().getBody());
+                if (timeoutBody != null) {
+                    exchange.getMessage().setBody(timeoutBody);
+                } else {
+                    exchange.setException(new ExchangeTimedOutException(exchange, timeout));
                 }
-            });
-
-            return true;
-        }
+                callback.done(false);
+            }
+        });
     }
 }

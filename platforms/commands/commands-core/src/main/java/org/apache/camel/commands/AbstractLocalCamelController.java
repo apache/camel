@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +32,7 @@ import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.TabularData;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
@@ -278,8 +278,9 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
                         row.put("routeId", route.getId());
                         row.put("state", getRouteState(route));
                         row.put("uptime", route.getUptime());
-                        ManagedRouteMBean mr = context.getExtension(ManagedCamelContext.class).getManagedRoute(route.getId());
-                        if (mr != null) {
+                        ManagedCamelContext mcc = context.getExtension(ManagedCamelContext.class);
+                        if (mcc != null && mcc.getManagedCamelContext() != null) {
+                            ManagedRouteMBean mr = mcc.getManagedRoute(route.getId());
                             row.put("exchangesTotal", "" + mr.getExchangesTotal());
                             row.put("exchangesInflight", "" + mr.getExchangesInflight());
                             row.put("exchangesFailed", "" + mr.getExchangesFailed());
@@ -399,6 +400,30 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
                 String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
                 if (camelId != null && camelId.equals(camelContextName)) {
                     String xml = (String) mBeanServer.invoke(routeMBean, "dumpRouteStatsAsXml", new Object[]{fullStats, includeProcessors}, new String[]{"boolean", "boolean"});
+                    return xml;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String getStepStatsAsXml(String routeId, String camelContextName, boolean fullStats) throws Exception {
+        CamelContext context = this.getLocalCamelContext(camelContextName);
+        if (context == null) {
+            return null;
+        }
+
+        ManagementAgent agent = context.getManagementStrategy().getManagementAgent();
+        if (agent != null) {
+            MBeanServer mBeanServer = agent.getMBeanServer();
+            Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=routes,name=\"" + routeId + "\",*"), null);
+            for (ObjectName routeMBean : set) {
+
+                // the route must be part of the camel context
+                String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
+                if (camelId != null && camelId.equals(camelContextName)) {
+                    String xml = (String) mBeanServer.invoke(routeMBean, "dumpStepStatsAsXml", new Object[]{fullStats}, new String[]{"boolean"});
                     return xml;
                 }
             }
@@ -538,95 +563,6 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
                 }
             }
         }
-        return answer;
-    }
-
-    public String explainEndpointAsJSon(String camelContextName, String uri, boolean allOptions) throws Exception {
-        CamelContext context = this.getLocalCamelContext(camelContextName);
-        if (context == null) {
-            return null;
-        }
-        return context.explainEndpointJson(uri, allOptions);
-    }
-
-    public String explainEipAsJSon(String camelContextName, String nameOrId, boolean allOptions) throws Exception {
-        CamelContext context = this.getLocalCamelContext(camelContextName);
-        if (context == null) {
-            return null;
-        }
-        return context.explainEipJson(nameOrId, allOptions);
-    }
-
-    public List<Map<String, String>> listComponents(String camelContextName) throws Exception {
-        CamelContext context = this.getLocalCamelContext(camelContextName);
-        if (context == null) {
-            return null;
-        }
-
-        List<Map<String, String>> answer = new ArrayList<>();
-
-        // find all components
-        Map<String, Properties> components = context.findComponents();
-
-        // gather component detail for each component
-        for (Map.Entry<String, Properties> entry : components.entrySet()) {
-            String name = entry.getKey();
-            String description = null;
-            String label = null;
-            // the status can be:
-            // - loaded = in use
-            // - classpath = on the classpath
-            // - release = available from the Apache Camel release
-            String status = context.hasComponent(name) != null ? "in use" : "on classpath";
-            String type = null;
-            String groupId = null;
-            String artifactId = null;
-            String version = null;
-
-            // load component json data, and parse it to gather the component meta-data
-            String json = context.getComponentParameterJsonSchema(name);
-            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
-            for (Map<String, String> row : rows) {
-                if (row.containsKey("description")) {
-                    description = row.get("description");
-                } else if (row.containsKey("label")) {
-                    label = row.get("label");
-                } else if (row.containsKey("javaType")) {
-                    type = row.get("javaType");
-                } else if (row.containsKey("groupId")) {
-                    groupId = row.get("groupId");
-                } else if (row.containsKey("artifactId")) {
-                    artifactId = row.get("artifactId");
-                } else if (row.containsKey("version")) {
-                    version = row.get("version");
-                }
-            }
-
-            Map<String, String> row = new HashMap<>();
-            row.put("name", name);
-            row.put("status", status);
-            if (description != null) {
-                row.put("description", description);
-            }
-            if (label != null) {
-                row.put("label", label);
-            }
-            if (type != null) {
-                row.put("type", type);
-            }
-            if (groupId != null) {
-                row.put("groupId", groupId);
-            }
-            if (artifactId != null) {
-                row.put("artifactId", artifactId);
-            }
-            if (version != null) {
-                row.put("version", version);
-            }
-
-            answer.add(row);
-        }
-
         return answer;
     }
 

@@ -17,134 +17,135 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel.example</groupId>
-    <artifactId>camel-example-opentracing</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>org.apache.camel.example</groupId>
+        <artifactId>camel-example-opentracing</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>camel-example-opentracing-service2</artifactId>
-  <name>Camel :: Example :: OpenTracing :: Service 2</name>
-  <description>An example showing how to trace incoming and outgoing messages from Camel with OpenTracing</description>
+    <artifactId>camel-example-opentracing-service2</artifactId>
+    <name>Camel :: Example :: OpenTracing :: Service 2</name>
+    <description>An example showing how to trace incoming and outgoing messages from Camel with OpenTracing
+    </description>
 
-  <properties>
-    <opentracing-agent.lib>${project.build.directory}/lib</opentracing-agent.lib>
-  </properties>
+    <properties>
+        <opentracing-agent.lib>${project.build.directory}/lib</opentracing-agent.lib>
+    </properties>
 
-  <!-- import Camel BOM -->
-  <dependencyManagement>
+    <!-- import Camel BOM -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-parent</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-parent</artifactId>
-        <version>${project.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
+
+        <!-- camel-core -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-undertow</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.xnio</groupId>
+            <artifactId>xnio-nio</artifactId>
+            <version>${jboss-xnio-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-1.2-api</artifactId>
+        </dependency>
+
+        <!-- OpenTracing dependencies -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-opentracing</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel.example</groupId>
+            <artifactId>camel-example-opentracing-loggingtracer</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.opentracing.contrib</groupId>
+            <artifactId>opentracing-agent</artifactId>
+            <version>${opentracing-java-agent-version}</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
-  </dependencyManagement>
 
-  <dependencies>
+    <build>
 
-    <!-- camel-core -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-undertow</artifactId>
-    </dependency>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>get-agent</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>io.opentracing.contrib</groupId>
+                                    <artifactId>opentracing-agent</artifactId>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${opentracing-agent.lib}</outputDirectory>
+                                    <destFileName>opentracing-agent.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-javaagent:${opentracing-agent.lib}/opentracing-agent.jar</argument>
+                        <argument>-classpath</argument>
+                        <classpath/>
+                        <argument>sample.camel.Service2Application</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+        </plugins>
 
-    <dependency>
-      <groupId>org.jboss.xnio</groupId>
-      <artifactId>xnio-nio</artifactId>
-      <version>${jboss-xnio-version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-1.2-api</artifactId>
-    </dependency>
-
-    <!-- OpenTracing dependencies -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-opentracing</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel.example</groupId>
-      <artifactId>camel-example-opentracing-loggingtracer</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.opentracing.contrib</groupId>
-      <artifactId>opentracing-agent</artifactId>
-      <version>${opentracing-java-agent-version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-  </dependencies>
-
-  <build>
-
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>get-agent</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>io.opentracing.contrib</groupId>
-                  <artifactId>opentracing-agent</artifactId>
-                  <overWrite>true</overWrite>
-                  <outputDirectory>${opentracing-agent.lib}</outputDirectory>
-                  <destFileName>opentracing-agent.jar</destFileName>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <configuration>
-          <executable>java</executable>
-          <arguments>
-            <argument>-javaagent:${opentracing-agent.lib}/opentracing-agent.jar</argument>
-            <argument>-classpath</argument>
-            <classpath/>
-            <argument>sample.camel.Service2Application</argument>
-          </arguments>
-        </configuration>
-      </plugin>
-    </plugins>
-
-  </build>
+    </build>
 
 </project>

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,7 +29,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.StringHelper;
 
@@ -37,7 +37,7 @@ import org.apache.camel.util.StringHelper;
  * Component for JavaMail.
  */
 @Component("imap,imaps,pop3,pop3s,smtp,smtps")
-public class MailComponent extends DefaultComponent implements SSLContextParametersAware {
+public class MailComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced")
     private MailConfiguration configuration;
@@ -100,6 +100,7 @@ public class MailComponent extends DefaultComponent implements SSLContextParamet
         }
 
         endpoint.setContentTypeResolver(contentTypeResolver);
+        setEndpointHeaderFilterStrategy(endpoint);
         setProperties(endpoint.getConfiguration(), parameters);
         setProperties(endpoint, parameters);
 

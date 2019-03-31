@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,9 +16,6 @@
  */
 package org.apache.camel;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
@@ -29,24 +26,6 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum ExchangePattern {
     InOnly, InOut, InOptionalOut;
-
-    protected static final Map<String, ExchangePattern> MAP = new HashMap<>();
-
-    /**
-     * Returns the WSDL URI for this message exchange pattern
-     */
-    public String getWsdlUri() {
-        switch (this) {
-        case InOnly:
-            return "http://www.w3.org/ns/wsdl/in-only";
-        case InOptionalOut:
-            return "http://www.w3.org/ns/wsdl/in-opt-out";
-        case InOut:
-            return "http://www.w3.org/ns/wsdl/in-out";
-        default:
-            throw new IllegalArgumentException("Unknown message exchange pattern: " + this);
-        }
-    }
 
     /**
      * Return true if there can be an IN message
@@ -79,13 +58,6 @@ public enum ExchangePattern {
         }
     }
 
-    /**
-     * Converts the WSDL URI into a {@link ExchangePattern} instance
-     */
-    public static ExchangePattern fromWsdlUri(String wsdlUri) {
-        return MAP.get(wsdlUri);
-    }
-    
     public static ExchangePattern asEnum(String value) {
         try {
             return valueOf(value);
@@ -94,13 +66,4 @@ public enum ExchangePattern {
         }
     }
 
-    static {
-        for (ExchangePattern mep : values()) {
-            String uri = mep.getWsdlUri();
-            MAP.put(uri, mep);
-            String name = uri.substring(uri.lastIndexOf('/') + 1);
-            MAP.put("http://www.w3.org/2004/08/wsdl/" + name, mep);
-            MAP.put("http://www.w3.org/2006/01/wsdl/" + name, mep);
-        }
-    }
 }

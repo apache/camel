@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,7 +39,15 @@ public class EnvPropertiesFunction implements PropertiesFunction {
             defaultValue = StringHelper.after(remainder, ":");
         }
 
+        // lookup OS environment variable using upper case key
+        key = key.toUpperCase();
+
         String value = System.getenv(key);
+        // some OS do not support dashes in keys, so replace with underscore
+        if (value == null) {
+            String noDashKey = key.replace('-', '_');
+            value = System.getenv(noDashKey);
+        }
         return value != null ? value : defaultValue;
     }
 

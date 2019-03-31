@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -47,14 +47,20 @@ public interface SendDynamicAware {
      */
     class DynamicAwareEntry {
 
+        private final String uri;
         private final String originalUri;
         private final Map<String, String> properties;
         private final Map<String, String> lenientProperties;
 
-        public DynamicAwareEntry(String originalUri, Map<String, String> properties, Map<String, String> lenientProperties) {
+        public DynamicAwareEntry(String uri, String originalUri, Map<String, String> properties, Map<String, String> lenientProperties) {
+            this.uri = uri;
             this.originalUri = originalUri;
             this.properties = properties;
             this.lenientProperties = lenientProperties;
+        }
+
+        public String getUri() {
+            return uri;
         }
 
         public String getOriginalUri() {
@@ -74,12 +80,13 @@ public interface SendDynamicAware {
      * Prepares for using optimised dynamic to by parsing the uri and returning an entry of details that are
      * used for creating the pre and post processors, and the static uri.
      *
-     * @param exchange    the exchange
-     * @param uri         the original uri
+     * @param exchange     the exchange
+     * @param uri          the resolved uri which is intended to be used
+     * @param originalUri  the original uri of the endpoint before any dynamic evaluation
      * @return prepared information about the dynamic endpoint to use
      * @throws Exception is thrown if error parsing the uri
      */
-    DynamicAwareEntry prepare(Exchange exchange, String uri) throws Exception;
+    DynamicAwareEntry prepare(Exchange exchange, String uri, String originalUri) throws Exception;
 
     /**
      * Resolves the static part of the uri that are used for creating a single {@link org.apache.camel.Endpoint}

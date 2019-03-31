@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,7 +31,7 @@ import static org.hamcrest.core.Is.is;
 
 public class HipchatXmlDefinedComponentProducerTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "hipchat:https:foobar.com:443?authToken=abc123")
+    @EndpointInject("hipchat:https:foobar.com:443?authToken=abc123")
     protected Endpoint endpoint;
 
     @Test

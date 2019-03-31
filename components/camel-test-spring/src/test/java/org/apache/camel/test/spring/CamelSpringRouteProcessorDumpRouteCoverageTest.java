@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,9 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.test.spring;
+
 import java.io.File;
 
-import org.apache.camel.management.ManagedManagementStrategy;
+import org.apache.camel.management.JmxManagementStrategy;
 import org.apache.camel.test.junit4.TestSupport;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -37,7 +38,7 @@ public class CamelSpringRouteProcessorDumpRouteCoverageTest extends CamelSpringR
     @Test
     public void testJmx() throws Exception {
         // JMX is enabled with route coverage
-        assertEquals(ManagedManagementStrategy.class, camelContext.getManagementStrategy().getClass());
+        assertEquals(JmxManagementStrategy.class, camelContext.getManagementStrategy().getClass());
     }
 
     @Override

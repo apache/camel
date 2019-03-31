@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.spring.boot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -38,12 +39,12 @@ import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.health.HealthCheckService;
-import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.FileWatcherReloadStrategy;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
@@ -54,7 +55,6 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementObjectNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicyFactory;
@@ -66,7 +66,9 @@ import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.spring.spi.ApplicationContextBeanRepository;
 import org.apache.camel.spring.spi.XmlCamelContextConfigurer;
+import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -124,13 +126,17 @@ public class CamelAutoConfiguration {
 
         if (camelContext instanceof DefaultCamelContext) {
             final DefaultCamelContext defaultContext = (DefaultCamelContext) camelContext;
-            final Map<String, Registry> registryBeans = applicationContext.getBeansOfType(Registry.class);
+            final Map<String, BeanRepository> repositories = applicationContext.getBeansOfType(BeanRepository.class);
 
-            if (!registryBeans.isEmpty()) {
-                final List<Registry> registries = new ArrayList<>(registryBeans.values());
-                OrderComparator.sort(registries);
-                final Registry registry = new CompositeRegistry(registries);
-                defaultContext.setRegistry(registry);
+            if (!repositories.isEmpty()) {
+                List<BeanRepository> reps = new ArrayList<>();
+                // include default bean repository as well
+                reps.add(new ApplicationContextBeanRepository(applicationContext));
+                // and then any custom
+                reps.addAll(repositories.values());
+                // sort by ordered
+                OrderComparator.sort(reps);
+                defaultContext.setRegistry(new DefaultRegistry(reps));
             }
         }
 

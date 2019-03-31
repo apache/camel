@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.junit.Test;
 
 public class BeanInjectRouteBuilderTest extends ContextTestSupport {
@@ -41,7 +42,7 @@ public class BeanInjectRouteBuilderTest extends ContextTestSupport {
         CamelContext context = super.createCamelContext();
 
         // manual post process us as ContextTestSupport in camel-core doesn't do that out of the box
-        DefaultCamelBeanPostProcessor post = new DefaultCamelBeanPostProcessor(context);
+        CamelBeanPostProcessor post = context.getBeanPostProcessor();
         post.postProcessBeforeInitialization(this, "MyRoute");
         post.postProcessAfterInitialization(this, "MyRoute");
         return context;

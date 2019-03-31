@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,7 @@ import java.util.Map;
 import com.rabbitmq.client.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -106,7 +106,7 @@ public class RabbitMQComponentTest {
     public void testConnectionFactoryRef() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
         ConnectionFactory connectionFactoryMock = Mockito.mock(ConnectionFactory.class);
-        registry.put("connectionFactoryMock", connectionFactoryMock);
+        registry.bind("connectionFactoryMock", connectionFactoryMock);
 
         CamelContext defaultContext = new DefaultCamelContext(registry);
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -165,6 +165,24 @@ public final class EventHelper {
             EventNotifier::isIgnoreExchangeSentEvents);
     }
 
+    public static boolean notifyStepStarted(CamelContext context, Exchange exchange, String stepId) {
+        return doNotifyStep(context, exchange,
+            factory -> factory.createStepStartedEvent(exchange, stepId),
+            EventNotifier::isIgnoreStepEvents);
+    }
+
+    public static boolean notifyStepDone(CamelContext context, Exchange exchange, String stepId) {
+        return doNotifyStep(context, exchange,
+            factory -> factory.createStepCompletedEvent(exchange, stepId),
+            EventNotifier::isIgnoreStepEvents);
+    }
+
+    public static boolean notifyStepFailed(CamelContext context, Exchange exchange, String stepId) {
+        return doNotifyStep(context, exchange,
+            factory -> factory.createStepFailedEvent(exchange, stepId),
+            EventNotifier::isIgnoreStepEvents);
+    }
+
     public static boolean notifyCamelContextSuspending(CamelContext context) {
         return doNotify(context,
             factory -> factory.createCamelContextSuspendingEvent(context),
@@ -203,6 +221,16 @@ public final class EventHelper {
         return doNotify(context,
                 eventSupplier,
                 notifierFilter.or(EventNotifier::isIgnoreExchangeEvents));
+    }
+
+    private static boolean doNotifyStep(CamelContext context, Exchange exchange, Function<EventFactory, CamelEvent> eventSupplier, Predicate<EventNotifier> notifierFilter) {
+        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+            // do not generate events for an notify event
+            return false;
+        }
+        return doNotify(context,
+            eventSupplier,
+            notifierFilter.or(EventNotifier::isIgnoreStepEvents));
     }
 
     private static boolean doNotify(CamelContext context, Function<EventFactory, CamelEvent> eventSupplier, Predicate<EventNotifier> notifierFilter) {

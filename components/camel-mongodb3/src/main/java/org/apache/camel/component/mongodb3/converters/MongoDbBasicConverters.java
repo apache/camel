@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -44,7 +44,7 @@ import org.bson.json.JsonReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Converter
+@Converter(loader = true)
 public final class MongoDbBasicConverters {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbBasicConverters.class);

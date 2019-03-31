@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
@@ -178,7 +178,7 @@ public class SmppComponentTest {
     @Test
     public void createEndpointWithSessionStateListener() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("sessionStateListener", new SessionStateListener() {
+        registry.bind("sessionStateListener", new SessionStateListener() {
             @Override
             public void onStateChange(SessionState arg0, SessionState arg1, Session arg2) {
             }

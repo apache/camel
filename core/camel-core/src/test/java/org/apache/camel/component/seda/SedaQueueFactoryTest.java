@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,8 +23,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.util.SedaConstants;
 import org.junit.Test;
 
@@ -36,11 +34,10 @@ public class SedaQueueFactoryTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        SimpleRegistry simpleRegistry = new SimpleRegistry();
-        simpleRegistry.put("arrayQueueFactory", arrayQueueFactory);
-        return new DefaultCamelContext(simpleRegistry);
+        CamelContext context = super.createCamelContext();
+        context.getRegistry().bind("arrayQueueFactory", arrayQueueFactory);
+        return context;
     }
-
 
     @Test
     public void testArrayBlockingQueueFactory() throws Exception {

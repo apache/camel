@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A converter of StAX objects
  */
-@Converter
+@Converter(loader = true)
 public class StaxConverter {
     private static final Logger LOG = LoggerFactory.getLogger(StaxConverter.class);
 

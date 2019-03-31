@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -214,6 +214,33 @@ public interface EventFactory {
      * @return the created event
      */
     CamelEvent createExchangeSentEvent(Exchange exchange, Endpoint endpoint, long timeTaken);
+
+    /**
+     * Creates an {@link CamelEvent} when a step has been started
+     *
+     * @param exchange the exchange
+     * @param stepId   the step id
+     * @return the created event
+     */
+    CamelEvent createStepStartedEvent(Exchange exchange, String stepId);
+
+    /**
+     * Creates an {@link CamelEvent} when a step has been completed successfully
+     *
+     * @param exchange the exchange
+     * @param stepId   the step id
+     * @return the created event
+     */
+    CamelEvent createStepCompletedEvent(Exchange exchange, String stepId);
+
+    /**
+     * Creates an {@link CamelEvent} when a step has failed
+     *
+     * @param exchange the exchange
+     * @param stepId   the step id
+     * @return the created event
+     */
+    CamelEvent createStepFailedEvent(Exchange exchange, String stepId);
 
     /**
      * Creates an {@link CamelEvent} for Camel is suspending.

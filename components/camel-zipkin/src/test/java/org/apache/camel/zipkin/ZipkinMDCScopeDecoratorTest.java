@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,7 @@ import org.slf4j.MDC;
 
 import zipkin2.reporter.Reporter;
 
-@Ignore
+
 public class ZipkinMDCScopeDecoratorTest extends CamelTestSupport {
     
     private ZipkinTracer zipkin;
@@ -63,7 +63,6 @@ public class ZipkinMDCScopeDecoratorTest extends CamelTestSupport {
                 from("direct:start").to("seda:cat");
 
                 from("seda:cat").routeId("cat")
-                        .delay(simple("${random(1000,2000)}"))
                         .setBody().constant("Cat says hello Dog")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {

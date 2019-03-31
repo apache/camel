@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,45 +22,17 @@ import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.Producer;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.core.osgi.utils.BundleContextUtils;
 
 @Vetoed
 final class CdiCamelEnvironment {
 
-    private final boolean hasBundleContext;
-
-    CdiCamelEnvironment() {
-        hasBundleContext = isCamelCoreOsgiPresent() && hasBundleContext(CdiCamelExtension.class);
-    }
-
     <T extends CamelContext> Producer<T> camelContextProducer(Producer<T> delegate, Annotated annotated, BeanManager manager, CdiCamelExtension extension) {
-        CamelContextProducer<T> producer = new CamelContextProducer<>(delegate, annotated, manager, extension);
-        return hasBundleContext ? new CamelContextOsgiProducer<>(producer) : producer;
+        return new CamelContextProducer<>(delegate, annotated, manager, extension);
     }
 
     <T extends CamelContext> InjectionTarget<T> camelContextInjectionTarget(InjectionTarget<T> delegate, Annotated annotated, BeanManager manager, CdiCamelExtension extension) {
         CamelContextProducer<T> producer = new CamelContextProducer<>(delegate, annotated, manager, extension);
-        return new CamelContextInjectionTarget<>(delegate, hasBundleContext ? new CamelContextOsgiProducer<>(producer) : producer);
+        return new CamelContextInjectionTarget<>(delegate, producer);
     }
 
-    private static boolean isCamelCoreOsgiPresent() {
-        try {
-            getClassLoader(CdiCamelExtension.class).loadClass("org.apache.camel.core.osgi.OsgiCamelContextHelper");
-            return true;
-        } catch (ClassNotFoundException | NoClassDefFoundError cause) {
-            return false;
-        }
-    }
-
-    private static boolean hasBundleContext(Class clazz) {
-        return BundleContextUtils.getBundleContext(clazz) != null;
-    }
-
-    private static ClassLoader getClassLoader(Class<?> clazz) {
-        if (Thread.currentThread().getContextClassLoader() != null) {
-            return Thread.currentThread().getContextClassLoader();
-        } else {
-            return clazz.getClassLoader();
-        }
-    }
 }

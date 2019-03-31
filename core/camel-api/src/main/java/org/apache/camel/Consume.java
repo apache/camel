@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,12 +39,15 @@ public @interface Consume {
     /**
      * The uri to consume from
      */
-    String uri() default "";
+    String value() default "";
 
     /**
-     * Reference to endpoint to consume from
+     * The uri to consume from
+     *
+     * @deprecated use value instead
      */
-    String ref() default "";
+    @Deprecated
+    String uri() default "";
 
     /**
      * Use the field or getter on the bean to provide the uri to consume from

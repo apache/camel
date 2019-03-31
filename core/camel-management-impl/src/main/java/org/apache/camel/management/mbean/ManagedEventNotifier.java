@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -131,6 +131,14 @@ public class ManagedEventNotifier extends NotificationBroadcasterSupport impleme
         getEventNotifier().setIgnoreExchangeSendingEvents(ignoreExchangeSendingEvents);
     }
 
+    public boolean isIgnoreStepEvents() {
+        return getEventNotifier().isIgnoreStepEvents();
+    }
+
+    public void setIgnoreStepEvents(boolean ignoreStepEvents) {
+        getEventNotifier().setIgnoreStepEvents(ignoreStepEvents);
+    }
+
     public MBeanNotificationInfo[] getNotificationInfo() {
         // all the class names in the event package
         String[] names = {"CamelContextStartedEvent", "CamelContextStartingEvent", "CamelContextStartupFailureEvent",
@@ -138,7 +146,8 @@ public class ManagedEventNotifier extends NotificationBroadcasterSupport impleme
                           "CamelContextSuspendingEvent", "CamelContextSuspendedEvent", "CamelContextResumingEvent", "CamelContextResumedEvent",
                           "CamelContextResumeFailureEvent", "ExchangeCompletedEvent", "ExchangeCreatedEvent", "ExchangeFailedEvent",
                           "ExchangeFailureHandledEvent", "ExchangeRedeliveryEvents", "ExchangeSendingEvent", "ExchangeSentEvent", "RouteStartedEvent",
-                          "RouteStoppedEvent", "ServiceStartupFailureEvent", "ServiceStopFailureEvent"};
+                          "RouteStoppedEvent", "ServiceStartupFailureEvent", "ServiceStopFailureEvent",
+                          "StepStartedEvent", "StepCompletedEvent", "StepFailedEvent"};
 
         List<MBeanNotificationInfo> infos = new ArrayList<>();
         for (String name : names) {

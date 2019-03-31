@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,8 +16,6 @@
  */
 package org.apache.camel.management.mbean;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.management.AttributeValueExp;
 import javax.management.MBeanServer;
@@ -40,8 +37,6 @@ import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
-import org.w3c.dom.Document;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
@@ -52,6 +47,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.api.management.mbean.RouteError;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
@@ -60,7 +56,6 @@ import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -323,44 +318,21 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     public String dumpRouteAsXml() throws Exception {
-        return dumpRouteAsXml(false);
+        return dumpRouteAsXml(false, false);
+    }
+
+    public String dumpRouteAsXml(boolean resolvePlaceholders) throws Exception {
+        return dumpRouteAsXml(resolvePlaceholders, false);
     }
 
     @Override
-    public String dumpRouteAsXml(boolean resolvePlaceholders) throws Exception {
+    public String dumpRouteAsXml(boolean resolvePlaceholders, boolean resolveDelegateEndpoints) throws Exception {
         String id = route.getId();
         RouteDefinition def = context.getRouteDefinition(id);
         if (def != null) {
-            String xml = ModelHelper.dumpModelAsXml(context, def);
-
-            // if resolving placeholders we parse the xml, and resolve the property placeholders during parsing
-            if (resolvePlaceholders) {
-                final AtomicBoolean changed = new AtomicBoolean();
-                InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8"));
-                Document dom = XmlLineNumberParser.parseXml(is, new XmlLineNumberParser.XmlTextTransformer() {
-                    @Override
-                    public String transform(String text) {
-                        try {
-                            String after = getContext().resolvePropertyPlaceholders(text);
-                            if (!changed.get()) {
-                                changed.set(!text.equals(after));
-                            }
-                            return after;
-                        } catch (Exception e) {
-                            // ignore
-                            return text;
-                        }
-                    }
-                });
-                // okay there were some property placeholder replaced so re-create the model
-                if (changed.get()) {
-                    xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
-                    RouteDefinition copy = ModelHelper.createModelFromXml(context, xml, RouteDefinition.class);
-                    xml = ModelHelper.dumpModelAsXml(context, copy);
-                }
-            }
-            return xml;
+            return ModelHelper.dumpModelAsXml(context, def, resolvePlaceholders, resolveDelegateEndpoints);
         }
+
         return null;
     }
 
@@ -479,6 +451,61 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return answer.toString();
     }
 
+    public String dumpStepStatsAsXml(boolean fullStats) throws Exception {
+        // in this logic we need to calculate the accumulated processing time for the processor in the route
+        // and hence why the logic is a bit more complicated to do this, as we need to calculate that from
+        // the bottom -> top of the route but this information is valuable for profiling routes
+        StringBuilder sb = new StringBuilder();
+
+        // gather all the steps for this route, which requires JMX
+        sb.append("  <stepStats>\n");
+        MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+        if (server != null) {
+            // get all the processor mbeans and sort them accordingly to their index
+            String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+            ObjectName query = ObjectName.getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=steps,*");
+            Set<ObjectName> names = server.queryNames(query, null);
+            List<ManagedStepMBean> mps = new ArrayList<>();
+            for (ObjectName on : names) {
+                ManagedStepMBean step = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedStepMBean.class);
+
+                // the step must belong to this route
+                if (getRouteId().equals(step.getRouteId())) {
+                    mps.add(step);
+                }
+            }
+            mps.sort(new OrderProcessorMBeans());
+
+            // and now add the sorted list of steps to the xml output
+            for (ManagedStepMBean step : mps) {
+                sb.append("    <stepStat").append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\"", step.getProcessorId(), step.getIndex(), step.getState()));
+                // use substring as we only want the attributes
+                sb.append(" ").append(step.dumpStatsAsXml(fullStats).substring(7)).append("\n");
+            }
+        }
+        sb.append("  </stepStats>\n");
+
+        StringBuilder answer = new StringBuilder();
+        answer.append("<routeStat").append(String.format(" id=\"%s\"", route.getId())).append(String.format(" state=\"%s\"", getState()));
+        // use substring as we only want the attributes
+        String stat = dumpStatsAsXml(fullStats);
+        answer.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
+        InflightRepository.InflightExchange oldest = getOldestInflightEntry();
+        if (oldest == null) {
+            answer.append(" oldestInflightExchangeId=\"\"");
+            answer.append(" oldestInflightDuration=\"\"");
+        } else {
+            answer.append(" oldestInflightExchangeId=\"").append(oldest.getExchange().getExchangeId()).append("\"");
+            answer.append(" oldestInflightDuration=\"").append(oldest.getDuration()).append("\"");
+        }
+        answer.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
+
+        answer.append(sb);
+
+        answer.append("</routeStat>");
+        return answer.toString();
+    }
+
     public void reset(boolean includeProcessors) throws Exception {
         reset();
 
@@ -496,15 +523,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 }
             }
         }
-    }
-
-    public String createRouteStaticEndpointJson() {
-        return getContext().createRouteStaticEndpointJson(getRouteId());
-    }
-
-    @Override
-    public String createRouteStaticEndpointJson(boolean includeDynamic) {
-        return getContext().createRouteStaticEndpointJson(getRouteId(), includeDynamic);
     }
 
     @Override

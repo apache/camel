@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,10 +18,10 @@ package org.apache.camel.component.hystrix.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.HystrixDefinition;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.support.SimpleRegistry;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -41,8 +41,8 @@ public class HystrixHierarchicalConfigTest {
         ref.setGroupKey("ref-group-key");
         ref.setCorePoolSize(5);
 
-        registry.put(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, def);
-        registry.put("ref-hystrix", ref);
+        registry.bind(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, def);
+        registry.bind("ref-hystrix", ref);
 
         final HystrixReifier reifier = new HystrixReifier(
                 new HystrixDefinition()
@@ -112,8 +112,8 @@ public class HystrixHierarchicalConfigTest {
 
         context.adapt(ModelCamelContext.class).setHystrixConfiguration(def);
 
-        registry.put(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, defReg);
-        registry.put("ref-hystrix", ref);
+        registry.bind(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, defReg);
+        registry.bind("ref-hystrix", ref);
 
         final HystrixReifier reifier = new HystrixReifier(
                 new HystrixDefinition()

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -236,6 +236,13 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testSimpleStepId() throws Exception {
+        assertExpression("${stepId}", null);
+        exchange.setProperty(Exchange.STEP_ID, "foo");
+        assertExpression("${stepId}", "foo");
+    }
+
+    @Test
     public void testSimpleOutExpressions() throws Exception {
         exchange.getOut().setBody("Bye World");
         exchange.getOut().setHeader("quote", "Camel rocks");
@@ -264,6 +271,14 @@ public class SimpleTest extends LanguageTestSupport {
         }
     }
     
+    @Test
+    public void testSimpleSystemEnvironmentExpressionsIfDash() throws Exception {
+        String foo = System.getenv("FOO_SERVICE_HOST");
+        if (foo != null) {
+            assertExpression("${sysenv.FOO-SERVICE-HOST}", foo);
+        }
+    }
+
     @Test
     public void testSimpleSystemEnvironmentExpressionsIfLowercase() throws Exception {
         String path = System.getenv("PATH");

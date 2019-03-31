@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,16 +27,16 @@ import javax.management.modelmbean.RequiredModelMBean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.NotificationSenderAware;
-import org.apache.camel.management.DefaultManagementMBeanAssembler;
-import org.apache.camel.management.NotificationSenderAdapter;
+import org.apache.camel.support.management.DefaultManagementMBeanAssembler;
+import org.apache.camel.support.management.NotificationSenderAdapter;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
 
 /**
- * An springAssembler to assemble a {@link javax.management.modelmbean.ModelMBean} which can be used
- * to register the object in JMX. The springAssembler is capable of using the Spring JMX annotations to
+ * An spring assembler to assemble a {@link javax.management.modelmbean.ModelMBean} which can be used
+ * to register the object in JMX. The spring assembler is capable of using the Spring JMX annotations to
  * gather the list of JMX operations and attributes.
  */
 public class SpringManagementMBeanAssembler extends DefaultManagementMBeanAssembler {

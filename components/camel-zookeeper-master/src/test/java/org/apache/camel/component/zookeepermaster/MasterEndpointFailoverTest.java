@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.curator.framework.CuratorFramework;
 import org.junit.After;
@@ -57,7 +57,7 @@ public class MasterEndpointFailoverTest {
 
         // Need to bind the zookeeper client with the name "curator"
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("curator", client);
+        registry.bind("curator", client);
 
         producerContext = new DefaultCamelContext(registry);
         // Add the vm:start endpoint to avoid the NPE before starting the consumerContext1

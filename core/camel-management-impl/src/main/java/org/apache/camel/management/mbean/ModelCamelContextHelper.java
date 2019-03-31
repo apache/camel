@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,7 +19,6 @@ package org.apache.camel.management.mbean;
 import java.util.Iterator;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
@@ -45,10 +44,8 @@ public final class ModelCamelContextHelper {
      */
     public static boolean isEipInUse(CamelContext camelContext, String name) {
         for (RouteDefinition route : camelContext.adapt(ModelCamelContext.class).getRouteDefinitions()) {
-            for (FromDefinition from : route.getInputs()) {
-                if (name.equals(from.getShortName())) {
-                    return true;
-                }
+            if (name.equals(route.getInput().getShortName())) {
+                return true;
             }
             Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
             while (it.hasNext()) {

@@ -106,6 +106,18 @@ with the following path and query parameters:
 // spring-boot-auto-configure options: START
 === Spring Boot Auto-Configuration
 
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-lucene-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
 
 The component supports 11 options, which are listed below.
 
@@ -115,10 +127,10 @@ The component supports 11 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.lucene.config.analyzer* | An Analyzer builds TokenStreams, which analyze text. It thus represents a policy for extracting index terms from text. The value for analyzer can be any class that extends the abstract class org.apache.lucene.analysis.Analyzer. Lucene also offers a rich set of analyzers out of the box |  | Analyzer
-| *camel.component.lucene.config.authority* |  |  | String
+| *camel.component.lucene.config.authority* | Operation to do such as insert or query. |  | String
 | *camel.component.lucene.config.host* | The URL to the lucene server |  | String
 | *camel.component.lucene.config.index-directory* | A file system directory in which index files are created upon analysis of the document by the specified analyzer |  | File
-| *camel.component.lucene.config.lucene-version* |  |  | Version
+| *camel.component.lucene.config.lucene-version* | An integer value that limits the result set of the search operation |  | Version
 | *camel.component.lucene.config.max-hits* | An integer value that limits the result set of the search operation |  | Integer
 | *camel.component.lucene.config.operation* | Operation to do such as insert or query. |  | LuceneOperation
 | *camel.component.lucene.config.source-directory* | An optional directory containing files to be used to be analyzed and added to the index at producer startup. |  | File
@@ -185,19 +197,11 @@ RouteBuilder builder = new RouteBuilder() {
 
 [source,java]
 -----------------------------------------------------------------
-@Override
-protected JndiRegistry createRegistry() throws Exception {
-  JndiRegistry registry =
-         new JndiRegistry(createJndiContext());
-  registry.bind("whitespace", new File("./whitespaceIndexDir"));
-  registry.bind("load_dir",
-        new File("src/test/resources/sources"));
-  registry.bind("whitespaceAnalyzer",
-        new WhitespaceAnalyzer());
-  return registry;
-}
-...
 CamelContext context = new DefaultCamelContext(createRegistry());
+Registry registry = context.getRegistry();
+registry.bind("whitespace", new File("./whitespaceIndexDir"));
+registry.bind("load_dir", new File("src/test/resources/sources"));
+registry.bind("whitespaceAnalyzer", new WhitespaceAnalyzer());
 -----------------------------------------------------------------
 
 #### Example 2: Performing searches using a Query Producer

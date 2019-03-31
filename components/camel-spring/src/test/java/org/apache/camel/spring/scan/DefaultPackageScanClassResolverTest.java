@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -142,14 +142,16 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
     }
     
     @Test
+    // Need to run the mvn clean install to create the jar file when running it from IDE
     public void testFindByFilterPackageInJarUrl() throws Exception {
         ClassLoader savedClassLoader = null;
         try {
             savedClassLoader = Thread.currentThread().getContextClassLoader();
+            // build a mock URLClassLoader
             URL url = getClass().getResource("/package_scan_test.jar");
-            
             URL urls[] = {new URL("jar:" + url.toString() + "!/")};
             URLClassLoader classLoader = new URLClassLoader(urls, savedClassLoader);
+
 
             Thread.currentThread().setContextClassLoader(classLoader);
 
@@ -169,6 +171,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
     }
     
     @Test
+    // Need to run the mvn clean install to create the test jar file when running it from IDE
     public void testFindByFilterPackageInJarUrlWithPlusChars() throws Exception {
         ClassLoader savedClassLoader = null;
         try {
@@ -194,4 +197,5 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
             }
         }
     }
+
 }

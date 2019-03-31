@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,6 +24,7 @@ import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * Wraps the processor in a Spring transaction
  */
+@JdkService(TransactedPolicy.class)
 public class SpringTransactionPolicy implements TransactedPolicy {
     private static final Logger LOG = LoggerFactory.getLogger(SpringTransactionPolicy.class);
     private TransactionTemplate template;

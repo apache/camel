@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,6 @@ package org.apache.camel.component.mllp.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.component.mllp.MllpComponent;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
@@ -147,19 +146,19 @@ public class MllpComponentConfiguration
          */
         private Integer bindRetryInterval = 5000;
         /**
-         * Timeout (in milliseconds) while waiting for a TCP connection TCP
-         * Server Only
-         */
-        private Integer acceptTimeout = 60000;
-        /**
          * TCP Server Only - Allow the endpoint to start before the TCP
          * ServerSocket is bound. In some environments, it may be desirable to
          * allow the endpoint to start before the TCP ServerSocket is bound.
          */
         private Boolean lenientBind = false;
         /**
-         * Timeout (in milliseconds) for establishing for a TCP connection TCP
-         * Client only
+         * Timeout (in milliseconds) while waiting for a TCP connection <p/> TCP
+         * Server Only
+         */
+        private Integer acceptTimeout = 60000;
+        /**
+         * Timeout (in milliseconds) for establishing for a TCP connection <p/>
+         * TCP Client only
          */
         private Integer connectTimeout = 30000;
         /**
@@ -223,10 +222,10 @@ public class MllpComponentConfiguration
         private Boolean hl7Headers = true;
         /**
          * Enable/Disable strict compliance to the MLLP standard. The MLLP
-         * standard specifies START_OF_BLOCKhl7 payloadEND_OF_BLOCKEND_OF_DATA,
-         * however, some systems do not send the final END_OF_DATA byte. This
-         * setting controls whether or not the final END_OF_DATA byte is
-         * required or optional.
+         * standard specifies [START_OF_BLOCK]hl7
+         * payload[END_OF_BLOCK][END_OF_DATA], however, some systems do not send
+         * the final END_OF_DATA byte. This setting controls whether or not the
+         * final END_OF_DATA byte is required or optional.
          */
         private Boolean requireEndOfData = true;
         /**
@@ -311,20 +310,20 @@ public class MllpComponentConfiguration
             this.bindRetryInterval = bindRetryInterval;
         }
 
-        public Integer getAcceptTimeout() {
-            return acceptTimeout;
-        }
-
-        public void setAcceptTimeout(Integer acceptTimeout) {
-            this.acceptTimeout = acceptTimeout;
-        }
-
         public Boolean getLenientBind() {
             return lenientBind;
         }
 
         public void setLenientBind(Boolean lenientBind) {
             this.lenientBind = lenientBind;
+        }
+
+        public Integer getAcceptTimeout() {
+            return acceptTimeout;
+        }
+
+        public void setAcceptTimeout(Integer acceptTimeout) {
+            this.acceptTimeout = acceptTimeout;
         }
 
         public Integer getConnectTimeout() {

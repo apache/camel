@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,8 +23,6 @@ import com.microsoft.azure.storage.StorageCredentialsAccountAndKey;
 import com.microsoft.azure.storage.blob.CloudAppendBlob;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
 import com.microsoft.azure.storage.core.Base64;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -47,8 +45,7 @@ public class BlobServiceUtilTest extends CamelTestSupport {
         CloudBlockBlob client = 
             new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
         
-        JndiRegistry registry = (JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
-        registry.bind("azureBlobClient", client);
+        context.getRegistry().bind("azureBlobClient", client);
         
         BlobServiceComponent component = new BlobServiceComponent(context);
         BlobServiceEndpoint endpoint = 
@@ -59,9 +56,8 @@ public class BlobServiceUtilTest extends CamelTestSupport {
     public void testGetConfiguredClientTypeMismatch() throws Exception {
         CloudBlockBlob client = 
             new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
-        
-        JndiRegistry registry = (JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
-        registry.bind("azureBlobClient", client);
+
+        context.getRegistry().bind("azureBlobClient", client);
         
         BlobServiceComponent component = new BlobServiceComponent(context);
         BlobServiceEndpoint endpoint = 
@@ -78,9 +74,8 @@ public class BlobServiceUtilTest extends CamelTestSupport {
     public void testGetConfiguredClientUriMismatch() throws Exception {
         CloudAppendBlob client = 
             new CloudAppendBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
-        
-        JndiRegistry registry = (JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
-        registry.bind("azureBlobClient", client);
+
+        context.getRegistry().bind("azureBlobClient", client);
         
         BlobServiceComponent component = new BlobServiceComponent(context);
         BlobServiceEndpoint endpoint = 
@@ -95,10 +90,9 @@ public class BlobServiceUtilTest extends CamelTestSupport {
     }
 
     private void registerCredentials() {
-        StorageCredentials creds = new StorageCredentialsAccountAndKey("camelazure", 
+        StorageCredentials creds = new StorageCredentialsAccountAndKey("camelazure",
                                                                        Base64.encode("key".getBytes()));
-        JndiRegistry registry = (JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
-        registry.bind("creds", creds);
+        context.getRegistry().bind("creds", creds);
     }
 
 }

@@ -17,7 +17,7 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
@@ -45,8 +45,8 @@
             <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
-          <groupId>org.apache.httpcomponents</groupId>
-          <artifactId>httpclient</artifactId>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.apis</groupId>
@@ -151,15 +151,15 @@
                                     <healthcheckUrl>http://localhost:8383</healthcheckUrl>
                                     <workingDir>/tmp</workingDir>
                                     <arguments>
-                                            <argument>java</argument>
-                                            <argument>
-                                                -Djava.util.logging.config.file=${project.basedir}/src/test/resources/logging.properties
-                                            </argument>
-                                            <argument>-jar</argument>
-                                            <argument>
-                                                ${env.GCLOUD_SDK_PATH}/platform/pubsub-emulator/lib/cloud-pubsub-emulator-0.1-SNAPSHOT-all.jar
-                                            </argument>
-                                            <argument>--port=8383</argument>
+                                        <argument>java</argument>
+                                        <argument>
+                                            -Djava.util.logging.config.file=${project.basedir}/src/test/resources/logging.properties
+                                        </argument>
+                                        <argument>-jar</argument>
+                                        <argument>
+                                            ${env.GCLOUD_SDK_PATH}/platform/pubsub-emulator/lib/cloud-pubsub-emulator-0.1-SNAPSHOT-all.jar
+                                        </argument>
+                                        <argument>--port=8383</argument>
                                     </arguments>
                                 </configuration>
                             </execution>

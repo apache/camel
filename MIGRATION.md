@@ -28,6 +28,28 @@ Maven users of Apache Camel can keep using the dependency *camel-core* which wil
 However users whom wants to trim the size of the classes on the classpath, can use fine grained Maven dependency on only the modules needed.
 You may find how to do that in the examples.
 
+We have also modularized many of the core components and moved them out of `camel-core` to individual components:
+
+- camel-browse
+- camel-controlbus
+- camel-dataformat
+- camel-direct
+- camel-directvm
+- camel-file
+- camel-language
+- camel-log
+- camel-properties
+- camel-ref
+- camel-rest
+- camel-saga
+- camel-scheduler
+- camel-seda
+- camel-stub
+- camel-timer
+- camel-validator
+- camel-xslt
+
+TODO: there are some remainder components in camel-core we would like to modularize
 TODO: we need camel-core-minimal dependency for just basic Camel
 
 
@@ -36,7 +58,7 @@ Migrating custom components
 
 You should depend on `camel-support` and not `camel-core` directly.
 
-The classes from `org.apache.camel.impl` that was intended to support Camel developers building custom components has been moved out of `camel-core` into `camel-support` into the `org.apache.camel.support` package. For example classes such as `DefaultComponent`, `DefaultEndpoint` etc has been moved and migration is nessasary.
+The classes from `org.apache.camel.impl` that was intended to support Camel developers building custom components has been moved out of `camel-core` into `camel-support` into the `org.apache.camel.support` package. For example classes such as `DefaultComponent`, `DefaultEndpoint` etc has been moved and migration is necessary.
 
 // TODO: Should we create a camel2-support JAR with an adapter to bridge between 2.x and 3.0
 
@@ -54,9 +76,74 @@ We have removed all deprecated components from Camel 2.x, also including the old
 
 We have also renamed `camel-jetty9` to `camel-jetty`.
 
+### ActiveMQ
+
+If you are using the `activemq-camel` component, then you should migrate to use `camel-activemq` component, where the component name has changed from `org.apache.activemq.camel.component.ActiveMQComponent` to `org.apache.camel.component.activemq.ActiveMQComponent`.
+
+### AWS 
+
+The component `camel-aws` has been splitted in multiple components:
+
+- camel-aws-cw
+- camel-aws-ddb (which contains both ddb and ddbstreams components)
+- camel-aws-ec2
+- camel-aws-ecs
+- camel-aws-eks
+- camel-aws-iam
+- camel-aws-kinesis (which contains both kinesis and kinesis-firehose components)
+- camel-aws-kms
+- camel-aws-lambda
+- camel-aws-mq
+- camel-aws-s3
+- camel-aws-sdb
+- camel-aws-ses
+- camel-aws-sns
+- camel-aws-sqs
+- camel-aws-swf
+
+So you'll have to add explicitly the dependencies for these components. From the OSGi perspective, there is still a `camel-aws` Karaf feature, which includes all the components features.
+
 ### JMX
 
 If you run Camel standalone with just `camel-core` as dependency, and you want JMX enabled out of the box, then you need to add `camel-management-impl` as dependency.
+
+For using `ManagedCamelContext` you now need to get this an extension from `CamelContext` as follows:
+
+    ManagedCamelContext managed = camelContext.getExtension(ManagedCamelContext.class);
+
+### Configuring global options on CamelContext
+
+In Camel 2.x we have deprecated `getProperties` on `CamelContext` in favour of `getGlobalOptions`, so you should migrate to:
+
+    context.getGlobalOptions().put("CamelJacksonEnableTypeConverter", "true");
+    context.getGlobalOptions().put("CamelJacksonTypeConverterToPojo", "true");
+
+... and in XML:
+
+    <globalOptions>
+      <globalOption key="CamelJacksonEnableTypeConverter" value="true"/>
+      <globalOption key="CamelJacksonTypeConverterToPojo" value="true"/>
+    </globalOptions>
+
+
+### Main class
+
+The `Main` class from `camel-core`, `camel-spring` and `camel-cdi` has been modified to only support a single `CamelContext` which was really its intention, but there was some old crufy code for multiple Camels. The method `getCamelContextMap` has been removed, and there is just a `getCamelContext` method now.
+
+### POJO annotations 
+
+The `ref` attribute on `@Consume`, `@Produce` and `@EndpointInject` has been removed. Instead use the ref component in the `uri` attribute, eg `uri = "ref:myName"`.
+
+The uri attribute has been deprecated, instead use value, which allows a shorthand style, from using `@Consume(uri = "jms:cheese")` to `@Consume("jms:cheese")`.
+
+### Routes with multiple inputs
+
+In Camel 2.x you could have 2 or more inputs to Camel routes, however this was not supported in all use-cases in Camel, and this functionality is seldom in use. This has
+also been deprecated in Camel 2.x. In Camel 3 we have removed the remaining code for specifying multipe inputs to routes, and its now only possible to specify exactly only 1 input to a route.
+
+### JSon DataFormat
+
+The default JSon library with the JSon dataformat has changed from `XStream` to `Jackson`.
 
 ### Moved APIs
 
@@ -65,7 +152,20 @@ The following API changes may affect your existing Camel applications, which nee
 TODO: Should this be a table?
 TODO: Add the other moved classes/packages etc
 
+#### CamelContext
+
+The methods on `CamelContext` that are related to catalog has been moved into a new `CatalogCamelContext` interface, which you can access by adapting:
+
+    CatalogCamelContext ccc = context.adapt(CatalogCamelContext.class);
+
+The `loadRouteDefinitions` and `loadRestDefinitions` on `ModelCamelContext` has been changed to `addRouteDefinitions` and `addRestDefinitions` to be aligned with the other methods. You can find loader methods on the `ModelHelper` utility class.
+
+
 #### Generic Information
+
+The class `SimpleRegistry` is moved from `org.apache.camel.impl` to `org.apache.camel.support`. Also you should favour using the `org.apache.camel.support.DefaultRegistry` instead. Also you should use the `bind` operation instead of `put` to add entries to the `SimpleRegistry` or `DefaultRegistry`.
+
+The class `CompositeRegistry` and `PropertyPlaceholderDelegateRegistry` has been deleted. Instead use `DefaultRegistry`.
 
 The classes from `org.apache.camel.impl` that was intended to support Camel developers building custom components has been moved out of `camel-core` into `camel-support` into the `org.apache.camel.support` package. If you have built custom Camel components that may have used some of these APIs you would then need to migrate.
 
@@ -87,6 +187,23 @@ The class `org.apache.camel.processor.aggregate.AggregationStrategy` has been mo
 
 The class `org.apache.camel.processor.loadbalancer.SimpleLoadBalancerSupport` has been removed, instead use `org.apache.camel.processor.loadbalancer.LoadBalancerSupport`.
 
+The class `org.apache.camel.management.JmxSystemPropertyKeys` has been moved to `org.apache.camel.api.management.JmxSystemPropertyKeys`.
+
+#### camel-test
+
+If you are using camel-test and override the `createRegistry` method, for example to register beans from the `JndiRegisty` class, then this is no longer necessary, and instead
+you should just use the `bind` method from the `Registry` API which you can call directly from `CamelContext`, such as:
+
+    context.getRegistry().bind("myId", myBean);
+    
+
+#### Controlling routes
+
+The `startRoute`, `stopRoute`, `suspendRoute`, `resumeRoute`, `getRouteStatus`, and other related methods on `CamelContext` has been moved to the `RouteController` as shown below:
+
+    context.getRouteController().startRoute("myRoute");
+
+
 #### JMX events
 
 All the events from package `org.apache.camel.management.event` has been moved to the class `org.apache.camel.spi.CamelEvent` as sub-classes, for example the event for CamelContext started would be `CamelEvent.CamelContextStartedEvent`.
@@ -103,7 +220,7 @@ to using style:
 
     RouteReifier.adviceWith(context.getRouteDefinition("start"), context, new RouteBuilder() {
         ...
-    }    
+    }
 
 We are planning on making this easier in 3.0.0-M2 onwards.
 
@@ -113,7 +230,9 @@ The class `JNDIContext` has been moved from `org.apache.camel.util.jndi.JNDICont
 
 #### EIPs
 
-The `circuitBreaker` load-blancer EIP was deprecated in Camel 2.x, and has been removed. Instead use Hystrix EIP as the load-balancer.
+The `circuitBreaker` load-balancer EIP was deprecated in Camel 2.x, and has been removed. Instead use Hystrix EIP as the load-balancer.
+
+The class `ThreadPoolRejectedPolicy` has been moved from `org.apache.camel.ThreadPoolRejectedPolicy` to `org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy`.
 
 #### Languages
 
@@ -121,7 +240,11 @@ The simple language `property` function was deprecated in Camel 2.x and has been
 
 The terser language has been renamed from terser to hl7terser.
 
-#### Helpers
+#### JSSE
+
+The classes from `org.apache.camel.util.jsse` has been moved to `org.apache.camel.support.jsse`.
+
+#### Helpers and support
 
 The class `AsyncProcessorHelper` has been moved from `org.apache.camel.util.AsyncProcessorHelper` in the camel-core JAR to `org.apache.camel.support.AsyncProcessorHelper` and moved to the `camel-support` JAR.
 
@@ -157,19 +280,36 @@ The class `ServiceHelper` has been moved from `org.apache.camel.util.ServiceHelp
 
 The class `UnitOfWorkHelper` has been moved from `org.apache.camel.util.UnitOfWorkHelper` in the camel-core JAR to `org.apache.camel.support.UnitOfWorkHelper` and moved to the `camel-support` JAR.
 
+
 #### Idempotent Repositories
 
 The class `FileIdempotentRepository` has been moved from `org.apache.camel.processor.idempotent.FileIdempotentRepository` in the camel-core JAR to `org.apache.camel.support.processor.idempotent.FileIdempotentRepository` and moved to the `camel-suppor` JAR.
 
 The class `MemoryIdempotentRepository` has been moved from `org.apache.camel.processor.idempotent.MemoryIdempotentRepository` in the camel-core JAR to `org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository` and moved to the `camel-suppor` JAR.
 
+
+#### Route Policies
+
+The class `org.apache.camel.impl.RoutePolicySupport` has been moved to `org.apache.camel.support.RoutePolicySupport`.
+
+The class `org.apache.camel.impl.ThrottlingInflightRoutePolicy` has been moved to `org.apache.camel.throttling.ThrottlingInflightRoutePolicy`
+
+
 #### Aggregation
 
 The class `XsltAggregationStrategy` has been moved from `org.apache.camel.builder.XsltAggregationStrategy` in the camel-core JAR to `org.apache.camel.component.xslt.XsltAggregationStrategy` and moved to the `camel-xslt` JAR.
 
-When using the option `groupedExchange` on the aggregator EIP then the output of the aggregation
-is now longer also stored in the exchange property `Exchange.GROUPED_EXCHANGE`.
-This behaviour was already deprecated from Camel 2.13 onwards.
+When using the option `groupedExchange` on the aggregator EIP then the output of the aggregation is now longer also stored in the exchange property `Exchange.GROUPED_EXCHANGE`. This behaviour was already deprecated from Camel 2.13 onwards.
+
+### Fallback type converters
+
+The `@FallbackConverter` annotation has been removed, and you should use `@Converter(fallback = true)` instead. Also you can set `@Converter(loader = true)` on the converter class to allow Camel to generate source code for loading type converters in a faster way.
+
+
+### Removed JMX APIs for explaining EIPs, components, etc.
+
+The APIs that could find, and explain EIPs, components, endpoints etc has been removed. These APIs have little value for production runtimes, and you can obtain this kind of information via the `camel-catalog`. Also the related Camel Karaf commands that used these APIs has been removed.
+
 
 ### Other changes
 
@@ -203,4 +343,8 @@ The `camel-report-maven-plugin` has the `validate` and `route-coverage` goals wh
 Known Issues
 ------------
 
-There is an issue with MDC logging and correctly transfering the Camel breadscrumb id's under certain situations with routing over asynchronous endpoints, due to the internal routing engine refactorings. This change also affects the `camel-zipkin` component, with may not correctly transfer the span id's when using MDC logging as well. 
+There is an issue with MDC logging and correctly transfering the Camel breadscrumb id's under certain situations with routing over asynchronous endpoints, due to the internal routing engine refactorings. This change also affects the `camel-zipkin` component, which may not correctly transfer the span id's when using MDC logging as well. 
+
+The tracer feature does not work (the implementation from Camel 2.x was deprecated), and we plan to implement a new and improved tracer.
+
+

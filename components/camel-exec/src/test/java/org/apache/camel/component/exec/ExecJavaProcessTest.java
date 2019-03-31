@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -69,10 +69,10 @@ public class ExecJavaProcessTest extends CamelTestSupport {
 
     private static final String EXECUTABLE_PROGRAM_ARG = ExecutableJavaProgram.class.getName();
 
-    @Produce(uri = "direct:input")
+    @Produce("direct:input")
     ProducerTemplate producerTemplate;
 
-    @EndpointInject(uri = "mock:output")
+    @EndpointInject("mock:output")
     MockEndpoint output;
 
     @Override

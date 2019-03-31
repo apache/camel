@@ -109,6 +109,18 @@ with the following path and query parameters:
 // spring-boot-auto-configure options: START
 === Spring Boot Auto-Configuration
 
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-milo-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
 
 The component supports 21 options, which are listed below.
 
@@ -123,7 +135,7 @@ The component supports 21 options, which are listed below.
 | *camel.component.milo-server.bind-port* | The TCP port the server binds to |  | Integer
 | *camel.component.milo-server.build-info* | Server build info. The option is a org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo type. |  | String
 | *camel.component.milo-server.certificate-manager* | Server certificate manager. The option is a org.eclipse.milo.opcua.stack.core.application.CertificateManager type. |  | String
-| *camel.component.milo-server.certificate-validator* | Validator for client certificates. The option is a java.util.function.Supplier <org.eclipse.milo.opcua.stack.core.application.CertificateValidator> type. |  | String
+| *camel.component.milo-server.certificate-validator* | Validator for client certificates. The option is a java.util.function.Supplier<org.eclipse.milo.opcua.stack.core.application.CertificateValidator> type. |  | String
 | *camel.component.milo-server.default-certificate-validator* | Validator for client certificates using default file based approach |  | File
 | *camel.component.milo-server.enable-anonymous-authentication* | Enable anonymous authentication, disabled by default | false | Boolean
 | *camel.component.milo-server.enabled* | Enable milo-server component | true | Boolean

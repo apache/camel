@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,7 +32,7 @@ import org.apache.camel.StringSource;
  * since it's the most simple one. It has just one constructor that accepts a
  * String as input.
  */
-@Converter
+@Converter(loader = true)
 public final class StringSourceConverter {
 
     private StringSourceConverter() {

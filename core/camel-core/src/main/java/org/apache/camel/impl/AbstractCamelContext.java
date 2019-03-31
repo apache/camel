@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,6 @@ package org.apache.camel.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,12 +44,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import javax.naming.Context;
-import javax.xml.bind.Unmarshaller;
-
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ConsumerTemplate;
@@ -60,9 +57,7 @@ import org.apache.camel.ExtendedStartupListener;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.IsSingleton;
-import org.apache.camel.LoadPropertiesException;
 import org.apache.camel.MultipleConsumersSupport;
-import org.apache.camel.NamedNode;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.PollingConsumer;
@@ -90,7 +85,6 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
@@ -110,6 +104,7 @@ import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.CamelContextTracker;
 import org.apache.camel.spi.ClassResolver;
@@ -136,6 +131,7 @@ import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.ManagementStrategyFactory;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
@@ -165,30 +161,26 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.IntrospectionSupport;
-import org.apache.camel.support.JSonSchemaHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.StringQuoteHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.function.ThrowingRunnable;
 import org.slf4j.MDC;
-
 import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
 
 /**
  * Represents the context used to configure routes and the policies to use.
  */
-public abstract class AbstractCamelContext extends ServiceSupport implements ModelCamelContext, Suspendable {
+public abstract class AbstractCamelContext extends ServiceSupport implements ModelCamelContext, CatalogCamelContext, Suspendable {
 
     public enum Initialization {
         Eager, Default, Lazy
@@ -252,6 +244,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     private volatile TypeConverter typeConverter;
     private volatile TypeConverterRegistry typeConverterRegistry;
     private volatile Injector injector;
+    private volatile CamelBeanPostProcessor beanPostProcessor;
     private volatile ComponentResolver componentResolver;
     private volatile LanguageResolver languageResolver;
     private volatile DataFormatResolver dataFormatResolver;
@@ -306,23 +299,12 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     private Map<Class<?>, Object> extensions = new ConcurrentHashMap<>();
 
     /**
-     * Creates the {@link CamelContext} using {@link JndiRegistry} as registry,
-     * but will silently fallback and use {@link SimpleRegistry} if JNDI cannot be used.
+     * Creates the {@link CamelContext} using {@link org.apache.camel.support.DefaultRegistry} as registry.
      * <p/>
-     * Use one of the other constructors to force use an explicit registry / JNDI.
+     * Use one of the other constructors to force use an explicit registry.
      */
     public AbstractCamelContext() {
         this(true);
-    }
-
-    /**
-     * Creates the {@link CamelContext} using the given JNDI context as the registry
-     *
-     * @param jndiContext the JNDI context
-     */
-    public AbstractCamelContext(Context jndiContext) {
-        this();
-        setJndiContext(jndiContext);
     }
 
     /**
@@ -352,9 +334,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     }
 
     public void doInit() {
-        // setup management strategy first since end users may use it to add event notifiers
+        // setup management first since end users may use it to add event notifiers
         // using the management strategy before the CamelContext has been started
-        this.managementStrategy = createManagementStrategy();
+        setupManagement(null);
 
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
@@ -517,7 +499,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
                 }
             }
 
-            return  component;
+            return component;
         } catch (Exception e) {
             throw new RuntimeCamelException("Cannot auto create component: " + name, e);
         } finally {
@@ -1008,32 +990,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         doWithDefinedClassLoader(() -> builder.addRoutesToCamelContext(AbstractCamelContext.this));
     }
 
-    public synchronized RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception {
-        return ModelHelper.loadRoutesDefinition(this, is);
-    }
-
-    public synchronized RestsDefinition loadRestsDefinition(InputStream is) throws Exception {
-        // load routes using JAXB
-        Unmarshaller unmarshaller = getModelJAXBContextFactory().newJAXBContext().createUnmarshaller();
-        Object result = unmarshaller.unmarshal(is);
-
-        if (result == null) {
-            throw new IOException("Cannot unmarshal to rests using JAXB from input stream: " + is);
+    public void addRouteDefinitions(InputStream is) throws Exception {
+        RoutesDefinition def = ModelHelper.loadRoutesDefinition(this, is);
+        if (def != null) {
+            addRouteDefinitions(def.getRoutes());
         }
-
-        // can either be routes or a single route
-        RestsDefinition answer;
-        if (result instanceof RestDefinition) {
-            RestDefinition rest = (RestDefinition) result;
-            answer = new RestsDefinition();
-            answer.getRests().add(rest);
-        } else if (result instanceof RestsDefinition) {
-            answer = (RestsDefinition) result;
-        } else {
-            throw new IllegalArgumentException("Unmarshalled object is an unsupported type: " + ObjectHelper.className(result) + " -> " + result);
-        }
-
-        return answer;
     }
 
     public synchronized void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
@@ -1473,41 +1434,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         }
     }
 
-    public String resolveComponentDefaultName(String javaType) {
-        // try to find the component by its java type from the in-use components
-        if (javaType != null) {
-            // find all the components which will include the default component name
-            try {
-                Map<String, Properties> all = CamelContextHelper.findComponents(this);
-                for (Map.Entry<String, Properties> entry : all.entrySet()) {
-                    String fqn = (String) entry.getValue().get("class");
-                    if (javaType.equals(fqn)) {
-                        // is there component docs for that name?
-                        String name = entry.getKey();
-                        String json = getComponentParameterJsonSchema(name);
-                        if (json != null) {
-                            return name;
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                // ignore
-                return null;
-            }
-        }
-
-        // could not find a component with that name
-        return null;
-    }
-
-    public Map<String, Properties> findComponents() throws LoadPropertiesException, IOException {
-        return CamelContextHelper.findComponents(this);
-    }
-
-    public Map<String, Properties> findEips() throws LoadPropertiesException, IOException {
-        return CamelContextHelper.findEips(this);
-    }
-
     public String getComponentParameterJsonSchema(String componentName) throws IOException {
         // use the component factory finder to find the package name of the component class, which is the location
         // where the documentation exists as well
@@ -1651,718 +1577,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         return null;
     }
 
-    public String explainEipJson(String nameOrId, boolean includeAllOptions) {
-        try {
-            // try to find the id within all known routes and their eips
-            String eipName = nameOrId;
-            NamedNode target = null;
-            for (RouteDefinition route : getRouteDefinitions()) {
-                if (route.getId().equals(nameOrId)) {
-                    target = route;
-                    break;
-                }
-                for (FromDefinition from : route.getInputs()) {
-                    if (nameOrId.equals(from.getId())) {
-                        target = route;
-                        break;
-                    }
-                }
-                Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
-                while (it.hasNext()) {
-                    ProcessorDefinition def = it.next();
-                    if (nameOrId.equals(def.getId())) {
-                        target = def;
-                        break;
-                    }
-                }
-                if (target != null) {
-                    break;
-                }
-            }
-
-            if (target != null) {
-                eipName = target.getShortName();
-            }
-
-            String json = getEipParameterJsonSchema(eipName);
-            if (json == null) {
-                return null;
-            }
-
-            // overlay with runtime parameters that id uses at runtime
-            if (target != null) {
-                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
-
-                // selected rows to use for answer
-                Map<String, String[]> selected = new LinkedHashMap<>();
-
-                // extract options from the node
-                Map<String, Object> options = new LinkedHashMap<>();
-                IntrospectionSupport.getProperties(target, options, "", false);
-                // remove outputs which we do not want to include
-                options.remove("outputs");
-
-                // include other rows
-                for (Map<String, String> row : rows) {
-                    String name = row.get("name");
-                    String kind = row.get("kind");
-                    String label = row.get("label");
-                    String required = row.get("required");
-                    String value = row.get("value");
-                    String defaultValue = row.get("defaultValue");
-                    String type = row.get("type");
-                    String javaType = row.get("javaType");
-                    String deprecated = row.get("deprecated");
-                    String description = row.get("description");
-
-                    // find the configured option
-                    Object o = options.get(name);
-                    if (o != null) {
-                        value = o.toString();
-                    }
-
-                    value = URISupport.sanitizePath(value);
-
-                    if (includeAllOptions || o != null) {
-                        // add as selected row
-                        if (!selected.containsKey(name)) {
-                            selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
-                        }
-                    }
-                }
-
-                json = StringHelper.before(json, "  \"properties\": {");
-
-                StringBuilder buffer = new StringBuilder("  \"properties\": {");
-
-                boolean first = true;
-                for (String[] row : selected.values()) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        buffer.append(",");
-                    }
-                    buffer.append("\n    ");
-
-                    String name = row[0];
-                    String kind = row[1];
-                    String label = row[2];
-                    String required = row[3];
-                    String type = row[4];
-                    String javaType = row[5];
-                    String deprecated = row[6];
-                    String value = row[7];
-                    String defaultValue = row[8];
-                    String description = row[9];
-
-                    // add json of the option
-                    buffer.append(StringQuoteHelper.doubleQuote(name)).append(": { ");
-                    CollectionStringBuffer csb = new CollectionStringBuffer();
-                    if (kind != null) {
-                        csb.append("\"kind\": \"" + kind + "\"");
-                    }
-                    if (label != null) {
-                        csb.append("\"label\": \"" + label + "\"");
-                    }
-                    if (required != null) {
-                        csb.append("\"required\": \"" + required + "\"");
-                    }
-                    if (type != null) {
-                        csb.append("\"type\": \"" + type + "\"");
-                    }
-                    if (javaType != null) {
-                        csb.append("\"javaType\": \"" + javaType + "\"");
-                    }
-                    if (deprecated != null) {
-                        csb.append("\"deprecated\": \"" + deprecated + "\"");
-                    }
-                    if (value != null) {
-                        csb.append("\"value\": \"" + value + "\"");
-                    }
-                    if (defaultValue != null) {
-                        csb.append("\"defaultValue\": \"" + defaultValue + "\"");
-                    }
-                    if (description != null) {
-                        csb.append("\"description\": \"" + description + "\"");
-                    }
-                    if (!csb.isEmpty()) {
-                        buffer.append(csb.toString());
-                    }
-                    buffer.append(" }");
-                }
-
-                buffer.append("\n  }\n}\n");
-
-                // insert the original first part of the json into the start of the buffer
-                buffer.insert(0, json);
-                return buffer.toString();
-            }
-
-            return json;
-        } catch (Exception e) {
-            // ignore and return empty response
-            return null;
-        }
-    }
-
-    public String explainDataFormatJson(String dataFormatName, DataFormat dataFormat, boolean includeAllOptions) {
-        try {
-            String json = getDataFormatParameterJsonSchema(dataFormatName);
-            if (json == null) {
-                // the model may be shared for multiple data formats such as bindy, json (xstream, jackson, gson)
-                if (dataFormatName.contains("-")) {
-                    dataFormatName = StringHelper.before(dataFormatName, "-");
-                    json = getDataFormatParameterJsonSchema(dataFormatName);
-                }
-                if (json == null) {
-                    return null;
-                }
-            }
-
-            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
-
-            // selected rows to use for answer
-            Map<String, String[]> selected = new LinkedHashMap<>();
-            Map<String, String[]> dataFormatOptions = new LinkedHashMap<>();
-
-            // extract options from the data format
-            Map<String, Object> options = new LinkedHashMap<>();
-            IntrospectionSupport.getProperties(dataFormat, options, "", false);
-
-            for (Map.Entry<String, Object> entry : options.entrySet()) {
-                String name = entry.getKey();
-                String value = "";
-                if (entry.getValue() != null) {
-                    value = entry.getValue().toString();
-                }
-                value = URISupport.sanitizePath(value);
-
-                // find type and description from the json schema
-                String type = null;
-                String kind = null;
-                String label = null;
-                String required = null;
-                String javaType = null;
-                String deprecated = null;
-                String secret = null;
-                String defaultValue = null;
-                String description = null;
-                for (Map<String, String> row : rows) {
-                    if (name.equals(row.get("name"))) {
-                        type = row.get("type");
-                        kind = row.get("kind");
-                        label = row.get("label");
-                        required = row.get("required");
-                        javaType = row.get("javaType");
-                        deprecated = row.get("deprecated");
-                        secret = row.get("secret");
-                        defaultValue = row.get("defaultValue");
-                        description = row.get("description");
-                        break;
-                    }
-                }
-
-                // remember this option from the uri
-                dataFormatOptions.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, secret, value, defaultValue, description});
-            }
-
-            // include other rows
-            for (Map<String, String> row : rows) {
-                String name = row.get("name");
-                String kind = row.get("kind");
-                String label = row.get("label");
-                String required = row.get("required");
-                String value = row.get("value");
-                String defaultValue = row.get("defaultValue");
-                String type = row.get("type");
-                String javaType = row.get("javaType");
-                String deprecated = row.get("deprecated");
-                String secret = row.get("secret");
-                value = URISupport.sanitizePath(value);
-                String description = row.get("description");
-
-                boolean isDataFormatOption = dataFormatOptions.containsKey(name);
-
-                // always include from uri or path options
-                if (includeAllOptions || isDataFormatOption) {
-                    if (!selected.containsKey(name)) {
-                        // add as selected row, but take the value from uri options if it was from there
-                        if (isDataFormatOption) {
-                            selected.put(name, dataFormatOptions.get(name));
-                        } else {
-                            selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, secret, value, defaultValue, description});
-                        }
-                    }
-                }
-            }
-
-            json = StringHelper.before(json, "  \"properties\": {");
-
-            StringBuilder buffer = new StringBuilder("  \"properties\": {");
-
-            boolean first = true;
-            for (String[] row : selected.values()) {
-                if (first) {
-                    first = false;
-                } else {
-                    buffer.append(",");
-                }
-                buffer.append("\n    ");
-
-                String name = row[0];
-                String kind = row[1];
-                String label = row[2];
-                String required = row[3];
-                String type = row[4];
-                String javaType = row[5];
-                String deprecated = row[6];
-                String secret = row[7];
-                String value = row[8];
-                String defaultValue = row[9];
-                String description = row[10];
-
-                // add json of the option
-                buffer.append(StringQuoteHelper.doubleQuote(name)).append(": { ");
-                CollectionStringBuffer csb = new CollectionStringBuffer();
-                if (kind != null) {
-                    csb.append("\"kind\": \"" + kind + "\"");
-                }
-                if (label != null) {
-                    csb.append("\"label\": \"" + label + "\"");
-                }
-                if (required != null) {
-                    csb.append("\"required\": \"" + required + "\"");
-                }
-                if (type != null) {
-                    csb.append("\"type\": \"" + type + "\"");
-                }
-                if (javaType != null) {
-                    csb.append("\"javaType\": \"" + javaType + "\"");
-                }
-                if (deprecated != null) {
-                    csb.append("\"deprecated\": \"" + deprecated + "\"");
-                }
-                if (secret != null) {
-                    csb.append("\"secret\": \"" + secret + "\"");
-                }
-                if (value != null) {
-                    csb.append("\"value\": \"" + value + "\"");
-                }
-                if (defaultValue != null) {
-                    csb.append("\"defaultValue\": \"" + defaultValue + "\"");
-                }
-                if (description != null) {
-                    csb.append("\"description\": \"" + description + "\"");
-                }
-                if (!csb.isEmpty()) {
-                    buffer.append(csb.toString());
-                }
-                buffer.append(" }");
-            }
-
-            buffer.append("\n  }\n}\n");
-
-            // insert the original first part of the json into the start of the buffer
-            buffer.insert(0, json);
-            return buffer.toString();
-
-        } catch (Exception e) {
-            // ignore and return empty response
-            return null;
-        }
-    }
-
-    public String explainComponentJson(String componentName, boolean includeAllOptions) {
-        try {
-            String json = getComponentParameterJsonSchema(componentName);
-            if (json == null) {
-                return null;
-            }
-            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
-
-            // selected rows to use for answer
-            Map<String, String[]> selected = new LinkedHashMap<>();
-
-            // insert values from component
-            Component component = getComponent(componentName);
-            Map<String, Object> options = new HashMap<>();
-            IntrospectionSupport.getProperties(component, options, null);
-
-            for (Map.Entry<String, Object> entry : options.entrySet()) {
-                String name = entry.getKey();
-                // skip unwanted options which is default inherited from DefaultComponent
-                if ("camelContext".equals(name) || "endpointClass".equals(name)) {
-                    continue;
-                }
-                String value = "";
-                if (entry.getValue() != null) {
-                    value = entry.getValue().toString();
-                }
-                value = URISupport.sanitizePath(value);
-
-                // find type and description from the json schema
-                String type = null;
-                String kind = null;
-                String group = null;
-                String label = null;
-                String required = null;
-                String javaType = null;
-                String deprecated = null;
-                String secret = null;
-                String defaultValue = null;
-                String description = null;
-                for (Map<String, String> row : rows) {
-                    if (name.equals(row.get("name"))) {
-                        type = row.get("type");
-                        kind = row.get("kind");
-                        group = row.get("group");
-                        label = row.get("label");
-                        required = row.get("required");
-                        javaType = row.get("javaType");
-                        deprecated = row.get("deprecated");
-                        secret = row.get("secret");
-                        defaultValue = row.get("defaultValue");
-                        description = row.get("description");
-                        break;
-                    }
-                }
-                // add as selected row
-                selected.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, secret, value, defaultValue, description});
-            }
-
-            // include other rows
-            for (Map<String, String> row : rows) {
-                String name = row.get("name");
-                String kind = row.get("kind");
-                String group = row.get("group");
-                String label = row.get("label");
-                String required = row.get("required");
-                String value = row.get("value");
-                String defaultValue = row.get("defaultValue");
-                String type = row.get("type");
-                String javaType = row.get("javaType");
-                String deprecated = row.get("deprecated");
-                String secret = row.get("secret");
-                value = URISupport.sanitizePath(value);
-                String description = row.get("description");
-                // always include path options
-                if (includeAllOptions) {
-                    // add as selected row
-                    if (!selected.containsKey(name)) {
-                        selected.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, secret, value, defaultValue, description});
-                    }
-                }
-            }
-
-            json = StringHelper.before(json, "  \"componentProperties\": {");
-            StringBuilder buffer = new StringBuilder("  \"componentProperties\": {");
-
-            boolean first = true;
-            for (String[] row : selected.values()) {
-                if (first) {
-                    first = false;
-                } else {
-                    buffer.append(",");
-                }
-                buffer.append("\n    ");
-
-                String name = row[0];
-                String kind = row[1];
-                String group = row[2];
-                String label = row[3];
-                String required = row[4];
-                String type = row[5];
-                String javaType = row[6];
-                String deprecated = row[7];
-                String secret = row[8];
-                String value = row[9];
-                String defaultValue = row[10];
-                String description = row[11];
-
-                // add json of the option
-                buffer.append(StringQuoteHelper.doubleQuote(name)).append(": { ");
-                CollectionStringBuffer csb = new CollectionStringBuffer();
-                if (kind != null) {
-                    csb.append("\"kind\": \"" + kind + "\"");
-                }
-                if (group != null) {
-                    csb.append("\"group\": \"" + group + "\"");
-                }
-                if (label != null) {
-                    csb.append("\"label\": \"" + label + "\"");
-                }
-                if (required != null) {
-                    csb.append("\"required\": \"" + required + "\"");
-                }
-                if (type != null) {
-                    csb.append("\"type\": \"" + type + "\"");
-                }
-                if (javaType != null) {
-                    csb.append("\"javaType\": \"" + javaType + "\"");
-                }
-                if (deprecated != null) {
-                    csb.append("\"deprecated\": \"" + deprecated + "\"");
-                }
-                if (secret != null) {
-                    csb.append("\"secret\": \"" + secret + "\"");
-                }
-                if (value != null) {
-                    csb.append("\"value\": \"" + value + "\"");
-                }
-                if (defaultValue != null) {
-                    csb.append("\"defaultValue\": \"" + defaultValue + "\"");
-                }
-                if (description != null) {
-                    csb.append("\"description\": \"" + description + "\"");
-                }
-                if (!csb.isEmpty()) {
-                    buffer.append(csb.toString());
-                }
-                buffer.append(" }");
-            }
-            buffer.append("\n  }\n}\n");
-            // insert the original first part of the json into the start of the buffer
-            buffer.insert(0, json);
-            return buffer.toString();
-        } catch (Exception e) {
-            // ignore and return empty response
-            return null;
-        }
-    }
-
-    // CHECKSTYLE:OFF
-    public String explainEndpointJson(String uri, boolean includeAllOptions) {
-        try {
-            URI u = new URI(uri);
-            String json = getComponentParameterJsonSchema(u.getScheme());
-            if (json == null) {
-                return null;
-            }
-            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
-
-            // selected rows to use for answer
-            Map<String, String[]> selected = new LinkedHashMap<>();
-            Map<String, String[]> uriOptions = new LinkedHashMap<>();
-
-            // insert values from uri
-            Map<String, Object> options = new HashMap<>(getExtension(RuntimeCamelCatalog.class).endpointProperties(uri));
-
-            // extract consumer. prefix options
-            Map<String, Object> consumerOptions = IntrospectionSupport.extractProperties(options, "consumer.");
-            // and add back again without the consumer. prefix as that json schema omits that
-            options.putAll(consumerOptions);
-
-            for (Map.Entry<String, Object> entry : options.entrySet()) {
-                String name = entry.getKey();
-                String value = "";
-                if (entry.getValue() != null) {
-                    value = entry.getValue().toString();
-                }
-                value = URISupport.sanitizePath(value);
-                // find type and description from the json schema
-                String type = null;
-                String kind = null;
-                String group = null;
-                String label = null;
-                String required = null;
-                String javaType = null;
-                String deprecated = null;
-                String secret = null;
-                String defaultValue = null;
-                String description = null;
-                for (Map<String, String> row : rows) {
-                    if (name.equals(row.get("name"))) {
-                        type = row.get("type");
-                        kind = row.get("kind");
-                        group = row.get("group");
-                        label = row.get("label");
-                        required = row.get("required");
-                        javaType = row.get("javaType");
-                        deprecated = row.get("deprecated");
-                        secret = row.get("secret");
-                        defaultValue = row.get("defaultValue");
-                        description = row.get("description");
-                        break;
-                    }
-                }
-                // remember this option from the uri
-                uriOptions.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, secret, value, defaultValue, description});
-            }
-
-            // include other rows
-            for (Map<String, String> row : rows) {
-                String name = row.get("name");
-                String kind = row.get("kind");
-                String group = row.get("group");
-                String label = row.get("label");
-                String required = row.get("required");
-                String value = row.get("value");
-                String defaultValue = row.get("defaultValue");
-                String type = row.get("type");
-                String javaType = row.get("javaType");
-                String deprecated = row.get("deprecated");
-                String secret = row.get("secret");
-                value = URISupport.sanitizePath(value);
-                String description = row.get("description");
-                boolean isUriOption = uriOptions.containsKey(name);
-                // always include from uri or path options
-                if (includeAllOptions || isUriOption || "path".equals(kind)) {
-                    if (!selected.containsKey(name)) {
-                        // add as selected row, but take the value from uri options if it was from there
-                        if (isUriOption) {
-                            selected.put(name, uriOptions.get(name));
-                        } else {
-                            selected.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, secret, value, defaultValue, description});
-                        }
-                    }
-                }
-            }
-
-            // skip component properties
-            json = StringHelper.before(json, "  \"componentProperties\": {");
-            // and rewrite properties
-            StringBuilder buffer = new StringBuilder("  \"properties\": {");
-
-            boolean first = true;
-            for (String[] row : selected.values()) {
-                if (first) {
-                    first = false;
-                } else {
-                    buffer.append(",");
-                }
-                buffer.append("\n    ");
-
-                String name = row[0];
-                String kind = row[1];
-                String group = row[2];
-                String label = row[3];
-                String required = row[4];
-                String type = row[5];
-                String javaType = row[6];
-                String deprecated = row[7];
-                String secret = row[8];
-                String value = row[9];
-                String defaultValue = row[10];
-                String description = row[11];
-
-                // add json of the option
-                buffer.append(StringQuoteHelper.doubleQuote(name)).append(": { ");
-                CollectionStringBuffer csb = new CollectionStringBuffer();
-                if (kind != null) {
-                    csb.append("\"kind\": \"" + kind + "\"");
-                }
-                if (group != null) {
-                    csb.append("\"group\": \"" + group + "\"");
-                }
-                if (label != null) {
-                    csb.append("\"label\": \"" + label + "\"");
-                }
-                if (required != null) {
-                    csb.append("\"required\": \"" + required + "\"");
-                }
-                if (type != null) {
-                    csb.append("\"type\": \"" + type + "\"");
-                }
-                if (javaType != null) {
-                    csb.append("\"javaType\": \"" + javaType + "\"");
-                }
-                if (deprecated != null) {
-                    csb.append("\"deprecated\": \"" + deprecated + "\"");
-                }
-                if (secret != null) {
-                    csb.append("\"secret\": \"" + secret + "\"");
-                }
-                if (value != null) {
-                    csb.append("\"value\": \"" + value + "\"");
-                }
-                if (defaultValue != null) {
-                    csb.append("\"defaultValue\": \"" + defaultValue + "\"");
-                }
-                if (description != null) {
-                    csb.append("\"description\": \"" + description + "\"");
-                }
-                if (!csb.isEmpty()) {
-                    buffer.append(csb.toString());
-                }
-                buffer.append(" }");
-            }
-            buffer.append("\n  }\n}\n");
-            // insert the original first part of the json into the start of the buffer
-            buffer.insert(0, json);
-            return buffer.toString();
-        } catch (Exception e) {
-            // ignore and return empty response
-            return null;
-        }
-    }
-    // CHECKSTYLE:ON
-
-    public String createRouteStaticEndpointJson(String routeId) {
-        // lets include dynamic as well as we want as much data as possible
-        return createRouteStaticEndpointJson(routeId, true);
-    }
-
-    public String createRouteStaticEndpointJson(String routeId, boolean includeDynamic) {
-        List<RouteDefinition> routes = new ArrayList<>();
-        if (routeId != null) {
-            RouteDefinition route = getRouteDefinition(routeId);
-            if (route == null) {
-                throw new IllegalArgumentException("Route with id " + routeId + " does not exist");
-            }
-            routes.add(route);
-        } else {
-            routes.addAll(getRouteDefinitions());
-        }
-
-        StringBuilder buffer = new StringBuilder("{\n  \"routes\": {");
-        boolean firstRoute = true;
-        for (RouteDefinition route : routes) {
-            if (!firstRoute) {
-                buffer.append("\n    },");
-            } else {
-                firstRoute = false;
-            }
-
-            String id = route.getId();
-            buffer.append("\n    \"").append(id).append("\": {");
-            buffer.append("\n      \"inputs\": [");
-            // for inputs we do not need to check dynamic as we have the data from the route definition
-            Set<String> inputs = RouteDefinitionHelper.gatherAllStaticEndpointUris(this, route, true, false);
-            boolean first = true;
-            for (String input : inputs) {
-                if (!first) {
-                    buffer.append(",");
-                } else {
-                    first = false;
-                }
-                buffer.append("\n        ");
-                buffer.append(StringHelper.toJson("uri", input, true));
-            }
-            buffer.append("\n      ]");
-
-            buffer.append(",");
-            buffer.append("\n      \"outputs\": [");
-            Set<String> outputs = RouteDefinitionHelper.gatherAllEndpointUris(this, route, false, true, includeDynamic);
-            first = true;
-            for (String output : outputs) {
-                if (!first) {
-                    buffer.append(",");
-                } else {
-                    first = false;
-                }
-                buffer.append("\n        ");
-                buffer.append(StringHelper.toJson("uri", output, true));
-            }
-            buffer.append("\n      ]");
-        }
-        if (!firstRoute) {
-            buffer.append("\n    }");
-        }
-        buffer.append("\n  }\n}\n");
-
-        return buffer.toString();
-    }
-
     // Helper methods
     // -----------------------------------------------------------------------
 
@@ -2479,6 +1693,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public void setTypeConverterRegistry(TypeConverterRegistry typeConverterRegistry) {
         this.typeConverterRegistry = doAddService(typeConverterRegistry);
+        // some registries are also a type converter implementation
+        if (typeConverterRegistry instanceof TypeConverter) {
+            this.typeConverter = (TypeConverter) typeConverterRegistry;
+        }
     }
 
     public Injector getInjector() {
@@ -2494,6 +1712,21 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public void setInjector(Injector injector) {
         this.injector = doAddService(injector);
+    }
+
+    public CamelBeanPostProcessor getBeanPostProcessor() {
+        if (beanPostProcessor == null) {
+            synchronized (lock) {
+                if (beanPostProcessor == null) {
+                    setBeanPostProcessor(createBeanPostProcessor());
+                }
+            }
+        }
+        return beanPostProcessor;
+    }
+
+    public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
+        this.beanPostProcessor = doAddService(beanPostProcessor);
     }
 
     public ManagementMBeanAssembler getManagementMBeanAssembler() {
@@ -2556,38 +1789,15 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     public <T> T getRegistry(Class<T> type) {
         Registry reg = getRegistry();
 
-        // unwrap the property placeholder delegate
-        if (reg instanceof PropertyPlaceholderDelegateRegistry) {
-            reg = ((PropertyPlaceholderDelegateRegistry) reg).getRegistry();
-        }
-
         if (type.isAssignableFrom(reg.getClass())) {
             return type.cast(reg);
-        } else if (reg instanceof CompositeRegistry) {
-            List<Registry> list = ((CompositeRegistry) reg).getRegistryList();
-            for (Registry r : list) {
-                if (type.isAssignableFrom(r.getClass())) {
-                    return type.cast(r);
-                }
-            }
         }
         return null;
     }
 
-    /**
-     * Sets the registry to the given JNDI context
-     *
-     * @param jndiContext is the JNDI context to use as the registry
-     * @see #setRegistry(Registry)
-     */
-    public void setJndiContext(Context jndiContext) {
-        setRegistry(new JndiRegistry(jndiContext));
-    }
-
     public void setRegistry(Registry registry) {
-        // wrap the registry so we always do property placeholder lookups
-        if (!(registry instanceof PropertyPlaceholderDelegateRegistry)) {
-            registry = new PropertyPlaceholderDelegateRegistry(this, registry);
+        if (registry instanceof CamelContextAware) {
+            ((CamelContextAware) registry).setCamelContext(this);
         }
         this.registry = registry;
     }
@@ -2625,12 +1835,26 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         return restDefinitions;
     }
 
-    public void addRestDefinitions(Collection<RestDefinition> restDefinitions) throws Exception {
+    public void addRestDefinitions(InputStream is, boolean addToRoutes) throws Exception {
+        RestsDefinition rests = ModelHelper.loadRestsDefinition(this, is);
+        if (rests != null) {
+            addRestDefinitions(rests.getRests(), addToRoutes);
+        }
+    }
+
+    public synchronized void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes) throws Exception {
         if (restDefinitions == null || restDefinitions.isEmpty()) {
             return;
         }
 
         this.restDefinitions.addAll(restDefinitions);
+        if (addToRoutes) {
+            // rests are also routes so need to add them there too
+            for (final RestDefinition restDefinition : restDefinitions) {
+                List<RouteDefinition> routeDefinitions = restDefinition.asRouteDefinition(this);
+                addRouteDefinitions(routeDefinitions);
+            }
+        }
     }
 
     public RestConfiguration getRestConfiguration() {
@@ -4255,13 +3479,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     }
 
     public ManagementStrategy getManagementStrategy() {
-        if (managementStrategy == null) {
-            synchronized (lock) {
-                if (managementStrategy == null) {
-                    setManagementStrategy(createManagementStrategy());
-                }
-            }
-        }
         return managementStrategy;
     }
 
@@ -4274,8 +3491,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
             disableJMX = true;
         } else if (isInit()) {
             disableJMX = true;
-            managementStrategy = createManagementStrategy();
-            lifecycleStrategies.clear();
+            // we are still in initializing mode, so we can disable JMX, by setting up management again
+            setupManagement(null);
         } else {
             throw new IllegalStateException("Disabling JMX can only be done when CamelContext has not been started");
         }
@@ -4283,6 +3500,37 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public boolean isJMXDisabled() {
         return disableJMX;
+    }
+
+    public void setupManagement(Map<String, Object> options) {
+        ManagementStrategyFactory factory = new DefaultManagementStrategyFactory();
+        if (!isJMXDisabled()) {
+            try {
+                FactoryFinder finder = getFactoryFinder("META-INF/services/org/apache/camel/management/");
+                try {
+                    if (finder != null) {
+                        Object object = finder.newInstance("ManagementStrategyFactory");
+                        if (object instanceof ManagementStrategyFactory) {
+                            factory = (ManagementStrategyFactory) object;
+                        }
+                    }
+                } catch (NoFactoryAvailableException e) {
+                    // ignore there is no custom factory
+                }
+            } catch (Exception e) {
+                log.warn("Cannot create JMX lifecycle strategy. Will fallback and disable JMX.", e);
+            }
+        }
+
+        log.debug("Setting up management with factory: {}", factory);
+        try {
+            ManagementStrategy strategy = factory.create(this, options);
+            LifecycleStrategy lifecycle = factory.createLifecycle(this);
+            factory.setupManagement(this, strategy, lifecycle);
+        } catch (Exception e) {
+            log.warn("Error setting up management due " + e.getMessage());
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
     }
 
     public InflightRepository getInflightRepository() {
@@ -4714,6 +3962,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     protected abstract Injector createInjector();
 
+    protected abstract CamelBeanPostProcessor createBeanPostProcessor();
+
     protected abstract ComponentResolver createComponentResolver();
 
     protected abstract Registry createRegistry();
@@ -4727,8 +3977,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     protected abstract FactoryFinderResolver createFactoryFinderResolver();
 
     protected abstract ClassResolver createClassResolver();
-
-    protected abstract ManagementStrategy createManagementStrategy();
 
     protected abstract ProcessorFactory createProcessorFactory();
 

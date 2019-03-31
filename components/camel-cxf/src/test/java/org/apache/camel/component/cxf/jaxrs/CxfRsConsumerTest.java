@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,8 +20,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
-import javax.naming.Context;
 import javax.servlet.ServletRequest;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.WebApplicationException;
@@ -44,6 +42,7 @@ import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -79,10 +78,8 @@ public class CxfRsConsumerTest extends CamelTestSupport {
             + "performInvocation=true&serviceBeans=#serviceBean";
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        Context ctx = super.createJndiContext();
-        ctx.bind("serviceBean", new CustomerService());
-        return ctx;
+    protected void bindToRegistry(Registry registry) throws Exception {
+        registry.bind("serviceBean", new CustomerService());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

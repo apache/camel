@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -98,7 +98,7 @@ public class PojoProduceProxyInterceptEndpointTest extends Assert {
 
     public static class MyBean {
 
-        @Produce(uri = "direct:start")
+        @Produce("direct:start")
         private EchoService echo;
 
         public Object doSomething(String body) throws Exception {

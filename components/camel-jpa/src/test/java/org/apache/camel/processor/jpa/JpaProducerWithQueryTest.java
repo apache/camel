@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.examples.Customer;
 import org.apache.camel.examples.MultiSteps;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.service.ServiceHelper;
 import org.junit.After;
 import org.junit.Assert;
@@ -125,7 +125,7 @@ public class JpaProducerWithQueryTest extends Assert {
         Map<String, Object> params = new HashMap<>();
         params.put("custName", "${body}");
         // bind the params
-        registry.put("params", params);
+        registry.bind("params", params);
         camelContext.setRegistry(registry);
 
         camelContext.addRoutes(new RouteBuilder() {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -58,9 +58,8 @@ public class DeadLetterChannelRestartFromBeginningTest extends ContextTestSuppor
                 // use the DLQ and let the retryBean handle this
                 errorHandler(deadLetterChannel("bean:retryBean").useOriginalMessage());
 
-                // use seda:retry as a way of retrying from the input route
                 // the seda:start could be any other kind of fire and forget endpoint
-                from("seda:start", "seda:retry")
+                from("seda:start")
                     .to("log:start", "mock:start")
                     .transform(body().prepend("Hello "))
                     .process(new Processor() {
@@ -93,7 +92,7 @@ public class DeadLetterChannelRestartFromBeginningTest extends ContextTestSuppor
 
             // we want to retry at most 4 times
             if (attempts <= 4) {
-                return "seda:retry";
+                return "seda:start";
             } else {
                 // okay we give up its a poison message
                 return "log:giveup";

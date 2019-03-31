@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -58,7 +58,7 @@ public class StartAndStopRoutesTest extends ContextTestSupport {
         context.getRouteController().stopRoute(route.getId());
 
         // lets mutate the route...
-        FromDefinition fromType = assertOneElement(route.getInputs());
+        FromDefinition fromType = route.getInput();
         fromType.setUri("direct:test.C");
         context.adapt(ModelCamelContext.class).addRouteDefinition(route);
 

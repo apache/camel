@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,17 +21,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class CBRHeaderPredicateTest extends ContextTestSupport {
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("cbrBean", new MyCBRBean());
-        return jndi;
-    }
 
     @Test
     public void testCBR() throws Exception {
@@ -52,6 +44,8 @@ public class CBRHeaderPredicateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                bindToRegistry("cbrBean", new MyCBRBean());
+
                 from("direct:start")
                     .choice()
                         .when().method("cbrBean", "checkHeader")

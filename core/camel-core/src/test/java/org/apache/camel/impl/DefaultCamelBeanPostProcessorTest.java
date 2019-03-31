@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,16 +15,19 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Consume;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.junit.Before;
 import org.junit.Test;
 
 public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
 
-    private DefaultCamelBeanPostProcessor postProcessor;
+    private CamelBeanPostProcessor postProcessor;
 
     @Test
     public void testPostProcessor() throws Exception {
@@ -38,21 +41,40 @@ public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("seda:input", "Hello World");
         assertMockEndpointsSatisfied();
+
+        // should register the beans in the registry via @BindRegistry
+        Object bean = context.getRegistry().lookupByName("myCoolBean");
+        assertNotNull(bean);
+        assertIsInstanceOf(MySerialBean.class, bean);
+        bean = context.getRegistry().lookupByName("FooService");
+        assertNotNull(bean);
+        assertIsInstanceOf(FooService.class, bean);
+        bean = context.getRegistry().lookupByName("doSomething");
+        assertNotNull(bean);
+        assertIsInstanceOf(FooBar.class, bean);
     }
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        postProcessor = new DefaultCamelBeanPostProcessor(context);
+        postProcessor = context.getBeanPostProcessor();
     }
 
+    @BindToRegistry
     public class FooService {
 
         private String fooEndpoint;
         private String barEndpoint;
         @Produce
         private ProducerTemplate bar;
+        @BindToRegistry("myCoolBean")
+        private MySerialBean myBean = new MySerialBean();
+
+        @BindToRegistry
+        public FooBar doSomething() {
+            return new FooBar();
+        }
 
         public String getFooEndpoint() {
             return fooEndpoint;

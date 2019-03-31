@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,13 +24,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.junit.Test;
 
 public class RefComponentTest extends ContextTestSupport {
 
-    private void bindToRegistry(JndiRegistry jndi) throws Exception {
+    private void setupComponent() throws Exception {
         Component comp = new DirectComponent();
         comp.setCamelContext(context);
 
@@ -43,7 +41,7 @@ public class RefComponentTest extends ContextTestSupport {
         consumer.start();
 
         // bind our endpoint to the registry for ref to lookup
-        jndi.bind("foo", slow);
+        context.getRegistry().bind("foo", slow);
     }
 
     @Test
@@ -51,9 +49,7 @@ public class RefComponentTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        PropertyPlaceholderDelegateRegistry delegate = (PropertyPlaceholderDelegateRegistry) context.getRegistry();
-        JndiRegistry jndi = (JndiRegistry) delegate.getRegistry();
-        bindToRegistry(jndi);
+        setupComponent();
 
         template.sendBody("ref:foo", "Hello World");
 

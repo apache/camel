@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -293,7 +293,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
     }
 
     private static String dateAsString(long value) {
-        if (value == 0) {
+        if (value <= 0) {
             return "";
         }
         return new SimpleDateFormat(TIMESTAMP_FORMAT).format(value);

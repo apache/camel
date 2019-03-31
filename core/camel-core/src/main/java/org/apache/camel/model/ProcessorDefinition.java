@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -778,6 +778,30 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         MulticastDefinition answer = new MulticastDefinition();
         addOutput(answer);
         answer.setAggregationStrategy(aggregationStrategy);
+        return answer;
+    }
+
+    /**
+     * Routes the message to a sequence of processors which is grouped together as one logical name.
+     *
+     * @return the builder
+     */
+    public StepDefinition step() {
+        StepDefinition answer = new StepDefinition();
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * Routes the message to a sequence of processors which is grouped together as one logical name.
+     *
+     * @param id unique id of the step within the camel context
+     * @return the builder
+     */
+    public StepDefinition step(String id) {
+        StepDefinition answer = new StepDefinition();
+        answer.setId(id);
+        addOutput(answer);
         return answer;
     }
 
@@ -3087,7 +3111,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Adds a onComplection {@link org.apache.camel.spi.Synchronization} hook that invoke this route as
+     * Adds a onCompletion {@link org.apache.camel.spi.Synchronization} hook that invoke this route as
      * a callback when the {@link org.apache.camel.Exchange} has finished being processed.
      * The hook invoke callbacks for either onComplete or onFailure.
      * <p/>

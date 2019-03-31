@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,6 +23,7 @@ import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.UriDt;
 import ca.uhn.fhir.rest.api.EncodingEnum;
 import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.api.RequestFormatParamStyleEnum;
 import ca.uhn.fhir.rest.api.RequestTypeEnum;
 import ca.uhn.fhir.rest.api.SummaryEnum;
 import ca.uhn.fhir.rest.client.api.Header;
@@ -368,6 +369,11 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
 
         @Override
         public void unregisterInterceptor(IClientInterceptor theInterceptor) {
+
+        }
+
+        @Override
+        public void setFormatParamStyle(RequestFormatParamStyleEnum requestFormatParamStyleEnum) {
 
         }
 

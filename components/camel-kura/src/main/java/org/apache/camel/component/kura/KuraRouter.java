@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext;
 import org.apache.camel.model.ModelCamelContext;
-import org.apache.camel.model.RoutesDefinition;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -66,8 +65,7 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
                 Object routePropertyValue = camelKuraConfig.getProperties().get(camelXmlRoutesProperty());
                 if (routePropertyValue != null) {
                     InputStream routesXml = new ByteArrayInputStream(routePropertyValue.toString().getBytes());
-                    RoutesDefinition loadedRoutes = camelContext.adapt(ModelCamelContext.class).loadRoutesDefinition(routesXml);
-                    camelContext.adapt(ModelCamelContext.class).addRouteDefinitions(loadedRoutes.getRoutes());
+                    camelContext.adapt(ModelCamelContext.class).addRouteDefinitions(routesXml);
                 }
             }
 

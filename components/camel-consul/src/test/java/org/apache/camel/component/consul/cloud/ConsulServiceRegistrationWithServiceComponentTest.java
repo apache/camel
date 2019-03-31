@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,12 +19,15 @@ package org.apache.camel.component.consul.cloud;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.service.ServiceComponent;
-import org.apache.camel.impl.JndiRegistry;
 
 public class ConsulServiceRegistrationWithServiceComponentTest extends ConsulServiceRegistrationTestBase {
+
+    @BindToRegistry("service")
+    ServiceComponent comp = new ServiceComponent();
 
     protected Map<String, String> getMetadata() {
         return new HashMap<String, String>() {
@@ -33,14 +36,6 @@ public class ConsulServiceRegistrationWithServiceComponentTest extends ConsulSer
                 put("service.zone", "US");
             }
         };
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("service", new ServiceComponent());
-
-        return registry;
     }
 
     @Override

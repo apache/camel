@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -49,7 +49,7 @@ public class ExecOutFileTest extends AbstractJUnit4SpringContextTests {
 
     private static final File FILE = new File("target/outfiletest.xml");
 
-    @Produce(uri = "direct:input")
+    @Produce("direct:input")
     private ProducerTemplate producerTemplate;
 
     @Before

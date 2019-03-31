@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -75,7 +75,7 @@ public class SolrComponentAutoConfiguration {
     }
 
     @Lazy
-    @Bean(name = {"solr-component", "solrCloud-component", "solrs-component"})
+    @Bean({"solr-component", "solrCloud-component", "solrs-component"})
     @ConditionalOnMissingBean(SolrComponent.class)
     public SolrComponent configureSolrComponent() throws Exception {
         SolrComponent component = new SolrComponent();

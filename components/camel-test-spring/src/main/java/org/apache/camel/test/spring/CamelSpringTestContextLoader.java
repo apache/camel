@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
-import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EventNotifier;
@@ -51,6 +51,7 @@ import org.springframework.test.context.support.AbstractContextLoader;
 import org.springframework.test.context.support.AbstractGenericContextLoader;
 import org.springframework.test.context.support.GenericXmlContextLoader;
 import org.springframework.util.StringUtils;
+
 import static org.apache.camel.test.spring.CamelSpringTestHelper.getAllMethods;
 
 /**

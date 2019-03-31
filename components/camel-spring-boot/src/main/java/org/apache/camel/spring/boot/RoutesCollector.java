@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,10 +31,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.StartupListener;
 import org.apache.camel.main.MainDurationEventNotifier;
 import org.apache.camel.model.ModelCamelContext;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.Type;
 import org.apache.camel.spi.EventNotifier;
@@ -300,8 +296,7 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                 Resource[] xmlRoutes = applicationContext.getResources(part);
                 for (Resource xmlRoute : xmlRoutes) {
                     LOG.debug("Found XML route: {}", xmlRoute);
-                    RoutesDefinition xmlDefinition = camelContext.adapt(ModelCamelContext.class).loadRoutesDefinition(xmlRoute.getInputStream());
-                    camelContext.adapt(ModelCamelContext.class).addRouteDefinitions(xmlDefinition.getRoutes());
+                    camelContext.adapt(ModelCamelContext.class).addRouteDefinitions(xmlRoute.getInputStream());
                 }
             } catch (FileNotFoundException e) {
                 LOG.debug("No XML routes found in {}. Skipping XML routes detection.", part);
@@ -316,12 +311,7 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
             try {
                 final Resource[] xmlRests = applicationContext.getResources(part);
                 for (final Resource xmlRest : xmlRests) {
-                    final RestsDefinition xmlDefinitions = camelContext.adapt(ModelCamelContext.class).loadRestsDefinition(xmlRest.getInputStream());
-                    camelContext.adapt(ModelCamelContext.class).addRestDefinitions(xmlDefinitions.getRests());
-                    for (final RestDefinition xmlDefinition : xmlDefinitions.getRests()) {
-                        final List<RouteDefinition> routeDefinitions = xmlDefinition.asRouteDefinition(camelContext);
-                        camelContext.adapt(ModelCamelContext.class).addRouteDefinitions(routeDefinitions);
-                    }
+                    camelContext.adapt(ModelCamelContext.class).addRestDefinitions(xmlRest.getInputStream(), true);
                 }
             } catch (FileNotFoundException e) {
                 LOG.debug("No XML rests found in {}. Skipping XML rests detection.", part);

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,6 @@
 package org.apache.camel.karaf.commands.internal;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -63,16 +62,11 @@ public class CamelControllerImpl extends AbstractLocalCamelController {
                 }
             }
         } catch (Exception e) {
-            LOG.warn("Cannot retrieve the list of Camel contexts.", e);
+            LOG.warn("Cannot retrieve the list of Camel contexts. This exception is ignored.", e);
         }
 
         // sort the list
-        Collections.sort(camelContexts, new Comparator<CamelContext>() {
-            @Override
-            public int compare(CamelContext o1, CamelContext o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
+        camelContexts.sort(Comparator.comparing(CamelContext::getName));
 
         return camelContexts;
     }
@@ -87,10 +81,11 @@ public class CamelControllerImpl extends AbstractLocalCamelController {
             row.put("name", camelContext.getName());
             row.put("state", camelContext.getStatus().name());
             row.put("uptime", camelContext.getUptime());
-            if (camelContext.getExtension(ManagedCamelContext.class).getManagedCamelContext() != null) {
-                row.put("exchangesTotal", "" + camelContext.getExtension(ManagedCamelContext.class).getManagedCamelContext().getExchangesTotal());
-                row.put("exchangesInflight", "" + camelContext.getExtension(ManagedCamelContext.class).getManagedCamelContext().getExchangesInflight());
-                row.put("exchangesFailed", "" + camelContext.getExtension(ManagedCamelContext.class).getManagedCamelContext().getExchangesFailed());
+            ManagedCamelContext mcc = camelContext.getExtension(ManagedCamelContext.class);
+            if (mcc != null && mcc.getManagedCamelContext() != null) {
+                row.put("exchangesTotal", "" + mcc.getManagedCamelContext().getExchangesTotal());
+                row.put("exchangesInflight", "" + mcc.getManagedCamelContext().getExchangesInflight());
+                row.put("exchangesFailed", "" + mcc.getManagedCamelContext().getExchangesFailed());
             } else {
                 row.put("exchangesTotal", "0");
                 row.put("exchangesInflight", "0");
@@ -148,8 +143,6 @@ public class CamelControllerImpl extends AbstractLocalCamelController {
 
     /**
      * Gets classloader associated with {@link CamelContext}
-     * @param context
-     * @return
      */
     private ClassLoader getClassLoader(CamelContext context) {
         return context.getApplicationContextClassLoader();

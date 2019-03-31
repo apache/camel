@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.JSonSchemaHelper;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -35,7 +36,7 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
     @Test
     public void testFlatpackDefaultValue() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String json = context.getEipParameterJsonSchema("flatpack");
+        String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("flatpack");
         assertNotNull(json);
 
         assertTrue(json.contains("\"name\": \"flatpack"));
@@ -68,7 +69,7 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
     @Test
     public void testUniVocityTsvEscapeChar() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String json = context.getEipParameterJsonSchema("univocity-tsv");
+        String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("univocity-tsv");
         assertNotNull(json);
 
         assertTrue(json.contains("\"name\": \"univocity-tsv"));

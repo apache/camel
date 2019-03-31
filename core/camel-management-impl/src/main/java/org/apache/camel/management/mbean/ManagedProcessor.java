@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,29 +16,19 @@
  */
 package org.apache.camel.management.mbean;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.management.openmbean.CompositeData;
-import javax.management.openmbean.CompositeDataSupport;
-import javax.management.openmbean.CompositeType;
-import javax.management.openmbean.TabularData;
-import javax.management.openmbean.TabularDataSupport;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.StepDefinition;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.support.JSonSchemaHelper;
 import org.apache.camel.support.service.ServiceHelper;
 
 @ManagedResource(description = "Managed Processor")
@@ -48,6 +38,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
     private final Processor processor;
     private final ProcessorDefinition<?> definition;
     private final String id;
+    private String stepId;
     private Route route;
 
     public ManagedProcessor(CamelContext context, Processor processor, ProcessorDefinition<?> definition) {
@@ -55,6 +46,13 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         this.processor = processor;
         this.definition = definition;
         this.id = definition.idOrCreate(context.getNodeIdFactory());
+        StepDefinition step;
+        if (definition instanceof StepDefinition) {
+            step = (StepDefinition) definition;
+        } else {
+            step = ProcessorDefinitionHelper.findFirstParentOfType(StepDefinition.class, definition, true);
+        }
+        this.stepId = step != null ? step.idOrCreate(context.getNodeIdFactory()) : null;
     }
 
     @Override
@@ -82,6 +80,10 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
 
     public String getId() {
         return id;
+    }
+
+    public String getStepId() {
+        return stepId;
     }
 
     public Integer getIndex() {
@@ -142,41 +144,6 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
             throw new IllegalArgumentException("CamelContext is not started");
         }
         ServiceHelper.stopService(getProcessor());
-    }
-
-    public String informationJson() {
-        return context.explainEipJson(id, true);
-    }
-
-    public TabularData explain(boolean allOptions) {
-        try {
-            String json = context.explainEipJson(id, allOptions);
-            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
-
-            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.explainEipTabularType());
-
-            for (Map<String, String> row : rows) {
-                String name = row.get("name");
-                String kind = row.get("kind");
-                String label = row.get("label") != null ? row.get("label") : "";
-                String type = row.get("type");
-                String javaType = row.get("javaType");
-                String deprecated = row.get("deprecated") != null ? row.get("deprecated") : "";
-                String value = row.get("value") != null ? row.get("value") : "";
-                String defaultValue = row.get("defaultValue") != null ? row.get("defaultValue") : "";
-                String description = row.get("description") != null ? row.get("description") : "";
-
-                CompositeType ct = CamelOpenMBeanTypes.explainEipsCompositeType();
-                CompositeData data = new CompositeDataSupport(ct,
-                        new String[]{"option", "kind", "label", "type", "java type", "deprecated", "value", "default value", "description"},
-                        new Object[]{name, kind, label, type, javaType, deprecated, value, defaultValue, description});
-                answer.put(data);
-            }
-
-            return answer;
-        } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
     }
 
     @Override

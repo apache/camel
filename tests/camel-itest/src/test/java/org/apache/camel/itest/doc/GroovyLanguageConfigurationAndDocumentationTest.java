@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.itest.doc;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -31,7 +32,7 @@ public class GroovyLanguageConfigurationAndDocumentationTest extends CamelTestSu
     @Test
     public void testLanguageJsonSchema() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String json = context.getLanguageParameterJsonSchema("groovy");
+        String json = context.adapt(CatalogCamelContext.class).getLanguageParameterJsonSchema("groovy");
         assertNotNull("Should have found some auto-generated JSON", json);
         log.info(json);
 

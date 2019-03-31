@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import com.microsoft.azure.storage.StorageCredentialsAccountAndKey;
+import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -28,14 +29,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.Ignore;
 import org.junit.Test;
 
 public class BlobServiceAppendConsumerTest extends CamelTestSupport {
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     ProducerTemplate templateStart;
     
     @Test
@@ -64,15 +64,14 @@ public class BlobServiceAppendConsumerTest extends CamelTestSupport {
             }
         }
     }
+
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        registry.bind("creds", 
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.getRegistry().bind("creds",
                       new StorageCredentialsAccountAndKey("camelazure",
                                                           "base64EncodedValue"));
-        
-        return registry;
+        return context;
     }
     
     @Override

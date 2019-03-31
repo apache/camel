@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,6 @@ import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.RemovalListener;
 import com.github.benmanes.caffeine.cache.stats.StatsCounter;
 import org.apache.camel.component.caffeine.EvictionType;
-import org.apache.camel.component.caffeine.load.CaffeineLoadCacheComponent;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -90,13 +89,13 @@ public class CaffeineLoadCacheComponentConfiguration
          */
         private Object key;
         /**
-         * The cache key type, default java.lang.Object
+         * The cache key type, default "java.lang.Object"
          */
-        private String keyType = "java.lang.Object";
+        private Class keyType = java.lang.Object.class;
         /**
-         * The cache value type, default java.lang.Object
+         * The cache value type, default "java.lang.Object"
          */
-        private String valueType = "java.lang.Object";
+        private Class valueType = java.lang.Object.class;
         /**
          * To configure an already instantiated cache to be used
          */
@@ -164,19 +163,19 @@ public class CaffeineLoadCacheComponentConfiguration
             this.key = key;
         }
 
-        public String getKeyType() {
+        public Class getKeyType() {
             return keyType;
         }
 
-        public void setKeyType(String keyType) {
+        public void setKeyType(Class keyType) {
             this.keyType = keyType;
         }
 
-        public String getValueType() {
+        public Class getValueType() {
             return valueType;
         }
 
-        public void setValueType(String valueType) {
+        public void setValueType(Class valueType) {
             this.valueType = valueType;
         }
 

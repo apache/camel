@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,9 @@ import org.apache.camel.TypeConverter;
  * such as for implementing a fallback type converter
  *
  * @see TypeConverterRegistry
+ * @deprecated to be removed in the near future
  */
+@Deprecated
 public interface TypeConverterAware {
 
     /**

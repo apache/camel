@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.spring.management;
 
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -50,23 +51,33 @@ public class DualCamelContextManagedAutoAssignedNameTest extends DualCamelContex
         set = mbeanServer.queryNames(new ObjectName("*:type=endpoints,*"), null);
         assertTrue("Size should be 4 or higher, was: " + set.size(), set.size() >= 4);
 
+        Set<String> ids1 = new TreeSet<>();
+        Set<String> ids2 = new TreeSet<>();
         for (ObjectName on : set) {
             String name = on.getCanonicalName();
 
+            log.info("ObjectName: {}", on);
+
             if (name.contains("mock://mock1")) {
                 String id = (String) mbeanServer.getAttribute(on, "CamelId");
-                assertEquals("camel-1", id);
+                ids1.add(id);
             } else if (name.contains("mock://mock2")) {
                 String id = (String) mbeanServer.getAttribute(on, "CamelId");
-                assertEquals("camel-2", id);
+                ids2.add(id);
             } else if (name.contains("file://target/route1")) {
                 String id = (String) mbeanServer.getAttribute(on, "CamelId");
-                assertEquals("camel-1", id);
+                ids1.add(id);
             } else if (name.contains("file://target/route2")) {
                 String id = (String) mbeanServer.getAttribute(on, "CamelId");
-                assertEquals("camel-2", id);
+                ids2.add(id);
             }
         }
+        assertEquals(1, ids1.size());
+        assertEquals(1, ids2.size());
+        String camel1 = ids1.iterator().next();
+        String camel2 = ids2.iterator().next();
+        // should be different Camels
+        assertNotEquals(camel1, camel2);
     }
 
 }

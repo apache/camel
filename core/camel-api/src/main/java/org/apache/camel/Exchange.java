@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -218,6 +218,7 @@ public interface Exchange {
     String SPLIT_INDEX        = "CamelSplitIndex";
     String SPLIT_COMPLETE     = "CamelSplitComplete";
     String SPLIT_SIZE         = "CamelSplitSize";
+    String STEP_ID            = "CamelStepId";
 
     String TIMER_COUNTER         = "CamelTimerCounter";
     String TIMER_FIRED_TIME      = "CamelTimerFiredTime";

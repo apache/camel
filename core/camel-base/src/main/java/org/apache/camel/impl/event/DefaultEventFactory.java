@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -119,6 +119,18 @@ public class DefaultEventFactory implements EventFactory {
 
     public CamelEvent createExchangeSentEvent(Exchange exchange, Endpoint endpoint, long timeTaken) {
         return new ExchangeSentEvent(exchange, endpoint, timeTaken);
+    }
+
+    public CamelEvent createStepStartedEvent(Exchange exchange, String stepId) {
+        return new StepStartedEvent(exchange, stepId);
+    }
+
+    public CamelEvent createStepCompletedEvent(Exchange exchange, String stepId) {
+        return new StepCompletedEvent(exchange, stepId);
+    }
+
+    public CamelEvent createStepFailedEvent(Exchange exchange, String stepId) {
+        return new StepFailedEvent(exchange, stepId);
     }
 
     public CamelEvent createCamelContextSuspendingEvent(CamelContext context) {

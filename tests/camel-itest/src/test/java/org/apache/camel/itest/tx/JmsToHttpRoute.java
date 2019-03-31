@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -40,7 +40,7 @@ public class JmsToHttpRoute extends SpringRouteBuilder {
     @Resource(name = "PROPAGATION_REQUIRED")
     protected SpringTransactionPolicy required;
 
-    @EndpointInject(ref = "data")
+    @EndpointInject(uri = "ref:data")
     protected Endpoint data;    
 
     protected String nok = "<?xml version=\"1.0\"?><reply><status>nok</status></reply>";

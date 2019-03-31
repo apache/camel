@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -42,7 +42,6 @@ public abstract class FhirDataFormat extends ServiceSupport implements DataForma
     private List<Class<? extends IBaseResource>> preferTypes;
     private boolean omitResourceId;
     private IIdType forceResourceId;
-    private Set<String> encodeElementsAppliesToResourceTypes;
     private boolean encodeElementsAppliesToChildResourcesOnly;
     private Set<String> encodeElements;
     private Set<String> dontEncodeElements;
@@ -132,14 +131,6 @@ public abstract class FhirDataFormat extends ServiceSupport implements DataForma
         this.forceResourceId = forceResourceId;
     }
 
-    public Set<String> getEncodeElementsAppliesToResourceTypes() {
-        return encodeElementsAppliesToResourceTypes;
-    }
-
-    public void setEncodeElementsAppliesToResourceTypes(Set<String> encodeElementsAppliesToResourceTypes) {
-        this.encodeElementsAppliesToResourceTypes = encodeElementsAppliesToResourceTypes;
-    }
-
     public boolean isEncodeElementsAppliesToChildResourcesOnly() {
         return encodeElementsAppliesToChildResourcesOnly;
     }
@@ -216,9 +207,6 @@ public abstract class FhirDataFormat extends ServiceSupport implements DataForma
         }
         if (ObjectHelper.isNotEmpty(getEncodeElements())) {
             parser.setEncodeElements(getEncodeElements());
-        }
-        if (ObjectHelper.isNotEmpty(getEncodeElementsAppliesToResourceTypes())) {
-            parser.setEncodeElementsAppliesToResourceTypes(getEncodeElementsAppliesToResourceTypes());
         }
         if (ObjectHelper.isNotEmpty(getForceResourceId())) {
             parser.setEncodeForceResourceId(getForceResourceId());

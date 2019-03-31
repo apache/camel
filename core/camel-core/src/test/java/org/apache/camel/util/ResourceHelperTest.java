@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,7 +30,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.ResourceHelper;
 import org.junit.Test;
 
@@ -92,8 +93,8 @@ public class ResourceHelperTest extends TestSupport {
 
     @Test
     public void testLoadRegistry() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("myBean", "This is a log4j logging configuration file");
+        Registry registry = new DefaultRegistry();
+        registry.bind("myBean", "This is a log4j logging configuration file");
 
         CamelContext context = new DefaultCamelContext(registry);
         context.start();
@@ -111,8 +112,8 @@ public class ResourceHelperTest extends TestSupport {
 
     @Test
     public void testLoadBeanDoubleColon() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("myBean", new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
+        Registry registry = new DefaultRegistry();
+        registry.bind("myBean", new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
 
         CamelContext context = new DefaultCamelContext(registry);
         context.start();
@@ -130,8 +131,8 @@ public class ResourceHelperTest extends TestSupport {
 
     @Test
     public void testLoadBeanDoubleColonLong() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("my.company.MyClass", new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
+        Registry registry = new DefaultRegistry();
+        registry.bind("my.company.MyClass", new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
 
         CamelContext context = new DefaultCamelContext(registry);
         context.start();
@@ -149,8 +150,8 @@ public class ResourceHelperTest extends TestSupport {
 
     @Test
     public void testLoadBeanDot() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("myBean", new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
+        Registry registry = new DefaultRegistry();
+        registry.bind("myBean", new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
 
         CamelContext context = new DefaultCamelContext(registry);
         context.start();

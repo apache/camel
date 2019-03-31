@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -95,7 +95,7 @@ public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
         Volume volume = new Volume();
 
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.VOLUME_SIZE_GIGABYTES))) {
-            volume.setSize(in.getHeader(DigitalOceanHeaders.VOLUME_SIZE_GIGABYTES, Double.class));
+            volume.setSize(in.getHeader(DigitalOceanHeaders.VOLUME_SIZE_GIGABYTES, Integer.class));
         } else {
             throw new IllegalArgumentException(DigitalOceanHeaders.VOLUME_SIZE_GIGABYTES + " must be specified");
         }

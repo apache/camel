@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,7 +19,7 @@ package org.apache.camel.component.jgroups.raft;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jgroups.raft.utils.NopStateMachine;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.jgroups.JChannel;
 import org.jgroups.raft.RaftHandle;

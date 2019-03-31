@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
-
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
@@ -33,7 +32,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -124,19 +122,31 @@ public final class ProcessorDefinitionHelper {
      * @param recursive  whether or not to check grand parent(s) as well
      * @return <tt>true</tt> if parent(s) is of given type, <tt>false</tt> otherwise
      */
-    public static boolean isParentOfType(Class<?> parentType, ProcessorDefinition<?> node, boolean recursive) {
+    public static boolean isParentOfType(Class<? extends ProcessorDefinition> parentType, ProcessorDefinition<?> node, boolean recursive) {
+        return findFirstParentOfType(parentType, node, recursive) != null;
+    }
+
+    /**
+     * Is the given node parent(s) of the given type
+     *
+     * @param parentType the parent type
+     * @param node       the current node
+     * @param recursive  whether or not to check grand parent(s) as well
+     * @return <tt>true</tt> if parent(s) is of given type, <tt>false</tt> otherwise
+     */
+    public static <T extends ProcessorDefinition> T findFirstParentOfType(Class<T> parentType, ProcessorDefinition<?> node, boolean recursive) {
         if (node == null || node.getParent() == null) {
-            return false;
+            return null;
         }
 
         if (parentType.isAssignableFrom(node.getParent().getClass())) {
-            return true;
+            return parentType.cast(node.getParent());
         } else if (recursive) {
             // recursive up the tree of parents
-            return isParentOfType(parentType, node.getParent(), true);
+            return findFirstParentOfType(parentType, node.getParent(), true);
         } else {
             // no match
-            return false;
+            return null;
         }
     }
 

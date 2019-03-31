@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -476,7 +476,7 @@ public class MethodInfo {
 
     protected Object invoke(Method mth, Object pojo, Object[] arguments, Exchange exchange) throws InvocationTargetException {
         try {
-            return mth.invoke(pojo, arguments);
+            return ObjectHelper.invokeMethodSafe(mth, pojo, arguments);
         } catch (IllegalAccessException e) {
             throw new RuntimeExchangeException("IllegalAccessException occurred invoking method: " + mth + " using arguments: " + Arrays.asList(arguments), exchange, e);
         } catch (IllegalArgumentException e) {

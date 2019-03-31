@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -41,6 +41,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.function.ThrowingConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +66,27 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         super(context);
     }
 
+    /**
+     * Add routes to a context using a lambda expression.
+     * It can be used as following:
+     * <pre>
+     * RouteBuilder.addRoutes(context, rb ->
+     *     rb.from("direct:inbound").bean(ProduceTemplateBean.class)));
+     * </pre>
+     *
+     * @param context the camel context to add routes
+     * @param rbc a lambda expression receiving the {@code RouteBuilder} to use to create routes
+     * @throws Exception if an error occurs
+     */
+    public static void addRoutes(CamelContext context, ThrowingConsumer<RouteBuilder, Exception> rbc) throws Exception {
+        context.addRoutes(new RouteBuilder(context) {
+            @Override
+            public void configure() throws Exception {
+                rbc.accept(this);
+            }
+        });
+    }
+
     @Override
     public String toString() {
         return getRouteCollection().toString();
@@ -79,6 +101,27 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @throws Exception can be thrown during configuration
      */
     public abstract void configure() throws Exception;
+
+    /**
+     * Binds the bean to the repository (if possible).
+     *
+     * @param id   the id of the bean
+     * @param bean the bean
+     */
+    public void bindToRegistry(String id, Object bean) {
+        getContext().getRegistry().bind(id, bean);
+    }
+
+    /**
+     * Binds the bean to the repository (if possible).
+     *
+     * @param id   the id of the bean
+     * @param type the type of the bean to associate the binding
+     * @param bean the bean
+     */
+    public void bindToRegistry(String id, Class<?> type, Object bean) {
+        getContext().getRegistry().bind(id, type, bean);
+    }
 
     /**
      * Configures the REST services
@@ -191,32 +234,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     public RouteDefinition from(Endpoint endpoint) {
         getRouteCollection().setCamelContext(getContext());
         RouteDefinition answer = getRouteCollection().from(endpoint);
-        configureRoute(answer);
-        return answer;
-    }
-
-    /**
-     * Creates a new route from the given URIs input
-     *
-     * @param uris  the from uris
-     * @return the builder
-     */
-    public RouteDefinition from(String... uris) {
-        getRouteCollection().setCamelContext(getContext());
-        RouteDefinition answer = getRouteCollection().from(uris);
-        configureRoute(answer);
-        return answer;
-    }
-
-    /**
-     * Creates a new route from the given endpoint
-     *
-     * @param endpoints  the from endpoints
-     * @return the builder
-     */
-    public RouteDefinition from(Endpoint... endpoints) {
-        getRouteCollection().setCamelContext(getContext());
-        RouteDefinition answer = getRouteCollection().from(endpoints);
         configureRoute(answer);
         return answer;
     }
@@ -448,14 +465,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 }
             }
         }
-        camelContext.addRestDefinitions(getRestCollection().getRests());
+        // cannot add rests as routes yet as we need to initialize this specially
+        camelContext.addRestDefinitions(getRestCollection().getRests(), false);
 
-        // convert rests into routes so we they are routes for runtime
-        List<RouteDefinition> routes = new ArrayList<>();
-        for (RestDefinition rest : getRestCollection().getRests()) {
-            List<RouteDefinition> list = rest.asRouteDefinition(getContext());
-            routes.addAll(list);
-        }
         // convert rests api-doc into routes so they are routes for runtime
         for (RestConfiguration config : camelContext.getRestConfigurations()) {
             if (config.getApiContextPath() != null) {
@@ -464,7 +476,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 // so we check all existing routes if they have rest-api route already added
                 boolean hasRestApi = false;
                 for (RouteDefinition route : camelContext.getRouteDefinitions()) {
-                    FromDefinition from = route.getInputs().get(0);
+                    FromDefinition from = route.getInput();
                     if (from.getUri() != null && from.getUri().startsWith("rest-api:")) {
                         hasRestApi = true;
                     }
@@ -472,15 +484,14 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 if (!hasRestApi) {
                     RouteDefinition route = RestDefinition.asRouteApiDefinition(camelContext, config);
                     log.debug("Adding routeId: {} as rest-api route", route.getId());
-                    routes.add(route);
+                    getRouteCollection().route(route);
                 }
             }
         }
-
-        // add the rest routes
-        for (RouteDefinition route : routes) {
-            getRouteCollection().route(route);
-        }
+        // add rest as routes and have them prepared as well via routeCollection.route method
+        getRestCollection().getRests()
+            .forEach(rest -> rest.asRouteDefinition(getContext())
+                .forEach(route -> getRouteCollection().route(route)));
     }
 
     protected void populateTransformers() {

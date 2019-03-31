@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -77,8 +77,7 @@ public class IgniteQueueComponentAutoConfiguration {
     @Lazy
     @Bean(name = "ignite-queue-component")
     @ConditionalOnMissingBean(IgniteQueueComponent.class)
-    public IgniteQueueComponent configureIgniteQueueComponent()
-            throws Exception {
+    public IgniteQueueComponent configureIgniteQueueComponent() throws Exception {
         IgniteQueueComponent component = new IgniteQueueComponent();
         component.setCamelContext(camelContext);
         Map<String, Object> parameters = new HashMap<>();

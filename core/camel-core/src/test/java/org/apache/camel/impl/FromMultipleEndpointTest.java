@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -54,7 +54,8 @@ public class FromMultipleEndpointTest extends ContextTestSupport {
             public void configure() throws Exception {
                 getContext().setTracing(true);
 
-                from("direct:foo", "seda:bar").to("mock:results");
+                from("direct:foo").to("mock:results");
+                from("seda:bar").to("mock:results");
             }
         };
 

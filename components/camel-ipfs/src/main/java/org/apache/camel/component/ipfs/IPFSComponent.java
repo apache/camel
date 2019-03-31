@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,17 +19,12 @@ package org.apache.camel.component.ipfs;
 import java.net.URI;
 import java.util.Map;
 
-import io.nessus.ipfs.client.DefaultIPFSClient;
-import io.nessus.ipfs.client.IPFSClient;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 @Component("ipfs")
 public class IPFSComponent extends DefaultComponent {
-
-    private IPFSClient client;
 
     @Override
     protected Endpoint createEndpoint(String urispec, String remaining, Map<String, Object> params) throws Exception {
@@ -55,17 +50,6 @@ public class IPFSComponent extends DefaultComponent {
         }
         config.setIpfsCmd(cmd);
 
-        client = createClient(config);
-
         return new IPFSEndpoint(urispec, this, config);
-    }
-
-    public IPFSClient getIPFSClient() {
-        return client;
-    }
-
-    private synchronized IPFSClient createClient(IPFSConfiguration config) {
-        IPFSClient ipfsClient = new DefaultIPFSClient(config.getIpfsHost(), config.getIpfsPort());
-        return ipfsClient.connect();
     }
 }

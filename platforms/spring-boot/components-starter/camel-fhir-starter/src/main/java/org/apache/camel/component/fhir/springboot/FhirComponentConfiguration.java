@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -72,13 +72,25 @@ public class FhirComponentConfiguration
     public static class FhirConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.fhir.FhirConfiguration.class;
         /**
-         * The FHIR server base URL
+         * Component configuration for FHIR component.
          */
         private String serverUrl;
         /**
-         * Pretty print all request
+         * Component configuration for FHIR component.
+         */
+        private String fhirVersion = "DSTU3";
+        /**
+         * Component configuration for FHIR component.
+         */
+        private String encoding;
+        /**
+         * Component configuration for FHIR component.
          */
         private Boolean prettyPrint = false;
+        /**
+         * Component configuration for FHIR component.
+         */
+        private String summary;
         /**
          * What kind of operation to perform
          */
@@ -88,74 +100,75 @@ public class FhirComponentConfiguration
          */
         private String methodName;
         /**
-         * FhirContext is an expensive object to create. To avoid creating
-         * multiple instances, it can be set directly.
+         * What sub operation to use for the selected operation
          */
         private FhirContext fhirContext;
         /**
-         * Force conformance check
+         * What sub operation to use for the selected operation
          */
         private Boolean forceConformanceCheck = false;
         /**
-         * Username to use for basic authentication
+         * What sub operation to use for the selected operation
          */
         private String username;
         /**
-         * Username to use for basic authentication
+         * What sub operation to use for the selected operation
          */
         private String password;
         /**
-         * OAuth access token
+         * What sub operation to use for the selected operation
          */
         private String accessToken;
         /**
-         * Will log every requests and responses
+         * What sub operation to use for the selected operation
          */
         private Boolean log = false;
         /**
-         * Compresses outgoing (POST/PUT) contents to the GZIP format
+         * What sub operation to use for the selected operation
          */
         private Boolean compress = false;
         /**
-         * HTTP session cookie to add to every request
+         * What sub operation to use for the selected operation
          */
         private String sessionCookie;
         /**
-         * When this option is set, model classes will not be scanned for
-         * children until the child list for the given type is actually
-         * accessed.
+         * What sub operation to use for the selected operation
+         */
+        private String validationMode = "ONCE";
+        /**
+         * What sub operation to use for the selected operation
          */
         private Boolean deferModelScanning = false;
         /**
-         * How long to try and establish the initial TCP connection (in ms)
+         * What sub operation to use for the selected operation
          */
         private Integer connectionTimeout = 10000;
         /**
-         * How long to block for individual read/write operations (in ms)
+         * What sub operation to use for the selected operation
          */
         private Integer socketTimeout = 10000;
         /**
-         * The proxy host
+         * What sub operation to use for the selected operation
          */
         private String proxyHost;
         /**
-         * The proxy password
+         * What sub operation to use for the selected operation
          */
         private String proxyPassword;
         /**
-         * The proxy port
+         * What sub operation to use for the selected operation
          */
         private Integer proxyPort;
         /**
-         * The proxy username
+         * What sub operation to use for the selected operation
          */
         private String proxyUser;
         /**
-         * To use the custom client
+         * What sub operation to use for the selected operation
          */
         private IGenericClient client;
         /**
-         * To use the custom client factory
+         * What sub operation to use for the selected operation
          */
         private IRestfulClientFactory clientFactory;
 
@@ -167,12 +180,36 @@ public class FhirComponentConfiguration
             this.serverUrl = serverUrl;
         }
 
+        public String getFhirVersion() {
+            return fhirVersion;
+        }
+
+        public void setFhirVersion(String fhirVersion) {
+            this.fhirVersion = fhirVersion;
+        }
+
+        public String getEncoding() {
+            return encoding;
+        }
+
+        public void setEncoding(String encoding) {
+            this.encoding = encoding;
+        }
+
         public Boolean getPrettyPrint() {
             return prettyPrint;
         }
 
         public void setPrettyPrint(Boolean prettyPrint) {
             this.prettyPrint = prettyPrint;
+        }
+
+        public String getSummary() {
+            return summary;
+        }
+
+        public void setSummary(String summary) {
+            this.summary = summary;
         }
 
         public FhirApiName getApiName() {
@@ -253,6 +290,14 @@ public class FhirComponentConfiguration
 
         public void setSessionCookie(String sessionCookie) {
             this.sessionCookie = sessionCookie;
+        }
+
+        public String getValidationMode() {
+            return validationMode;
+        }
+
+        public void setValidationMode(String validationMode) {
+            this.validationMode = validationMode;
         }
 
         public Boolean getDeferModelScanning() {

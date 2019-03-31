@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -79,8 +79,7 @@ public class BarcodeDataFormatAutoConfiguration {
 
     @Bean(name = "barcode-dataformat-factory")
     @ConditionalOnMissingBean(BarcodeDataFormat.class)
-    public DataFormatFactory configureBarcodeDataFormatFactory()
-            throws Exception {
+    public DataFormatFactory configureBarcodeDataFormatFactory() throws Exception {
         return new DataFormatFactory() {
             @Override
             public DataFormat newInstance() {

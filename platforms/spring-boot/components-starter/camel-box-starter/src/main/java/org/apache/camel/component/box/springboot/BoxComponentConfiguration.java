@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.component.box.springboot;
 
 import java.util.Map;
 import javax.annotation.Generated;
+import com.box.sdk.EncryptionAlgorithm;
 import com.box.sdk.IAccessTokenCache;
 import org.apache.camel.component.box.internal.BoxApiName;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
@@ -101,9 +102,20 @@ public class BoxComponentConfiguration
          */
         private String privateKeyPassword;
         /**
-         * The type of authentication for connection. Types of Authentication:
-         * STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION
-         * - OAuth 2.0 with JSON Web Tokens
+         * The maximum number of access tokens in cache.
+         */
+        private Integer maxCacheEntries = 100;
+        /**
+         * The type of encryption algorithm for JWT. <p> Supported Algorithms:
+         * <ul> <li>RSA_SHA_256</li> <li>RSA_SHA_384</li> <li>RSA_SHA_512</li>
+         * </ul>
+         */
+        private EncryptionAlgorithm encryptionAlgorithm = EncryptionAlgorithm.RSA_SHA_256;
+        /**
+         * The type of authentication for connection. <p> Types of
+         * Authentication: <ul> <li>STANDARD_AUTHENTICATION - OAuth 2.0
+         * (3-legged)</li> <li>SERVER_AUTHENTICATION - OAuth 2.0 with JSON Web
+         * Tokens</li> </ul>
          */
         private String authenticationType = "APP_USER_AUTHENTICATION";
         /**
@@ -190,6 +202,23 @@ public class BoxComponentConfiguration
 
         public void setPrivateKeyPassword(String privateKeyPassword) {
             this.privateKeyPassword = privateKeyPassword;
+        }
+
+        public Integer getMaxCacheEntries() {
+            return maxCacheEntries;
+        }
+
+        public void setMaxCacheEntries(Integer maxCacheEntries) {
+            this.maxCacheEntries = maxCacheEntries;
+        }
+
+        public EncryptionAlgorithm getEncryptionAlgorithm() {
+            return encryptionAlgorithm;
+        }
+
+        public void setEncryptionAlgorithm(
+                EncryptionAlgorithm encryptionAlgorithm) {
+            this.encryptionAlgorithm = encryptionAlgorithm;
         }
 
         public String getAuthenticationType() {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,6 +25,7 @@ import javax.naming.Context;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.itest.CamelJmsTestHelper;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.jndi.JndiContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -54,17 +55,14 @@ public class JmsIntegrationTest extends CamelTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
-        answer.bind("myBean", myBean);
-
+    protected void bindToRegistry(Registry registry) throws Exception {
         // add ActiveMQ with embedded broker
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
         amq.setCamelContext(context);
 
-        answer.bind("jms", amq);
-        return answer;
+        registry.bind("myBean", myBean);
+        registry.bind("jms", amq);
     }
 
     protected class MyBean {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,10 +28,10 @@ public class PubsubProducerTest extends PubsubTestSupport {
 
     private static final String TEST_TOPIC_NAME = "test-topic-name";
 
-    @EndpointInject(uri = "google-pubsub:{{project.id}}:" + TEST_TOPIC_NAME)
+    @EndpointInject("google-pubsub:{{project.id}}:" + TEST_TOPIC_NAME)
     private Endpoint to;
 
-    @EndpointInject(uri = "direct:from")
+    @EndpointInject("direct:from")
     private Endpoint from;
 
     @Test

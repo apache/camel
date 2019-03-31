@@ -46,7 +46,6 @@
             </transform>
           </onException>
           <to uri="mock:hello"/>
-          <to uri="mock:bar"/>
           <throwException ref="darn"/>
         </route>
       </get>

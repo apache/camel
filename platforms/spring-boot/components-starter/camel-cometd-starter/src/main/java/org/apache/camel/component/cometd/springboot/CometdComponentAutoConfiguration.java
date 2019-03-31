@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -75,7 +75,7 @@ public class CometdComponentAutoConfiguration {
     }
 
     @Lazy
-    @Bean(name = {"cometd-component", "cometds-component"})
+    @Bean({"cometd-component", "cometds-component"})
     @ConditionalOnMissingBean(CometdComponent.class)
     public CometdComponent configureCometdComponent() throws Exception {
         CometdComponent component = new CometdComponent();

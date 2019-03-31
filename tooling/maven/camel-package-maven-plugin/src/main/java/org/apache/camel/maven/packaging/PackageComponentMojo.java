@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -147,7 +147,7 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
                         text = text.replaceFirst(" {4}\"deprecated\": false,", "    \"deprecated\": true,");
                     }
 
-                    writeText(file, text);
+                    updateResource(null, file.toPath(), text);
                 } catch (IOException e) {
                     throw new MojoExecutionException("Failed to update file " + file + ". Reason: " + e, e);
                 }

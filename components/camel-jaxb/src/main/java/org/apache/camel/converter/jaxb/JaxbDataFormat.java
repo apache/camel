@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,6 +35,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBIntrospector;
+import javax.xml.bind.MarshalException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
@@ -63,7 +64,8 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
@@ -237,6 +239,15 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
                         return;
                     }
                 } catch (Exception e) {
+                    // if a schema is set then an MarshallException is thrown when the XML is not valid
+                    // and the method must throw this exception as it would when the object in the body is a root element
+                    // or a partial class (the other alternatives above)
+                    // 
+                    // it would be best to completely remove the exception handler here but it's left for backwards compatibility reasons.
+                    if (MarshalException.class.isAssignableFrom(e.getClass()) && schema != null) {
+                        throw e;
+                    }
+                    
                     log.debug("Unable to create JAXBElement object for type " + element.getClass() + " due to " + e.getMessage(), e);
                 }
             }

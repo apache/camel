@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * Represents a map of values which timeout after a period of inactivity.
  */
-public interface TimeoutMap<K, V> extends Runnable {
+public interface TimeoutMap<K, V> extends Service {
 
     /**
      * Looks up the value in the map by the given key.
@@ -28,13 +28,6 @@ public interface TimeoutMap<K, V> extends Runnable {
      * @return the value for the given key or <tt>null</tt> if it is not present (or has timed out)
      */
     V get(K key);
-
-    /**
-     * Returns a copy of the keys in the map
-     *
-     * @return the keys
-     */
-    Object[] getKeys();
 
     /**
      * Returns the size of the map
@@ -57,7 +50,8 @@ public interface TimeoutMap<K, V> extends Runnable {
     
     /**
      * Adds the key value pair into the map if the specified key is not already associated with a value
-     * such that some time after the given timeout the entry will be evicted
+     * such that some time after the given timeout the entry will be evicted. Expiry time of an existing mapping
+     * is left unchanged.
      *
      * @param key   the key
      * @param value the value
@@ -68,16 +62,6 @@ public interface TimeoutMap<K, V> extends Runnable {
     V putIfAbsent(K key, V value, long timeoutMillis);
 
     /**
-     * Callback when the value has been evicted
-     *
-     * @param key the key
-     * @param value the value
-     * @return <tt>true</tt> to remove the evicted value,
-     *         or <tt>false</tt> to veto the eviction and thus keep the value.
-     */
-    boolean onEviction(K key, V value);
-
-    /**
      * Removes the object with the given key
      *
      * @param key  key for the object to remove
@@ -86,7 +70,24 @@ public interface TimeoutMap<K, V> extends Runnable {
     V remove(K key);
 
     /**
-     * Purges any old entries from the map
+     * Assign the (singular) {@link Listener}
+     *
+     * @param listener the new listener
      */
-    void purge();
+    void addListener(Listener<K, V> listener);
+
+    @FunctionalInterface
+    interface Listener<K, V> {
+
+        enum Type { Put, Remove, Evict }
+
+        /**
+         * Callback when the map changes content
+         *
+         * @param key the item key
+         * @param value the item value
+         */
+        void timeoutMapEvent(Type type, K key, V value);
+
+    }
 }

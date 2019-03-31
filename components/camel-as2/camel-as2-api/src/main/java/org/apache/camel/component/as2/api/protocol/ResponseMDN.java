@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -47,6 +47,7 @@ import org.apache.camel.component.as2.api.util.SigningUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.protocol.HttpContext;
@@ -106,16 +107,17 @@ public class ResponseMDN implements HttpResponseInterceptor {
         }
 
         HttpCoreContext coreContext = HttpCoreContext.adapt(context);
-
-        HttpEntityEnclosingRequest request = coreContext.getAttribute(HttpCoreContext.HTTP_REQUEST, HttpEntityEnclosingRequest.class);
-        if (request == null) {
-            // Should never happen; but you never know
-            LOG.debug("MDN not returned due to null request");
-            throw new HttpException("request missing from HTTP context");
+        
+        HttpRequest request = coreContext.getAttribute(HttpCoreContext.HTTP_REQUEST, HttpRequest.class);
+        if (request == null || !(request instanceof HttpEntityEnclosingRequest)) {
+            // Not an enclosing request so nothing to do.
+            return;
         }
-        LOG.debug("Processing MDN for request: {}", request);
 
-        if (HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_TO) == null) {
+        HttpEntityEnclosingRequest httpEntityEnclosingRequest = (HttpEntityEnclosingRequest) request;
+        LOG.debug("Processing MDN for request: {}", httpEntityEnclosingRequest);
+
+        if (HttpMessageUtils.getHeaderValue(httpEntityEnclosingRequest, AS2Header.DISPOSITION_NOTIFICATION_TO) == null) {
             // no receipt requested by sender
             LOG.debug("MDN not returned: no receipt requested");
             return;
@@ -123,17 +125,17 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
         // Return a Message Disposition Notification Receipt in response body
         String boundary = EntityUtils.createBoundaryValue();
-        String mdnMessage = createMdnDescription(request, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, 
+        String mdnMessage = createMdnDescription(httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, 
         AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, DEFAULT_MDN_MESSAGE_TEMPLATE);
         DispositionNotificationMultipartReportEntity multipartReportEntity = new DispositionNotificationMultipartReportEntity(
-                request, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
                 AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true, decryptingPrivateKey, mdnMessage);
 
         DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser
                 .parseDispositionNotificationOptions(
-                        HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS), null);
+                        HttpMessageUtils.getHeaderValue(httpEntityEnclosingRequest, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS), null);
 
-        String receiptAddress = HttpMessageUtils.getHeaderValue(request, AS2Header.RECEIPT_DELIVERY_OPTION);
+        String receiptAddress = HttpMessageUtils.getHeaderValue(httpEntityEnclosingRequest, AS2Header.RECEIPT_DELIVERY_OPTION);
         if (receiptAddress != null) {
             // Asynchronous Delivery
 
@@ -152,7 +154,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             /* Subject header */
             // RFC4130 - 7.3 -  Subject header SHOULD be supplied
             String subjectPrefix = coreContext.getAttribute(AS2ServerManager.SUBJECT, String.class);
-            String subject = HttpMessageUtils.getHeaderValue(request, AS2Header.SUBJECT);
+            String subject = HttpMessageUtils.getHeaderValue(httpEntityEnclosingRequest, AS2Header.SUBJECT);
             if (subjectPrefix != null && subject != null) {
                 subject = subjectPrefix + subject;
             } else if (subject != null) {
@@ -167,7 +169,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             response.addHeader(AS2Header.FROM, from);
 
             /* AS2-From header */
-            String as2From = HttpMessageUtils.getHeaderValue(request, AS2Header.AS2_TO);
+            String as2From = HttpMessageUtils.getHeaderValue(httpEntityEnclosingRequest, AS2Header.AS2_TO);
             try {
                 AS2Utils.validateAS2Name(as2From);
             } catch (InvalidAS2NameException e) {
@@ -176,7 +178,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             response.addHeader(AS2Header.AS2_FROM, as2From);
 
             /* AS2-To header */
-            String as2To = HttpMessageUtils.getHeaderValue(request, AS2Header.AS2_FROM);
+            String as2To = HttpMessageUtils.getHeaderValue(httpEntityEnclosingRequest, AS2Header.AS2_FROM);
             try {
                 AS2Utils.validateAS2Name(as2To);
             } catch (InvalidAS2NameException e) {

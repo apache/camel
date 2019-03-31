@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -42,12 +42,8 @@ public class EndpointList extends CamelControllerImpl implements Action {
             required = false, multiValued = false, valueToShowInHelp = "false")
     boolean verbose;
 
-    @Option(name = "--explain", aliases = "-e", description = "Whether to explain the endpoint options",
-            required = false, multiValued = false, valueToShowInHelp = "false")
-    boolean explain;
-
     public Object execute() throws Exception {
-        EndpointListCommand command = new EndpointListCommand(name, decode, verbose, explain);
+        EndpointListCommand command = new EndpointListCommand(name, decode, verbose);
         return command.execute(this, System.out, System.err);
     }
 

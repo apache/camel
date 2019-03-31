@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,7 +29,7 @@ import org.springframework.messaging.support.GenericMessage;
  * The <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  * for turning the Spring Integration types into Camel native type.
  */
-@Converter
+@Converter(loader = true)
 public final class SpringIntegrationConverter {
 
     private SpringIntegrationConverter() {

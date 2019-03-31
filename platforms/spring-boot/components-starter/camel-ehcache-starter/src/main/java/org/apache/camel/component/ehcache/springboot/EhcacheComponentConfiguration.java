@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,7 +19,6 @@ package org.apache.camel.component.ehcache.springboot;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Generated;
-import org.apache.camel.component.ehcache.EhcacheComponent;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
@@ -66,8 +65,8 @@ public class EhcacheComponentConfiguration
     private String cacheConfiguration;
     /**
      * A map of caches configurations to be used to create caches. The option is
-     * a java.util.Map<java.lang.String,org.ehcache.config.CacheConfiguration<?,
-     * ?>> type.
+     * a
+     * java.util.Map<java.lang.String,org.ehcache.config.CacheConfiguration<?,?>> type.
      */
     private String cachesConfigurations;
     /**
@@ -147,8 +146,6 @@ public class EhcacheComponentConfiguration
         private String configurationUri;
         /**
          * URI pointing to the Ehcache XML configuration file's location
-         * 
-         * @deprecated use {@link #setConfigurationUri(String)} instead
          */
         @Deprecated
         private String configUri;
@@ -196,13 +193,13 @@ public class EhcacheComponentConfiguration
          */
         private Map configurations;
         /**
-         * The cache key type, default java.lang.Object
+         * The cache key type, default "java.lang.Object"
          */
-        private String keyType = "java.lang.Object";
+        private Class keyType = java.lang.Object.class;
         /**
-         * The cache value type, default java.lang.Object
+         * The cache value type, default "java.lang.Object"
          */
-        private String valueType = "java.lang.Object";
+        private Class valueType = java.lang.Object.class;
 
         public String getConfigurationUri() {
             return configurationUri;
@@ -304,19 +301,19 @@ public class EhcacheComponentConfiguration
             this.configurations = configurations;
         }
 
-        public String getKeyType() {
+        public Class getKeyType() {
             return keyType;
         }
 
-        public void setKeyType(String keyType) {
+        public void setKeyType(Class keyType) {
             this.keyType = keyType;
         }
 
-        public String getValueType() {
+        public Class getValueType() {
             return valueType;
         }
 
-        public void setValueType(String valueType) {
+        public void setValueType(Class valueType) {
             this.valueType = valueType;
         }
     }

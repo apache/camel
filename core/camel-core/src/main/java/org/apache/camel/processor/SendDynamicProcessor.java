@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -102,10 +102,11 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
             recipient = expression.evaluate(exchange, Object.class);
             if (dynamicAware != null) {
                 // if its the same scheme as the pre-resolved dynamic aware then we can optimise to use it
+                String originalUri = uri;
                 String uri = resolveUri(exchange, recipient);
                 String scheme = resolveScheme(exchange, uri);
                 if (dynamicAware.getScheme().equals(scheme)) {
-                    SendDynamicAware.DynamicAwareEntry entry = dynamicAware.prepare(exchange, uri);
+                    SendDynamicAware.DynamicAwareEntry entry = dynamicAware.prepare(exchange, uri, originalUri);
                     if (entry != null) {
                         staticUri = dynamicAware.resolveStaticUri(exchange, entry);
                         preAwareProcessor = dynamicAware.createPreProcessor(exchange, entry);

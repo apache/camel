@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.spring.boot.actuate.health;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spring.boot.health.HealthCheckVerboseConfiguration;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -27,9 +28,11 @@ import org.springframework.boot.actuate.health.HealthIndicator;
 public class CamelHealthIndicator extends AbstractHealthIndicator {
 
     private final CamelContext camelContext;
+    private final  HealthCheckVerboseConfiguration properties;
 
-    public CamelHealthIndicator(CamelContext camelContext) {
+    public CamelHealthIndicator(CamelContext camelContext, HealthCheckVerboseConfiguration properties) {
         this.camelContext = camelContext;
+        this.properties = properties;
     }
 
     @Override
@@ -37,8 +40,10 @@ public class CamelHealthIndicator extends AbstractHealthIndicator {
         if (camelContext == null) {
             builder.unknown();
         } else {
-            builder.withDetail("name", camelContext.getName());
-            builder.withDetail("version", camelContext.getVersion());
+            if (properties.isVerbose()) {
+                builder.withDetail("name", camelContext.getName());
+                builder.withDetail("version", camelContext.getVersion());
+            }
             if (camelContext.getUptime() != null) {
                 builder.withDetail("uptime", camelContext.getUptime());
                 builder.withDetail("uptimeMillis", camelContext.getUptimeMillis());

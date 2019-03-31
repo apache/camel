@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.spi;
+
+import java.util.Properties;
 
 import org.apache.camel.Component;
 
@@ -39,14 +41,69 @@ public interface PropertiesComponent extends Component {
 
     String getSuffixToken();
 
+    /**
+     * Parses the input text and resolve all property placeholders.
+     *
+     * @param uri  input text
+     * @return text with resolved property placeholders
+     * @throws Exception is thrown if error during parsing
+     */
     String parseUri(String uri) throws Exception;
 
-    String parseUri(String uri, String... uris) throws Exception;
+    /**
+     * Parses the input text and resolve all property placeholders.
+     *
+     * @param uri  input text
+     * @param locations locations to load as properties (will not use the default locations)
+     * @return text with resolved property placeholders
+     * @throws Exception is thrown if error during parsing
+     */
+    String parseUri(String uri, String... locations) throws Exception;
+
+    /**
+     * Loads the properties from the default locations.
+     *
+     * @return the properties loaded.
+     * @throws Exception is thrown if error loading properties
+     */
+    Properties loadProperties() throws Exception;
+
+    /**
+     * Loads the properties from the given locations
+     *
+     * @param locations locations to load as properties (will not use the default locations)
+     * @return the properties loaded.
+     * @throws Exception is thrown if error loading properties
+     */
+    Properties loadProperties(String... locations) throws Exception;
 
     /**
      * A list of locations to load properties. You can use comma to separate multiple locations.
      * This option will override any default locations and only use the locations from this option.
      */
     void setLocation(String location);
+
+    /**
+     * Adds the list of locations to the current locations, where to load properties.
+     * You can use comma to separate multiple locations.
+     * This option will override any default locations and only use the locations from this option.
+     */
+    void addLocation(String location);
+
+    /**
+     * Whether to silently ignore if a location cannot be located, such as a properties file not found.
+     */
+    void setIgnoreMissingLocation(boolean ignoreMissingLocation);
+
+    /**
+     * Sets initial properties which will be added before any property locations are loaded.
+     */
+    void setInitialProperties(Properties initialProperties);
+
+    /**
+     * Sets a special list of override properties that take precedence
+     * and will use first, if a property exist.
+     */
+    void setOverrideProperties(Properties overrideProperties);
 
 }

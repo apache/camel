@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -42,7 +42,7 @@ public class DefaultInjectorTest extends Assert {
 
     public static class MyBean {
 
-        @Produce(uri = "language:simple:${body}${body}")
+        @Produce("language:simple:${body}${body}")
         ProducerTemplate template;
 
         public Object doSomething(String body) {

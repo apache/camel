@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -47,6 +47,7 @@ final class CdiCamelBeanPostProcessor extends DefaultCamelBeanPostProcessor {
         this.manager = manager;
     }
 
+    // TODO: Not sure overriding this is needed
     protected void injectFields(final Object bean, final String beanName) {
         ReflectionHelper.doWithFields(bean.getClass(), field -> {
             PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
@@ -71,7 +72,8 @@ final class CdiCamelBeanPostProcessor extends DefaultCamelBeanPostProcessor {
             EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
             if (endpointInject != null) {
                 try {
-                    injectField(field, endpointInject.uri(), endpointInject.ref(), endpointInject.property(), endpointInject.context(), bean, beanName);
+                    String uri = endpointInject.value().isEmpty() ? endpointInject.uri() : endpointInject.value();
+                    injectField(field, uri, endpointInject.property(), endpointInject.context(), bean, beanName);
                 } catch (Exception cause) {
                     throw new InjectionException("Injection of [" + endpointInject + "] for field [" + field + "] failed!", cause);
                 }
@@ -80,7 +82,8 @@ final class CdiCamelBeanPostProcessor extends DefaultCamelBeanPostProcessor {
             Produce produce = field.getAnnotation(Produce.class);
             if (produce != null) {
                 try {
-                    injectField(field, produce.uri(), produce.ref(), produce.property(), produce.context(), bean, beanName);
+                    String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
+                    injectField(field, uri, produce.property(), produce.context(), bean, beanName);
                 } catch (Exception cause) {
                     throw new InjectionException("Injection of [" + produce + "] for field [" + field + "] failed!", cause);
                 }
@@ -88,8 +91,8 @@ final class CdiCamelBeanPostProcessor extends DefaultCamelBeanPostProcessor {
         });
     }
 
-    private void injectField(Field field, String uri, String ref, String property, String context, Object bean, String beanName) {
-        ReflectionHelper.setField(field, bean, getPostProcessorHelper(context).getInjectionValue(field.getType(), uri, ref, property, field.getName(), bean, beanName));
+    private void injectField(Field field, String uri, String property, String context, Object bean, String beanName) {
+        ReflectionHelper.setField(field, bean, getPostProcessorHelper(context).getInjectionValue(field.getType(), uri, property, field.getName(), bean, beanName));
     }
 
     private void injectFieldProperty(Field field, String property, String defaultValue, String context, Object bean, String beanName) {

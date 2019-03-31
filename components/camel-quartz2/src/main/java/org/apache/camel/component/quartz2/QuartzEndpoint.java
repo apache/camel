@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,12 +22,11 @@ import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
-import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -58,7 +57,9 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 public class QuartzEndpoint extends DefaultEndpoint {
 
     private TriggerKey triggerKey;
-    private LoadBalancer consumerLoadBalancer;
+
+    private volatile AsyncProcessor processor;
+
     // An internal variables to track whether a job has been in scheduler or not, and has it paused or not.
     private final AtomicBoolean jobAdded = new AtomicBoolean(false);
     private final AtomicBoolean jobPaused = new AtomicBoolean(false);
@@ -216,18 +217,6 @@ public class QuartzEndpoint extends DefaultEndpoint {
     public void setUsingFixedCamelContextName(boolean usingFixedCamelContextName) {
         this.usingFixedCamelContextName = usingFixedCamelContextName;
     }
-
-    public LoadBalancer getConsumerLoadBalancer() {
-        if (consumerLoadBalancer == null) {
-            consumerLoadBalancer = new RoundRobinLoadBalancer();
-        }
-        return consumerLoadBalancer;
-    }
-
-    public void setConsumerLoadBalancer(LoadBalancer consumerLoadBalancer) {
-        this.consumerLoadBalancer = consumerLoadBalancer;
-    }
-
 
     public Map<String, Object> getTriggerParameters() {
         return triggerParameters;
@@ -616,7 +605,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     public void onConsumerStart(QuartzConsumer quartzConsumer) throws Exception {
-        getConsumerLoadBalancer().addProcessor(quartzConsumer.getAsyncProcessor());
+        this.processor = quartzConsumer.getAsyncProcessor();
         if (!jobAdded.get()) {
             addJobInScheduler();
         } else {
@@ -625,9 +614,13 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     public void onConsumerStop(QuartzConsumer quartzConsumer) throws Exception {
-        getConsumerLoadBalancer().removeProcessor(quartzConsumer.getAsyncProcessor());
         if (jobAdded.get()) {
             pauseTrigger();
         }
+        this.processor = null;
+    }
+
+    AsyncProcessor getProcessor() {
+        return this.processor;
     }
 }

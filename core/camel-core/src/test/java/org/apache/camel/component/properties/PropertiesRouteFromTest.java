@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,7 +34,7 @@ public class PropertiesRouteFromTest extends ContextTestSupport {
         ProcessorDefinition out = context.getRouteDefinition("foo").getOutputs().get(0);
         assertEquals("{{cool.end}}", ((SendDefinition) out).getUri());
 
-        String uri = context.getRouteDefinition("foo").getInputs().get(0).getUri();
+        String uri = context.getRouteDefinition("foo").getInput().getUri();
         assertEquals("{{cool.start}}", uri);
 
         // use a routes definition to dump the routes

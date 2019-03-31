@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -145,13 +145,13 @@ public class StompComponentConfiguration
     public static class StompConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.stomp.StompConfiguration.class;
         /**
-         * The URI of the Stomp broker to connect to
-         */
-        private String brokerURL = "tcp://localhost:61613";
-        /**
          * The virtual host name
          */
         private String host;
+        /**
+         * The URI of the Stomp broker to connect to
+         */
+        private String brokerURL = "tcp://localhost:61613";
         /**
          * The username
          */
@@ -165,20 +165,20 @@ public class StompComponentConfiguration
          */
         private SSLContextParameters sslContextParameters;
 
-        public String getBrokerURL() {
-            return brokerURL;
-        }
-
-        public void setBrokerURL(String brokerURL) {
-            this.brokerURL = brokerURL;
-        }
-
         public String getHost() {
             return host;
         }
 
         public void setHost(String host) {
             this.host = host;
+        }
+
+        public String getBrokerURL() {
+            return brokerURL;
+        }
+
+        public void setBrokerURL(String brokerURL) {
+            this.brokerURL = brokerURL;
         }
 
         public String getLogin() {

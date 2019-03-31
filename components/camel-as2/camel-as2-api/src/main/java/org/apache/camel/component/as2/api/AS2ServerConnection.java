@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -208,6 +208,14 @@ public class AS2ServerConnection {
                 this.serverPortNumber, this.signingAlgorithm, this.signingCertificateChain, this.signingPrivateKey, this.decryptingPrivateKey);
         listenerThread.setDaemon(true);
         listenerThread.start();
+    }
+
+    public PrivateKey getSigningPrivateKey() {
+        return signingPrivateKey;
+    }
+
+    public PrivateKey getDecryptingPrivateKey() {
+        return decryptingPrivateKey;
     }
 
     public void close() {

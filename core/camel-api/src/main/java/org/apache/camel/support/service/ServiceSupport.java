@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * <b>Important: </b> You should override the lifecycle methods that start with <tt>do</tt>, eg {@link #doStart()}},
  * {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()}, {@link #stop()} should
- * <b>NOT</b> be overriden as they are used internally to keep track of the state of this service and properly
+ * <b>NOT</b> be overridden as they are used internally to keep track of the state of this service and properly
  * invoke the operation in a safe manner.
  */
 public abstract class ServiceSupport implements StatefulService {
@@ -55,7 +55,7 @@ public abstract class ServiceSupport implements StatefulService {
         if (status == NEW) {
             synchronized (lock) {
                 if (status == NEW) {
-                    log.trace("Initializing service");
+                    log.trace("Initializing service: {}", this);
                     doInit();
                     status = INITIALIZED;
                 }
@@ -72,23 +72,23 @@ public abstract class ServiceSupport implements StatefulService {
     public void start() throws Exception {
         synchronized (lock) {
             if (status == STARTED) {
-                log.trace("Service already started");
+                log.trace("Service: {} already started", this);
                 return;
             }
             if (status == STARTING) {
-                log.trace("Service already starting");
+                log.trace("Service: {} already starting", this);
                 return;
             }
             init();
             try {
                 status = STARTING;
-                log.trace("Starting service");
+                log.trace("Starting service: {}", this);
                 doStart();
                 status = STARTED;
-                log.trace("Service started");
+                log.trace("Service started: {}", this);
             } catch (Exception e) {
                 status = FAILED;
-                log.trace("Error while starting service", e);
+                log.trace("Error while starting service: " + this, e);
                 throw e;
             }
         }
@@ -97,28 +97,28 @@ public abstract class ServiceSupport implements StatefulService {
     /**
      * <b>Important: </b> You should override the lifecycle methods that start with <tt>do</tt>, eg {@link #doStart()},
      * {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()}, {@link #stop()} should
-     * <b>NOT</b> be overriden as they are used internally to keep track of the state of this service and properly
+     * <b>NOT</b> be overridden as they are used internally to keep track of the state of this service and properly
      * invoke the operation in a safe manner.
      */
     public void stop() throws Exception {
         synchronized (lock) {
             if (status == STOPPED || status == SHUTTINGDOWN || status == SHUTDOWN) {
-                log.trace("Service already stopped");
+                log.trace("Service: {} already stopped", this);
                 return;
             }
             if (status == STOPPING) {
-                log.trace("Service already stopping");
+                log.trace("Service: {} already stopping", this);
                 return;
             }
             status = STOPPING;
-            log.trace("Stopping service");
+            log.trace("Stopping service: {}", this);
             try {
                 doStop();
                 status = STOPPED;
-                log.trace("Service stopped service");
+                log.trace("Service: {} stopped service", this);
             } catch (Exception e) {
                 status = FAILED;
-                log.trace("Error while stopping service", e);
+                log.trace("Error while stopping service: " + this, e);
                 throw e;
             }
         }
@@ -127,29 +127,29 @@ public abstract class ServiceSupport implements StatefulService {
     /**
      * <b>Important: </b> You should override the lifecycle methods that start with <tt>do</tt>, eg {@link #doStart()},
      * {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()}, {@link #stop()} should
-     * <b>NOT</b> be overriden as they are used internally to keep track of the state of this service and properly
+     * <b>NOT</b> be overridden as they are used internally to keep track of the state of this service and properly
      * invoke the operation in a safe manner.
      */
     @Override
     public void suspend() throws Exception {
         synchronized (lock) {
             if (status == SUSPENDED) {
-                log.trace("Service already suspended");
+                log.trace("Service: {} already suspended", this);
                 return;
             }
             if (status == SUSPENDING) {
-                log.trace("Service already suspending");
+                log.trace("Service: {} already suspending", this);
                 return;
             }
             status = SUSPENDING;
-            log.trace("Suspending service");
+            log.trace("Suspending service: {}", this);
             try {
                 doSuspend();
                 status = SUSPENDED;
-                log.trace("Service suspended");
+                log.trace("Service suspended: {}", this);
             } catch (Exception e) {
                 status = FAILED;
-                log.trace("Error while suspending service", e);
+                log.trace("Error while suspending service: " + this, e);
                 throw e;
             }
         }
@@ -165,18 +165,18 @@ public abstract class ServiceSupport implements StatefulService {
     public void resume() throws Exception {
         synchronized (lock) {
             if (status != SUSPENDED) {
-                log.trace("Service is not suspended");
+                log.trace("Service is not suspended: {}", this);
                 return;
             }
             status = STARTING;
-            log.trace("Resuming service");
+            log.trace("Resuming service: {}", this);
             try {
                 doResume();
                 status = STARTED;
-                log.trace("Service resumed");
+                log.trace("Service resumed: {}", this);
             } catch (Exception e) {
                 status = FAILED;
-                log.trace("Error while resuming service", e);
+                log.trace("Error while resuming service: " + this, e);
                 throw e;
             }
         }
@@ -192,23 +192,23 @@ public abstract class ServiceSupport implements StatefulService {
     public void shutdown() throws Exception {
         synchronized (lock) {
             if (status == SHUTDOWN) {
-                log.trace("Service already shut down");
+                log.trace("Service: {} already shut down", this);
                 return;
             }
             if (status == SHUTTINGDOWN) {
-                log.trace("Service already shutting down");
+                log.trace("Service: {} already shutting down", this);
                 return;
             }
             stop();
             status = SHUTDOWN;
-            log.trace("Shutting down service");
+            log.trace("Shutting down service: {}", this);
             try {
                 doShutdown();
-                log.trace("Service shut down");
+                log.trace("Service: {} shut down", this);
                 status = SHUTDOWN;
             } catch (Exception e) {
                 status = FAILED;
-                log.trace("Error shutting down service", e);
+                log.trace("Error shutting down service: " + this, e);
                 throw e;
             }
         }

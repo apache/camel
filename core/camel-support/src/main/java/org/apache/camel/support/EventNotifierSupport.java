@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,6 +35,7 @@ public abstract class EventNotifierSupport extends ServiceSupport implements Eve
     private boolean ignoreExchangeRedeliveryEvents;
     private boolean ignoreExchangeSendingEvents;
     private boolean ignoreExchangeSentEvents;
+    private boolean ignoreStepEvents;
 
     public boolean isIgnoreCamelContextEvents() {
         return ignoreCamelContextEvents;
@@ -124,6 +125,14 @@ public abstract class EventNotifierSupport extends ServiceSupport implements Eve
 
     public void setIgnoreExchangeSendingEvents(boolean ignoreExchangeSendingEvents) {
         this.ignoreExchangeSendingEvents = ignoreExchangeSendingEvents;
+    }
+
+    public boolean isIgnoreStepEvents() {
+        return ignoreStepEvents;
+    }
+
+    public void setIgnoreStepEvents(boolean ignoreStepEvents) {
+        this.ignoreStepEvents = ignoreStepEvents;
     }
 
     protected void doStart() throws Exception {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -76,6 +76,9 @@ public class TwilioComponent extends AbstractApiComponent<TwilioApiName, TwilioC
             if (ObjectHelper.isEmpty(username) && ObjectHelper.isEmpty(password)) {
                 throw new IllegalStateException("Unable to initialise Twilio, Twilio component configuration is missing");
             }
+            if (ObjectHelper.isEmpty(accountSid)) {
+                accountSid = username;
+            }
 
             restClient = new TwilioRestClient.Builder(username, password)
                 .accountSid(accountSid)
@@ -134,7 +137,7 @@ public class TwilioComponent extends AbstractApiComponent<TwilioApiName, TwilioC
     }
 
     public String getAccountSid() {
-        return accountSid == null ? username : accountSid;
+        return accountSid;
     }
 
     /**

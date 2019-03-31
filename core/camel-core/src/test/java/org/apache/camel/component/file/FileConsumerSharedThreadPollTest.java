@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,17 +15,15 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,7 +33,6 @@ import org.junit.Test;
 public class FileConsumerSharedThreadPollTest extends ContextTestSupport {
 
     private ScheduledExecutorService pool;
-    private SimpleRegistry registry = new SimpleRegistry();
 
     @Override
     @Before
@@ -43,11 +40,6 @@ public class FileConsumerSharedThreadPollTest extends ContextTestSupport {
         deleteDirectory("target/data/a");
         deleteDirectory("target/data/b");
         super.setUp();
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return new DefaultCamelContext(registry);
     }
 
     @Test
@@ -70,7 +62,7 @@ public class FileConsumerSharedThreadPollTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // create shared pool and enlist in registry
                 pool = new ThreadPoolBuilder(context).poolSize(1).buildScheduled(this, "MySharedPool");
-                registry.put("myPool", pool);
+                context.getRegistry().bind("myPool", pool);
 
                 from("file:target/data/a?initialDelay=0&delay=10&scheduledExecutorService=#myPool").routeId("a")
                     .to("direct:shared");

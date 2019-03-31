@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -147,12 +147,8 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
             try {
                 String uuid = context.getUuidGenerator().generateUuid();
 
-                context.addRoutes(new RouteBuilder() {
-                    @Override
-                    public void configure() throws Exception {
-                        from(camelUri).to("reactive-streams:" + uuid);
-                    }
-                });
+                RouteBuilder.addRoutes(context, rb ->
+                        rb.from(camelUri).to("reactive-streams:" + uuid));
 
                 return uuid;
             } catch (Exception e) {

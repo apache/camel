@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.support.ObjectHelper;
 
@@ -31,10 +32,10 @@ import org.apache.camel.support.ObjectHelper;
 public class DefaultInjector implements Injector  {
 
     // use the reflection injector
-    private final DefaultCamelBeanPostProcessor postProcessor;
+    private final CamelBeanPostProcessor postProcessor;
 
     public DefaultInjector(CamelContext context) {
-        postProcessor = new DefaultCamelBeanPostProcessor(context);
+        postProcessor = context.getBeanPostProcessor();
     }
 
     @Override

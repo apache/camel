@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -68,20 +68,18 @@ public final class RouteDefinitionHelper {
      * Gather all the endpoint uri's the route is using from the EIPs that has a static or dynamic endpoint defined.
      *
      * @param route          the route
-     * @param includeInputs  whether to include inputs
+     * @param includeInput  whether to include inputs
      * @param includeOutputs whether to include outputs
      * @param includeDynamic whether to include dynamic outputs which has been in use during routing at runtime, gathered from the {@link org.apache.camel.spi.RuntimeEndpointRegistry}.
      * @return the endpoints uris
      */
-    public static Set<String> gatherAllEndpointUris(CamelContext camelContext, RouteDefinition route, boolean includeInputs, boolean includeOutputs, boolean includeDynamic) {
+    public static Set<String> gatherAllEndpointUris(CamelContext camelContext, RouteDefinition route, boolean includeInput, boolean includeOutputs, boolean includeDynamic) {
         Set<String> answer = new LinkedHashSet<>();
 
-        if (includeInputs) {
-            for (FromDefinition from : route.getInputs()) {
-                String uri = normalizeUri(from.getEndpointUri());
-                if (uri != null) {
-                    answer.add(uri);
-                }
+        if (includeInput) {
+            String uri = normalizeUri(route.getInput().getEndpointUri());
+            if (uri != null) {
+                answer.add(uri);
             }
         }
 
@@ -147,7 +145,7 @@ public final class RouteDefinitionHelper {
             } else {
                 RestDefinition rest = route.getRestDefinition();
                 if (rest != null && route.isRest()) {
-                    VerbDefinition verb = findVerbDefinition(rest, route.getInputs().get(0).getUri());
+                    VerbDefinition verb = findVerbDefinition(rest, route.getInput().getUri());
                     if (verb != null) {
                         String id = verb.getId();
                         if (verb.hasCustomIdAssigned() && ObjectHelper.isNotEmpty(id) && !customIds.contains(id)) {
@@ -184,7 +182,7 @@ public final class RouteDefinitionHelper {
             }
             RestDefinition rest = route.getRestDefinition();
             if (rest != null && route.isRest()) {
-                VerbDefinition verb = findVerbDefinition(rest, route.getInputs().get(0).getUri());
+                VerbDefinition verb = findVerbDefinition(rest, route.getInput().getUri());
                 if (verb != null) {
                     String id = verb.idOrCreate(context.getNodeIdFactory());
                     if (!verb.getUsedForGeneratingNodeId()) {
@@ -192,20 +190,19 @@ public final class RouteDefinitionHelper {
                     }
                     verb.setRouteId(id);
                 }
-                List<FromDefinition> fromDefinitions = route.getInputs();
-                
-                if (ObjectHelper.isNotEmpty(fromDefinitions)) {
-                    FromDefinition fromDefinition = fromDefinitions.get(0);
+
+                // if its the rest/rest-api endpoints then they should include the route id as well
+                if (ObjectHelper.isNotEmpty(route.getInput())) {
+                    FromDefinition fromDefinition = route.getInput();
                     String endpointUri = fromDefinition.getEndpointUri();
-                    if (ObjectHelper.isNotEmpty(endpointUri)) {
-                        Map<String, Object> options = new HashMap<String, Object>();
+                    if (ObjectHelper.isNotEmpty(endpointUri) && (endpointUri.startsWith("rest:") || endpointUri.startsWith("rest-api:"))) {
+                        Map<String, Object> options = new HashMap<String, Object>(1);
                         options.put("routeId", route.getId());
                         endpointUri = URISupport.appendParametersToURI(endpointUri, options);
                      
                         // replace uri with new routeId
                         fromDefinition.setUri(endpointUri);
-                        fromDefinitions.set(0, fromDefinition);
-                        route.setInputs(fromDefinitions);
+                        route.setInput(fromDefinition);
                     }
                 }
             }
@@ -355,7 +352,7 @@ public final class RouteDefinitionHelper {
                                     List<OnCompletionDefinition> onCompletions) {
 
         // init the route inputs
-        initRouteInputs(context, route.getInputs());
+        initRouteInput(context, route.getInput());
 
         // abstracts is the cross cutting concerns
         List<ProcessorDefinition<?>> abstracts = new ArrayList<>();
@@ -398,7 +395,7 @@ public final class RouteDefinitionHelper {
     public static void sanityCheckRoute(RouteDefinition route) {
         ObjectHelper.notNull(route, "route");
 
-        if (route.getInputs() == null || route.getInputs().isEmpty()) {
+        if (route.getInput() == null) {
             String msg = "Route has no inputs: " + route;
             if (route.getId() != null) {
                 msg = "Route " + route.getId() + " has no inputs: " + route;
@@ -433,9 +430,9 @@ public final class RouteDefinitionHelper {
         }
     }
 
-    private static void initRouteInputs(CamelContext camelContext, List<FromDefinition> inputs) {
-        // resolve property placeholders on route inputs which hasn't been done yet
-        for (FromDefinition input : inputs) {
+    private static void initRouteInput(CamelContext camelContext, FromDefinition input) {
+        // resolve property placeholders on route input which hasn't been done yet
+        if (input != null) {
             try {
                 ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, input);
             } catch (Exception e) {
@@ -572,21 +569,19 @@ public final class RouteDefinitionHelper {
                     boolean isRefPattern = pattern.startsWith("ref*") || pattern.startsWith("ref:");
 
                     match = false;
-                    for (FromDefinition input : route.getInputs()) {
-                        // a bit more logic to lookup the endpoint as it can be uri/ref based
-                        String uri = input.getUri();
-                        // if the pattern is not a ref itself, then resolve the ref uris, so we can match the actual uri's with each other
-                        if (!isRefPattern) {
-                            if (uri != null && uri.startsWith("ref:")) {
-                                // its a ref: so lookup the endpoint to get its url
-                                String ref = uri.substring(4);
-                                uri = CamelContextHelper.getMandatoryEndpoint(context, ref).getEndpointUri();
-                            }
+
+                    // a bit more logic to lookup the endpoint as it can be uri/ref based
+                    String uri = route.getInput().getUri();
+                    // if the pattern is not a ref itself, then resolve the ref uris, so we can match the actual uri's with each other
+                    if (!isRefPattern) {
+                        if (uri != null && uri.startsWith("ref:")) {
+                            // its a ref: so lookup the endpoint to get its url
+                            String ref = uri.substring(4);
+                            uri = CamelContextHelper.getMandatoryEndpoint(context, ref).getEndpointUri();
                         }
-                        if (EndpointHelper.matchEndpoint(context, uri, pattern)) {
-                            match = true;
-                            break;
-                        }
+                    }
+                    if (EndpointHelper.matchEndpoint(context, uri, pattern)) {
+                        match = true;
                     }
                 }
 

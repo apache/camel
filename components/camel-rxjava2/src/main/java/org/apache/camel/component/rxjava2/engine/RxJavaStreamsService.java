@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -146,12 +146,8 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
             try {
                 String uuid = context.getUuidGenerator().generateUuid();
 
-                context.addRoutes(new RouteBuilder() {
-                    @Override
-                    public void configure() throws Exception {
-                        from(camelUri).to("reactive-streams:" + uuid);
-                    }
-                });
+                RouteBuilder.addRoutes(context, rb ->
+                        rb.from(camelUri).to("reactive-streams:" + uuid));
 
                 return uuid;
             } catch (Exception e) {
@@ -177,13 +173,8 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
     public Subscriber<Exchange> subscriber(String uri) {
         try {
             String uuid = context.getUuidGenerator().generateUuid();
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from("reactive-streams:" + uuid)
-                        .to(uri);
-                }
-            });
+            RouteBuilder.addRoutes(context, rb ->
+                    rb.from("reactive-streams:" + uuid).to(uri));
 
             return streamSubscriber(uuid);
         } catch (Exception e) {
@@ -201,13 +192,8 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
         String streamName = requestedUriToStream.computeIfAbsent(uri, camelUri -> {
             try {
                 String uuid = context.getUuidGenerator().generateUuid();
-                context.addRoutes(new RouteBuilder() {
-                    @Override
-                    public void configure() throws Exception {
-                        from("reactive-streams:" + uuid)
-                            .to(camelUri);
-                    }
-                });
+                RouteBuilder.addRoutes(context, rb ->
+                        rb.from("reactive-streams:" + uuid).to(camelUri));
 
                 return uuid;
             } catch (Exception e) {

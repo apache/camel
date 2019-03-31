@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -264,8 +264,8 @@ public class SshComponentConfiguration
         /**
          * Sets the command string to send to the remote SSH server during every
          * poll cycle. Only works with camel-ssh component being used as a
-         * consumer, i.e. from(ssh://...) You may need to end your command with
-         * a newline, and that must be URL encoded %0A
+         * consumer, i.e. from("ssh://...") You may need to end your command
+         * with a newline, and that must be URL encoded %0A
          */
         private String pollCommand;
         /**
@@ -276,7 +276,7 @@ public class SshComponentConfiguration
         /**
          * Sets the key type to pass to the KeyPairProvider as part of
          * authentication. KeyPairProvider.loadKey(...) will be passed this
-         * value. Defaults to ssh-rsa.
+         * value. Defaults to "ssh-rsa".
          */
         private String keyType = "ssh-rsa";
         /**
@@ -285,14 +285,13 @@ public class SshComponentConfiguration
          */
         private Long timeout = 30000L;
         /**
-         * @deprecated As of version 2.11, replaced by
-         *             {@link #setCertResource(String)}
+         * @deprecated As of version 2.11, replaced by certResource.
          */
         @Deprecated
         private String certFilename;
         /**
          * Sets the resource path of the certificate to use for Authentication.
-         * Will use ResourceHelperKeyPairProvider to resolve file based
+         * Will use {@link ResourceHelperKeyPairProvider} to resolve file based
          * certificate, and depends on keyType setting.
          */
         private String certResource;
@@ -307,7 +306,7 @@ public class SshComponentConfiguration
         private Boolean failOnUnknownHost = false;
         /**
          * Sets the channel type to pass to the Channel as part of command
-         * execution. Defaults to exec.
+         * execution. Defaults to "exec".
          */
         private String channelType = "exec";
         /**

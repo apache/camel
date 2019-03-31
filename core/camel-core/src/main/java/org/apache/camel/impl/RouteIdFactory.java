@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.apache.camel.NamedNode;
@@ -83,13 +82,11 @@ public class RouteIdFactory implements NodeIdFactory {
             return Optional.empty();
         }
 
-        List<FromDefinition> inputs = routeDefinition.getInputs();
-
-        if (inputs == null || inputs.isEmpty()) {
+        if (routeDefinition.getInput() == null) {
             return Optional.empty();
         }
 
-        FromDefinition from = inputs.get(0);
+        FromDefinition from = routeDefinition.getInput();
         String uri = from.getUri();
 
         // we want to use the context-path of the route
@@ -149,13 +146,11 @@ public class RouteIdFactory implements NodeIdFactory {
      * Extract id from rest input uri.
      */
     private Optional<String> extractIdFromInput(RouteDefinition route) {
-        List<FromDefinition> inputs = route.getInputs();
-
-        if (inputs == null || inputs.isEmpty()) {
+        if (route.getInput() == null) {
             return Optional.empty();
         }
 
-        FromDefinition from = inputs.get(0);
+        FromDefinition from = route.getInput();
         String uri = from.getUri();
 
         String[] uriSplitted = uri.split(":");

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
-
 import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -73,8 +72,6 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.FromDefinition;
-import org.apache.camel.model.InterceptDefinition;
-import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.MarshalDefinition;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -643,7 +640,6 @@ public class CamelNamespaceHandler implements NamespaceHandler {
      * to inform about state of Camel contexts. If Karaf is available, this information will propagate to
      * <em>extended bundle info</em>.
      * See CAMEL-12980
-     * @param context
      */
     private void registerBundleStateService(ParserContext context) {
         ComponentDefinitionRegistry componentDefinitionRegistry = context.getComponentDefinitionRegistry();
@@ -855,20 +851,22 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
                     EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
                     if (endpointInject != null && matchContext(endpointInject.context())) {
-                        injectField(field, endpointInject.uri(), endpointInject.ref(), endpointInject.property(), bean, beanName);
+                        String uri = endpointInject.value().isEmpty() ? endpointInject.uri() : endpointInject.value();
+                        injectField(field, uri, endpointInject.property(), bean, beanName);
                     }
 
                     Produce produce = field.getAnnotation(Produce.class);
                     if (produce != null && matchContext(produce.context())) {
-                        injectField(field, produce.uri(), produce.ref(), produce.property(), bean, beanName);
+                        String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
+                        injectField(field, uri, produce.property(), bean, beanName);
                     }
                 }
                 clazz = clazz.getSuperclass();
             } while (clazz != null && clazz != Object.class);
         }
 
-        protected void injectField(Field field, String endpointUri, String endpointRef, String endpointProperty, Object bean, String beanName) {
-            setField(field, bean, getInjectionValue(field.getType(), endpointUri, endpointRef, endpointProperty, field.getName(), bean, beanName));
+        protected void injectField(Field field, String endpointUri, String endpointProperty, Object bean, String beanName) {
+            setField(field, bean, getInjectionValue(field.getType(), endpointUri, endpointProperty, field.getName(), bean, beanName));
         }
 
         protected void injectFieldProperty(Field field, String propertyName, String propertyDefaultValue, Object bean, String beanName) {
@@ -922,12 +920,14 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
             EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
             if (endpointInject != null && matchContext(endpointInject.context())) {
-                setterInjection(method, bean, beanName, endpointInject.uri(), endpointInject.ref(), endpointInject.property());
+                String uri = endpointInject.value().isEmpty() ? endpointInject.uri() : endpointInject.value();
+                setterInjection(method, bean, beanName, uri, endpointInject.property());
             }
 
             Produce produce = method.getAnnotation(Produce.class);
             if (produce != null && matchContext(produce.context())) {
-                setterInjection(method, bean, beanName, produce.uri(), produce.ref(), produce.property());
+                String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
+                setterInjection(method, bean, beanName, uri, produce.property());
             }
         }
 
@@ -956,14 +956,14 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             }
         }
 
-        protected void setterInjection(Method method, Object bean, String beanName, String endpointUri, String endpointRef, String endpointProperty) {
+        protected void setterInjection(Method method, Object bean, String beanName, String endpointUri, String endpointProperty) {
             Class<?>[] parameterTypes = method.getParameterTypes();
             if (parameterTypes != null) {
                 if (parameterTypes.length != 1) {
                     LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
                 } else {
                     String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
-                    Object value = getInjectionValue(parameterTypes[0], endpointUri, endpointRef, endpointProperty, propertyName, bean, beanName);
+                    Object value = getInjectionValue(parameterTypes[0], endpointUri, endpointProperty, propertyName, bean, beanName);
                     ObjectHelper.invokeMethod(method, bean, value);
                 }
             }
@@ -972,6 +972,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         public Object afterInit(Object bean, String beanName, BeanCreator beanCreator, BeanMetadata beanMetadata) {
             LOG.trace("After init of bean: {} -> {}", beanName, bean);
             // we cannot inject CamelContextAware beans as the CamelContext may not be ready
+            // TODO: use bean post processor instead
             injectFields(bean, beanName);
             injectMethods(bean, beanName);
             return bean;
@@ -1025,7 +1026,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
             // regular camel routes
             for (RouteDefinition rd : camelContext.adapt(ModelCamelContext.class).getRouteDefinitions()) {
-                findInputComponents(rd.getInputs(), components, languages, dataformats);
+                findInputComponents(rd.getInput(), components, languages, dataformats);
                 findOutputComponents(rd.getOutputs(), components, languages, dataformats);
             }
 
@@ -1035,7 +1036,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                     Object o = vd.getToOrRoute();
                     if (o instanceof RouteDefinition) {
                         RouteDefinition route = (RouteDefinition) o;
-                        findInputComponents(route.getInputs(), components, languages, dataformats);
+                        findInputComponents(route.getInput(), components, languages, dataformats);
                         findOutputComponents(route.getOutputs(), components, languages, dataformats);
                     } else if (o instanceof ToDefinition) {
                         findUriComponent(((ToDefinition) o).getUri(), components);
@@ -1107,12 +1108,10 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
         }
 
-        private void findInputComponents(List<FromDefinition> defs, Set<String> components, Set<String> languages, Set<String> dataformats) {
-            if (defs != null) {
-                for (FromDefinition def : defs) {
-                    findUriComponent(def.getUri(), components);
-                    findSchedulerUriComponent(def.getUri(), components);
-                }
+        private void findInputComponents(FromDefinition from, Set<String> components, Set<String> languages, Set<String> dataformats) {
+            if (from != null) {
+                findUriComponent(from.getUri(), components);
+                findSchedulerUriComponent(from.getUri(), components);
             }
         }
 

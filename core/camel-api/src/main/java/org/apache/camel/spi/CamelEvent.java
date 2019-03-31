@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -47,6 +47,9 @@ public interface CamelEvent {
         ExchangeRedelivery,
         ExchangeSending,
         ExchangeSent,
+        StepStarted,
+        StepCompleted,
+        StepFailed,
         RouteAdded,
         RouteRemoved,
         RouteStarted,
@@ -171,7 +174,6 @@ public interface CamelEvent {
         default Type getType() {
             return Type.ExchangeFailed;
         }
-
     }
 
     interface ExchangeFailureEvent extends ExchangeEvent {
@@ -222,6 +224,28 @@ public interface CamelEvent {
 
         default Type getType() {
             return Type.ExchangeSent;
+        }
+    }
+
+    interface StepEvent extends ExchangeEvent {
+        String getStepId();
+    }
+
+    interface StepStartedEvent extends StepEvent {
+        default Type getType() {
+            return Type.StepStarted;
+        }
+    }
+
+    interface StepCompletedEvent extends StepEvent {
+        default Type getType() {
+            return Type.StepCompleted;
+        }
+    }
+
+    interface StepFailedEvent extends StepEvent, FailureEvent {
+        default Type getType() {
+            return Type.StepFailed;
         }
     }
 

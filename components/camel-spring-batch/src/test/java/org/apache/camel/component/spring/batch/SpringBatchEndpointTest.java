@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.Test;
@@ -307,7 +307,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     public void shouldFailWhenThereIsNoJobLauncher() throws Exception {
         // Given
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("mockJob", job);
+        registry.bind("mockJob", job);
         CamelContext camelContext = new DefaultCamelContext(registry);
         camelContext.addRoutes(new RouteBuilder() {
             @Override
@@ -324,9 +324,9 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     public void shouldFailWhenThereIsMoreThanOneJobLauncher() throws Exception {
         // Given
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("mockJob", job);
-        registry.put("launcher1", jobLauncher);
-        registry.put("launcher2", jobLauncher);
+        registry.bind("mockJob", job);
+        registry.bind("launcher1", jobLauncher);
+        registry.bind("launcher2", jobLauncher);
         CamelContext camelContext = new DefaultCamelContext(registry);
         camelContext.addRoutes(new RouteBuilder() {
             @Override
@@ -343,8 +343,8 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     public void shouldResolveAnyJobLauncher() throws Exception {
         // Given
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("mockJob", job);
-        registry.put("someRandomName", jobLauncher);
+        registry.bind("mockJob", job);
+        registry.bind("someRandomName", jobLauncher);
         CamelContext camelContext = new DefaultCamelContext(registry);
         camelContext.addRoutes(new RouteBuilder() {
             @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,17 +16,37 @@
  */
 package org.apache.camel.impl;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ManagementStrategyFactory;
 
 /**
- * Factory for creating {@link ManagementStrategy}
+ * Factory for creating non JMX {@link ManagementStrategy}.
  */
 public class DefaultManagementStrategyFactory implements ManagementStrategyFactory {
 
-    public ManagementStrategy create(CamelContext context) {
+    @Override
+    public ManagementStrategy create(CamelContext context, Map<String, Object> properties) throws Exception {
         return new DefaultManagementStrategy(context);
     }
 
+    @Override
+    public LifecycleStrategy createLifecycle(CamelContext context) throws Exception {
+        // not in use for non JMX
+        return null;
+    }
+
+    @Override
+    public void setupManagement(CamelContext camelContext, ManagementStrategy strategy, LifecycleStrategy lifecycle) {
+        camelContext.setManagementStrategy(strategy);
+
+        if (!camelContext.getLifecycleStrategies().isEmpty()) {
+            // camel-spring/camel-blueprint may re-initialize JMX during startup,
+            // so remove any previous JMX initialized lifecycle strategy
+            camelContext.getLifecycleStrategies().removeIf(s -> s.getClass().getName().startsWith("org.apache.camel.management"));
+        }
+    }
 }

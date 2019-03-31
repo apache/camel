@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -664,11 +664,11 @@ public class CoreEipAnnotationProcessorHelper {
                            false, null, false);
         eipOptions.add(ep);
 
-        // inputs
+        // input
         Set<String> oneOfTypes = new TreeSet<>();
         oneOfTypes.add("from");
-        docComment = findJavaDoc(elementUtils, null, "inputs", null, classElement, true);
-        ep = new EipOption("inputs", "Inputs", "element", "java.util.List<org.apache.camel.model.FromDefinition>", true, "", docComment, false, null, false, null, true, oneOfTypes,
+        docComment = findJavaDoc(elementUtils, null, "input", null, classElement, true);
+        ep = new EipOption("input", "Input", "element", "org.apache.camel.model.FromDefinition", true, "", docComment, false, null, false, null, true, oneOfTypes,
                            false);
         eipOptions.add(ep);
 

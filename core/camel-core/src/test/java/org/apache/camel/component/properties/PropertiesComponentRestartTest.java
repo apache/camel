@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,6 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
 import org.junit.Test;
 
 public class PropertiesComponentRestartTest extends ContextTestSupport {
@@ -59,10 +58,10 @@ public class PropertiesComponentRestartTest extends ContextTestSupport {
         });
 
         // put the properties component into the registry so that it survives restarts
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("properties", pc);
 
-        return new DefaultCamelContext(registry);
+        CamelContext context = new DefaultCamelContext();
+        context.getRegistry().bind("properties", pc);
+        return context;
     }
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,8 +39,7 @@ public class LoadRouteFromXmlTest extends ContextTestSupport {
         // START SNIPPET: e1
         // load route from XML and add them to the existing camel context
         InputStream is = getClass().getResourceAsStream("barRoute.xml");
-        RoutesDefinition routes = context.loadRoutesDefinition(is);
-        context.addRouteDefinitions(routes.getRoutes());
+        context.addRouteDefinitions(is);
         // END SNIPPET: e1
 
         assertNotNull("Loaded bar route should be there", context.getRoute("bar"));

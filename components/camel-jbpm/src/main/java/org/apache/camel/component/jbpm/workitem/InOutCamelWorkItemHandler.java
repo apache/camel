@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -56,7 +56,7 @@ import org.kie.api.runtime.process.WorkItemManager;
         name = "InOutCamelConnector",
         displayName = "InOutCamelConnector",
         category = "Camel",
-        defaultHandler = "mvel: new org.apache.camel.component.jbpm.workitem.InOutCamelWorkitemHandler()",
+        defaultHandler = "mvel: new org.apache.camel.component.jbpm.workitem.InOutCamelWorkItemHandler()",
         documentation = "${artifactId}/index.html",
         parameters = {
                 @WidParameter(name = JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM)

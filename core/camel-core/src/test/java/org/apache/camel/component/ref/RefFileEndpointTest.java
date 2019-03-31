@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,19 +15,17 @@
  * limitations under the License.
  */
 package org.apache.camel.component.ref;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
 public class RefFileEndpointTest extends ContextTestSupport {
-
-    private SimpleRegistry registry = new SimpleRegistry();
 
     @Override
     @Before
@@ -51,8 +49,8 @@ public class RefFileEndpointTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext(registry);
-        registry.put("foo", context.getEndpoint("file:target/data/foo?initialDelay=250&delay=3000&delete=true"));
+        CamelContext context = new DefaultCamelContext();
+        context.getRegistry().bind("foo", context.getEndpoint("file:target/data/foo?initialDelay=250&delay=3000&delete=true"));
         return context;
     }
 

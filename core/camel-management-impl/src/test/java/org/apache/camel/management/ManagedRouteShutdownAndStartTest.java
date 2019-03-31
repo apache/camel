@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -57,8 +57,9 @@ public class ManagedRouteShutdownAndStartTest extends ManagementTestSupport {
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Should be started", ServiceStatus.Started.name(), state);
 
-        // calling the shutdown 
-        mbeanServer.invoke(on, "shutdown", null, null);
+        // calling the stop and remove
+        mbeanServer.invoke(on, "stop", null, null);
+        mbeanServer.invoke(on, "remove", null, null);
 
         // the managed route object should be removed
         assertFalse("The managed route should be removed", mbeanServer.isRegistered(on));

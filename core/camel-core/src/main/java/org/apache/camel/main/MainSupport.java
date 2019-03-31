@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,11 +16,16 @@
  */
 package org.apache.camel.main;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -28,21 +33,30 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.impl.FileWatcherReloadStrategy;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
-import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReloadStrategy;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.support.ObjectHelper.invokeMethod;
+import static org.apache.camel.util.ReflectionHelper.findMethod;
 
 /**
  * Base class for main implementations to allow starting up a JVM with Camel embedded.
@@ -61,16 +75,22 @@ public abstract class MainSupport extends ServiceSupport {
     protected int durationMaxMessages;
     protected TimeUnit timeUnit = TimeUnit.SECONDS;
     protected boolean trace;
+
+    protected CamelContext camelContext;
     protected List<RouteBuilder> routeBuilders = new ArrayList<>();
     protected String routeBuilderClasses;
+    protected List<Object> configurations = new ArrayList<>();
+    protected String configurationClasses;
     protected String fileWatchDirectory;
     protected boolean fileWatchDirectoryRecursively;
-    protected final List<CamelContext> camelContexts = new ArrayList<>();
     protected ProducerTemplate camelTemplate;
     protected boolean hangupInterceptorEnabled = true;
     protected int durationHitExitCode = DEFAULT_EXIT_CODE;
     protected ReloadStrategy reloadStrategy;
     protected String propertyPlaceholderLocations;
+    protected boolean autoConfigurationEnabled = true;
+    protected Properties initialProperties;
+    protected Properties overrideProperties;
 
     /**
      * A class for intercepting the hang up signal and do a graceful shutdown of the Camel.
@@ -94,6 +114,11 @@ public abstract class MainSupport extends ServiceSupport {
         }
     }
 
+    protected MainSupport(Class... configurationClasses) {
+        this();
+        addConfigurationClass(configurationClasses);
+    }
+
     protected MainSupport() {
         addOption(new Option("h", "help", "Displays the help screen") {
             protected void doProcess(String arg, LinkedList<String> remainingArgs) {
@@ -102,16 +127,16 @@ public abstract class MainSupport extends ServiceSupport {
             }
         });
         addOption(new ParameterOption("r", "routers",
-                 "Sets the router builder classes which will be loaded while starting the camel context",
-                 "routerBuilderClasses") {
+            "Sets the router builder classes which will be loaded while starting the camel context",
+            "routerBuilderClasses") {
             @Override
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setRouteBuilderClasses(parameter);
             }
         });
         addOption(new ParameterOption("d", "duration",
-                "Sets the time duration (seconds) that the application will run for before terminating.",
-                "duration") {
+            "Sets the time duration (seconds) that the application will run for before terminating.",
+            "duration") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 // skip second marker to be backwards compatible
                 if (parameter.endsWith("s") || parameter.endsWith("S")) {
@@ -121,15 +146,15 @@ public abstract class MainSupport extends ServiceSupport {
             }
         });
         addOption(new ParameterOption("dm", "durationMaxMessages",
-                "Sets the duration of maximum number of messages that the application will process before terminating.",
-                "durationMaxMessages") {
+            "Sets the duration of maximum number of messages that the application will process before terminating.",
+            "durationMaxMessages") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setDurationMaxMessages(Integer.parseInt(parameter));
             }
         });
         addOption(new ParameterOption("di", "durationIdle",
-                "Sets the idle time duration (seconds) duration that the application can be idle before terminating.",
-                "durationIdle") {
+            "Sets the idle time duration (seconds) duration that the application can be idle before terminating.",
+            "durationIdle") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 // skip second marker to be backwards compatible
                 if (parameter.endsWith("s") || parameter.endsWith("S")) {
@@ -144,18 +169,25 @@ public abstract class MainSupport extends ServiceSupport {
             }
         });
         addOption(new ParameterOption("e", "exitcode",
-                "Sets the exit code if duration was hit",
-                "exitcode")  {
+            "Sets the exit code if duration was hit",
+            "exitcode") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setDurationHitExitCode(Integer.parseInt(parameter));
             }
         });
         addOption(new ParameterOption("watch", "fileWatch",
-                "Sets a directory to watch for file changes to trigger reloading routes on-the-fly",
-                "fileWatch") {
+            "Sets a directory to watch for file changes to trigger reloading routes on-the-fly",
+            "fileWatch") {
             @Override
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setFileWatchDirectory(parameter);
+            }
+        });
+        addOption(new ParameterOption("pl", "propertiesLocation",
+            "Sets location(s) to load properties, such as from classpath or file system.",
+            "propertiesLocation") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                setPropertyPlaceholderLocations(parameter);
             }
         });
     }
@@ -399,6 +431,38 @@ public abstract class MainSupport extends ServiceSupport {
         return exitCode.get();
     }
 
+    public String getConfigurationClasses() {
+        return configurationClasses;
+    }
+
+    public void setConfigurationClasses(String configurations) {
+        this.configurationClasses = configurations;
+    }
+
+    public void addConfigurationClass(Class... configuration) {
+        String existing = configurationClasses;
+        if (existing == null) {
+            existing = "";
+        }
+        if (configuration != null) {
+            for (Class clazz : configuration) {
+                if (!existing.isEmpty()) {
+                    existing = existing + ",";
+                }
+                existing = existing + clazz.getName();
+            }
+        }
+        setConfigurationClasses(existing);
+    }
+
+    public void addConfiguration(Object configuration) {
+        configurations.add(configuration);
+    }
+
+    public String getRouteBuilderClasses() {
+        return routeBuilderClasses;
+    }
+
     public void setRouteBuilderClasses(String builders) {
         this.routeBuilderClasses = builders;
     }
@@ -415,11 +479,11 @@ public abstract class MainSupport extends ServiceSupport {
     public void setFileWatchDirectory(String fileWatchDirectory) {
         this.fileWatchDirectory = fileWatchDirectory;
     }
-    
+
     public boolean isFileWatchDirectoryRecursively() {
         return fileWatchDirectoryRecursively;
     }
-    
+
     /**
      * Sets the flag to watch directory of XML file changes recursively to trigger live reload of Camel routes.
      * <p/>
@@ -427,10 +491,6 @@ public abstract class MainSupport extends ServiceSupport {
      */
     public void setFileWatchDirectoryRecursively(boolean fileWatchDirectoryRecursively) {
         this.fileWatchDirectoryRecursively = fileWatchDirectoryRecursively;
-    }
-
-    public String getRouteBuilderClasses() {
-        return routeBuilderClasses;
     }
 
     public ReloadStrategy getReloadStrategy() {
@@ -451,11 +511,63 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     /**
-     * A list of locations to load properties. You can use comma to separate multiple locations.
-     * This option will override any default locations and only use the locations from this option.
+     * A list of locations to add for loading properties.
+     * You can use comma to separate multiple locations.
      */
     public void setPropertyPlaceholderLocations(String location) {
         this.propertyPlaceholderLocations = location;
+    }
+
+    public boolean isAutoConfigurationEnabled() {
+        return autoConfigurationEnabled;
+    }
+
+    /**
+     * Whether auto configuration of components/dataformats/languages is enabled or not.
+     * When enabled the configuration parameters are loaded from the properties component
+     * and configured as defaults (similar to spring-boot auto-configuration). You can prefix
+     * the parameters in the properties file with:
+     * - camel.component.name.option1=value1
+     * - camel.component.name.option2=value2
+     * - camel.dataformat.name.option1=value1
+     * - camel.dataformat.name.option2=value2
+     * - camel.language.name.option1=value1
+     * - camel.language.name.option2=value2
+     * Where name is the name of the component, dataformat or language such as seda,direct,jaxb.
+     * <p/>
+     * The auto configuration also works for any options on components
+     * that is a complex type (not standard Java type) and there has been an explicit single
+     * bean instance registered to the Camel registry via the {@link org.apache.camel.spi.Registry#bind(String, Object)} method
+     * or by using the {@link org.apache.camel.BindToRegistry} annotation style.
+     * <p/>
+     * This option is default enabled.
+     */
+    public void setAutoConfigurationEnabled(boolean autoConfigurationEnabled) {
+        this.autoConfigurationEnabled = autoConfigurationEnabled;
+    }
+
+    public Properties getInitialProperties() {
+        return initialProperties;
+    }
+
+    /**
+     * Sets initial properties for the properties component,
+     * which will be used before any locations are resolved.
+     */
+    public void setInitialProperties(Properties initialProperties) {
+        this.initialProperties = initialProperties;
+    }
+
+    public Properties getOverrideProperties() {
+        return overrideProperties;
+    }
+
+    /**
+     * Sets a special list of override properties that take precedence
+     * and will use first, if a property exist.
+     */
+    public void setOverrideProperties(Properties overrideProperties) {
+        this.overrideProperties = overrideProperties;
     }
 
     public boolean isTrace() {
@@ -520,8 +632,8 @@ public abstract class MainSupport extends ServiceSupport {
         System.out.println();
     }
 
-    public List<CamelContext> getCamelContexts() {
-        return camelContexts;
+    public CamelContext getCamelContext() {
+        return camelContext;
     }
 
     public List<RouteBuilder> getRouteBuilders() {
@@ -532,9 +644,17 @@ public abstract class MainSupport extends ServiceSupport {
         this.routeBuilders = routeBuilders;
     }
 
+    public List<Object> getConfigurations() {
+        return configurations;
+    }
+
+    public void setConfigurations(List<Object> configurations) {
+        this.configurations = configurations;
+    }
+
     public List<RouteDefinition> getRouteDefinitions() {
         List<RouteDefinition> answer = new ArrayList<>();
-        for (CamelContext camelContext : camelContexts) {
+        if (camelContext != null) {
             answer.addAll(camelContext.adapt(ModelCamelContext.class).getRouteDefinitions());
         }
         return answer;
@@ -549,30 +669,62 @@ public abstract class MainSupport extends ServiceSupport {
 
     protected abstract ProducerTemplate findOrCreateCamelTemplate();
 
-    protected abstract Map<String, CamelContext> getCamelContextMap();
+    protected abstract CamelContext createCamelContext();
 
-    protected void postProcessContext() throws Exception {
-        Map<String, CamelContext> map = getCamelContextMap();
-        Set<Map.Entry<String, CamelContext>> entries = map.entrySet();
-        for (Map.Entry<String, CamelContext> entry : entries) {
-            CamelContext camelContext = entry.getValue();
-            camelContexts.add(camelContext);
-            postProcessCamelContext(camelContext);
-        }
-    }
-
-    public ModelJAXBContextFactory getModelJAXBContextFactory() {
-        return new DefaultModelJAXBContextFactory();
+    protected void initCamelContext() throws Exception {
+        camelContext = createCamelContext();
+        postProcessCamelContext(camelContext);
     }
 
     protected void loadRouteBuilders(CamelContext camelContext) throws Exception {
+        // lets use Camel's bean post processor on any existing route builder classes
+        // so the instance has some support for dependency injection
+        CamelBeanPostProcessor postProcessor = camelContext.getBeanPostProcessor();
+        for (RouteBuilder routeBuilder : getRouteBuilders()) {
+            postProcessor.postProcessBeforeInitialization(routeBuilder, routeBuilder.getClass().getName());
+            postProcessor.postProcessAfterInitialization(routeBuilder, routeBuilder.getClass().getName());
+        }
+
         if (routeBuilderClasses != null) {
-            // get the list of route builder classes
             String[] routeClasses = routeBuilderClasses.split(",");
             for (String routeClass : routeClasses) {
                 Class<?> routeClazz = camelContext.getClassResolver().resolveClass(routeClass);
-                RouteBuilder builder = (RouteBuilder) routeClazz.newInstance();
-                getRouteBuilders().add(builder);
+                // lets use Camel's injector so the class has some support for dependency injection
+                Object builder = camelContext.getInjector().newInstance(routeClazz);
+                if (builder instanceof RouteBuilder) {
+                    getRouteBuilders().add((RouteBuilder) builder);
+                } else {
+                    LOG.warn("Class {} is not a RouteBuilder class", routeClazz);
+                }
+            }
+        }
+    }
+
+    protected void loadConfigurations(CamelContext camelContext) throws Exception {
+        // lets use Camel's bean post processor on any existing configuration classes
+        // so the instance has some support for dependency injection
+        CamelBeanPostProcessor postProcessor = camelContext.getBeanPostProcessor();
+        for (Object configuration : getConfigurations()) {
+            postProcessor.postProcessBeforeInitialization(configuration, configuration.getClass().getName());
+            postProcessor.postProcessAfterInitialization(configuration, configuration.getClass().getName());
+        }
+
+        if (configurationClasses != null) {
+            String[] configClasses = configurationClasses.split(",");
+            for (String configClass : configClasses) {
+                Class<?> configClazz = camelContext.getClassResolver().resolveClass(configClass);
+                // lets use Camel's injector so the class has some support for dependency injection
+                Object config = camelContext.getInjector().newInstance(configClazz);
+                getConfigurations().add(config);
+            }
+        }
+
+        for (Object config : getConfigurations()) {
+            // invoke configure method if exists
+            Method method = findMethod(config.getClass(), "configure");
+            if (method != null) {
+                log.info("Calling configure method on configuration class: {}", config.getClass().getName());
+                invokeMethod(method, config);
             }
         }
     }
@@ -580,7 +732,26 @@ public abstract class MainSupport extends ServiceSupport {
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
         if (propertyPlaceholderLocations != null) {
             PropertiesComponent pc = camelContext.getPropertiesComponent();
-            pc.setLocation(propertyPlaceholderLocations);
+            pc.addLocation(propertyPlaceholderLocations);
+            if (initialProperties != null) {
+                pc.setInitialProperties(initialProperties);
+            }
+            if (overrideProperties != null) {
+                pc.setOverrideProperties(overrideProperties);
+            }
+            LOG.info("Using properties from: {}", propertyPlaceholderLocations);
+        } else {
+            // lets default to application.properties and ignore if its missing
+            PropertiesComponent pc = camelContext.getPropertiesComponent();
+            pc.addLocation("classpath:application.properties");
+            pc.setIgnoreMissingLocation(true);
+            if (initialProperties != null) {
+                pc.setInitialProperties(initialProperties);
+            }
+            if (overrideProperties != null) {
+                pc.setOverrideProperties(overrideProperties);
+            }
+            LOG.info("Using optional properties from classpath:application.properties");
         }
         if (trace) {
             camelContext.setTracing(true);
@@ -620,7 +791,17 @@ public abstract class MainSupport extends ServiceSupport {
             camelContext.getManagementStrategy().addEventNotifier(notifier);
         }
 
-        // try to load the route builders from the routeBuilderClasses
+        // try to load configurations
+        loadConfigurations(camelContext);
+
+        // conventional configuration via properties to allow configuring options on
+        // component, dataformat, and languages (like spring-boot auto-configuration)
+        if (autoConfigurationEnabled) {
+            autoConfigurationFromRegistry(camelContext);
+            autoConfigurationFromProperties(camelContext);
+        }
+
+        // try to load the route builders
         loadRouteBuilders(camelContext);
         for (RouteBuilder routeBuilder : routeBuilders) {
             camelContext.addRoutes(routeBuilder);
@@ -633,8 +814,174 @@ public abstract class MainSupport extends ServiceSupport {
         }
     }
 
+    protected void autoConfigurationFromProperties(CamelContext camelContext) throws Exception {
+        // load properties
+        Properties prop = camelContext.getPropertiesComponent().loadProperties();
+
+        Map<Object, Map<String, Object>> properties = new LinkedHashMap<>();
+
+        for (String key : prop.stringPropertyNames()) {
+            int dot = key.indexOf(".", 16);
+            if (key.startsWith("camel.component.") && dot > 0) {
+                // grab component name
+                String name = key.substring(16, dot);
+                Component component = camelContext.getComponent(name);
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(dot + 1);
+                Map<String, Object> values = properties.getOrDefault(component, new LinkedHashMap<>());
+                values.put(option, value);
+                properties.put(component, values);
+            }
+            dot = key.indexOf(".", 17);
+            if (key.startsWith("camel.dataformat.") && dot > 0) {
+                // grab component name
+                String name = key.substring(17, dot);
+                DataFormat dataformat = camelContext.resolveDataFormat(name);
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(dot + 1);
+                Map<String, Object> values = properties.getOrDefault(dataformat, new LinkedHashMap<>());
+                values.put(option, value);
+                properties.put(dataformat, values);
+            }
+            dot = key.indexOf(".", 15);
+            if (key.startsWith("camel.language.") && dot > 0) {
+                // grab component name
+                String name = key.substring(15, dot);
+                Language language = camelContext.resolveLanguage(name);
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(dot + 1);
+                Map<String, Object> values = properties.getOrDefault(language, new LinkedHashMap<>());
+                values.put(option, value);
+                properties.put(language, values);
+            }
+        }
+
+        if (!properties.isEmpty()) {
+            long total = properties.values().stream().mapToLong(Map::size).sum();
+            LOG.info("Auto configuring {} components/dataformat/languages from loaded properties: {}", properties.size(), total);
+        }
+
+        for (Object obj : properties.keySet()) {
+            Map<String, Object> values = properties.get(obj);
+            setCamelProperties(camelContext, obj, values, true);
+        }
+    }
+
+    protected void autoConfigurationFromRegistry(CamelContext camelContext) throws Exception {
+        camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
+            @Override
+            public void onComponentAdd(String name, Component component) {
+                // when adding a component then support auto-configuring complex types
+                // by looking up from registry, such as DataSource etc
+                Map<String, Object> properties = new LinkedHashMap<>();
+                IntrospectionSupport.getProperties(component, properties, null);
+
+                // lookup complex types
+                properties.forEach((k, v) -> {
+                    // if the property has not been set and its a complex type (not simple or string etc)
+                    Class type = getGetterType(component, k);
+                    if (isComplexType(type)) {
+                        Set lookup = findExplicitBindingByType(camelContext, type);
+                        if (lookup.size() == 1) {
+                            v = lookup.iterator().next();
+                            try {
+                                LOG.info("Auto configuring option: {} on component: {} as one instance of type: {} registered in the Camel Registry", k, name, type.getName());
+                                IntrospectionSupport.setProperty(camelContext, component, k, v);
+                            } catch (Exception e) {
+                                LOG.warn("Cannot auto configure option: " + k + " on component: " + name + " due to " + e.getMessage());
+                            }
+                        }
+                    }
+                });
+            }
+
+            /**
+             * Finds any explicit bean bindings that has been added to the registry.
+             * This means that if there are any, then they have been added by the end user
+             * and we should favour using the bean if there is a single instance bound for the type.
+             */
+            private Set findExplicitBindingByType(CamelContext camelContext, Class type) {
+                if (camelContext.getRegistry() instanceof MainRegistry) {
+                    return ((MainRegistry) camelContext.getRegistry()).findBindingsByType(type);
+                }
+                return Collections.EMPTY_SET;
+            }
+
+            private boolean isComplexType(Class type) {
+                // lets consider all non java as complex types
+                return type != null && !type.isPrimitive() && !type.getName().startsWith("java");
+            }
+
+            private Class getGetterType(Component component, String key) {
+                try {
+                    Method getter = IntrospectionSupport.getPropertyGetter(component.getClass(), key);
+                    if (getter != null) {
+                        return getter.getReturnType();
+                    }
+                } catch (NoSuchMethodException e) {
+                    // ignore
+                }
+                return null;
+            }
+        });
+    }
+
     public void addRouteBuilder(RouteBuilder routeBuilder) {
         getRouteBuilders().add(routeBuilder);
+    }
+
+    public void addRouteBuilder(Class... routeBuilder) {
+        String existing = routeBuilderClasses;
+        if (existing == null) {
+            existing = "";
+        }
+        if (routeBuilder != null) {
+            for (Class clazz : routeBuilder) {
+                if (!existing.isEmpty()) {
+                    existing = existing + ",";
+                }
+                existing = existing + clazz.getName();
+            }
+        }
+        setRouteBuilderClasses(existing);
+    }
+
+    private static boolean setCamelProperties(CamelContext context, Object target, Map<String, Object> properties, boolean failIfNotSet) throws Exception {
+        ObjectHelper.notNull(context, "context");
+        ObjectHelper.notNull(target, "target");
+        ObjectHelper.notNull(properties, "properties");
+        boolean rc = false;
+        Iterator it = properties.entrySet().iterator();
+
+        while (it.hasNext()) {
+            Map.Entry<String, Object> entry = (Map.Entry) it.next();
+            String name = entry.getKey();
+            Object value = entry.getValue();
+            String stringValue = value != null ? value.toString() : null;
+            boolean hit = false;
+            if (EndpointHelper.isReferenceParameter(stringValue)) {
+                hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, (Object) null, stringValue, true);
+            } else if (value != null) {
+                try {
+                    hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, value);
+                } catch (IllegalArgumentException var12) {
+                    hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, (Object) null, stringValue, true);
+                }
+            }
+
+            if (hit) {
+                it.remove();
+                rc = true;
+            } else if (failIfNotSet) {
+                throw new IllegalArgumentException("Cannot configure option [" + name + "] with value [" + stringValue + "] as the bean class ["
+                    + ObjectHelper.classCanonicalName(target) + "] has no suitable setter method, or not possible to lookup a bean with the id [" + stringValue + "] in Camel registry");
+            }
+        }
+
+        return rc;
     }
 
     public abstract class Option {

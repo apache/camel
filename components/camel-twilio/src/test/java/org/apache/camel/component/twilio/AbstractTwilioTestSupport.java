@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -52,12 +52,9 @@ public class AbstractTwilioTestSupport extends CamelTestSupport {
             options.put(entry.getKey().toString(), entry.getValue());
         }
 
-        final TwilioConfiguration configuration = new TwilioConfiguration();
-        IntrospectionSupport.setProperties(configuration, options);
-
         // add TwilioComponent to Camel context
         final TwilioComponent component = new TwilioComponent(context);
-        component.setConfiguration(configuration);
+        IntrospectionSupport.setProperties(component, options);
         context.addComponent("twilio", component);
 
         return context;

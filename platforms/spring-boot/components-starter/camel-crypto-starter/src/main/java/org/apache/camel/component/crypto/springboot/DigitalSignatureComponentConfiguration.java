@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -85,12 +85,11 @@ public class DigitalSignatureComponentConfiguration
          */
         private String algorithm = "SHA1WithDSA";
         /**
-         * Sets the alias used to query the KeyStore for keys and {link
+         * Sets the alias used to query the KeyStore for keys and {@link
          * java.security.cert.Certificate Certificates} to be used in signing
          * and verifying exchanges. This value can be provided at runtime via
-         * the message header
-         * org.apache.camel.component.crypto.DigitalSignatureConstants
-         * #KEYSTORE_ALIAS
+         * the message header {@link
+         * org.apache.camel.component.crypto.DigitalSignatureConstants#KEYSTORE_ALIAS}
          */
         private String alias;
         /**
@@ -98,7 +97,7 @@ public class DigitalSignatureComponentConfiguration
          */
         private PrivateKey privateKey;
         /**
-         * Sets the reference name for a PrivateKey that can be fond in the
+         * Sets the reference name for a PrivateKey that can be found in the
          * registry.
          */
         private String privateKeyName;
@@ -108,7 +107,8 @@ public class DigitalSignatureComponentConfiguration
          */
         private PublicKey publicKey;
         /**
-         * references that should be resolved when the context changes
+         * Sets the reference name for a publicKey that can be found in the
+         * registry.
          */
         private String publicKeyName;
         /**
@@ -117,55 +117,55 @@ public class DigitalSignatureComponentConfiguration
          */
         private Certificate certificate;
         /**
-         * Sets the reference name for a PrivateKey that can be fond in the
+         * Sets the reference name for a PrivateKey that can be found in the
          * registry.
          */
         private String certificateName;
         /**
          * Sets the KeyStore that can contain keys and Certficates for use in
-         * signing and verifying exchanges. A KeyStore is typically used with an
-         * alias, either one supplied in the Route definition or dynamically via
-         * the message header CamelSignatureKeyStoreAlias. If no alias is
-         * supplied and there is only a single entry in the Keystore, then this
-         * single entry will be used.
+         * signing and verifying exchanges. A {@link KeyStore} is typically used
+         * with an alias, either one supplied in the Route definition or
+         * dynamically via the message header "CamelSignatureKeyStoreAlias". If
+         * no alias is supplied and there is only a single entry in the
+         * Keystore, then this single entry will be used.
          */
         private KeyStore keystore;
         /**
-         * Sets the reference name for a Keystore that can be fond in the
+         * Sets the reference name for a Keystore that can be found in the
          * registry.
          */
         private String keystoreName;
         /**
-         * Sets the password used to access an aliased PrivateKey in the
+         * Sets the password used to access an aliased {@link PrivateKey} in the
          * KeyStore.
          */
         private char[] password;
         /**
          * Sets the KeyStore that can contain keys and Certficates for use in
          * signing and verifying exchanges based on the given
-         * KeyStoreParameters. A KeyStore is typically used with an alias,
-         * either one supplied in the Route definition or dynamically via the
-         * message header CamelSignatureKeyStoreAlias. If no alias is supplied
-         * and there is only a single entry in the Keystore, then this single
-         * entry will be used.
+         * KeyStoreParameters. A {@link KeyStore} is typically used with an
+         * alias, either one supplied in the Route definition or dynamically via
+         * the message header "CamelSignatureKeyStoreAlias". If no alias is
+         * supplied and there is only a single entry in the Keystore, then this
+         * single entry will be used.
          */
         private KeyStoreParameters keyStoreParameters;
+        /**
+         * Sets the reference name for a SecureRandom that can be found in the
+         * registry.
+         */
+        private String secureRandomName;
         /**
          * Set the SecureRandom used to initialize the Signature service
          */
         private SecureRandom secureRandom;
-        /**
-         * Sets the reference name for a SecureRandom that can be fond in the
-         * registry.
-         */
-        private String secureRandomName;
         /**
          * Set the size of the buffer used to read in the Exchange payload data.
          */
         private Integer bufferSize = 2048;
         /**
          * Set the id of the security provider that provides the configured
-         * Signature algorithm.
+         * {@link Signature} algorithm.
          */
         private String provider;
         /**
@@ -290,20 +290,20 @@ public class DigitalSignatureComponentConfiguration
             this.keyStoreParameters = keyStoreParameters;
         }
 
-        public SecureRandom getSecureRandom() {
-            return secureRandom;
-        }
-
-        public void setSecureRandom(SecureRandom secureRandom) {
-            this.secureRandom = secureRandom;
-        }
-
         public String getSecureRandomName() {
             return secureRandomName;
         }
 
         public void setSecureRandomName(String secureRandomName) {
             this.secureRandomName = secureRandomName;
+        }
+
+        public SecureRandom getSecureRandom() {
+            return secureRandom;
+        }
+
+        public void setSecureRandom(SecureRandom secureRandom) {
+            this.secureRandom = secureRandom;
         }
 
         public Integer getBufferSize() {

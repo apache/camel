@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -1031,8 +1031,8 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
 
     /**
      * This option is used to allow additional headers which may have values that are invalid according to JMS specification.
-     + For example some message systems such as WMQ do this with header names using prefix JMS_IBM_MQMD_ containing values with byte array or other invalid types.
-     + You can specify multiple header names separated by comma, and use * as suffix for wildcard matching.
+     * For example some message systems such as WMQ do this with header names using prefix JMS_IBM_MQMD_ containing values with byte array or other invalid types.
+     * You can specify multiple header names separated by comma, and use * as suffix for wildcard matching.
      */
     @Metadata(label = "producer,advanced",
         description = "This option is used to allow additional headers which may have values that are invalid according to JMS specification."

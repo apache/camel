@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -61,6 +61,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
@@ -75,12 +76,11 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
@@ -332,6 +332,9 @@ public abstract class CamelTestSupport extends TestSupport {
 
         assertNotNull("No context found!", context);
 
+        // add custom beans
+        bindToRegistry(context.getRegistry());
+
         // reduce default shutdown timeout to avoid waiting for 300 seconds
         context.getShutdownStrategy().setTimeout(getShutdownTimeout());
 
@@ -379,6 +382,7 @@ public abstract class CamelTestSupport extends TestSupport {
             pc.setIgnoreMissingLocation(ignore);
         }
 
+        // prepare for in-between tests
         postProcessTest();
 
         if (isUseRouteBuilder()) {
@@ -434,9 +438,11 @@ public abstract class CamelTestSupport extends TestSupport {
             String dir = "target/camel-route-coverage";
             String name = className + "-" + getTestMethodName() + ".xml";
 
-            ManagedCamelContextMBean managedCamelContext = context != null ? context.getExtension(ManagedCamelContext.class).getManagedCamelContext() : null;
+            ManagedCamelContext mc = context != null ? context.getExtension(ManagedCamelContext.class) : null;
+            ManagedCamelContextMBean managedCamelContext = mc != null ? mc.getManagedCamelContext() : null;
             if (managedCamelContext == null) {
-                log.warn("Cannot dump route coverage to file as JMX is not enabled. Override useJmx() method to enable JMX in the unit test classes.");
+                log.warn("Cannot dump route coverage to file as JMX is not enabled. "  
+                    + "Add camel-management-impl JAR as dependency and/or override useJmx() method to enable JMX in the unit test classes.");
             } else {
                 logCoverageSummary(managedCamelContext);
 
@@ -771,15 +777,67 @@ public abstract class CamelTestSupport extends TestSupport {
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext(createRegistry());
+        // for backwards compatibility
+        Registry registry = createRegistry();
+        if (registry instanceof FakeJndiRegistry) {
+            boolean inUse = ((FakeJndiRegistry) registry).isInUse();
+            if (!inUse) {
+                registry = null;
+            }
+        }
+        if (registry != null) {
+            String msg = "createRegistry() from camel-test is deprecated. Use createCamelRegistry if you want to control which registry to use, however"
+                + " if you need to bind beans to the registry then this is possible already with the bind method on registry,"
+                + " and there is no need to override this method.";
+            LOG.warn(msg);
+        } else {
+            registry = createCamelRegistry();
+        }
+
+        CamelContext context;
+        if (registry != null) {
+            context = new DefaultCamelContext(registry);
+        } else {
+            context = new DefaultCamelContext();
+        }
         return context;
     }
 
-    protected JndiRegistry createRegistry() throws Exception {
-        return new JndiRegistry(createJndiContext());
+    /**
+     * Allows to bind custom beans to the Camel {@link Registry}.
+     */
+    protected void bindToRegistry(Registry registry) throws Exception {
+        // noop
     }
 
+    /**
+     * Override to use a custom {@link Registry}.
+     *
+     * However if you need to bind beans to the registry then this is possible already with the bind method on registry,"
+     * and there is no need to override this method.
+     */
+    protected Registry createCamelRegistry() throws Exception {
+        return null;
+    }
+
+    /**
+     * @deprecated use createCamelRegistry if you want to control which registry to use, however
+     * if you need to bind beans to the registry then this is possible already with the bind method on registry,
+     * and there is no need to override this method.
+     */
+    @Deprecated
+    protected JndiRegistry createRegistry() throws Exception {
+        return new FakeJndiRegistry(createJndiContext());
+    }
+
+    /**
+     * @deprecated use createCamelRegistry if you want to control which registry to use, however
+     * if you need to bind beans to the registry then this is possible already with the bind method on registry,
+     * and there is no need to use JndiRegistry and override this method.
+     */
+    @Deprecated
     protected Context createJndiContext() throws Exception {
+        LOG.warn("The method createJndiContext() in camel-test is deprecated. You can bind beans directly from Camel Registry instead");
         Properties properties = new Properties();
 
         // jndi.properties is optional
@@ -791,6 +849,26 @@ public abstract class CamelTestSupport extends TestSupport {
             properties.put("java.naming.factory.initial", "org.apache.camel.support.jndi.CamelInitialContextFactory");
         }
         return new InitialContext(new Hashtable<>(properties));
+    }
+
+    private class FakeJndiRegistry extends JndiRegistry {
+
+        private boolean inUse;
+
+        public FakeJndiRegistry(Context context) {
+            super(context);
+        }
+
+        @Override
+        public void bind(String name, Object object) {
+            super.bind(name, object);
+            inUse = true;
+        }
+
+        public boolean isInUse() {
+            // only if the end user bind beans then its in use
+            return inUse;
+        }
     }
 
     /**

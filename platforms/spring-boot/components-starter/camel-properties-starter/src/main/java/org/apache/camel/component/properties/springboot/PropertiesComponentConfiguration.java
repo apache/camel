@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -119,9 +119,18 @@ public class PropertiesComponentConfiguration
      */
     private String overrideProperties;
     /**
-     * Sets the system property mode.
+     * Sets the system property (and environment variable) mode. The default
+     * mode (override) is to check system properties (and environment variables)
+     * first, before trying the specified properties. This allows system
+     * properties/environment variables to override any other property source.
      */
     private Integer systemPropertiesMode = 2;
+    /**
+     * Sets the OS environment variables mode. The default mode (fallback) is to
+     * check OS environment variables, if the property cannot be resolved from
+     * its sources first. This allows environment variables as fallback values.
+     */
+    private Integer environmentVariableMode = 1;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -256,6 +265,14 @@ public class PropertiesComponentConfiguration
 
     public void setSystemPropertiesMode(Integer systemPropertiesMode) {
         this.systemPropertiesMode = systemPropertiesMode;
+    }
+
+    public Integer getEnvironmentVariableMode() {
+        return environmentVariableMode;
+    }
+
+    public void setEnvironmentVariableMode(Integer environmentVariableMode) {
+        this.environmentVariableMode = environmentVariableMode;
     }
 
     public Boolean getResolvePropertyPlaceholders() {

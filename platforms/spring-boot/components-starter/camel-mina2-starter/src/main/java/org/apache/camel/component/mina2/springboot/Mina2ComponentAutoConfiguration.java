@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -75,7 +75,7 @@ public class Mina2ComponentAutoConfiguration {
     }
 
     @Lazy
-    @Bean(name = {"mina-component", "mina2-component"})
+    @Bean({"mina-component", "mina2-component"})
     @ConditionalOnMissingBean(Mina2Component.class)
     public Mina2Component configureMina2Component() throws Exception {
         Mina2Component component = new Mina2Component();

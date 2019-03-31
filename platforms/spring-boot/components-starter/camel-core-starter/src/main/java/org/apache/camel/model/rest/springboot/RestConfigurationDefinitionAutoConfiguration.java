@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -60,6 +60,7 @@ public class RestConfigurationDefinitionAutoConfiguration {
             throws Exception {
         Map<String, Object> properties = new HashMap<>();
         IntrospectionSupport.getProperties(config, properties, null, false);
+        // These options is configured specially further below, so remove them first
         properties.remove("enableCors");
         properties.remove("apiProperty");
         properties.remove("componentProperty");
@@ -67,33 +68,31 @@ public class RestConfigurationDefinitionAutoConfiguration {
         properties.remove("dataFormatProperty");
         properties.remove("endpointProperty");
         properties.remove("corsHeaders");
+        
         RestConfiguration definition = new RestConfiguration();
-        CamelPropertiesHelper.setCamelProperties(camelContext, definition,
-                properties, true);
+        CamelPropertiesHelper.setCamelProperties(camelContext, definition, properties, true);
+        
+        // Workaround for spring-boot properties name as It would appear
+        // as enable-c-o-r-s if left uppercase in Configuration
         definition.setEnableCORS(config.getEnableCors());
+        
         if (config.getApiProperty() != null) {
-            definition.setApiProperties(new HashMap<>(CollectionHelper
-                    .flattenKeysInMap(config.getApiProperty(), ".")));
+            definition.setApiProperties(new HashMap<>(CollectionHelper.flattenKeysInMap(config.getApiProperty(), ".")));
         }
         if (config.getComponentProperty() != null) {
-            definition.setComponentProperties(new HashMap<>(CollectionHelper
-                    .flattenKeysInMap(config.getComponentProperty(), ".")));
+            definition.setComponentProperties(new HashMap<>(CollectionHelper.flattenKeysInMap(config.getComponentProperty(), ".")));
         }
         if (config.getConsumerProperty() != null) {
-            definition.setConsumerProperties(new HashMap<>(CollectionHelper
-                    .flattenKeysInMap(config.getConsumerProperty(), ".")));
+            definition.setConsumerProperties(new HashMap<>(CollectionHelper.flattenKeysInMap(config.getConsumerProperty(), ".")));
         }
         if (config.getDataFormatProperty() != null) {
-            definition.setDataFormatProperties(new HashMap<>(CollectionHelper
-                    .flattenKeysInMap(config.getDataFormatProperty(), ".")));
+            definition.setDataFormatProperties(new HashMap<>(CollectionHelper.flattenKeysInMap(config.getDataFormatProperty(), ".")));
         }
         if (config.getEndpointProperty() != null) {
-            definition.setEndpointProperties(new HashMap<>(CollectionHelper
-                    .flattenKeysInMap(config.getEndpointProperty(), ".")));
+            definition.setEndpointProperties(new HashMap<>(CollectionHelper.flattenKeysInMap(config.getEndpointProperty(), ".")));
         }
         if (config.getCorsHeaders() != null) {
-            Map<String, Object> map = CollectionHelper.flattenKeysInMap(
-                    config.getCorsHeaders(), ".");
+            Map<String, Object> map = CollectionHelper.flattenKeysInMap(config.getCorsHeaders(), ".");
             Map<String, String> target = new HashMap<>();
             map.forEach((k, v) -> target.put(k, v.toString()));
             definition.setCorsHeaders(target);

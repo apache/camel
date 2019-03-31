@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,13 +18,10 @@ package org.apache.camel.component.seda;
 
 import java.util.concurrent.ArrayBlockingQueue;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
 import org.junit.Test;
 
 public class SedaQueueTest extends ContextTestSupport {
@@ -52,17 +49,12 @@ public class SedaQueueTest extends ContextTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        SimpleRegistry simpleRegistry = new SimpleRegistry();
-        simpleRegistry.put("arrayQueue", new ArrayBlockingQueue<Exchange>(10));
-        return new DefaultCamelContext(simpleRegistry);
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.getRegistry().bind("arrayQueue", new ArrayBlockingQueue<Exchange>(10));
+
                 from("seda:foo?size=20&concurrentConsumers=2").to("mock:result");
 
                 from("seda:bar").to("mock:result");

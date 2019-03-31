@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -50,8 +50,7 @@ import org.springframework.context.annotation.Lazy;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @Configuration
-@Conditional({
-        ConditionalOnCamelContextAndAutoConfigurationBeans.class,
+@Conditional({ConditionalOnCamelContextAndAutoConfigurationBeans.class,
         KubernetesPersistentVolumesClaimsComponentAutoConfiguration.GroupConditions.class})
 @AutoConfigureAfter(CamelAutoConfiguration.class)
 @EnableConfigurationProperties({ComponentConfigurationProperties.class,
@@ -71,8 +70,7 @@ public class KubernetesPersistentVolumesClaimsComponentAutoConfiguration {
 
     static class GroupConditions extends GroupCondition {
         public GroupConditions() {
-            super("camel.component",
-                    "camel.component.kubernetes-persistent-volumes-claims");
+            super("camel.component", "camel.component.kubernetes-persistent-volumes-claims");
         }
     }
 
@@ -110,16 +108,15 @@ public class KubernetesPersistentVolumesClaimsComponentAutoConfiguration {
         if (ObjectHelper.isNotEmpty(customizers)) {
             for (ComponentCustomizer<KubernetesPersistentVolumesClaimsComponent> customizer : customizers) {
                 boolean useCustomizer = (customizer instanceof HasId)
-                        ? HierarchicalPropertiesEvaluator
-                                .evaluate(
-                                        applicationContext.getEnvironment(),
-                                        "camel.component.customizer",
-                                        "camel.component.kubernetes-persistent-volumes-claims.customizer",
-                                        ((HasId) customizer).getId())
-                        : HierarchicalPropertiesEvaluator
-                                .evaluate(applicationContext.getEnvironment(),
-                                        "camel.component.customizer",
-                                        "camel.component.kubernetes-persistent-volumes-claims.customizer");
+                        ? HierarchicalPropertiesEvaluator.evaluate(
+                                applicationContext.getEnvironment(),
+                                "camel.component.customizer",
+                                "camel.component.kubernetes-persistent-volumes-claims.customizer",
+                                ((HasId) customizer).getId())
+                        : HierarchicalPropertiesEvaluator.evaluate(
+                                applicationContext.getEnvironment(),
+                                "camel.component.customizer",
+                                "camel.component.kubernetes-persistent-volumes-claims.customizer");
                 if (useCustomizer) {
                     LOGGER.debug("Configure component {}, with customizer {}",
                             component, customizer);

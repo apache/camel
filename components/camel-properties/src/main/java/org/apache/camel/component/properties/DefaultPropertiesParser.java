@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -306,13 +306,21 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
 
             String value = null;
 
-            // override is the default mode
-            int mode = propertiesComponent != null ? propertiesComponent.getSystemPropertiesMode() : PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE;
+            // override is the default mode for SYS
+            int sysMode = propertiesComponent != null ? propertiesComponent.getSystemPropertiesMode() : PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE;
+            // fallback is the default mode for ENV
+            int envMode = propertiesComponent != null ? propertiesComponent.getEnvironmentVariableMode() : PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_FALLBACK;
 
-            if (mode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE) {
+            if (sysMode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE) {
                 value = System.getProperty(key);
                 if (value != null) {
                     log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
+                }
+            }
+            if (value == null && envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_OVERRIDE) {
+                value = lookupEnvironmentVariable(key);
+                if (value != null) {
+                    log.debug("Found a environment property: {} with value: {} to be used.", key, value);
                 }
             }
 
@@ -323,15 +331,38 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
                 }
             }
 
-            if (value == null && mode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_FALLBACK) {
+            if (value == null && sysMode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_FALLBACK) {
                 value = System.getProperty(key);
                 if (value != null) {
                     log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
                 }
             }
+            if (value == null && envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_FALLBACK) {
+                // lookup OS env with upper case key
+                value = lookupEnvironmentVariable(key);
+                if (value != null) {
+                    log.debug("Found a environment property: {} with value: {} to be used.", key, value);
+                }
+            }
 
             return parseProperty(key, value, properties);
         }
+    }
+
+    /**
+     * Lookup the OS environment variable in a safe manner by
+     * using upper case keys and underscore instead of dash.
+     */
+    private static String lookupEnvironmentVariable(String key) {
+        // lookup OS env with upper case key
+        String upperKey = key.toUpperCase();
+        String value = System.getenv(upperKey);
+        // some OS do not support dashes in keys, so replace with underscore
+        if (value == null) {
+            String noDashKey = upperKey.replace('-', '_');
+            value = System.getenv(noDashKey);
+        }
+        return value;
     }
 
     /**

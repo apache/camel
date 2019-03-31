@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -52,12 +52,30 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     public static final int SYSTEM_PROPERTIES_MODE_FALLBACK = 1;
 
     /**
-     * Check system properties first, before trying the specified properties.
+     * Check system properties variables) first, before trying the specified properties.
      * This allows system properties to override any other property source.
      * <p/>
      * This is the default.
      */
     public static final int SYSTEM_PROPERTIES_MODE_OVERRIDE = 2;
+
+    /**
+     *  Never check OS environment variables.
+     */
+    public static final int ENVIRONMENT_VARIABLES_MODE_NEVER = 0;
+
+    /**
+     * Check OS environment variables if not resolvable in the specified properties.
+     * <p/>
+     * This is the default.
+     */
+    public static final int ENVIRONMENT_VARIABLES_MODE_FALLBACK = 1;
+
+    /**
+     * Check OS environment variables first, before trying the specified properties.
+     * This allows system properties to override any other property source.
+     */
+    public static final int ENVIRONMENT_VARIABLES_MODE_OVERRIDE = 2;
 
     /**
      * Key for stores special override properties that containers such as OSGi can store
@@ -67,18 +85,21 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     @SuppressWarnings("unchecked")
     private final Map<CacheKey, Properties> cacheMap = LRUCacheFactory.newLRUSoftCache(1000);
-    private final Map<String, PropertiesFunction> functions = new HashMap<>();
+    private final Map<String, PropertiesFunction> functions = new LinkedHashMap<>();
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver(this);
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private List<PropertiesLocation> locations = Collections.emptyList();
 
+    private transient String propertyPrefixResolved;
+
+    @Metadata
     private boolean ignoreMissingLocation;
+    @Metadata
     private String encoding;
     @Metadata(defaultValue = "true")
     private boolean cache = true;
     @Metadata(label = "advanced")
     private String propertyPrefix;
-    private transient String propertyPrefixResolved;
     @Metadata(label = "advanced")
     private String propertySuffix;
     private transient String propertySuffixResolved;
@@ -96,6 +117,8 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     private Properties overrideProperties;
     @Metadata(defaultValue = "" + SYSTEM_PROPERTIES_MODE_OVERRIDE, enums = "0,1,2")
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
+    @Metadata(defaultValue = "" + SYSTEM_PROPERTIES_MODE_FALLBACK, enums = "0,1,2")
+    private int environmentVariableMode = ENVIRONMENT_VARIABLES_MODE_FALLBACK;
 
     public PropertiesComponent() {
         super();
@@ -147,15 +170,26 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         return parseUri(uri, locations);
     }
 
-    public String parseUri(String uri, String... uris) throws Exception {
+    public String parseUri(String uri, String... locations) throws Exception {
         return parseUri(
             uri,
-            uris != null
-                ? Arrays.stream(uris).map(PropertiesLocation::new).collect(Collectors.toList())
+            locations != null
+                ? Arrays.stream(locations).map(PropertiesLocation::new).collect(Collectors.toList())
                 : Collections.emptyList());
     }
 
-    public String parseUri(String uri, List<PropertiesLocation> paths) throws Exception {
+    public Properties loadProperties() throws Exception {
+        return doLoadProperties(locations);
+    }
+
+    public Properties loadProperties(String... locations) throws Exception {
+        if (locations != null) {
+            return doLoadProperties(Arrays.stream(locations).map(PropertiesLocation::new).collect(Collectors.toList()));
+        }
+        return new Properties();
+    }
+
+    protected Properties doLoadProperties(List<PropertiesLocation> paths) throws Exception {
         Properties prop = new Properties();
 
         // use initial properties
@@ -189,6 +223,12 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
             override.putAll(overrideProperties);
             prop = override;
         }
+
+        return prop;
+    }
+
+    protected String parseUri(String uri, List<PropertiesLocation> paths) throws Exception {
+        Properties prop = doLoadProperties(paths);
 
         // enclose tokens if missing
         if (!uri.contains(prefixToken) && !uri.startsWith(prefixToken)) {
@@ -255,6 +295,20 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         }
 
         setLocations(locations);
+    }
+
+    public void addLocation(String location) {
+        if (location != null) {
+            List<PropertiesLocation> newLocations = new ArrayList<>();
+            for (String loc : location.split(",")) {
+                newLocations.add(new PropertiesLocation(loc));
+            }
+            List<PropertiesLocation> current = getLocations();
+            if (!current.isEmpty()) {
+                newLocations.addAll(0, current);
+            }
+            setLocations(newLocations);
+        }
     }
 
     /**
@@ -463,7 +517,11 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     }
 
     /**
-     * Sets the system property mode.
+     * Sets the system property (and environment variable) mode.
+     *
+     * The default mode (override) is to check system properties (and environment variables) first,
+     * before trying the specified properties.
+     * This allows system properties/environment variables to override any other property source.
      *
      * @see #SYSTEM_PROPERTIES_MODE_NEVER
      * @see #SYSTEM_PROPERTIES_MODE_FALLBACK
@@ -471,6 +529,25 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
      */
     public void setSystemPropertiesMode(int systemPropertiesMode) {
         this.systemPropertiesMode = systemPropertiesMode;
+    }
+
+    public int getEnvironmentVariableMode() {
+        return environmentVariableMode;
+    }
+
+    /**
+     * Sets the OS environment variables mode.
+     *
+     * The default mode (fallback) is to check OS environment variables,
+     * if the property cannot be resolved from its sources first.
+     * This allows environment variables as fallback values.
+     *
+     * @see #ENVIRONMENT_VARIABLES_MODE_NEVER
+     * @see #ENVIRONMENT_VARIABLES_MODE_FALLBACK
+     * @see #ENVIRONMENT_VARIABLES_MODE_OVERRIDE
+     */
+    public void setEnvironmentVariableMode(int environmentVariableMode) {
+        this.environmentVariableMode = environmentVariableMode;
     }
 
     @Override
@@ -487,6 +564,11 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
                 && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_FALLBACK
                 && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_OVERRIDE) {
             throw new IllegalArgumentException("Option systemPropertiesMode has invalid value: " + systemPropertiesMode);
+        }
+        if (environmentVariableMode != ENVIRONMENT_VARIABLES_MODE_NEVER
+                && environmentVariableMode != ENVIRONMENT_VARIABLES_MODE_FALLBACK
+                && environmentVariableMode != ENVIRONMENT_VARIABLES_MODE_OVERRIDE) {
+            throw new IllegalArgumentException("Option environmentVariableMode has invalid value: " + environmentVariableMode);
         }
 
         // inject the component to the parser

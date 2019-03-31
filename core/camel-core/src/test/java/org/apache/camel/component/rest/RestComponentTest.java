@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,13 +33,11 @@ public class RestComponentTest {
 
     @Before
     public void createSubjects() {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("host-ref", "http://localhost:8080");
-        context = new DefaultCamelContext(registry);
+        context = new DefaultCamelContext();
+        context.getRegistry().bind("host-ref", "http://localhost:8080");
 
         rest = new RestComponent();
         rest.setCamelContext(context);
-
     }
 
     @Test

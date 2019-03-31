@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 
 /**
@@ -23,6 +25,34 @@ import org.apache.camel.CamelContext;
  */
 public interface ManagementStrategyFactory {
 
-    ManagementStrategy create(CamelContext context);
+    /**
+     * Creates the {@link ManagementStrategy}.
+     *
+     * @param context     the camel context
+     * @param properties  optional options to set on {@link ManagementAgent}
+     * @return the created strategy
+     * @throws Exception is thrown if error creating the strategy
+     */
+    ManagementStrategy create(CamelContext context, Map<String, Object> properties) throws Exception;
+
+    /**
+     * Creates the associated {@link LifecycleStrategy} that the management strategy uses.
+     *
+     * @param context     the camel context
+     * @return the created lifecycle strategy
+     * @throws Exception is thrown if error creating the lifecycle strategy
+     */
+    LifecycleStrategy createLifecycle(CamelContext context) throws Exception;
+
+    /**
+     * Setup the management on the {@link CamelContext}.
+     * <p/>
+     * This allows implementations to provide the logic for setting up management on Camel.
+     *
+     * @param camelContext  the camel context
+     * @param strategy      the management strategy
+     * @param lifecycle      the associated lifecycle strategy (optional)
+     */
+    void setupManagement(CamelContext camelContext, ManagementStrategy strategy, LifecycleStrategy lifecycle);
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -49,7 +49,7 @@ public class GuavaEventBusComponentConfiguration
      * multi-event listeners and for handling DeadEvent properly. This option
      * cannot be used together with eventClass option.
      */
-    private Class listenerInterface;
+    private Class<?> listenerInterface;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -65,11 +65,11 @@ public class GuavaEventBusComponentConfiguration
         this.eventBus = eventBus;
     }
 
-    public Class getListenerInterface() {
+    public Class<?> getListenerInterface() {
         return listenerInterface;
     }
 
-    public void setListenerInterface(Class listenerInterface) {
+    public void setListenerInterface(Class<?> listenerInterface) {
         this.listenerInterface = listenerInterface;
     }
 

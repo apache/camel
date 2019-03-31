@@ -17,7 +17,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -44,11 +45,11 @@
             <artifactId>javax.mail</artifactId>
             <version>${javax-mail-version}</version>
             <exclusions>
-              <!-- javax activation is part of the JDK now -->
-              <exclusion>
-                <groupId>javax.activation</groupId>
-                <artifactId>activation</artifactId>
-              </exclusion>
+                <!-- javax activation is part of the JDK now -->
+                <exclusion>
+                    <groupId>javax.activation</groupId>
+                    <artifactId>activation</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -63,10 +64,10 @@
             <artifactId>mock-javamail</artifactId>
             <version>${mock-javamail-version}</version>
             <exclusions>
-              <exclusion>
-                <groupId>javax.mail</groupId>
-                <artifactId>mail</artifactId>
-              </exclusion>
+                <exclusion>
+                    <groupId>javax.mail</groupId>
+                    <artifactId>mail</artifactId>
+                </exclusion>
             </exclusions>
             <scope>test</scope>
         </dependency>
@@ -74,7 +75,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-        </dependency>   
+        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -96,33 +97,33 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-          <groupId>commons-io</groupId>
-          <artifactId>commons-io</artifactId>
-          <scope>test</scope>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-quartz2</artifactId>
-          <scope>test</scope>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-quartz2</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-          <groupId>org.assertj</groupId>
-          <artifactId>assertj-core</artifactId>
-          <scope>test</scope>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-           <artifactId>maven-surefire-plugin</artifactId>
-             <configuration>
-               <!-- required to make MailMimeDecodeHeadersTest work on operating systems with a different default encoding -->
-               <argLine>-Dfile.encoding=UTF-8</argLine>
-             </configuration>
-         </plugin>
-      </plugins>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- required to make MailMimeDecodeHeadersTest work on operating systems with a different default encoding -->
+                    <argLine>-Dfile.encoding=UTF-8</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
     <profiles>
@@ -137,7 +138,9 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <!-- required to make MailMimeDecodeHeadersTest work on operating systems with a different default encoding -->
-                            <argLine>-Dfile.encoding=UTF-8 --add-modules java.activation,java.xml.bind --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+                            <argLine>-Dfile.encoding=UTF-8 --add-modules java.activation,java.xml.bind --add-opens
+                                java.base/java.lang=ALL-UNNAMED
+                            </argLine>
                         </configuration>
                     </plugin>
                 </plugins>
