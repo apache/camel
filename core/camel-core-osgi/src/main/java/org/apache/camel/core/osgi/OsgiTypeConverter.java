@@ -280,7 +280,9 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
                                 return e.hasMoreElements();
                             }
                             public void forEachRemaining(Consumer<? super T> action) {
-                                while(e.hasMoreElements()) action.accept(e.nextElement());
+                                while (e.hasMoreElements()) {
+                                    action.accept(e.nextElement());
+                                }
                             }
                         },
                         Spliterator.ORDERED), false);

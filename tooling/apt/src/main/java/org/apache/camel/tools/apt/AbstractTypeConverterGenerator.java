@@ -257,7 +257,9 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
                 writer.append("    }\n");
                 writer.append("\n");
 
-                writer.append("    private void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) { \n");
+                writer.append(
+                              "    private void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method)"
+                              + " { \n");
                 writer.append("        registry.addTypeConverter(toType, fromType, new SimpleTypeConverter(allowNull, method));\n");
                 writer.append("    }\n");
                 writer.append("\n");
