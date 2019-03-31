@@ -159,7 +159,6 @@
         <include>org.apache.camel:camel-jdbc</include>
         <include>org.apache.camel:camel-jetty</include>
         <include>org.apache.camel:camel-jetty-common</include>
-        <include>org.apache.camel:camel-jetty9</include>
         <include>org.apache.camel:camel-jgroups</include>
         <include>org.apache.camel:camel-jgroups-raft</include>
         <include>org.apache.camel:camel-jibx</include>
@@ -470,7 +469,6 @@
         <include>org.apache.camel:camel-jdbc-starter</include>
         <include>org.apache.camel:camel-jetty-common-starter</include>
         <include>org.apache.camel:camel-jetty-starter</include>
-        <include>org.apache.camel:camel-jetty9-starter</include>
         <include>org.apache.camel:camel-jgroups-raft-starter</include>
         <include>org.apache.camel:camel-jgroups-starter</include>
         <include>org.apache.camel:camel-jibx-starter</include>
@@ -563,6 +561,7 @@
         <include>org.apache.camel:camel-snmp-starter</include>
         <include>org.apache.camel:camel-soap-starter</include>
         <include>org.apache.camel:camel-solr-starter</include>
+        <include>org.apache.camel:camel-soroush-starter</include>
         <include>org.apache.camel:camel-spark-starter</include>
         <include>org.apache.camel:camel-splunk-starter</include>
         <include>org.apache.camel:camel-spring-batch-starter</include>

@@ -690,11 +690,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty9</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jgroups</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -2064,11 +2059,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty9-starter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jgroups-raft-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -2525,6 +2515,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-solr-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-soroush-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

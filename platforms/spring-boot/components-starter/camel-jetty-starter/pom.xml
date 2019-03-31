@@ -42,6 +42,11 @@
     <!--START OF GENERATED CODE-->
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>apt</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-core-starter</artifactId>
     </dependency>
     <dependency>
