@@ -135,6 +135,6 @@ public class SparkEndpoint extends DefaultEndpoint {
 
     @Override
     public SparkComponent getComponent() {
-      return (SparkComponent) super.getComponent();
+        return (SparkComponent) super.getComponent();
     }
 }
