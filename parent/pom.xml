@@ -103,8 +103,8 @@
         <braintree-gateway-version>2.91.0</braintree-gateway-version>
         <brave-zipkin-version>5.6.3</brave-zipkin-version>
         <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
-        <c3p0-version>0.9.5.3</c3p0-version>
-        <c3p0-bundle-version>0.9.5.3_1</c3p0-bundle-version>
+        <c3p0-version>0.9.5.4</c3p0-version>
+        <c3p0-bundle-version>0.9.5.4_1</c3p0-bundle-version>
         <caffeine-version>2.7.0</caffeine-version>
         <californium-version>1.0.6</californium-version>
         <cassandra-driver-version>3.7.1</cassandra-driver-version>
