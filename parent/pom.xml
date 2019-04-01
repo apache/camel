@@ -432,8 +432,8 @@
         <jython-version>2.5.3</jython-version>
         <jzlib-version>1.1.3</jzlib-version>
         <jzlib-bundle-version>1.1.3_2</jzlib-bundle-version>
-        <kafka-version>2.1.1</kafka-version>
-        <kafka-bundle-version>2.1.1_1</kafka-bundle-version>
+        <kafka-version>2.2.0</kafka-version>
+        <kafka-bundle-version>2.2.0_1</kafka-bundle-version>
         <karaf4-version>4.2.4</karaf4-version>
         <kie-version>7.19.0.Final</kie-version>
         <kubernetes-client-version>4.1.1</kubernetes-client-version>
