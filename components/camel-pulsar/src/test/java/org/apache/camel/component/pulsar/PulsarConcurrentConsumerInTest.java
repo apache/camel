@@ -30,24 +30,24 @@ import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.Schema;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
-import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.PulsarContainer;
 
 import java.util.concurrent.TimeUnit;
 
-@Ignore //TODO use TestContainers to spin up local pulsar broker
 public class PulsarConcurrentConsumerInTest extends CamelTestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConcurrentConsumerInTest.class);
 
-    private static final String PULSAR_CLUSTER_URL = "pulsar://localhost:6650";
-
-
     private static final String TOPIC_URI = "non-persistent://public/default/concurrent-camel-topic";
     private static final String PRODUCER = "camel-producer";
     private static final int NUMBER_OF_CONSUMERS=5;
+
+    @Rule
+    public PulsarContainer pulsarContainer = new PulsarContainer();
 
     @EndpointInject(uri = "pulsar:" + TOPIC_URI
         + "?numberOfConsumers=5&subscriptionType=Shared"
@@ -65,7 +65,7 @@ public class PulsarConcurrentConsumerInTest extends CamelTestSupport {
             Processor processor = new Processor() {
                 @Override
                 public void process(final Exchange exchange) {
-                    LOGGER.error("Processing message {} on Thread {}", exchange.getIn().getBody(), Thread.currentThread());
+                    LOGGER.info("Processing message {} on Thread {}", exchange.getIn().getBody(), Thread.currentThread());
                 }
             };
 
@@ -95,7 +95,7 @@ public class PulsarConcurrentConsumerInTest extends CamelTestSupport {
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
         return new ClientBuilderImpl()
-            .serviceUrl(PULSAR_CLUSTER_URL)
+            .serviceUrl(pulsarContainer.getPulsarBrokerUrl())
             .ioThreads(2)
             .listenerThreads(5)
             .build();

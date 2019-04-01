@@ -29,17 +29,20 @@ import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.testcontainers.containers.PulsarContainer;
 
 import java.util.concurrent.TimeUnit;
 
-@Ignore //TODO use TestContainers to spin up local pulsar broker
+@Ignore
 public class PulsarProducerInTest extends CamelTestSupport {
-
-    private static final String PULSAR_CLUSTER_URL = "pulsar://localhost:6650";
 
     private static final String TOPIC_URI = "persistent://public/default/camel-producer-topic";
     private static final String PRODUCER = "camel-producer";
+
+    @Rule
+    public PulsarContainer pulsarContainer = new PulsarContainer();
 
     @Produce(uri = "direct:start")
     private ProducerTemplate producerTemplate;
@@ -86,7 +89,7 @@ public class PulsarProducerInTest extends CamelTestSupport {
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
         return new ClientBuilderImpl()
-            .serviceUrl(PULSAR_CLUSTER_URL)
+            .serviceUrl(pulsarContainer.getPulsarBrokerUrl())
             .ioThreads(1)
             .listenerThreads(1)
             .build();
