@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.component.rest;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -33,8 +33,6 @@ import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.StaticService;
-import org.apache.camel.component.rest.RestApiEndpoint;
-import org.apache.camel.component.rest.RestEndpoint;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.support.LifecycleStrategySupport;
