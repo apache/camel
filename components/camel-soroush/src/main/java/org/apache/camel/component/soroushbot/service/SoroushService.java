@@ -152,7 +152,7 @@ public class SoroushService {
             Class<? extends SoroushResponse> SoroushResponseType = responseType.asSubclass(SoroushResponse.class);
             SoroushResponse soroushResponse = response.readEntity(SoroushResponseType);
             if (soroushResponse.getResultCode() != 200) {
-                throw new SoroushException(soroushResponse, status, response.readEntity(String.class));
+                throw new SoroushException(soroushResponse, status, soroushResponse.toString());
             }
             return (T) soroushResponse;
         } else {

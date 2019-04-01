@@ -48,4 +48,12 @@ public class SoroushResponse {
     public void setResultMessage(String resultMessage) {
         this.resultMessage = resultMessage;
     }
+
+    @Override
+    public String toString() {
+        return "SoroushResponse{" +
+                "resultCode=" + resultCode +
+                ", resultMessage='" + resultMessage + '\'' +
+                '}';
+    }
 }
