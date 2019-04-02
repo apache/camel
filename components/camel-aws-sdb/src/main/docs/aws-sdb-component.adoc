@@ -9,7 +9,7 @@ https://aws.amazon.com/sdb[Amazon's SDB] service.
 Prerequisites
 
 You must have a valid Amazon Web Services developer account, and be
-signed up to use Amazon SDB. More information are available at
+signed up to use Amazon SDB. More information is available at
 https://aws.amazon.com/sdb[Amazon SDB].
 
 ### URI Format

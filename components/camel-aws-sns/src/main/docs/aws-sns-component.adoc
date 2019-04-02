@@ -11,7 +11,7 @@ the https://aws.amazon.com/sdkforjava/[AWS SDK].
 Prerequisites
 
 You must have a valid Amazon Web Services developer account, and be
-signed up to use Amazon SNS. More information are available at
+signed up to use Amazon SNS. More information is available at
 https://aws.amazon.com/sns[Amazon SNS].
 
 ### URI Format
