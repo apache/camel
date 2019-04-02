@@ -4,13 +4,13 @@
 *Available as of Camel version 3.0*
 
 The KMS component supports create, run, start, stop and terminate
-https://aws.amazon.com/it/msk/[AWS MSK] instances.
+https://aws.amazon.com/msk/[AWS MSK] instances.
 
 Prerequisites
 
 You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon MSK. More information are available at
-https://aws.amazon.com/it/msk/[Amazon MSK].
+https://aws.amazon.com/msk/[Amazon MSK].
 
 ### URI Format
 
@@ -125,7 +125,7 @@ Required MSK component options
 
 You have to provide the amazonKmsClient in the
 Registry or your accessKey and secretKey to access
-the https://aws.amazon.com/it/msk/[Amazon MSK] service.
+the https://aws.amazon.com/msk/[Amazon MSK] service.
 
 ### Usage
 

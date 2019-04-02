@@ -4,7 +4,7 @@
 *Available as of Camel version 3.0*
 
 The EKS component supports create, delete, describe and list
-https://aws.amazon.com/it/eks/[AWS EKS] clusters instances.
+https://aws.amazon.com/eks/[AWS EKS] clusters instances.
 
 Prerequisites
 

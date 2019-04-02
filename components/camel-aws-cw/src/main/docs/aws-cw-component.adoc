@@ -4,15 +4,15 @@
 *Available as of Camel version 2.11*
 
 The CW component allows messages to be sent to an
-http://aws.amazon.com/cloudwatch/[Amazon CloudWatch] metrics. The
+https://aws.amazon.com/cloudwatch/[Amazon CloudWatch] metrics. The
 implementation of the Amazon API is provided by
-the http://aws.amazon.com/sdkforjava/[AWS SDK].
+the https://aws.amazon.com/sdkforjava/[AWS SDK].
 
 Prerequisites
 
 You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon CloudWatch. More information are available at
-http://aws.amazon.com/cloudwatch/[Amazon CloudWatch].
+https://aws.amazon.com/cloudwatch/[Amazon CloudWatch].
 
 ### URI Format
 
@@ -134,7 +134,7 @@ Required CW component options
 
 You have to provide the amazonCwClient in the
 Registry or your accessKey and secretKey to access
-the http://aws.amazon.com/cloudwatch/[Amazon's CloudWatch].
+the https://aws.amazon.com/cloudwatch/[Amazon's CloudWatch].
 
 ### Usage
 
