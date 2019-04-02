@@ -4,13 +4,13 @@
 *Available as of Camel version 2.23*
 
 The KMS component supports create, run, start, stop and terminate
-https://aws.amazon.com/it/iam/[AWS IAM] instances.
+https://aws.amazon.com/iam/[AWS IAM] instances.
 
 Prerequisites
 
 You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon IAM. More information are available at
-https://aws.amazon.com/it/iam/[Amazon IAM].
+https://aws.amazon.com/iam/[Amazon IAM].
 
 ### URI Format
 
@@ -124,7 +124,7 @@ Required IAM component options
 
 You have to provide the amazonKmsClient in the
 Registry or your accessKey and secretKey to access
-the https://aws.amazon.com/it/iam/[Amazon IAM] service.
+the https://aws.amazon.com/iam/[Amazon IAM] service.
 
 ### Usage
 
