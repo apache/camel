@@ -28,7 +28,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.testcontainers.containers.PulsarContainer;
@@ -37,7 +36,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-@Ignore
 public class PulsarConcurrentProducerInTest extends CamelTestSupport {
 
     private static final String TOPIC_URI = "persistent://public/default/camel-concurrent-producers-topic";

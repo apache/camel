@@ -36,6 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.PulsarContainer;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class PulsarConcurrentConsumerInTest extends CamelTestSupport {
@@ -86,14 +88,14 @@ public class PulsarConcurrentConsumerInTest extends CamelTestSupport {
     }
 
     private void registerPulsarBeans(final JndiRegistry jndi) throws PulsarClientException {
-        PulsarClient pulsarClient = givenPulsarClient();
+        PulsarClient pulsarClient = concurrentPulsarClient();
         AutoConfiguration autoConfiguration = new AutoConfiguration(null, null);
 
         jndi.bind("pulsarClient", pulsarClient);
         jndi.bind("pulsar", new PulsarComponent(context(), autoConfiguration, pulsarClient));
     }
 
-    private PulsarClient givenPulsarClient() throws PulsarClientException {
+    private PulsarClient concurrentPulsarClient() throws PulsarClientException {
         return new ClientBuilderImpl()
             .serviceUrl(pulsarContainer.getPulsarBrokerUrl())
             .ioThreads(2)
@@ -102,10 +104,10 @@ public class PulsarConcurrentConsumerInTest extends CamelTestSupport {
     }
 
     @Test
-    public void givenARunningPulsarCluster_whenIPublishAMessageToCluster_verifyInMessageIsConsumed() throws Exception {
+    public void testMultipleMessageConsumedByCluster_withConcurrentConfiguration() throws Exception {
         to.expectedMessageCount(NUMBER_OF_CONSUMERS);
 
-        Producer<String> producer = givenPulsarClient()
+        Producer<String> producer = concurrentPulsarClient()
             .newProducer(Schema.STRING)
             .producerName(PRODUCER)
             .topic(TOPIC_URI)
