@@ -80,6 +80,10 @@ public class KMSProducer extends DefaultProducer {
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
+
+        if (ObjectHelper.isEmpty(operation)) {
+            throw new IllegalArgumentException("Operation must be specified");
+        }
         return operation;
     }
 
