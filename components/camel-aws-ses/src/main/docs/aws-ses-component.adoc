@@ -9,7 +9,7 @@ https://aws.amazon.com/ses[Amazon's SES] service.
 Prerequisites
 
 You must have a valid Amazon Web Services developer account, and be
-signed up to use Amazon SES. More information are available at
+signed up to use Amazon SES. More information is available at
 https://aws.amazon.com/ses[Amazon SES].
 
 ### URI Format

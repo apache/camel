@@ -9,7 +9,7 @@ https://aws.amazon.com/ecs/[AWS ECS] clusters instances.
 Prerequisites
 
 You must have a valid Amazon Web Services developer account, and be
-signed up to use Amazon ECS. More information are available at
+signed up to use Amazon ECS. More information is available at
 https://aws.amazon.com/ecs/[Amazon ECS].
 
 ### URI Format
