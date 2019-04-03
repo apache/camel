@@ -22,7 +22,7 @@ import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.AuthCmd;
 import com.github.dockerjava.api.command.CommitCmd;
 import com.github.dockerjava.api.command.ContainerDiffCmd;
-import com.github.dockerjava.api.command.CopyFileFromContainerCmd;
+import com.github.dockerjava.api.command.CopyArchiveFromContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateImageCmd;
 import com.github.dockerjava.api.command.ExecCreateCmd;
@@ -66,6 +66,8 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static com.github.dockerjava.api.model.HostConfig.newHostConfig;
 
 /**
  * The Docker producer.
@@ -587,7 +589,7 @@ public class DockerProducer extends DefaultProducer {
      * @param message
      * @return
      */
-    private CopyFileFromContainerCmd executeCopyFileContainerRequest(DockerClient client, Message message) {
+    private CopyArchiveFromContainerCmd executeCopyFileContainerRequest(DockerClient client, Message message) {
 
         LOGGER.debug("Executing Docker Copy File/Folder Container Request");
 
@@ -598,15 +600,15 @@ public class DockerProducer extends DefaultProducer {
             throw new IllegalArgumentException("Container ID and Resource must be specified");
         }
 
-        CopyFileFromContainerCmd copyFileContainerCmd = client.copyFileFromContainerCmd(containerId, resource);
+        CopyArchiveFromContainerCmd copyArchiveFromContainerCmd = client.copyArchiveFromContainerCmd(containerId, resource);
 
         String hostPath = DockerHelper.getProperty(DockerConstants.DOCKER_HOST_PATH, configuration, message, String.class);
 
         if (hostPath != null) {
-            copyFileContainerCmd.withHostPath(hostPath);
+            copyArchiveFromContainerCmd.withHostPath(hostPath);
         }
 
-        return copyFileContainerCmd;
+        return copyArchiveFromContainerCmd;
 
     }
 
@@ -626,6 +628,7 @@ public class DockerProducer extends DefaultProducer {
         ObjectHelper.notNull(image, "Image must be specified");
 
         CreateContainerCmd createContainerCmd = client.createContainerCmd(image);
+        createContainerCmd.withHostConfig(newHostConfig());
 
         Boolean attachStdErr = DockerHelper.getProperty(DockerConstants.DOCKER_ATTACH_STD_ERR, configuration, message, Boolean.class);
 
@@ -648,13 +651,13 @@ public class DockerProducer extends DefaultProducer {
         Capability[] capAdd = DockerHelper.getArrayProperty(DockerConstants.DOCKER_CAP_ADD, message, Capability.class);
 
         if (capAdd != null) {
-            createContainerCmd.withCapAdd(capAdd);
+            createContainerCmd.getHostConfig().withCapAdd(capAdd);
         }
 
         Capability[] capDrop = DockerHelper.getArrayProperty(DockerConstants.DOCKER_CAP_DROP, message, Capability.class);
 
         if (capDrop != null) {
-            createContainerCmd.withCapDrop(capDrop);
+            createContainerCmd.getHostConfig().withCapDrop(capDrop);
         }
 
         String[] cmd = DockerHelper.parseDelimitedStringHeader(DockerConstants.DOCKER_CMD, message);
@@ -666,7 +669,7 @@ public class DockerProducer extends DefaultProducer {
         Integer cpuShares = DockerHelper.getProperty(DockerConstants.DOCKER_CPU_SHARES, configuration, message, Integer.class);
 
         if (cpuShares != null) {
-            createContainerCmd.withCpuShares(cpuShares);
+            createContainerCmd.getHostConfig().withCpuShares(cpuShares);
         }
 
         Boolean disableNetwork = DockerHelper.getProperty(DockerConstants.DOCKER_DISABLE_NETWORK, configuration, message, Boolean.class);
@@ -678,7 +681,7 @@ public class DockerProducer extends DefaultProducer {
         String[] dns = DockerHelper.parseDelimitedStringHeader(DockerConstants.DOCKER_DNS, message);
 
         if (dns != null) {
-            createContainerCmd.withDns(dns);
+            createContainerCmd.getHostConfig().withDns(dns);
         }
 
         String domainName = DockerHelper.getProperty(DockerConstants.DOCKER_DOMAIN_NAME, configuration, message, String.class);
@@ -720,13 +723,13 @@ public class DockerProducer extends DefaultProducer {
         Long memoryLimit = DockerHelper.getProperty(DockerConstants.DOCKER_MEMORY_LIMIT, configuration, message, Long.class);
 
         if (memoryLimit != null) {
-            createContainerCmd.withMemory(memoryLimit);
+            createContainerCmd.getHostConfig().withMemory(memoryLimit);
         }
 
         Long memorySwap = DockerHelper.getProperty(DockerConstants.DOCKER_MEMORY_SWAP, configuration, message, Long.class);
 
         if (memorySwap != null) {
-            createContainerCmd.withMemorySwap(memorySwap);
+            createContainerCmd.getHostConfig().withMemorySwap(memorySwap);
         }
 
         String name = DockerHelper.getProperty(DockerConstants.DOCKER_NAME, configuration, message, String.class);
@@ -774,7 +777,7 @@ public class DockerProducer extends DefaultProducer {
         VolumesFrom[] volumesFrom = DockerHelper.getArrayProperty(DockerConstants.DOCKER_VOLUMES_FROM, message, VolumesFrom.class);
 
         if (volumesFrom != null) {
-            createContainerCmd.withVolumesFrom(volumesFrom);
+            createContainerCmd.getHostConfig().withVolumesFrom(volumesFrom);
         }
 
         String workingDir = DockerHelper.getProperty(DockerConstants.DOCKER_WORKING_DIR, configuration, message, String.class);
