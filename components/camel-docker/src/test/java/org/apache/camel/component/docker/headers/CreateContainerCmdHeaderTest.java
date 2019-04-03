@@ -43,6 +43,9 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
     @Mock
     private CreateContainerCmd mockObject;
 
+    @Mock
+    private HostConfig hostConfig;
+
     @Test
     public void createContainerHeaderTest() {
 
@@ -67,7 +70,6 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         VolumesFrom volumesFromContainer = new VolumesFrom("/etc");
         String env = "FOO=bar";
         String cmd = "whoami";
-        HostConfig hostConfig = new HostConfig();
         Capability capAdd = Capability.NET_BROADCAST;
         Capability capDrop = Capability.BLOCK_SUSPEND;
         String[] entrypoint = new String[]{"sleep", "9999"};
@@ -104,6 +106,7 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         headers.put(DockerConstants.DOCKER_DNS, dns);
         headers.put(DockerConstants.DOCKER_DOMAIN_NAME, domainName);
 
+        Mockito.when(mockObject.getHostConfig()).thenReturn(hostConfig);
 
         template.sendBodyAndHeaders("direct:in", "", headers);
 
@@ -120,22 +123,21 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         Mockito.verify(mockObject, Mockito.times(1)).withAttachStderr(attachStdErr);
         Mockito.verify(mockObject, Mockito.times(1)).withAttachStdin(attachStdIn);
         Mockito.verify(mockObject, Mockito.times(1)).withAttachStdout(attachStdOut);
-        Mockito.verify(mockObject, Mockito.times(1)).withMemory(memoryLimit);
-        Mockito.verify(mockObject, Mockito.times(1)).withMemorySwap(swapMemory);
-        Mockito.verify(mockObject, Mockito.times(1)).withCpuShares(cpuShares);
         Mockito.verify(mockObject, Mockito.times(1)).withVolumes(volumes);
-        Mockito.verify(mockObject, Mockito.times(1)).withVolumesFrom(volumesFromContainer);
         Mockito.verify(mockObject, Mockito.times(1)).withEnv(env);
         Mockito.verify(mockObject, Mockito.times(1)).withCmd(cmd);
         Mockito.verify(mockObject, Mockito.times(1)).withHostConfig(hostConfig);
-        Mockito.verify(mockObject, Mockito.times(1)).withCapAdd(capAdd);
-        Mockito.verify(mockObject, Mockito.times(1)).withCapDrop(capDrop);
         Mockito.verify(mockObject, Mockito.times(1)).withEntrypoint(entrypoint);
         Mockito.verify(mockObject, Mockito.times(1)).withPortSpecs(portSpecs);
-        Mockito.verify(mockObject, Mockito.times(1)).withDns(dns);
         Mockito.verify(mockObject, Mockito.times(1)).withDomainName(domainName);
 
-
+        Mockito.verify(hostConfig, Mockito.times(1)).withVolumesFrom(volumesFromContainer);
+        Mockito.verify(hostConfig, Mockito.times(1)).withCapAdd(capAdd);
+        Mockito.verify(hostConfig, Mockito.times(1)).withCapDrop(capDrop);
+        Mockito.verify(hostConfig, Mockito.times(1)).withDns(dns);
+        Mockito.verify(hostConfig, Mockito.times(1)).withMemory(memoryLimit);
+        Mockito.verify(hostConfig, Mockito.times(1)).withMemorySwap(swapMemory);
+        Mockito.verify(hostConfig, Mockito.times(1)).withCpuShares(cpuShares);
     }
 
     @Override
