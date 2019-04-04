@@ -125,26 +125,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>jdk9+-build</id>
-            <activation>
-                <jdk>[9,)</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <!-- required to make MailMimeDecodeHeadersTest work on operating systems with a different default encoding -->
-                            <argLine>-Dfile.encoding=UTF-8 --add-modules java.activation,java.xml.bind --add-opens
-                                java.base/java.lang=ALL-UNNAMED
-                            </argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

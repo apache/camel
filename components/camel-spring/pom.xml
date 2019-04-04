@@ -93,11 +93,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>jsr250-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cloud</artifactId>
             <scope>test</scope>
@@ -187,7 +182,12 @@
             <version>${assertj-version}</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>woodstox-core-asl</artifactId>
+            <version>${woodstox-version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -658,36 +658,12 @@
                 <platform.skip.tests>org/apache/camel/spring/management/**/*.java</platform.skip.tests>
             </properties>
         </profile>
-        <profile>
-            <id>woodstox</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <dependencies>
-                <!-- xmltokenizer using woodstox -->
-                <dependency>
-                    <groupId>org.codehaus.woodstox</groupId>
-                    <artifactId>woodstox-core-asl</artifactId>
-                    <version>${woodstox-version}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
 
         <profile>
             <id>jdk8</id>
             <activation>
                 <jdk>(,1.8]</jdk>
             </activation>
-            <dependencies>
-                <!-- xmltokenizer using woodstox -->
-                <dependency>
-                    <groupId>org.codehaus.woodstox</groupId>
-                    <artifactId>woodstox-core-asl</artifactId>
-                    <version>${woodstox-version}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
             <build>
                 <plugins>
                     <plugin>
@@ -719,20 +695,13 @@
             <activation>
                 <jdk>[9,)</jdk>
             </activation>
-            <dependencies>
-                <!-- xmltokenizer using woodstox -->
-                <dependency>
-                    <groupId>org.codehaus.woodstox</groupId>
-                    <artifactId>woodstox-core-asl</artifactId>
-                    <version>${woodstox-version}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>jaxb2-maven-plugin</artifactId>
+                        <!--Workaround until https://github.com/mojohaus/jaxb2-maven-plugin/pull/126/ is resolved-->
+                        <groupId>com.github.davidmoten</groupId>
+                        <artifactId>jax-maven-plugin</artifactId>
+                        <version>${jax-maven-plugin-version}</version>
                         <executions>
                             <execution>
                                 <id>generate schema</id>
@@ -743,11 +712,13 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/schema</outputDirectory>
                             <sources>
                                 <source>${project.build.directory}/schema-src</source>
                             </sources>
-                            <createJavaDocAnnotations>false</createJavaDocAnnotations>
+                            <arguments>
+                                <argument>-d</argument>
+                                <argument>${project.build.directory}/schema</argument>
+                            </arguments>
                         </configuration>
                     </plugin>
                 </plugins>
