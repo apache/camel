@@ -122,7 +122,7 @@ public final class BoxConnectionHelper {
             passwordField.val(configuration.getUserPassword());
 
             //submit loginPage
-            final Map<String, String> cookies = new HashMap();
+            final Map<String, String> cookies = new HashMap<>();
             cookies.putAll(loginPageResponse.cookies());
 
             Connection.Response response = addProxy(loginForm.submit(), proxy)
@@ -173,7 +173,7 @@ public final class BoxConnectionHelper {
 
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API connection failed: API returned the error code %d\n\n%s",
+                    String.format("Box API connection failed: API returned the error code %d%n%n%s",
                             e.getResponseCode(), e.getResponse()),
                     e);
         } catch (Exception e) {
@@ -184,16 +184,26 @@ public final class BoxConnectionHelper {
     /**
      * Validation of page:
      * - detects CAPTCHA test
+     * - detects 2-step verification
      * - detects invalid credentials error
      * - detects wrong clientId error
      */
     private static void validatePage(Document page) {
+        // CAPTCHA
         Elements captchaDivs = page.select("div[class*=g-recaptcha]");
         if (!captchaDivs.isEmpty()) {
             throw new IllegalArgumentException(
                     "Authentication requires CAPTCHA test. First you need to authenticate the account manually via web to unlock CAPTCHA.");
         }
 
+        // 2-step verification
+        Elements twoStepDivs = page.select("div[data-module=two-factor-enroll-form]");
+        if (!twoStepDivs.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "2-step verification is enabled on the Box account. Turn it off for camel-box to proceed the standard authentication.");
+        }
+
+        // login failures
         Elements errorDivs = page.select("div[class*=error_message]");
         String errorMessage = null;
         if (!errorDivs.isEmpty()) {
@@ -245,7 +255,7 @@ public final class BoxConnectionHelper {
                     configuration.getClientId(), configuration.getClientSecret(), encryptionPref, accessTokenCache);
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API connection failed: API returned the error code %d\n\n%s",
+                    String.format("Box API connection failed: API returned the error code %d%n%n%s",
                             e.getResponseCode(), e.getResponse()),
                     e);
         }
@@ -276,7 +286,7 @@ public final class BoxConnectionHelper {
                     configuration.getClientId(), configuration.getClientSecret(), encryptionPref, accessTokenCache);
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API connection failed: API returned the error code %d\n\n%s",
+                    String.format("Box API connection failed: API returned the error code %d%n%n%s",
                             e.getResponseCode(), e.getResponse()),
                     e);
         }
