@@ -45,7 +45,7 @@ import org.junit.Test;
 public class SimpleTest extends LanguageTestSupport {
 
     private static final String JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG = "Index: 2, Size: 2";
-    private static final String INDEX_OUT_OF_BOUNDS_ERROR_MSG = "Index 2 out-of-bounds for length 2";
+    private static final String INDEX_OUT_OF_BOUNDS_ERROR_MSG = "Index 2 out of bounds for length 2";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {

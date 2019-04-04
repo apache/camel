@@ -94,7 +94,7 @@ public class CsvMarshalHeaderWithCustomMarshallFactoryTest extends CamelTestSupp
         dataFormat.setDelimiter('\t');
         dataFormat.setTrim(true);
         dataFormat.setIgnoreSurroundingSpaces(true);
-        dataFormat.setHeader((String[]) Arrays.asList("first_name", "last_name").toArray());
+        dataFormat.setHeader(Arrays.asList("first_name", "last_name").toArray(new String[0]));
         dataFormat.setMarshallerFactory(new CsvMarshallerFactory() {
 
             @Override
