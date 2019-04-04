@@ -345,29 +345,23 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 		pack.appendChild(sourcefile);
 		                    
 		int covered = 0, missed = 0;
-		for (RouteCoverageNode node : coverage) {
-			
-		    int missedCount = 0;
-		    
+		for (RouteCoverageNode node : coverage) {			
+		    int missedCount = 0;		    
 		    if (node.getCount() > 0) {
 		        covered++;
 		    }                        
 		    else {
 		    	missedCount ++;
 		    	missed ++;
-		    }
-		    
+		    }		    
 		    // line tag
-		    Element line = document.createElement("line");
-		    
+		    Element line = document.createElement("line");		    
 		    createAttrInt(document, line, "nr", node.getLineNumber());
 		    createAttrInt(document, line, "mi", missedCount);
-		    createAttrInt(document, line, "ci", node.getCount());
-		    
+		    createAttrInt(document, line, "ci", node.getCount());		    
 		    // provides no useful information, needed to be read by sonarQube
 		    createAttrInt(document, line, "mb", 0);
-		    createAttrInt(document, line, "cb", 0);
-		    
+		    createAttrInt(document, line, "cb", 0);		    
 		    sourcefile.appendChild(line);                                             
 		}
                
@@ -497,22 +491,21 @@ public class RouteCoverageMojo extends AbstractExecMojo {
     
     private static Document createDocument() throws ParserConfigurationException {
     	Document document = null;
-    
-    	    DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();        
-    	    DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-    	    document = documentBuilder.newDocument();
+    	DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();        
+    	DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+    	document = documentBuilder.newDocument();
     	
     	return document; 
     }
     
     private static void createXmlFile(Document document, File file) throws TransformerException {
-    		String xmlFilePath = file.toString() + "/xmlJacoco.xml";
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            DOMSource domSource = new DOMSource(document);
-            StreamResult streamResult = new StreamResult(new File(xmlFilePath));
+        String xmlFilePath = file.toString() + "/xmlJacoco.xml";
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        DOMSource domSource = new DOMSource(document);
+        StreamResult streamResult = new StreamResult(new File(xmlFilePath));
        
-            transformer.transform(domSource, streamResult);
+        transformer.transform(domSource, streamResult);
     }   
 
     private static List<RouteCoverageNode> gatherRouteCoverageSummary(List<CamelNodeDetails> route, List<CoverageData> coverageData) {
