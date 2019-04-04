@@ -35,7 +35,7 @@ Apache Gora currently supports the following datastores:
 http://hbase.apache.org/[Apache HBase],
 http://cassandra.apache.org/[Apache Cassandra],
 http://accumulo.apache.org/[Apache Accumulo],
-http://aws.amazon.com/dynamodb/[Amazon DynamoDB] and SQL databases such
+https://aws.amazon.com/dynamodb/[Amazon DynamoDB] and SQL databases such
 as http://hsqldb.org/[hsqldb], http://www.mysql.com/[MySQL] and more.
 
 ### URI format
