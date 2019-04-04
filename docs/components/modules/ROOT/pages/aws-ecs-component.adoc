@@ -4,12 +4,12 @@
 *Available as of Camel version 3.0*
 
 The ECS component supports create, delete, describe and list
-https://aws.amazon.com/it/ecs/[AWS ECS] clusters instances.
+https://aws.amazon.com/ecs/[AWS ECS] clusters instances.
 
 Prerequisites
 
 You must have a valid Amazon Web Services developer account, and be
-signed up to use Amazon ECS. More information are available at
+signed up to use Amazon ECS. More information is available at
 https://aws.amazon.com/ecs/[Amazon ECS].
 
 ### URI Format

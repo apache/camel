@@ -4,13 +4,13 @@
 *Available as of Camel version 2.9*
 
 The ses component supports sending emails with
-http://aws.amazon.com/ses[Amazon's SES] service.
+https://aws.amazon.com/ses[Amazon's SES] service.
 
 Prerequisites
 
 You must have a valid Amazon Web Services developer account, and be
-signed up to use Amazon SES. More information are available at
-http://aws.amazon.com/ses[Amazon SES].
+signed up to use Amazon SES. More information is available at
+https://aws.amazon.com/ses[Amazon SES].
 
 ### URI Format
 
@@ -131,7 +131,7 @@ Required SES component options
 
 You have to provide the amazonSESClient in the
 Registry or your accessKey and secretKey to access
-the http://aws.amazon.com/ses[Amazon's SES].
+the https://aws.amazon.com/ses[Amazon's SES].
 
 ### Usage
 
