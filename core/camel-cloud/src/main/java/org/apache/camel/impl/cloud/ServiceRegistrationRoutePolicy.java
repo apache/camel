@@ -28,7 +28,6 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.cloud.DiscoverableService;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceRegistry;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -167,8 +166,8 @@ public class ServiceRegistrationRoutePolicy extends RoutePolicySupport implement
         String serviceId = properties.get(ServiceDefinition.SERVICE_META_ID);
         if (serviceId == null) {
             // if not check if the route id is custom and use it
-            RouteDefinition definition = (RouteDefinition) route.getRouteContext().getRoute();
-            if (definition.hasCustomIdAssigned()) {
+            boolean custom = "true".equals(route.getProperties().get(Route.CUSTOM_ID_PROPERTY));
+            if (custom) {
                 serviceId = route.getId();
             }
 

@@ -33,6 +33,7 @@ import org.apache.camel.spi.RouteContext;
 public interface Route extends EndpointAware {
 
     String ID_PROPERTY = "id";
+    String CUSTOM_ID_PROPERTY = "customId";
     String PARENT_PROPERTY = "parent";
     String GROUP_PROPERTY = "group";
     String REST_PROPERTY = "rest";
