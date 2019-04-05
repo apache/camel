@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NamedNode;
@@ -83,10 +85,12 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
     // START SNIPPET: e3
     public static class MyFactory implements ProcessorFactory {
 
+        @Override
         public Processor createChildProcessor(RouteContext routeContext, NamedNode definition, boolean mandatory) throws Exception {
             return null;
         }
 
+        @Override
         public Processor createProcessor(RouteContext routeContext, NamedNode definition) throws Exception {
             if (definition instanceof SplitDefinition) {
                 // add additional output to the splitter
@@ -101,6 +105,11 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
 
             // return null to let the default implementation create the processor, we just wanted to alter the definition
             // before the processor was created
+            return null;
+        }
+
+        @Override
+        public Processor createProcessor(CamelContext camelContext, String definitionName, Map<String, Object> args) throws Exception {
             return null;
         }
     }

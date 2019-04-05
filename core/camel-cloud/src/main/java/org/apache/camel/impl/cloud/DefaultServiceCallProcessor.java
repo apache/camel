@@ -16,19 +16,22 @@
  */
 package org.apache.camel.impl.cloud;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.cloud.ServiceCallConstants;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceLoadBalancer;
-import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.spi.Language;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -44,7 +47,7 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
     private final CamelContext camelContext;
     private final ServiceLoadBalancer loadBalancer;
     private final Expression expression;
-    private SendDynamicProcessor processor;
+    private AsyncProcessor processor;
 
     public DefaultServiceCallProcessor(
         CamelContext camelContext, String name, String scheme, String uri, ExchangePattern exchangePattern,
@@ -122,11 +125,13 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
         ObjectHelper.notNull(expression, "expression");
         ObjectHelper.notNull(loadBalancer, "load balancer");
 
-        processor = new SendDynamicProcessor(uri, expression);
-        processor.setCamelContext(camelContext);
-        if (exchangePattern != null) {
-            processor.setPattern(exchangePattern);
-        }
+        Map<String, Object> args = new HashMap<>();
+        args.put("uri", uri);
+        args.put("expression", expression);
+        args.put("pattern", exchangePattern);
+
+        Processor send = camelContext.getProcessorFactory().createProcessor(camelContext, "SendDynamicProcessor", args);
+        processor = AsyncProcessorConverterHelper.convert(send);
 
         // Start services if needed
         ServiceHelper.startService(processor);

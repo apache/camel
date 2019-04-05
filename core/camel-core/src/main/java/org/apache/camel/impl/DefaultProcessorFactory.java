@@ -16,9 +16,15 @@
  */
 package org.apache.camel.impl;
 
+import java.util.Map;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Expression;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.RouteContext;
@@ -75,4 +81,22 @@ public class DefaultProcessorFactory implements ProcessorFactory {
 
         return null;
     }
+
+    @Override
+    public Processor createProcessor(CamelContext camelContext, String definitionName, Map<String, Object> args) throws Exception {
+        // currently only SendDynamicProcessor is supported
+        SendDynamicProcessor answer = null;
+        if ("SendDynamicProcessor".equals(definitionName)) {
+            String uri = (String) args.get("uri");
+            Expression expression = (Expression) args.get("expression");
+            ExchangePattern pattern = (ExchangePattern) args.get("exchangePattern");
+            answer = new SendDynamicProcessor(uri, expression);
+            if (pattern != null) {
+                answer.setPattern(pattern);
+            }
+        }
+
+        return answer;
+    }
+    
 }
