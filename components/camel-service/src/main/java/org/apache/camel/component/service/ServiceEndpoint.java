@@ -101,6 +101,11 @@ public class ServiceEndpoint extends DefaultEndpoint implements DelegateEndpoint
         return true;
     }
 
+    @Override
+    public boolean isLenientProperties() {
+        return true;
+    } 
+
     private ServiceDefinition computeServiceDefinition(CamelContext context, Endpoint delegateEndpoint) {
         Map<String, String> parameters = new HashMap<>();
 
