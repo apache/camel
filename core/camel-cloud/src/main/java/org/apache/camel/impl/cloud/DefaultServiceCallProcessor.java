@@ -210,7 +210,11 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
      * @return the computed expression
      */
     private static String applySimpleLanguage(String expression, Exchange exchange) {
-        Language simple = exchange.getContext().resolveLanguage("simple");
-        return simple.createExpression(expression).evaluate(exchange, String.class);
+        if (expression != null) {
+            Language simple = exchange.getContext().resolveLanguage("simple");
+            return simple.createExpression(expression).evaluate(exchange, String.class);
+        } else {
+            return null;
+        }
     }
 }
