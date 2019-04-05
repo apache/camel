@@ -128,7 +128,7 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
         Map<String, Object> args = new HashMap<>();
         args.put("uri", uri);
         args.put("expression", expression);
-        args.put("pattern", exchangePattern);
+        args.put("exchangePattern", exchangePattern);
 
         Processor send = camelContext.getProcessorFactory().createProcessor(camelContext, "SendDynamicProcessor", args);
         processor = AsyncProcessorConverterHelper.convert(send);

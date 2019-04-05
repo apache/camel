@@ -89,11 +89,11 @@ public class DefaultProcessorFactory implements ProcessorFactory {
         if ("SendDynamicProcessor".equals(definitionName)) {
             String uri = (String) args.get("uri");
             Expression expression = (Expression) args.get("expression");
-            ExchangePattern pattern = (ExchangePattern) args.get("exchangePattern");
+            ExchangePattern exchangePattern = (ExchangePattern) args.get("exchangePattern");
             answer = new SendDynamicProcessor(uri, expression);
             answer.setCamelContext(camelContext);
-            if (pattern != null) {
-                answer.setPattern(pattern);
+            if (exchangePattern != null) {
+                answer.setPattern(exchangePattern);
             }
         }
 
