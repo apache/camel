@@ -40,13 +40,13 @@
         <module>camel-support</module>
         <module>camel-caffeine-lrucache</module>
         <module>camel-headersmap</module>
-        <module>camel-cloud</module>
         <module>camel-management-api</module>
         <module>camel-management-impl</module>
         <module>camel-base</module>
         <module>camel-core</module>
         <module>camel-core-osgi</module>
         <module>camel-core-xml</module>
+        <module>camel-cloud</module>
     </modules>
 
     <build>
