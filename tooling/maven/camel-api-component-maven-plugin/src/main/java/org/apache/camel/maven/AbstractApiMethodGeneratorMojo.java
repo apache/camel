@@ -50,7 +50,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     private Pattern propertyTypePattern;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void executeInternal() throws MojoExecutionException {
 
         setCompileSourceRoots();
 

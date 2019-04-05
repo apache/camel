@@ -21,18 +21,17 @@ import java.io.IOError;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
+import org.apache.camel.util.function.ThrowingHelper;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -56,9 +55,6 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     protected static final String OUT_PACKAGE = PREFIX + "component.internal";
     protected static final String COMPONENT_PACKAGE = PREFIX + "component";
 
-    private static ClassLoader projectClassLoader;
-    private static boolean sharedProjectState;
-
     // used for velocity logging, to avoid creating velocity.log
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -77,19 +73,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     @Parameter(required = true, defaultValue = "${project}", readonly = true)
     protected MavenProject project;
 
-    protected AbstractGeneratorMojo() {
-        clearSharedProjectState();
-    }
-
-    public static void setSharedProjectState(boolean sharedProjectState) {
-        AbstractGeneratorMojo.sharedProjectState = sharedProjectState;
-    }
-
-    protected static void clearSharedProjectState() {
-        if (!sharedProjectState) {
-            projectClassLoader = null;
-        }
-    }
+    private ClassLoader projectClassLoader;
 
     // Thread-safe deferred-construction singleton via nested static class
     private static class VelocityEngineHolder {
@@ -114,28 +98,43 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         }
     }
 
-    protected ClassLoader getProjectClassLoader() throws MojoExecutionException {
-        if (projectClassLoader == null)  {
-            final List classpathElements;
-            try {
-                classpathElements = project.getTestClasspathElements();
-            } catch (org.apache.maven.artifact.DependencyResolutionRequiredException e) {
-                throw new MojoExecutionException(e.getMessage(), e);
-            }
-            final URL[] urls = new URL[classpathElements.size()];
-            int i = 0;
-            for (Iterator it = classpathElements.iterator(); it.hasNext(); i++) {
-                try {
-                    urls[i] = new File((String) it.next()).toURI().toURL();
-                    log.debug("Adding project path " + urls[i]);
-                } catch (MalformedURLException e) {
-                    throw new MojoExecutionException(e.getMessage(), e);
-                }
-            }
-            final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-            projectClassLoader = new URLClassLoader(urls, tccl != null ? tccl : getClass().getClassLoader());
+    @Override
+    public final void execute() throws MojoExecutionException {
+        try {
+            // Expensive construction of ClassLoader
+            setProjectClassLoader(buildProjectClassLoader());
+            executeInternal();
+        } catch (MojoExecutionException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        } finally {
+            projectClassLoader = null; // Eagerly discard in the case of FAE semantics
         }
+    }
+
+    /**
+     * Template Method which assumes {@link #projectClassLoader} is set.
+     */
+    protected abstract void executeInternal() throws Exception;
+
+    protected ClassLoader getProjectClassLoader() {
         return projectClassLoader;
+    }
+
+    protected void setProjectClassLoader(ClassLoader projectClassLoader) {
+        this.projectClassLoader = projectClassLoader;
+    }
+
+    private ClassLoader buildProjectClassLoader() throws DependencyResolutionRequiredException {
+        URL[] urls = project.getTestClasspathElements().stream()
+            .map(File::new)
+            .map(ThrowingHelper.wrapAsFunction(e -> e.toURI().toURL()))
+            .peek(url -> log.debug("Adding project path " + url))
+            .toArray(URL[]::new);
+
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        return new URLClassLoader(urls, tccl != null ? tccl : getClass().getClassLoader());
     }
 
     protected void mergeTemplate(VelocityContext context, File outFile, String templateName) throws MojoExecutionException {

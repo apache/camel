@@ -52,8 +52,6 @@ public class FileApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMojo {
                 line = reader.readLine();
             }
             reader.close();
-        } catch (FileNotFoundException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
         } catch (IOException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
