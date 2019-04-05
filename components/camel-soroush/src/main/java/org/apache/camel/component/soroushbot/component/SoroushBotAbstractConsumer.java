@@ -79,7 +79,7 @@ abstract public class SoroushBotAbstractConsumer extends DefaultConsumer {
                 try {
                     if (event == null || event.isClosed()) {
                         if (retry == 0) {
-                            if (log.isInfoEnabled()) log.info("connection to getMessage from soroush");
+                            if (log.isInfoEnabled()) log.info("connecting to getMessage from soroush");
                         } else {
                             if (log.isInfoEnabled())
                                 log.info("connection is closed. retrying for the " + ordinal(retry) + " time(s)... ");

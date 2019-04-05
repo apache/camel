@@ -89,7 +89,7 @@ public class MultiQueueWithTopicThreadPoolTest {
                 }
             });
         }
-        Thread.sleep(130 * 3 + 100); // wait enough time for all task to be done
+        Thread.sleep(130 * 3 + 500); // wait enough time for all task to be done
         Assert.assertArrayEquals("order of thread that executed is not what is expected", results, finalResultsOrder.toArray());
     }
 

@@ -27,18 +27,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SoroushMessage {
+public class SoroushMessage implements Cloneable {
     private String to;
     private String from;
     private String body;
     private MinorType type;
     private String time;
-    private String fileId;
     private String fileName;
     private FileType fileType;
     private Double fileSize;
@@ -59,6 +60,33 @@ public class SoroushMessage {
     private InputStream file;
     @JsonIgnore
     private InputStream thumbnail;
+
+    public SoroushMessage() {
+    }
+
+    public SoroushMessage(String to, String from, String body, MinorType type, String time, String fileName, FileType fileType, Double fileSize, String fileUrl, String thumbnailUrl, Double imageWidth, Double imageHeight, Double fileDuration, Double thumbnailWidth, Double thumbnailHeight, String nickName, String avatarUrl, Double phoneNo, Double latitude, Double longitude, List<List<CustomKey>> keyboard) {
+        this.to = to;
+        this.from = from;
+        this.body = body;
+        this.type = type;
+        this.time = time;
+        this.fileName = fileName;
+        this.fileType = fileType;
+        this.fileSize = fileSize;
+        this.fileUrl = fileUrl;
+        this.thumbnailUrl = thumbnailUrl;
+        this.imageWidth = imageWidth;
+        this.imageHeight = imageHeight;
+        this.fileDuration = fileDuration;
+        this.thumbnailWidth = thumbnailWidth;
+        this.thumbnailHeight = thumbnailHeight;
+        this.nickName = nickName;
+        this.avatarUrl = avatarUrl;
+        this.phoneNo = phoneNo;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.keyboard = keyboard;
+    }
 
     /**
      * set uploading file to a file
@@ -101,7 +129,7 @@ public class SoroushMessage {
      */
     @JsonIgnore
     public void setThumbnail(File thumbnail) throws FileNotFoundException {
-        this.file = new BufferedInputStream(new FileInputStream(thumbnail));
+        this.thumbnail = new BufferedInputStream(new FileInputStream(thumbnail));
     }
 
     public String getTo() {
@@ -142,14 +170,6 @@ public class SoroushMessage {
 
     public void setTime(String time) {
         this.time = time;
-    }
-
-    public String getFileId() {
-        return fileId;
-    }
-
-    public void setFileId(String fileId) {
-        this.fileId = fileId;
     }
 
     public String getFileName() {
@@ -304,7 +324,6 @@ public class SoroushMessage {
                 ", body='" + body + '\'' +
                 ", type=" + type +
                 ", time='" + time + '\'' +
-                ", fileId='" + fileId + '\'' +
                 ", fileName='" + fileName + '\'' +
                 ", fileType=" + fileType +
                 ", fileSize=" + fileSize +
@@ -334,7 +353,6 @@ public class SoroushMessage {
                 Objects.equals(getBody(), that.getBody()) &&
                 getType() == that.getType() &&
                 Objects.equals(getTime(), that.getTime()) &&
-                Objects.equals(getFileId(), that.getFileId()) &&
                 Objects.equals(getFileName(), that.getFileName()) &&
                 getFileType() == that.getFileType() &&
                 Objects.equals(getFileSize(), that.getFileSize()) &&
@@ -354,8 +372,34 @@ public class SoroushMessage {
     }
 
     @Override
+    public SoroushMessage clone() throws CloneNotSupportedException {
+        return new SoroushMessage(to,
+                from,
+                body,
+                type,
+                time,
+                fileName,
+                fileType,
+                fileSize,
+                fileUrl,
+                thumbnailUrl,
+                imageWidth,
+                imageHeight,
+                fileDuration,
+                thumbnailWidth,
+                thumbnailHeight,
+                nickName,
+                avatarUrl,
+                phoneNo,
+                latitude,
+                longitude,
+                (keyboard == null) ? null : keyboard.stream().map(it -> it == null ? null : new ArrayList<>(it)).collect(Collectors.toList())
+        );
+    }
+
+    @Override
     public int hashCode() {
 
-        return Objects.hash(getTo(), getFrom(), getBody(), getType(), getTime(), getFileId(), getFileName(), getFileType(), getFileSize(), getFileUrl(), getThumbnailUrl(), getImageWidth(), getImageHeight(), getFileDuration(), getThumbnailWidth(), getThumbnailHeight(), getNickName(), getAvatarUrl(), getPhoneNo(), getLatitude(), getLongitude(), getKeyboard());
+        return Objects.hash(getTo(), getFrom(), getBody(), getType(), getTime(), getFileName(), getFileType(), getFileSize(), getFileUrl(), getThumbnailUrl(), getImageWidth(), getImageHeight(), getFileDuration(), getThumbnailWidth(), getThumbnailHeight(), getNickName(), getAvatarUrl(), getPhoneNo(), getLatitude(), getLongitude(), getKeyboard());
     }
 }

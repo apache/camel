@@ -20,7 +20,7 @@ package org.apache.camel.component.soroushbot.utils;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 
 public class CongestionException extends RuntimeException {
-    private SoroushMessage body;
+    private SoroushMessage soroushMessage;
 
     public CongestionException() {
     }
@@ -41,35 +41,43 @@ public class CongestionException extends RuntimeException {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 
-    public CongestionException(SoroushMessage body) {
-        this.body = body;
+    public CongestionException(SoroushMessage soroushMessage) {
+        this.soroushMessage = soroushMessage;
     }
 
-    public CongestionException(String message, SoroushMessage body) {
+    public CongestionException(String message, SoroushMessage soroushMessage) {
         super(message);
-        this.body = body;
+        this.soroushMessage = soroushMessage;
     }
 
-    public CongestionException(String message, Throwable cause, SoroushMessage body) {
+    public CongestionException(String message, Throwable cause, SoroushMessage soroushMessage) {
         super(message, cause);
-        this.body = body;
+        this.soroushMessage = soroushMessage;
     }
 
-    public CongestionException(Throwable cause, SoroushMessage body) {
+    public CongestionException(Throwable cause, SoroushMessage soroushMessage) {
         super(cause);
-        this.body = body;
+        this.soroushMessage = soroushMessage;
     }
 
-    public CongestionException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, SoroushMessage body) {
+    public CongestionException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, SoroushMessage soroushMessage) {
         super(message, cause, enableSuppression, writableStackTrace);
-        this.body = body;
+        this.soroushMessage = soroushMessage;
     }
 
-    public SoroushMessage getBody() {
-        return body;
+    public SoroushMessage getSoroushMessage() {
+        return soroushMessage;
     }
 
-    public void setBody(SoroushMessage body) {
-        this.body = body;
+    public void setSoroushMessage(SoroushMessage soroushMessage) {
+        this.soroushMessage = soroushMessage;
+    }
+
+    @Override
+    public String getLocalizedMessage() {
+        return "MaximumConnectionRetryReachedException{" +
+                "soroushMessage=" + soroushMessage +
+                ", message=" + getMessage() +
+                "} ";
     }
 }

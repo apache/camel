@@ -17,6 +17,7 @@
 
 package org.apache.camel.component.soroushbot.component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.soroushbot.models.ConnectionType;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
@@ -44,6 +45,7 @@ public class SoroushBotSendMessageProducer extends DefaultProducer {
 
     private static Logger log = LoggerFactory.getLogger(SoroushBotSendMessageProducer.class);
     SoroushBotEndpoint endpoint;
+    ObjectMapper objectMapper = new ObjectMapper();
 
     public SoroushBotSendMessageProducer(SoroushBotEndpoint endpoint) {
         super(endpoint);
@@ -65,7 +67,7 @@ public class SoroushBotSendMessageProducer extends DefaultProducer {
      * @throws MaximumConnectionRetryReachedException if can not connect to soroush after retry {@link SoroushBotEndpoint#maxConnectionRetry} times
      * @throws SoroushException                       if soroush response code wasn't 200
      */
-    private void sendMessage(SoroushMessage message) throws SoroushException {
+    private void sendMessage(SoroushMessage message) throws SoroushException, MaximumConnectionRetryReachedException {
         Response response;
         // this for is responsible to handle maximum connection retry.
         for (int count = 0; count <= endpoint.maxConnectionRetry; count++) {
@@ -74,12 +76,12 @@ public class SoroushBotSendMessageProducer extends DefaultProducer {
                     log.debug("sending message for " + ordinal(count + 1) + " time(s). message:" + message);
                 }
                 response = endpoint.getSendMessageTarget().request(MediaType.APPLICATION_JSON_TYPE)
-                        .post(Entity.json(message));
-                SoroushService.get().assertSuccessful(response);
+                        .post(Entity.entity(objectMapper.writeValueAsString(message), MediaType.APPLICATION_JSON_TYPE));
+                SoroushService.get().assertSuccessful(response, message);
                 return;
             } catch (IOException | ProcessingException ex) {
                 if (count == endpoint.maxConnectionRetry) {
-                    throw new MaximumConnectionRetryReachedException("failed to send message. maximum retry limit reached. aborting... message: " + message, ex);
+                    throw new MaximumConnectionRetryReachedException("failed to send message. maximum retry limit reached. aborting... message: " + message, ex, message);
                 }
                 if (log.isWarnEnabled()) {
                     log.warn("failed to send message: " + message, ex);
@@ -90,28 +92,3 @@ public class SoroushBotSendMessageProducer extends DefaultProducer {
     }
 
 }
-/*
-
-
-    companion object {
-private val LOG=LoggerFactory.getLogger(SoroushBotProducer::class.java)
-        }
-
-        }
-
-private fun Response.printStatusInfo(message:String):String{
-        return"""$message >> status is: ${status} response is: ${readEntity(String::class.java)}"""
-        }
-
-private fun Response.assertAccepted(){
-        readEntity(SoroushResponse::class.java)?.let{
-        if(it.resultCode==200){
-        return
-        }
-        throw SoroushException(it.resultCode,it.resultMessage)
-        }
-        }
-
-
-        }
-*/
