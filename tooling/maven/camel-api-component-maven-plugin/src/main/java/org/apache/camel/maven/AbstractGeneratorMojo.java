@@ -56,9 +56,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     protected static final String OUT_PACKAGE = PREFIX + "component.internal";
     protected static final String COMPONENT_PACKAGE = PREFIX + "component";
 
-    private static VelocityEngine engine;
     private static ClassLoader projectClassLoader;
-
     private static boolean sharedProjectState;
 
     // used for velocity logging, to avoid creating velocity.log
@@ -93,23 +91,27 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         }
     }
 
-    protected static VelocityEngine getEngine() throws MojoExecutionException {
-        if (engine == null) {
+    // Thread-safe deferred-construction singleton via nested static class
+    private static class VelocityEngineHolder {
+        private static final VelocityEngine ENGINE;
+        static {
             // initialize velocity to load resources from class loader and use Log4J
             Properties velocityProperties = new Properties();
             velocityProperties.setProperty(RuntimeConstants.RESOURCE_LOADER, "cloader");
             velocityProperties.setProperty("cloader.resource.loader.class", ClasspathResourceLoader.class.getName());
-            final Logger velocityLogger = LoggerFactory.getLogger("org.apache.camel.maven.Velocity");
+            Logger velocityLogger = LoggerFactory.getLogger("org.apache.camel.maven.Velocity");
             velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_NAME, velocityLogger.getName());
-            try {
-                engine = new VelocityEngine(velocityProperties);
-                engine.init();
-            } catch (Exception e) {
-                throw new MojoExecutionException(e.getMessage(), e);
-            }
-            
+            ENGINE = new VelocityEngine(velocityProperties);
+            ENGINE.init();
         }
-        return engine;
+    }
+
+    protected static VelocityEngine getEngine() throws MojoExecutionException {
+        try {
+            return VelocityEngineHolder.ENGINE;
+        } catch (Exception e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        }
     }
 
     protected ClassLoader getProjectClassLoader() throws MojoExecutionException {
