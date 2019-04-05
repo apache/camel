@@ -96,7 +96,7 @@ public class PulsarConcurrentProducerInTest extends CamelTestSupport {
     }
 
     @Test
-    public void givenARunningPulsarCluster_whenIPublishAMessagesConcurrentlyToRoute_verifyMessageIsSentToClusterAndThenConsumed() throws Exception {
+    public void testConcurrentMessagesAreSentAndThenConsumed() throws Exception {
         to.expectedMessageCount(100);
 
         sendMessages();

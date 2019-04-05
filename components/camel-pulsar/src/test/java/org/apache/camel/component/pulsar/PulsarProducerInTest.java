@@ -94,12 +94,12 @@ public class PulsarProducerInTest extends CamelTestSupport {
     }
 
     @Test
-    public void givenARunningPulsarCluster_whenIPublishAMessageToRoute_verifyMessageIsSentToClusterAndThenConsumed() throws Exception {
+    public void testAMessageToRouteIsSentAndThenConsumed() throws Exception {
         to.expectedMessageCount(3);
 
         producerTemplate.sendBody("Hello ");
         producerTemplate.sendBody("World ");
-        producerTemplate.sendBody(new Integer(10));
+        producerTemplate.sendBody(10);
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
     }

@@ -101,7 +101,7 @@ public class PulsarConsumerInTest extends CamelTestSupport {
     }
 
     @Test
-    public void givenARunningPulsarCluster_whenIPublishAMessageToCluster_verifyInMessageIsConsumed() throws Exception {
+    public void testAMessageToClusterIsConsumed() throws Exception {
         to.expectedMessageCount(1);
 
         Producer<String> producer = givenPulsarClient().newProducer(Schema.STRING)
