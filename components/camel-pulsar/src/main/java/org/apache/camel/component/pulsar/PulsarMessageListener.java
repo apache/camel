@@ -23,7 +23,6 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Message;
 import org.apache.pulsar.client.api.MessageListener;
-import org.apache.pulsar.client.api.PulsarClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +46,7 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
 
         try {
             processor.process(exchange);
-            acknowledgeReceipt(consumer, message);
+            consumer.acknowledge(message.getMessageId());
         } catch (Exception exception) {
             handleProcessorException(exchange, exception);
         }
@@ -61,14 +60,5 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
             .handleException("An error occurred", exchangeWithException, exception);
 
         LOGGER.error("An error occurred while processing this exchange :: {}", exception);
-    }
-
-    private void acknowledgeReceipt(final Consumer<byte[]> consumer, final Message<byte[]> message) {
-        try {
-            consumer.acknowledge(message.getMessageId());
-        } catch (PulsarClientException exception) {
-            LOGGER.error("An error occurred while acknowledging this message :: {}", exception);
-            // TODO should we be doing anything else here?
-        }
     }
 }

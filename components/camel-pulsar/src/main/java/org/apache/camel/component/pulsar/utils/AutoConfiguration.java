@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * What is the purpose of this? Needs documentation here
+ * Automatically create Pulsar tenant and namespace if enabled
  */
 public class AutoConfiguration {
 

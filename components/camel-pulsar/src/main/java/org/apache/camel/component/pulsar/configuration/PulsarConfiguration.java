@@ -25,25 +25,29 @@ import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionType
 @UriParams
 public class PulsarConfiguration {
 
-    @UriParam(label = "consumer", description = "Name of the subscription to use", defaultValue = "subscription")
+    @UriParam(label = "consumer", defaultValue = "subscription")
     private String subscriptionName = "subs";
-    @UriParam(label = "consumer", description = "Type of the subscription", enums = "EXCLUSIVE, SHARED, FAILOVER", defaultValue = "EXCLUSIVE")
+    @UriParam(label = "consumer", enums = "EXCLUSIVE, SHARED, FAILOVER", defaultValue = "EXCLUSIVE")
     private SubscriptionType subscriptionType = EXCLUSIVE;
-    @UriParam(label = "consumer", description = "Number of consumers", defaultValue = "1")
+    @UriParam(label = "consumer", defaultValue = "1")
     private int numberOfConsumers = 1;
-    @UriParam(label = "consumer", description = "Size of the consumer queue", defaultValue = "10")
+    @UriParam(label = "consumer", defaultValue = "10")
     private int consumerQueueSize = 10;
-    @UriParam(label = "consumer", description = "Name of the consumer when subscription is EXCLUSIVE", defaultValue = "sole-consumer")
+    @UriParam(label = "consumer", defaultValue = "sole-consumer")
     private String consumerName = "sole-consumer";
-    @UriParam(label = "producer", description = "Name of the producer", defaultValue = "default-producer")
+    @UriParam(label = "producer", defaultValue = "default-producer")
     private String producerName = "default-producer";
-    @UriParam(label = "consumer", description = "Prefix to add to consumer names when a SHARED or FAILOVER subscription is used", defaultValue = "cons")
+    @UriParam(label = "consumer", defaultValue = "cons")
     private String consumerNamePrefix = "cons";
 
     public String getSubscriptionName() {
         return subscriptionName;
     }
 
+    /**
+     * Name of the subscription to use
+     * @param subscriptionName
+     */
     public void setSubscriptionName(String subscriptionName) {
         this.subscriptionName = subscriptionName;
     }
@@ -52,6 +56,10 @@ public class PulsarConfiguration {
         return subscriptionType;
     }
 
+    /**
+     * Type of the subscription [EXCLUSIVE|SHARED|FAILOVER], defaults to EXCLUSIVE
+     * @param subscriptionType
+     */
     public void setSubscriptionType(SubscriptionType subscriptionType) {
         this.subscriptionType = subscriptionType;
     }
@@ -60,6 +68,10 @@ public class PulsarConfiguration {
         return numberOfConsumers;
     }
 
+    /**
+     * Number of consumers - defaults to 1
+     * @param numberOfConsumers
+     */
     public void setNumberOfConsumers(int numberOfConsumers) {
         this.numberOfConsumers = numberOfConsumers;
     }
@@ -68,6 +80,10 @@ public class PulsarConfiguration {
         return consumerQueueSize;
     }
 
+    /**
+     * Size of the consumer queue - defaults to 10
+     * @param consumerQueueSize
+     */
     public void setConsumerQueueSize(int consumerQueueSize) {
         this.consumerQueueSize = consumerQueueSize;
     }
@@ -76,6 +92,10 @@ public class PulsarConfiguration {
         return consumerName;
     }
 
+    /**
+     * Name of the consumer when subscription is EXCLUSIVE
+     * @param consumerName
+     */
     public void setConsumerName(String consumerName) {
         this.consumerName = consumerName;
     }
@@ -84,6 +104,10 @@ public class PulsarConfiguration {
         return producerName;
     }
 
+    /**
+     * Name of the producer
+     * @param producerName
+     */
     public void setProducerName(String producerName) {
         this.producerName = producerName;
     }
@@ -92,6 +116,10 @@ public class PulsarConfiguration {
         return consumerNamePrefix;
     }
 
+    /**
+     * Prefix to add to consumer names when a SHARED or FAILOVER subscription is used
+     * @param consumerNamePrefix
+     */
     public void setConsumerNamePrefix(String consumerNamePrefix) {
         this.consumerNamePrefix = consumerNamePrefix;
     }
