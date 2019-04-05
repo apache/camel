@@ -80,7 +80,7 @@ public class ServiceComponent extends DefaultComponent {
 
         // remove all the service related options so the underlying component
         // does not fail because of unknown parameters
-        parameters.keySet().removeAll(parameters.keySet());
+        parameters.keySet().removeAll(params.keySet());
 
         return new ServiceEndpoint(
             uri,
