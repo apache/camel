@@ -27,8 +27,8 @@ import org.apache.camel.Message;
 import org.apache.camel.cloud.ServiceCallConstants;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceLoadBalancer;
-import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.processor.SendDynamicProcessor;
+import org.apache.camel.spi.Language;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -204,9 +204,8 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
      * @param exchange the exchange
      * @return the computed expression
      */
-    private String applySimpleLanguage(String expression, Exchange exchange) {
-        return SimpleLanguage.hasSimpleFunction(expression)
-            ? SimpleLanguage.simple(expression).evaluate(exchange, String.class)
-            : expression;
+    private static String applySimpleLanguage(String expression, Exchange exchange) {
+        Language simple = exchange.getContext().resolveLanguage("simple");
+        return simple.createExpression(expression).evaluate(exchange, String.class);
     }
 }
