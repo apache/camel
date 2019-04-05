@@ -32,7 +32,7 @@ public class SalesforceHttpRequest extends HttpRequest {
     }
 
     @Override
-	public HttpConversation getConversation() {
+    public HttpConversation getConversation() {
         return super.getConversation();
     }
 }

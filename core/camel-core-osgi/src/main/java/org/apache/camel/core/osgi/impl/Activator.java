@@ -79,6 +79,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
     public static final String META_INF_LANGUAGE_RESOLVER = "META-INF/services/org/apache/camel/language/resolver/";
     public static final String META_INF_DATAFORMAT = "META-INF/services/org/apache/camel/dataformat/";
     public static final String META_INF_TYPE_CONVERTER = "META-INF/services/org/apache/camel/TypeConverter";
+    public static final String META_INF_TYPE_CONVERTER_LOADER = "META-INF/services/org/apache/camel/TypeConverterLoader";
     public static final String META_INF_FALLBACK_TYPE_CONVERTER = "META-INF/services/org/apache/camel/FallbackTypeConverter";
     public static final String EXTENDER_NAMESPACE = "osgi.extender";
     public static final String CAMEL_EXTENDER = "org.apache.camel";
@@ -230,8 +231,9 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
     protected void registerTypeConverterLoader(Bundle bundle, List<BaseService> resolvers) {
         if (canSee(bundle, TypeConverter.class)) {
             URL url1 = bundle.getEntry(META_INF_TYPE_CONVERTER);
-            URL url2 = bundle.getEntry(META_INF_FALLBACK_TYPE_CONVERTER);
-            if (url1 != null || url2 != null) {
+            URL url2 = bundle.getEntry(META_INF_TYPE_CONVERTER_LOADER);
+            URL url3 = bundle.getEntry(META_INF_FALLBACK_TYPE_CONVERTER);
+            if (url1 != null || url2 != null || url3 != null) {
                 LOG.debug("Found TypeConverter in bundle {}", bundle.getSymbolicName());
                 resolvers.add(new BundleTypeConverterLoader(bundle, url2 != null));
             }

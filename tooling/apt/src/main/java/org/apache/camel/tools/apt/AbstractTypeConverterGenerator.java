@@ -198,7 +198,7 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
         return false;
     }
 
-    void writeConverters(String fqn, String suffix, boolean staticInstance, ClassConverters converters) throws Exception {
+    void writeConverters(String fqn, String suffix, ClassConverters converters) throws Exception {
 
         int pos = fqn.lastIndexOf('.');
         String p = fqn.substring(0, pos);
@@ -215,63 +215,14 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
             writer.append("import org.apache.camel.TypeConverterLoaderException;\n");
             writer.append("import org.apache.camel.spi.TypeConverterLoader;\n");
             writer.append("import org.apache.camel.spi.TypeConverterRegistry;\n");
+            writer.append("import org.apache.camel.support.SimpleTypeConverter;\n");
             writer.append("import org.apache.camel.support.TypeConverterSupport;\n");
             writer.append("import org.apache.camel.util.DoubleMap;\n");
             writer.append("\n");
             writer.append("@SuppressWarnings(\"unchecked\")\n");
             writer.append("public class ").append(c).append(" implements TypeConverterLoader {\n");
             writer.append("\n");
-            if (staticInstance) {
-                writer.append("    public static final ").append(c).append(" INSTANCE = new ").append(c).append("();\n");
-            }
-            writer.append("\n");
-
-            if (converters.size() > 0) {
-                writer.append("    static abstract class BaseTypeConverter extends TypeConverterSupport {\n");
-                writer.append("        private final boolean allowNull;\n");
-                writer.append("\n");
-                writer.append("        public BaseTypeConverter(boolean allowNull) {\n");
-                writer.append("            this.allowNull = allowNull;\n");
-                writer.append("        }\n");
-                writer.append("\n");
-                writer.append("        @Override\n");
-                writer.append("        public boolean allowNull() {\n");
-                writer.append("            return allowNull;\n");
-                writer.append("        }\n");
-                writer.append("\n");
-                writer.append("        @Override\n");
-                writer.append("        public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {\n");
-                writer.append("            try {\n");
-                writer.append("                return (T) doConvert(exchange, value);\n");
-                writer.append("            } catch (TypeConversionException e) {\n");
-                writer.append("                throw e;\n");
-                writer.append("            } catch (Exception e) {\n");
-                writer.append("                throw new TypeConversionException(value, type, e);\n");
-                writer.append("            }\n");
-                writer.append("        }\n");
-                writer.append("        protected abstract Object doConvert(Exchange exchange, Object value) throws Exception;\n");
-                writer.append("    };\n");
-                writer.append("\n");
-                writer.append("    private final DoubleMap<Class<?>, Class<?>, BaseTypeConverter> converters = new DoubleMap<>(").append(String.valueOf(converters.size())).append(");\n");
-                writer.append("\n");
-            }
-            writer.append("    ").append(staticInstance ? "private " : "public ").append(c).append("() {\n");
-            writer.append("    }\n");
-            writer.append("\n");
-            writer.append("    private void registerConverters() {\n");
-
-            for (Map.Entry<String, Map<TypeMirror, ExecutableElement>> to : converters.getConverters().entrySet()) {
-                for (Map.Entry<TypeMirror, ExecutableElement> from : to.getValue().entrySet()) {
-                    boolean allowNull = isAllowNull(from.getValue());
-                    writer.append("        converters.put(").append(to.getKey()).append(".class").append(", ").append(toString(from.getKey()))
-                        .append(".class, new BaseTypeConverter(").append(Boolean.toString(allowNull)).append(") {\n");
-                    writer.append("            @Override\n");
-                    writer.append("            public Object doConvert(Exchange exchange, Object value) throws Exception {\n");
-                    writer.append("                return ").append(toJava(from.getValue(), converterClasses)).append(";\n");
-                    writer.append("            }\n");
-                    writer.append("        });\n");
-                }
-            }
+            writer.append("    ").append("public ").append(c).append("() {\n");
             writer.append("    }\n");
             writer.append("\n");
             writer.append("    @Override\n");
@@ -279,40 +230,61 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
             if (converters.size() > 0) {
                 if (converters.isIgnoreOnLoadError()) {
                     writer.append("        try {\n");
-                    writer.append("            registerConverters();\n");
-                    writer.append("            converters.forEach((k, v, c) -> registry.addTypeConverter(k, v, c));\n");
+                    writer.append("            registerConverters(registry);\n");
                     writer.append("        } catch (Throwable e) {\n");
                     writer.append("            // ignore on load error\n");
                     writer.append("        }\n");
                 } else {
-                    writer.append("        registerConverters();\n");
-                    writer.append("        converters.forEach((k, v, c) -> registry.addTypeConverter(k, v, c));\n");
+                    writer.append("        registerConverters(registry);\n");
                 }
             }
-            for (ExecutableElement ee : converters.getFallbackConverters()) {
-                boolean allowNull = isAllowNull(ee);
-                boolean canPromote = isFallbackCanPromote(ee);
-                writer.append("        registry.addFallbackTypeConverter(new TypeConverterSupport() {\n");
-                if (allowNull) {
-                    writer.append("            @Override\n");
-                    writer.append("            public boolean allowNull() {\n");
-                    writer.append("                return ").append(Boolean.toString(allowNull)).append(";\n");
-                    writer.append("            }\n");
-                }
-                writer.append("            @Override\n");
-                writer.append("            public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {\n");
-                writer.append("                try {\n");
-                writer.append("                    return (T) ").append(toJavaFallback(ee, converterClasses)).append(";\n");
-                writer.append("                } catch (TypeConversionException e) {\n");
-                writer.append("                    throw e;\n");
-                writer.append("                } catch (Exception e) {\n");
-                writer.append("                    throw new TypeConversionException(value, type, e);\n");
-                writer.append("                }\n");
-                writer.append("            }\n");
-                writer.append("        }, ").append(Boolean.toString(canPromote)).append(");\n");
+            if (converters.sizeFallback() > 0) {
+                writer.append("        registerFallbackConverters(registry);\n");
             }
             writer.append("    }\n");
             writer.append("\n");
+
+            if (converters.size() > 0) {
+                writer.append("    private void registerConverters(TypeConverterRegistry registry) {\n");
+                for (Map.Entry<String, Map<TypeMirror, ExecutableElement>> to : converters.getConverters().entrySet()) {
+                    for (Map.Entry<TypeMirror, ExecutableElement> from : to.getValue().entrySet()) {
+                        boolean allowNull = isAllowNull(from.getValue());
+                        writer.append("        addTypeConverter(registry, ").append(to.getKey()).append(".class").append(", ").append(toString(from.getKey()))
+                                .append(".class, ").append(Boolean.toString(allowNull)).append(",\n");
+                        writer.append("            (type, exchange, value) -> ").append(toJava(from.getValue(), converterClasses)).append(");\n");
+                    }
+                }
+                writer.append("    }\n");
+                writer.append("\n");
+
+                writer.append(
+                              "    private void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method)"
+                              + " { \n");
+                writer.append("        registry.addTypeConverter(toType, fromType, new SimpleTypeConverter(allowNull, method));\n");
+                writer.append("    }\n");
+                writer.append("\n");
+            }
+
+            if (converters.sizeFallback() > 0) {
+                writer.append("    private void registerFallbackConverters(TypeConverterRegistry registry) {\n");
+                for (ExecutableElement ee : converters.getFallbackConverters()) {
+                    boolean allowNull = isAllowNull(ee);
+                    boolean canPromote = isFallbackCanPromote(ee);
+                    writer.append("        addFallbackTypeConverter(registry, ")
+                            .append(Boolean.toString(allowNull)).append(", ")
+                            .append(Boolean.toString(canPromote)).append(", ")
+                            .append("(type, exchange, value) -> ")
+                            .append(toJavaFallback(ee, converterClasses))
+                            .append(");\n");
+                }
+                writer.append("    }\n");
+                writer.append("\n");
+
+                writer.append("    private void addFallbackTypeConverter(TypeConverterRegistry registry, boolean allowNull, boolean canPromote, SimpleTypeConverter.ConversionMethod method) { \n");
+                writer.append("        registry.addFallbackTypeConverter(new SimpleTypeConverter(allowNull, method), canPromote);\n");
+                writer.append("    }\n");
+                writer.append("\n");
+            }
 
             for (String f : converterClasses) {
                 String s = f.substring(f.lastIndexOf('.') + 1);

@@ -3232,6 +3232,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
      */
     protected void forceLazyInitialization() {
         if (initialization != Initialization.Lazy) {
+            getVersion();
             getTypeConverter();
             getTypeConverterRegistry();
             getInjector();

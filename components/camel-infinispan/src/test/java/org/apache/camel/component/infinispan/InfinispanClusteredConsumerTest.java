@@ -30,10 +30,10 @@ public class InfinispanClusteredConsumerTest extends InfinispanClusterTestSuppor
 
     private static final long WAIT_TIMEOUT = 5000;
 
-    @EndpointInject(uri = "mock:resultCreated")
+    @EndpointInject("mock:resultCreated")
     private MockEndpoint mockResultCreatedEvents;
 
-    @EndpointInject(uri = "mock:resultExpired")
+    @EndpointInject("mock:resultExpired")
     private MockEndpoint mockResultExpiredEvents;
 
     @BeforeClass

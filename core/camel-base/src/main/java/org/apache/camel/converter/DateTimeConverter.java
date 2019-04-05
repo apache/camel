@@ -24,7 +24,7 @@ import org.apache.camel.Converter;
 /**
  * Date and time related converters.
  */
-@Converter
+@Converter(loader = true)
 public final class DateTimeConverter {
 
     /**

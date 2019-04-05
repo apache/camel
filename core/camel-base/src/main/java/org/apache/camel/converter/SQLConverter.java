@@ -23,7 +23,7 @@ import org.apache.camel.Converter;
 /**
  * SQL Date and time related converters.
  */
-@Converter
+@Converter(loader = true)
 public final class SQLConverter {
 
     /**
