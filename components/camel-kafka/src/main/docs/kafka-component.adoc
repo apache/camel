@@ -108,7 +108,7 @@ with the following path and query parameters:
 | *pollTimeoutMs* (consumer) | The timeout used when polling the KafkaConsumer. | 5000 | Long
 | *seekTo* (consumer) | Set if KafkaConsumer will read from beginning or end on startup: beginning : read from beginning end : read from end This is replacing the earlier property seekToBeginning |  | String
 | *sessionTimeoutMs* (consumer) | The timeout used to detect failures when using Kafka's group management facilities. | 10000 | Integer
-| *specificAvroReader* (consumer) | This enables the use of a specific Avro reader for use with the Confluent schema registry and the io.confluent.kafka.serializers.KafkaAvroDeserializer. This option is only available in the Confluent Kafka product (not standard Apache Kafka) | false | boolean
+| *specificAvroReader* (consumer) | This enables the use of a specific Avro reader for use with the Confluent Platform schema registry and the io.confluent.kafka.serializers.KafkaAvroDeserializer. This option is only available in the Confluent Platform (not standard Apache Kafka) | false | boolean
 | *topicIsPattern* (consumer) | Whether the topic is a pattern (regular expression). This can be used to subscribe to dynamic number of topics matching the pattern. | false | boolean
 | *valueDeserializer* (consumer) | Deserializer class for value that implements the Deserializer interface. | org.apache.kafka.common.serialization.StringDeserializer | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
@@ -171,7 +171,7 @@ with the following path and query parameters:
 | *sslTrustmanagerAlgorithm* (security) | The algorithm used by trust manager factory for SSL connections. Default value is the trust manager factory algorithm configured for the Java Virtual Machine. | PKIX | String
 | *sslTruststoreLocation* (security) | The location of the trust store file. |  | String
 | *sslTruststoreType* (security) | The file format of the trust store file. Default value is JKS. | JKS | String
-| *schemaRegistryURL* (confluent) | URL of the Confluent schema registry servers to use. The format is host1:port1,host2:port2. This is known as schema.registry.url in the Confluent documentation. This option is only available in the Confluent Kafka product (not standard Apache Kafka) |  | String
+| *schemaRegistryURL* (confluent) | URL of the Confluent Platform schema registry servers to use. The format is host1:port1,host2:port2. This is known as schema.registry.url in the Confluent Platform documentation. This option is only available in the Confluent Platform (not standard Apache Kafka) |  | String
 | *sslTruststorePassword* (security) | The password for the trust store file. |  | String
 |===
 // endpoint options: END
