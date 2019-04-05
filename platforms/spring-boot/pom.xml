@@ -34,7 +34,21 @@
 
     <modules>
         <module>spring-boot-dm</module>
-        <module>components-starter</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>spring-boot-starters</id>
+            <activation>
+                <property>
+                    <name>!skipSpringBootStarters</name>
+                </property>
+            </activation>
+            <modules>
+                <module>spring-boot-dm</module>
+                <module>components-starter</module>
+            </modules>
+        </profile>
+    </profiles>
 
 </project>
