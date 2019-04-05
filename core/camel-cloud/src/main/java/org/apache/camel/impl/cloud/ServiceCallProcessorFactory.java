@@ -47,15 +47,15 @@ import static org.apache.camel.support.CamelContextHelper.lookup;
 
 public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCallDefinition> {
 
-    protected ServiceCallProcessorFactory() {
+    private volatile ServiceCallDefinition definition;
+
+    public ServiceCallProcessorFactory() {
         super(ServiceCallDefinition.class);
     }
 
     // *****************************
     // Processor Factory
     // *****************************
-
-    private volatile ServiceCallDefinition definition;
 
     @Override
     public Processor doCreateProcessor(RouteContext routeContext, ServiceCallDefinition definition) throws Exception {
