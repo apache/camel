@@ -18,6 +18,7 @@
 package org.apache.camel.component.soroushbot.service;
 
 import org.apache.camel.component.soroushbot.models.ConnectionType;
+import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.models.response.SoroushResponse;
 import org.apache.camel.component.soroushbot.utils.SoroushException;
 import org.glassfish.jersey.client.ClientProperties;
@@ -120,12 +121,13 @@ public class SoroushService {
      * check if the response is successfully sent to soroush, by default it assumes that the response type is SoroushResponse
      *
      * @param response the response
+     * @param soroushMessage the message that we are checking its success, only for logging purpose
      * @return SoroushResponse
      * @throws IOException      if can not connect to soroush server
      * @throws SoroushException if soroush reject the response
      */
-    public SoroushResponse assertSuccessful(Response response) throws IOException, SoroushException {
-        return assertSuccessful(response, SoroushResponse.class);
+    public SoroushResponse assertSuccessful(Response response, SoroushMessage soroushMessage) throws IOException, SoroushException {
+        return assertSuccessful(response, SoroushResponse.class, soroushMessage);
     }
 
     /**
@@ -133,26 +135,28 @@ public class SoroushService {
      * if the exception is instance of SoroushException it indicates that the soroush does not accept the message
      * and therefore resending the request will never be succeed
      *
-     * @param response
-     * @param responseType expecting response type from soroush
      * @param <T>          the class that we expect the response should be of this type
+     * @param response the response
+     * @param responseType expecting response type from soroush
+     * @param soroushMessage the message that we are checking its success, only for logging purpose
      * @throws IOException      if sending message to soroush server is not successful
      * @throws SoroushException if soroush reject the response with an error code
      */
-    public <T> T assertSuccessful(Response response, Class<T> responseType) throws IOException, SoroushException {
+    public <T> T assertSuccessful(Response response, Class<T> responseType, SoroushMessage soroushMessage) throws IOException, SoroushException {
         int status = response.getStatus();
         if (status == 503 || status == 429 || status == 301) {
             String message = response.readEntity(String.class);
             throw new IOException("code: " + status + " message:" + message);
         }
         if (status >= 300) {
-            throw new SoroushException(status, response.readEntity(String.class));
+            throw new SoroushException(soroushMessage, null, status, response.readEntity(String.class));
         }
         if (SoroushResponse.class.isAssignableFrom(responseType)) {
             Class<? extends SoroushResponse> SoroushResponseType = responseType.asSubclass(SoroushResponse.class);
             SoroushResponse soroushResponse = response.readEntity(SoroushResponseType);
             if (soroushResponse.getResultCode() != 200) {
-                throw new SoroushException(soroushResponse, status, soroushResponse.toString());
+                String body = soroushResponse.toString();
+                throw new SoroushException(soroushMessage, soroushResponse, status, body);
             }
             return (T) soroushResponse;
         } else {

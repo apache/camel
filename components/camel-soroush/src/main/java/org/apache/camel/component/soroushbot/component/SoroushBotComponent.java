@@ -25,7 +25,7 @@ import org.apache.camel.support.DefaultComponent;
 import java.util.Map;
 
 /**
- * Represents the component that manages SoroushBotEndpoint.
+ *  The Soroush Component</a> provides access to Soroush IM App.
  */
 @Component("soroush")
 public class SoroushBotComponent extends DefaultComponent {

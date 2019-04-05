@@ -93,7 +93,7 @@ public class SoroushServiceTest {
         message.setTo(receiverId);
         message.setType(MinorType.TEXT);
         Response response = target.request(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(message));
-        soroushService.assertSuccessful(response);
+        soroushService.assertSuccessful(response, null);
 
     }
 
@@ -106,7 +106,7 @@ public class SoroushServiceTest {
         multipart.bodyPart(new StreamDataBodyPart("file", new ByteArrayInputStream(fileData.getBytes()), null, MediaType.APPLICATION_OCTET_STREAM_TYPE));
         Response response = target.request(MediaType.APPLICATION_JSON_TYPE)
                 .post(Entity.entity(multipart, multipart.getMediaType()));
-        UploadFileResponse uploadFileResponse = soroushService.assertSuccessful(response, UploadFileResponse.class);
+        UploadFileResponse uploadFileResponse = soroushService.assertSuccessful(response, UploadFileResponse.class, null);
         Assert.assertNotNull(uploadFileResponse.getFileUrl());
 
         WebTarget downloadFileTarget = soroushService.createDownloadFileTarget(authorizationToken, uploadFileResponse.getFileUrl(), 2000);

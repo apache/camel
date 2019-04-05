@@ -17,67 +17,111 @@
 
 package org.apache.camel.component.soroushbot.utils;
 
+import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.models.response.SoroushResponse;
 
 /**
  * Exception representation of response from Soroush server.
  */
 public class SoroushException extends Exception {
+    SoroushMessage soroushMessage;
     SoroushResponse soroushResponse;
     Integer status;
-    String body;
+    String responseBody;
+
+    public SoroushException(SoroushMessage soroushMessage, SoroushResponse soroushResponse, Integer status, String responseBody) {
+        super(responseBody);
+        this.soroushMessage = soroushMessage;
+        this.soroushResponse = soroushResponse;
+        this.status = status;
+        this.responseBody = responseBody;
+    }
+
+    public SoroushException(String message, SoroushMessage soroushMessage, SoroushResponse soroushResponse, Integer status, String responseBody) {
+        super(message);
+        this.soroushMessage = soroushMessage;
+        this.soroushResponse = soroushResponse;
+        this.status = status;
+        this.responseBody = responseBody;
+    }
+
+    public SoroushException(String message, Throwable cause, SoroushMessage soroushMessage, SoroushResponse soroushResponse, Integer status, String responseBody) {
+        super(message, cause);
+        this.soroushMessage = soroushMessage;
+        this.soroushResponse = soroushResponse;
+        this.status = status;
+        this.responseBody = responseBody;
+    }
+
+    public SoroushException(Throwable cause, SoroushMessage soroushMessage, SoroushResponse soroushResponse, Integer status, String responseBody) {
+        super(responseBody, cause);
+        this.soroushMessage = soroushMessage;
+        this.soroushResponse = soroushResponse;
+        this.status = status;
+        this.responseBody = responseBody;
+    }
+
+    public SoroushException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, SoroushMessage soroushMessage, SoroushResponse soroushResponse, Integer status, String responseBody) {
+        super(message, cause, enableSuppression, writableStackTrace);
+        this.soroushMessage = soroushMessage;
+        this.soroushResponse = soroushResponse;
+        this.status = status;
+        this.responseBody = responseBody;
+    }
 
     public SoroushException() {
     }
 
-    public SoroushException(SoroushResponse soroushResponse, Integer status, String body) {
+    public SoroushException(SoroushResponse soroushResponse, Integer status, String responseBody) {
+        super(responseBody);
         this.soroushResponse = soroushResponse;
         this.status = status;
-        this.body = body;
+        this.responseBody = responseBody;
     }
 
-    public SoroushException(String message, SoroushResponse soroushResponse, Integer status, String body) {
+    public SoroushException(String message, SoroushResponse soroushResponse, Integer status, String responseBody) {
         super(message);
         this.soroushResponse = soroushResponse;
         this.status = status;
-        this.body = body;
+        this.responseBody = responseBody;
     }
 
-    public SoroushException(String message, Throwable cause, SoroushResponse soroushResponse, Integer status, String body) {
+    public SoroushException(String message, Throwable cause, SoroushResponse soroushResponse, Integer status, String responseBody) {
         super(message, cause);
         this.soroushResponse = soroushResponse;
         this.status = status;
-        this.body = body;
+        this.responseBody = responseBody;
     }
 
-    public SoroushException(Throwable cause, SoroushResponse soroushResponse, Integer status, String body) {
-        super(cause);
+    public SoroushException(Throwable cause, SoroushResponse soroushResponse, Integer status, String responseBody) {
+        super(responseBody, cause);
         this.soroushResponse = soroushResponse;
         this.status = status;
-        this.body = body;
+        this.responseBody = responseBody;
     }
 
-    public SoroushException(Integer status, String body) {
+    public SoroushException(Integer status, String responseBody) {
+        super(responseBody);
         this.status = status;
-        this.body = body;
+        this.responseBody = responseBody;
     }
 
-    public SoroushException(String message, Integer status, String body) {
+    public SoroushException(String message, Integer status, String responseBody) {
         super(message);
         this.status = status;
-        this.body = body;
+        this.responseBody = responseBody;
     }
 
-    public SoroushException(String message, Throwable cause, Integer status, String body) {
+    public SoroushException(String message, Throwable cause, Integer status, String responseBody) {
         super(message, cause);
         this.status = status;
-        this.body = body;
+        this.responseBody = responseBody;
     }
 
-    public SoroushException(Throwable cause, Integer status, String body) {
-        super(cause);
+    public SoroushException(Throwable cause, Integer status, String responseBody) {
+        super(responseBody, cause);
         this.status = status;
-        this.body = body;
+        this.responseBody = responseBody;
     }
 
     public SoroushException(String message) {
@@ -95,9 +139,10 @@ public class SoroushException extends Exception {
     @Override
     public String getLocalizedMessage() {
         return "SoroushException{" +
+                "soroushMessage=" + soroushMessage +
                 "soroushResponse=" + soroushResponse +
                 ", status=" + status +
-                ", body='" + body + '\'' +
+                ", responseBody='" + responseBody + '\'' +
                 ", message='" + getMessage() + '\'' +
                 "} ";
     }

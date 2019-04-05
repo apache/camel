@@ -106,7 +106,7 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
         List<ConnectionType> types = getSupportedConnectionType();
         for (int i = 0; i < types.size(); i++) {
             if (i != 0) {
-                s.append(i);
+                s.append(", ");
             }
             s.append(types.get(i).value());
         }
@@ -380,11 +380,11 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
                 }
                 response = getUploadFileTarget().request(MediaType.APPLICATION_JSON_TYPE)
                         .post(Entity.entity(multipart, multipart.getMediaType()));
-                return SoroushService.get().assertSuccessful(response, UploadFileResponse.class);
+                return SoroushService.get().assertSuccessful(response, UploadFileResponse.class, message);
             } catch (IOException | ProcessingException ex) {
                 //if maximum connection retry reached, abort sending the request.
                 if (count == maxConnectionRetry) {
-                    throw new MaximumConnectionRetryReachedException("uploading " + fileType + " for message " + message + " failed. maximum retry limit reached! aborting upload file and send message", ex);
+                    throw new MaximumConnectionRetryReachedException("uploading " + fileType + " for message " + message + " failed. maximum retry limit reached! aborting upload file and send message", ex, message);
                 }
                 if (log.isWarnEnabled()) {
                     log.warn("uploading " + fileType + " for message " + message + " failed", ex);
@@ -393,7 +393,7 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
         }
         log.error("should never reach this line of code because maxConnectionRetry is greater than -1 and at least the above for must execute single time and");
         //for backup
-        throw new MaximumConnectionRetryReachedException("uploading " + fileType + " for message " + message + " failed. maximum retry limit reached! aborting upload file and send message");
+        throw new MaximumConnectionRetryReachedException("uploading " + fileType + " for message " + message + " failed. maximum retry limit reached! aborting upload file and send message", message);
     }
 
     /**
@@ -475,10 +475,10 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
             }
             try {
                 response = target.request().get();
-                return SoroushService.get().assertSuccessful(response, InputStream.class);
+                return SoroushService.get().assertSuccessful(response, InputStream.class, message);
             } catch (IOException | ProcessingException ex) {
                 if (i == maxConnectionRetry) {
-                    throw new MaximumConnectionRetryReachedException("maximum connection retry reached for " + type + ": " + fileUrl, ex);
+                    throw new MaximumConnectionRetryReachedException("maximum connection retry reached for " + type + ": " + fileUrl, ex, message);
                 }
                 if (log.isWarnEnabled())
                     log.warn("can not download " + type + ": " + fileUrl + " from soroush. response code is", ex);
@@ -486,6 +486,6 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
         }
         //should never reach this line
         log.error("should never reach this line. an exception should have been thrown by catch block for target.request().get");
-        throw new MaximumConnectionRetryReachedException("can not upload " + type + ": " + fileUrl + " response:" + ((response == null) ? null : response.getStatus()));
+        throw new MaximumConnectionRetryReachedException("can not upload " + type + ": " + fileUrl + " response:" + ((response == null) ? null : response.getStatus()), message);
     }
 }
