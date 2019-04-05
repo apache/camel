@@ -5508,7 +5508,7 @@
                     <!-- lets re-run the failed test one more time, just to be sure -->
                     <rerunFailingTestsCount>2</rerunFailingTestsCount>
                     <systemPropertyVariables>
-                        <javax.xml.accessExternalSchema>file,http</javax.xml.accessExternalSchema>
+                        <javax.xml.accessExternalSchema>file,http,https</javax.xml.accessExternalSchema>
                         <javax.xml.accessExternalDTD>file,http</javax.xml.accessExternalDTD>
                         <derby.stream.error.file>target/derby.log</derby.stream.error.file>
                         <java.awt.headless>${java.awt.headless}</java.awt.headless>
