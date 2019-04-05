@@ -55,13 +55,17 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
     // Processor Factory
     // *****************************
 
+    private volatile ServiceCallDefinition definition;
+
     @Override
     public Processor doCreateProcessor(RouteContext routeContext, ServiceCallDefinition definition) throws Exception {
+        this.definition = definition;
+
         final CamelContext camelContext = routeContext.getCamelContext();
-        final ServiceDiscovery serviceDiscovery = retrieveServiceDiscovery(camelContext, definition);
-        final ServiceFilter serviceFilter = retrieveServiceFilter(camelContext, definition);
-        final ServiceChooser serviceChooser = retrieveServiceChooser(camelContext, definition);
-        final ServiceLoadBalancer loadBalancer = retrieveLoadBalancer(camelContext, definition);
+        final ServiceDiscovery serviceDiscovery = retrieveServiceDiscovery(camelContext);
+        final ServiceFilter serviceFilter = retrieveServiceFilter(camelContext);
+        final ServiceChooser serviceChooser = retrieveServiceChooser(camelContext);
+        final ServiceLoadBalancer loadBalancer = retrieveLoadBalancer(camelContext);
 
         CamelContextAware.trySetCamelContext(serviceDiscovery, camelContext);
         CamelContextAware.trySetCamelContext(serviceFilter, camelContext);
@@ -82,7 +86,7 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
         // The component configured on EIP takes precedence vs configured on configuration.
         String endpointScheme = definition.getComponent();
         if (endpointScheme == null) {
-            ServiceCallConfigurationDefinition conf = retrieveConfig(camelContext, definition);
+            ServiceCallConfigurationDefinition conf = retrieveConfig(camelContext);
             if (conf != null) {
                 endpointScheme = conf.getComponent();
             }
@@ -98,7 +102,7 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
         // The uri configured on EIP takes precedence vs configured on configuration.
         String endpointUri = definition.getUri();
         if (endpointUri == null) {
-            ServiceCallConfigurationDefinition conf = retrieveConfig(camelContext, definition);
+            ServiceCallConfigurationDefinition conf = retrieveConfig(camelContext);
             if (conf != null) {
                 endpointUri = conf.getUri();
             }
@@ -123,7 +127,7 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
                 endpointUri,
                 definition.getPattern(),
                 loadBalancer,
-                retrieveExpression(camelContext, endpointScheme, definition));
+                retrieveExpression(camelContext, endpointScheme));
     }
 
     // *****************************
@@ -152,7 +156,7 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
         return config;
     }
 
-    private ServiceCallConfigurationDefinition retrieveConfig(CamelContext camelContext, ServiceCallDefinition definition) {
+    private ServiceCallConfigurationDefinition retrieveConfig(CamelContext camelContext) {
         ServiceCallConfigurationDefinition config = null;
         if (definition.getConfigurationRef() != null) {
             // lookup in registry firstNotNull
@@ -190,7 +194,7 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
         return answer;
     }
 
-    private ServiceDiscovery retrieveServiceDiscovery(CamelContext camelContext, ServiceCallDefinition definition) throws Exception {
+    private ServiceDiscovery retrieveServiceDiscovery(CamelContext camelContext) throws Exception {
         return Suppliers.firstNotNull(
                 () -> (definition.getServiceDiscoveryConfiguration() != null) ? definition.getServiceDiscoveryConfiguration().newInstance(camelContext) : null,
                 // Local configuration
@@ -246,7 +250,7 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
         return answer;
     }
 
-    private ServiceFilter retrieveServiceFilter(CamelContext camelContext, ServiceCallDefinition definition) throws Exception {
+    private ServiceFilter retrieveServiceFilter(CamelContext camelContext) throws Exception {
         return Suppliers.firstNotNull(
                 () -> (definition.getServiceFilterConfiguration() != null) ? definition.getServiceFilterConfiguration().newInstance(camelContext) : null,
                 // Local configuration
@@ -296,7 +300,7 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
         return answer;
     }
 
-    private ServiceChooser retrieveServiceChooser(CamelContext camelContext, ServiceCallDefinition definition) throws Exception {
+    private ServiceChooser retrieveServiceChooser(CamelContext camelContext) throws Exception {
         return Suppliers.firstNotNull(
                 // Local configuration
                 () -> retrieve(ServiceChooser.class, camelContext, definition::getServiceChooser, definition::getServiceChooserRef),
@@ -338,7 +342,7 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
         return answer;
     }
 
-    private ServiceLoadBalancer retrieveLoadBalancer(CamelContext camelContext, ServiceCallDefinition definition) throws Exception {
+    private ServiceLoadBalancer retrieveLoadBalancer(CamelContext camelContext) throws Exception {
         return Suppliers.firstNotNull(
                 () -> (definition.getLoadBalancerConfiguration() != null) ? definition.getLoadBalancerConfiguration().newInstance(camelContext) : null,
                 // Local configuration
@@ -381,7 +385,7 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
         return answer;
     }
 
-    private Expression retrieveExpression(CamelContext camelContext, String component, ServiceCallDefinition definition) throws Exception {
+    private Expression retrieveExpression(CamelContext camelContext, String component) throws Exception {
         Optional<Expression> expression = Suppliers.firstNotNull(
                 () -> (definition.getExpressionConfiguration() != null) ? definition.getExpressionConfiguration().newInstance(camelContext) : null,
                 // Local configuration
