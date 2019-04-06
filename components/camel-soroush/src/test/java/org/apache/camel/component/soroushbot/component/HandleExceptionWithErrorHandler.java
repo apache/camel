@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,9 @@
 
 package org.apache.camel.component.soroushbot.component;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,9 +28,6 @@ import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.io.File;
-import java.io.FileNotFoundException;
 
 public class HandleExceptionWithErrorHandler extends SoroushBotTestSupport {
     @Override
@@ -38,7 +38,7 @@ public class HandleExceptionWithErrorHandler extends SoroushBotTestSupport {
                 onException(FileNotFoundException.class).to("mock:exceptionRoute");
                 from("soroush://" + ConnectionType.getMessage + "/5?concurrentConsumers=2")
                         .process(exchange -> {
-                            SoroushMessage body = exchange.getIn().getBody(SoroushMessage.class);
+                                    SoroushMessage body = exchange.getIn().getBody(SoroushMessage.class);
                                     File file = new File("badFile-ShouldNotExits");
                                     Assert.assertFalse("file should not exists for this test", file.exists());
                                     body.setFile(file);

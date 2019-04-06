@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,17 @@
  */
 
 package org.apache.camel.component.soroushbot.component;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -37,16 +48,6 @@ import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * this class represents Soroush Endpoint, it is also a bean containing the configuration of the Endpoint
  */
@@ -54,35 +55,51 @@ import java.util.List;
 public class SoroushBotEndpoint extends DefaultEndpoint {
     private static Logger log = LoggerFactory.getLogger(SoroushBotEndpoint.class);
 
-    @UriPath(name = "connectionType", enums = "ConnectionType", javaType = "ConnectionType", description = "The endpoint type. it support `getMessage` as consumer and `sendMessage`,`uploadFile`,`downloadFile` as producer")
+    @UriPath(name = "connectionType", enums = "ConnectionType", javaType = "ConnectionType",
+            description = "The endpoint type. it support `getMessage` as consumer and `sendMessage`,`uploadFile`,`downloadFile` as producer")
     @Metadata(required = true)
-    ConnectionType type = null;
+    ConnectionType type;
 
-    @UriPath(label = "global,security", description = "The authorization token for using" +
-            " the bot (ask the @mrbot) e.g. 9yDv09nqKvP9CkBGKNmKQHir1dj2qLpN-YWa8hP7Rm3LK\"\n" +
-            "            + \"3MqQXYdXZIA5W4e0agPiUb-3eUKX69ozUNdY9yZBMlJiwnlksslkjWjsxcARo5cYtDnKTElig0xa\"\n" +
-            "            + \"e1Cjt1Bexz2cw-t6cJ7t1f ")
+    @UriPath(label = "global,security", description = "The authorization token for using"
+            + " the bot (ask the @mrbot) e.g. 9yDv09nqKvP9CkBGKNmKQHir1dj2qLpN-YWa8hP7Rm3LK\"\n"
+            + "            + \"3MqQXYdXZIA5W4e0agPiUb-3eUKX69ozUNdY9yZBMlJiwnlksslkjWjsxcARo5cYtDnKTElig0xa\"\n"
+            + "            + \"e1Cjt1Bexz2cw-t6cJ7t1f ")
     @Metadata(required = true)
     @UriParam(label = "global,security", description = "The authorization token for using"
             + " the bot. if uri path does not contain authorization token, this token will be used.", secret = true)
-    String authorizationToken = null;
+    String authorizationToken;
     @UriParam(label = "global", description = "connection timeout in ms when connecting to soroush API", defaultValue = "30000")
     Integer connectionTimeout = 30000;
-    @UriParam(label = "global", description = "maximum connection retry when fail to connect to soroush API, if the quota is reached, `MaximumConnectionRetryReachedException` is thrown for that message. ", defaultValue = "4")
+    @UriParam(label = "global", description = "maximum connection retry when fail to connect to soroush API, if the quota is reached,"
+            + " `MaximumConnectionRetryReachedException` is thrown for that message. ", defaultValue = "4")
     Integer maxConnectionRetry = 4;
-    @UriParam(label = "getMessage,consumer", description = "number of thread created by consumer in the route. if you use this method for parallelism, it is guaranteed that message from same user always execute in the same thread and therefore messages from the same user are processed sequentially", defaultValue = "1", defaultValueNote = "using SoroushBotSingleThreadConsumer")
+    @UriParam(label = "getMessage,consumer", description = "number of thread created by consumer in the route."
+            + " if you use this method for parallelism, it is guaranteed that message from same user always execute in the same"
+            + " thread and therefore messages from the same user are processed sequentially", defaultValue = "1",
+            defaultValueNote = "using SoroushBotSingleThreadConsumer")
     Integer concurrentConsumers = 1;
-    @UriParam(label = "getMessage,consumer", description = "maximum capacity of each queue when `concurrentConsumers` is greater than 1. if a queue become full, every message that should goes to that queue will be dropped. if `bridgeErrorHandler` sets to `true`, an exchange with `CongestionException` is directed to ErrorHandler. you can then processed the error using `onException(CongestionException.class)` route", defaultValue = "0", defaultValueNote = "infinite capacity")
+    @UriParam(label = "getMessage,consumer", description = "maximum capacity of each queue when `concurrentConsumers` is greater than 1."
+            + " if a queue become full, every message that should goes to that queue will be dropped. if `bridgeErrorHandler`"
+            + " sets to `true`, an exchange with `CongestionException` is directed to ErrorHandler. you can then processed the"
+            + " error using `onException(CongestionException.class)` route", defaultValue = "0", defaultValueNote = "infinite capacity")
     Integer queueCapacityPerThread = 0;
-    @UriParam(label = "sendMessage", description = "automatically upload attachments when message goes to the sendMessage endpoint and the `SoroushMessage.file` (`SoroushMessage.thumbnail`) has been set and `SoroushMessage.fileUrl`(`SoroushMessage.thumbnailUrl`) is null", defaultValue = "true")
+    @UriParam(label = "sendMessage", description = "automatically upload attachments when message goes to the sendMessage endpoint "
+            + "and the `SoroushMessage.file` (`SoroushMessage.thumbnail`) has been set and `SoroushMessage.fileUrl`(`SoroushMessage.thumbnailUrl`) is null",
+            defaultValue = "true")
     Boolean autoUploadFile = true;
-    @UriParam(label = "sendMessage,uploadFile", description = "force to  upload `SoroushMessage.file`(`SoroushMessage.thumbnail`) if exists, even if the `SoroushMessage.fileUrl`(`SoroushMessage.thumbnailUrl`) is not null in the message", defaultValue = "false")
+    @UriParam(label = "sendMessage,uploadFile", description = "force to  upload `SoroushMessage.file`(`SoroushMessage.thumbnail`) if exists, even if the "
+            + "`SoroushMessage.fileUrl`(`SoroushMessage.thumbnailUrl`) is not null in the message", defaultValue = "false")
     Boolean forceUpload = false;
-    @UriParam(label = "getMessage,downloadFile", description = "if true, when downloading attached file, thumbnail will be downloaded if provided in the message. otherwise only the file will be downloaded ", defaultValue = "true")
+    @UriParam(label = "getMessage,downloadFile", description = "if true, when downloading attached file, thumbnail will be downloaded if provided in the message."
+            + " otherwise only the file will be downloaded ", defaultValue = "true")
     Boolean downloadThumbnail = true;
-    @UriParam(label = "downloadFile", description = "force to download `SoroushMessage.fileUrl`(`SoroushMessage.thumbnailUrl`) if exists, even if the `SoroushMessage.file`(`SoroushMessage.thumbnail`) was not null in that message", defaultValue = "false")
+    @UriParam(label = "downloadFile", description = "force to download `SoroushMessage.fileUrl`(`SoroushMessage.thumbnailUrl`)"
+            + " if exists, even if the `SoroushMessage.file`(`SoroushMessage.thumbnail`) was not null in that message",
+            defaultValue = "false")
     Boolean forceDownload = false;
-    @UriParam(label = "getMessage", description = "automatically download `SoroushMessage.fileUrl` and `SoroushMessage.thumbnailUrl` if exists for the message and store them in `SoroushMessage.file` and `SoroushMessage.thumbnail` field ", defaultValue = "false")
+    @UriParam(label = "getMessage", description = "automatically download `SoroushMessage.fileUrl` and `SoroushMessage.thumbnailUrl` "
+            + "if exists for the message and store them in `SoroushMessage.file` and `SoroushMessage.thumbnail` field ",
+            defaultValue = "false")
     Boolean autoDownload = false;
     /**
      * lazy instance of {@link WebTarget} to used for uploading file to soroush Server, since the url is always the same, we reuse this WebTarget for all requests
@@ -167,8 +184,12 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
      * check and fix invalid value in uri parameter.
      */
     void normalizeConfiguration() {
-        if (connectionTimeout == null) connectionTimeout = 0;
-        if (maxConnectionRetry == null) maxConnectionRetry = 0;
+        if (connectionTimeout == null) {
+            connectionTimeout = 0;
+        }
+        if (maxConnectionRetry == null) {
+            maxConnectionRetry = 0;
+        }
         connectionTimeout = Math.max(0, connectionTimeout);
         maxConnectionRetry = Math.max(0, maxConnectionRetry);
     }
@@ -189,7 +210,8 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
         if (type == ConnectionType.downloadFile) {
             return new SoroushBotDownloadFileProducer(this);
         } else {
-            throw new IllegalArgumentException("only [" + ConnectionType.sendMessage + ", " + ConnectionType.downloadFile + ", " + ConnectionType.uploadFile + "] supported for producer(from) and process");
+            throw new IllegalArgumentException("only [" + ConnectionType.sendMessage + ", " + ConnectionType.downloadFile + ", " + ConnectionType.uploadFile
+                    + "] supported for producer(from) and process");
         }
     }
 
@@ -229,7 +251,8 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * create a {@link WebTarget} that could be used to download file from soroush based on {@link SoroushBotEndpoint#authorizationToken}, {@link SoroushBotEndpoint#connectionTimeout} and {@code fileUrl} (fileId)
+     * create a {@link WebTarget} that could be used to download file from soroush based on {@link SoroushBotEndpoint#authorizationToken},
+     * {@link SoroushBotEndpoint#connectionTimeout} and {@code fileUrl} (fileId)
      *
      * @param fileUrl fileId to download
      * @return WebTarget
@@ -384,7 +407,8 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
             } catch (IOException | ProcessingException ex) {
                 //if maximum connection retry reached, abort sending the request.
                 if (count == maxConnectionRetry) {
-                    throw new MaximumConnectionRetryReachedException("uploading " + fileType + " for message " + message + " failed. maximum retry limit reached! aborting upload file and send message", ex, message);
+                    throw new MaximumConnectionRetryReachedException("uploading " + fileType + " for message " + message + " failed. maximum retry limit reached!"
+                            + " aborting upload file and send message", ex, message);
                 }
                 if (log.isWarnEnabled()) {
                     log.warn("uploading " + fileType + " for message " + message + " failed", ex);
@@ -393,7 +417,8 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
         }
         log.error("should never reach this line of code because maxConnectionRetry is greater than -1 and at least the above for must execute single time and");
         //for backup
-        throw new MaximumConnectionRetryReachedException("uploading " + fileType + " for message " + message + " failed. maximum retry limit reached! aborting upload file and send message", message);
+        throw new MaximumConnectionRetryReachedException("uploading " + fileType + " for message " + message + " failed. maximum retry limit reached! aborting "
+                + "upload file and send message", message);
     }
 
     /**
@@ -433,23 +458,32 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
 
     /**
      * check whether {@link SoroushMessage#fileUrl}({@link SoroushMessage#thumbnailUrl}) is null or not, and download the resource if it is not null
-     * this function only set {@link SoroushMessage#file} to {@link InputStream} get from {@link Response#readEntity(Class)} )} and does not store the resource in file.
+     * this function only set {@link SoroushMessage#file} to {@link InputStream} get from {@link Response#readEntity(Class)} )}
+     * and does not store the resource in file.
      *
      * @param message
      * @throws SoroushException if the file does not exists on soroush or soroush reject the request
      */
     public void handleDownloadFiles(SoroushMessage message) throws SoroushException {
         if (message.getFileUrl() != null && (message.getFile() == null || forceDownload)) {
-            if (log.isDebugEnabled()) log.debug("downloading file from server for message: " + message);
+            if (log.isDebugEnabled()) {
+                log.debug("downloading file from server for message: " + message);
+            }
             InputStream inputStream = downloadFromServer(message.getFileUrl(), message, "file");
             message.setFile(inputStream);
-            if (log.isDebugEnabled()) log.debug("file successfully downloaded for message: " + message);
+            if (log.isDebugEnabled()) {
+                log.debug("file successfully downloaded for message: " + message);
+            }
         }
         if (downloadThumbnail && message.getThumbnailUrl() != null && (message.getThumbnail() == null || forceDownload)) {
-            if (log.isDebugEnabled()) log.debug("downloading thumbnail from server for message: " + message);
+            if (log.isDebugEnabled()) {
+                log.debug("downloading thumbnail from server for message: " + message);
+            }
             InputStream inputStream = downloadFromServer(message.getThumbnailUrl(), message, "thumbnail");
             message.setThumbnail(inputStream);
-            if (log.isDebugEnabled()) log.debug("thumbnail successfully downloaded for message: " + message);
+            if (log.isDebugEnabled()) {
+                log.debug("thumbnail successfully downloaded for message: " + message);
+            }
         }
     }
 
@@ -480,8 +514,9 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
                 if (i == maxConnectionRetry) {
                     throw new MaximumConnectionRetryReachedException("maximum connection retry reached for " + type + ": " + fileUrl, ex, message);
                 }
-                if (log.isWarnEnabled())
+                if (log.isWarnEnabled()) {
                     log.warn("can not download " + type + ": " + fileUrl + " from soroush. response code is", ex);
+                }
             }
         }
         //should never reach this line

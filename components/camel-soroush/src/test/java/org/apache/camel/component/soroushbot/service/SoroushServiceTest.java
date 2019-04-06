@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,17 @@
 
 package org.apache.camel.component.soroushbot.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import org.apache.camel.component.soroushbot.IOUtils;
 import org.apache.camel.component.soroushbot.models.ConnectionType;
 import org.apache.camel.component.soroushbot.models.MinorType;
@@ -33,29 +44,20 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 /**
  * check if soroush BOT Api work as expected
  */
 public class SoroushServiceTest {
     static String authorizationToken;
     static String receiverId;
-    static private SoroushService soroushService;
+    private static SoroushService soroushService;
 
     @BeforeClass
     public static void setUp() {
         authorizationToken = System.getenv("soroushBotAuthorizationToken");
         receiverId = System.getenv("soroushBotReceiverId");
-        Assert.assertTrue("you need to define `soroushBotAuthorizationToken` and `soroushBotReceiverId` environment variable in order to do integration test ", authorizationToken != null && receiverId != null);
+        Assert.assertTrue("you need to define `soroushBotAuthorizationToken` and "
+                + "`soroushBotReceiverId` environment variable in order to do integration test ", authorizationToken != null && receiverId != null);
         soroushService = SoroushService.get();
         soroushService.setAlternativeUrl(null);
     }

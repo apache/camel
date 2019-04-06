@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,26 +17,27 @@
 
 package org.apache.camel.component.soroushbot.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * a simple thread pool that send each job to a thread based on the jobs topic,
  */
 public class MultiQueueWithTopicThreadPool {
     private static Logger log = LoggerFactory.getLogger(MultiQueueWithTopicThreadPool.class);
-    private boolean shutdown = false;
+    private boolean shutdown; //default is false
     private int poolSize;
     private List<PoolWorker> workers = new ArrayList<>();
 
     public MultiQueueWithTopicThreadPool(int poolSize, int capacity, String namePrefix) {
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug("creating MultiQueueWithTopicThreadPool with size " + poolSize + " and capacity of each queue is set to " + capacity);
+        }
         this.poolSize = poolSize;
         //create a pool of thread and start them
         for (int i = 0; i < poolSize; i++) {
@@ -127,11 +128,14 @@ class PoolWorker extends Thread {
                 //poll next task as we know it is exists in the queue
                 task = queue.poll();
                 //double check!
-                if (task == null) continue;
+                if (task == null) {
+                    continue;
+                }
             }
             try {
                 task.run();
-            } catch (RuntimeException e) {//catch RuntimeException that may thrown in the task
+            } catch (RuntimeException e) {
+                //catch RuntimeException that may thrown in the task
                 log.error("Thread pool is interrupted due to an issue: " + e.getMessage());
             }
 

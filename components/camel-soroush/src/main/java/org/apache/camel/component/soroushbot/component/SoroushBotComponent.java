@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,12 +17,12 @@
 
 package org.apache.camel.component.soroushbot.component;
 
+import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-
-import java.util.Map;
 
 /**
  *  The Soroush Component</a> provides access to Soroush IM App.
@@ -31,7 +31,7 @@ import java.util.Map;
 public class SoroushBotComponent extends DefaultComponent {
 
     @Metadata(label = "security", description = "The default Soroush authorization token to be used when the information is not provided in the endpoints.")
-    private String authorizationToken = null;
+    private String authorizationToken;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

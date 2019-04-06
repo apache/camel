@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,11 @@
 
 package org.apache.camel.component.soroushbot.component;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,11 +34,6 @@ import org.glassfish.jersey.media.sse.EventInput;
 import org.glassfish.jersey.media.sse.InboundEvent;
 import org.glassfish.jersey.media.sse.SseFeature;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-
 import static org.apache.camel.component.soroushbot.utils.StringUtils.ordinal;
 
 /**
@@ -41,7 +41,7 @@ import static org.apache.camel.component.soroushbot.utils.StringUtils.ordinal;
  * it calls abstract function {@link SoroushBotAbstractConsumer#sendExchange(Exchange)}
  * each subclass should handle how it will start the processing of the exchange
  */
-abstract public class SoroushBotAbstractConsumer extends DefaultConsumer {
+public abstract class SoroushBotAbstractConsumer extends DefaultConsumer {
     SoroushBotEndpoint endpoint;
     /**
      * {@link ObjectMapper} for parse message JSON
@@ -68,63 +68,17 @@ abstract public class SoroushBotAbstractConsumer extends DefaultConsumer {
     @Override
     public void doStart() {
 //     create new Thread for listening to Soroush SSE Server so that it release the main camel thread.
-        Thread thread = new Thread(() -> {
-            Client client = ClientBuilder.newBuilder().register(SseFeature.class).build();
-            client.property(ClientProperties.CONNECT_TIMEOUT, endpoint.connectionTimeout);
-            WebTarget target = client.target(SoroushService.get().generateUrl(endpoint.authorizationToken, ConnectionType.getMessage, null));
-            EventInput event = null;
-            int retry = 0;
-            //this while handle connectionRetry if connection failed or get closed.
-            while (retry <= endpoint.maxConnectionRetry) {
-                try {
-                    if (event == null || event.isClosed()) {
-                        if (retry == 0) {
-                            if (log.isInfoEnabled()) log.info("connecting to getMessage from soroush");
-                        } else {
-                            if (log.isInfoEnabled())
-                                log.info("connection is closed. retrying for the " + ordinal(retry) + " time(s)... ");
-                        }
-                        event = createEvent(target);
-                    }
-                    InboundEvent inboundEvent = event.read();
-                    if (inboundEvent == null) {
-                        if (log.isErrorEnabled()) log.error("can not read event");
-                        event = null;
-                        retry++;
-                    } else {
-                        //if read the message successfully then we reset the retry count to 0.
-                        retry = 0;
-                        Exchange exchange = endpoint.createExchange();
-                        SoroushMessage soroushMessage = objectMapper.readValue(inboundEvent.getRawData(), SoroushMessage.class);
-                        try {
-                            exchange.getIn().setBody(soroushMessage);
-                            if (log.isDebugEnabled())
-                                log.debug("event data is: " + new String(inboundEvent.getRawData()));
-                            // if autoDownload is true, download the resource if provided in the message
-                            if (endpoint.autoDownload) {
-                                endpoint.handleDownloadFiles(soroushMessage);
-                            }
-                            //let each subclass decide how to start processing of each exchange
-                            sendExchange(exchange);
-                        } catch (Exception ex) {
-                            handleExceptionThrownWhileCreatingOrProcessingExchange(exchange, soroushMessage, ex);
-                        }
-                    }
-                } catch (Exception ex) {
-                    log.error("can not read data from soroush due to following error:", ex);
-                    event = null;
-                    retry++;
-                }
-
-            }
-            //todo how to handle long connection failure
-            log.info("max connection retry reached! we are closing the endpoint!");
-        });
+        Thread thread = new Thread(//this while handle connectionRetry if connection failed or get closed.
+//if read the message successfully then we reset the retry count to 0.
+// if autoDownload is true, download the resource if provided in the message
+//let each subclass decide how to start processing of each exchange
+//todo how to handle long connection failure
+                this::run);
         thread.start();
         thread.setName("Soroush Receiver");
     }
 
-    final protected void handleExceptionThrownWhileCreatingOrProcessingExchange(Exchange exchange, SoroushMessage soroushMessage, Exception ex) {
+    protected final void handleExceptionThrownWhileCreatingOrProcessingExchange(Exchange exchange, SoroushMessage soroushMessage, Exception ex) {
         //set originalMessage property to the created soroushMessage to let  Error Handler access the message
         exchange.setProperty("OriginalMessage", soroushMessage);
         //use this instead of handleException() to manually set the exchange.
@@ -139,5 +93,63 @@ abstract public class SoroushBotAbstractConsumer extends DefaultConsumer {
      */
     protected abstract void sendExchange(Exchange exchange) throws Exception;
 
+    private void run() {
+        Client client = ClientBuilder.newBuilder().register(SseFeature.class).build();
+        client.property(ClientProperties.CONNECT_TIMEOUT, endpoint.connectionTimeout);
+        WebTarget target = client.target(SoroushService.get().generateUrl(endpoint.authorizationToken, ConnectionType.getMessage, null));
+        EventInput event = null;
+        int retry = 0;
+        //this while handle connectionRetry if connection failed or get closed.
+        while (retry <= endpoint.maxConnectionRetry) {
+            try {
+                if (event == null || event.isClosed()) {
+                    if (retry == 0) {
+                        if (log.isInfoEnabled()) {
+                            log.info("connecting to getMessage from soroush");
+                        }
+                    } else {
+                        if (log.isInfoEnabled()) {
+                            log.info("connection is closed. retrying for the " + ordinal(retry) + " time(s)... ");
+                        }
+                    }
+                    event = createEvent(target);
+                }
+                InboundEvent inboundEvent = event.read();
+                if (inboundEvent == null) {
+                    if (log.isErrorEnabled()) {
+                        log.error("can not read event");
+                    }
+                    event = null;
+                    retry++;
+                } else {
+                    //if read the message successfully then we reset the retry count to 0.
+                    retry = 0;
+                    Exchange exchange = endpoint.createExchange();
+                    SoroushMessage soroushMessage = objectMapper.readValue(inboundEvent.getRawData(), SoroushMessage.class);
+                    try {
+                        exchange.getIn().setBody(soroushMessage);
+                        if (log.isDebugEnabled()) {
+                            log.debug("event data is: " + new String(inboundEvent.getRawData()));
+                        }
+                        // if autoDownload is true, download the resource if provided in the message
+                        if (endpoint.autoDownload) {
+                            endpoint.handleDownloadFiles(soroushMessage);
+                        }
+                        //let each subclass decide how to start processing of each exchange
+                        sendExchange(exchange);
+                    } catch (Exception ex) {
+                        handleExceptionThrownWhileCreatingOrProcessingExchange(exchange, soroushMessage, ex);
+                    }
+                }
+            } catch (Exception ex) {
+                log.error("can not read data from soroush due to following error:", ex);
+                event = null;
+                retry++;
+            }
+
+        }
+        //todo how to handle long connection failure
+        log.info("max connection retry reached! we are closing the endpoint!");
+    }
 }
 

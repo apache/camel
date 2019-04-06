@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,10 @@
 
 package org.apache.camel.component.soroushbot.utils;
 
-public class StringUtils {
+public final class StringUtils {
+    protected StringUtils() {
+    }
+
     /**
      * create ordinal value for each number. like 1st, 2nd, 3rd, 4th ...
      *

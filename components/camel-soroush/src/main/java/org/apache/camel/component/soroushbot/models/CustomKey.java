@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,9 +17,10 @@
 
 package org.apache.camel.component.soroushbot.models;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomKey {
@@ -45,11 +46,15 @@ public class CustomKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CustomKey)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof CustomKey)) {
+            return false;
+        }
         CustomKey customKey = (CustomKey) o;
-        return Objects.equals(getCommand(), customKey.getCommand()) &&
-                Objects.equals(getText(), customKey.getText());
+        return Objects.equals(getCommand(), customKey.getCommand())
+                && Objects.equals(getText(), customKey.getText());
     }
 
     @Override

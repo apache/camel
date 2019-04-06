@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,64 +20,21 @@ package org.apache.camel.component.soroushbot.utils;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 
 public class CongestionException extends RuntimeException {
-    private SoroushMessage soroushMessage;
-
-    public CongestionException() {
-    }
-
-    public CongestionException(String message) {
-        super(message);
-    }
-
-    public CongestionException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public CongestionException(Throwable cause) {
-        super(cause);
-    }
-
-    public CongestionException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
-
-    public CongestionException(SoroushMessage soroushMessage) {
-        this.soroushMessage = soroushMessage;
-    }
-
-    public CongestionException(String message, SoroushMessage soroushMessage) {
-        super(message);
-        this.soroushMessage = soroushMessage;
-    }
-
-    public CongestionException(String message, Throwable cause, SoroushMessage soroushMessage) {
-        super(message, cause);
-        this.soroushMessage = soroushMessage;
-    }
+    private final SoroushMessage soroushMessage;
 
     public CongestionException(Throwable cause, SoroushMessage soroushMessage) {
         super(cause);
         this.soroushMessage = soroushMessage;
     }
 
-    public CongestionException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, SoroushMessage soroushMessage) {
-        super(message, cause, enableSuppression, writableStackTrace);
-        this.soroushMessage = soroushMessage;
-    }
-
     public SoroushMessage getSoroushMessage() {
         return soroushMessage;
     }
-
-    public void setSoroushMessage(SoroushMessage soroushMessage) {
-        this.soroushMessage = soroushMessage;
-    }
-
     @Override
     public String getLocalizedMessage() {
-        return "MaximumConnectionRetryReachedException{" +
-                "soroushMessage=" + soroushMessage +
-                ", message=" + getMessage() +
-                "} ";
+        return "MaximumConnectionRetryReachedException{"
+                + "soroushMessage=" + soroushMessage
+                + ", message=" + getMessage()
+                + "} ";
     }
 }
