@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,13 @@
 
 package org.apache.camel.component.soroushbot.service;
 
+import java.io.IOException;
+
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
+
 import org.apache.camel.component.soroushbot.models.ConnectionType;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.models.response.SoroushResponse;
@@ -24,23 +31,17 @@ import org.apache.camel.component.soroushbot.utils.SoroushException;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-
 /**
  * singleton class that allows interacting with the Soroush server to exchange messages.
  */
-public class SoroushService {
-    private static final String url = "https://bot.sapp.ir";
+public final class SoroushService {
+    private static final String URL = "https://bot.sapp.ir";
     private static SoroushService soroushService;
     /**
      * allow Soroush server to be mocked for testing,
      * during testing soroush service will be connected to the alternativeUrl if provided
      */
-    private String alternativeUrl = null;
+    private String alternativeUrl;
 
     private SoroushService() {
     }
@@ -49,9 +50,13 @@ public class SoroushService {
      * @return soroush server instance.
      */
     public static SoroushService get() {
-        if (soroushService != null) return soroushService;
+        if (soroushService != null) {
+            return soroushService;
+        }
         synchronized (SoroushService.class) {
-            if (soroushService != null) return soroushService;
+            if (soroushService != null) {
+                return soroushService;
+            }
             soroushService = new SoroushService();
             return soroushService;
         }
@@ -65,13 +70,15 @@ public class SoroushService {
      * @param fileId
      * @return
      */
-    public final String generateUrl(@NotNull String token, @NotNull ConnectionType type, String fileId) {
+    public String generateUrl(@NotNull String token, @NotNull ConnectionType type, String fileId) {
         return getCurrentUrl() + "/" + token + "/" + type.value() + (fileId != null ? "/" + fileId : "");
     }
 
     private String getCurrentUrl() {
-        if (alternativeUrl != null) return alternativeUrl;
-        return url;
+        if (alternativeUrl != null) {
+            return alternativeUrl;
+        }
+        return URL;
     }
 
     /**
@@ -152,8 +159,8 @@ public class SoroushService {
             throw new SoroushException(soroushMessage, null, status, response.readEntity(String.class));
         }
         if (SoroushResponse.class.isAssignableFrom(responseType)) {
-            Class<? extends SoroushResponse> SoroushResponseType = responseType.asSubclass(SoroushResponse.class);
-            SoroushResponse soroushResponse = response.readEntity(SoroushResponseType);
+            Class<? extends SoroushResponse> soroushResponseType = responseType.asSubclass(SoroushResponse.class);
+            SoroushResponse soroushResponse = response.readEntity(soroushResponseType);
             if (soroushResponse.getResultCode() != 200) {
                 String body = soroushResponse.toString();
                 throw new SoroushException(soroushMessage, soroushResponse, status, body);

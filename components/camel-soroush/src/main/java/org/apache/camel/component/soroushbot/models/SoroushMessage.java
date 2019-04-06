@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,11 +17,6 @@
 
 package org.apache.camel.component.soroushbot.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import org.apache.camel.component.soroushbot.component.SoroushBotEndpoint;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,6 +26,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import org.apache.camel.component.soroushbot.component.SoroushBotEndpoint;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -64,7 +64,9 @@ public class SoroushMessage implements Cloneable {
     public SoroushMessage() {
     }
 
-    public SoroushMessage(String to, String from, String body, MinorType type, String time, String fileName, FileType fileType, Double fileSize, String fileUrl, String thumbnailUrl, Double imageWidth, Double imageHeight, Double fileDuration, Double thumbnailWidth, Double thumbnailHeight, String nickName, String avatarUrl, Double phoneNo, Double latitude, Double longitude, List<List<CustomKey>> keyboard) {
+    public SoroushMessage(String to, String from, String body, MinorType type, String time, String fileName, FileType fileType, Double fileSize, String fileUrl, String thumbnailUrl,
+                          Double imageWidth, Double imageHeight, Double fileDuration, Double thumbnailWidth, Double thumbnailHeight, String nickName, String avatarUrl, Double phoneNo,
+                          Double latitude, Double longitude, List<List<CustomKey>> keyboard) {
         this.to = to;
         this.from = from;
         this.body = body;
@@ -318,57 +320,61 @@ public class SoroushMessage implements Cloneable {
 
     @Override
     public String toString() {
-        return "SoroushMessage{" +
-                "to='" + to + '\'' +
-                ", from='" + from + '\'' +
-                ", body='" + body + '\'' +
-                ", type=" + type +
-                ", time='" + time + '\'' +
-                ", fileName='" + fileName + '\'' +
-                ", fileType=" + fileType +
-                ", fileSize=" + fileSize +
-                ", fileUrl='" + fileUrl + '\'' +
-                ", thumbnailUrl='" + thumbnailUrl + '\'' +
-                ", imageWidth=" + imageWidth +
-                ", imageHeight=" + imageHeight +
-                ", fileDuration=" + fileDuration +
-                ", thumbnailWidth=" + thumbnailWidth +
-                ", thumbnailHeight=" + thumbnailHeight +
-                ", nickName='" + nickName + '\'' +
-                ", avatarUrl='" + avatarUrl + '\'' +
-                ", phoneNo=" + phoneNo +
-                ", latitude=" + latitude +
-                ", longitude=" + longitude +
-                ", keyboard=" + keyboard +
-                '}';
+        return "SoroushMessage{"
+                + "to='" + to + '\''
+                + ", from='" + from + '\''
+                + ", body='" + body + '\''
+                + ", type=" + type
+                + ", time='" + time + '\''
+                + ", fileName='" + fileName + '\''
+                + ", fileType=" + fileType
+                + ", fileSize=" + fileSize
+                + ", fileUrl='" + fileUrl + '\''
+                + ", thumbnailUrl='" + thumbnailUrl + '\''
+                + ", imageWidth=" + imageWidth
+                + ", imageHeight=" + imageHeight
+                + ", fileDuration=" + fileDuration
+                + ", thumbnailWidth=" + thumbnailWidth
+                + ", thumbnailHeight=" + thumbnailHeight
+                + ", nickName='" + nickName + '\''
+                + ", avatarUrl='" + avatarUrl + '\''
+                + ", phoneNo=" + phoneNo
+                + ", latitude=" + latitude
+                + ", longitude=" + longitude
+                + ", keyboard=" + keyboard
+                + '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SoroushMessage)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SoroushMessage)) {
+            return false;
+        }
         SoroushMessage that = (SoroushMessage) o;
-        return Objects.equals(getTo(), that.getTo()) &&
-                Objects.equals(getFrom(), that.getFrom()) &&
-                Objects.equals(getBody(), that.getBody()) &&
-                getType() == that.getType() &&
-                Objects.equals(getTime(), that.getTime()) &&
-                Objects.equals(getFileName(), that.getFileName()) &&
-                getFileType() == that.getFileType() &&
-                Objects.equals(getFileSize(), that.getFileSize()) &&
-                Objects.equals(getFileUrl(), that.getFileUrl()) &&
-                Objects.equals(getThumbnailUrl(), that.getThumbnailUrl()) &&
-                Objects.equals(getImageWidth(), that.getImageWidth()) &&
-                Objects.equals(getImageHeight(), that.getImageHeight()) &&
-                Objects.equals(getFileDuration(), that.getFileDuration()) &&
-                Objects.equals(getThumbnailWidth(), that.getThumbnailWidth()) &&
-                Objects.equals(getThumbnailHeight(), that.getThumbnailHeight()) &&
-                Objects.equals(getNickName(), that.getNickName()) &&
-                Objects.equals(getAvatarUrl(), that.getAvatarUrl()) &&
-                Objects.equals(getPhoneNo(), that.getPhoneNo()) &&
-                Objects.equals(getLatitude(), that.getLatitude()) &&
-                Objects.equals(getLongitude(), that.getLongitude()) &&
-                Objects.equals(getKeyboard(), that.getKeyboard());
+        return Objects.equals(getTo(), that.getTo())
+                && Objects.equals(getFrom(), that.getFrom())
+                && Objects.equals(getBody(), that.getBody())
+                && getType() == that.getType()
+                && Objects.equals(getTime(), that.getTime())
+                && Objects.equals(getFileName(), that.getFileName())
+                && getFileType() == that.getFileType()
+                && Objects.equals(getFileSize(), that.getFileSize())
+                && Objects.equals(getFileUrl(), that.getFileUrl())
+                && Objects.equals(getThumbnailUrl(), that.getThumbnailUrl())
+                && Objects.equals(getImageWidth(), that.getImageWidth())
+                && Objects.equals(getImageHeight(), that.getImageHeight())
+                && Objects.equals(getFileDuration(), that.getFileDuration())
+                && Objects.equals(getThumbnailWidth(), that.getThumbnailWidth())
+                && Objects.equals(getThumbnailHeight(), that.getThumbnailHeight())
+                && Objects.equals(getNickName(), that.getNickName())
+                && Objects.equals(getAvatarUrl(), that.getAvatarUrl())
+                && Objects.equals(getPhoneNo(), that.getPhoneNo())
+                && Objects.equals(getLatitude(), that.getLatitude())
+                && Objects.equals(getLongitude(), that.getLongitude())
+                && Objects.equals(getKeyboard(), that.getKeyboard());
     }
 
     @Override
@@ -400,6 +406,9 @@ public class SoroushMessage implements Cloneable {
     @Override
     public int hashCode() {
 
-        return Objects.hash(getTo(), getFrom(), getBody(), getType(), getTime(), getFileName(), getFileType(), getFileSize(), getFileUrl(), getThumbnailUrl(), getImageWidth(), getImageHeight(), getFileDuration(), getThumbnailWidth(), getThumbnailHeight(), getNickName(), getAvatarUrl(), getPhoneNo(), getLatitude(), getLongitude(), getKeyboard());
+        return Objects.hash(getTo(), getFrom(), getBody(), getType(), getTime(), getFileName(), getFileType(),
+                getFileSize(), getFileUrl(), getThumbnailUrl(), getImageWidth(), getImageHeight(), getFileDuration(),
+                getThumbnailWidth(), getThumbnailHeight(), getNickName(), getAvatarUrl(), getPhoneNo(), getLatitude(),
+                getLongitude(), getKeyboard());
     }
 }

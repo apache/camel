@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,14 +17,15 @@
 
 package org.apache.camel.component.soroushbot.support;
 
-import org.apache.camel.component.soroushbot.IOUtils;
-import org.apache.camel.component.soroushbot.models.SoroushMessage;
-import org.apache.camel.component.soroushbot.models.response.SoroushResponse;
-import org.apache.camel.component.soroushbot.models.response.UploadFileResponse;
-import org.apache.logging.log4j.LogManager;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.glassfish.jersey.media.sse.OutboundEvent;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Scanner;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -38,15 +39,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.sse.SseEventSink;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Scanner;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.camel.component.soroushbot.IOUtils;
+import org.apache.camel.component.soroushbot.models.SoroushMessage;
+import org.apache.camel.component.soroushbot.models.response.SoroushResponse;
+import org.apache.camel.component.soroushbot.models.response.UploadFileResponse;
+import org.apache.logging.log4j.LogManager;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.glassfish.jersey.media.sse.OutboundEvent;
 
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -102,24 +103,9 @@ public class SoroushBotWS {
                 if (token.toLowerCase().contains("close")) {
                     sink.close();
                 }
-/*
-            } catch (IOException e) {
-                throw new RuntimeException(
-                        "Error when writing the event.", e);
-*/
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-/*
-            finally {
-                try {
-                    eventOutput.close();
-                } catch (IOException ioClose) {
-                    throw new RuntimeException(
-                            "Error when closing the event output.", ioClose);
-                }
-            }
-*/
         }).start();
     }
 

@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,14 +17,15 @@
 
 package org.apache.camel.component.soroushbot.utils;
 
+import java.util.concurrent.LinkedBlockingQueue;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class MultiQueueWithTopicThreadPoolTest {
     @Test
-    public void singleThread_successful() throws InterruptedException {
+    public void singleThreadSuccessful() throws InterruptedException {
         LinkedBlockingQueue<Integer> finalResultsOrder = new LinkedBlockingQueue<>();
         int capacity = 10;
         Integer[] results = new Integer[capacity];
@@ -48,7 +49,7 @@ public class MultiQueueWithTopicThreadPoolTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void singleThread_poolSizeExceeded() {
+    public void singleThreadPoolSizeExceeded() {
         int capacity = 10;
         MultiQueueWithTopicThreadPool pool = new MultiQueueWithTopicThreadPool(1, capacity, "test");
         for (int i = 0; i < capacity + 2; i++) {
@@ -63,12 +64,12 @@ public class MultiQueueWithTopicThreadPoolTest {
     }
 
     @Test
-    public void multiThread_endOrder_successful() throws InterruptedException {
+    public void multiThreadEndOrderSuccessful() throws InterruptedException {
         LinkedBlockingQueue<Integer> finalResultsOrder = new LinkedBlockingQueue<>();
         int totalJobs = 9;
         Integer[] results = new Integer[totalJobs];
         for (int i = 0; i < totalJobs / 3; i++) {
-            /*
+            /**
               0 1 2 3 4 5 6 7 8
               0 3 6 1 4 7 2 5 8 <- start order should be this
              */
@@ -94,7 +95,7 @@ public class MultiQueueWithTopicThreadPoolTest {
     }
 
     @Test
-    public void multiThread_startOrder_successful() throws InterruptedException {
+    public void multiThreadStartOrderSuccessful() throws InterruptedException {
         LinkedBlockingQueue<Integer> finalResultsOrder = new LinkedBlockingQueue<>();
         int totalJobs = 9;
         Integer[] expectedResults = new Integer[totalJobs];
@@ -125,7 +126,7 @@ public class MultiQueueWithTopicThreadPoolTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void multiThread_poolSizeExceeded() throws InterruptedException {
+    public void multiThreadPoolSizeExceeded() throws InterruptedException {
         LinkedBlockingQueue<Integer> finalResultsOrder = new LinkedBlockingQueue<>();
         int capacity = 3;
         int poolSize = 3;
