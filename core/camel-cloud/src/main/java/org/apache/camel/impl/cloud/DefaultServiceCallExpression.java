@@ -16,13 +16,11 @@
  */
 package org.apache.camel.impl.cloud;
 
-import org.apache.camel.cloud.ServiceCallExpressionSupport;
-import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Support class for custom implementations of {@link ServiceCallDefinition ServiceCall EIP} components.
+ * Support class for custom implementations of ServiceCall EIP components.
  * <p/>
  * Below are some examples how to call a service and what Camel endpoint URI is constructed based on the input:
  * <pre>

@@ -17,7 +17,7 @@
 #
 
 
-CONSUL_VER="1.0.6"
+CONSUL_VER="1.0.8"
 CONSUL_ZIP="consul_${CONSUL_VER}_darwin_amd64.zip"
 
 # cleanup

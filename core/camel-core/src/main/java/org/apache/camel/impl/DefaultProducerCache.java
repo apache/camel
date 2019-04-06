@@ -60,7 +60,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         this.producers = new ServicePool<>(Endpoint::createAsyncProducer, AsyncProducer::getEndpoint, maxCacheSize);
 
         // only if JMX is enabled
-        if (camelContext.getManagementStrategy().getManagementAgent() != null) {
+        if (camelContext.getManagementStrategy() != null && camelContext.getManagementStrategy().getManagementAgent() != null) {
             this.extendedStatistics = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
         } else {
             this.extendedStatistics = false;
