@@ -23,7 +23,7 @@ Using multiple shells:
 
  - start consul:
 
-  $ cd services
+  $ cd service
   $ src/main/bash/consul-run-linux.sh    (for linux)
   $ src/main/bash/consul-run-osx.sh      (for mac osx)
 
