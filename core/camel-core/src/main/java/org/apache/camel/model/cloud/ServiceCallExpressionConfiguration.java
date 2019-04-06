@@ -35,7 +35,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.cloud.ServiceCallConstants;
 import org.apache.camel.cloud.ServiceExpressionFactory;
-//import org.apache.camel.impl.cloud.DefaultServiceCallExpression;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
@@ -43,7 +42,6 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
 
 @Metadata(label = "routing,cloud")
 @XmlRootElement(name = "serviceExpression")
