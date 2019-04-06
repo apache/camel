@@ -36,6 +36,7 @@ We have also modularized many of the core components and moved them out of `came
 - camel-browse
 - camel-controlbus
 - camel-dataformat
+- camel-dataset
 - camel-direct
 - camel-directvm
 - camel-file
