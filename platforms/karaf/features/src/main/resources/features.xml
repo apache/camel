@@ -57,6 +57,7 @@
     <bundle>mvn:org.apache.camel/camel-browse/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-controlbus/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-dataformat/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-dataset/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-direct/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-directvm/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-file/${project.version}</bundle>

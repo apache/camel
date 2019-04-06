@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.test;
+package org.apache.camel.component.dataset;
 
 import java.util.Map;
 
@@ -24,21 +24,21 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.URISupport;
 
 /**
- * The <a href="http://camel.apache.org/test.html">Test Component</a> is for simplifying unit and integration tests.
+ * The <a href="http://camel.apache.org/test.html">DataSet Test Component</a> is for simplifying unit and integration tests.
  *
  * Component for testing by polling test messages from another endpoint on startup as the expected message bodies to
  * receive during testing.
  */
-@org.apache.camel.spi.annotations.Component("test")
-public class TestComponent extends DefaultComponent {
+@org.apache.camel.spi.annotations.Component("dataset-test")
+public class DataSetTestComponent extends DefaultComponent {
 
-    public TestComponent() {
+    public DataSetTestComponent() {
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Long timeout = getAndRemoveParameter(parameters, "timeout", Long.class);
-        TestEndpoint answer = new TestEndpoint(uri, this);
+        DataSetTestEndpoint answer = new DataSetTestEndpoint(uri, this);
         if (timeout != null) {
             answer.setTimeout(timeout);
         }
