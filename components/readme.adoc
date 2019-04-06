@@ -769,7 +769,7 @@ Number of Components: 293 in 229 JAR artifacts (0 deprecated)
 | link:camel-spring-batch/src/main/docs/spring-batch-component.adoc[Spring Batch] (camel-spring-batch) +
 `spring-batch:jobName` | 2.10 | The spring-batch component allows to send messages to Spring Batch for further processing.
 
-| link:@@@ARTIFACTID@@@/src/main/docs/spring-event-component.adoc[Spring Event] (@@@ARTIFACTID@@@) +
+| link:camel-spring/src/main/docs/spring-event-component.adoc[Spring Event] (camel-spring) +
 `spring-event:name` | 1.4 | The spring-event component allows to listen for Spring Application Events.
 
 | link:camel-spring-integration/src/main/docs/spring-integration-component.adoc[Spring Integration] (camel-spring-integration) +
@@ -995,7 +995,7 @@ Number of Data Formats: 45 in 35 JAR artifacts (0 deprecated)
 ==== Expression Languages
 
 // languages: START
-Number of Languages: 17 in 8 JAR artifacts (1 deprecated)
+Number of Languages: 18 in 9 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1026,6 +1026,8 @@ Number of Languages: 17 in 8 JAR artifacts (1 deprecated)
 | link:../core/camel-core/src/main/docs/ref-language.adoc[Ref] (camel-core) | 2.8 | Reference to an existing Camel expression or predicate, which is looked up from the Camel registry.
 
 | link:../core/camel-core/src/main/docs/simple-language.adoc[Simple] (camel-core) | 1.1 | To use Camels built-in Simple language in Camel expressions or predicates.
+
+| link:camel-spring/src/main/docs/spel-language.adoc[SpEL] (camel-spring) | 2.7 | To use Spring Expression Language (SpEL) in Camel expressions or predicates.
 
 | link:../core/camel-core/src/main/docs/tokenize-language.adoc[Tokenize] (camel-core) | 2.0 | To use Camel message body or header with a tokenizer in Camel expressions or predicates.
 
