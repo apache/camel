@@ -14,44 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.test;
+package org.apache.camel.component.dataset;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-public class TestFileSplitTest extends ContextTestSupport {
+public class DataSetTestSedaTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/testme");
-        super.setUp();
-    }
-
-    @Ignore
     @Test
-    public void testFile() throws Exception {
-        template.sendBody("file:target/data/testme", "Hello World\nBye World\nHi World");
+    public void testSeda() throws Exception {
+        template.sendBody("seda:testme", "Hello World");
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("test:file:target/data/testme?noop=true&split=true&timeout=1000");
+                        .to("dataset-test:seda:testme?timeout=0");
             }
         });
         context.start();
 
         template.sendBody("direct:start", "Hello World");
-        template.sendBody("direct:start", "Bye World");
-        template.sendBody("direct:start", "Hi World");
 
         assertMockEndpointsSatisfied();
     }

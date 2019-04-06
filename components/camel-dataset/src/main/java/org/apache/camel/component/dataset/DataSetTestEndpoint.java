@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.test;
+package org.apache.camel.component.dataset;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,7 +34,7 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ObjectHelper;
 
 /**
- * The test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
+ * The dataset-test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
  *
  * That is, you use the test endpoint in a route and messages arriving on it will be implicitly compared to some
  * expected messages extracted from some other location.
@@ -42,8 +42,8 @@ import org.apache.camel.support.ObjectHelper;
  * This will then set up a properly configured Mock endpoint, which is only valid if the received messages
  * match the number of expected messages and their message payloads are equal.
  */
-@UriEndpoint(firstVersion = "1.3.0", scheme = "test", title = "Test", syntax = "test:name", producerOnly = true, label = "core,testing", lenientProperties = true)
-public class TestEndpoint extends MockEndpoint {
+@UriEndpoint(firstVersion = "1.3.0", scheme = "dataset-test", title = "DataSet Test", syntax = "dataset-test:name", producerOnly = true, label = "core,testing", lenientProperties = true)
+public class DataSetTestEndpoint extends MockEndpoint {
 
     private Endpoint expectedMessageEndpoint;
 
@@ -58,7 +58,7 @@ public class TestEndpoint extends MockEndpoint {
     @UriParam
     private String delimiter = "\\n|\\r";
 
-    public TestEndpoint(String endpointUri, Component component) {
+    public DataSetTestEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
     }
 

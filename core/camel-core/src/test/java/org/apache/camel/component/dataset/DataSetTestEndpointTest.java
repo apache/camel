@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.test;
+package org.apache.camel.component.dataset;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -31,7 +31,7 @@ import org.junit.Test;
 /**
  *
  */
-public class TestEndpointTest extends ContextTestSupport {
+public class DataSetTestEndpointTest extends ContextTestSupport {
 
     private String expectedBody = "Hello World";
 
@@ -52,7 +52,7 @@ public class TestEndpointTest extends ContextTestSupport {
                 context.addEndpoint("my:foo", my);
 
                 from("seda:foo")
-                    .to("test:my:foo?timeout=0");
+                    .to("dataset-test:my:foo?timeout=0");
             }
         };
     }

@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.test;
+package org.apache.camel.component.dataset;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class TestFileTest extends ContextTestSupport {
+public class DataSetTestFileTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -44,7 +45,7 @@ public class TestFileTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("test:file:target/data/testme?noop=true&timeout=1500");
+                        .to("dataset-test:file:target/data/testme?noop=true&timeout=1500");
             }
         });
         context.start();

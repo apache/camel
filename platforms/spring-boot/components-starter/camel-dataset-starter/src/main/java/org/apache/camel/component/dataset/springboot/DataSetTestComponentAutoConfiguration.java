@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.test.springboot;
+package org.apache.camel.component.dataset.springboot;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.test.TestComponent;
+import org.apache.camel.component.dataset.DataSetTestComponent;
 import org.apache.camel.spi.ComponentCustomizer;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
@@ -51,34 +51,34 @@ import org.springframework.context.annotation.Lazy;
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @Configuration
 @Conditional({ConditionalOnCamelContextAndAutoConfigurationBeans.class,
-        TestComponentAutoConfiguration.GroupConditions.class})
+        DataSetTestComponentAutoConfiguration.GroupConditions.class})
 @AutoConfigureAfter(CamelAutoConfiguration.class)
 @EnableConfigurationProperties({ComponentConfigurationProperties.class,
-        TestComponentConfiguration.class})
-public class TestComponentAutoConfiguration {
+        DataSetTestComponentConfiguration.class})
+public class DataSetTestComponentAutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(TestComponentAutoConfiguration.class);
+            .getLogger(DataSetTestComponentAutoConfiguration.class);
     @Autowired
     private ApplicationContext applicationContext;
     @Autowired
     private CamelContext camelContext;
     @Autowired
-    private TestComponentConfiguration configuration;
+    private DataSetTestComponentConfiguration configuration;
     @Autowired(required = false)
-    private List<ComponentCustomizer<TestComponent>> customizers;
+    private List<ComponentCustomizer<DataSetTestComponent>> customizers;
 
     static class GroupConditions extends GroupCondition {
         public GroupConditions() {
-            super("camel.component", "camel.component.test");
+            super("camel.component", "camel.component.dataset-test");
         }
     }
 
     @Lazy
-    @Bean(name = "test-component")
-    @ConditionalOnMissingBean(TestComponent.class)
-    public TestComponent configureTestComponent() throws Exception {
-        TestComponent component = new TestComponent();
+    @Bean(name = "dataset-test-component")
+    @ConditionalOnMissingBean(DataSetTestComponent.class)
+    public DataSetTestComponent configureDataSetTestComponent() throws Exception {
+        DataSetTestComponent component = new DataSetTestComponent();
         component.setCamelContext(camelContext);
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,
@@ -105,17 +105,17 @@ public class TestComponentAutoConfiguration {
         CamelPropertiesHelper.setCamelProperties(camelContext, component,
                 parameters, false);
         if (ObjectHelper.isNotEmpty(customizers)) {
-            for (ComponentCustomizer<TestComponent> customizer : customizers) {
+            for (ComponentCustomizer<DataSetTestComponent> customizer : customizers) {
                 boolean useCustomizer = (customizer instanceof HasId)
                         ? HierarchicalPropertiesEvaluator.evaluate(
                                 applicationContext.getEnvironment(),
                                 "camel.component.customizer",
-                                "camel.component.test.customizer",
+                                "camel.component.dataset-test.customizer",
                                 ((HasId) customizer).getId())
                         : HierarchicalPropertiesEvaluator.evaluate(
                                 applicationContext.getEnvironment(),
                                 "camel.component.customizer",
-                                "camel.component.test.customizer");
+                                "camel.component.dataset-test.customizer");
                 if (useCustomizer) {
                     LOGGER.debug("Configure component {}, with customizer {}",
                             component, customizer);
