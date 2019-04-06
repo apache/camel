@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.test;
+package org.apache.camel.component.dataset;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class TestSedaTest extends ContextTestSupport {
+public class DataSetTestAnyOrderTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -28,19 +28,21 @@ public class TestSedaTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSeda() throws Exception {
+    public void testAnyOrder() throws Exception {
+        template.sendBody("seda:testme", "Bye World");
         template.sendBody("seda:testme", "Hello World");
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("test:seda:testme?timeout=0");
+                        .to("dataset-test:seda:testme?anyOrder=true&timeout=0");
             }
         });
         context.start();
 
         template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", "Bye World");
 
         assertMockEndpointsSatisfied();
     }
