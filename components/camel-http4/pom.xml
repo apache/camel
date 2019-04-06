@@ -35,7 +35,7 @@
 
     <properties>
         <camel.osgi.import.before.defaults>
-            org.apache.http.*;version="[4.5,5)"
+            org.apache.http.*;version="[4.4,5)"
         </camel.osgi.import.before.defaults>
     </properties>
 
