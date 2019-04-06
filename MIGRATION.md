@@ -76,6 +76,10 @@ Migrating Camel applications
 
 We have removed all deprecated components from Camel 2.x, also including the old `camel-http` component. Instead you can use `camel-http4`.
 
+### Renamed components
+
+The `test` component has been renamed to `dataset-test` and moved out of `camel-core` into `camel-dataset` JAR.
+
 We have also renamed `camel-jetty9` to `camel-jetty`.
 
 ### ActiveMQ

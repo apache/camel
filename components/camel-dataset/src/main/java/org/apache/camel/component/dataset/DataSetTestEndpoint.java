@@ -34,7 +34,7 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ObjectHelper;
 
 /**
- * The test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
+ * The dataset-test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
  *
  * That is, you use the test endpoint in a route and messages arriving on it will be implicitly compared to some
  * expected messages extracted from some other location.
