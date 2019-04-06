@@ -132,4 +132,9 @@ public class SparkEndpoint extends DefaultEndpoint {
         HttpMethod method = getCamelContext().getTypeConverter().mandatoryConvertTo(HttpMethod.class, verb);
         verb = method.name();
     }
+
+    @Override
+    public SparkComponent getComponent() {
+        return (SparkComponent) super.getComponent();
+    }
 }

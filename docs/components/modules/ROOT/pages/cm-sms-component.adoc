@@ -8,7 +8,7 @@ for the [CM SMS Gateway](https://www.cmtelecom.com).
 
 It allows to integrate https://dashboard.onlinesmsgateway.com/docs[CM SMS API]in an application as a camel component. 
 
-You must have a valid account.  More information are available at https://www.cmtelecom.com/support[CM Telecom].
+You must have a valid account.  More information is available at https://www.cmtelecom.com/support[CM Telecom].
 
 [source,text]
 ----

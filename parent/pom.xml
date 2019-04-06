@@ -83,8 +83,8 @@
         <avro-bundle-version>1.8.2_1</avro-bundle-version>
         <avro-ipc-bundle-version>1.8.2_1</avro-ipc-bundle-version>
         <awaitility-version>3.1.6</awaitility-version>
-        <aws-java-sdk-bundle-version>1.11.496_1</aws-java-sdk-bundle-version>
-        <aws-java-sdk-version>1.11.496</aws-java-sdk-version>
+        <aws-java-sdk-bundle-version>1.11.524_1</aws-java-sdk-bundle-version>
+        <aws-java-sdk-version>1.11.524</aws-java-sdk-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.2.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
@@ -100,13 +100,13 @@
         <boon-version>0.34</boon-version>
         <bouncycastle-version>1.60</bouncycastle-version>
         <box-java-sdk-version>2.10.0</box-java-sdk-version>
-        <braintree-gateway-version>2.91.0</braintree-gateway-version>
+        <braintree-gateway-version>2.93.0</braintree-gateway-version>
         <brave-zipkin-version>5.6.3</brave-zipkin-version>
         <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
-        <c3p0-version>0.9.5.3</c3p0-version>
-        <c3p0-bundle-version>0.9.5.3_1</c3p0-bundle-version>
+        <c3p0-version>0.9.5.4</c3p0-version>
+        <c3p0-bundle-version>0.9.5.4_1</c3p0-bundle-version>
         <caffeine-version>2.7.0</caffeine-version>
-        <californium-version>1.0.6</californium-version>
+        <californium-version>1.0.7</californium-version>
         <cassandra-driver-version>3.7.1</cassandra-driver-version>
         <cassandra-driver-guava-version>19.0</cassandra-driver-guava-version>
         <cassandra-version>3.7</cassandra-version>
@@ -175,8 +175,8 @@
         <disruptor-version>3.4.2</disruptor-version>
         <dnsjava-version>2.1.8</dnsjava-version>
         <dnsjava-bundle-version>2.1.8_1</dnsjava-bundle-version>
-        <docker-java-version>3.0.14</docker-java-version>
-        <docker-java-bundle-version>3.0.14_1</docker-java-bundle-version>
+        <docker-java-version>3.1.1</docker-java-version>
+        <docker-java-bundle-version>3.1.1_1</docker-java-bundle-version>
         <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
         <dozer-version>6.4.1</dozer-version>
         <drools-version>7.19.0.Final</drools-version>
@@ -187,10 +187,10 @@
         <ehcache-version>2.10.6</ehcache-version>
         <ehcache3-version>3.7.0</ehcache3-version>
         <ekstazi-maven-plugin-version>5.3.0</ekstazi-maven-plugin-version>
-        <elasticsearch-rest-sniffer-version>6.5.4</elasticsearch-rest-sniffer-version>
-        <elasticsearch-rest-cluster-runner-version>6.5.4.0</elasticsearch-rest-cluster-runner-version>
-        <elasticsearch-rest-version>6.5.4</elasticsearch-rest-version>
-        <elasticsearch-rest-bundle-version>6.5.4_1</elasticsearch-rest-bundle-version>
+        <elasticsearch-rest-sniffer-version>6.6.2</elasticsearch-rest-sniffer-version>
+        <elasticsearch-rest-cluster-runner-version>6.6.2.0</elasticsearch-rest-cluster-runner-version>
+        <elasticsearch-rest-version>6.6.2</elasticsearch-rest-version>
+        <elasticsearch-rest-bundle-version>6.6.2_1</elasticsearch-rest-bundle-version>
         <elsql-version>1.3</elsql-version>
         <el-api-1.0-version>1.0.1</el-api-1.0-version>
         <eddsa-version>0.3.0</eddsa-version>
@@ -300,8 +300,8 @@
         <ibatis-version>2.3.4.726</ibatis-version>
         <ical4j-version>1.0.7</ical4j-version>
         <ignite-version>2.7.0</ignite-version>
-        <infinispan-version>9.4.11.Final</infinispan-version>
-        <infinispan-spring-boot-version>2.1.4.Final</infinispan-spring-boot-version>
+        <infinispan-version>9.4.12.Final</infinispan-version>
+        <infinispan-spring-boot-version>2.1.5.Final</infinispan-spring-boot-version>
         <influx-java-driver-version>2.15</influx-java-driver-version>
         <influx-java-driver-bundle-version>2.15_1</influx-java-driver-bundle-version>
         <influx-guava-version>20.0</influx-guava-version>
@@ -432,8 +432,8 @@
         <jython-version>2.5.3</jython-version>
         <jzlib-version>1.1.3</jzlib-version>
         <jzlib-bundle-version>1.1.3_2</jzlib-bundle-version>
-        <kafka-version>2.1.1</kafka-version>
-        <kafka-bundle-version>2.1.1_1</kafka-bundle-version>
+        <kafka-version>2.2.0</kafka-version>
+        <kafka-bundle-version>2.2.0_1</kafka-bundle-version>
         <karaf4-version>4.2.4</karaf4-version>
         <kie-version>7.19.0.Final</kie-version>
         <kubernetes-client-version>4.1.1</kubernetes-client-version>
@@ -442,8 +442,8 @@
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.10</leveldb-api-version>
         <leveldb-version>0.10</leveldb-version>
-        <libphonenumber-version>8.10.6</libphonenumber-version>
-        <libphonenumber-bundle-version>8.10.6_1</libphonenumber-bundle-version>
+        <libphonenumber-version>8.10.8</libphonenumber-version>
+        <libphonenumber-bundle-version>8.10.8_1</libphonenumber-bundle-version>
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <lettuce-version>5.1.0.RELEASE</lettuce-version>
@@ -486,7 +486,7 @@
         <maven-surefire-report-plugin-version>2.22.1</maven-surefire-report-plugin-version>
         <maven-war-plugin-version>3.0.0</maven-war-plugin-version>
         <metrics-version>3.2.6</metrics-version>
-        <micrometer-version>1.1.3</micrometer-version>
+        <micrometer-version>1.1.4</micrometer-version>
         <milo-version>0.2.5</milo-version>
         <mina2-version>2.0.20</mina2-version>
         <minidns-version>0.3.3</minidns-version>
@@ -498,12 +498,12 @@
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
         <mqtt-client-version>1.15</mqtt-client-version>
         <msv-version>2013.6.1</msv-version>
-        <mustache-java-version>0.9.5</mustache-java-version>
-        <mustache-guava-version>16.0</mustache-guava-version>
-        <mustache-bundle-version>0.9.5_4</mustache-bundle-version>
+        <mustache-java-version>0.9.6</mustache-java-version>
+        <mustache-guava-version>20.0</mustache-guava-version>
+        <mustache-bundle-version>0.9.6_1</mustache-bundle-version>
         <mvel-version>2.4.4.Final</mvel-version>
         <mybatis-version>3.5.0</mybatis-version>
-        <narayana-version>5.9.4.Final</narayana-version>
+        <narayana-version>5.9.5.Final</narayana-version>
         <nessus-version>1.0.0.Beta4</nessus-version>
         <nsq-client-version>1.0.0.RC4</nsq-client-version>
         <neethi-bundle-version>3.0.1</neethi-bundle-version>
@@ -586,8 +586,8 @@
         <rxjava-version>1.3.8</rxjava-version>
         <rxjava2-version>2.2.8</rxjava2-version>
         <saaj-impl-version>1.3.2_2</saaj-impl-version>
-        <saxon-bundle-version>9.9.1-1_1</saxon-bundle-version>
-        <saxon-version>9.9.1-1</saxon-version>
+        <saxon-bundle-version>9.9.1-2_1</saxon-bundle-version>
+        <saxon-version>9.9.1-2</saxon-version>
         <scala-version>2.11.7</scala-version>
         <scala-maven-plugin-version>3.2.2</scala-maven-plugin-version>
         <scalatest-version>2.2.5</scalatest-version>
@@ -620,7 +620,7 @@
         <splunk-version>1.6.5.0_1</splunk-version>
         <spring-batch-version>4.1.1.RELEASE</spring-batch-version>
         <spring-batch-bundle-version>4.1.1.RELEASE_1</spring-batch-bundle-version>
-        <spring-boot-version>2.1.3.RELEASE</spring-boot-version>
+        <spring-boot-version>2.1.4.RELEASE</spring-boot-version>
         <spring-cloud-commons-version>2.0.2.RELEASE</spring-cloud-commons-version>
         <spring-cloud-consul-version>2.0.1.RELEASE</spring-cloud-consul-version>
         <spring-cloud-netflix-version>2.0.2.RELEASE</spring-cloud-netflix-version>
@@ -636,7 +636,7 @@
         <spring-ldap-bundle-version>2.3.2.RELEASE_1</spring-ldap-bundle-version>
         <spring-version-range>[5,6)</spring-version-range>
         <spring-version>${spring5-version}</spring-version>
-        <spring5-version>5.1.5.RELEASE</spring5-version>
+        <spring5-version>5.1.6.RELEASE</spring5-version>
         <spring-security-version>5.1.4.RELEASE</spring-security-version>
         <spring-security-bundle-version>5.1.3.RELEASE_1</spring-security-bundle-version>
         <spring-ws-version>3.0.6.RELEASE</spring-ws-version>
@@ -663,7 +663,7 @@
         <tagsoup-bundle-version>1.2.1_1</tagsoup-bundle-version>
         <tagsoup-version>1.2.1</tagsoup-version>
         <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
-        <testcontainers-version>1.11.0</testcontainers-version>
+        <testcontainers-version>1.11.1</testcontainers-version>
         <testng-version>6.14.2</testng-version>
         <tinybundles-version>2.1.1</tinybundles-version>
         <tika-version>1.20</tika-version>
@@ -680,7 +680,7 @@
         <velocity-bundle-version>1.7_6</velocity-bundle-version>
         <velocity-tools-version>2.0</velocity-tools-version>
         <velocity-version>2.0</velocity-version>
-        <vertx-version>3.6.3</vertx-version>
+        <vertx-version>3.7.0</vertx-version>
         <vysper-version>0.7</vysper-version>
         <web3j-version>3.6.0</web3j-version>
         <web3j-quorum-version>0.8.0</web3j-quorum-version>
@@ -709,7 +709,7 @@
         <xmlgraphics-commons-bundle-version>2.3_1</xmlgraphics-commons-bundle-version>
         <xmlgraphics-batik-version>1.11</xmlgraphics-batik-version>
         <xmlresolver-bundle-version>1.2_5</xmlresolver-bundle-version>
-        <xmlsec-version>2.1.2</xmlsec-version>
+        <xmlsec-version>2.1.3</xmlsec-version>
         <xmlunit-version>2.6.2</xmlunit-version>
         <xpp3-bundle-version>1.1.4c_7</xpp3-bundle-version>
         <xpp3-version>1.1.4c</xpp3-version>
@@ -718,8 +718,8 @@
         <xstream-version>1.4.11</xstream-version>
         <xom-version>1.2.5</xom-version>
         <zendesk-client-version>0.6.2</zendesk-client-version>
-        <zipkin-reporter-version>2.8.1</zipkin-reporter-version>
-        <zipkin-version>2.12.6</zipkin-version>
+        <zipkin-reporter-version>2.8.2</zipkin-reporter-version>
+        <zipkin-version>2.12.7</zipkin-version>
         <zjsonpatch-version>0.3.0</zjsonpatch-version>
         <zookeeper-version>3.4.13</zookeeper-version>
         <zookeeper-guava-version>16.0</zookeeper-guava-version>
@@ -5518,7 +5518,7 @@
                     <!-- lets re-run the failed test one more time, just to be sure -->
                     <rerunFailingTestsCount>2</rerunFailingTestsCount>
                     <systemPropertyVariables>
-                        <javax.xml.accessExternalSchema>file,http</javax.xml.accessExternalSchema>
+                        <javax.xml.accessExternalSchema>file,http,https</javax.xml.accessExternalSchema>
                         <javax.xml.accessExternalDTD>file,http</javax.xml.accessExternalDTD>
                         <derby.stream.error.file>target/derby.log</derby.stream.error.file>
                         <java.awt.headless>${java.awt.headless}</java.awt.headless>
