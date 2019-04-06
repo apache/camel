@@ -273,12 +273,6 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
                     throw new IllegalArgumentException(e);
                 }
             }
-        } else {
-            // TODO: Make this possible to create in camel-cloud
-//            answer = new DefaultServiceCallExpression(
-//                ObjectHelper.notNull(hostHeader, "hostHeader"),
-//                ObjectHelper.notNull(portHeader, "portHeader")
-//            );
         }
 
         return answer;
