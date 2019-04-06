@@ -18,11 +18,14 @@ In Camel 2.x camel-core was one JAR file, which now has been splitup into many J
 
 - camel-api
 - camel-base
+- camel-caffeine-lrucache
+- camel-cloud
 - camel-core
 - camel-management-api
 - camel-management-impl
 - camel-support
 - camel-util
+- camel-util-json
  
 Maven users of Apache Camel can keep using the dependency *camel-core* which will have transitive dependency on all of its modules, and therefore no migration is needed.
 However users whom wants to trim the size of the classes on the classpath, can use fine grained Maven dependency on only the modules needed.
@@ -47,10 +50,8 @@ We have also modularized many of the core components and moved them out of `came
 - camel-stub
 - camel-timer
 - camel-validator
+- camel-vm
 - camel-xslt
-
-TODO: there are some remainder components in camel-core we would like to modularize
-TODO: we need camel-core-minimal dependency for just basic Camel
 
 
 Migrating custom components
