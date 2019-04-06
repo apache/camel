@@ -16,6 +16,9 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Map;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 
@@ -55,5 +58,17 @@ public interface ProcessorFactory {
      * @throws Exception can be thrown if error creating the processor
      */
     Processor createProcessor(RouteContext routeContext, NamedNode definition) throws Exception;
+
+    /**
+     * Creates a processor by the name of the definition. This should only be used in some special situations
+     * where the processor is used internally in some features such as camel-cloud.
+     *
+     * @param camelContext     the camel context
+     * @param definitionName   the name of the definition that represents the processor
+     * @param args             arguments for creating the processor (name=vale pairs)
+     * @return the created processor, or <tt>null</tt> if this situation is not yet implemented.
+     * @throws Exception can be thrown if error creating the processor
+     */
+    Processor createProcessor(CamelContext camelContext, String definitionName, Map<String, Object> args) throws Exception;
 
 }

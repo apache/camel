@@ -17,7 +17,7 @@
     limitations under the License.
 
 -->
-<features xmlns="http://karaf.apache.org/xmlns/features/v1.3.0" name='camel-${project.version}'>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.5.0" name='camel-${project.version}'>
   <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf-version}/xml/features</repository>
   <repository>mvn:org.apache.jclouds.karaf/jclouds-karaf/${jclouds-version}/xml/features</repository>
   <repository>mvn:org.ops4j.pax.cdi/pax-cdi-features/${pax-cdi-version}/xml/features</repository>
@@ -52,6 +52,7 @@
     <bundle>mvn:org.apache.camel/camel-management-impl/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core-osgi/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-cloud/${project.version}</bundle>
     <!-- core components -->
     <bundle>mvn:org.apache.camel/camel-browse/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-controlbus/${project.version}</bundle>

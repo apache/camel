@@ -34,9 +34,8 @@
     <description>Camel HTTP (Apache HttpClient 4.x) support</description>
 
     <properties>
-        <!-- CAMEL-7010 Now we move to HttpClient 4.3 API -->
         <camel.osgi.import.before.defaults>
-            org.apache.http.*;version="[4.3,5)"
+            org.apache.http.*;version="[4.4,5)"
         </camel.osgi.import.before.defaults>
     </properties>
 
@@ -44,7 +43,7 @@
 
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-support</artifactId>
+            <artifactId>camel-cloud</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

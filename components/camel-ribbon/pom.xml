@@ -41,10 +41,9 @@
 
     <dependencies>
 
-        <!-- needs camel-core because of camel cloud -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
+            <artifactId>camel-cloud</artifactId>
         </dependency>
 
         <dependency>
