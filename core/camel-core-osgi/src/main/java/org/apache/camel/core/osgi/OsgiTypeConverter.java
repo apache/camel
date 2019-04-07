@@ -107,8 +107,6 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         }
         // It can force camel to reload the type converter again
         this.delegate = null;
-        
-        // TODO: reloading all type converters when one service is removed is suboptimal...
     }
 
     @Override
