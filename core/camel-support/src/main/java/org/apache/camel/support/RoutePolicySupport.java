@@ -77,11 +77,9 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
      * @return the returned value is always <tt>true</tt> and should not be used.
      * @see #resumeOrStartConsumer(Consumer)
      */
-    public boolean startConsumer(Consumer consumer) throws Exception {
-        // TODO: change to void in Camel 3.0
+    public void startConsumer(Consumer consumer) throws Exception {
         ServiceHelper.startService(consumer);
         log.debug("Started consumer {}", consumer);
-        return true;
     }
 
     /**
@@ -90,12 +88,10 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
      * @return the returned value is always <tt>true</tt> and should not be used.
      * @see #suspendOrStopConsumer(Consumer)
      */
-    public boolean stopConsumer(Consumer consumer) throws Exception {
-        // TODO: change to void in Camel 3.0
+    public void stopConsumer(Consumer consumer) throws Exception {
         // stop and shutdown
         ServiceHelper.stopAndShutdownServices(consumer);
         log.debug("Stopped consumer {}", consumer);
-        return true;
     }
 
     /**
