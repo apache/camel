@@ -170,12 +170,6 @@
             <artifactId>camel-xslt</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-dataset</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <!-- required dependencies by camel-core -->
         <dependency>
             <groupId>org.apache.camel</groupId>
