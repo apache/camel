@@ -82,6 +82,10 @@ The `test` component has been renamed to `dataset-test` and moved out of `camel-
 
 We have also renamed `camel-jetty9` to `camel-jetty`.
 
+### DataSet component
+
+The `dataset` component has been moved out of `camel-core`, and is no longer a transient dependency from `camel-core`, and therefore you should add `camel-dataset` as dependency if you use this component.
+
 ### ActiveMQ
 
 If you are using the `activemq-camel` component, then you should migrate to use `camel-activemq` component, where the component name has changed from `org.apache.activemq.camel.component.ActiveMQComponent` to `org.apache.camel.component.activemq.ActiveMQComponent`.
