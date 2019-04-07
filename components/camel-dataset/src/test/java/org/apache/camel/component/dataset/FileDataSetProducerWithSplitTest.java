@@ -15,26 +15,29 @@
  * limitations under the License.
  */
 package org.apache.camel.component.dataset;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
-import javax.naming.Context;
-
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-public class FileDataSetProducerWithSplitTest extends ContextTestSupport {
+public class FileDataSetProducerWithSplitTest extends CamelTestSupport {
 
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
+
+    @BindToRegistry("foo")
     protected FileDataSet dataSet;
 
     final String testDataFileName = "src/test/data/file-dataset-test.txt";
@@ -71,7 +74,7 @@ public class FileDataSetProducerWithSplitTest extends ContextTestSupport {
     @Before
     public void setUp() throws Exception {
         File fileDataset = createFileDatasetWithSystemEndOfLine();
-        dataSet = new FileDataSet(fileDataset, LS);
+        dataSet = new FileDataSet(fileDataset, TestSupport.LS);
         assertEquals("Unexpected DataSet size", testDataFileRecordCount, dataSet.getSize());
         super.setUp();
     }
@@ -82,13 +85,6 @@ public class FileDataSetProducerWithSplitTest extends ContextTestSupport {
         ByteArrayInputStream content = new ByteArrayInputStream(String.format("Line 1%nLine 2%nLine 3%nLine 4%nLine 5%nLine 6%nLine 7%nLine 8%nLine 9%nLine 10%n").getBytes());
         Files.copy(content, fileDataset.toPath(), StandardCopyOption.REPLACE_EXISTING);
         return fileDataset;
-    }
-
-    @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind(dataSetName, dataSet);
-        return context;
     }
 
     @Override

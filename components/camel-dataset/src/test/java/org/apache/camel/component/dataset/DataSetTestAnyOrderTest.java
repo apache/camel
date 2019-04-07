@@ -16,37 +16,35 @@
  */
 package org.apache.camel.component.dataset;
 
-import javax.naming.Context;
-
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class DataSetTest extends ContextTestSupport {
-    protected SimpleDataSet dataSet = new SimpleDataSet(20);
+public class DataSetTestAnyOrderTest extends CamelTestSupport {
+
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
 
     @Test
-    public void testDataSet() throws Exception {
-        // data set will itself set its assertions so we should just
-        // assert that all mocks is ok
+    public void testAnyOrder() throws Exception {
+        template.sendBody("seda:testme", "Bye World");
+        template.sendBody("seda:testme", "Hello World");
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                        .to("dataset-test:seda:testme?anyOrder=true&timeout=0");
+            }
+        });
+        context.start();
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", "Bye World");
+
         assertMockEndpointsSatisfied();
     }
 
-    @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind("foo", dataSet);
-        return context;
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                // start this first to make sure the "direct:foo" consumer is ready
-                from("direct:foo").to("dataset:foo?minRate=50");
-                from("dataset:foo?initialDelay=0&minRate=50").to("direct:foo");
-            }
-        };
-    }
 }

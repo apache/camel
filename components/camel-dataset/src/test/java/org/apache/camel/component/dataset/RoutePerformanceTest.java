@@ -14,30 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.component.dataset;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import javax.naming.Context;
-
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.dataset.SimpleDataSet;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.Test;
+import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 
 /**
  * A route for simple performance testing that can be used when we suspect
  * something is wrong. Inspired by end user on forum doing this as proof of concept.
  */
-public class RoutePerformanceTest extends ContextTestSupport {
-    
+public class RoutePerformanceTest extends CamelTestSupport {
+
     private int size = 250;
+
+    @BindToRegistry("foo")
     private SimpleDataSet dataSet = new SimpleDataSet(size);
+
     private String uri = "mock:results";
 
     @Test
@@ -49,27 +50,9 @@ public class RoutePerformanceTest extends ContextTestSupport {
         endpoint.expectedHeaderReceived("foo", 123);
 
         // wait 30 sec for slow servers
-        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
+        assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         log.info("RoutePerformanceTest: Sent: {} Took: {} ms", size, watch.taken());
-    }
-
-    @Override
-    protected boolean canRunOnThisPlatform() {
-        String os = System.getProperty("os.name");
-        // HP-UX is just to slow to run this test
-        return !os.toLowerCase(Locale.ENGLISH).contains("hp-ux");
-    }
-
-    @Override
-    protected Context createJndiContext() throws Exception {
-        Map<String, Object> headers = new HashMap<>();
-        headers.put("foo", 123);
-        dataSet.setDefaultHeaders(headers);
-
-        Context context = super.createJndiContext();
-        context.bind("foo", dataSet);
-        return context;
     }
 
     @Override
@@ -77,6 +60,10 @@ public class RoutePerformanceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                Map<String, Object> headers = new HashMap<>();
+                headers.put("foo", 123);
+                dataSet.setDefaultHeaders(headers);
+
                 from("dataset:foo").to("direct:start");
 
                 from("direct:start").to("log:a?level=OFF", "log:b?level=OFF", "direct:c");
