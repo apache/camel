@@ -16,36 +16,26 @@
  */
 package org.apache.camel.component.dataset;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Ignore;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class DataSetTestFileTest extends ContextTestSupport {
+public class DataSetTestSedaTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/testme");
-        super.setUp();
-    }
-
-    @Ignore
     @Test
-    public void testFile() throws Exception {
-        template.sendBody("file:target/data/testme", "Hello World");
+    public void testSeda() throws Exception {
+        template.sendBody("seda:testme", "Hello World");
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("dataset-test:file:target/data/testme?noop=true&timeout=1500");
+                        .to("dataset-test:seda:testme?timeout=0");
             }
         });
         context.start();

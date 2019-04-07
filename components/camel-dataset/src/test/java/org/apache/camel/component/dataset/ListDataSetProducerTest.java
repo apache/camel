@@ -15,18 +15,20 @@
  * limitations under the License.
  */
 package org.apache.camel.component.dataset;
+
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.naming.Context;
-
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ListDataSetProducerTest extends ContextTestSupport {
+public class ListDataSetProducerTest extends CamelTestSupport {
+
+    @BindToRegistry("foo")
     protected ListDataSet dataSet = new ListDataSet();
 
     final String sourceUri = "direct://source";
@@ -61,13 +63,6 @@ public class ListDataSetProducerTest extends ContextTestSupport {
         dataSet = new ListDataSet(bodies);
 
         super.setUp();
-    }
-
-    @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind(dataSetName, dataSet);
-        return context;
     }
 
     @Override

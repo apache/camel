@@ -15,26 +15,28 @@
  * limitations under the License.
  */
 package org.apache.camel.component.dataset;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
-import javax.naming.Context;
-
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-public class FileDataSetProducerTest extends ContextTestSupport {
+public class FileDataSetProducerTest extends CamelTestSupport {
 
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
+
+    @BindToRegistry("foo")
     protected FileDataSet dataSet;
 
     final String testPayload = String.format("Line 1%nLine 2%nLine 3%nLine 4%nLine 5%nLine 6%nLine 7%nLine 8%nLine 9%nLine 10%n");
@@ -78,13 +80,6 @@ public class FileDataSetProducerTest extends ContextTestSupport {
         File fileDataset = tempFolder.newFile("file-dataset-test.txt");
         Files.copy(new ByteArrayInputStream(testPayload.getBytes()), fileDataset.toPath(), StandardCopyOption.REPLACE_EXISTING);
         return fileDataset;
-    }
-
-    @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind(dataSetName, dataSet);
-        return context;
     }
 
     @Override

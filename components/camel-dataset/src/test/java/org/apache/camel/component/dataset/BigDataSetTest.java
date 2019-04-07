@@ -15,53 +15,32 @@
  * limitations under the License.
  */
 package org.apache.camel.component.dataset;
+
+import java.util.concurrent.TimeUnit;
+
 import javax.naming.Context;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
-public class FileDataSetConsumerWithSplitTest extends ContextTestSupport {
-    protected FileDataSet dataSet;
-
-    final String testDataFileName = "src/test/data/file-dataset-test.txt";
-    final int testDataFileRecordCount = 10;
-
-    final String resultUri = "mock://result";
-    final String dataSetName = "foo";
-    final String dataSetUri = "dataset://" + dataSetName;
+@Ignore("Manual test")
+public class BigDataSetTest extends CamelTestSupport {
+    protected SimpleDataSet dataSet = new SimpleDataSet(20000);
 
     @Test
-    public void testDefaultListDataSet() throws Exception {
-        MockEndpoint result = getMockEndpoint(resultUri);
-        result.expectedMinimumMessageCount((int) dataSet.getSize());
-
-        result.assertIsSatisfied();
-    }
-
-    @Test
-    public void testDefaultListDataSetWithSizeGreaterThanListSize() throws Exception {
-        MockEndpoint result = getMockEndpoint(resultUri);
-        dataSet.setSize(20);
-        result.expectedMinimumMessageCount((int) dataSet.getSize());
-
-        result.assertIsSatisfied();
-    }
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        dataSet = new FileDataSet(testDataFileName, "\n");
-        assertEquals("Unexpected DataSet size", testDataFileRecordCount, dataSet.getSize());
-        super.setUp();
+    public void testDataSet() throws Exception {
+        // data set will itself set its assertions so we should just
+        // assert that all mocks is ok
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override
     protected Context createJndiContext() throws Exception {
         Context context = super.createJndiContext();
-        context.bind(dataSetName, dataSet);
+        context.bind("foo", dataSet);
         return context;
     }
 
@@ -69,8 +48,10 @@ public class FileDataSetConsumerWithSplitTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(dataSetUri)
-                        .to("mock://result");
+                // start this first to make sure the "direct:foo" consumer is ready
+                from("direct:foo").to("dataset:foo");
+
+                from("dataset:foo").to("direct:foo");
             }
         };
     }

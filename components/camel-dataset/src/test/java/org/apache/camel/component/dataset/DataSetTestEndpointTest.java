@@ -18,7 +18,6 @@ package org.apache.camel.component.dataset;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -26,12 +25,13 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  *
  */
-public class DataSetTestEndpointTest extends ContextTestSupport {
+public class DataSetTestEndpointTest extends CamelTestSupport {
 
     private String expectedBody = "Hello World";
 

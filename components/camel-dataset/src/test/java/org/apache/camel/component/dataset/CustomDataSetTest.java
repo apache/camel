@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.dataset;
 
-import javax.naming.Context;
-
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -27,9 +25,12 @@ import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.support.PredicateAssertHelper;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class CustomDataSetTest extends ContextTestSupport {
+public class CustomDataSetTest extends CamelTestSupport {
+
+    @BindToRegistry("foo")
     protected DataSet dataSet = new DataSetSupport() {
         Expression expression = new XPathBuilder("/message/@index").resultType(Long.class);
 
@@ -51,13 +52,6 @@ public class CustomDataSetTest extends ContextTestSupport {
         // data set will itself set its assertions so we should just
         // assert that all mocks is ok
         assertMockEndpointsSatisfied();
-    }
-
-    @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind("foo", dataSet);
-        return context;
     }
 
     @Override

@@ -16,18 +16,19 @@
  */
 package org.apache.camel.component.dataset;
 
-import javax.naming.Context;
-
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Unit test to demonstrate high concurrency with seda. Offspring by CAMEL-605.
  */
-public class DataSetSedaTest extends ContextTestSupport {
+public class DataSetSedaTest extends CamelTestSupport {
+    @BindToRegistry("foo")
     private SimpleDataSet dataSet = new SimpleDataSet(200);
+
     private String uri = "dataset:foo?initialDelay=0&produceDelay=1";
 
     @Test
@@ -38,13 +39,6 @@ public class DataSetSedaTest extends ContextTestSupport {
         context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
-    }
-
-    @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind("foo", dataSet);
-        return context;
     }
 
     @Override

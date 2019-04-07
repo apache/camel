@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.dataset;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class DataSetTestFileSplitTest extends ContextTestSupport {
+public class DataSetTestFileTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -39,20 +39,18 @@ public class DataSetTestFileSplitTest extends ContextTestSupport {
     @Ignore
     @Test
     public void testFile() throws Exception {
-        template.sendBody("file:target/data/testme", "Hello World\nBye World\nHi World");
+        template.sendBody("file:target/data/testme", "Hello World");
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("dataset-test:file:target/data/testme?noop=true&split=true&timeout=1000");
+                        .to("dataset-test:file:target/data/testme?noop=true&timeout=1500");
             }
         });
         context.start();
 
         template.sendBody("direct:start", "Hello World");
-        template.sendBody("direct:start", "Bye World");
-        template.sendBody("direct:start", "Hi World");
 
         assertMockEndpointsSatisfied();
     }

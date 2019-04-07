@@ -18,13 +18,14 @@ package org.apache.camel.component.dataset;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Assert;
 import org.junit.Test;
 
-public class DataSetEndpointTest extends ContextTestSupport {
+public class DataSetEndpointTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -98,7 +99,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
         context.start();
 
         endpoint.assertIsSatisfied();
-        assertTrue(reported.get());
+        Assert.assertTrue(reported.get());
     }
 
     @Test
@@ -120,7 +121,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
                 exchange.getIn().setBody(body);
             }
         });
-        assertNotNull(ds.getOutputTransformer());
+        Assert.assertNotNull(ds.getOutputTransformer());
 
         final DataSetEndpoint endpoint = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), ds);
         endpoint.setInitialDelay(0);

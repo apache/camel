@@ -15,19 +15,20 @@
  * limitations under the License.
  */
 package org.apache.camel.component.dataset;
-import java.util.LinkedList;
-import java.util.List;
 
-import javax.naming.Context;
-
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ListDataSetConsumerTest extends ContextTestSupport {
-    protected ListDataSet dataSet;
+public class FileDataSetConsumerWithSplitTest extends CamelTestSupport {
+    @BindToRegistry("foo")
+    protected FileDataSet dataSet;
+
+    final String testDataFileName = "src/test/data/file-dataset-test.txt";
+    final int testDataFileRecordCount = 10;
 
     final String resultUri = "mock://result";
     final String dataSetName = "foo";
@@ -44,7 +45,7 @@ public class ListDataSetConsumerTest extends ContextTestSupport {
     @Test
     public void testDefaultListDataSetWithSizeGreaterThanListSize() throws Exception {
         MockEndpoint result = getMockEndpoint(resultUri);
-        dataSet.setSize(10);
+        dataSet.setSize(20);
         result.expectedMinimumMessageCount((int) dataSet.getSize());
 
         result.assertIsSatisfied();
@@ -53,18 +54,9 @@ public class ListDataSetConsumerTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        List<Object> bodies = new LinkedList<>();
-        bodies.add("<hello>world!</hello>");
-        dataSet = new ListDataSet(bodies);
-
+        dataSet = new FileDataSet(testDataFileName, "\n");
+        assertEquals("Unexpected DataSet size", testDataFileRecordCount, dataSet.getSize());
         super.setUp();
-    }
-
-    @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind(dataSetName, dataSet);
-        return context;
     }
 
     @Override
