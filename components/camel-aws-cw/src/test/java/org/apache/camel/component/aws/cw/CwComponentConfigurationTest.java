@@ -34,8 +34,8 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithAllOptions() throws Exception {
-    	AmazonCloudWatchClient cloudWatchClient = mock(AmazonCloudWatchClient.class);
-    	context.getRegistry().bind("amazonCwClient", cloudWatchClient);
+        AmazonCloudWatchClient cloudWatchClient = mock(AmazonCloudWatchClient.class);
+        context.getRegistry().bind("amazonCwClient", cloudWatchClient);
         CwComponent component = new CwComponent(context);
         CwEndpoint endpoint = (CwEndpoint) component.createEndpoint("aws-cw://camel.apache.org/test?amazonCwClient=#amazonCwClient&name=testMetric&value=2&unit=Count&timestamp=#now");
 
