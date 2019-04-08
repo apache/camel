@@ -106,7 +106,7 @@ public final class UnsafeUriCharactersEncoder {
         }
 
         // First check whether we actually need to encode
-        char chars[] = s.toCharArray();
+        char[] chars = s.toCharArray();
         for (int i = 0;;) {
             // just deal with the ascii character
             if (chars[i] > 0 && chars[i] < 128) {
