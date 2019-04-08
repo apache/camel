@@ -16,9 +16,8 @@
  */
 package org.apache.camel.model.dataformat;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.spi.Metadata;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,8 +25,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.Metadata;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * To configure data formats
@@ -59,6 +59,7 @@ public class DataFormatsDefinition {
         @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
         @XmlElement(required = false, name = "jibx", type = JibxDataFormat.class),
         @XmlElement(required = false, name = "json", type = JsonDataFormat.class),
+        @XmlElement(required = false, name = "jsonApi", type = JsonApiDataFormat.class),
         @XmlElement(required = false, name = "lzf", type = LZFDataFormat.class),
         @XmlElement(required = false, name = "mimeMultipart", type = MimeMultipartDataFormat.class),
         @XmlElement(required = false, name = "protobuf", type = ProtobufDataFormat.class),

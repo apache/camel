@@ -23,7 +23,6 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.logging.log4j.message.Message;
 
 import java.io.InputStream;
 import java.io.OutputStream;

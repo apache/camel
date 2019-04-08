@@ -18,33 +18,17 @@ package org.apache.camel.component.jsonapi;
 
 import com.github.jasminb.jsonapi.exceptions.DocumentSerializationException;
 import com.github.jasminb.jsonapi.exceptions.UnregisteredTypeException;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 public class JsonApiDataFormatTest extends CamelTestSupport {
-
-    private CamelContext context;
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        context = new DefaultCamelContext();
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        context.stop();
-    }
 
     @Test
     public void test_jsonApi_marshal() throws Exception {
@@ -109,6 +93,66 @@ public class JsonApiDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = new DefaultExchange(context);
         jsonApiDataFormat.unmarshal(exchange, new ByteArrayInputStream(jsonApiInput.getBytes()));
+    }
+
+    @Test
+    public void test_camel_jsonApi_marshal() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:resultMarshal");
+        mock.expectedMessageCount(1);
+
+        MyAuthor author = new MyAuthor();
+        author.setAuthorId("1");
+        author.setFirstName("Claus");
+        author.setLastName("Ibsen");
+
+        Exchange exchange = this.createExchangeWithBody(author);
+        Exchange outExchange = template.send("direct:startMarshal", exchange);
+        String outBody = outExchange.getIn().getBody(String.class);
+        assertNotNull(outBody);
+        assertEquals(this.generateAuthorString(), outBody);
+
+        assertMockEndpointsSatisfied();
+
+    }
+
+    @Test
+    public void test_camel_jsonApi_unmarshal() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:resultUnmarshal");
+        mock.expectedMessageCount(1);
+
+        Exchange exchange = this.createExchangeWithBody(this.generateAuthorString());
+        Exchange outExchange = template.send("direct:startUnmarshal", exchange);
+
+        assertMockEndpointsSatisfied();
+
+        MyAuthor author = outExchange.getIn().getBody(MyAuthor.class);
+        assertNotNull(author);
+        assertEquals("1", author.getAuthorId());
+        assertEquals("Claus", author.getFirstName());
+        assertEquals("Ibsen", author.getLastName());
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                Class<?>[] formats = { MyAuthor.class };
+                JsonApiDataFormat jsonApi = new JsonApiDataFormat(MyAuthor.class, formats);
+
+                from("direct:startMarshal")
+                    .marshal(jsonApi)
+                    .to("mock:resultMarshal");
+
+                from("direct:startUnmarshal")
+                    .unmarshal(jsonApi)
+                    .to("mock:resultUnmarshal");
+            }
+        };
+    }
+
+    private String generateAuthorString() {
+        return "{\"data\":{\"type\":\"author\",\"id\":\"1\",\"attributes\":{\"firstName\":\"Claus\",\"lastName\":\"Ibsen\"}}}";
     }
 
     private String generateTestDataAsString() {
