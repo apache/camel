@@ -32,11 +32,10 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
     @BindToRegistry("now")
     private static final Date NOW = new Date();
 
-    @BindToRegistry("amazonCwClient")
-    private AmazonCloudWatchClient cloudWatchClient = mock(AmazonCloudWatchClient.class);
-
     @Test
     public void createEndpointWithAllOptions() throws Exception {
+    	AmazonCloudWatchClient cloudWatchClient = mock(AmazonCloudWatchClient.class);
+    	context.getRegistry().bind("amazonCwClient", cloudWatchClient);
         CwComponent component = new CwComponent(context);
         CwEndpoint endpoint = (CwEndpoint) component.createEndpoint("aws-cw://camel.apache.org/test?amazonCwClient=#amazonCwClient&name=testMetric&value=2&unit=Count&timestamp=#now");
 
@@ -59,10 +58,10 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
         component.createEndpoint("aws-cw://camel.apache.org/test?accessKey=xxx");
     }
     
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
         CwComponent component = new CwComponent(context);
-        component.createEndpoint("aws-cw://camel.apache.org/test?amazonCwClient=#amazonCwClient&accessKey=xxx");
+        component.createEndpoint("aws-cw://camel.apache.org/test?accessKey=xxx");
     }
     
     @Test
