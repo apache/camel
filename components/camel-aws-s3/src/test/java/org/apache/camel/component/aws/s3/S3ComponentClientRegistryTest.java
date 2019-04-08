@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.aws.s3;
 
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
