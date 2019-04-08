@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * This Aggregation Strategy is suitable for usage in aggregate, split, multicast, enrich and recipient list EIPs.
  */
-public class FlexibleAggregationStrategy<E extends Object> implements AggregationStrategy {
+public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(FlexibleAggregationStrategy.class);
 
