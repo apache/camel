@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.RestRegistryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,11 +48,11 @@ public class RestRegistryFactoryResolver {
 
         if (type != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Found RestRegistryFactory: {} via: {}{}", type.getName(), factoryFinder.getResourcePath(), "headers-map-factory");
+                LOG.debug("Found RestRegistryFactory: {} via: {}{}", type.getName(), factoryFinder.getResourcePath(), "rest-registry-factory");
             }
             if (RestRegistryFactory.class.isAssignableFrom(type)) {
                 RestRegistryFactory answer = (RestRegistryFactory) context.getInjector().newInstance(type);
-                LOG.info("Detected and using custom RestRegistryFactory: {}", answer);
+                LOG.info("Detected and using RestRegistryFactory: {}", answer);
                 return answer;
             } else {
                 throw new IllegalArgumentException("Type is not a RestRegistryFactory implementation. Found: " + type.getName());
