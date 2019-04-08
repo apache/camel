@@ -500,6 +500,11 @@ This operation will list the objects in the mycamelbucket bucket
 
 This operation will return an S3Object instance related to the camelKey object in mycamelbucket bucket.
 
+### Automatic detection of AmazonS3 client in registry
+
+From Camel 3.0.0-M3 the component will be able to detect the presence of an AmazonS3 bean into the registry.
+If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter, like the example above.
+This may be really useful for smarter configuration of the endpoint.
 
 ### Dependencies
 
