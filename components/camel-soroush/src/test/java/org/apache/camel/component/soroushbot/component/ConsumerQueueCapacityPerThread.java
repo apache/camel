@@ -20,7 +20,7 @@ package org.apache.camel.component.soroushbot.component;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.soroushbot.models.ConnectionType;
+import org.apache.camel.component.soroushbot.models.Endpoint;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ public class ConsumerQueueCapacityPerThread extends SoroushBotTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("soroush:" + ConnectionType.getMessage + "/150?queueCapacityPerThread=1&concurrentConsumers=2")
+                from("soroush:" + Endpoint.getMessage + "/150?queueCapacityPerThread=1&concurrentConsumers=2")
                         .process(exchange -> {
                             Thread.sleep(1000);
                         }).to("mock:ConsumerQueueCapacityPerThread");

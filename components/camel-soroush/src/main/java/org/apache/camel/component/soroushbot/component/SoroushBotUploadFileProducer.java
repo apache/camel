@@ -18,12 +18,12 @@
 package org.apache.camel.component.soroushbot.component;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.soroushbot.models.ConnectionType;
+import org.apache.camel.component.soroushbot.models.Endpoint;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.support.DefaultProducer;
 
 /**
- * this Producer is responsible for URIs of type {@link ConnectionType#uploadFile}
+ * this Producer is responsible for URIs of type {@link Endpoint#uploadFile}
  * to upload messages file(thumbnail) to SoroushAPI.
  * it will be instantiated for URIs like "soroush:uploadFile/[token]
  */

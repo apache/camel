@@ -23,7 +23,7 @@ import java.io.FileNotFoundException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.soroushbot.models.ConnectionType;
+import org.apache.camel.component.soroushbot.models.Endpoint;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.junit.Assert;
@@ -36,7 +36,7 @@ public class HandleExceptionWithErrorHandler extends SoroushBotTestSupport {
             @Override
             public void configure() {
                 onException(FileNotFoundException.class).to("mock:exceptionRoute");
-                from("soroush://" + ConnectionType.getMessage + "/5?concurrentConsumers=2")
+                from("soroush://" + Endpoint.getMessage + "/5?concurrentConsumers=2")
                         .process(exchange -> {
                                     SoroushMessage body = exchange.getIn().getBody(SoroushMessage.class);
                                     File file = new File("badFile-ShouldNotExits");
@@ -45,7 +45,7 @@ public class HandleExceptionWithErrorHandler extends SoroushBotTestSupport {
                                     body.setTo(body.getFrom());
                                 }
                         )
-                        .to("soroush://" + ConnectionType.sendMessage + "/token")
+                        .to("soroush://" + Endpoint.sendMessage + "/token")
                         .to("mock:mainRoute");
 
             }

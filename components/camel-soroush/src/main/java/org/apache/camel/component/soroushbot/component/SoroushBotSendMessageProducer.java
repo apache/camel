@@ -26,7 +26,7 @@ import javax.ws.rs.core.Response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.soroushbot.models.ConnectionType;
+import org.apache.camel.component.soroushbot.models.Endpoint;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.service.SoroushService;
 import org.apache.camel.component.soroushbot.utils.MaximumConnectionRetryReachedException;
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.soroushbot.utils.StringUtils.ordinal;
 
 /**
- * this Producer is responsible for URIs of type {@link ConnectionType#sendMessage}
+ * this Producer is responsible for URIs of type {@link Endpoint#sendMessage}
  * to send message to SoroushAPI.
  * it will be instantiated for URIs like "soroush:sendMessage/[token]
  */

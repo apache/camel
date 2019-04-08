@@ -29,7 +29,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.camel.component.soroushbot.IOUtils;
-import org.apache.camel.component.soroushbot.models.ConnectionType;
+import org.apache.camel.component.soroushbot.models.Endpoint;
 import org.apache.camel.component.soroushbot.models.MinorType;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.models.response.UploadFileResponse;
@@ -69,7 +69,7 @@ public class SoroushServiceTest {
     public void connectToGetMessageEndPoint() {
         Client client = ClientBuilder.newBuilder().register(SseFeature.class).build();
         client.property(ClientProperties.CONNECT_TIMEOUT, 2000);
-        WebTarget target = client.target(soroushService.generateUrl(authorizationToken, ConnectionType.getMessage, null));
+        WebTarget target = client.target(soroushService.generateUrl(authorizationToken, Endpoint.getMessage, null));
         EventInput eventInput = target.request().get(EventInput.class);
         eventInput.setChunkType(MediaType.SERVER_SENT_EVENTS);
         Assert.assertFalse(eventInput.isClosed());
@@ -79,7 +79,7 @@ public class SoroushServiceTest {
     public void canNotReadMessageDueToWrongAuthorizationToken() {
         Client client = ClientBuilder.newBuilder().register(SseFeature.class).build();
         client.property(ClientProperties.CONNECT_TIMEOUT, 2000);
-        WebTarget target = client.target(soroushService.generateUrl("bad_string" + authorizationToken, ConnectionType.getMessage, null));
+        WebTarget target = client.target(soroushService.generateUrl("bad_string" + authorizationToken, Endpoint.getMessage, null));
         EventInput eventInput = target.request().get(EventInput.class);
         eventInput.setChunkType(MediaType.SERVER_SENT_EVENTS);
         Assert.assertFalse(eventInput.isClosed());

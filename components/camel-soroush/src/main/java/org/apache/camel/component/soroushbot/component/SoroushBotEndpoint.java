@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Entity;
@@ -31,7 +32,7 @@ import javax.ws.rs.core.Response;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.soroushbot.models.ConnectionType;
+import org.apache.camel.component.soroushbot.models.Endpoint;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.models.response.UploadFileResponse;
 import org.apache.camel.component.soroushbot.service.SoroushService;
@@ -51,14 +52,14 @@ import org.slf4j.LoggerFactory;
 /**
  * this class represents Soroush Endpoint, it is also a bean containing the configuration of the Endpoint
  */
-@UriEndpoint(firstVersion = "3.0.0-SNAPSHOT", scheme = "soroush", title = "SoroushBot", syntax = "soroush:<connectionType>[/authorizationToken][?options]", label = "chat")
+@UriEndpoint(firstVersion = "3.0.0-SNAPSHOT", scheme = "soroush", title = "SoroushBot", syntax = "soroush:<endpoint>[/authorizationToken][?options]", label = "chat")
 public class SoroushBotEndpoint extends DefaultEndpoint {
     private static Logger log = LoggerFactory.getLogger(SoroushBotEndpoint.class);
 
-    @UriPath(name = "connectionType", enums = "ConnectionType", javaType = "ConnectionType",
+    @UriPath(name = "endpoint", enums = "Endpoint", javaType = "Endpoint",
             description = "The endpoint type. it support `getMessage` as consumer and `sendMessage`,`uploadFile`,`downloadFile` as producer")
     @Metadata(required = true)
-    ConnectionType type;
+    Endpoint type;
 
     @UriPath(label = "global,security", description = "The authorization token for using"
             + " the bot (ask the @mrbot) e.g. 9yDv09nqKvP9CkBGKNmKQHir1dj2qLpN-YWa8hP7Rm3LK\"\n"
@@ -115,26 +116,17 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
 
 
     /**
-     * @return supported connection type as string to display in error.
+     * @return supported Soroush endpoint as string to display in error.
      */
-    private String getSupportedConnectionTypeAsString() {
-        StringBuilder s = new StringBuilder("[");
-        List<ConnectionType> types = getSupportedConnectionType();
-        for (int i = 0; i < types.size(); i++) {
-            if (i != 0) {
-                s.append(", ");
-            }
-            s.append(types.get(i).value());
-        }
-        s.append("]");
-        return s.toString();
+    private String getSupportedEndpointAsString() {
+        return "[" + String.join(", ", getSupportedEndpoint().stream().map(Endpoint::value).collect(Collectors.toList())) + "]";
     }
 
     /**
-     * @return supported connection type which is all connection supported by SoroushAPI
+     * @return supported Soroush endpoint by this component which is all Soroush Bot API
      */
-    private List<ConnectionType> getSupportedConnectionType() {
-        return Arrays.asList(ConnectionType.values());
+    private List<Endpoint> getSupportedEndpoint() {
+        return Arrays.asList(Endpoint.values());
     }
 
     /**
@@ -147,7 +139,7 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
     void updatePathConfiguration(String remaining, String defaultAuthorizationToken, String uri) {
         List<String> pathParts;
         if (remaining == null) {
-            throw new IllegalArgumentException("Unexpected URI format. Expected soroush://" + getSupportedConnectionTypeAsString() + "[/<authorizationToken>][?options]', found " + uri);
+            throw new IllegalArgumentException("Unexpected URI format. Expected soroush://" + getSupportedEndpointAsString() + "[/<authorizationToken>][?options]', found " + uri);
         }
         pathParts = Arrays.asList(remaining.split("/"));
         for (int i = pathParts.size() - 1; i >= 0; i--) {
@@ -157,15 +149,15 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
         }
 
         if (pathParts.size() > 2 || pathParts.size() == 0) {
-            throw new IllegalArgumentException("Unexpected URI format. Expected soroush://" + getSupportedConnectionTypeAsString() + "[/<authorizationToken>][?options]', found " + uri);
+            throw new IllegalArgumentException("Unexpected URI format. Expected soroush://" + getSupportedEndpointAsString() + "[/<authorizationToken>][?options]', found " + uri);
         }
-        for (ConnectionType supported : getSupportedConnectionType()) {
+        for (Endpoint supported : getSupportedEndpoint()) {
             if (supported.value().equals(pathParts.get(0))) {
                 type = supported;
             }
         }
         if (type == null) {
-            throw new IllegalArgumentException("Unexpected URI format. Expected soroush://" + getSupportedConnectionTypeAsString() + "[/<authorizationToken>][?options]', found " + uri);
+            throw new IllegalArgumentException("Unexpected URI format. Expected soroush://" + getSupportedEndpointAsString() + "[/<authorizationToken>][?options]', found " + uri);
         }
         if (this.authorizationToken == null) {
             String authorizationToken = defaultAuthorizationToken;
@@ -194,22 +186,22 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * create producer based on uri {@link ConnectionType}
+     * create producer based on uri {@link Endpoint}
      *
      * @return created producer
      */
     @Override
     public Producer createProducer() {
-        if (type == ConnectionType.sendMessage) {
+        if (type == Endpoint.sendMessage) {
             return new SoroushBotSendMessageProducer(this);
         }
-        if (type == ConnectionType.uploadFile) {
+        if (type == Endpoint.uploadFile) {
             return new SoroushBotUploadFileProducer(this);
         }
-        if (type == ConnectionType.downloadFile) {
+        if (type == Endpoint.downloadFile) {
             return new SoroushBotDownloadFileProducer(this);
         } else {
-            throw new IllegalArgumentException("only [" + ConnectionType.sendMessage + ", " + ConnectionType.downloadFile + ", " + ConnectionType.uploadFile
+            throw new IllegalArgumentException("only [" + Endpoint.sendMessage + ", " + Endpoint.downloadFile + ", " + Endpoint.uploadFile
                     + "] supported for producer(from) and process");
         }
     }
@@ -230,8 +222,8 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         Consumer consumer;
-        if (type != ConnectionType.getMessage) {
-            throw new IllegalArgumentException("only " + ConnectionType.getMessage + " support for consumer(from)");
+        if (type != Endpoint.getMessage) {
+            throw new IllegalArgumentException("only " + Endpoint.getMessage + " support for consumer(from)");
         }
         if (concurrentConsumers < 2) {
             consumer = new SoroushBotSingleThreadConsumer(this, processor);
@@ -293,11 +285,11 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
         return sendMessageTarget;
     }
 
-    public ConnectionType getType() {
+    public Endpoint getType() {
         return type;
     }
 
-    public void setType(ConnectionType type) {
+    public void setType(Endpoint type) {
         this.type = type;
     }
 

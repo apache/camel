@@ -25,7 +25,7 @@ import javax.ws.rs.core.MediaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.soroushbot.models.ConnectionType;
+import org.apache.camel.component.soroushbot.models.Endpoint;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.service.SoroushService;
 import org.apache.camel.support.DefaultConsumer;
@@ -91,7 +91,7 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer {
     private void run() {
         Client client = ClientBuilder.newBuilder().register(SseFeature.class).build();
         client.property(ClientProperties.CONNECT_TIMEOUT, endpoint.connectionTimeout);
-        WebTarget target = client.target(SoroushService.get().generateUrl(endpoint.authorizationToken, ConnectionType.getMessage, null));
+        WebTarget target = client.target(SoroushService.get().generateUrl(endpoint.authorizationToken, Endpoint.getMessage, null));
         EventInput event = null;
         int retry = 0;
         //this while handle connectionRetry if connection failed or get closed.

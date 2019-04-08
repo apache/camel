@@ -17,7 +17,7 @@
 
 package org.apache.camel.component.soroushbot.models;
 
-public enum ConnectionType {
+public enum Endpoint {
     sendMessage("sendMessage"),
     getMessage("getMessage"),
     uploadFile("uploadFile"),
@@ -25,7 +25,7 @@ public enum ConnectionType {
 
     private final String value;
 
-    ConnectionType(String value) {
+    Endpoint(String value) {
         this.value = value;
     }
 

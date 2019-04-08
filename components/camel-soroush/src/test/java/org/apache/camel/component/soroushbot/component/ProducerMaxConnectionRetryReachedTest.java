@@ -18,12 +18,11 @@
 package org.apache.camel.component.soroushbot.component;
 
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.soroushbot.models.ConnectionType;
+import org.apache.camel.component.soroushbot.models.Endpoint;
 import org.apache.camel.component.soroushbot.models.MinorType;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
@@ -34,7 +33,7 @@ import org.junit.Test;
 
 public class ProducerMaxConnectionRetryReachedTest extends SoroushBotTestSupport {
     @EndpointInject(uri = "direct:soroush")
-    Endpoint endpoint;
+    org.apache.camel.Endpoint endpoint;
 
     @Override
     @Before
@@ -48,7 +47,7 @@ public class ProducerMaxConnectionRetryReachedTest extends SoroushBotTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:soroush").to("soroush://" + ConnectionType.sendMessage + "/retry 3?maxConnectionRetry=2")
+                from("direct:soroush").to("soroush://" + Endpoint.sendMessage + "/retry 3?maxConnectionRetry=2")
                         .to("mock:soroush");
             }
         };

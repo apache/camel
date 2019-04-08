@@ -24,7 +24,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
-import org.apache.camel.component.soroushbot.models.ConnectionType;
+import org.apache.camel.component.soroushbot.models.Endpoint;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.models.response.SoroushResponse;
 import org.apache.camel.component.soroushbot.utils.SoroushException;
@@ -63,14 +63,14 @@ public final class SoroushService {
     }
 
     /**
-     * create fully qualified URL, given the token connection type and fileId if needed.
+     * create fully qualified URL, given the token, endpoint and fileId if needed.
      *
      * @param token
      * @param type
      * @param fileId
      * @return
      */
-    public String generateUrl(@NotNull String token, @NotNull ConnectionType type, String fileId) {
+    public String generateUrl(@NotNull String token, @NotNull Endpoint type, String fileId) {
         return getCurrentUrl() + "/" + token + "/" + type.value() + (fileId != null ? "/" + fileId : "");
     }
 
@@ -92,7 +92,7 @@ public final class SoroushService {
         return ClientBuilder.newBuilder()
                 .property(ClientProperties.CONNECT_TIMEOUT, timeOut)
                 .register(MultiPartFeature.class).build()
-                .target(generateUrl(token, ConnectionType.uploadFile, null));
+                .target(generateUrl(token, Endpoint.uploadFile, null));
     }
 
     /**
@@ -106,7 +106,7 @@ public final class SoroushService {
     public WebTarget createSendMessageTarget(String token, Integer timeOut) {
         return ClientBuilder.newBuilder()
                 .property(ClientProperties.CONNECT_TIMEOUT, timeOut).build()
-                .target(generateUrl(token, ConnectionType.sendMessage, null));
+                .target(generateUrl(token, Endpoint.sendMessage, null));
     }
 
     /**
@@ -121,7 +121,7 @@ public final class SoroushService {
     public WebTarget createDownloadFileTarget(String token, String fileId, Integer timeOut) {
         return ClientBuilder.newBuilder()
                 .property(ClientProperties.CONNECT_TIMEOUT, timeOut).build()
-                .target(generateUrl(token, ConnectionType.downloadFile, fileId));
+                .target(generateUrl(token, Endpoint.downloadFile, fileId));
     }
 
     /**

@@ -21,13 +21,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.soroushbot.IOUtils;
-import org.apache.camel.component.soroushbot.models.ConnectionType;
+import org.apache.camel.component.soroushbot.models.Endpoint;
 import org.apache.camel.component.soroushbot.models.MinorType;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
@@ -39,7 +38,7 @@ import org.junit.Test;
 public class ProducerDownloadFile extends SoroushBotTestSupport {
 
     @EndpointInject(uri = "direct:soroush")
-    Endpoint endpoint;
+    org.apache.camel.Endpoint endpoint;
 
 
     @Override
@@ -54,13 +53,13 @@ public class ProducerDownloadFile extends SoroushBotTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:soroush").to("soroush://" + ConnectionType.sendMessage + "/token")
+                from("direct:soroush").to("soroush://" + Endpoint.sendMessage + "/token")
                         .process(exchange -> {
                             SoroushMessage body = exchange.getIn().getBody(SoroushMessage.class);
                             body.setFile((InputStream) null);
                             body.setThumbnail((InputStream) null);
                         })
-                        .to("soroush://" + ConnectionType.downloadFile + "/token")
+                        .to("soroush://" + Endpoint.downloadFile + "/token")
                         .to("mock:soroush");
             }
         };

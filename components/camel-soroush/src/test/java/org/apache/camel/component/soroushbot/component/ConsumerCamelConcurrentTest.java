@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.soroushbot.models.ConnectionType;
+import org.apache.camel.component.soroushbot.models.Endpoint;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.logging.log4j.LogManager;
@@ -38,7 +38,7 @@ public class ConsumerCamelConcurrentTest extends SoroushBotTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("soroush://" + ConnectionType.getMessage + "/10").threads().poolSize(4).process(exchange -> {
+                from("soroush://" + Endpoint.getMessage + "/10").threads().poolSize(4).process(exchange -> {
                     SoroushMessage message = exchange.getIn().getBody(SoroushMessage.class);
                     String from = message.getFrom();
                     //message from u0 (0,4,8) should be processed at the end
