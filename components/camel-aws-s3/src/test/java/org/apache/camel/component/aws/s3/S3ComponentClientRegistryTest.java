@@ -16,20 +16,17 @@
  */
 package org.apache.camel.component.aws.s3;
 
-import com.amazonaws.regions.Regions;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class S3ComponentClientRegistryTest extends CamelTestSupport {
 
-    @BindToRegistry("amazonS3Client")
-    AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
-
     @Test
     public void createEndpointWithMinimalS3ClientConfiguration() throws Exception {
 
+        AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
+        context.getRegistry().bind("amazonS3Client", clientMock);
         S3Component component = new S3Component(context);
         S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket");
 
@@ -41,5 +38,12 @@ public class S3ComponentClientRegistryTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getPolicy());
         assertNull(endpoint.getConfiguration().getPrefix());
         assertTrue(endpoint.getConfiguration().isIncludeBody());
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void createEndpointWithMinimalS3ClientMisconfiguration() throws Exception {
+
+        S3Component component = new S3Component(context);
+        S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket");
     }
 }
