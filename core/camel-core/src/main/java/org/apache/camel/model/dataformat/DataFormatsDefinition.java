@@ -16,8 +16,9 @@
  */
 package org.apache.camel.model.dataformat;
 
-import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.Metadata;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,9 +26,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.spi.Metadata;
 
 /**
  * To configure data formats
