@@ -45,7 +45,8 @@ public class SoroushBotMultiThreadConsumer extends SoroushBotAbstractConsumer {
                     if (endpoint.isSynchronous()) {
                         getProcessor().process(exchange);
                     } else {
-                        getAsyncProcessor().process(exchange);
+                        getAsyncProcessor().process(exchange, e -> {
+                        });
                     }
                 } catch (Exception ex) {
                     log.error("internal error occurs", ex);

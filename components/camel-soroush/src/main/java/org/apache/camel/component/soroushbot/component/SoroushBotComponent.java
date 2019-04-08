@@ -25,12 +25,12 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
- *  The Soroush Component</a> provides access to Soroush IM App.
+ *  The Soroush Component provides access to Soroush IM App.
  */
 @Component("soroush")
 public class SoroushBotComponent extends DefaultComponent {
 
-    @Metadata(label = "security", description = "The default Soroush authorization token to be used when the information is not provided in the endpoints.")
+    @Metadata(label = "global", description = "The default Soroush authorization token to be used when the information is not provided in the endpoints.")
     private String authorizationToken;
 
     @Override

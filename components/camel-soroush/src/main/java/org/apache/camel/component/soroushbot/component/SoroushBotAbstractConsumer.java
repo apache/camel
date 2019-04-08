@@ -68,12 +68,7 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer {
     @Override
     public void doStart() {
 //     create new Thread for listening to Soroush SSE Server so that it release the main camel thread.
-        Thread thread = new Thread(//this while handle connectionRetry if connection failed or get closed.
-//if read the message successfully then we reset the retry count to 0.
-// if autoDownload is true, download the resource if provided in the message
-//let each subclass decide how to start processing of each exchange
-//todo how to handle long connection failure
-                this::run);
+        Thread thread = new Thread(this::run);
         thread.start();
         thread.setName("Soroush Receiver");
     }

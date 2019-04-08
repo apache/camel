@@ -36,7 +36,8 @@ public class SoroushBotSingleThreadConsumer extends SoroushBotAbstractConsumer {
             if (endpoint.isSynchronous()) {
                 getProcessor().process(exchange);
             } else {
-                getAsyncProcessor().process(exchange);
+                getAsyncProcessor().process(exchange, e -> {
+                });
             }
         } catch (Exception e) {
             if (exchange.getException() != null) {

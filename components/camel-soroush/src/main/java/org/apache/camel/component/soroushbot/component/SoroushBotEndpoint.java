@@ -64,40 +64,39 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
             + " the bot (ask the @mrbot) e.g. 9yDv09nqKvP9CkBGKNmKQHir1dj2qLpN-YWa8hP7Rm3LK\"\n"
             + "            + \"3MqQXYdXZIA5W4e0agPiUb-3eUKX69ozUNdY9yZBMlJiwnlksslkjWjsxcARo5cYtDnKTElig0xa\"\n"
             + "            + \"e1Cjt1Bexz2cw-t6cJ7t1f ")
-    @Metadata(required = true)
     @UriParam(label = "global,security", description = "The authorization token for using"
             + " the bot. if uri path does not contain authorization token, this token will be used.", secret = true)
     String authorizationToken;
-    @UriParam(label = "global", description = "connection timeout in ms when connecting to soroush API", defaultValue = "30000")
+    @UriParam(label = "global", description = "Connection timeout in ms when connecting to soroush API", defaultValue = "30000")
     Integer connectionTimeout = 30000;
-    @UriParam(label = "global", description = "maximum connection retry when fail to connect to soroush API, if the quota is reached,"
-            + " `MaximumConnectionRetryReachedException` is thrown for that message. ", defaultValue = "4")
+    @UriParam(label = "global", description = "Maximum connection retry when fail to connect to soroush API, if the quota is reached,"
+            + " `MaximumConnectionRetryReachedException` is thrown for that message.", defaultValue = "4")
     Integer maxConnectionRetry = 4;
-    @UriParam(label = "getMessage,consumer", description = "number of thread created by consumer in the route."
-            + " if you use this method for parallelism, it is guaranteed that message from same user always execute in the same"
+    @UriParam(label = "getMessage,consumer", description = "Number of Thread created by consumer in the route."
+            + " if you use this method for parallelism, it is guaranteed that messages from same user always execute in the same"
             + " thread and therefore messages from the same user are processed sequentially", defaultValue = "1",
             defaultValueNote = "using SoroushBotSingleThreadConsumer")
     Integer concurrentConsumers = 1;
-    @UriParam(label = "getMessage,consumer", description = "maximum capacity of each queue when `concurrentConsumers` is greater than 1."
-            + " if a queue become full, every message that should goes to that queue will be dropped. if `bridgeErrorHandler`"
-            + " sets to `true`, an exchange with `CongestionException` is directed to ErrorHandler. you can then processed the"
+    @UriParam(label = "getMessage,consumer", description = "Maximum capacity of each queue when `concurrentConsumers` is greater than 1."
+            + " if a queue become full, every message that should go to that queue will be dropped. If `bridgeErrorHandler`"
+            + " is set to `true`, an exchange with `CongestionException` is directed to ErrorHandler. You can then processed the"
             + " error using `onException(CongestionException.class)` route", defaultValue = "0", defaultValueNote = "infinite capacity")
     Integer queueCapacityPerThread = 0;
-    @UriParam(label = "sendMessage", description = "automatically upload attachments when message goes to the sendMessage endpoint "
+    @UriParam(label = "sendMessage", description = "Automatically upload attachments when a message goes to the sendMessage endpoint "
             + "and the `SoroushMessage.file` (`SoroushMessage.thumbnail`) has been set and `SoroushMessage.fileUrl`(`SoroushMessage.thumbnailUrl`) is null",
             defaultValue = "true")
     Boolean autoUploadFile = true;
-    @UriParam(label = "sendMessage,uploadFile", description = "force to  upload `SoroushMessage.file`(`SoroushMessage.thumbnail`) if exists, even if the "
+    @UriParam(label = "sendMessage,uploadFile", description = "Force to  upload `SoroushMessage.file`(`SoroushMessage.thumbnail`) if exists, even if the "
             + "`SoroushMessage.fileUrl`(`SoroushMessage.thumbnailUrl`) is not null in the message", defaultValue = "false")
     Boolean forceUpload = false;
-    @UriParam(label = "getMessage,downloadFile", description = "if true, when downloading attached file, thumbnail will be downloaded if provided in the message."
-            + " otherwise only the file will be downloaded ", defaultValue = "true")
+    @UriParam(label = "getMessage,downloadFile", description = "If true, when downloading an attached file, thumbnail will be downloaded if provided in the message."
+            + " Otherwise, only the file will be downloaded ", defaultValue = "true")
     Boolean downloadThumbnail = true;
-    @UriParam(label = "downloadFile", description = "force to download `SoroushMessage.fileUrl`(`SoroushMessage.thumbnailUrl`)"
+    @UriParam(label = "downloadFile", description = "Force to download `SoroushMessage.fileUrl`(`SoroushMessage.thumbnailUrl`)"
             + " if exists, even if the `SoroushMessage.file`(`SoroushMessage.thumbnail`) was not null in that message",
             defaultValue = "false")
     Boolean forceDownload = false;
-    @UriParam(label = "getMessage", description = "automatically download `SoroushMessage.fileUrl` and `SoroushMessage.thumbnailUrl` "
+    @UriParam(label = "getMessage", description = "Automatically download `SoroushMessage.fileUrl` and `SoroushMessage.thumbnailUrl` "
             + "if exists for the message and store them in `SoroushMessage.file` and `SoroushMessage.thumbnail` field ",
             defaultValue = "false")
     Boolean autoDownload = false;
@@ -407,7 +406,7 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
             } catch (IOException | ProcessingException ex) {
                 //if maximum connection retry reached, abort sending the request.
                 if (count == maxConnectionRetry) {
-                    throw new MaximumConnectionRetryReachedException("uploading " + fileType + " for message " + message + " failed. maximum retry limit reached!"
+                    throw new MaximumConnectionRetryReachedException("uploading " + fileType + " for message " + message + " failed. Maximum retry limit reached!"
                             + " aborting upload file and send message", ex, message);
                 }
                 if (log.isWarnEnabled()) {
@@ -417,7 +416,7 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
         }
         log.error("should never reach this line of code because maxConnectionRetry is greater than -1 and at least the above for must execute single time and");
         //for backup
-        throw new MaximumConnectionRetryReachedException("uploading " + fileType + " for message " + message + " failed. maximum retry limit reached! aborting "
+        throw new MaximumConnectionRetryReachedException("uploading " + fileType + " for message " + message + " failed. Maximum retry limit reached! aborting "
                 + "upload file and send message", message);
     }
 
@@ -515,12 +514,12 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
                     throw new MaximumConnectionRetryReachedException("maximum connection retry reached for " + type + ": " + fileUrl, ex, message);
                 }
                 if (log.isWarnEnabled()) {
-                    log.warn("can not download " + type + ": " + fileUrl + " from soroush. response code is", ex);
+                    log.warn("can not download " + type + ": " + fileUrl + " from soroush. Response code is", ex);
                 }
             }
         }
         //should never reach this line
-        log.error("should never reach this line. an exception should have been thrown by catch block for target.request().get");
+        log.error("should never reach this line. An exception should have been thrown by catch block for target.request().get");
         throw new MaximumConnectionRetryReachedException("can not upload " + type + ": " + fileUrl + " response:" + ((response == null) ? null : response.getStatus()), message);
     }
 }
