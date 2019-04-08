@@ -688,7 +688,7 @@ public final class IntrospectionSupport {
             Method[] methods = clazz.getMethods();
             for (Method method : methods) {
                 if (method.getName().equals(name) && isSetter(method, allowBuilderPattern)) {
-                    Class<?> params[] = method.getParameterTypes();
+                    Class<?>[] params = method.getParameterTypes();
                     if (params[0].equals(Object.class)) {
                         objectSetMethod = method;
                     } else {
