@@ -485,7 +485,7 @@ public final class CamelContextHelper {
      */
     public static SortedMap<String, Properties> findComponents(CamelContext camelContext) throws LoadPropertiesException {
         ClassResolver resolver = camelContext.getClassResolver();
-        LOG.debug("Finding all components using class resolver: {} -> {}", resolver);
+        LOG.debug("Finding all components using class resolver: {}", resolver);
         Enumeration<URL> iter = resolver.loadAllResourcesAsURL(COMPONENT_DESCRIPTOR);
         return findComponents(camelContext, iter);
     }
