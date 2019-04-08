@@ -17,11 +17,9 @@
 package org.apache.camel.impl.converter;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.camel.spi.TypeConverterLoader;
 
 /**
  * Default implementation of a type converter registry used for
