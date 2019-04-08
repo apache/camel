@@ -54,7 +54,7 @@ public abstract class TransformerReifier<T> {
 
     public Transformer createTransformer(CamelContext context) throws Exception {
         return doCreateTransformer(context);
-    };
+    }
 
     protected abstract Transformer doCreateTransformer(CamelContext context) throws Exception;
 
