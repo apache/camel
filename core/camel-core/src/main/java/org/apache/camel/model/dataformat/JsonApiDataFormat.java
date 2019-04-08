@@ -21,6 +21,7 @@ import org.apache.camel.spi.Metadata;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Metadata(firstVersion = "3.0.0", label = "dataformat,transformation", title = "jsonApi")
@@ -28,8 +29,30 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonApiDataFormat extends DataFormatDefinition {
 
+    @XmlAttribute
+    private Class<?>[] dataFormatTypes;
+
+    @XmlAttribute
+    private Class<?> mainFormatType;
+
     public JsonApiDataFormat() {
         super("jsonApi");
+    }
+
+    public Class<?>[] getDataFormatTypes() {
+        return dataFormatTypes;
+    }
+
+    public void setDataFormatTypes(Class<?>[] dataFormatTypes) {
+        this.dataFormatTypes = dataFormatTypes;
+    }
+
+    public Class<?> getMainFormatType() {
+        return mainFormatType;
+    }
+
+    public void setMainFormatType(Class<?> mainFormatType) {
+        this.mainFormatType = mainFormatType;
     }
 
 }
