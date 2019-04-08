@@ -17,6 +17,9 @@
 package org.apache.camel.component.aws.s3;
 
 import java.util.Map;
+import java.util.Set;
+
+import com.amazonaws.services.s3.AmazonS3;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -70,6 +73,7 @@ public class S3Component extends DefaultComponent {
         if (ObjectHelper.isEmpty(configuration.getRegion())) {
             setRegion(region);
         }
+        checkAndSetRegistryClient(configuration);
         if (!configuration.isUseIAMCredentials() && configuration.getAmazonS3Client() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("useIAMCredentials is set to false, AmazonS3Client or accessKey and secretKey must be specified");
         }
@@ -122,5 +126,12 @@ public class S3Component extends DefaultComponent {
      */
     public void setRegion(String region) {
         configuration.setRegion(region);
+    }
+
+    private void checkAndSetRegistryClient(S3Configuration configuration) {
+        Set<AmazonS3> clients = getCamelContext().getRegistry().findByType(AmazonS3.class);
+        if (clients.size() == 1) {
+            configuration.setAmazonS3Client(clients.stream().findFirst().get());
+        }
     }
 }
