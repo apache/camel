@@ -469,7 +469,7 @@ public class BeanInfo {
                     // will ignore the expression for parameter evaluation
                 }
             }
-            LOG.trace("Parameter #{} has parameter info: ", i, parameterInfo);
+            LOG.trace("Parameter #{} has parameter info: {}", i, parameterInfo);
         }
 
         // now let's add the method to the repository
