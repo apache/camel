@@ -112,7 +112,7 @@ class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorReifier<T
             // there is a plus sign so we need to split in a safe manner
             List<Pair<Integer>> rawPairs = URISupport.scanRaw(s);
             StringBuilder sb = new StringBuilder();
-            char chars[] = s.toCharArray();
+            char[] chars = s.toCharArray();
             for (int i = 0; i < chars.length; i++) {
                 char ch = chars[i];
                 if (ch != '+' || URISupport.isRaw(i, rawPairs)) {
