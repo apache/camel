@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.apache.camel.Service;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.iq80.leveldb.CompressionType;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.DBFactory;
@@ -30,11 +31,6 @@ import org.iq80.leveldb.Options;
 import org.iq80.leveldb.WriteOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
-
-import static org.fusesource.leveldbjni.JniDBFactory.factory;
-
 
 /**
  * Manages access to a shared <a href="https://github.com/fusesource/leveldbjni/">LevelDB</a> file.
@@ -179,6 +175,7 @@ public class LevelDBFile implements Service {
         try {
             final Path dbFile = Paths.get(this.getFileName());
             Files.createDirectories(dbFile.getParent());
+            DBFactory factory = getFactory();
             db = factory.open(getFile(), options);
         } catch (IOException ioe) {
             throw new RuntimeException("Error opening LevelDB with file " + getFile(), ioe);
@@ -192,7 +189,7 @@ public class LevelDBFile implements Service {
         };
         for (String cn : classNames) {
             try {
-                Class<?> clz = getClass().getClassLoader().loadClass(cn);
+                Class<?> clz = ObjectHelper.loadClass(cn, getClass().getClassLoader());
                 DBFactory factory = (DBFactory) clz.newInstance();
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Using {} implementation of org.iq80.leveldb.DBFactory", factory.getClass().getName());

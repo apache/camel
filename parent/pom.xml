@@ -442,6 +442,7 @@
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.10</leveldb-api-version>
         <leveldb-version>0.10</leveldb-version>
+        <leveldb-guava-version>21.0</leveldb-guava-version>
         <libphonenumber-version>8.10.8</libphonenumber-version>
         <libphonenumber-bundle-version>8.10.8_1</libphonenumber-bundle-version>
         <!-- virtual dependency only used by Eclipse m2e -->
