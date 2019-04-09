@@ -1131,6 +1131,23 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateEndpointHttpPropertyPlaceholder() throws Exception {
+        String uri = "http://api.openweathermap.org/data/2.5/weather?{{property.weatherUri}}";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+        result = catalog.validateEndpointProperties(uri, true);
+        assertTrue(result.isSuccess());
+
+        // use incorrect style using ${ } as placeholder
+        uri = "http://api.openweathermap.org/data/2.5/weather?${property.weatherUri}";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+        result = catalog.validateEndpointProperties(uri, true);
+        assertFalse(result.isSuccess());
+        assertEquals("${property.weatherUri}", result.getUnknown().iterator().next());
+    }
+
+    @Test
     public void testValidateEndpointJmsDefault() throws Exception {
         String uri = "jms:cheese?maxMessagesPerTask=-1";
 

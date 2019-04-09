@@ -18,9 +18,12 @@ package org.apache.camel.component.leveldb;
 
 import java.io.File;
 import java.io.IOException;
-
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.apache.camel.Service;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.iq80.leveldb.CompressionType;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.DBFactory;
@@ -55,20 +58,20 @@ public class LevelDBFile implements Service {
         return db;
     }
 
-    public void setFile(File file) throws IOException {
-        this.file = file;
-    }
-
     public File getFile() {
         return file;
     }
 
-    public void setFileName(String fileName) {
-        this.file = new File(fileName);
+    public void setFile(File file) throws IOException {
+        this.file = file;
     }
 
     public String getFileName() throws IOException {
         return file.getCanonicalPath();
+    }
+
+    public void setFileName(String fileName) {
+        this.file = new File(fileName);
     }
 
     public int getWriteBufferSize() {
@@ -170,7 +173,8 @@ public class LevelDBFile implements Service {
 
         options.createIfMissing(true);
         try {
-            getFile().getParentFile().mkdirs();
+            final Path dbFile = Paths.get(this.getFileName());
+            Files.createDirectories(dbFile.getParent());
             DBFactory factory = getFactory();
             db = factory.open(getFile(), options);
         } catch (IOException ioe) {
@@ -185,7 +189,7 @@ public class LevelDBFile implements Service {
         };
         for (String cn : classNames) {
             try {
-                Class<?> clz = getClass().getClassLoader().loadClass(cn);
+                Class<?> clz = ObjectHelper.loadClass(cn, getClass().getClassLoader());
                 DBFactory factory = (DBFactory) clz.newInstance();
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Using {} implementation of org.iq80.leveldb.DBFactory", factory.getClass().getName());

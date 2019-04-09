@@ -34,16 +34,16 @@ import org.junit.Test;
 public class SqlQueryTest extends BigQueryTestSupport {
     private static final String TABLE_ID = "test_sql_table";
 
-    @EndpointInject(uri = "direct:in")
+    @EndpointInject("direct:in")
     private Endpoint directIn;
 
-    @EndpointInject(uri = "google-bigquery-sql:{{project.id}}: insert into {{bigquery.datasetId}}." + TABLE_ID + "(col1, col2) values (@col1, @col2)")
+    @EndpointInject("google-bigquery-sql:{{project.id}}: insert into {{bigquery.datasetId}}." + TABLE_ID + "(col1, col2) values (@col1, @col2)")
     private Endpoint bigqueryEndpoint;
 
-    @EndpointInject(uri = "mock:sendResult")
+    @EndpointInject("mock:sendResult")
     private MockEndpoint sendResult;
 
-    @Produce(uri = "direct:in")
+    @Produce("direct:in")
     private ProducerTemplate producer;
 
     @Before

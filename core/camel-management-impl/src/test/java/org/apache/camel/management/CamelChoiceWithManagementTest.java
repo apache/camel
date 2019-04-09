@@ -57,11 +57,9 @@ public class CamelChoiceWithManagementTest extends ContextTestSupport {
         c.expectedHeaderReceived("Validation", "Yes");
         expectsMessageCount(0, b, d, e);
 
-        template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(body);
-                exchange.getIn().setHeader("CBR1", "Yes");
-            }
+        template.send("direct:start", exchange -> {
+            exchange.getIn().setBody(body);
+            exchange.getIn().setHeader("CBR1", "Yes");
         });
 
         assertMockEndpointsSatisfied();
@@ -74,11 +72,7 @@ public class CamelChoiceWithManagementTest extends ContextTestSupport {
 
         expectsMessageCount(0, a, b, c, d);
 
-        template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(body);
-            }
-        });
+        template.send("direct:start", exchange -> exchange.getIn().setBody(body));
 
         assertMockEndpointsSatisfied();
     }

@@ -780,7 +780,7 @@ public class MethodInfo {
                             // its a valid parameter value, so convert it to the expected type of the parameter
                             answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, exchange, parameterValue);
                             if (LOG.isTraceEnabled()) {
-                                LOG.trace("Parameter #{} evaluated as: {} type: ", index, answer, org.apache.camel.util.ObjectHelper.type(answer));
+                                LOG.trace("Parameter #{} evaluated as: {} type: {}", index, answer, org.apache.camel.util.ObjectHelper.type(answer));
                             }
                         } catch (Exception e) {
                             if (LOG.isDebugEnabled()) {
@@ -813,7 +813,7 @@ public class MethodInfo {
                         answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, result);
                     }
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Parameter #{} evaluated as: {} type: ", index, answer, org.apache.camel.util.ObjectHelper.type(answer));
+                        LOG.trace("Parameter #{} evaluated as: {} type: {}", index, answer, org.apache.camel.util.ObjectHelper.type(answer));
                     }
                 } catch (NoTypeConversionAvailableException e) {
                     if (LOG.isDebugEnabled()) {

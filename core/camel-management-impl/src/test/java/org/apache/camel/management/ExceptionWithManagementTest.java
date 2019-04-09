@@ -42,12 +42,7 @@ public class ExceptionWithManagementTest extends ContextTestSupport {
         MockEndpoint out = this.resolveMandatoryEndpoint("mock:out", MockEndpoint.class);
         out.expectedMessageCount(0);
         
-        template.send("direct:start", ExchangePattern.InOnly, new Processor() {    
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("hello");
-            }
-
-        });
+        template.send("direct:start", ExchangePattern.InOnly, exchange -> exchange.getIn().setBody("hello"));
         
         error.assertIsSatisfied();
         out.assertIsSatisfied();
@@ -61,10 +56,8 @@ public class ExceptionWithManagementTest extends ContextTestSupport {
 
                 onException(IllegalArgumentException.class).redeliveryDelay(0).maximumRedeliveries(1).to("mock:error");
 
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        throw new IllegalArgumentException("intentional error");
-                    }
+                from("direct:start").process(exchange -> {
+                    throw new IllegalArgumentException("intentional error");
                 }).to("mock:out");
             }
         };

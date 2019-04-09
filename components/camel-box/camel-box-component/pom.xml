@@ -281,7 +281,7 @@
                                             <methodAlias>versions</methodAlias>
                                         </alias>
                                         <alias>
-                                            <methodPattern>downloadPreviousFileVersions</methodPattern>
+                                            <methodPattern>downloadPreviousFileVersion</methodPattern>
                                             <methodAlias>downloadVersion</methodAlias>
                                         </alias>
                                         <alias>

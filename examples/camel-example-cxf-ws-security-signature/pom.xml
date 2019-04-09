@@ -142,34 +142,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>jdk9+-build</id>
-            <activation>
-                <jdk>[9,)</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine>--add-modules java.activation,java.xml.bind,java.xml.ws,jdk.xml.bind --add-opens
-                                java.base/java.lang=ALL-UNNAMED --add-exports=java.naming/com.sun.jndi.ldap=ALL-UNNAMED
-                                --add-exports=java.xml.bind/com.sun.xml.internal.bind=ALL-UNNAMED
-                                --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2=ALL-UNNAMED
-                                --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2.runtime.reflect=ALL-UNNAMED
-                                --add-exports=java.xml.ws/com.sun.xml.internal.messaging.saaj.soap.impl=ALL-UNNAMED
-                                --add-exports=java.xml.ws/com.sun.xml.internal.messaging.saaj.soap=ALL-UNNAMED
-                                --add-opens
-                                java.base/java.net=ALL-UNNAMED
-                                --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2.runtime=ALL-UNNAMED
-                            </argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
 </project>

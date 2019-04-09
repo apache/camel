@@ -39,7 +39,7 @@
 
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
+            <artifactId>camel-validator</artifactId>
         </dependency>
 
         <dependency>

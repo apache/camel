@@ -182,7 +182,7 @@ public final class DefaultHealthCheckService extends ServiceSupport implements H
         if (ObjectHelper.isNotEmpty(registry) && ObjectHelper.isEmpty(future)) {
             // Start the health check task only if the health check registry
             // has been registered.
-            LOGGER.debug("Schedule health-checks to be executed every %d (%s)", checkInterval, checkIntervalUnit.name());
+            LOGGER.debug("Schedule health-checks to be executed every {} ({})", checkInterval, checkIntervalUnit.name());
             future = executorService.scheduleAtFixedRate(
                 () -> {
                     if (!isRunAllowed()) {

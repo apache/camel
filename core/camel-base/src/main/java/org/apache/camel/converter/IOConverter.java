@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * Some core java.io based <a
  * href="http://camel.apache.org/type-converter.html">Type Converters</a>
  */
-@Converter
+@Converter(loader = true)
 public final class IOConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(IOConverter.class);

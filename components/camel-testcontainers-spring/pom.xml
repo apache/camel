@@ -74,23 +74,6 @@
     </dependencies>
 
     <profiles>
-        <profile>
-            <id>jdk9+-build</id>
-            <activation>
-                <jdk>[9,)</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine>--add-modules java.xml.bind --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
         <!-- activate integration test if the docker socket file is accessible -->
         <profile>
             <id>testcontainers-spring-integration-tests-docker-file</id>

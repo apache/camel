@@ -35,7 +35,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.converter.stream.CachedOutputStream;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.CamelObjectInputStream;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -204,12 +203,7 @@ public final class HttpHelper {
         if (is == null) {
             return null;
         }
-        boolean disableStreamCaching = false;
-        // Just take the consideration of the setting of Camel Context StreamCaching
-        if (exchange.getContext() instanceof DefaultCamelContext) { 
-            DefaultCamelContext context = (DefaultCamelContext) exchange.getContext();
-            disableStreamCaching = !context.isStreamCaching();
-        }
+        boolean disableStreamCaching = !exchange.getContext().isStreamCaching();
         // convert the input stream to StreamCache if the stream cache is not disabled
         if (exchange.getProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, disableStreamCaching, Boolean.class)) {
             return is;

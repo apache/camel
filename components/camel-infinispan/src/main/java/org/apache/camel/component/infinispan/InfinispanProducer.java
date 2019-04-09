@@ -414,6 +414,14 @@ public class InfinispanProducer extends HeaderSelectorProducer {
         final Object result = cache.compute(key, configuration.getRemappingFunction());
         setResult(message, result);
     }
+    
+    @InvokeOnHeader("COMPUTEASYNC")
+    void onComputeAsync(Message message) {
+        final BasicCache<Object, Object> cache = manager.getCache(message, this.cacheName);
+        final Object key = message.getHeader(InfinispanConstants.KEY);
+        final CompletableFuture<Object> result = cache.computeAsync(key, configuration.getRemappingFunction());
+        setResult(message, result);
+    }
 
     // ************************************
     // Helpers

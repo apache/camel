@@ -69,6 +69,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cloud</artifactId>
+        </dependency>
         <!-- JMX is enabled by default -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -161,24 +165,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>jdk9+-build</id>
-            <activation>
-                <jdk>[9,)</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
-                            <argLine>--add-modules java.xml.bind</argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

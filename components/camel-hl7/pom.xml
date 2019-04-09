@@ -40,10 +40,12 @@
 
     <dependencies>
 
+        <!-- requires camel-core -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
         </dependency>
+        
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-base</artifactId>
@@ -142,23 +144,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>jdk9+-build</id>
-            <activation>
-                <jdk>[9,)</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine>--add-modules java.xml.bind</argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

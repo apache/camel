@@ -58,8 +58,6 @@ import org.slf4j.LoggerFactory;
  */
 public class NotifyBuilder {
 
-    // TODO: camel-mock
-
     private static final Logger LOG = LoggerFactory.getLogger(NotifyBuilder.class);
 
     private final CamelContext context;

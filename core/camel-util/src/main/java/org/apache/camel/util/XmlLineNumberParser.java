@@ -197,7 +197,7 @@ public final class XmlLineNumberParser {
             }
 
             @Override
-            public void characters(final char ch[], final int start, final int length) throws SAXException {
+            public void characters(final char[] ch, final int start, final int length) throws SAXException {
                 char[] chars = new char[length];
                 System.arraycopy(ch, start, chars, 0, length);
                 String s = new String(chars);

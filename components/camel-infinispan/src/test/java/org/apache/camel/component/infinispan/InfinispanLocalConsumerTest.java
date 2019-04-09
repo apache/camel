@@ -25,10 +25,10 @@ import org.junit.Test;
 
 public class InfinispanLocalConsumerTest extends InfinispanTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mockResult;
 
-    @EndpointInject(uri = "mock:result2")
+    @EndpointInject("mock:result2")
     private MockEndpoint mockResult2;
 
     @Test

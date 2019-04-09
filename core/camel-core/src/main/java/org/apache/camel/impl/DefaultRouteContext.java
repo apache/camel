@@ -229,6 +229,7 @@ public class DefaultRouteContext implements RouteContext {
             // and create the route that wraps the UoW
             Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), internal);
             edcr.getProperties().put(Route.ID_PROPERTY, routeId);
+            edcr.getProperties().put(Route.CUSTOM_ID_PROPERTY, route.hasCustomIdAssigned() ? "true" : "false");
             edcr.getProperties().put(Route.PARENT_PROPERTY, Integer.toHexString(route.hashCode()));
             edcr.getProperties().put(Route.DESCRIPTION_PROPERTY, route.getDescriptionText());
             if (route.getGroup() != null) {

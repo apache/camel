@@ -28,10 +28,10 @@ import org.junit.Test;
 
 public class InfluxDbProducerBatchTest extends AbstractInfluxDbTest {
 
-    @EndpointInject(uri = "mock:test")
+    @EndpointInject("mock:test")
     MockEndpoint successEndpoint;
 
-    @EndpointInject(uri = "mock:error")
+    @EndpointInject("mock:error")
     MockEndpoint errorEndpoint;
 
     @Override

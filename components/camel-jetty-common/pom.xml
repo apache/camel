@@ -31,11 +31,11 @@
     <packaging>jar</packaging>
 
     <name>Camel :: Jetty :: Common</name>
-    <description>Camel Jetty 8.x/9.x support</description>
+    <description>Camel Jetty 9.x support</description>
 
     <properties>
         <camel.osgi.import.before.defaults>
-            org.eclipse.jetty.*;version="[9.3,10)",
+            org.eclipse.jetty.*;version="[9.4,10)",
             javax.servlet.*;version="${servlet-version-range}"
         </camel.osgi.import.before.defaults>
     </properties>
@@ -44,7 +44,7 @@
 
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-support</artifactId>
+            <artifactId>camel-cloud</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

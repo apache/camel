@@ -29,7 +29,6 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
-import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.StringQuoteHelper;
@@ -262,7 +261,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
 
         Object answer = null;
         if ((nextParam.startsWith("$simple{") || nextParam.startsWith("${")) && nextParam.endsWith("}")) {
-            answer = SimpleLanguage.expression(nextParam).evaluate(exchange, Object.class);
+            answer = exchange.getContext().resolveLanguage("simple").createExpression(nextParam).evaluate(exchange, Object.class);
         } else if (bodyMap.containsKey(nextParam)) {
             answer = bodyMap.get(nextParam);
         } else if (headersMap.containsKey(nextParam)) {

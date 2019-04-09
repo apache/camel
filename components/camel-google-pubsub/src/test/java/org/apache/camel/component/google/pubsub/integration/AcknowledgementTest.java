@@ -34,19 +34,19 @@ public class AcknowledgementTest extends PubsubTestSupport {
     private static final String SUBSCRIPTION_NAME = "failureSub";
     private static Boolean fail = false;
 
-    @EndpointInject(uri = "direct:in")
+    @EndpointInject("direct:in")
     private Endpoint directIn;
 
-    @EndpointInject(uri = "google-pubsub:{{project.id}}:" + TOPIC_NAME)
+    @EndpointInject("google-pubsub:{{project.id}}:" + TOPIC_NAME)
     private Endpoint pubsubTopic;
 
-    @EndpointInject(uri = "google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME)
+    @EndpointInject("google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME)
     private Endpoint pubsubSubscription;
 
-    @EndpointInject(uri = "mock:receiveResult")
+    @EndpointInject("mock:receiveResult")
     private MockEndpoint receiveResult;
 
-    @Produce(uri = "direct:in")
+    @Produce("direct:in")
     private ProducerTemplate producer;
 
     @BeforeClass

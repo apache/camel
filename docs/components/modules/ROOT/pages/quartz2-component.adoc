@@ -255,7 +255,7 @@ was fired.
 === Using Cron Triggers
 
 Quartz supports
-http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger[Cron-like
+http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html[Cron-like
 expressions] for specifying timers in a handy format. You can use these
 expressions in the `cron` URI parameter; though to preserve valid URI
 encoding we allow + to be used instead of spaces.

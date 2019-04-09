@@ -52,6 +52,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cloud</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-blueprint</artifactId>
             <!-- exclude aries blueprint as we add these dependencies explicit -->
             <exclusions>
@@ -175,25 +180,4 @@
         </dependency>
 
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>jdk9+-build</id>
-            <activation>
-                <jdk>[9,)</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine>--add-modules java.xml.bind,java.xml.ws --add-opens
-                                java.base/java.lang=ALL-UNNAMED
-                            </argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

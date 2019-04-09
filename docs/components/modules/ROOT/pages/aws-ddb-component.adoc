@@ -4,13 +4,13 @@
 *Available as of Camel version 2.10*
 
 The DynamoDB component supports storing and retrieving data from/to
-http://aws.amazon.com/dynamodb[Amazon's DynamoDB] service.
+https://aws.amazon.com/dynamodb[Amazon's DynamoDB] service.
 
 Prerequisites
 
 You must have a valid Amazon Web Services developer account, and be
-signed up to use Amazon DynamoDB. More information are available at
-http://aws.amazon.com/dynamodb[Amazon DynamoDB].
+signed up to use Amazon DynamoDB. More information is available at
+https://aws.amazon.com/dynamodb[Amazon DynamoDB].
 
 ### URI Format
 
@@ -135,7 +135,7 @@ Required DDB component options
 
 You have to provide the amazonDDBClient in the
 Registry or your accessKey and secretKey to access
-the http://aws.amazon.com/dynamodb[Amazon's DynamoDB].
+the https://aws.amazon.com/dynamodb[Amazon's DynamoDB].
 
 ### Usage
 
@@ -360,6 +360,12 @@ AmazonDynamoDB client = new AmazonDynamoDBClient(awsCredentials, clientConfigura
 
 registry.bind("client", client);
 --------------------------------------------------------------------------------------
+
+### Automatic detection of AmazonDynamoDB client in registry
+
+From Camel 3.0.0-M3 the component will be able to detect the presence of an AmazonDynamoDB bean into the registry.
+If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
+This may be really useful for smarter configuration of the endpoint.
 
 ### Dependencies
 

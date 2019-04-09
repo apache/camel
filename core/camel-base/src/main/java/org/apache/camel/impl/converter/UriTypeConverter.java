@@ -26,7 +26,7 @@ import org.apache.camel.TypeConverter;
 /**
  * A {@link TypeConverter} that converts to and from {@link URI}s.
  */
-@Converter
+@Converter(loader = true)
 public final class UriTypeConverter {
 
     private UriTypeConverter() {

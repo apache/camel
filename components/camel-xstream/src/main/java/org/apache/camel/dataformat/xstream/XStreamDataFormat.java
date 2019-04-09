@@ -114,7 +114,7 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
         if (getXstreamDriver() != null) {
             return getXstreamDriver().createWriter(stream);
         }
-        XMLStreamWriter xmlWriter = getStaxConverter().createXMLStreamWriter(stream, exchange);
+        XMLStreamWriter xmlWriter = exchange.getContext().getTypeConverter().convertTo(XMLStreamWriter.class, exchange, stream);
         return new StaxWriter(new QNameMap(), xmlWriter);
     }
 
@@ -123,7 +123,7 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
         if (getXstreamDriver() != null) {
             return getXstreamDriver().createReader(stream);
         }
-        XMLStreamReader xmlReader = getStaxConverter().createXMLStreamReader(stream, exchange);
+        XMLStreamReader xmlReader = exchange.getContext().getTypeConverter().convertTo(XMLStreamReader.class, exchange, stream);
         return new StaxReader(new QNameMap(), xmlReader);
     }
 }

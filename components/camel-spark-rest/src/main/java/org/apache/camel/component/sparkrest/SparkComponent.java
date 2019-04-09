@@ -36,11 +36,17 @@ import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
+import spark.Service;
 
 @Component("spark-rest")
 public class SparkComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory {
 
     private static final Pattern PATTERN = Pattern.compile("\\{(.*?)\\}");
+    
+    /**
+     * SPARK instance for the component
+     */
+    private Service sparkInstance;
 
     @Metadata(defaultValue = "4567")
     private int port = 4567;
@@ -67,6 +73,10 @@ public class SparkComponent extends DefaultComponent implements RestConsumerFact
     private SparkConfiguration sparkConfiguration = new SparkConfiguration();
     @Metadata(label = "advanced")
     private SparkBinding sparkBinding = new DefaultSparkBinding();
+
+    public Service getSparkInstance() {
+        return sparkInstance;
+    }
 
     public int getPort() {
         return port;
@@ -218,20 +228,21 @@ public class SparkComponent extends DefaultComponent implements RestConsumerFact
     protected void doStart() throws Exception {
         super.doStart();
 
+        sparkInstance = Service.ignite();
         if (getPort() != 4567) {
-            CamelSpark.port(getPort());
+            sparkInstance.port(getPort());
         } else {
             // if no explicit port configured, then use port from rest configuration
             RestConfiguration config = getCamelContext().getRestConfiguration("spark-rest", true);
             int port = config.getPort();
             if (port > 0) {
-                CamelSpark.port(port);
+                sparkInstance.port(port);
             }
         }
 
         String host = getIpAddress();
         if (host != null) {
-            CamelSpark.ipAddress(host);
+            sparkInstance.ipAddress(host);
         } else {
             // if no explicit port configured, then use port from rest configuration
             RestConfiguration config = getCamelContext().getRestConfiguration("spark-rest", true);
@@ -245,12 +256,14 @@ public class SparkComponent extends DefaultComponent implements RestConsumerFact
                     host = HostUtils.getLocalIp();
                 }
             }
-            CamelSpark.ipAddress(host);
+            sparkInstance.ipAddress(host);
         }
 
         if (keystoreFile != null || truststoreFile != null) {
-            CamelSpark.security(keystoreFile, keystorePassword, truststoreFile, truststorePassword);
+            sparkInstance.secure(keystoreFile, keystorePassword, truststoreFile, truststorePassword);
         }
+        
+        CamelSpark.threadPool(sparkInstance, minThreads, maxThreads, timeOutMillis);
 
         // configure component options
         RestConfiguration config = getCamelContext().getRestConfiguration("spark-rest", true);
@@ -263,7 +276,7 @@ public class SparkComponent extends DefaultComponent implements RestConsumerFact
     @Override
     protected void doShutdown() throws Exception {
         super.doShutdown();
-        CamelSpark.stop();
+        sparkInstance.stop();
     }
 
     @Override

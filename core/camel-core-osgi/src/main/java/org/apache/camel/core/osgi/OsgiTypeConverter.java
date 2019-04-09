@@ -16,11 +16,25 @@
  */
 package org.apache.camel.core.osgi;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -30,6 +44,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverters;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.spi.FactoryFinder;
@@ -92,8 +107,6 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         }
         // It can force camel to reload the type converter again
         this.delegate = null;
-        
-        // TODO: reloading all type converters when one service is removed is suboptimal...
     }
 
     @Override
@@ -214,8 +227,10 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         DefaultTypeConverter answer = new DefaultTypeConverter(new DefaultPackageScanClassResolver() {
             @Override
             public Set<ClassLoader> getClassLoaders() {
-                // we don't need any classloaders as we use OSGi service tracker instead
-                return Collections.emptySet();
+                // we only need classloaders for loading core TypeConverterLoaders
+                return new HashSet<>(Arrays.asList(
+                        DefaultTypeConverter.class.getClassLoader(),
+                        DefaultCamelContext.class.getClassLoader()));
             }
         }, injector, factoryFinder, false);
 
@@ -251,4 +266,24 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         LOG.trace("Created TypeConverter: {}", answer);
         return answer;
     }
+
+    public static <T> Stream<T> enumerationAsStream(Enumeration<T> e) {
+        return StreamSupport.stream(
+                Spliterators.spliteratorUnknownSize(
+                        new Iterator<T>() {
+                            public T next() {
+                                return e.nextElement();
+                            }
+                            public boolean hasNext() {
+                                return e.hasMoreElements();
+                            }
+                            public void forEachRemaining(Consumer<? super T> action) {
+                                while (e.hasMoreElements()) {
+                                    action.accept(e.nextElement());
+                                }
+                            }
+                        },
+                        Spliterator.ORDERED), false);
+    }
+
 }

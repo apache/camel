@@ -27,7 +27,7 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.health.HealthCheckRegistry;
-import org.apache.camel.impl.converter.FastTypeConverterRegistry;
+import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
@@ -131,10 +131,9 @@ public class DefaultCamelContext extends AbstractCamelContext {
      */
     protected TypeConverter createTypeConverter() {
         // lets use the new fast type converter registry
-        FastTypeConverterRegistry answer = new FastTypeConverterRegistry();
-        answer.setCamelContext(this);
-        setTypeConverterRegistry(answer);
-        return answer;
+        return new DefaultTypeConverter(
+                this, getPackageScanClassResolver(),
+                getInjector(), getDefaultFactoryFinder(), isLoadTypeConverters());
     }
 
     @Override
@@ -283,7 +282,7 @@ public class DefaultCamelContext extends AbstractCamelContext {
 
     @Override
     protected RestRegistry createRestRegistry() {
-        return new DefaultRestRegistry();
+        return new RestRegistryFactoryResolver().resolve(this).createRegistry();
     }
 
     protected EndpointRegistry<EndpointKey> createEndpointRegistry(Map<EndpointKey, Endpoint> endpoints) {

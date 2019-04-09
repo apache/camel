@@ -412,27 +412,6 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>jaxb2-maven-plugin</artifactId>
-                        <version>2.4</version>
-                        <executions>
-                            <execution>
-                                <id>generate-schema</id>
-                                <phase>generate-test-sources</phase>
-                                <goals>
-                                    <goal>schemagen</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/schema</outputDirectory>
-                            <sources>
-                                <source>${project.build.directory}/schema-src</source>
-                            </sources>
-                            <createJavaDocAnnotations>false</createJavaDocAnnotations>
-                        </configuration>
-                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -489,6 +468,36 @@
             </build>
         </profile>
         <profile>
+            <id>jdk8</id>
+            <activation>
+                <jdk>(,1.8]</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>jaxb2-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate-schema</id>
+                                <phase>generate-test-sources</phase>
+                                <goals>
+                                    <goal>schemagen</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/schema</outputDirectory>
+                            <sources>
+                                <source>${project.build.directory}/schema-src</source>
+                            </sources>
+                            <createJavaDocAnnotations>false</createJavaDocAnnotations>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>jdk9+-build</id>
             <activation>
                 <jdk>[9,)</jdk>
@@ -502,38 +511,32 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <reuseForks>true</reuseForks>
-                            <argLine>--add-modules java.xml.bind,java.xml.ws --add-opens
-                                java.base/java.lang=ALL-UNNAMED
-                            </argLine>
                         </configuration>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.8</version>
+                        <!--Workaround until https://github.com/mojohaus/jaxb2-maven-plugin/pull/126/ is resolved-->
+                        <groupId>com.github.davidmoten</groupId>
+                        <artifactId>jax-maven-plugin</artifactId>
+                        <version>${jax-maven-plugin-version}</version>
                         <executions>
                             <execution>
-                                <id>include-sources</id>
-                                <phase>package</phase>
-                                <configuration>
-                                    <target>
-                                        <echo>Including source code from camel-core-xml in the
-                                            camel-blueprint-sources.jar
-                                        </echo>
-                                        <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar"
-                                             update="true">
-                                            <fileset dir="${basedir}/../../core/camel-core-osgi/src/main/java"
-                                                     includes="**/*"/>
-                                            <fileset dir="${basedir}/../../core/camel-core-xml/src/main/java"
-                                                     includes="**/*"/>
-                                        </jar>
-                                    </target>
-                                </configuration>
+                                <id>generate schema</id>
+                                <phase>generate-test-sources</phase>
                                 <goals>
-                                    <goal>run</goal>
+                                    <goal>schemagen</goal>
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <classpathScope>compile</classpathScope>
+                            <sources>
+                                <source>${project.build.directory}/schema-src</source>
+                            </sources>
+                            <arguments>
+                                <argument>-d</argument>
+                                <argument>${project.build.directory}/schema</argument>
+                            </arguments>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

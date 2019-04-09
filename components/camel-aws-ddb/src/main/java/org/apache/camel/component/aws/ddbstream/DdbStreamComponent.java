@@ -17,9 +17,12 @@
 package org.apache.camel.component.aws.ddbstream;
 
 import java.util.Map;
+import java.util.Set;
+
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -68,6 +71,7 @@ public class DdbStreamComponent extends DefaultComponent {
         if (ObjectHelper.isEmpty(configuration.getRegion())) {
             setRegion(region);
         }
+        checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonDynamoDbStreamsClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonDDBStreamsClient or accessKey and secretKey must be specified");
         }
@@ -118,5 +122,12 @@ public class DdbStreamComponent extends DefaultComponent {
      */
     public void setRegion(String region) {
         configuration.setRegion(region);
+    }
+    
+    private void checkAndSetRegistryClient(DdbStreamConfiguration configuration) {
+        Set<AmazonDynamoDBStreams> clients = getCamelContext().getRegistry().findByType(AmazonDynamoDBStreams.class);
+        if (clients.size() == 1) {
+            configuration.setAmazonDynamoDbStreamsClient(clients.stream().findFirst().get());
+        }
     }
 }

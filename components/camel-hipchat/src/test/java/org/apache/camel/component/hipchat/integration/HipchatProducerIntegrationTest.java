@@ -33,10 +33,10 @@ import org.junit.Test;
 @Ignore("Must be manually tested. Provide your own auth key, user, & room from https://www.hipchat.com/docs/apiv2/auth")
 public class HipchatProducerIntegrationTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
     @Test

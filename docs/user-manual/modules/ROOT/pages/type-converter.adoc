@@ -36,12 +36,8 @@ http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/TypeCo
 interface that can be customized on a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/CamelContext.html[CamelContext].
 
-Camel provides two type converter registy implementations:
-
-- FastTypeConverterRegistry (new default)
-- DefaultTypeConverterRegistry (old)
-
-From Camel 3 onwards there is a faster type converter registry implementation that is enabled by default. This implementation uses source code generation via the `camel-apt` compiler plugin to generate source code, that allows Camel at runtime to load and invoke these type converters via quick java method invocations. The older implementation in Camel 2 uses a annotation based discover to load and register type converters and invokes the type converters via Java method call reflections.
+Camel provides a default type converter registy.
+From Camel 3 onwards there type converter registry implementation uses source code generation via the `camel-apt` compiler plugin to generate source code, that allows Camel at runtime to load and invoke these type converters via quick java method invocations. The older implementation in Camel 2 uses a annotation based discover to load and register type converters and invokes the type converters via Java method call reflections.
 
 
 [[TypeConverter-TypeConverterRegistry]]

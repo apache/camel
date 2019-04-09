@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.ec2;
 
+import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
 
 import org.apache.camel.RuntimeCamelException;
@@ -30,7 +31,7 @@ public class EC2Configuration implements Cloneable {
     @UriPath(description = "Logical name") @Metadata(required = true)
     private String label;
     @UriParam(label = "producer")
-    private AmazonEC2Client amazonEc2Client;
+    private AmazonEC2 amazonEc2Client;
     @UriParam(label = "producer", secret = true)
     private String accessKey;
     @UriParam(label = "producer", secret = true)
@@ -45,14 +46,14 @@ public class EC2Configuration implements Cloneable {
     @UriParam
     private String region;
     
-    public AmazonEC2Client getAmazonEc2Client() {
+    public AmazonEC2 getAmazonEc2Client() {
         return amazonEc2Client;
     }
 
     /**
      * To use a existing configured AmazonEC2Client as client
      */
-    public void setAmazonEc2Client(AmazonEC2Client amazonEc2Client) {
+    public void setAmazonEc2Client(AmazonEC2 amazonEc2Client) {
         this.amazonEc2Client = amazonEc2Client;
     }
     

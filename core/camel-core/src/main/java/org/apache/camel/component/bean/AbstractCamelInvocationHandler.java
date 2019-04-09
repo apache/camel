@@ -167,7 +167,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         if (binding) {
             LOG.trace("Binding to service interface as @Body,@Header,@ExchangeProperty detected when calling proxy method: {}", method);
         } else {
-            LOG.trace("No binding to service interface as @Body,@Header,@ExchangeProperty not detected. Using BeanInvocation as message body when calling proxy method: {}");
+            LOG.trace("No binding to service interface as @Body,@Header,@ExchangeProperty not detected. Using BeanInvocation as message body when calling proxy method: {}", method);
         }
 
         return doInvoke(method, exchange);

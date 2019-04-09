@@ -376,19 +376,16 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         if (resolvePlaceholders) {
             final AtomicBoolean changed = new AtomicBoolean();
             InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8"));
-            Document dom = XmlLineNumberParser.parseXml(is, new XmlLineNumberParser.XmlTextTransformer() {
-                @Override
-                public String transform(String text) {
-                    try {
-                        String after = getContext().resolvePropertyPlaceholders(text);
-                        if (!changed.get()) {
-                            changed.set(!text.equals(after));
-                        }
-                        return after;
-                    } catch (Exception e) {
-                        // ignore
-                        return text;
+            Document dom = XmlLineNumberParser.parseXml(is, text -> {
+                try {
+                    String after = getContext().resolvePropertyPlaceholders(text);
+                    if (!changed.get()) {
+                        changed.set(!text.equals(after));
                     }
+                    return after;
+                } catch (Exception e) {
+                    // ignore
+                    return text;
                 }
             });
             // okay there were some property placeholder replaced so re-create the model

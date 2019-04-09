@@ -77,6 +77,8 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     private static final Logger LOG = LoggerFactory.getLogger(SftpOperations.class);
     private static final Pattern UP_DIR_PATTERN = Pattern.compile("/[^/]+");
+    private static final int OK_STATUS = 0;
+    private static final String OK_MESSAGE = "OK";
     private Proxy proxy;
     private SftpEndpoint endpoint;
     private ChannelSftp channel;
@@ -764,8 +766,13 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 target.setBody(bos.toByteArray());
             }
 
+
+            createResultHeadersFromExchange(null, exchange);
             return true;
-        } catch (IOException | SftpException e) {
+        } catch (SftpException e) {
+            createResultHeadersFromExchange(e, exchange);
+            throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
+        } catch (IOException e) {
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } finally {
             // change back to current directory if we changed directory
@@ -843,6 +850,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             channel.get(remoteName, os);
 
         } catch (SftpException e) {
+            createResultHeadersFromExchange(e, exchange);
             LOG.trace("Error occurred during retrieving file: {} to local directory. Deleting local work file: {}", name, temp);
             // failed to retrieve the file so we need to close streams and
             // delete in progress file
@@ -862,6 +870,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             }
         }
 
+        createResultHeadersFromExchange(null, exchange);
         LOG.debug("Retrieve file to local work file result: true");
 
         // operation went okay so rename temp to local after we have retrieved
@@ -981,9 +990,11 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 channel.chmod(permissions, targetName);
             }
 
+            createResultHeadersFromExchange(null, exchange);
             return true;
 
         } catch (SftpException e) {
+            createResultHeadersFromExchange(e, exchange);
             throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
         } catch (InvalidPayloadException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
@@ -1132,5 +1143,22 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             throw new RuntimeCamelException(message, ee[0]);
         }
         return socket;
+    }
+
+    /**
+     * Helper method which gets result code and message from sftpException and puts it into header.
+     * In case that exception is null, it sets successfull response.
+     */
+    private void createResultHeadersFromExchange(SftpException sftpException, Exchange exchange) {
+
+        //if exception is null, it means that result was ok
+        if (sftpException == null) {
+            exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, OK_STATUS);
+            exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, OK_MESSAGE);
+        } else {
+            // store client reply information after the operation
+            exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, sftpException.id);
+            exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, sftpException.getMessage());
+        }
     }
 }
