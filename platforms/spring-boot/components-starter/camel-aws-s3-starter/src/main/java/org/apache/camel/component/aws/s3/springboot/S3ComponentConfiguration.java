@@ -132,7 +132,13 @@ public class S3ComponentConfiguration
          */
         private AmazonS3 amazonS3Client;
         /**
-         * The prefix which is used in the
+         * The delimiter which is used in the
+         * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
+         * objects we are interested in.
+         */
+        private String delimiter;
+        /**
+         * The delimiter which is used in the
          * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
          * objects we are interested in.
          */
@@ -296,6 +302,14 @@ public class S3ComponentConfiguration
 
         public void setAmazonS3Client(AmazonS3 amazonS3Client) {
             this.amazonS3Client = amazonS3Client;
+        }
+
+        public String getDelimiter() {
+            return delimiter;
+        }
+
+        public void setDelimiter(String delimiter) {
+            this.delimiter = delimiter;
         }
 
         public String getPrefix() {
