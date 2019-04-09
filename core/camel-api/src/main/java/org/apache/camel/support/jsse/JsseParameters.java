@@ -162,7 +162,7 @@ public class JsseParameters implements CamelContextAware {
 
         if (is == null) {
             LOG.trace("Trying to open resource [{}] as a class path resource using the classloader [{}].",
-                      this.getClass().getClassLoader());
+                      resource, this.getClass().getClassLoader());
             is = this.getClass().getResourceAsStream(resource);
             
             if (is == null) {
