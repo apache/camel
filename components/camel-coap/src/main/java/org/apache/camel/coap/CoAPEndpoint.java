@@ -25,6 +25,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.eclipse.californium.core.CoapServer;
 
 /**
@@ -36,6 +37,9 @@ public class CoAPEndpoint extends DefaultEndpoint {
     private URI uri;
     @UriParam(label = "consumer")
     private String coapMethodRestrict;
+    
+    @UriParam
+    private KeyStoreParameters keyStoreParameters;
         
     private CoAPComponent component;
     
@@ -80,6 +84,17 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
 
     public CoapServer getCoapServer() {
-        return component.getServer(getUri().getPort());
+        return component.getServer(getUri().getPort(), keyStoreParameters);
+    }
+    
+    /**
+     * The KeyStoreParameters object to use with TLS
+     */
+    public KeyStoreParameters getKeyStoreParameters() {
+        return keyStoreParameters;
+    }
+
+    public void setKeyStoreParameters(KeyStoreParameters keyStoreParameters) {
+        this.keyStoreParameters = keyStoreParameters;
     }
 }
