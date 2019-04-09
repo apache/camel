@@ -62,9 +62,9 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *defaultFrom* (producer) | This is the sender name. The maximum length is 11 characters. |  | String)
-| *defaultMaxNumberOfParts* (producer) | If it is a multipart message forces the max number. Message can be truncated. Technically the gateway will first check if a message is larger than 160 characters, if so, the message will be cut into multiple 153 characters parts limited by these parameters. | 8 | Max(8L)::Int)
-| *productToken* (producer) | *Required* The unique token to use |  | String)
+| *defaultFrom* (producer) | This is the sender name. The maximum length is 11 characters. |  | String
+| *defaultMaxNumberOfParts* (producer) | If it is a multipart message forces the max number. Message can be truncated. Technically the gateway will first check if a message is larger than 160 characters, if so, the message will be cut into multiple 153 characters parts limited by these parameters. | 8 | Max(8L)Int
+| *productToken* (producer) | *Required* The unique token to use |  | String
 | *testConnectionOnStartup* (producer) | Whether to test the connection to the SMS Gateway on startup | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
