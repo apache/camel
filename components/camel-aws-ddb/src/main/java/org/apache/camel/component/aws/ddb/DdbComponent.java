@@ -19,15 +19,14 @@ package org.apache.camel.component.aws.ddb;
 import java.util.Map;
 import java.util.Set;
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
-
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.s3.AmazonS3;
 
 @Component("aws-ddb")
 public class DdbComponent extends DefaultComponent {
