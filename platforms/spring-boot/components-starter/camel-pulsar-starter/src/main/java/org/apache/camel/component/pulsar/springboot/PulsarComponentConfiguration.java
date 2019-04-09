@@ -37,11 +37,37 @@ public class PulsarComponentConfiguration
      */
     private Boolean enabled;
     /**
+     * The pulsar autoconfiguration. The option is a
+     * org.apache.camel.component.pulsar.utils.AutoConfiguration type.
+     */
+    private String autoConfiguration;
+    /**
+     * The pulsar client. The option is a
+     * org.apache.pulsar.client.api.PulsarClient type.
+     */
+    private String pulsarClient;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+
+    public String getAutoConfiguration() {
+        return autoConfiguration;
+    }
+
+    public void setAutoConfiguration(String autoConfiguration) {
+        this.autoConfiguration = autoConfiguration;
+    }
+
+    public String getPulsarClient() {
+        return pulsarClient;
+    }
+
+    public void setPulsarClient(String pulsarClient) {
+        this.pulsarClient = pulsarClient;
+    }
 
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;

@@ -29,13 +29,15 @@ import java.util.Map;
 @Component("pulsar")
 public class PulsarComponent extends DefaultComponent {
 
-    private final AutoConfiguration autoConfiguration;
-    private final PulsarClient pulsarClient;
+    private AutoConfiguration autoConfiguration;
+    private PulsarClient pulsarClient;
+    
+    public PulsarComponent() {
+        this(null);
+    }
 
-    PulsarComponent(CamelContext context, AutoConfiguration autoConfiguration, PulsarClient pulsarClient) {
+    public PulsarComponent(CamelContext context) {
         super(context);
-        this.autoConfiguration = autoConfiguration;
-        this.pulsarClient = pulsarClient;
     }
 
     @Override
@@ -53,4 +55,26 @@ public class PulsarComponent extends DefaultComponent {
 
         return PulsarEndpoint.create(uri, path, configuration, this, pulsarClient);
     }
+
+	public AutoConfiguration getAutoConfiguration() {
+		return autoConfiguration;
+	}
+	
+    /**
+     * The pulsar autoconfiguration
+     */
+	public void setAutoConfiguration(AutoConfiguration autoConfiguration) {
+		this.autoConfiguration = autoConfiguration;
+	}
+
+	public PulsarClient getPulsarClient() {
+		return pulsarClient;
+	}
+
+    /**
+     * The pulsar client
+     */
+	public void setPulsarClient(PulsarClient pulsarClient) {
+		this.pulsarClient = pulsarClient;
+	}
 }
