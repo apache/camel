@@ -20,11 +20,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.pulsar.client.api.PulsarClient;
 
 import java.util.Map;
 
+@Component("pulsar")
 public class PulsarComponent extends DefaultComponent {
 
     private final AutoConfiguration autoConfiguration;
