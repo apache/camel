@@ -150,16 +150,16 @@ public class S3Configuration implements Cloneable {
     public String getPrefix() {
         return prefix;
     }
-
+    
     /**
-     * The delimiter which is used in the
+     * The prefix which is used in the
      * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
      * objects we are interested in.
      */
-    public void setDelimiter(String delimiter) {
-        this.delimiter = delimiter;
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
     }
-
+    
     public String getDelimiter() {
         return delimiter;
     }
@@ -169,8 +169,8 @@ public class S3Configuration implements Cloneable {
      * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
      * objects we are interested in.
      */
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
     }
 
     public String getBucketName() {
