@@ -38,6 +38,8 @@ public class S3Configuration implements Cloneable {
     private String fileName;
     @UriParam(label = "consumer")
     private String prefix;
+    @UriParam(label = "consumer")
+    private String delimiter;
     @UriParam
     private String region;
     @UriParam(label = "consumer", defaultValue = "true")
@@ -150,7 +152,20 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * The prefix which is used in the
+     * The delimiter which is used in the
+     * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
+     * objects we are interested in.
+     */
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
+    }
+
+    public String getDelimiter() {
+        return delimiter;
+    }
+
+    /**
+     * The delimiter which is used in the
      * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
      * objects we are interested in.
      */
