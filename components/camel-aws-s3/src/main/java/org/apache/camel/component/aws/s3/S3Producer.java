@@ -397,10 +397,10 @@ public class S3Producer extends DefaultProducer {
         }
         sourceKey = exchange.getIn().getHeader(S3Constants.KEY, String.class);
         if (ObjectHelper.isEmpty(bucketName)) {
-            throw new IllegalArgumentException("Bucket Name must be specified for deleteObject Operation");
+            throw new IllegalArgumentException("Bucket Name must be specified for getObject Operation");
         }
         if (ObjectHelper.isEmpty(sourceKey)) {
-            throw new IllegalArgumentException("Source Key must be specified for deleteObject Operation");
+            throw new IllegalArgumentException("Source Key must be specified for getObject Operation");
         }
         GetObjectRequest req = new GetObjectRequest(bucketName, sourceKey);
         S3Object res = s3Client.getObject(req);
