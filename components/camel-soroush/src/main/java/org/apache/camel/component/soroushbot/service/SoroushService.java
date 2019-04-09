@@ -19,7 +19,6 @@ package org.apache.camel.component.soroushbot.service;
 
 import java.io.IOException;
 
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
@@ -70,7 +69,7 @@ public final class SoroushService {
      * @param fileId
      * @return
      */
-    public String generateUrl(@NotNull String token, @NotNull Endpoint type, String fileId) {
+    public String generateUrl(String token, Endpoint type, String fileId) {
         return getCurrentUrl() + "/" + token + "/" + type.value() + (fileId != null ? "/" + fileId : "");
     }
 
