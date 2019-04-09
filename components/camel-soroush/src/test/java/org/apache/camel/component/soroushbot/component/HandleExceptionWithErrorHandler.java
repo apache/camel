@@ -38,13 +38,12 @@ public class HandleExceptionWithErrorHandler extends SoroushBotTestSupport {
                 onException(FileNotFoundException.class).to("mock:exceptionRoute");
                 from("soroush://" + Endpoint.getMessage + "/5?concurrentConsumers=2")
                         .process(exchange -> {
-                                    SoroushMessage body = exchange.getIn().getBody(SoroushMessage.class);
-                                    File file = new File("badFile-ShouldNotExits");
-                                    Assert.assertFalse("file should not exists for this test", file.exists());
-                                    body.setFile(file);
-                                    body.setTo(body.getFrom());
-                                }
-                        )
+                            SoroushMessage body = exchange.getIn().getBody(SoroushMessage.class);
+                            File file = new File("badFile-ShouldNotExits");
+                            Assert.assertFalse("file should not exists for this test", file.exists());
+                            body.setFile(file);
+                            body.setTo(body.getFrom());
+                        })
                         .to("soroush://" + Endpoint.sendMessage + "/token")
                         .to("mock:mainRoute");
 
