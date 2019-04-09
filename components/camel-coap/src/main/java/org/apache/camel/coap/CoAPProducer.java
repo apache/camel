@@ -16,7 +16,15 @@
  */
 package org.apache.camel.coap;
 
+import java.io.IOException;
 import java.net.URI;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -24,6 +32,9 @@ import org.apache.camel.impl.DefaultProducer;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
+import org.eclipse.californium.core.network.CoapEndpoint;
+import org.eclipse.californium.scandium.DTLSConnector;
+import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 
 /**
  * The CoAP producer.
@@ -91,6 +102,41 @@ public class CoAPProducer extends DefaultProducer {
                 uri = endpoint.getUri();
             }
             client = new CoapClient(uri);
+            
+            if (endpoint.getKeyStoreParameters() != null) {
+                DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder();
+                builder.setClientOnly();
+
+                try {
+                    // TODO Add client key config if specified
+                    
+                    KeyStore keyStore = endpoint.getKeyStoreParameters().createKeyStore();
+                    // Add all certificates from the truststore
+                    Enumeration<String> aliases = keyStore.aliases();
+                    List<Certificate> trustCerts = new ArrayList<>();
+                    while (aliases.hasMoreElements()) {
+                        String alias = aliases.nextElement();
+                        X509Certificate cert =
+                                (X509Certificate) keyStore.getCertificate(alias);
+                        if (cert != null) {
+                            trustCerts.add(cert);
+                        }
+                    }
+                    builder.setTrustStore(trustCerts.toArray(new Certificate[0]));
+                } catch (GeneralSecurityException | IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+                builder.setSupportedCipherSuites(new String[] {"TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256"}); //TODO
+
+                DTLSConnector connector = new DTLSConnector(builder.build());
+                CoapEndpoint.Builder coapBuilder = new CoapEndpoint.Builder();
+                coapBuilder.setConnector(connector);
+
+                client.setEndpoint(coapBuilder.build());
+            }
+
         }
         return client;
     }
