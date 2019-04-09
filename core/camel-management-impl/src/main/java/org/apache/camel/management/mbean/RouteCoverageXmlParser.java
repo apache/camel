@@ -153,7 +153,7 @@ public final class RouteCoverageXmlParser {
             }
 
             @Override
-            public void characters(final char ch[], final int start, final int length) throws SAXException {
+            public void characters(final char[] ch, final int start, final int length) throws SAXException {
                 textBuffer.append(ch, start, length);
             }
 
