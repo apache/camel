@@ -17,14 +17,17 @@
 package org.apache.camel.component.aws.ddb;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
+
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.s3.AmazonS3;
 
 @Component("aws-ddb")
 public class DdbComponent extends DefaultComponent {
@@ -67,6 +70,7 @@ public class DdbComponent extends DefaultComponent {
         if (ObjectHelper.isEmpty(configuration.getRegion())) {
             setRegion(region);
         }
+        checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonDDBClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonDDBClient or accessKey and secretKey must be specified");
         }
@@ -117,5 +121,12 @@ public class DdbComponent extends DefaultComponent {
 
     public void setRegion(String region) {
         configuration.setRegion(region);
+    }
+    
+    private void checkAndSetRegistryClient(DdbConfiguration configuration) {
+        Set<AmazonDynamoDB> clients = getCamelContext().getRegistry().findByType(AmazonDynamoDB.class);
+        if (clients.size() == 1) {
+            configuration.setAmazonDDBClient(clients.stream().findFirst().get());
+        }
     }
 }
