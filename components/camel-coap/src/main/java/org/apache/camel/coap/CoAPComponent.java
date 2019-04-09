@@ -16,7 +16,17 @@
  */
 package org.apache.camel.coap;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,12 +39,15 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.eclipse.californium.core.CoapServer;
-import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.core.network.CoapEndpoint;
+import org.eclipse.californium.scandium.DTLSConnector;
+import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,15 +64,56 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
     public CoAPComponent() {
     }
 
-    public synchronized CoapServer getServer(int port) {
+    public synchronized CoapServer getServer(int port, KeyStoreParameters keyStoreParameters) {
         CoapServer server = servers.get(port);
         if (server == null && port == -1) {
-            server = getServer(DEFAULT_PORT);
+            server = getServer(DEFAULT_PORT, keyStoreParameters);
         }
         if (server == null) {
-            NetworkConfig config = new NetworkConfig();
-            //FIXME- configure the network stuff
-            server = new CoapServer(config, port);
+            CoapEndpoint.Builder coapBuilder = new CoapEndpoint.Builder();
+            InetSocketAddress address = new InetSocketAddress(port);
+            
+            if (keyStoreParameters != null) {
+                DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder();
+                builder.setAddress(address);
+
+                try {
+                    KeyStore keyStore = keyStoreParameters.createKeyStore();
+                    // TODO
+                    PrivateKey privateKey = (PrivateKey)keyStoreParameters.createKeyStore().getKey("ec", "security".toCharArray());
+                    builder.setIdentity(privateKey, keyStore.getCertificateChain("ec"));
+
+                    // Add all certificates from the truststore
+                    Enumeration<String> aliases = keyStore.aliases();
+                    List<Certificate> trustCerts = new ArrayList<>();
+                    while (aliases.hasMoreElements()) {
+                        String alias = aliases.nextElement();
+                        X509Certificate cert =
+                                (X509Certificate) keyStore.getCertificate(alias);
+                        if (cert != null) {
+                            trustCerts.add(cert);
+                        }
+                    }
+                    builder.setTrustStore(trustCerts.toArray(new Certificate[0]));
+
+                } catch (GeneralSecurityException | IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+                builder.setClientAuthenticationRequired(false); //TODO
+
+                builder.setSupportedCipherSuites(new String[] {"TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256"}); //TODO
+
+                DTLSConnector connector = new DTLSConnector(builder.build());
+                coapBuilder.setConnector(connector);
+            } else {
+                coapBuilder.setInetSocketAddress(address);
+            }
+
+            server = new CoapServer();
+            server.addEndpoint(coapBuilder.build());
+            
             servers.put(port, server);
             if (this.isStarted()) {
                 server.start();
