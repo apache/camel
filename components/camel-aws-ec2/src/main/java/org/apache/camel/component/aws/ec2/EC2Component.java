@@ -19,14 +19,14 @@ package org.apache.camel.component.aws.ec2;
 import java.util.Map;
 import java.util.Set;
 
+import com.amazonaws.services.ec2.AmazonEC2;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
-
-import com.amazonaws.services.ec2.AmazonEC2;
 
 /**
  * For working with Amazon's Elastic Compute Cloud (EC2).
