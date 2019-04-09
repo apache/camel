@@ -17,26 +17,23 @@
 package org.apache.camel.component.pulsar.utils.consumers;
 
 import org.apache.camel.component.pulsar.PulsarConsumer;
-import org.apache.camel.component.pulsar.utils.retry.PulsarClientRetryPolicy;
 
 public class ConsumerCreationStrategyFactory {
 
-    private final PulsarClientRetryPolicy retryPolicy;
     private final PulsarConsumer pulsarConsumer;
 
-    private ConsumerCreationStrategyFactory(PulsarConsumer pulsarConsumer, PulsarClientRetryPolicy retryPolicy) {
-        this.retryPolicy = retryPolicy;
+    private ConsumerCreationStrategyFactory(PulsarConsumer pulsarConsumer) {
         this.pulsarConsumer = pulsarConsumer;
     }
 
-    public static ConsumerCreationStrategyFactory create(PulsarConsumer pulsarConsumer, PulsarClientRetryPolicy retryPolicy) {
-        validate(pulsarConsumer, retryPolicy);
-        return new ConsumerCreationStrategyFactory(pulsarConsumer, retryPolicy);
+    public static ConsumerCreationStrategyFactory create(PulsarConsumer pulsarConsumer) {
+        validate(pulsarConsumer);
+        return new ConsumerCreationStrategyFactory(pulsarConsumer);
     }
 
-    private static void validate(PulsarConsumer pulsarConsumer, PulsarClientRetryPolicy retryPolicy) {
-        if (pulsarConsumer == null || retryPolicy == null) {
-            throw new IllegalArgumentException("Neither Pulsar Consumer nor Retry Policy can be null");
+    private static void validate(PulsarConsumer pulsarConsumer) {
+        if (pulsarConsumer == null) {
+            throw new IllegalArgumentException("Pulsar Consumer cannot be null");
         }
     }
 
@@ -46,13 +43,13 @@ public class ConsumerCreationStrategyFactory {
 
         switch (type) {
             case SHARED:
-                return new SharedConsumerStrategy(pulsarConsumer, retryPolicy);
+                return new SharedConsumerStrategy(pulsarConsumer);
             case EXCLUSIVE:
-                return new ExclusiveConsumerStrategy(pulsarConsumer, retryPolicy);
+                return new ExclusiveConsumerStrategy(pulsarConsumer);
             case FAILOVER:
-                return new FailoverConsumerStrategy(pulsarConsumer, retryPolicy);
+                return new FailoverConsumerStrategy(pulsarConsumer);
             default:
-                return new ExclusiveConsumerStrategy(pulsarConsumer, retryPolicy);
+                return new ExclusiveConsumerStrategy(pulsarConsumer);
         }
     }
 }

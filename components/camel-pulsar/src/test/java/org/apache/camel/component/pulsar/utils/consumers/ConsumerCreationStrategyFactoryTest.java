@@ -21,38 +21,25 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 import org.apache.camel.component.pulsar.PulsarConsumer;
-import org.apache.camel.component.pulsar.utils.retry.PulsarClientRetryPolicy;
 import org.junit.Test;
 
 public class ConsumerCreationStrategyFactoryTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void givenPulsarConsumerIsNull_whenICreateFactory_verifyIllegalArgumentExceptionIsThrown() {
-        ConsumerCreationStrategyFactory.create(null, mock(PulsarClientRetryPolicy.class));
+        ConsumerCreationStrategyFactory.create(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void givenRetryPolicyIsNull_whenICreateFactory_verifyIllegalArgumentExceptionIsThrown() {
-        ConsumerCreationStrategyFactory.create(mock(PulsarConsumer.class), null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void givenPulsarConsumerAndRetryPolicyIsNull_whenICreateFactory_verifyIllegalArgumentExceptionIsThrown() {
-        ConsumerCreationStrategyFactory.create(null, null);
-    }
-
-    @Test()
-    public void givenPulsarConsumerAndRetryPolicyNonNull_whenICreateFactory_verifyIllegalArgumentExceptionIsThrown() {
-        ConsumerCreationStrategyFactory factory = ConsumerCreationStrategyFactory.create(mock(PulsarConsumer.class),
-            mock(PulsarClientRetryPolicy.class));
+    @Test
+    public void givenPulsarConsumerAndRetryPolicyNonNull_whenICreateFactory_verifyIllegalArgumentExceptionIsNotThrown() {
+        ConsumerCreationStrategyFactory factory = ConsumerCreationStrategyFactory.create(mock(PulsarConsumer.class));
 
         assertNotNull(factory);
     }
 
     @Test
     public void verifyFailOverStrategy() {
-        ConsumerCreationStrategyFactory factory = ConsumerCreationStrategyFactory.create(mock(PulsarConsumer.class),
-            mock(PulsarClientRetryPolicy.class));
+        ConsumerCreationStrategyFactory factory = ConsumerCreationStrategyFactory.create(mock(PulsarConsumer.class));
 
         ConsumerCreationStrategy strategy = factory.getStrategy(SubscriptionType.FAILOVER);
 
@@ -61,8 +48,7 @@ public class ConsumerCreationStrategyFactoryTest {
 
     @Test
     public void verifySharedStrategy() {
-        ConsumerCreationStrategyFactory factory = ConsumerCreationStrategyFactory.create(mock(PulsarConsumer.class),
-            mock(PulsarClientRetryPolicy.class));
+        ConsumerCreationStrategyFactory factory = ConsumerCreationStrategyFactory.create(mock(PulsarConsumer.class));
 
         ConsumerCreationStrategy strategy = factory.getStrategy(SubscriptionType.SHARED);
 
@@ -71,8 +57,7 @@ public class ConsumerCreationStrategyFactoryTest {
 
     @Test
     public void verifyExclusiveStrategy() {
-        ConsumerCreationStrategyFactory factory = ConsumerCreationStrategyFactory.create(mock(PulsarConsumer.class),
-            mock(PulsarClientRetryPolicy.class));
+        ConsumerCreationStrategyFactory factory = ConsumerCreationStrategyFactory.create(mock(PulsarConsumer.class));
 
         ConsumerCreationStrategy strategy = factory.getStrategy(SubscriptionType.EXCLUSIVE);
 
@@ -81,8 +66,7 @@ public class ConsumerCreationStrategyFactoryTest {
 
     @Test
     public void verifyDefaultStrategyIsExclusiveStrategy() {
-        ConsumerCreationStrategyFactory factory = ConsumerCreationStrategyFactory.create(mock(PulsarConsumer.class),
-            mock(PulsarClientRetryPolicy.class));
+        ConsumerCreationStrategyFactory factory = ConsumerCreationStrategyFactory.create(mock(PulsarConsumer.class));
 
         ConsumerCreationStrategy strategy = factory.getStrategy(null);
 

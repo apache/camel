@@ -33,13 +33,8 @@ import java.io.ObjectOutputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.pulsar.client.api.Message;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class PulsarMessageUtils {
-
-    // TODO unused?
-    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarMessageUtils.class);
 
     public static Exchange updateExchange(final Message<byte[]> message, final Exchange input) {
         final Exchange output = input.copy(true);

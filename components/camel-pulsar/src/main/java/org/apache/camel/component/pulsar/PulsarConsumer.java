@@ -24,7 +24,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.apache.camel.Processor;
 import org.apache.camel.component.pulsar.utils.consumers.ConsumerCreationStrategy;
 import org.apache.camel.component.pulsar.utils.consumers.ConsumerCreationStrategyFactory;
-import org.apache.camel.component.pulsar.utils.retry.ExponentialRetryPolicy;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.PulsarClientException;
@@ -40,7 +39,7 @@ public class PulsarConsumer extends DefaultConsumer {
         super(pulsarEndpoint, processor);
         this.pulsarEndpoint = pulsarEndpoint;
         this.pulsarConsumers = new ConcurrentLinkedQueue<>();
-        this.consumerCreationStrategyFactory = ConsumerCreationStrategyFactory.create(this, new ExponentialRetryPolicy());
+        this.consumerCreationStrategyFactory = ConsumerCreationStrategyFactory.create(this);
     }
 
     public static PulsarConsumer create(final PulsarEndpoint pulsarEndpoint, final Processor processor) {
@@ -48,7 +47,7 @@ public class PulsarConsumer extends DefaultConsumer {
     }
 
     @Override
-    protected void doStart() throws PulsarClientException {
+    protected void doStart() throws Exception {
         pulsarConsumers = stopConsumers(pulsarConsumers);
 
         Collection<Consumer<byte[]>> consumers = createConsumers(pulsarEndpoint, consumerCreationStrategyFactory);
@@ -67,7 +66,7 @@ public class PulsarConsumer extends DefaultConsumer {
     }
 
     @Override
-    protected void doResume() throws PulsarClientException {
+    protected void doResume() throws Exception {
         pulsarConsumers = stopConsumers(pulsarConsumers);
 
         Collection<Consumer<byte[]>> consumers = createConsumers(pulsarEndpoint, consumerCreationStrategyFactory);
@@ -76,7 +75,7 @@ public class PulsarConsumer extends DefaultConsumer {
     }
 
     private Collection<Consumer<byte[]>> createConsumers(final PulsarEndpoint endpoint,
-        final ConsumerCreationStrategyFactory factory) {
+        final ConsumerCreationStrategyFactory factory) throws Exception {
 
         ConsumerCreationStrategy strategy = factory
             .getStrategy(endpoint.getConfiguration().getSubscriptionType());

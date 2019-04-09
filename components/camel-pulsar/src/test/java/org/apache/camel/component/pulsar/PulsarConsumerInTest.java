@@ -46,7 +46,7 @@ public class PulsarConsumerInTest extends CamelTestSupport {
     public PulsarContainer pulsarContainer = new PulsarContainer();
 
     private static final String TOPIC_URI = "persistent://public/default/camel-topic";
-    private static final String PRODUCER = "camel-producer";
+    private static final String PRODUCER = "camel-producer-1";
 
     @EndpointInject(uri = "pulsar:" + TOPIC_URI
         + "?numberOfConsumers=1&subscriptionType=Exclusive"

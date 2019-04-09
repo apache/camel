@@ -22,5 +22,5 @@ import org.apache.pulsar.client.api.Consumer;
 
 public interface ConsumerCreationStrategy {
 
-    Collection<Consumer<byte[]>> create(PulsarEndpoint pulsarEndpoint);
+    Collection<Consumer<byte[]>> create(PulsarEndpoint pulsarEndpoint) throws Exception;
 }
