@@ -30,14 +30,14 @@ import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.Schema;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.PulsarContainer;
 
-@Ignore
+import java.util.concurrent.TimeUnit;
+
 public class PulsarConsumerInTest extends CamelTestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerInTest.class);
@@ -111,6 +111,6 @@ public class PulsarConsumerInTest extends CamelTestSupport {
 
         producer.send("Hello World!");
 
-        to.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
     }
 }

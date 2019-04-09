@@ -118,5 +118,7 @@ public class PulsarConcurrentConsumerInTest extends CamelTestSupport {
         }
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
+
+        producer.close();
     }
 }
