@@ -46,17 +46,14 @@ public class ManagedRouteAddFromRouteTest extends ManagementTestSupport {
                 seda.getQueue().put(new DefaultExchange(context));
 
                 from("seda:start").routeId("foo")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                RouteBuilder child = new RouteBuilder() {
-                                    @Override
-                                    public void configure() throws Exception {
-                                        from("seda:bar").routeId("bar").to("mock:bar");
-                                    }
-                                };
-                                context.addRoutes(child);
-                            }
+                        .process(exchange -> {
+                            RouteBuilder child = new RouteBuilder() {
+                                @Override
+                                public void configure() throws Exception {
+                                    from("seda:bar").routeId("bar").to("mock:bar");
+                                }
+                            };
+                            context.addRoutes(child);
                         })
                         .to("mock:result");
             }

@@ -39,11 +39,8 @@ public class ManagedFailoverLoadBalancerTest extends ManagementTestSupport {
             return;
         }
 
-        getMockEndpoint("mock:foo").whenAnyExchangeReceived(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                throw new IOException("Forced");
-            }
+        getMockEndpoint("mock:foo").whenAnyExchangeReceived(exchange -> {
+            throw new IOException("Forced");
         });
 
         MockEndpoint bar = getMockEndpoint("mock:bar");

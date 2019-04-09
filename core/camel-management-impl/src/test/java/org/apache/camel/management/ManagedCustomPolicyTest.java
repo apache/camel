@@ -88,12 +88,9 @@ public class ManagedCustomPolicyTest extends ManagementTestSupport {
 
         @Override
         public Processor wrap(RouteContext routeContext, final Processor processor) {
-            return new Processor() {
-                @Override
-                public void process(Exchange exchange) throws Exception {
-                    counter.incrementAndGet();
-                    processor.process(exchange);
-                }
+            return exchange -> {
+                counter.incrementAndGet();
+                processor.process(exchange);
             };
         }
     }

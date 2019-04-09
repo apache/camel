@@ -35,11 +35,9 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        // simulate a little processing time
-                        Thread.sleep(10);
-                    }
+                from("direct:start").process(exchange -> {
+                    // simulate a little processing time
+                    Thread.sleep(10);
                 }).to("mock:end").to("mock:end");
             }
         };

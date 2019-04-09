@@ -93,12 +93,10 @@ public class ManagedRedeliverTest extends ManagementTestSupport {
 
                 from("direct:start")
                     .to("mock:foo")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            log.info("Invoking me");
+                    .process(exchange -> {
+                        log.info("Invoking me");
 
-                            throw new IllegalArgumentException("Damn");
-                        }
+                        throw new IllegalArgumentException("Damn");
                     }).id("myprocessor");
             }
         };

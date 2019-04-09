@@ -63,17 +63,14 @@ public class ManagedRouteDirectWhileIssueLeakTest extends ManagementTestSupport 
             public void configure() throws Exception {
                 from("direct:start")
                     .choice().when(simple("${header.counter} > 0"))
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                String body = exchange.getIn().getBody(String.class);
-                                body = "A" + body;
-                                exchange.getIn().setBody(body);
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            body = "A" + body;
+                            exchange.getIn().setBody(body);
 
-                                int counter = exchange.getIn().getHeader("counter", int.class);
-                                counter = counter - 1;
-                                exchange.getIn().setHeader("counter", counter);
-                            }
+                            int counter = exchange.getIn().getHeader("counter", int.class);
+                            counter = counter - 1;
+                            exchange.getIn().setHeader("counter", counter);
                         }).to("direct:start")
                     .otherwise()
                         .to("mock:result")

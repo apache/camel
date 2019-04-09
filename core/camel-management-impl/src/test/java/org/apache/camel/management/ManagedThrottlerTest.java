@@ -315,11 +315,8 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
                 from("seda:throttleCountAsyncException")
                         .throttle(1).asyncDelayed().timePeriodMillis(250).id("mythrottler4")
                         .to("mock:endAsyncException")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                throw new RuntimeException("Fail me");
-                            }
+                        .process(exchange -> {
+                            throw new RuntimeException("Fail me");
                         });
                 from("seda:throttleCountRejectExecutionCallerRuns")
                         .onException(RejectedExecutionException.class).to("mock:rejectedExceptionEndpoint1").end()

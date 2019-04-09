@@ -56,17 +56,9 @@ public class AsyncEndpointWithJMXTest extends ContextTestSupport {
                 from("direct:start")
                         .to("mock:before")
                         .to("log:before")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                beforeThreadName = Thread.currentThread().getName();
-                            }
-                        })
+                        .process(exchange -> beforeThreadName = Thread.currentThread().getName())
                         .to("async:bye:camel")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                afterThreadName = Thread.currentThread().getName();
-                            }
-                        })
+                        .process(exchange -> afterThreadName = Thread.currentThread().getName())
                         .to("log:after")
                         .to("mock:after")
                         .to("mock:result");
