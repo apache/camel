@@ -568,15 +568,13 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         // use async thread for starting the JMX Connector
         // (no need to use a thread pool or enlist in JMX as this thread is terminated when the JMX connector has been started)
         String threadName = camelContext.getExecutorServiceManager().resolveThreadName("JMXConnector: " + url);
-        Thread thread = getCamelContext().getExecutorServiceManager().newThread(threadName, new Runnable() {
-            public void run() {
-                try {
-                    LOG.debug("Staring JMX Connector thread to listen at: {}", url);
-                    cs.start();
-                    LOG.info("JMX Connector thread started and listening at: {}", url);
-                } catch (IOException ioe) {
-                    LOG.warn("Could not start JMXConnector thread at: " + url + ". JMX Connector not in use.", ioe);
-                }
+        Thread thread = getCamelContext().getExecutorServiceManager().newThread(threadName, () -> {
+            try {
+                LOG.debug("Staring JMX Connector thread to listen at: {}", url);
+                cs.start();
+                LOG.info("JMX Connector thread started and listening at: {}", url);
+            } catch (IOException ioe) {
+                LOG.warn("Could not start JMXConnector thread at: " + url + ". JMX Connector not in use.", ioe);
             }
         });
         thread.start();

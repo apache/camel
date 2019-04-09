@@ -121,12 +121,9 @@ public class ManagedInflightStatisticsTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                CountDownLatch latch = (CountDownLatch) exchange.getIn().getBody();
-                                latch.await(10, TimeUnit.SECONDS);
-                            }
+                        .process(exchange -> {
+                            CountDownLatch latch = (CountDownLatch) exchange.getIn().getBody();
+                            latch.await(10, TimeUnit.SECONDS);
                         })
                         .to("mock:result").id("mock");
             }

@@ -101,13 +101,11 @@ public class ManagedFileIdempotentClearTest extends ManagementTestSupport {
     }
 
     protected void sendMessage(final Object messageId, final Object body) {
-        template.send(startEndpoint, new Processor() {
-            public void process(Exchange exchange) {
-                // now lets fire in a message
-                Message in = exchange.getIn();
-                in.setBody(body);
-                in.setHeader("messageId", messageId);
-            }
+        template.send(startEndpoint, exchange -> {
+            // now lets fire in a message
+            Message in = exchange.getIn();
+            in.setBody(body);
+            in.setHeader("messageId", messageId);
         });
     }
 
