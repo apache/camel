@@ -6014,6 +6014,11 @@
                             <groupId>javax.xml.soap</groupId>
                             <artifactId>javax.xml.soap-api</artifactId>
                         </exclusion>
+                        <exclusion>
+                            <!--Get dependency from jaxb-runtime-->
+                            <groupId>org.jvnet.staxex</groupId>
+                            <artifactId>stax-ex</artifactId>
+                        </exclusion>
                     </exclusions>
                 </dependency>
                 <dependency>
