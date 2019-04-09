@@ -41,7 +41,7 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "2.16.0", scheme = "aws-ec2", title = "AWS EC2", syntax = "aws-ec2:label", producerOnly = true, label = "cloud,management")
 public class EC2Endpoint extends ScheduledPollEndpoint {
     
-    private AmazonEC2Client ec2Client;
+    private AmazonEC2 ec2Client;
 
     @UriParam
     private EC2Configuration configuration;
@@ -84,7 +84,7 @@ public class EC2Endpoint extends ScheduledPollEndpoint {
         return configuration;
     }
 
-    public AmazonEC2Client getEc2Client() {
+    public AmazonEC2 getEc2Client() {
         return ec2Client;
     }
 

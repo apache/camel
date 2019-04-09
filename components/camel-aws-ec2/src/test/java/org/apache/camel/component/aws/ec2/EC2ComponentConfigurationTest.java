@@ -19,19 +19,17 @@ package org.apache.camel.component.aws.ec2;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.ec2.AmazonEC2Client;
 
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 import static org.mockito.Mockito.mock;
 
 public class EC2ComponentConfigurationTest extends CamelTestSupport {
-    
-    @BindToRegistry("amazonEc2Client")
-    AmazonEC2Client amazonEc2Client = mock(AmazonEC2Client.class);
 
     @Test
     public void createEndpointWithMinimalConfiguration() throws Exception {
+        AmazonEC2Client amazonEc2Client = mock(AmazonEC2Client.class);
+        context.getRegistry().bind("amazonEc2Client", amazonEc2Client);
         EC2Component component = new EC2Component(context);
         EC2Endpoint endpoint = (EC2Endpoint)component.createEndpoint("aws-ec2://TestDomain?amazonEc2Client=#amazonEc2Client&accessKey=xxx&secretKey=yyy");
         
@@ -76,6 +74,8 @@ public class EC2ComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
+        AmazonEC2Client amazonEc2Client = mock(AmazonEC2Client.class);
+        context.getRegistry().bind("amazonEc2Client", amazonEc2Client);
         EC2Component component = new EC2Component(context);
         component.createEndpoint("aws-ec2://TestDomain?amazonEc2Client=#amazonEc2Client");
     }
