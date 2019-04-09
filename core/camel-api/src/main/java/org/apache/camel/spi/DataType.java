@@ -46,7 +46,7 @@ public class DataType {
     
     public DataType(String urn) {
         if (urn != null) {
-            String split[] = StringHelper.splitOnCharacter(urn, ":", 2);
+            String[] split = StringHelper.splitOnCharacter(urn, ":", 2);
             model = split[0];
             isJavaType = model.equals(JAVA_TYPE_PREFIX);
             if (split.length > 1) {
