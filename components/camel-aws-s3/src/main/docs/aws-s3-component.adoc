@@ -155,7 +155,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 35 options, which are listed below.
+The component supports 36 options, which are listed below.
 
 
 
@@ -172,6 +172,7 @@ The component supports 35 options, which are listed below.
 | *camel.component.aws-s3.configuration.chunked-encoding-disabled* | Define if disabled Chunked Encoding is true or false | false | Boolean
 | *camel.component.aws-s3.configuration.delete-after-read* | Delete objects from S3 after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs, the object is not deleted. <p/> If this option is false, then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the {@link S3Constants#BUCKET_NAME} and {@link S3Constants#KEY} headers, or only the {@link S3Constants#KEY} header. | true | Boolean
 | *camel.component.aws-s3.configuration.delete-after-write* | Delete file object after the S3 file has been uploaded | false | Boolean
+| *camel.component.aws-s3.configuration.delimiter* | The delimiter which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
 | *camel.component.aws-s3.configuration.dualstack-enabled* | Define if Dualstack enabled is true or false | false | Boolean
 | *camel.component.aws-s3.configuration.encryption-materials* | The encryption materials to use in case of Symmetric/Asymmetric client usage |  | EncryptionMaterials
 | *camel.component.aws-s3.configuration.file-name* | To get the object from the bucket with the given file name |  | String
@@ -183,7 +184,7 @@ The component supports 35 options, which are listed below.
 | *camel.component.aws-s3.configuration.path-style-access* | Whether or not the S3 client should use path style access | false | Boolean
 | *camel.component.aws-s3.configuration.payload-signing-enabled* | Define if Payload Signing enabled is true or false | false | Boolean
 | *camel.component.aws-s3.configuration.policy* | The policy for this queue to set in the `com.amazonaws.services.s3.AmazonS3#setBucketPolicy()` method. |  | String
-| *camel.component.aws-s3.configuration.prefix* | The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
+| *camel.component.aws-s3.configuration.prefix* | The delimiter which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
 | *camel.component.aws-s3.configuration.proxy-host* | To define a proxy host when instantiating the SQS client |  | String
 | *camel.component.aws-s3.configuration.proxy-port* | Specify a proxy port to be used inside the client definition. |  | Integer
 | *camel.component.aws-s3.configuration.region* | The region in which S3 client needs to work |  | String
