@@ -2239,26 +2239,26 @@
     <feature version='${project.version}'>camel-core</feature>
 
     <bundle dependency='true'>mvn:org.glassfish.jersey.core/jersey-client/${jersey-version}</bundle>
-    <bundle dependency='true'>mvn:jakarta.ws.rs/jakarta.ws.rs-api/2.1.5</bundle>
+    <bundle dependency='true'>mvn:jakarta.ws.rs/jakarta.ws.rs-api/${jakarta-api-version}</bundle>
     <bundle dependency='true'>mvn:org.glassfish.jersey.core/jersey-common/${jersey-version}</bundle>
     <bundle dependency='true'>mvn:org.glassfish.hk2/osgi-resource-locator/${hk2-osgi-resource-version}</bundle>
-    <bundle dependency='true'>mvn:org.glassfish.hk2.external/jakarta.inject/2.5.0</bundle>
+    <bundle dependency='true'>mvn:org.glassfish.hk2.external/jakarta.inject/${hk2-version}</bundle>
 
     <bundle dependency='true'>mvn:org.glassfish.jersey.media/jersey-media-json-jackson/${jersey-version}</bundle>
     <bundle dependency='true'>mvn:org.glassfish.jersey.ext/jersey-entity-filtering/${jersey-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/2.9.8</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson2-version}</bundle>
 
     <bundle dependency='true'>mvn:org.glassfish.jersey.inject/jersey-hk2/${jersey-version}</bundle>
-    <bundle dependency='true'>mvn:org.glassfish.hk2/hk2-locator/2.5.0</bundle>
-    <bundle dependency='true'>mvn:org.glassfish.hk2.external/aopalliance-repackaged/2.5.0</bundle>
-    <bundle dependency='true'>mvn:org.glassfish.hk2/hk2-api/2.5.0</bundle>
-    <bundle dependency='true'>mvn:org.glassfish.hk2/hk2-utils/2.5.0</bundle>
+    <bundle dependency='true'>mvn:org.glassfish.hk2/hk2-locator/${hk2-version}</bundle>
+    <bundle dependency='true'>mvn:org.glassfish.hk2.external/aopalliance-repackaged/${hk2-version}</bundle>
+    <bundle dependency='true'>mvn:org.glassfish.hk2/hk2-api/${hk2-version}</bundle>
+    <bundle dependency='true'>mvn:org.glassfish.hk2/hk2-utils/${hk2-version}</bundle>
     <bundle dependency='true'>mvn:org.javassist/javassist/${javassist-version}</bundle>
 
     <bundle dependency='true'>mvn:org.glassfish.jersey.media/jersey-media-sse/${jersey-version}</bundle>
 
     <bundle dependency='true'>mvn:org.glassfish.jersey.media/jersey-media-multipart/${jersey-version}</bundle>
-    <bundle dependency='true'>mvn:org.jvnet.mimepull/mimepull/1.9.11</bundle>
+    <bundle dependency='true'>mvn:org.jvnet.mimepull/mimepull/${mimepull-version}</bundle>
 
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
