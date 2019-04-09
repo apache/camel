@@ -17,7 +17,7 @@
 package org.apache.camel.component.aws.ec2.springboot;
 
 import javax.annotation.Generated;
-import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.AmazonEC2;
 import org.apache.camel.component.aws.ec2.EC2Operations;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -108,7 +108,7 @@ public class EC2ComponentConfiguration
         /**
          * To use a existing configured AmazonEC2Client as client
          */
-        private AmazonEC2Client amazonEc2Client;
+        private AmazonEC2 amazonEc2Client;
         /**
          * Amazon AWS Access Key
          */
@@ -137,11 +137,11 @@ public class EC2ComponentConfiguration
          */
         private String region;
 
-        public AmazonEC2Client getAmazonEc2Client() {
+        public AmazonEC2 getAmazonEc2Client() {
             return amazonEc2Client;
         }
 
-        public void setAmazonEc2Client(AmazonEC2Client amazonEc2Client) {
+        public void setAmazonEc2Client(AmazonEC2 amazonEc2Client) {
             this.amazonEc2Client = amazonEc2Client;
         }
 
