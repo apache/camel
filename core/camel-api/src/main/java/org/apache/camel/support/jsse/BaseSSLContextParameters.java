@@ -348,13 +348,13 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(SSL_ENGINE_CIPHER_SUITE_LOG_MSG,
-                            new Object[] {engine,
-                                          enabledCipherSuites,
-                                          enabledCipherSuitePatterns, 
-                                          engine.getSSLParameters().getCipherSuites(),
-                                          engine.getEnabledCipherSuites(),
-                                          defaultEnabledCipherSuitePatterns,
-                                          filteredCipherSuites});
+                            engine,
+                            enabledCipherSuites,
+                            enabledCipherSuitePatterns,
+                            engine.getSSLParameters().getCipherSuites(),
+                            engine.getEnabledCipherSuites(),
+                            defaultEnabledCipherSuitePatterns,
+                            filteredCipherSuites);
                 }
                 
                 engine.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
@@ -367,13 +367,13 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                 
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(SSL_ENGINE_PROTOCOL_LOG_MSG,
-                            new Object[] {engine,
-                                          enabledSecureSocketProtocols,
-                                          enabledSecureSocketProtocolsPatterns, 
-                                          engine.getSSLParameters().getProtocols(),
-                                          engine.getEnabledProtocols(),
-                                          defaultEnabledSecureSocketProtocolsPatterns,
-                                          filteredSecureSocketProtocols});
+                            engine,
+                            enabledSecureSocketProtocols,
+                            enabledSecureSocketProtocolsPatterns,
+                            engine.getSSLParameters().getProtocols(),
+                            engine.getEnabledProtocols(),
+                            defaultEnabledSecureSocketProtocolsPatterns,
+                            filteredSecureSocketProtocols);
                 }
                 
                 engine.setEnabledProtocols(filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
@@ -531,13 +531,13 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             !allowPassthrough);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(SSL_SOCKET_CIPHER_SUITE_LOG_MSG,
-                            new Object[] {socket,
-                                          enabledCipherSuites,
-                                          enabledCipherSuitePatterns, 
-                                          socket.getSSLParameters().getCipherSuites(),
-                                          socket.getEnabledCipherSuites(),
-                                          defaultEnabledCipherSuitePatterns,
-                                          filteredCipherSuites});
+                            socket,
+                            enabledCipherSuites,
+                            enabledCipherSuitePatterns,
+                            socket.getSSLParameters().getCipherSuites(),
+                            socket.getEnabledCipherSuites(),
+                            defaultEnabledCipherSuitePatterns,
+                            filteredCipherSuites);
                 }
                  
                 socket.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
@@ -550,13 +550,13 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(SSL_SOCKET_PROTOCOL_LOG_MSG,
-                            new Object[] {socket,
-                                          enabledSecureSocketProtocols,
-                                          enabledSecureSocketProtocolsPatterns, 
-                                          socket.getSSLParameters().getProtocols(),
-                                          socket.getEnabledProtocols(),
-                                          defaultEnabledSecureSocketProtocolsPatterns,
-                                          filteredSecureSocketProtocols});
+                            socket,
+                            enabledSecureSocketProtocols,
+                            enabledSecureSocketProtocolsPatterns,
+                            socket.getSSLParameters().getProtocols(),
+                            socket.getEnabledProtocols(),
+                            defaultEnabledSecureSocketProtocolsPatterns,
+                            filteredSecureSocketProtocols);
                 }
                 
                 socket.setEnabledProtocols(filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
@@ -631,13 +631,13 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                  
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(SSL_SERVER_SOCKET_CIPHER_SUITE_LOG_MSG,
-                            new Object[] {socket,
-                                          enabledCipherSuites,
-                                          enabledCipherSuitePatterns, 
-                                          socket.getSupportedCipherSuites(),
-                                          socket.getEnabledCipherSuites(),
-                                          defaultEnabledCipherSuitePatterns,
-                                          filteredCipherSuites});
+                            socket,
+                            enabledCipherSuites,
+                            enabledCipherSuitePatterns,
+                            socket.getSupportedCipherSuites(),
+                            socket.getEnabledCipherSuites(),
+                            defaultEnabledCipherSuitePatterns,
+                            filteredCipherSuites);
                 }
                 
                 socket.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
@@ -650,13 +650,13 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(SSL_SERVER_SOCKET_PROTOCOL_LOG_MSG,
-                            new Object[] {socket,
-                                          enabledSecureSocketProtocols,
-                                          enabledSecureSocketProtocolsPatterns, 
-                                          socket.getSupportedProtocols(),
-                                          socket.getEnabledProtocols(),
-                                          defaultEnabledSecureSocketProtocolsPatterns,
-                                          filteredSecureSocketProtocols});
+                            socket,
+                            enabledSecureSocketProtocols,
+                            enabledSecureSocketProtocolsPatterns,
+                            socket.getSupportedProtocols(),
+                            socket.getEnabledProtocols(),
+                            defaultEnabledSecureSocketProtocolsPatterns,
+                            filteredSecureSocketProtocols);
                 }
                 
                 socket.setEnabledProtocols(filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
