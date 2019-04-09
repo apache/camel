@@ -40,7 +40,7 @@ public class DdbComponentTest extends CamelTestSupport {
         assertEquals("creatibleTable", amazonDDBClient.createTableRequest.getTableName());
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithOnlySecretKeyConfiguration() throws Exception {
         DdbComponent component = new DdbComponent(context);
         component.createEndpoint("aws-ddb://activeTable?secretKey=xxx");

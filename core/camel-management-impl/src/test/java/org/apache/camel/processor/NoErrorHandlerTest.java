@@ -78,11 +78,9 @@ public class NoErrorHandlerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(noErrorHandler());
 
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        if (++counter < 3) {
-                            throw new IllegalArgumentException("Forced by unit test");
-                        }
+                from("direct:start").process(exchange -> {
+                    if (++counter < 3) {
+                        throw new IllegalArgumentException("Forced by unit test");
                     }
                 }).to("mock:result");
             }

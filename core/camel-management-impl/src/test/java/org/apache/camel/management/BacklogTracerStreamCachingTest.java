@@ -88,12 +88,9 @@ public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
                 context.setUseBreadcrumb(false);
 
                 from("direct:start").streamCaching()
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                ByteArrayInputStream is = new ByteArrayInputStream("Bye World".getBytes());
-                                exchange.getIn().setBody(is);
-                            }
+                        .process(exchange -> {
+                            ByteArrayInputStream is = new ByteArrayInputStream("Bye World".getBytes());
+                            exchange.getIn().setBody(is);
                         })
                         .log("Got ${body}")
                         .to("mock:bar").id("bar");

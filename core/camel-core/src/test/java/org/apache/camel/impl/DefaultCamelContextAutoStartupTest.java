@@ -23,8 +23,6 @@ import org.junit.Test;
 
 public class DefaultCamelContextAutoStartupTest extends TestSupport {
 
-    // TODO: We should have a JMX test of this as well
-
     @Test
     public void testAutoStartupFalseContextStart() throws Exception {
         DefaultCamelContext camel = new DefaultCamelContext(false);

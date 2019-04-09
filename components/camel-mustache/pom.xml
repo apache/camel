@@ -70,24 +70,4 @@
         </dependency>
 
     </dependencies>
-
-    <!-- unit testing requires java 8 -->
-    <profiles>
-        <profile>
-            <id>jdk8-test</id>
-            <activation>
-                <jdk>!1.8</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skipTests>true</skipTests>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

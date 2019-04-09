@@ -18,7 +18,6 @@ package org.apache.camel.impl.converter;
 
 import java.util.concurrent.Future;
 
-import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConversionException;

@@ -512,7 +512,7 @@ public class XmlConverter {
                 xmlReader = xmlReaderPool.createXMLReader();
             }
         } catch (Exception ex) {
-            LOG.warn("Cannot create the SAXParser XMLReader, due to {}", ex);
+            LOG.warn("Cannot create the SAXParser XMLReader, due to {}", ex.getMessage(), ex);
         }
         return new SAXSource(xmlReader, inputSource);
     }

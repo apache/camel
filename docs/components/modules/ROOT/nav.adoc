@@ -74,6 +74,8 @@
 * xref:cxf-component.adoc[CXF Component]
 * xref:cxfrs-component.adoc[CXF-RS Component]
 * xref:dataformat-component.adoc[Data Format Component]
+* xref:dataset-component.adoc[Dataset Component]
+* xref:dataset-test-component.adoc[DataSet Test Component]
 * xref:digitalocean-component.adoc[DigitalOcean Component]
 * xref:direct-component.adoc[Direct Component]
 * xref:direct-vm-component.adoc[Direct VM Component]

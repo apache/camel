@@ -196,7 +196,7 @@ public final class IOHelper {
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Copying InputStream: {} -> OutputStream: {} with buffer: {} and flush on each write {}", new Object[] {input, output, bufferSize, flushOnEachWrite});
+            LOG.trace("Copying InputStream: {} -> OutputStream: {} with buffer: {} and flush on each write {}", input, output, bufferSize, flushOnEachWrite);
         }
 
         int total = 0;

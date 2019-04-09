@@ -70,7 +70,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *accessKey* (producer) | Amazon AWS Access Key |  | String
-| *amazonEc2Client* (producer) | To use a existing configured AmazonEC2Client as client |  | AmazonEC2Client
+| *amazonEc2Client* (producer) | To use a existing configured AmazonEC2Client as client |  | AmazonEC2
 | *operation* (producer) | *Required* The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags or deleteTags |  | EC2Operations
 | *proxyHost* (producer) | To define a proxy host when instantiating the EC2 client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the EC2 client |  | Integer
@@ -104,7 +104,7 @@ The component supports 12 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.aws-ec2.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-ec2.configuration.access-key* | Amazon AWS Access Key |  | String
-| *camel.component.aws-ec2.configuration.amazon-ec2-client* | To use a existing configured AmazonEC2Client as client |  | AmazonEC2Client
+| *camel.component.aws-ec2.configuration.amazon-ec2-client* | To use a existing configured AmazonEC2Client as client |  | AmazonEC2
 | *camel.component.aws-ec2.configuration.operation* | The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags or deleteTags |  | EC2Operations
 | *camel.component.aws-ec2.configuration.proxy-host* | To define a proxy host when instantiating the EC2 client |  | String
 | *camel.component.aws-ec2.configuration.proxy-port* | To define a proxy port when instantiating the EC2 client |  | Integer
@@ -155,6 +155,12 @@ terminate operations on.
 
 |`CamelAwsEC2InstancesTags` |`Collection` |A collection of tags to add or remove from EC2 resources
 |=======================================================================
+
+### Automatic detection of AmazonEC2 client in registry
+
+From Camel 3.0.0-M3 the component will be able to detect the presence of an AmazonEC2 bean into the registry.
+If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
+This may be really useful for smarter configuration of the endpoint.
 
 Dependencies
 

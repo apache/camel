@@ -17,10 +17,12 @@
 package org.apache.camel.component.aws.ec2;
 
 import java.util.Map;
+import java.util.Set;
+
+import com.amazonaws.services.ec2.AmazonEC2;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -66,6 +68,7 @@ public class EC2Component extends DefaultComponent {
         if (ObjectHelper.isEmpty(configuration.getRegion())) {
             setRegion(region);
         }
+        checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonEc2Client() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonEC2Client or accessKey and secretKey must be specified");
         }
@@ -118,4 +121,10 @@ public class EC2Component extends DefaultComponent {
         configuration.setSecretKey(secretKey);
     }
 
+    private void checkAndSetRegistryClient(EC2Configuration configuration) {
+        Set<AmazonEC2> clients = getCamelContext().getRegistry().findByType(AmazonEC2.class);
+        if (clients.size() == 1) {
+            configuration.setAmazonEc2Client(clients.stream().findFirst().get());
+        }
+    }
 }

@@ -711,7 +711,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         if (answer == null) {
             try {
                 // Use the URI prefix to find the component.
-                String splitURI[] = StringHelper.splitOnCharacter(uri, ":", 2);
+                String[] splitURI = StringHelper.splitOnCharacter(uri, ":", 2);
                 if (splitURI[1] != null) {
                     scheme = splitURI[0];
                     log.trace("Endpoint uri: {} is from component with name: {}", uri, scheme);

@@ -138,6 +138,12 @@ public class S3ComponentConfiguration
          */
         private String prefix;
         /**
+         * The delimiter which is used in the
+         * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
+         * objects we are interested in.
+         */
+        private String delimiter;
+        /**
          * Name of the bucket. The bucket will be created if it doesn't already
          * exists.
          */
@@ -304,6 +310,14 @@ public class S3ComponentConfiguration
 
         public void setPrefix(String prefix) {
             this.prefix = prefix;
+        }
+
+        public String getDelimiter() {
+            return delimiter;
+        }
+
+        public void setDelimiter(String delimiter) {
+            this.delimiter = delimiter;
         }
 
         public String getBucketName() {

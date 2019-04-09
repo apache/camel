@@ -48,23 +48,20 @@ public class ManagedInflightRepositoryTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 from("direct:start").routeId("foo")
                         .to("mock:a")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                MBeanServer mbeanServer = getMBeanServer();
-                                ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,name=DefaultInflightRepository");
+                        .process(exchange -> {
+                            MBeanServer mbeanServer = getMBeanServer();
+                            ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,name=DefaultInflightRepository");
 
-                                Integer size = (Integer) mbeanServer.getAttribute(name, "Size");
-                                assertEquals(1, size.intValue());
+                            Integer size = (Integer) mbeanServer.getAttribute(name, "Size");
+                            assertEquals(1, size.intValue());
 
-                                Integer routeSize = (Integer) mbeanServer.invoke(name, "size", new Object[]{"foo"}, new String[]{"java.lang.String"});
-                                assertEquals(1, routeSize.intValue());
+                            Integer routeSize = (Integer) mbeanServer.invoke(name, "size", new Object[]{"foo"}, new String[]{"java.lang.String"});
+                            assertEquals(1, routeSize.intValue());
 
-                                TabularData data = (TabularData) mbeanServer.invoke(name, "browse", null, null);
-                                assertNotNull(data);
+                            TabularData data = (TabularData) mbeanServer.invoke(name, "browse", null, null);
+                            assertNotNull(data);
 
-                                assertEquals(1, data.size());
-                            }
+                            assertEquals(1, data.size());
                         }).id("myProcessor")
                         .to("mock:result");
             }

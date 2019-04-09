@@ -75,6 +75,8 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
             ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
             listObjectsRequest.setBucketName(bucketName);
             listObjectsRequest.setPrefix(getConfiguration().getPrefix());
+            listObjectsRequest.setDelimiter(getConfiguration().getDelimiter());
+
             if (maxMessagesPerPoll > 0) {
                 listObjectsRequest.setMaxKeys(maxMessagesPerPoll);
             }

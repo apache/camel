@@ -141,12 +141,10 @@ public class ManagedErrorHandlerOptionsTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 errorHandler(defaultErrorHandler().maximumRedeliveries(5));
 
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        counter++;
-                        if (counter < 3) {
-                            throw new  IllegalArgumentException("Forced");
-                        }
+                from("direct:start").process(exchange -> {
+                    counter++;
+                    if (counter < 3) {
+                        throw new IllegalArgumentException("Forced");
                     }
                 }).to("mock:result");
             }

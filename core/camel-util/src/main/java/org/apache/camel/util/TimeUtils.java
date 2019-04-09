@@ -147,7 +147,7 @@ public final class TimeUtils {
             }
         }
 
-        LOG.trace("source: {} milliseconds: ", source, milliseconds);
+        LOG.trace("source: [{}], milliseconds: {}", source, milliseconds);
 
         return milliseconds;
     }

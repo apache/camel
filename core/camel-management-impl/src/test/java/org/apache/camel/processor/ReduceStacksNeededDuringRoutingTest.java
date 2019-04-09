@@ -51,16 +51,13 @@ public class ReduceStacksNeededDuringRoutingTest extends ContextTestSupport {
                         .to("log:foo")
                         .to("log:bar")
                         .to("log:baz")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                try {
-                                    throw new IllegalArgumentException("Forced to dump stacktrace");
-                                } catch (Exception e) {
-                                    e.fillInStackTrace();
-                                    log.info("There are " + e.getStackTrace().length + " lines in the stacktrace");
-                                    log.error("Dump stacktrace to log", e);
-                                }
+                        .process(exchange -> {
+                            try {
+                                throw new IllegalArgumentException("Forced to dump stacktrace");
+                            } catch (Exception e) {
+                                e.fillInStackTrace();
+                                log.info("There are " + e.getStackTrace().length + " lines in the stacktrace");
+                                log.error("Dump stacktrace to log", e);
                             }
                         })
                         .to("mock:result");

@@ -17,6 +17,9 @@
 package org.apache.camel.component.aws.cw;
 
 import java.util.Map;
+import java.util.Set;
+
+import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -66,6 +69,7 @@ public class CwComponent extends DefaultComponent {
         if (ObjectHelper.isEmpty(configuration.getRegion())) {
             setRegion(region);
         }
+        checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonCwClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonCwClient or accessKey and secretKey must be specified");
         }
@@ -116,5 +120,12 @@ public class CwComponent extends DefaultComponent {
 
     public void setRegion(String region) {
         configuration.setRegion(region);
+    }
+    
+    private void checkAndSetRegistryClient(CwConfiguration configuration) {
+        Set<AmazonCloudWatch> clients = getCamelContext().getRegistry().findByType(AmazonCloudWatch.class);
+        if (clients.size() == 1) {
+            configuration.setAmazonCwClient(clients.stream().findFirst().get());
+        }
     }
 }

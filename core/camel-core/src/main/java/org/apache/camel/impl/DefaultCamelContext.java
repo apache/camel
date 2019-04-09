@@ -282,7 +282,7 @@ public class DefaultCamelContext extends AbstractCamelContext {
 
     @Override
     protected RestRegistry createRestRegistry() {
-        return new DefaultRestRegistry();
+        return new RestRegistryFactoryResolver().resolve(this).createRegistry();
     }
 
     protected EndpointRegistry<EndpointKey> createEndpointRegistry(Map<EndpointKey, Endpoint> endpoints) {

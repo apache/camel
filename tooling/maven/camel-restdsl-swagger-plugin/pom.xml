@@ -77,6 +77,12 @@
             <artifactId>camel-jetty</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -131,25 +137,6 @@
             <properties>
                 <invoker.skip>true</invoker.skip>
             </properties>
-        </profile>
-
-        <profile>
-            <id>jigsaw</id>
-            <activation>
-                <jdk>[1.9,)</jdk>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>jakarta.xml.bind</groupId>
-                    <artifactId>jakarta.xml.bind-api</artifactId>
-                    <version>${jakarta-jaxb-version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.glassfish.jaxb</groupId>
-                    <artifactId>jaxb-runtime</artifactId>
-                    <version>${glassfish-jaxb-runtime-version}</version>
-                </dependency>
-            </dependencies>
         </profile>
     </profiles>
 </project>

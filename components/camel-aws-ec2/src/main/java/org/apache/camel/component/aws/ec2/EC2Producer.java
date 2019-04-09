@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.model.CreateTagsRequest;
 import com.amazonaws.services.ec2.model.CreateTagsResult;
@@ -129,7 +130,7 @@ public class EC2Producer extends DefaultProducer {
         return (EC2Endpoint) super.getEndpoint();
     }
     
-    private void createAndRunInstance(AmazonEC2Client ec2Client, Exchange exchange) {
+    private void createAndRunInstance(AmazonEC2 ec2Client, Exchange exchange) {
         String ami;
         InstanceType instanceType;
         RunInstancesRequest request = new RunInstancesRequest();
@@ -201,7 +202,7 @@ public class EC2Producer extends DefaultProducer {
         message.setBody(result);
     }
     
-    private void startInstances(AmazonEC2Client ec2Client, Exchange exchange) {
+    private void startInstances(AmazonEC2 ec2Client, Exchange exchange) {
         Collection instanceIds;
         StartInstancesRequest request = new StartInstancesRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
@@ -222,7 +223,7 @@ public class EC2Producer extends DefaultProducer {
         message.setBody(result);        
     }
     
-    private void stopInstances(AmazonEC2Client ec2Client, Exchange exchange) {
+    private void stopInstances(AmazonEC2 ec2Client, Exchange exchange) {
         Collection instanceIds;
         StopInstancesRequest request = new StopInstancesRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
@@ -243,7 +244,7 @@ public class EC2Producer extends DefaultProducer {
         message.setBody(result);        
     }
     
-    private void terminateInstances(AmazonEC2Client ec2Client, Exchange exchange) {
+    private void terminateInstances(AmazonEC2 ec2Client, Exchange exchange) {
         Collection instanceIds;
         TerminateInstancesRequest request = new TerminateInstancesRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
@@ -264,7 +265,7 @@ public class EC2Producer extends DefaultProducer {
         message.setBody(result);        
     }
     
-    private void describeInstances(AmazonEC2Client ec2Client, Exchange exchange) {
+    private void describeInstances(AmazonEC2 ec2Client, Exchange exchange) {
         Collection instanceIds;
         DescribeInstancesRequest request = new DescribeInstancesRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
@@ -282,7 +283,7 @@ public class EC2Producer extends DefaultProducer {
         message.setBody(result);        
     }
     
-    private void describeInstancesStatus(AmazonEC2Client ec2Client, Exchange exchange) {
+    private void describeInstancesStatus(AmazonEC2 ec2Client, Exchange exchange) {
         Collection instanceIds;
         DescribeInstanceStatusRequest request = new DescribeInstanceStatusRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
@@ -300,7 +301,7 @@ public class EC2Producer extends DefaultProducer {
         message.setBody(result);        
     }
     
-    private void rebootInstances(AmazonEC2Client ec2Client, Exchange exchange) {
+    private void rebootInstances(AmazonEC2 ec2Client, Exchange exchange) {
         Collection instanceIds;
         RebootInstancesRequest request = new RebootInstancesRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
@@ -318,7 +319,7 @@ public class EC2Producer extends DefaultProducer {
         }
     }
     
-    private void monitorInstances(AmazonEC2Client ec2Client, Exchange exchange) {
+    private void monitorInstances(AmazonEC2 ec2Client, Exchange exchange) {
         Collection instanceIds;
         MonitorInstancesRequest request = new MonitorInstancesRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
@@ -339,7 +340,7 @@ public class EC2Producer extends DefaultProducer {
         message.setBody(result); 
     }
     
-    private void unmonitorInstances(AmazonEC2Client ec2Client, Exchange exchange) {
+    private void unmonitorInstances(AmazonEC2 ec2Client, Exchange exchange) {
         Collection instanceIds;
         UnmonitorInstancesRequest request = new UnmonitorInstancesRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
@@ -360,7 +361,7 @@ public class EC2Producer extends DefaultProducer {
         message.setBody(result); 
     }
     
-    private void createTags(AmazonEC2Client ec2Client, Exchange exchange) {
+    private void createTags(AmazonEC2 ec2Client, Exchange exchange) {
         Collection instanceIds;
         Collection tags;
         CreateTagsRequest request = new CreateTagsRequest();
@@ -388,7 +389,7 @@ public class EC2Producer extends DefaultProducer {
         message.setBody(result); 
     }
     
-    private void deleteTags(AmazonEC2Client ec2Client, Exchange exchange) {
+    private void deleteTags(AmazonEC2 ec2Client, Exchange exchange) {
         Collection instanceIds;
         Collection tags;
         DeleteTagsRequest request = new DeleteTagsRequest();

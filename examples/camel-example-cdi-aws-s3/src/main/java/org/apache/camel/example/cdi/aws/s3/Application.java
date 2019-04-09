@@ -41,7 +41,7 @@ public class Application {
 
         @Override
         public void configure() {
-            from("aws-s3://bucket-name?amazonS3Client=#amazonS3Client&deleteAfterRead=false&maxMessagesPerPoll=25&delay=5000")
+            from("aws-s3://bucket-name?deleteAfterRead=false&maxMessagesPerPoll=25&delay=5000")
             .log(LoggingLevel.INFO, "consuming", "Consumer Fired!")
             .idempotentConsumer(header("CamelAwsS3ETag"),
                     FileIdempotentRepository.fileIdempotentRepository(new File("target/file.data"), 250, 512000))

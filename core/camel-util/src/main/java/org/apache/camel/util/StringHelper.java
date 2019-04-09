@@ -343,7 +343,7 @@ public final class StringHelper {
     }
     
     public static String[] splitOnCharacter(String value, String needle, int count) {
-        String rc[] = new String[count];
+        String[] rc = new String[count];
         rc[0] = value;
         for (int i = 1; i < count; i++) {
             String v = rc[i - 1];

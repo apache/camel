@@ -16,12 +16,8 @@
  */
 package org.apache.camel.api.management.mbean;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-
-import javax.management.openmbean.TabularData;
 
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;

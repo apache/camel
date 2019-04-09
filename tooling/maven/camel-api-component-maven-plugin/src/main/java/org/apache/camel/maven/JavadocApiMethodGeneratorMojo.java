@@ -87,9 +87,8 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
             final String javaDocPath = aClass.getName().replaceAll("\\.", "/").replace('$', '.') + ".html";
 
             // read javadoc html text for class
-            InputStream inputStream = null;
-            try {
-                inputStream = getProjectClassLoader().getResourceAsStream(javaDocPath);
+
+            try (InputStream inputStream = getProjectClassLoader().getResourceAsStream(javaDocPath)) {
                 if (inputStream == null) {
                     log.debug("JavaDoc not found on classpath for " + aClass.getName());
                     break;
@@ -136,8 +135,6 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
                 }
             } catch (IOException e) {
                 throw new MojoExecutionException(e.getMessage(), e);
-            } finally {
-                IOUtil.close(inputStream);
             }
         }
 

@@ -85,15 +85,11 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
     private ApiCollection collection;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void executeInternal() throws MavenReportException {
         RenderingContext context = new RenderingContext(reportOutputDirectory, getOutputName() + ".html");
         SiteRendererSink sink = new SiteRendererSink(context);
         Locale locale = Locale.getDefault();
-        try {
-            generate(sink, locale);
-        } catch (MavenReportException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
-        }
+        generate(sink, locale);
     }
 
     private void loadApiCollection() throws MavenReportException {
@@ -102,15 +98,7 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
                     outPackage + "." + componentName + "ApiCollection");
             final Method getCollection = collectionClass.getMethod("getCollection");
             this.collection = (ApiCollection) getCollection.invoke(null);
-        } catch (ClassNotFoundException e) {
-            throw new MavenReportException(e.getMessage(), e);
-        } catch (NoSuchMethodException e) {
-            throw new MavenReportException(e.getMessage(), e);
-        } catch (InvocationTargetException e) {
-            throw new MavenReportException(e.getMessage(), e);
-        } catch (IllegalAccessException e) {
-            throw new MavenReportException(e.getMessage(), e);
-        } catch (MojoExecutionException e) {
+        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             throw new MavenReportException(e.getMessage(), e);
         }
     }
@@ -161,8 +149,6 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
                 configClass = getProjectClassLoader().loadClass(getEndpointConfigName(apiMethod));
             } catch (ClassNotFoundException e) {
                 throw new MavenReportException(e.getMessage(), e);
-            } catch (MojoExecutionException e) {
-                throw new MavenReportException(e.getMessage(), e);
             }
             apiConfigs.put(name, configClass);
         }
@@ -176,8 +162,6 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
         try {
             configClass = getProjectClassLoader().loadClass(getComponentConfig());
         } catch (ClassNotFoundException e) {
-            throw new MavenReportException(e.getMessage(), e);
-        } catch (MojoExecutionException e) {
             throw new MavenReportException(e.getMessage(), e);
         }
         context.put("componentConfig", configClass);

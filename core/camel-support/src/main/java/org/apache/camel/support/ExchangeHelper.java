@@ -921,7 +921,7 @@ public final class ExchangeHelper {
         String scheme = null;
         if (uri != null) {
             // Use the URI prefix to find the component.
-            String splitURI[] = StringHelper.splitOnCharacter(uri, ":", 2);
+            String[] splitURI = StringHelper.splitOnCharacter(uri, ":", 2);
             if (splitURI[1] != null) {
                 scheme = splitURI[0];
             }

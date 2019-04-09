@@ -54,7 +54,7 @@ public abstract class ValidatorReifier<T> {
 
     public Validator createValidator(CamelContext context) throws Exception {
         return doCreateValidator(context);
-    };
+    }
 
     protected abstract Validator doCreateValidator(CamelContext context) throws Exception;
 

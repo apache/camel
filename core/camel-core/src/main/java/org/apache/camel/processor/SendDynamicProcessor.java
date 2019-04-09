@@ -55,11 +55,6 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
     protected int cacheSize;
     protected boolean allowOptimisedComponents = true;
 
-    public SendDynamicProcessor(Expression expression) {
-        this.uri = null;
-        this.expression = expression;
-    }
-
     public SendDynamicProcessor(String uri, Expression expression) {
         this.uri = uri;
         this.expression = expression;

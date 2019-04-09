@@ -18,11 +18,14 @@ In Camel 2.x camel-core was one JAR file, which now has been splitup into many J
 
 - camel-api
 - camel-base
+- camel-caffeine-lrucache
+- camel-cloud
 - camel-core
 - camel-management-api
 - camel-management-impl
 - camel-support
 - camel-util
+- camel-util-json
  
 Maven users of Apache Camel can keep using the dependency *camel-core* which will have transitive dependency on all of its modules, and therefore no migration is needed.
 However users whom wants to trim the size of the classes on the classpath, can use fine grained Maven dependency on only the modules needed.
@@ -33,6 +36,7 @@ We have also modularized many of the core components and moved them out of `came
 - camel-browse
 - camel-controlbus
 - camel-dataformat
+- camel-dataset
 - camel-direct
 - camel-directvm
 - camel-file
@@ -47,10 +51,8 @@ We have also modularized many of the core components and moved them out of `came
 - camel-stub
 - camel-timer
 - camel-validator
+- camel-vm
 - camel-xslt
-
-TODO: there are some remainder components in camel-core we would like to modularize
-TODO: we need camel-core-minimal dependency for just basic Camel
 
 
 Migrating custom components
@@ -74,7 +76,15 @@ Migrating Camel applications
 
 We have removed all deprecated components from Camel 2.x, also including the old `camel-http` component. Instead you can use `camel-http4`.
 
+### Renamed components
+
+The `test` component has been renamed to `dataset-test` and moved out of `camel-core` into `camel-dataset` JAR.
+
 We have also renamed `camel-jetty9` to `camel-jetty`.
+
+### DataSet component
+
+The `dataset` component has been moved out of `camel-core`, and is no longer a transient dependency from `camel-core`, and therefore you should add `camel-dataset` as dependency if you use this component.
 
 ### ActiveMQ
 
@@ -290,7 +300,7 @@ The class `MemoryIdempotentRepository` has been moved from `org.apache.camel.pro
 
 #### Route Policies
 
-The class `org.apache.camel.impl.RoutePolicySupport` has been moved to `org.apache.camel.support.RoutePolicySupport`.
+The class `org.apache.camel.impl.RoutePolicySupport` has been moved to `org.apache.camel.support.RoutePolicySupport`. The return type from `startConsumer` and `stopConsumer` has been changed from `boolean` to `void` as they always returned `true` before.
 
 The class `org.apache.camel.impl.ThrottlingInflightRoutePolicy` has been moved to `org.apache.camel.throttling.ThrottlingInflightRoutePolicy`
 

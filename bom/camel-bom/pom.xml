@@ -553,6 +553,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-cloud</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-cm-sms</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -730,6 +735,16 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-dataformat-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-dataset</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-dataset-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
