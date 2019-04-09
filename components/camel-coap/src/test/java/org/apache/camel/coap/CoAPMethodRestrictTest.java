@@ -54,7 +54,7 @@ public class CoAPMethodRestrictTest extends CoAPTestSupport {
             if (methodRestrict.contains(method)) {
                 assertEquals(expectedResponse, result);
             } else {
-                assertEquals("", result);
+                assertNull(result);
             }
         }
     }
