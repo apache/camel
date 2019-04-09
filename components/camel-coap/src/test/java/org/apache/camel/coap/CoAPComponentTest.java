@@ -35,8 +35,8 @@ public class CoAPComponentTest extends CoAPTestSupport {
     @Test
     public void testCoAPComponent() throws Exception {
         CoapClient client = createClient("/TestResource");
-        CoapResponse response = client.get();
-        assertEquals("Hello ", response.getResponseText());
+        CoapResponse response = client.post("Camel", MediaTypeRegistry.TEXT_PLAIN);
+        assertEquals("Hello Camel", response.getResponseText());
         
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);

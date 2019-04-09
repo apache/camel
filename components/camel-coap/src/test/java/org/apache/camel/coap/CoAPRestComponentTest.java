@@ -46,7 +46,7 @@ public class CoAPRestComponentTest extends CamelTestSupport {
         assertEquals("Hello Ducky: data", rsp.getResponseText());
 
         client = new CoapClient("coap://localhost:" + coapport + "/TestParams?id=Ducky");
-        client.setTimeout(1000000);
+        client.setTimeout(1000000L);
         rsp = client.get();
         assertEquals(ResponseCode.CONTENT, rsp.getCode());
         assertEquals("Hello Ducky", rsp.getResponseText());
@@ -60,7 +60,7 @@ public class CoAPRestComponentTest extends CamelTestSupport {
     public void testCoAPMethodNotAllowedResponse() throws Exception {
         NetworkConfig.createStandardWithoutFile();
         CoapClient client = new CoapClient("coap://localhost:" + coapport + "/TestResource/Ducky");
-        client.setTimeout(1000000);
+        client.setTimeout(1000000L);
         CoapResponse rsp = client.delete();
         assertEquals(ResponseCode.METHOD_NOT_ALLOWED, rsp.getCode());
     }
@@ -69,7 +69,7 @@ public class CoAPRestComponentTest extends CamelTestSupport {
     public void testCoAPNotFoundResponse() throws Exception {
         NetworkConfig.createStandardWithoutFile();
         CoapClient client = new CoapClient("coap://localhost:" + coapport + "/foo/bar/cheese");
-        client.setTimeout(1000000);
+        client.setTimeout(1000000L);
         CoapResponse rsp = client.get();
         assertEquals(ResponseCode.NOT_FOUND, rsp.getCode());
     }
