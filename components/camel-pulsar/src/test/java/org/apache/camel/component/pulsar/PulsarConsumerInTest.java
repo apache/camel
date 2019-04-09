@@ -89,7 +89,10 @@ public class PulsarConsumerInTest extends CamelTestSupport {
         AutoConfiguration autoConfiguration = new AutoConfiguration(null, null);
 
         jndi.bind("pulsarClient", pulsarClient);
-        jndi.bind("pulsar", new PulsarComponent(context(), autoConfiguration, pulsarClient));
+        PulsarComponent comp = new PulsarComponent(context);
+        comp.setAutoConfiguration(autoConfiguration);
+        comp.setPulsarClient(pulsarClient);
+        jndi.bind("pulsar", comp);
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {

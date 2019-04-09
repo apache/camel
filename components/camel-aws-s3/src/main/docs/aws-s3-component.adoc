@@ -184,7 +184,7 @@ The component supports 36 options, which are listed below.
 | *camel.component.aws-s3.configuration.path-style-access* | Whether or not the S3 client should use path style access | false | Boolean
 | *camel.component.aws-s3.configuration.payload-signing-enabled* | Define if Payload Signing enabled is true or false | false | Boolean
 | *camel.component.aws-s3.configuration.policy* | The policy for this queue to set in the `com.amazonaws.services.s3.AmazonS3#setBucketPolicy()` method. |  | String
-| *camel.component.aws-s3.configuration.prefix* | The delimiter which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
+| *camel.component.aws-s3.configuration.prefix* | The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
 | *camel.component.aws-s3.configuration.proxy-host* | To define a proxy host when instantiating the SQS client |  | String
 | *camel.component.aws-s3.configuration.proxy-port* | Specify a proxy port to be used inside the client definition. |  | Integer
 | *camel.component.aws-s3.configuration.region* | The region in which S3 client needs to work |  | String
