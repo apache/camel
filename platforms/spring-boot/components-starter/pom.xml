@@ -368,6 +368,7 @@
     <module>camel-vm-starter</module>
     <module>camel-weather-starter</module>
     <module>camel-web3j-starter</module>
+    <module>camel-webhook-starter</module>
     <module>camel-websocket-jsr356-starter</module>
     <module>camel-websocket-starter</module>
     <module>camel-wordpress-starter</module>

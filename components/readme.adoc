@@ -859,6 +859,9 @@ Number of Components: 294 in 230 JAR artifacts (0 deprecated)
 | link:camel-web3j/src/main/docs/web3j-component.adoc[Web3j Ethereum Blockchain] (camel-web3j) +
 `web3j:nodeAddress` | 2.22 | The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
 
+| link:camel-webhook/src/main/docs/webhook-component.adoc[Webhook] (camel-webhook) +
+`webhook:endpointUri` | 3.0 | Camel Webhook component
+
 | link:camel-wordpress/src/main/docs/wordpress-component.adoc[Wordpress] (camel-wordpress) +
 `wordpress:operationDetail` | 2.21 | Integrates Camel with Wordpress.
 
