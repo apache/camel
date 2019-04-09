@@ -37,7 +37,7 @@ import org.apache.pulsar.client.api.Message;
 public final class PulsarMessageUtils {
 
     public static Exchange updateExchange(final Message<byte[]> message, final Exchange input) {
-        final Exchange output = input.copy(true);
+        final Exchange output = input.copy();
 
         org.apache.camel.Message msg = output.getIn();
 
@@ -59,7 +59,7 @@ public final class PulsarMessageUtils {
     }
 
     public static Exchange updateExchangeWithException(final Exception exception, final Exchange input) {
-        final Exchange output = input.copy(true);
+        final Exchange output = input.copy();
 
         output.setException(exception);
 
