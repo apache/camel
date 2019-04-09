@@ -104,7 +104,7 @@ The component supports 12 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.aws-ec2.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-ec2.configuration.access-key* | Amazon AWS Access Key |  | String
-| *camel.component.aws-ec2.configuration.amazon-ec2-client* | To use a existing configured AmazonEC2Client as client |  | AmazonEC2Client
+| *camel.component.aws-ec2.configuration.amazon-ec2-client* | To use a existing configured AmazonEC2Client as client |  | AmazonEC2
 | *camel.component.aws-ec2.configuration.operation* | The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags or deleteTags |  | EC2Operations
 | *camel.component.aws-ec2.configuration.proxy-host* | To define a proxy host when instantiating the EC2 client |  | String
 | *camel.component.aws-ec2.configuration.proxy-port* | To define a proxy port when instantiating the EC2 client |  | Integer
