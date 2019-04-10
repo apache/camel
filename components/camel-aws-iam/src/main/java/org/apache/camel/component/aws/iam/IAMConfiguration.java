@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.aws.iam;
 
-import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClient;
+import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
@@ -31,7 +31,7 @@ public class IAMConfiguration implements Cloneable {
     @Metadata(required = true)
     private String label;
     @UriParam(label = "producer")
-    private AmazonIdentityManagementClient iamClient;
+    private AmazonIdentityManagement iamClient;
     @UriParam(label = "producer", secret = true)
     private String accessKey;
     @UriParam(label = "producer", secret = true)
@@ -46,14 +46,14 @@ public class IAMConfiguration implements Cloneable {
     @UriParam
     private String region;
 
-    public AmazonIdentityManagementClient getIamClient() {
+    public AmazonIdentityManagement getIamClient() {
         return iamClient;
     }
 
     /**
      * To use a existing configured AWS IAM as client
      */
-    public void setIamClient(AmazonIdentityManagementClient iamClient) {
+    public void setIamClient(AmazonIdentityManagement iamClient) {
         this.iamClient = iamClient;
     }
 
