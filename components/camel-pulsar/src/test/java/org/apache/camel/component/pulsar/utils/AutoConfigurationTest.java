@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.pulsar.utils;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.apache.pulsar.client.admin.Namespaces;
 import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.admin.PulsarAdminException;
@@ -24,9 +27,6 @@ import org.apache.pulsar.common.policies.data.TenantInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
-
-import java.util.Collections;
-import java.util.Set;
 
 import static org.mockito.Mockito.*;
 
@@ -78,28 +78,28 @@ public class AutoConfigurationTest {
     @Test
     public void newTenantAndNamespace() throws PulsarAdminException {
         when(pulsarAdmin.tenants()).thenReturn(tenants);
-        when(tenants.getTenants()).thenReturn(Collections.<String>emptyList());
+        when(tenants.getTenants()).thenReturn(Collections.<String> emptyList());
         when(pulsarAdmin.namespaces()).thenReturn(namespaces);
-        when(namespaces.getNamespaces("tn1")).thenReturn(Collections.<String>emptyList());
+        when(namespaces.getNamespaces("tn1")).thenReturn(Collections.<String> emptyList());
 
         AutoConfiguration autoConfiguration = new AutoConfiguration(pulsarAdmin, clusters);
         autoConfiguration.ensureNameSpaceAndTenant("tn1/ns1/topic");
 
-        verify(tenants).createTenant(eq("tn1"), Matchers.<TenantInfo>any());
+        verify(tenants).createTenant(eq("tn1"), Matchers.<TenantInfo> any());
         verify(namespaces).createNamespace("tn1/ns1", Collections.singleton("standalone"));
     }
 
     @Test
     public void existingTenantAndNamespace() throws PulsarAdminException {
         when(pulsarAdmin.tenants()).thenReturn(tenants);
-        when(tenants.getTenants()).thenReturn(Collections.<String>singletonList("tn1"));
+        when(tenants.getTenants()).thenReturn(Collections.<String> singletonList("tn1"));
         when(pulsarAdmin.namespaces()).thenReturn(namespaces);
-        when(namespaces.getNamespaces("tn1")).thenReturn(Collections.<String>singletonList("tn1/ns1"));
+        when(namespaces.getNamespaces("tn1")).thenReturn(Collections.<String> singletonList("tn1/ns1"));
 
         AutoConfiguration autoConfiguration = new AutoConfiguration(pulsarAdmin, clusters);
         autoConfiguration.ensureNameSpaceAndTenant("tn1/ns1/topic");
 
-        verify(tenants, never()).createTenant(Matchers.<String>any(), Matchers.<TenantInfo>any());
-        verify(namespaces, never()).createNamespace(Matchers.<String>any(), anySet());
+        verify(tenants, never()).createTenant(Matchers.<String> any(), Matchers.<TenantInfo> any());
+        verify(namespaces, never()).createNamespace(Matchers.<String> any(), anySet());
     }
 }

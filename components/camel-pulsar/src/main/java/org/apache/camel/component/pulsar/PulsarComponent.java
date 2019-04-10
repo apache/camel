@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.pulsar;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
@@ -25,16 +27,14 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.pulsar.client.api.PulsarClient;
 
-import java.util.Map;
-
 @Component("pulsar")
 public class PulsarComponent extends DefaultComponent {
 
-	@Metadata
+    @Metadata
     private AutoConfiguration autoConfiguration;
-	@Metadata
+    @Metadata
     private PulsarClient pulsarClient;
-    
+
     public PulsarComponent() {
         this(null);
     }
@@ -59,25 +59,25 @@ public class PulsarComponent extends DefaultComponent {
         return PulsarEndpoint.create(uri, path, configuration, this, pulsarClient);
     }
 
-	public AutoConfiguration getAutoConfiguration() {
-		return autoConfiguration;
-	}
-	
+    public AutoConfiguration getAutoConfiguration() {
+        return autoConfiguration;
+    }
+
     /**
      * The pulsar autoconfiguration
      */
-	public void setAutoConfiguration(AutoConfiguration autoConfiguration) {
-		this.autoConfiguration = autoConfiguration;
-	}
+    public void setAutoConfiguration(AutoConfiguration autoConfiguration) {
+        this.autoConfiguration = autoConfiguration;
+    }
 
-	public PulsarClient getPulsarClient() {
-		return pulsarClient;
-	}
+    public PulsarClient getPulsarClient() {
+        return pulsarClient;
+    }
 
     /**
      * The pulsar client
      */
-	public void setPulsarClient(PulsarClient pulsarClient) {
-		this.pulsarClient = pulsarClient;
-	}
+    public void setPulsarClient(PulsarClient pulsarClient) {
+        this.pulsarClient = pulsarClient;
+    }
 }

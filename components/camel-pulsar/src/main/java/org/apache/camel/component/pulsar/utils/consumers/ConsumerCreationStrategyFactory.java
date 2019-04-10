@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,7 @@ package org.apache.camel.component.pulsar.utils.consumers;
 
 import org.apache.camel.component.pulsar.PulsarConsumer;
 
-public class ConsumerCreationStrategyFactory {
+public final class ConsumerCreationStrategyFactory {
 
     private final PulsarConsumer pulsarConsumer;
 
@@ -37,19 +37,18 @@ public class ConsumerCreationStrategyFactory {
         }
     }
 
-
     public ConsumerCreationStrategy getStrategy(final SubscriptionType subscriptionType) {
         final SubscriptionType type = subscriptionType == null ? SubscriptionType.EXCLUSIVE : subscriptionType;
 
         switch (type) {
-            case SHARED:
-                return new SharedConsumerStrategy(pulsarConsumer);
-            case EXCLUSIVE:
-                return new ExclusiveConsumerStrategy(pulsarConsumer);
-            case FAILOVER:
-                return new FailoverConsumerStrategy(pulsarConsumer);
-            default:
-                return new ExclusiveConsumerStrategy(pulsarConsumer);
+        case SHARED:
+            return new SharedConsumerStrategy(pulsarConsumer);
+        case EXCLUSIVE:
+            return new ExclusiveConsumerStrategy(pulsarConsumer);
+        case FAILOVER:
+            return new FailoverConsumerStrategy(pulsarConsumer);
+        default:
+            return new ExclusiveConsumerStrategy(pulsarConsumer);
         }
     }
 }

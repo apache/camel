@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,14 +35,10 @@ public class PulsarProducer extends DefaultProducer {
 
     private final PulsarEndpoint pulsarEndpoint;
 
-    private PulsarProducer(PulsarEndpoint pulsarEndpoint) {
+    public PulsarProducer(PulsarEndpoint pulsarEndpoint) {
         super(pulsarEndpoint);
 
         this.pulsarEndpoint = pulsarEndpoint;
-    }
-
-    public static PulsarProducer create(final PulsarEndpoint pulsarEndpoint) {
-        return new PulsarProducer(pulsarEndpoint);
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -41,8 +41,9 @@ public class PulsarComponentTest extends CamelTestSupport {
     public void testPulsarEndpointConfiguration() throws Exception {
         PulsarComponent component = new PulsarComponent(context);
         component.setAutoConfiguration(autoConfiguration);
-        
-        PulsarEndpoint endpoint = (PulsarEndpoint) component.createEndpoint("pulsar://persistent/test/foobar/BatchCreated?numberOfConsumers=10&subscriptionName=batch-created-subscription&subscriptionType=Shared");
+
+        PulsarEndpoint endpoint = (PulsarEndpoint)component
+            .createEndpoint("pulsar://persistent/test/foobar/BatchCreated?numberOfConsumers=10&subscriptionName=batch-created-subscription&subscriptionType=Shared");
 
         assertNotNull(endpoint);
     }
@@ -51,7 +52,7 @@ public class PulsarComponentTest extends CamelTestSupport {
     public void testPulsarEndpointDefaultConfiguration() throws Exception {
         PulsarComponent component = new PulsarComponent(context);
 
-        PulsarEndpoint endpoint = (PulsarEndpoint) component.createEndpoint("pulsar://persistent/test/foobar/BatchCreated");
+        PulsarEndpoint endpoint = (PulsarEndpoint)component.createEndpoint("pulsar://persistent/test/foobar/BatchCreated");
 
         assertNotNull(endpoint);
         assertEquals("sole-consumer", endpoint.getPulsarConfiguration().getConsumerName());
