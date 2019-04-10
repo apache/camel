@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.redis.processor.idempotent;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
@@ -37,6 +38,7 @@ import static org.mockito.Mockito.when;
 public class RedisStringIdempotentRepositoryTest {
 
     private static final String REPOSITORY = "testRepository";
+    private static final String REPOSITORY_NOEXPIRY = "testRepositoryNoExpiry";
     private static final String KEY = "KEY";
 
     @Mock
@@ -51,27 +53,30 @@ public class RedisStringIdempotentRepositoryTest {
     private ValueOperations<String, String> valueOperations;
 
     private RedisStringIdempotentRepository idempotentRepository;
+    private RedisStringIdempotentRepository idempotentRepositoryNoExpiry;
 
     @Before
     public void setUp() throws Exception {
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-        when(valueOperations.getOperations()).thenReturn(redisOperations);
         idempotentRepository = new RedisStringIdempotentRepository(redisTemplate, REPOSITORY);
         idempotentRepository.setExpiry(1000L);
+        idempotentRepositoryNoExpiry = new RedisStringIdempotentRepository(redisTemplate, REPOSITORY_NOEXPIRY);
     }
 
     @Test
     public void shouldAddKey() {
         idempotentRepository.add(KEY);
-        verify(valueOperations).setIfAbsent(idempotentRepository.createRedisKey(KEY), KEY);
-        verify(redisOperations)
-                .expire(idempotentRepository.createRedisKey(KEY), 1000L, TimeUnit.SECONDS);
+        verify(valueOperations).setIfAbsent(idempotentRepository.createRedisKey(KEY), KEY, Duration.ofSeconds(1000L));
+        idempotentRepositoryNoExpiry.add(KEY);
+        verify(valueOperations).setIfAbsent(idempotentRepositoryNoExpiry.createRedisKey(KEY), KEY);
     }
 
     @Test
     public void shoulCheckForMembers() {
         idempotentRepository.contains(KEY);
         verify(valueOperations).get(idempotentRepository.createRedisKey(KEY));
+        idempotentRepositoryNoExpiry.contains(KEY);
+        verify(valueOperations).get(idempotentRepositoryNoExpiry.createRedisKey(KEY));       
     }
 
 
@@ -79,6 +84,8 @@ public class RedisStringIdempotentRepositoryTest {
     public void shouldReturnProcessorName() {
         String processorName = idempotentRepository.getProcessorName();
         assertEquals(REPOSITORY, processorName);
+        String processorNameNoExpiry = idempotentRepositoryNoExpiry.getProcessorName();
+        assertEquals(REPOSITORY_NOEXPIRY, processorNameNoExpiry);
     }
 
 }
