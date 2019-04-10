@@ -78,7 +78,7 @@ public class PulsarConsumer extends DefaultConsumer {
         final ConsumerCreationStrategyFactory factory) throws Exception {
 
         ConsumerCreationStrategy strategy = factory
-            .getStrategy(endpoint.getConfiguration().getSubscriptionType());
+            .getStrategy(endpoint.getPulsarConfiguration().getSubscriptionType());
 
         return strategy.create(endpoint);
     }

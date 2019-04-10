@@ -54,13 +54,13 @@ public class PulsarComponentTest extends CamelTestSupport {
         PulsarEndpoint endpoint = (PulsarEndpoint) component.createEndpoint("pulsar://persistent/test/foobar/BatchCreated");
 
         assertNotNull(endpoint);
-        assertEquals("sole-consumer", endpoint.getConfiguration().getConsumerName());
-        assertEquals("cons", endpoint.getConfiguration().getConsumerNamePrefix());
-        assertEquals(10, endpoint.getConfiguration().getConsumerQueueSize());
-        assertEquals(1, endpoint.getConfiguration().getNumberOfConsumers());
-        assertEquals("default-producer", endpoint.getConfiguration().getProducerName());
-        assertEquals("subs", endpoint.getConfiguration().getSubscriptionName());
-        assertEquals(SubscriptionType.EXCLUSIVE, endpoint.getConfiguration().getSubscriptionType());
+        assertEquals("sole-consumer", endpoint.getPulsarConfiguration().getConsumerName());
+        assertEquals("cons", endpoint.getPulsarConfiguration().getConsumerNamePrefix());
+        assertEquals(10, endpoint.getPulsarConfiguration().getConsumerQueueSize());
+        assertEquals(1, endpoint.getPulsarConfiguration().getNumberOfConsumers());
+        assertEquals("default-producer", endpoint.getPulsarConfiguration().getProducerName());
+        assertEquals("subs", endpoint.getPulsarConfiguration().getSubscriptionName());
+        assertEquals(SubscriptionType.EXCLUSIVE, endpoint.getPulsarConfiguration().getSubscriptionType());
     }
 
     @Test
