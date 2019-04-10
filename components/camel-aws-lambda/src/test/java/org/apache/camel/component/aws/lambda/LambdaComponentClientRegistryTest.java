@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.aws.lambda;
 
+import com.amazonaws.services.lambda.AWSLambdaClient;
+
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
-import com.amazonaws.services.lambda.AWSLambdaClient;
 
 import static org.mockito.Mockito.mock;
 
@@ -29,7 +29,7 @@ public class LambdaComponentClientRegistryTest extends CamelTestSupport {
     public void createEndpointWithMinimalKMSClientConfiguration() throws Exception {
 
         AWSLambdaClient awsLambdaClient = mock(AWSLambdaClient.class);
-    	context.getRegistry().bind("awsLambdaClient", awsLambdaClient);
+        context.getRegistry().bind("awsLambdaClient", awsLambdaClient);
         LambdaComponent component = new LambdaComponent(context);
         LambdaEndpoint endpoint = (LambdaEndpoint) component.createEndpoint(
                 "aws-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
@@ -40,7 +40,7 @@ public class LambdaComponentClientRegistryTest extends CamelTestSupport {
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalKMSClientMisconfiguration() throws Exception {
 
-    	LambdaComponent component = new LambdaComponent(context);
+        LambdaComponent component = new LambdaComponent(context);
         LambdaEndpoint endpoint = (LambdaEndpoint) component.createEndpoint(
                 "aws-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
     }

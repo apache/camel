@@ -28,7 +28,7 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithMinimalConfiguration() throws Exception {
         AWSLambdaClient awsLambdaClient = mock(AWSLambdaClient.class);
-    	context.getRegistry().bind("awsLambdaClient", awsLambdaClient);
+        context.getRegistry().bind("awsLambdaClient", awsLambdaClient);
         LambdaComponent component = new LambdaComponent(context);
         LambdaEndpoint endpoint = (LambdaEndpoint) component.createEndpoint(
             "aws-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
@@ -65,7 +65,7 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
         AWSLambdaClient awsLambdaClient = mock(AWSLambdaClient.class);
-    	context.getRegistry().bind("awsLambdaClient", awsLambdaClient);
+        context.getRegistry().bind("awsLambdaClient", awsLambdaClient);
         LambdaComponent component = new LambdaComponent(context);
         component.createEndpoint("aws-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient");
     }
