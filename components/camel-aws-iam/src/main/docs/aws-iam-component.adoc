@@ -104,7 +104,7 @@ The component supports 12 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.aws-iam.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-iam.configuration.access-key* | Amazon AWS Access Key |  | String
-| *camel.component.aws-iam.configuration.iam-client* | To use a existing configured AWS IAM as client |  | AmazonIdentity ManagementClient
+| *camel.component.aws-iam.configuration.iam-client* | To use a existing configured AWS IAM as client |  | AmazonIdentity Management
 | *camel.component.aws-iam.configuration.operation* | The operation to perform |  | IAMOperations
 | *camel.component.aws-iam.configuration.proxy-host* | To define a proxy host when instantiating the IAM client |  | String
 | *camel.component.aws-iam.configuration.proxy-port* | To define a proxy port when instantiating the IAM client |  | Integer
