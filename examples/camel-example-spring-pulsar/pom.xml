@@ -31,6 +31,7 @@
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.example.server.*</camel.osgi.export.pkg>
         <camel.osgi.import.additional>org.apache.activemq.xbean</camel.osgi.import.additional>
+        <skipTests>true</skipTests>
     </properties>
 
     <dependencies>
@@ -60,14 +61,27 @@
         <!-- END SNIPPET: e2 -->
 
         <!-- for logging using log4j.properties in src/main/resources -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
+                    <!-- logging -->
+                    <dependency>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-api</artifactId>
+                        <version>${log4j2-version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-core</artifactId>
+                        <version>${log4j2-version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-slf4j-impl</artifactId>
+                        <version>${log4j2-version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-1.2-api</artifactId>
+                        <version>${log4j2-version}</version>
+                    </dependency>
         
         <!-- for testing -->
         <dependency>
