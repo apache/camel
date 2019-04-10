@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.pulsar;
 
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.pulsar.client.api.PulsarClient;
+
+import java.util.Map;
 
 public class PulsarComponent extends DefaultComponent {
 

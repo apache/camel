@@ -24,10 +24,6 @@ import org.apache.pulsar.client.api.ConsumerBuilder;
 
 public final class CommonCreationStrategyImpl {
 
-    private CommonCreationStrategyImpl() {
-
-    }
-
     public static ConsumerBuilder<byte[]> create(final String name,
                                                  final PulsarEndpoint pulsarEndpoint,
                                                  final PulsarConsumer pulsarConsumer) {

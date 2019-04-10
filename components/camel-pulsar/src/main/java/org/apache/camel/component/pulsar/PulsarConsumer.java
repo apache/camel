@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.pulsar;
 
+import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopConsumers;
+
 import java.util.Collection;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
 import org.apache.camel.Processor;
 import org.apache.camel.component.pulsar.utils.consumers.ConsumerCreationStrategy;
 import org.apache.camel.component.pulsar.utils.consumers.ConsumerCreationStrategyFactory;
@@ -80,18 +81,6 @@ public class PulsarConsumer extends DefaultConsumer {
             .getStrategy(endpoint.getConfiguration().getSubscriptionType());
 
         return strategy.create(endpoint);
-    }
-
-    public static Queue<Consumer<byte[]>> stopConsumers(final Queue<Consumer<byte[]>> consumers) throws PulsarClientException {
-        while (!consumers.isEmpty()) {
-            Consumer<byte[]> consumer = consumers.poll();
-            if (consumer != null) {
-                consumer.unsubscribe();
-                consumer.close();
-            }
-        }
-
-        return new ConcurrentLinkedQueue<>();
     }
 
 }

@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.pulsar.utils;
 
-import java.util.Collections;
-import java.util.Set;
-
 import org.apache.pulsar.client.admin.Namespaces;
 import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.admin.PulsarAdminException;
@@ -27,6 +24,9 @@ import org.apache.pulsar.common.policies.data.TenantInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
+
+import java.util.Collections;
+import java.util.Set;
 
 import static org.mockito.Mockito.*;
 

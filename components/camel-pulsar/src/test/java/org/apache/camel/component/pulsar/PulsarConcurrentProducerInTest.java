@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.pulsar;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -35,6 +31,10 @@ import org.apache.pulsar.client.impl.ClientBuilderImpl;
 import org.junit.Rule;
 import org.junit.Test;
 import org.testcontainers.containers.PulsarContainer;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class PulsarConcurrentProducerInTest extends CamelTestSupport {
 
@@ -107,7 +107,7 @@ public class PulsarConcurrentProducerInTest extends CamelTestSupport {
     private void sendMessages() {
         ExecutorService executorService = Executors.newFixedThreadPool(5);
 
-        for (int i = 0; i < 100; i++) {
+        for (int i=0; i < 100; i++) {
             executorService.submit(new Runnable() {
                 @Override
                 public void run() {

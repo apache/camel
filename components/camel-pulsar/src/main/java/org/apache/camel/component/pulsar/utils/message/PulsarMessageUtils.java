@@ -16,15 +16,6 @@
  */
 package org.apache.camel.component.pulsar.utils.message;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectOutputStream;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.pulsar.client.api.Message;
-
 import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders.EVENT_TIME;
 import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders.KEY;
 import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders.KEY_BYTES;
@@ -35,11 +26,15 @@ import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeade
 import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders.SEQUENCE_ID;
 import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders.TOPIC_NAME;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectOutputStream;
+import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.pulsar.client.api.Message;
+
 public final class PulsarMessageUtils {
-
-    private PulsarMessageUtils() {
-
-    }
 
     public static Exchange updateExchange(final Message<byte[]> message, final Exchange input) {
         final Exchange output = input.copy(true);

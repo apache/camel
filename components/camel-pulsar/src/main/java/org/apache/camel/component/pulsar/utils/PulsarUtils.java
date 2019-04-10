@@ -14,15 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pulsar;
+package org.apache.camel.component.pulsar.utils;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.PulsarClientException;
-import org.junit.Test;
 
-public class PulsarEndpointTest {
+public final class PulsarUtils {
 
-    @Test(expected = IllegalArgumentException.class)
-    public void givenPulsarEndpointConfigurationIsNull_throwIllegalArgumentExceptionOnCreation() throws PulsarClientException {
-        PulsarEndpoint.create("", "", null, null, null);
+    public static Queue<Consumer<byte[]>> stopConsumers(final Queue<Consumer<byte[]>> consumers) throws PulsarClientException {
+        while (!consumers.isEmpty()) {
+            Consumer<byte[]> consumer = consumers.poll();
+            if (consumer != null) {
+                consumer.unsubscribe();
+                consumer.close();
+            }
+        }
+
+        return new ConcurrentLinkedQueue<>();
     }
 }

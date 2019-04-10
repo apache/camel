@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.pulsar.utils.message;
 
-import java.io.Serializable;
-
 import org.junit.Test;
+
+import java.io.Serializable;
 
 import static org.junit.Assert.assertNotNull;
 
