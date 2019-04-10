@@ -17,6 +17,9 @@
 package org.apache.camel.component.aws.eks;
 
 import java.util.Map;
+import java.util.Set;
+
+import com.amazonaws.services.eks.AmazonEKS;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -65,6 +68,7 @@ public class EKSComponent extends DefaultComponent {
         if (ObjectHelper.isEmpty(configuration.getRegion())) {
             setRegion(region);
         }
+        checkAndSetRegistryClient(configuration);
         if (configuration.getEksClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon eks client or accessKey and secretKey must be specified");
         }
@@ -117,4 +121,10 @@ public class EKSComponent extends DefaultComponent {
         configuration.setRegion(region);
     }
 
+    private void checkAndSetRegistryClient(EKSConfiguration configuration) {
+        Set<AmazonEKS> clients = getCamelContext().getRegistry().findByType(AmazonEKS.class);
+        if (clients.size() == 1) {
+            configuration.setEksClient(clients.stream().findFirst().get());
+        }
+    }
 }
