@@ -16,17 +16,10 @@
  */
 package org.apache.camel.coap;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.security.PrivateKey;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,7 +32,6 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -65,10 +57,10 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
     public CoAPComponent() {
     }
 
-    public synchronized CoapServer getServer(int port, KeyStoreParameters keyStoreParameters) {
+    public synchronized CoapServer getServer(int port, CoAPEndpoint endpoint) {
         CoapServer server = servers.get(port);
         if (server == null && port == -1) {
-            server = getServer(DEFAULT_PORT, keyStoreParameters);
+            server = getServer(DEFAULT_PORT, endpoint);
         }
         if (server == null) {
             CoapEndpoint.Builder coapBuilder = new CoapEndpoint.Builder();
@@ -76,37 +68,37 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
             InetSocketAddress address = new InetSocketAddress(port);
             coapBuilder.setNetworkConfig(config);
             
-            if (keyStoreParameters != null) {
+            if (endpoint.getKeystore() != null) {
                 DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder();
                 builder.setAddress(address);
+                if (endpoint.getAlias() == null) {
+                    throw new IllegalStateException("An alias must be configured to use TLS");
+                }
+                if (endpoint.getPassword() == null) {
+                    throw new IllegalStateException("A password must be configured to use TLS");
+                }
+                if (endpoint.getTruststore() == null) {
+                    throw new IllegalStateException("A truststore must be configured to use TLS");
+                }
 
                 try {
-                    KeyStore keyStore = keyStoreParameters.createKeyStore();
-                    // TODO
-                    PrivateKey privateKey = (PrivateKey)keyStoreParameters.createKeyStore().getKey("ec", "security".toCharArray());
-                    builder.setIdentity(privateKey, keyStore.getCertificateChain("ec"));
+                    // Configure the identity
+                    PrivateKey privateKey = 
+                        (PrivateKey)endpoint.getKeystore().getKey(endpoint.getAlias(), endpoint.getPassword());
+                    builder.setIdentity(privateKey, endpoint.getKeystore().getCertificateChain(endpoint.getAlias()));
 
                     // Add all certificates from the truststore
-                    Enumeration<String> aliases = keyStore.aliases();
-                    List<Certificate> trustCerts = new ArrayList<>();
-                    while (aliases.hasMoreElements()) {
-                        String alias = aliases.nextElement();
-                        X509Certificate cert =
-                                (X509Certificate) keyStore.getCertificate(alias);
-                        if (cert != null) {
-                            trustCerts.add(cert);
-                        }
-                    }
-                    builder.setTrustStore(trustCerts.toArray(new Certificate[0]));
+                    builder.setTrustStore(endpoint.getTrustedCerts());
 
-                } catch (GeneralSecurityException | IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                } catch (GeneralSecurityException e) {
+                    throw new IllegalStateException("Error in configuring TLS", e);
                 }
 
                 builder.setClientAuthenticationRequired(false); //TODO
 
-                builder.setSupportedCipherSuites(new String[] {"TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256"}); //TODO
+                if (endpoint.getConfiguredCipherSuites() != null) {
+                    builder.setSupportedCipherSuites(endpoint.getConfiguredCipherSuites());
+                }
 
                 DTLSConnector connector = new DTLSConnector(builder.build());
                 coapBuilder.setConnector(connector);
