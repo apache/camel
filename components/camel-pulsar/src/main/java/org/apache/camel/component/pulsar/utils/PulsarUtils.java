@@ -22,7 +22,7 @@ import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.PulsarClientException;
 
 public final class PulsarUtils {
-
+    
     private PulsarUtils() {
     }
 

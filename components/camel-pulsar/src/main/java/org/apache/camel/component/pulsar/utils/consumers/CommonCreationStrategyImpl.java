@@ -23,7 +23,7 @@ import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
 import org.apache.pulsar.client.api.ConsumerBuilder;
 
 public final class CommonCreationStrategyImpl {
-
+    
     private CommonCreationStrategyImpl() {
     }
 
