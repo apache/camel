@@ -29,7 +29,7 @@ import org.apache.pulsar.client.api.ProducerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PulsarProducer extends DefaultProducer {
+public final class PulsarProducer extends DefaultProducer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarProducer.class);
 

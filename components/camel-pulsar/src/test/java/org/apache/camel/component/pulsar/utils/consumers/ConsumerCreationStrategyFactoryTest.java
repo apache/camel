@@ -16,22 +16,23 @@
  */
 package org.apache.camel.component.pulsar.utils.consumers;
 
+import org.apache.camel.component.pulsar.PulsarConsumer;
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 
-import org.apache.camel.component.pulsar.PulsarConsumer;
-import org.junit.Test;
 
 public class ConsumerCreationStrategyFactoryTest {
 
     @Test(expected = IllegalArgumentException.class)
-    public void givenPulsarConsumerIsNull_whenICreateFactory_verifyIllegalArgumentExceptionIsThrown() {
+    public void verifyIllegalArgumentExceptionIsThrownWhenPulsarConsumerIsNull() {
         ConsumerCreationStrategyFactory.create(null);
     }
 
     @Test
-    public void givenPulsarConsumerAndRetryPolicyNonNull_whenICreateFactory_verifyIllegalArgumentExceptionIsNotThrown() {
+    public void verifyIllegalArgumentExceptionIsNotThrown() {
         ConsumerCreationStrategyFactory factory = ConsumerCreationStrategyFactory.create(mock(PulsarConsumer.class));
 
         assertNotNull(factory);

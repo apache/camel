@@ -28,7 +28,7 @@ import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 
 @UriEndpoint(scheme = "pulsar", title = "Apache Pulsar", syntax = "pulsar:[persistent|non-persistent]://tenant/namespace/topic", label = "messaging")
-public class PulsarEndpoint extends DefaultEndpoint {
+public final class PulsarEndpoint extends DefaultEndpoint {
 
     private final PulsarConfiguration pulsarConfiguration;
     private final PulsarClient pulsarClient;
@@ -48,7 +48,7 @@ public class PulsarEndpoint extends DefaultEndpoint {
                                         final PulsarComponent component,
                                         final PulsarClient pulsarClient) throws PulsarClientException, IllegalArgumentException {
 
-        if(null == pulsarConfiguration) {
+        if (null == pulsarConfiguration) {
             throw new IllegalArgumentException("PulsarEndpointConfiguration cannot be null");
         }
 

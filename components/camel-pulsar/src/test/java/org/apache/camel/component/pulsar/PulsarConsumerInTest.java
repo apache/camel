@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.pulsar;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -25,6 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
@@ -36,17 +41,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.PulsarContainer;
 
-import java.util.concurrent.TimeUnit;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class PulsarConsumerInTest extends CamelTestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerInTest.class);
+    private static final String TOPIC_URI = "persistent://public/default/camel-topic";
+    private static final String PRODUCER = "camel-producer-1";
 
     @Rule
     public PulsarContainer pulsarContainer = new PulsarContainer();
-
-    private static final String TOPIC_URI = "persistent://public/default/camel-topic";
-    private static final String PRODUCER = "camel-producer-1";
 
     @EndpointInject(uri = "pulsar:" + TOPIC_URI
         + "?numberOfConsumers=1&subscriptionType=Exclusive"
@@ -98,6 +104,48 @@ public class PulsarConsumerInTest extends CamelTestSupport {
             .ioThreads(1)
             .listenerThreads(1)
             .build();
+    }
+
+    @Test
+    public void verifyEmptyQueueIsReturnedWithEmptyQueue() throws PulsarClientException {
+        Queue<Consumer<byte[]>> expected = PulsarConsumer.stopConsumers(new ConcurrentLinkedQueue<Consumer<byte[]>>());
+
+        assertTrue(expected.isEmpty());
+    }
+
+    @Test
+    public void verifyEmptyQueueIsReturnedWhenConsumersStopped() throws PulsarClientException {
+        Queue<Consumer<byte[]>> consumers = new ConcurrentLinkedQueue<>();
+        consumers.add(mock(Consumer.class));
+
+        Queue<Consumer<byte[]>> expected = PulsarConsumer.stopConsumers(consumers);
+
+        assertTrue(expected.isEmpty());
+    }
+
+    @Test
+    public void verifyCallToCloseAndUnsubscribeConsumerWhenStopped() throws PulsarClientException {
+        Consumer<byte[]> consumer = mock(Consumer.class);
+
+        Queue<Consumer<byte[]>> consumers = new ConcurrentLinkedQueue<>();
+        consumers.add(consumer);
+
+        PulsarConsumer.stopConsumers(consumers);
+
+        verify(consumer).unsubscribe();
+        verify(consumer).close();
+    }
+
+    @Test(expected = PulsarClientException.class)
+    public void verifyExceptionIsThrown() throws PulsarClientException {
+        Consumer<byte[]> consumer = mock(Consumer.class);
+
+        Queue<Consumer<byte[]>> consumers = new ConcurrentLinkedQueue<>();
+        consumers.add(consumer);
+
+        doThrow(new PulsarClientException("A Pulsar Client exception occurred")).when(consumer).close();
+
+        PulsarConsumer.stopConsumers(consumers);
     }
 
     @Test

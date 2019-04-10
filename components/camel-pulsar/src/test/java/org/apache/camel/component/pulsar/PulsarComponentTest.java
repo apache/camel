@@ -41,7 +41,8 @@ public class PulsarComponentTest extends CamelTestSupport {
     public void testPulsarEndpointConfiguration() throws Exception {
         PulsarComponent component = new PulsarComponent(context, autoConfiguration, null);
 
-        PulsarEndpoint endpoint = (PulsarEndpoint) component.createEndpoint("pulsar://persistent/test/foobar/BatchCreated?numberOfConsumers=10&subscriptionName=batch-created-subscription&subscriptionType=Shared");
+        PulsarEndpoint endpoint = (PulsarEndpoint)
+                component.createEndpoint("pulsar://persistent/test/foobar/BatchCreated?numberOfConsumers=10&subscriptionName=batch-created-subscription&subscriptionType=Shared");
 
         assertNotNull(endpoint);
     }
