@@ -17,14 +17,16 @@
 package org.apache.camel.component.aws.kinesis;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
+
+import com.amazonaws.services.kinesis.AmazonKinesis;
 
 @Component("aws-kinesis")
 public class KinesisComponent extends DefaultComponent {
@@ -64,6 +66,7 @@ public class KinesisComponent extends DefaultComponent {
         if (ObjectHelper.isEmpty(configuration.getRegion())) {
             setRegion(region);
         }
+        checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonKinesisClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonKinesisClient or accessKey and secretKey must be specified");
         }        
@@ -114,5 +117,12 @@ public class KinesisComponent extends DefaultComponent {
      */
     public void setRegion(String region) {
         configuration.setRegion(region);
+    }
+    
+    private void checkAndSetRegistryClient(KinesisConfiguration configuration) {
+        Set<AmazonKinesis> clients = getCamelContext().getRegistry().findByType(AmazonKinesis.class);
+        if (clients.size() == 1) {
+            configuration.setAmazonKinesisClient(clients.stream().findFirst().get());
+        }
     }
 }
