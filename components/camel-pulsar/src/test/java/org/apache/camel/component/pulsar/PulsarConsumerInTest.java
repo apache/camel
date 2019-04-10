@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.pulsar;
+
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
@@ -36,17 +38,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.PulsarContainer;
 
-import java.util.concurrent.TimeUnit;
-
 public class PulsarConsumerInTest extends CamelTestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerInTest.class);
 
-    @Rule
-    public PulsarContainer pulsarContainer = new PulsarContainer();
-
     private static final String TOPIC_URI = "persistent://public/default/camel-topic";
     private static final String PRODUCER = "camel-producer-1";
+
+    @Rule
+    public PulsarContainer pulsarContainer = new PulsarContainer();
 
     @EndpointInject(uri = "pulsar:" + TOPIC_URI
         + "?numberOfConsumers=1&subscriptionType=Exclusive"

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.pulsar;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -32,10 +36,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.testcontainers.containers.PulsarContainer;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 public class PulsarConcurrentProducerInTest extends CamelTestSupport {
 
     private static final String TOPIC_URI = "persistent://public/default/camel-concurrent-producers-topic";
@@ -47,12 +47,8 @@ public class PulsarConcurrentProducerInTest extends CamelTestSupport {
     @Produce(uri = "direct:start")
     private ProducerTemplate producerTemplate;
 
-    @EndpointInject(uri = "pulsar:" + TOPIC_URI
-        + "?numberOfConsumers=3&subscriptionType=Shared"
-        + "&subscriptionName=camel-subscription&consumerQueueSize=1"
-        + "&consumerNamePrefix=camel-consumer"
-        + "&producerName=" + PRODUCER
-    )
+    @EndpointInject(uri = "pulsar:" + TOPIC_URI + "?numberOfConsumers=3&subscriptionType=Shared" + "&subscriptionName=camel-subscription&consumerQueueSize=1"
+                          + "&consumerNamePrefix=camel-consumer" + "&producerName=" + PRODUCER)
     private Endpoint from;
 
     @EndpointInject(uri = "mock:result")
@@ -91,11 +87,7 @@ public class PulsarConcurrentProducerInTest extends CamelTestSupport {
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl()
-            .serviceUrl(pulsarContainer.getPulsarBrokerUrl())
-            .ioThreads(1)
-            .listenerThreads(1)
-            .build();
+        return new ClientBuilderImpl().serviceUrl(pulsarContainer.getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
     }
 
     @Test
@@ -110,7 +102,7 @@ public class PulsarConcurrentProducerInTest extends CamelTestSupport {
     private void sendMessages() {
         ExecutorService executorService = Executors.newFixedThreadPool(5);
 
-        for (int i=0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             executorService.submit(new Runnable() {
                 @Override
                 public void run() {

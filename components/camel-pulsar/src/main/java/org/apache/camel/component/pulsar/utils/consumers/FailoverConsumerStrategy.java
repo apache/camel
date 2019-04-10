@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.component.pulsar.utils.consumers;
 
 import java.util.Collection;
 import java.util.LinkedList;
+
 import org.apache.camel.component.pulsar.PulsarConsumer;
 import org.apache.camel.component.pulsar.PulsarEndpoint;
 import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
@@ -50,8 +51,7 @@ public class FailoverConsumerStrategy implements ConsumerCreationStrategy {
         for (int i = 0; i < configuration.getNumberOfConsumers(); i++) {
             final String consumerName = configuration.getConsumerNamePrefix() + i;
             try {
-                ConsumerBuilder<byte[]> builder = CommonCreationStrategyImpl
-                    .create(consumerName, pulsarEndpoint, pulsarConsumer);
+                ConsumerBuilder<byte[]> builder = CommonCreationStrategyImpl.create(consumerName, pulsarEndpoint, pulsarConsumer);
 
                 consumers.add(builder.subscriptionType(SubscriptionType.Failover).subscribe());
             } catch (PulsarClientException exception) {
