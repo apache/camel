@@ -45,6 +45,7 @@ import org.apache.camel.util.URISupport;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.network.CoapEndpoint;
+import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import org.slf4j.Logger;
@@ -74,7 +75,9 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
         }
         if (server == null) {
             CoapEndpoint.Builder coapBuilder = new CoapEndpoint.Builder();
+            NetworkConfig config = NetworkConfig.createStandardWithoutFile();
             InetSocketAddress address = new InetSocketAddress(port);
+            coapBuilder.setNetworkConfig(config);
             
             if (keyStoreParameters != null) {
                 DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder();
