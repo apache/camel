@@ -49,7 +49,7 @@ The Apache Pulsar component supports 3 options, which are listed below.
 The Apache Pulsar endpoint is configured using URI syntax:
 
 ----
-pulsar:[persistent|non-persistent]://tenant/namespace/topic
+pulsar:persistence://tenant/namespace/topic
 ----
 
 with the following path and query parameters:
