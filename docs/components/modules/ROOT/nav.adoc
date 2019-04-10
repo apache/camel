@@ -252,6 +252,7 @@
 * xref:properties-component.adoc[Properties Component]
 * xref:protobuf-dataformat.adoc[Protobuf DataFormat]
 * xref:pubnub-component.adoc[PubNub Component]
+* xref:pulsar-component.adoc[Apache Pulsar Component]
 * xref:quartz2-component.adoc[Quartz2 Component]
 * xref:quickfix-component.adoc[QuickFix Component]
 * xref:rabbitmq-component.adoc[RabbitMQ Component]
