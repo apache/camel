@@ -45,7 +45,7 @@ public class FailoverConsumerStrategy implements ConsumerCreationStrategy {
 
     private Collection<Consumer<byte[]>> createMultipleConsumers(final PulsarEndpoint pulsarEndpoint) {
         final Collection<Consumer<byte[]>> consumers = new LinkedList<>();
-        final PulsarConfiguration configuration = pulsarEndpoint.getConfiguration();
+        final PulsarConfiguration configuration = pulsarEndpoint.getPulsarConfiguration();
 
         for (int i = 0; i < configuration.getNumberOfConsumers(); i++) {
             final String consumerName = configuration.getConsumerNamePrefix() + i;

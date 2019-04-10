@@ -23,6 +23,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
@@ -30,8 +31,9 @@ import org.apache.pulsar.client.api.PulsarClientException;
 @UriEndpoint(scheme = "pulsar", title = "Apache Pulsar", syntax = "pulsar:[persistent|non-persistent]://tenant/namespace/topic", label = "messaging")
 public class PulsarEndpoint extends DefaultEndpoint {
 
-    private final PulsarConfiguration pulsarConfiguration;
-    private final PulsarClient pulsarClient;
+    private PulsarClient pulsarClient;
+	@UriParam
+    private PulsarConfiguration pulsarConfiguration;
     @UriPath(label = "consumer,producer", description = "The Topic's full URI path including type, tenant and namespace")
     private final String topic;
 
@@ -81,11 +83,13 @@ public class PulsarEndpoint extends DefaultEndpoint {
         return pulsarClient;
     }
 
-    public PulsarConfiguration getConfiguration() {
+    public PulsarConfiguration getPulsarConfiguration() {
         return pulsarConfiguration;
     }
 
     public String getTopic() {
         return topic;
     }
+    
+
 }

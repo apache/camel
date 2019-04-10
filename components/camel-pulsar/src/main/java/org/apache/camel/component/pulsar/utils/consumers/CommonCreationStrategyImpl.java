@@ -27,7 +27,7 @@ public final class CommonCreationStrategyImpl {
     public static ConsumerBuilder<byte[]> create(final String name,
                                                  final PulsarEndpoint pulsarEndpoint,
                                                  final PulsarConsumer pulsarConsumer) {
-        final PulsarConfiguration endpointConfiguration = pulsarEndpoint.getConfiguration();
+        final PulsarConfiguration endpointConfiguration = pulsarEndpoint.getPulsarConfiguration();
 
         return pulsarEndpoint
             .getPulsarClient()
