@@ -17,7 +17,7 @@
 package org.apache.camel.component.aws.iam.springboot;
 
 import javax.annotation.Generated;
-import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClient;
+import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
 import org.apache.camel.component.aws.iam.IAMOperations;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -108,7 +108,7 @@ public class IAMComponentConfiguration
         /**
          * To use a existing configured AWS IAM as client
          */
-        private AmazonIdentityManagementClient iamClient;
+        private AmazonIdentityManagement iamClient;
         /**
          * Amazon AWS Access Key
          */
@@ -134,11 +134,11 @@ public class IAMComponentConfiguration
          */
         private String region;
 
-        public AmazonIdentityManagementClient getIamClient() {
+        public AmazonIdentityManagement getIamClient() {
             return iamClient;
         }
 
-        public void setIamClient(AmazonIdentityManagementClient iamClient) {
+        public void setIamClient(AmazonIdentityManagement iamClient) {
             this.iamClient = iamClient;
         }
 
