@@ -17,6 +17,7 @@
 package org.apache.camel.coap;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
@@ -38,6 +39,8 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.jsse.ClientAuthentication;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.scandium.DTLSConnector;
+import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 
 /**
  * The coap component is used for sending and receiving messages from COAP capable devices.
@@ -227,7 +230,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
         }
     }
     
-    public String[] getConfiguredCipherSuites() {
+    private String[] getConfiguredCipherSuites() {
         return configuredCipherSuites;
     }
     
@@ -250,17 +253,17 @@ public class CoAPEndpoint extends DefaultEndpoint {
         this.clientAuthentication = clientAuthentication;
     }
     
-    public boolean isClientAuthenticationRequired() {
+    private boolean isClientAuthenticationRequired() {
         return clientAuthentication != null 
             && ClientAuthentication.valueOf(clientAuthentication) == ClientAuthentication.REQUIRE;
     }
     
-    public boolean isClientAuthenticationWanted() {
+    private boolean isClientAuthenticationWanted() {
         return clientAuthentication != null 
             && ClientAuthentication.valueOf(clientAuthentication) == ClientAuthentication.WANT;
     }
     
-    public Certificate[] getTrustedCerts() throws KeyStoreException {
+    private Certificate[] getTrustedCerts() throws KeyStoreException {
         Enumeration<String> aliases = truststore.aliases();
         List<Certificate> trustCerts = new ArrayList<>();
         while (aliases.hasMoreElements()) {
@@ -273,10 +276,54 @@ public class CoAPEndpoint extends DefaultEndpoint {
         
         return trustCerts.toArray(new Certificate[0]);
     }
-
-    /*
-    public DTLSConnector createDTLSConnector() {
-        
+    
+    public static boolean enableTLS(URI uri) {
+        return "coaps".equals(uri.getScheme());
     }
-    */
+
+    public DTLSConnector createDTLSConnector(InetSocketAddress address, boolean client) {
+        if (getTruststore() == null) {
+            throw new IllegalStateException("A truststore must be configured to use TLS");
+        }
+        if (!client) {
+            if (getKeystore() == null) {
+                throw new IllegalStateException("A keystore must be configured to use TLS");
+            }
+            if (getAlias() == null) {
+                throw new IllegalStateException("An alias must be configured to use TLS");
+            }
+            if (getPassword() == null) {
+                throw new IllegalStateException("A password must be configured to use TLS");
+            }
+        }
+
+        DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder();
+        if (client) {
+            builder.setClientOnly();
+        } else {
+            builder.setAddress(address);
+            builder.setClientAuthenticationRequired(isClientAuthenticationRequired());
+            builder.setClientAuthenticationWanted(isClientAuthenticationWanted());
+        }
+
+        try {
+            // Configure the identity if the keystore parameter is specified
+            if (getKeystore() != null) {
+                PrivateKey privateKey = 
+                    (PrivateKey)getKeystore().getKey(getAlias(), getPassword());
+                builder.setIdentity(privateKey, getKeystore().getCertificateChain(getAlias()));
+            }
+    
+            // Add all certificates from the truststore
+            builder.setTrustStore(getTrustedCerts());
+        } catch (GeneralSecurityException e) {
+            throw new IllegalStateException("Error in configuring TLS", e);
+        }
+
+        if (getConfiguredCipherSuites() != null) {
+            builder.setSupportedCipherSuites(getConfiguredCipherSuites());
+        }
+
+        return new DTLSConnector(builder.build());
+    }
 }
