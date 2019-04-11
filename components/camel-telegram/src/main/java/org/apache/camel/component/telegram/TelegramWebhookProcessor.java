@@ -26,7 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.telegram.model.Update;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.telegram.util.TelegramMessageHelper.populateExchange;
 
@@ -55,7 +54,6 @@ public class TelegramWebhookProcessor extends AsyncProcessorSupport implements A
         populateExchange(exchange, update);
         return next.process(exchange, doneSync -> {
             // No response data expected
-            LoggerFactory.getLogger(getClass()).info("Resetting body");
             exchange.getMessage().setBody("");
             callback.done(doneSync);
         });
