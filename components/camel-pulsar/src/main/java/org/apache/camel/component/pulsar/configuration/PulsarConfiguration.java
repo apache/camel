@@ -46,7 +46,6 @@ public class PulsarConfiguration {
 
     /**
      * Name of the subscription to use
-     * @param subscriptionName
      */
     public void setSubscriptionName(String subscriptionName) {
         this.subscriptionName = subscriptionName;
@@ -58,7 +57,6 @@ public class PulsarConfiguration {
 
     /**
      * Type of the subscription [EXCLUSIVE|SHARED|FAILOVER], defaults to EXCLUSIVE
-     * @param subscriptionType
      */
     public void setSubscriptionType(SubscriptionType subscriptionType) {
         this.subscriptionType = subscriptionType;
@@ -70,7 +68,6 @@ public class PulsarConfiguration {
 
     /**
      * Number of consumers - defaults to 1
-     * @param numberOfConsumers
      */
     public void setNumberOfConsumers(int numberOfConsumers) {
         this.numberOfConsumers = numberOfConsumers;
@@ -82,7 +79,6 @@ public class PulsarConfiguration {
 
     /**
      * Size of the consumer queue - defaults to 10
-     * @param consumerQueueSize
      */
     public void setConsumerQueueSize(int consumerQueueSize) {
         this.consumerQueueSize = consumerQueueSize;
@@ -94,7 +90,6 @@ public class PulsarConfiguration {
 
     /**
      * Name of the consumer when subscription is EXCLUSIVE
-     * @param consumerName
      */
     public void setConsumerName(String consumerName) {
         this.consumerName = consumerName;
@@ -106,7 +101,6 @@ public class PulsarConfiguration {
 
     /**
      * Name of the producer
-     * @param producerName
      */
     public void setProducerName(String producerName) {
         this.producerName = producerName;
@@ -118,7 +112,6 @@ public class PulsarConfiguration {
 
     /**
      * Prefix to add to consumer names when a SHARED or FAILOVER subscription is used
-     * @param consumerNamePrefix
      */
     public void setConsumerNamePrefix(String consumerNamePrefix) {
         this.consumerNamePrefix = consumerNamePrefix;
