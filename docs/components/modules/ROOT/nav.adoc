@@ -352,6 +352,7 @@
 * xref:vm-component.adoc[VM Component]
 * xref:weather-component.adoc[Weather Component]
 * xref:web3j-component.adoc[Web3j Ethereum Blockchain Component]
+* xref:webhook-component.adoc[Webhook Component]
 * xref:websocket-jsr356-component.adoc[Javax Websocket Component]
 * xref:websocket-component.adoc[Jetty Websocket Component]
 * xref:wordpress-component.adoc[Wordpress Component]

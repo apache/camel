@@ -16,24 +16,34 @@
  */
 package org.apache.camel.component.telegram;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.telegram.model.Update;
+import org.apache.camel.component.webhook.WebhookCapableEndpoint;
+import org.apache.camel.component.webhook.WebhookConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
+
+import static org.apache.camel.component.telegram.util.TelegramMessageHelper.populateExchange;
 
 /**
  * The telegram component provides access to the <a href="https://core.telegram.org/bots/api">Telegram Bot API</a>.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "telegram", title = "Telegram", syntax = "telegram:type/authorizationToken", label = "chat")
-public class TelegramEndpoint extends ScheduledPollEndpoint {
+public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCapableEndpoint {
 
     @UriParam
     private TelegramConfiguration configuration;
+
+    private WebhookConfiguration webhookConfiguration;
 
     public TelegramEndpoint(String endpointUri, Component component, TelegramConfiguration configuration) {
         super(endpointUri, component);
@@ -54,22 +64,43 @@ public class TelegramEndpoint extends ScheduledPollEndpoint {
 
     public Exchange createExchange(Update update) {
         Exchange exchange = super.createExchange();
-
-        if (update.getMessage() != null) {
-            exchange.getIn().setBody(update.getMessage());
-
-            if (update.getMessage().getChat() != null) {
-                exchange.getIn().setHeader(TelegramConstants.TELEGRAM_CHAT_ID, update.getMessage().getChat().getId());
-            }
-        } else if (update.getChannelPost() != null) {
-            exchange.getIn().setBody(update.getChannelPost());
-
-            if (update.getChannelPost().getChat() != null) {
-                exchange.getIn().setHeader(TelegramConstants.TELEGRAM_CHAT_ID, update.getChannelPost().getChat().getId());
-            }
-        }
-
+        populateExchange(exchange, update);
         return exchange;
+    }
+
+    @Override
+    public Processor createWebhookHandler(Processor next) {
+        return new TelegramWebhookProcessor(next);
+    }
+
+    @Override
+    public void registerWebhook() throws Exception {
+        TelegramService service = TelegramServiceProvider.get().getService();
+        if (!service.setWebhook(configuration.getAuthorizationToken(), webhookConfiguration.computeFullExternalUrl())) {
+            throw new RuntimeCamelException("The Telegram API refused to register a webhook");
+        }
+    }
+
+    @Override
+    public void unregisterWebhook() throws Exception {
+        TelegramService service = TelegramServiceProvider.get().getService();
+        if (!service.removeWebhook(configuration.getAuthorizationToken())) {
+            throw new RuntimeCamelException("The Telegram API refused to unregister the webhook");
+        }
+    }
+
+    public WebhookConfiguration getWebhookConfiguration() {
+        return webhookConfiguration;
+    }
+
+    @Override
+    public void setWebhookConfiguration(WebhookConfiguration webhookConfiguration) {
+        this.webhookConfiguration = webhookConfiguration;
+    }
+
+    @Override
+    public List<String> getWebhookMethods() {
+        return Collections.singletonList("POST");
     }
 
     @Override

@@ -88,6 +88,10 @@ public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint
         }
     }
 
+    public WebhookConfiguration getConfiguration() {
+        return configuration;
+    }
+
     @Override
     public WebhookCapableEndpoint getEndpoint() {
         return delegateEndpoint;
