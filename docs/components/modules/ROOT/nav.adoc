@@ -181,6 +181,7 @@
 * xref:jpa-component.adoc[JPA Component]
 * xref:scp-component.adoc[SCP Component]
 * xref:json-validator-component.adoc[JSON Schema Validator Component]
+* xref:jsonApi-dataformat.adoc[jsonApi DataFormat]
 * xref:jsonpath-language.adoc[JsonPath Language]
 * xref:jt400-component.adoc[JT400 Component]
 * xref:kafka-component.adoc[Kafka Component]
