@@ -1,10 +1,15 @@
+[[jsonApi-dataformat]]
 == jsonApi DataFormat
+
+*Available as of Camel version 3.0*
 
 ### JsonAPI Options
 *Available as of Camel version 3.0*
 
 // dataformat options: START
 The jsonApi dataformat supports 3 options, which are listed below.
+
+
 
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |===
