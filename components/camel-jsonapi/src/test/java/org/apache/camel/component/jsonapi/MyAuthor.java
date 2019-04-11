@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,15 +16,12 @@
  */
 package org.apache.camel.component.jsonapi;
 
-
 import com.github.jasminb.jsonapi.annotations.Id;
 import com.github.jasminb.jsonapi.annotations.Type;
 
 /**
-*
-* JSON API test object
-*
-*/
+ * JSON API test object
+ */
 @Type("author")
 public class MyAuthor {
     @Id

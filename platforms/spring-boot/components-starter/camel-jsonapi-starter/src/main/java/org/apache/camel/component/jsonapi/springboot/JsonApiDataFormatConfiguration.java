@@ -34,6 +34,8 @@ public class JsonApiDataFormatConfiguration
      * enabled by default.
      */
     private Boolean enabled;
+    private Class<?>[] dataFormatTypes;
+    private Class<?> mainFormatType;
     /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
@@ -41,6 +43,22 @@ public class JsonApiDataFormatConfiguration
      * application/json for data formats marshalling to JSon etc.
      */
     private Boolean contentTypeHeader = false;
+
+    public Class<?>[] getDataFormatTypes() {
+        return dataFormatTypes;
+    }
+
+    public void setDataFormatTypes(Class<?>[] dataFormatTypes) {
+        this.dataFormatTypes = dataFormatTypes;
+    }
+
+    public Class<?> getMainFormatType() {
+        return mainFormatType;
+    }
+
+    public void setMainFormatType(Class<?> mainFormatType) {
+        this.mainFormatType = mainFormatType;
+    }
 
     public Boolean getContentTypeHeader() {
         return contentTypeHeader;
