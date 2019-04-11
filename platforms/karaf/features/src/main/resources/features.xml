@@ -667,7 +667,6 @@
     <bundle>mvn:org.apache.camel/camel-cometd/${project.version}</bundle>
   </feature>
   <feature name='camel-consul' version='${project.version}' start-level='50'>
-    <details>camel-consul currently does not work in OSGi</details>
     <feature prerequisite='true'>wrap</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:com.google.guava/guava/22.0</bundle>
