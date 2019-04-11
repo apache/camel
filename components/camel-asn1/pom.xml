@@ -46,7 +46,7 @@
             <version>${bouncycastle-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openmuc</groupId>
+            <groupId>com.beanit</groupId>
             <artifactId>jasn1</artifactId>
             <version>${jasn1-version}</version>
         </dependency>
@@ -92,7 +92,7 @@
              doesn't obbey the plugin's dependencies and only supports
              compile and runtime dependencies -->
         <dependency>
-            <groupId>org.openmuc</groupId>
+            <groupId>com.beanit</groupId>
             <artifactId>jasn1-compiler</artifactId>
             <version>${jasn1-version}</version>
             <optional>true</optional>
@@ -122,12 +122,12 @@
                             <arguments>
                                 <argument>-classpath</argument>
                                 <classpath>
-                                    <dependency>org.openmuc:jasn1-compiler</dependency>
-                                    <dependency>org.openmuc:jasn1</dependency>
+                                    <dependency>com.beanit:jasn1-compiler</dependency>
+                                    <dependency>com.beanit:jasn1</dependency>
                                     <dependency>antlr:antlr</dependency>
                                     <dependency>javax.xml.bind:jaxb-api</dependency>
                                 </classpath>
-                                <argument>org.openmuc.jasn1.compiler.Compiler</argument>
+                                <argument>com.beanit.jasn1.compiler.Compiler</argument>
                                 <argument>-o</argument>
                                 <argument>${basedir}/target/generated/src/test/java</argument>
                                 <argument>-p</argument>
