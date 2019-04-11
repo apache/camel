@@ -17,8 +17,6 @@
 package org.apache.camel.coap;
 
 import java.net.URI;
-import java.security.GeneralSecurityException;
-import java.security.PrivateKey;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -28,7 +26,6 @@ import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.scandium.DTLSConnector;
-import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 
 /**
  * The CoAP producer.
@@ -97,35 +94,9 @@ public class CoAPProducer extends DefaultProducer {
             }
             client = new CoapClient(uri);
             
-            if (endpoint.getTruststore() != null) {
-                DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder();
-                builder.setClientOnly();
-
-                try {
-                    // Configure the identity if the keystore parameter is specified
-                    if (endpoint.getKeystore() != null) {
-                        if (endpoint.getAlias() == null) {
-                            throw new IllegalStateException("An alias must be configured to use TLS");
-                        }
-                        if (endpoint.getPassword() == null) {
-                            throw new IllegalStateException("A password must be configured to use TLS");
-                        }
-                        PrivateKey privateKey = 
-                            (PrivateKey)endpoint.getKeystore().getKey(endpoint.getAlias(), endpoint.getPassword());
-                        builder.setIdentity(privateKey, endpoint.getKeystore().getCertificateChain(endpoint.getAlias()));
-                    }
-
-                    // Add all certificates from the truststore
-                    builder.setTrustStore(endpoint.getTrustedCerts());
-                } catch (GeneralSecurityException e) {
-                    throw new IllegalStateException("Error in configuring TLS", e);
-                }
-
-                if (endpoint.getConfiguredCipherSuites() != null) {
-                    builder.setSupportedCipherSuites(endpoint.getConfiguredCipherSuites());
-                }
-
-                DTLSConnector connector = new DTLSConnector(builder.build());
+            // Configure TLS
+            if (CoAPEndpoint.enableTLS((uri))) {
+                DTLSConnector connector = endpoint.createDTLSConnector(null, true);
                 CoapEndpoint.Builder coapBuilder = new CoapEndpoint.Builder();
                 coapBuilder.setConnector(connector);
 

@@ -17,8 +17,6 @@
 package org.apache.camel.coap;
 
 import java.net.InetSocketAddress;
-import java.security.GeneralSecurityException;
-import java.security.PrivateKey;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -40,7 +38,6 @@ import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.californium.scandium.DTLSConnector;
-import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,40 +69,9 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
             InetSocketAddress address = new InetSocketAddress(port);
             coapBuilder.setNetworkConfig(config);
             
-            if (endpoint.getKeystore() != null) {
-                DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder();
-                builder.setAddress(address);
-                if (endpoint.getAlias() == null) {
-                    throw new IllegalStateException("An alias must be configured to use TLS");
-                }
-                if (endpoint.getPassword() == null) {
-                    throw new IllegalStateException("A password must be configured to use TLS");
-                }
-                if (endpoint.getTruststore() == null) {
-                    throw new IllegalStateException("A truststore must be configured to use TLS");
-                }
-
-                try {
-                    // Configure the identity
-                    PrivateKey privateKey = 
-                        (PrivateKey)endpoint.getKeystore().getKey(endpoint.getAlias(), endpoint.getPassword());
-                    builder.setIdentity(privateKey, endpoint.getKeystore().getCertificateChain(endpoint.getAlias()));
-
-                    // Add all certificates from the truststore
-                    builder.setTrustStore(endpoint.getTrustedCerts());
-
-                } catch (GeneralSecurityException e) {
-                    throw new IllegalStateException("Error in configuring TLS", e);
-                }
-
-                builder.setClientAuthenticationRequired(endpoint.isClientAuthenticationRequired());
-                builder.setClientAuthenticationWanted(endpoint.isClientAuthenticationWanted());
-
-                if (endpoint.getConfiguredCipherSuites() != null) {
-                    builder.setSupportedCipherSuites(endpoint.getConfiguredCipherSuites());
-                }
-
-                DTLSConnector connector = new DTLSConnector(builder.build());
+            // Configure TLS
+            if (CoAPEndpoint.enableTLS(endpoint.getUri())) {
+                DTLSConnector connector = endpoint.createDTLSConnector(address, false);
                 coapBuilder.setConnector(connector);
             } else {
                 coapBuilder.setInetSocketAddress(address);
