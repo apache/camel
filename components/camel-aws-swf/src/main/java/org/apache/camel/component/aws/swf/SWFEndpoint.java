@@ -93,7 +93,7 @@ public class SWFEndpoint extends DefaultEndpoint {
         super.doStop();
     }
 
-    public AmazonSimpleWorkflowClient getSWClient() {
+    public AmazonSimpleWorkflow getSWClient() {
         return configuration.getAmazonSWClient() != null ? configuration.getAmazonSWClient() : amazonSWClient;
     }
 
