@@ -17,14 +17,16 @@
 package org.apache.camel.component.aws.mq;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
+
+import com.amazonaws.services.mq.AmazonMQ;
 
 /**
  * For working with Amazon MQ.
@@ -66,6 +68,7 @@ public class MQComponent extends DefaultComponent {
         if (ObjectHelper.isEmpty(configuration.getRegion())) {
             setRegion(region);
         }
+        checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonMqClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonMQClient or accessKey and secretKey must be specified");
         }
@@ -118,4 +121,10 @@ public class MQComponent extends DefaultComponent {
         configuration.setRegion(region);
     }
 
+    private void checkAndSetRegistryClient(MQConfiguration configuration) {
+        Set<AmazonMQ> clients = getCamelContext().getRegistry().findByType(AmazonMQ.class);
+        if (clients.size() == 1) {
+            configuration.setAmazonMqClient(clients.stream().findFirst().get());
+        }
+    }
 }
