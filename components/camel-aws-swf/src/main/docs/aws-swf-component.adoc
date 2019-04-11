@@ -69,7 +69,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *amazonSWClient* (common) | To use the given AmazonSimpleWorkflowClient as client |  | AmazonSimpleWorkflow Client
+| *amazonSWClient* (common) | To use the given AmazonSimpleWorkflowClient as client |  | AmazonSimpleWorkflow
 | *dataConverter* (common) | An instance of com.amazonaws.services.simpleworkflow.flow.DataConverter to use for serializing/deserializing the data. |  | DataConverter
 | *domainName* (common) | The workflow domain to use. |  | String
 | *eventName* (common) | The workflow or activity event name to use. |  | String
