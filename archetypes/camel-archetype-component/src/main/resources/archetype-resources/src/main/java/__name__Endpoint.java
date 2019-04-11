@@ -43,10 +43,6 @@ public class ${name}Endpoint extends DefaultEndpoint {
         super(uri, component);
     }
 
-    public ${name}Endpoint(String endpointUri) {
-        super(endpointUri);
-    }
-
     public Producer createProducer() throws Exception {
         return new ${name}Producer(this);
     }
