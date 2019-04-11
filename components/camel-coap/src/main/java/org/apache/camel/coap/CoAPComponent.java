@@ -94,7 +94,8 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
                     throw new IllegalStateException("Error in configuring TLS", e);
                 }
 
-                builder.setClientAuthenticationRequired(false); //TODO
+                builder.setClientAuthenticationRequired(endpoint.isClientAuthenticationRequired());
+                builder.setClientAuthenticationWanted(endpoint.isClientAuthenticationWanted());
 
                 if (endpoint.getConfiguredCipherSuites() != null) {
                     builder.setSupportedCipherSuites(endpoint.getConfiguredCipherSuites());
