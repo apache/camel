@@ -63,15 +63,15 @@ public class SoroushBotSendMessageProducer extends DefaultProducer {
         sendMessage(message);
     }
 
-
     /**
      * @throws MaximumConnectionRetryReachedException if can not connect to soroush after retry {@link SoroushBotEndpoint#maxConnectionRetry} times
      * @throws SoroushException                       if soroush response code wasn't 200
      */
-    private void sendMessage(SoroushMessage message) throws SoroushException, MaximumConnectionRetryReachedException {
+    private void sendMessage(SoroushMessage message) throws SoroushException, MaximumConnectionRetryReachedException, InterruptedException {
         Response response;
         // this for is responsible to handle maximum connection retry.
         for (int count = 0; count <= endpoint.maxConnectionRetry; count++) {
+            endpoint.waitBeforeRetry(count);
             try {
                 if (log.isDebugEnabled()) {
                     log.debug("sending message for " + ordinal(count + 1) + " time(s). message:" + message);

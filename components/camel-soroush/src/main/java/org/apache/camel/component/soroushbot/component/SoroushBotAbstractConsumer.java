@@ -68,7 +68,13 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer {
     @Override
     public void doStart() {
 //     create new Thread for listening to Soroush SSE Server so that it release the main camel thread.
-        Thread thread = new Thread(this::run);
+        Thread thread = new Thread(() -> {
+            try {
+                SoroushBotAbstractConsumer.this.run();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
         thread.start();
         thread.setName("Soroush Receiver");
     }
@@ -88,7 +94,7 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer {
      */
     protected abstract void sendExchange(Exchange exchange) throws Exception;
 
-    private void run() {
+    private void run() throws InterruptedException {
         Client client = ClientBuilder.newBuilder().register(SseFeature.class).build();
         client.property(ClientProperties.CONNECT_TIMEOUT, endpoint.connectionTimeout);
         WebTarget target = client.target(SoroushService.get().generateUrl(endpoint.authorizationToken, Endpoint.getMessage, null));
@@ -96,6 +102,7 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer {
         int retry = 0;
         //this while handle connectionRetry if connection failed or get closed.
         while (retry <= endpoint.maxConnectionRetry) {
+            endpoint.waitBeforeRetry(retry);
             try {
                 if (event == null || event.isClosed()) {
                     if (retry == 0) {

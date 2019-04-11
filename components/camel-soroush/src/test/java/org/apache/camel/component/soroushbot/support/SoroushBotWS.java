@@ -77,6 +77,7 @@ public class SoroushBotWS {
     public static void clear() {
         receivedMessages.clear();
         fileIdToContent.clear();
+        tokenCount.clear();
     }
 
     @GET

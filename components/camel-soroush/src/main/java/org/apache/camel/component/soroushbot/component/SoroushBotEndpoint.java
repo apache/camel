@@ -19,6 +19,7 @@ package org.apache.camel.component.soroushbot.component;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +37,10 @@ import org.apache.camel.component.soroushbot.models.Endpoint;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.models.response.UploadFileResponse;
 import org.apache.camel.component.soroushbot.service.SoroushService;
+import org.apache.camel.component.soroushbot.utils.BackOffStrategy;
+import org.apache.camel.component.soroushbot.utils.ExponentialBackOffStrategy;
+import org.apache.camel.component.soroushbot.utils.FixedBackOffStrategy;
+import org.apache.camel.component.soroushbot.utils.LinearBackOffStrategy;
 import org.apache.camel.component.soroushbot.utils.MaximumConnectionRetryReachedException;
 import org.apache.camel.component.soroushbot.utils.SoroushException;
 import org.apache.camel.component.soroushbot.utils.StringUtils;
@@ -48,6 +53,8 @@ import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
 
 /**
  * this class represents Soroush Endpoint, it is also a bean containing the configuration of the Endpoint
@@ -101,6 +108,24 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
             + "if exists for the message and store them in `SoroushMessage.file` and `SoroushMessage.thumbnail` field ",
             defaultValue = "false")
     Boolean autoDownload = false;
+    @UriParam(label = "global", description = "Waiting time before retry failed request (Millisecond)."
+            + " If backOffStrategy is not Fixed this is the based value for computing back off waiting time."
+            + " the first retry is always happen immediately after failure and retryWaitingTime do not apply to the first retry.",
+            defaultValue = "1000")
+    Long retryWaitingTime = 1000L;
+    @UriParam(label = "global", description = "The strategy to backoff in case of connection failure. Currently 3 strategies are supported:"
+            + " 1. `Exponential` (default): It multiply `retryWaitingTime` by `retryExponentialCoefficient` after each connection failure."
+            + " 2. `Linear`: It increase `retryWaitingTime` by `retryLinearIncrement` after each connection failure."
+            + " 3. `Fixed`: Always use `retryWaitingTime` as the time between retries.",
+            defaultValue = "Exponential")
+    String backOffStrategy = "Exponential";
+    @UriParam(label = "global", description = "Coefficient to compute back off time when using `Exponential` Back Off strategy", defaultValue = "2")
+    Long retryExponentialCoefficient = 2L;
+    @UriParam(label = "global", description = "The amount of time (in millisecond) which adds to waiting time when using `Linear` back off strategy", defaultValue = "10000")
+    Long retryLinearIncrement = 10000L;
+    @UriParam(label = "global", description = "Maximum amount of time (in millisecond) a thread wait before retrying failed request.",
+            defaultValue = "3600000")
+    Long maxRetryWaitingTime = 3600000L;
     /**
      * lazy instance of {@link WebTarget} to used for uploading file to soroush Server, since the url is always the same, we reuse this WebTarget for all requests
      */
@@ -109,6 +134,7 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
      * lazy instance of webTarget to used for send message to soroush Server, since the url is always the same, we reuse this WebTarget for all requests
      */
     private WebTarget sendMessageTarget;
+    private BackOffStrategy backOffStrategyHelper;
 
     public SoroushBotEndpoint(String endpointUri, SoroushBotComponent component) {
         super(endpointUri, component);
@@ -183,6 +209,16 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
         }
         connectionTimeout = Math.max(0, connectionTimeout);
         maxConnectionRetry = Math.max(0, maxConnectionRetry);
+        retryExponentialCoefficient = Math.max(1, retryExponentialCoefficient);
+        retryLinearIncrement = Math.max(0, retryLinearIncrement);
+
+        if (backOffStrategy.equalsIgnoreCase("fixed")) {
+            backOffStrategyHelper = new FixedBackOffStrategy(retryWaitingTime, maxRetryWaitingTime);
+        } else if (backOffStrategy.equalsIgnoreCase("linear")) {
+            backOffStrategyHelper = new LinearBackOffStrategy(retryWaitingTime, retryLinearIncrement, maxRetryWaitingTime);
+        } else {
+            backOffStrategyHelper = new ExponentialBackOffStrategy(retryWaitingTime, retryExponentialCoefficient, maxRetryWaitingTime);
+        }
     }
 
     /**
@@ -357,6 +393,46 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
         this.downloadThumbnail = downloadThumbnail;
     }
 
+    public Long getRetryWaitingTime() {
+        return retryWaitingTime;
+    }
+
+    public void setRetryWaitingTime(Long retryWaitingTime) {
+        this.retryWaitingTime = retryWaitingTime;
+    }
+
+    public String getBackOffStrategy() {
+        return backOffStrategy;
+    }
+
+    public void setBackOffStrategy(String backOffStrategy) {
+        this.backOffStrategy = backOffStrategy;
+    }
+
+    public Long getRetryExponentialCoefficient() {
+        return retryExponentialCoefficient;
+    }
+
+    public void setRetryExponentialCoefficient(Long retryExponentialCoefficient) {
+        this.retryExponentialCoefficient = retryExponentialCoefficient;
+    }
+
+    public Long getRetryLinearIncrement() {
+        return retryLinearIncrement;
+    }
+
+    public void setRetryLinearIncrement(Long retryLinearIncrement) {
+        this.retryLinearIncrement = retryLinearIncrement;
+    }
+
+    public Long getMaxRetryWaitingTime() {
+        return maxRetryWaitingTime;
+    }
+
+    public void setMaxRetryWaitingTime(Long maxRetryWaitingTime) {
+        this.maxRetryWaitingTime = maxRetryWaitingTime;
+    }
+
     public Boolean getForceDownload() {
         return forceDownload;
     }
@@ -380,11 +456,11 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
      * @param message
      * @param fileType
      */
-    private UploadFileResponse uploadToServer(InputStream inputStream, SoroushMessage message, String fileType) throws SoroushException {
+    private UploadFileResponse uploadToServer(InputStream inputStream, SoroushMessage message, String fileType) throws SoroushException, InterruptedException {
         javax.ws.rs.core.Response response;
         //this for handle connection retry if sending request failed.
         for (int count = 0; count <= maxConnectionRetry; count++) {
-
+            waitBeforeRetry(count);
             MultiPart multipart = new MultiPart();
             multipart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
             multipart.bodyPart(new StreamDataBodyPart("file", inputStream, null, MediaType.APPLICATION_OCTET_STREAM_TYPE));
@@ -419,7 +495,7 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
      * @param message
      * @throws SoroushException if soroush reject the file
      */
-    void handleFileUpload(SoroushMessage message) throws SoroushException {
+    void handleFileUpload(SoroushMessage message) throws SoroushException, InterruptedException {
         if (log.isTraceEnabled()) {
             log.trace("try to upload file(s) to server if exists for message:" + message.toString());
         }
@@ -513,5 +589,9 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
         //should never reach this line
         log.error("should never reach this line. An exception should have been thrown by catch block for target.request().get");
         throw new MaximumConnectionRetryReachedException("can not upload " + type + ": " + fileUrl + " response:" + ((response == null) ? null : response.getStatus()), message);
+    }
+
+    public void waitBeforeRetry(int retryCount) throws InterruptedException {
+        backOffStrategyHelper.waitBeforeRetry(retryCount);
     }
 }

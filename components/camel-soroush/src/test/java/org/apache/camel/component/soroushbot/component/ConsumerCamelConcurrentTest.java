@@ -45,7 +45,6 @@ public class ConsumerCamelConcurrentTest extends SoroushBotTestSupport {
                     if (from.equals("u0")) {
                         Thread.sleep(1000);
                     }
-                    System.out.println(from + " " + System.currentTimeMillis());
                     synchronized (fromOrder) {
                         fromOrder.add(from);
                     }
