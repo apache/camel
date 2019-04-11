@@ -197,6 +197,9 @@
                 <includes>
                     <include>**/*</include>
                 </includes>
+                <excludes>
+                    <exclude>**/*.class</exclude>
+                </excludes>
             </resource>
             <!--
             <resource>
@@ -351,6 +354,7 @@
                                                defaultValue=".0"/>
                                 <property name="camel.schema.version" value="${ov.p1a}${ov.p2a}"/>
                                 <mkdir dir="target"/>
+                                <mkdir dir="${project.build.directory}/schema/META-INF/JAXB"/>
                                 <echo file="target/camel.osgi.version.txt">
                                     camel.schema.version = ${camel.schema.version}
                                 </echo>
@@ -436,7 +440,9 @@
                                         preservelastmodified="true"/>
                                 <!-- copy modified schemas back again in classes so they are included in the JAR -->
                                 <copy todir="${project.build.directory}/classes" preservelastmodified="true">
-                                    <fileset dir="${project.build.directory}/schema"/>
+                                    <fileset dir="${project.build.directory}/schema">
+                                        <exclude name="**/*.class"/>
+                                    </fileset>
                                 </copy>
                             </target>
                         </configuration>
@@ -718,6 +724,8 @@
                             <arguments>
                                 <argument>-d</argument>
                                 <argument>${project.build.directory}/schema</argument>
+                                <argument>-episode</argument>
+                                <argument>${project.build.directory}/schema/META-INF/JAXB/episode_generate-schema.xjb</argument>
                             </arguments>
                         </configuration>
                     </plugin>
