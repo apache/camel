@@ -69,7 +69,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *amazonSWClient* (common) | To use the given AmazonSimpleWorkflowClient as client |  | AmazonSimpleWorkflow Client
+| *amazonSWClient* (common) | To use the given AmazonSimpleWorkflowClient as client |  | AmazonSimpleWorkflow
 | *dataConverter* (common) | An instance of com.amazonaws.services.simpleworkflow.flow.DataConverter to use for serializing/deserializing the data. |  | DataConverter
 | *domainName* (common) | The workflow domain to use. |  | String
 | *eventName* (common) | The workflow or activity event name to use. |  | String
@@ -131,7 +131,7 @@ The component supports 32 options, which are listed below.
 | *camel.component.aws-swf.configuration.activity-thread-pool-size* | Maximum number of threads in work pool for activity. | 100 | Integer
 | *camel.component.aws-swf.configuration.activity-type-execution-options* | Activity execution options |  | ActivityTypeExecution Options
 | *camel.component.aws-swf.configuration.activity-type-registration-options* | Activity registration options |  | ActivityType RegistrationOptions
-| *camel.component.aws-swf.configuration.amazon-s-w-client* | To use the given AmazonSimpleWorkflowClient as client |  | AmazonSimpleWorkflow Client
+| *camel.component.aws-swf.configuration.amazon-s-w-client* | To use the given AmazonSimpleWorkflowClient as client |  | AmazonSimpleWorkflow
 | *camel.component.aws-swf.configuration.child-policy* | The policy to use on child workflows when terminating a workflow. |  | String
 | *camel.component.aws-swf.configuration.client-configuration-parameters* | To configure the ClientConfiguration using the key/values from the Map. |  | Map
 | *camel.component.aws-swf.configuration.data-converter* | An instance of com.amazonaws.services.simpleworkflow.flow.DataConverter to use for serializing/deserializing the data. |  | DataConverter
@@ -280,6 +280,12 @@ AmazonSimpleWorkflowClient client = new AmazonSimpleWorkflowClient(awsCredential
 
 registry.bind("client", client);
 --------------------------------------------------------------------------------------------------------
+
+### Automatic detection of AmazonSimpleWorkflow client in registry
+
+From Camel 3.0.0-M3 the component will be able to detect the presence of an AmazonSimpleWorkflow bean into the registry.
+If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
+This may be really useful for smarter configuration of the endpoint.
 
 ### Dependencies
 
