@@ -35,6 +35,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.jsse.ClientAuthentication;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.eclipse.californium.core.CoapServer;
 
@@ -70,6 +71,8 @@ public class CoAPEndpoint extends DefaultEndpoint {
     private String cipherSuites;
     
     private String[] configuredCipherSuites;
+    
+    private String clientAuthentication;
         
     private CoAPComponent component;
     
@@ -232,6 +235,35 @@ public class CoAPEndpoint extends DefaultEndpoint {
         return configuredCipherSuites;
     }
     
+    
+    /**
+     * Gets the configuration options for server-side client-authentication requirements. The value is
+     * either null or one of NONE, WANT, REQUIRE.
+     */
+    public String getClientAuthentication() {
+        return clientAuthentication;
+    }
+
+    /**
+     * Sets the configuration options for server-side client-authentication requirements.
+     * The value must be one of NONE, WANT, REQUIRE.
+     * 
+     * @param value the desired configuration options or {@code null} to use the defaults
+     */
+    public void setClientAuthentication(String clientAuthentication) {
+        this.clientAuthentication = clientAuthentication;
+    }
+    
+    public boolean isClientAuthenticationRequired() {
+        return clientAuthentication != null 
+            && ClientAuthentication.valueOf(clientAuthentication) == ClientAuthentication.REQUIRE;
+    }
+    
+    public boolean isClientAuthenticationWanted() {
+        return clientAuthentication != null 
+            && ClientAuthentication.valueOf(clientAuthentication) == ClientAuthentication.WANT;
+    }
+    
     public Certificate[] getTrustedCerts() throws KeyStoreException {
         Enumeration<String> aliases = truststore.aliases();
         List<Certificate> trustCerts = new ArrayList<>();
@@ -245,4 +277,10 @@ public class CoAPEndpoint extends DefaultEndpoint {
         
         return trustCerts.toArray(new Certificate[0]);
     }
+
+    /*
+    public DTLSConnector createDTLSConnector() {
+        
+    }
+    */
 }
