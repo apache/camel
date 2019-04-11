@@ -171,7 +171,7 @@
   </feature>
   <feature name='camel-asn1' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.openmuc/jasn1/${jasn1-version}</bundle>
+    <bundle dependency='true'>mvn:com.beanit/jasn1/${jasn1-version}</bundle>
     <bundle dependency='true'>mvn:org.bouncycastle/bcprov-jdk15on/${bouncycastle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-asn1/${project.version}</bundle>
   </feature>
