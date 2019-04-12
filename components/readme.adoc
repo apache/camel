@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 294 in 230 JAR artifacts (0 deprecated)
+Number of Components: 295 in 231 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -860,7 +860,7 @@ Number of Components: 294 in 230 JAR artifacts (0 deprecated)
 `web3j:nodeAddress` | 2.22 | The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
 
 | link:camel-webhook/src/main/docs/webhook-component.adoc[Webhook] (camel-webhook) +
-`webhook:endpointUri` | 3.0 | A meta-endpoint that pushes webhook data into a delegate WebhookCapableEndpoint.
+`webhook:endpointUri` | 3.0 | The webhook component allows other Camel components that can receive push notifications to expose webhook endpoints and automatically register them with their own webhook provider.
 
 | link:camel-wordpress/src/main/docs/wordpress-component.adoc[Wordpress] (camel-wordpress) +
 `wordpress:operationDetail` | 2.21 | Integrates Camel with Wordpress.
