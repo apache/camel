@@ -33,8 +33,7 @@
     <dependency>
       <groupId>com.github.jasminb</groupId>
       <artifactId>jsonapi-converter</artifactId>
-      <!-- <version>${jasminb-jsonapi-version}</version> -->
-      <version>0.9</version>
+      <version>${jasminb-jsonapi-version}</version>
     </dependency>
 
     <!-- testing -->
