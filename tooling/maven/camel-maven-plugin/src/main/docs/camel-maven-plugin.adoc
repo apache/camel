@@ -426,6 +426,17 @@ Coverage: 4 out of 5 (80.0%)
 Here we can see that the 2nd last line with `to` has `0` in the count column, and therefore is not covered.
 We can also see that this is one line 34 in the source code file, which is in the `my-camel.xml` XML file.
 
+=== Make SonarQube pick up camel-route-coverage
+
+To allow sonarQube to show route-coverage in camel-routes you need to enable `generateJacocoXmlReport` 
+(see options below) and tell sonarRunner to pick up the resulting xml-files. When using the sonar-maven-plugin
+this is done by setting the following properties in your `pom.xml`
+
+----
+<sonar.sources>src/main</sonar.sources>		
+<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml,target/site/jacoco/xmlJacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+----
+
 === Options
 
 The maven plugin *coverage* goal supports the following options which can be configured from the command line (use `-D` syntax),
@@ -443,5 +454,6 @@ The maven plugin *coverage* goal supports the following options which can be con
  By using route id's then its safer to match the route cover data with the route source code.
  Anonymous routes are less safe to use for route coverage as its harder to know exactly which route
  that was tested corresponds to which of the routes from the source code.
+| generateJacocoXmlReport | false | *Camel 2.24* Whether to generate a coverage-report in jacocoXml-format, when enabled it will generate a file: `target/site/jacoco/xmlJacoco.xml` 
 |===
 
