@@ -30,6 +30,13 @@ import org.apache.camel.component.soroushbot.utils.MultiQueueWithTopicThreadPool
  * this consumer support both Sync and Async processors.
  */
 public class SoroushBotMultiThreadConsumer extends SoroushBotAbstractConsumer {
+    /**
+     * Since we want that every message from the same user to be processed one by one,
+     * i.e. no 2 message from the same user execute concurrently,
+     * we create a new simple thread pool that let us select a thread by a topic.
+     * It guarantees that all tasks with the same topic execute in the same thread.
+     * We use userIds as the topic of each task.
+     */
     MultiQueueWithTopicThreadPool threadPool;
 
     public SoroushBotMultiThreadConsumer(SoroushBotEndpoint endpoint, Processor processor) {
