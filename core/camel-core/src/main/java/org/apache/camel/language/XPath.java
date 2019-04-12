@@ -23,6 +23,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.apache.camel.component.bean.XPathAnnotationExpressionFactory;
+import org.apache.camel.support.language.LanguageAnnotation;
+import org.apache.camel.support.language.NamespacePrefix;
 
 /**
  * Used to inject an XPath expression into a field, property, method or parameter when using

@@ -23,7 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.jayway.jsonpath.Option;
-import org.apache.camel.language.LanguageAnnotation;
+import org.apache.camel.support.language.LanguageAnnotation;
 
 /**
  * An annotation used to inject a <a href="http://commons.apache.org/jsonpath/">JsonPath</a>

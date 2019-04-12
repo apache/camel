@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language;
+package org.apache.camel.support.language;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -23,12 +23,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Creates a namespace prefix for an XPath
+ * Base annotation for languages.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target({ElementType.ANNOTATION_TYPE })
-public @interface NamespacePrefix {
-    String prefix();
-    String uri();
+public @interface LanguageAnnotation {
+    String language();
+    Class<?> factory() default Object.class;
 }
