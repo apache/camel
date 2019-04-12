@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents a nsq endpoint.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "nsq", title = "NSQ", syntax = "nsq:lookupServer", label = "messaging")
+@UriEndpoint(firstVersion = "2.23.0", scheme = "nsq", title = "NSQ", syntax = "nsq:servers", label = "messaging")
 public class NsqEndpoint extends DefaultEndpoint {
 
     @UriParam
