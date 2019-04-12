@@ -30,14 +30,12 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -228,23 +226,23 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         Document document = null;
         File file = null;
         Element report = null;
-     
+
         if (generateJacocoXmlReport) {
-        	try{	
-        		// creates the folder for the xml.file
-        		file = (new File(project.getBasedir() + "/target/site/jacoco"));
-        			if (!file.exists()) {        
-        				file.mkdirs();
-        				}                    
-        		document = createDocument();
-       
-        		// report tag                      
-        		report = document.createElement("report"); 
-        		createAttrString(document, report, "name", "Camel Xml");
-        		document.appendChild(report); 
-        	} catch (Exception e) {
-        		getLog().info("Error creating xml-document");
-        	}
+            try {
+                // creates the folder for the xml.file
+                file = new File(project.getBasedir() + "/target/site/jacoco");
+                if (!file.exists()) {
+                    file.mkdirs();
+                }
+                document = createDocument();
+
+                // report tag
+                report = document.createElement("report");
+                createAttrString(document, report, "name", "Camel Xml");
+                document.appendChild(report);
+            } catch (Exception e) {
+                getLog().warn("Error generating Jacoco XML report due " + e.getMessage());
+            }
         }
         // favor strict matching on route ids
         for (CamelNodeDetails t : routeIdTrees) {
@@ -254,11 +252,11 @@ public class RouteCoverageMojo extends AbstractExecMojo {
             String packageName = (new File(fileName)).getParent();           
             
             Element pack = null;
-            if (generateJacocoXmlReport) {
-         // package tag
-            pack = document.createElement("package");
-            createAttrString(document, pack, "name", packageName);
-            report.appendChild(pack);
+            if (generateJacocoXmlReport && report != null) {
+                // package tag
+                pack = document.createElement("package");
+                createAttrString(document, pack, "name", packageName);
+                report.appendChild(pack);
             }
             // grab dump data for the route
             try {
@@ -270,25 +268,24 @@ public class RouteCoverageMojo extends AbstractExecMojo {
                     List<RouteCoverageNode> coverage = gatherRouteCoverageSummary(Collections.singletonList(t), coverageData);
                     String out = templateCoverageData(fileName, routeId, coverage, notCovered);
                     getLog().info("Route coverage summary:\n\n" + out);
-                    getLog().info("");                   
-                    
-                    if (generateJacocoXmlReport) {
-                 // sourcefile tag
-                    appendSourcefileNode(document, sourceFileName, pack, coverage);
+                    getLog().info("");
+
+                    if (generateJacocoXmlReport && report != null) {
+                        // sourcefile tag
+                        appendSourcefileNode(document, sourceFileName, pack, coverage);
                     }
                 }
-
             } catch (Exception e) {
                 throw new MojoExecutionException("Error during gathering route coverage data for route: " + routeId, e);
             }
         }        
         
-        if (generateJacocoXmlReport) {
+        if (generateJacocoXmlReport && report != null) {
         	try {
+                getLog().info("Generating Jacoco XML report: " + file);
 				createXmlFile(document, file);
-				getLog().info("Generating xml-file");
 			} catch (Exception e) {
-				getLog().info("Error creating xml-file");					
+                getLog().warn("Error generating Jacoco XML report due " + e.getMessage());
 			}
         }
                
