@@ -40,10 +40,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
@@ -54,6 +50,12 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-webhook-starter</artifactId>
         </dependency>
+        <!--
+            Adding camel-servlet to provide a way to the webhook component to expose a service for receiving notifications.
+
+            Camel-servlet-starter uses the underlying spring-boot-starter-web server implementation and exposes rest
+            endpoints under the '/camel' context path.
+        -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-servlet-starter</artifactId>
