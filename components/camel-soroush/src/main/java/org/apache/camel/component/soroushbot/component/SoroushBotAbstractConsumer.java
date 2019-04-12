@@ -68,15 +68,14 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer {
     @Override
     public void doStart() {
 //     create new Thread for listening to Soroush SSE Server so that it release the main camel thread.
-        Thread thread = new Thread(() -> {
-            try {
-                SoroushBotAbstractConsumer.this.run();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-        thread.start();
-        thread.setName("Soroush Receiver");
+        endpoint.getCamelContext().getExecutorServiceManager()
+                .newSingleThreadExecutor(this,"Soroush Receiver")
+                .execute(() -> {
+                    try {
+                        SoroushBotAbstractConsumer.this.run();
+                    } catch (InterruptedException ignored) {
+                    }
+                });
     }
 
     protected final void handleExceptionThrownWhileCreatingOrProcessingExchange(Exchange exchange, SoroushMessage soroushMessage, Exception ex) {

@@ -55,6 +55,5 @@ public class ConsumerExceptionHandledWithErrorHandler extends SoroushBotTestSupp
         mainEndPoint.setExpectedCount(4);
         exceptionEndpoint.assertIsSatisfied();
         mainEndPoint.assertIsSatisfied();
-        System.err.println("done");
     }
 }

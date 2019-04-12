@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
 /**
  * this class represents Soroush Endpoint, it is also a bean containing the configuration of the Endpoint
  */
-@UriEndpoint(firstVersion = "3.0.0-SNAPSHOT", scheme = "soroush", title = "SoroushBot", syntax = "soroush:<endpoint>[/authorizationToken][?options]", label = "chat")
+@UriEndpoint(firstVersion = "3.0", scheme = "soroush", title = "SoroushBot", syntax = "soroush:<endpoint>[/authorizationToken][?options]", label = "chat")
 public class SoroushBotEndpoint extends DefaultEndpoint {
     private static Logger log = LoggerFactory.getLogger(SoroushBotEndpoint.class);
 
