@@ -1418,8 +1418,6 @@
     <bundle dependency='true'>mvn:org.fusesource.leveldbjni/leveldbjni-all/${jgroups-raft-leveldbjni-version}</bundle>
     <bundle dependency='true'>mvn:org.mapdb/mapdb/${jgroups-raft-mapdb-version}</bundle>
   </feature>
-
-
   <feature name='camel-jibx' version='${project.version}' start-level='50'>
     <details>camel-jibx does not work with Java 8</details>
     <feature version='${project.version}'>camel-core</feature>
