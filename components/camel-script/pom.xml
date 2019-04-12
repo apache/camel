@@ -45,10 +45,9 @@
 
     <dependencies>
 
-        <!-- requires camel-core due language annotation -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
+            <artifactId>camel-support</artifactId>
         </dependency>
 
         <dependency>

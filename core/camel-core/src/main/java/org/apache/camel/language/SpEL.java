@@ -22,6 +22,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.apache.camel.support.language.LanguageAnnotation;
+
 /**
  * An annotation for injection of Spring Expression Language (SpEL) expressions
  * into method parameters, fields or properties.

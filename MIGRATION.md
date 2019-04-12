@@ -64,6 +64,11 @@ The classes from `org.apache.camel.impl` that was intended to support Camel deve
 
 // TODO: Should we create a camel2-support JAR with an adapter to bridge between 2.x and 3.0
 
+Migrating custom languages
+--------------------------
+
+The `LanguageAnnotation` annotation class has been moved from packge `org.apache.camel.language` to `org.apache.camel.support.language`.
+
 Deprecated APIs and Components
 ------------------------------
 

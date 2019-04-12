@@ -21,8 +21,9 @@ import java.lang.annotation.Annotation;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.xml.XPathBuilder;
-import org.apache.camel.language.LanguageAnnotation;
-import org.apache.camel.language.NamespacePrefix;
+import org.apache.camel.support.language.DefaultAnnotationExpressionFactory;
+import org.apache.camel.support.language.LanguageAnnotation;
+import org.apache.camel.support.language.NamespacePrefix;
 import org.apache.camel.util.ObjectHelper;
 
 /**

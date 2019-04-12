@@ -21,9 +21,10 @@ import java.lang.reflect.Method;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.LanguageAnnotation;
 import org.apache.camel.language.bean.BeanExpression;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.language.DefaultAnnotationExpressionFactory;
+import org.apache.camel.support.language.LanguageAnnotation;
 import org.apache.camel.util.StringHelper;
 
 public class BeanAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
