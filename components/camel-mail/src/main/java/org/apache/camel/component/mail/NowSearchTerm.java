@@ -51,7 +51,7 @@ public class NowSearchTerm extends ComparisonTerm {
     }
 
     private Date getDate() {
-        long now = new Date().getTime();
+        long now = System.currentTimeMillis();
         return new Date(now + offset);
     }
 

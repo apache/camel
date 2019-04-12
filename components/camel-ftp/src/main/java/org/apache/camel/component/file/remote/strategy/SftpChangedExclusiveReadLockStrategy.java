@@ -54,7 +54,7 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
         long lastModified = Long.MIN_VALUE;
         long length = Long.MIN_VALUE;
         StopWatch watch = new StopWatch();
-        long startTime = new Date().getTime();
+        long startTime = System.currentTimeMillis();
 
         while (!exclusive) {
             // timeout check
