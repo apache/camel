@@ -1502,6 +1502,11 @@
     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-json-validator/${project.version}</bundle>
   </feature>
+  <feature name='camel-json-api' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:com.github.jasminb/jsonapi-converter/${jasminb-jsonapi-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-jsonapi/${project.version}</bundle>
+  </feature>
   <feature name='camel-jsonpath' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:com.jayway.jsonpath/json-path/${json-path-version}</bundle>
