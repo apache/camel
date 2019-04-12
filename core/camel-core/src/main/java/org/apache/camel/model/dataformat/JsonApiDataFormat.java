@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,13 +16,13 @@
  */
 package org.apache.camel.model.dataformat;
 
-import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.Metadata;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.spi.Metadata;
 
 @Metadata(firstVersion = "3.0.0", label = "dataformat,transformation", title = "jsonApi")
 @XmlRootElement(name = "jsonApi")
