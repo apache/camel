@@ -55,7 +55,7 @@ The NSQ component supports 2 options, which are listed below.
 The NSQ endpoint is configured using URI syntax:
 
 ----
-nsq:lookupServer
+nsq:servers
 ----
 
 with the following path and query parameters:
