@@ -240,9 +240,10 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         for (CamelNodeDetails t : routeIdTrees) {
             String routeId = t.getRouteId();
             String fileName = stripRootPath(asRelativeFile(t.getFileName()));
+            String sourceFileName = new File(fileName).getName();
             String packageName = new File(fileName).getParent();
-
             Element pack = null;
+
             if (generateJacocoXmlReport && report != null) {
                 // package tag
                 pack = document.createElement("package");
@@ -261,6 +262,10 @@ public class RouteCoverageMojo extends AbstractExecMojo {
                     String out = templateCoverageData(fileName, routeId, coverage, notCovered);
                     getLog().info("Route coverage summary:\n\n" + out);
                     getLog().info("");
+
+                    if (generateJacocoXmlReport && report != null) {
+                        appendSourcefileNode(document, sourceFileName, pack, coverage);
+                    }
                 }
 
             } catch (Exception e) {
@@ -591,6 +596,49 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         }
 
         return name;
+    }
+
+    private void appendSourcefileNode(Document document, String sourceFileName, Element pack,
+                                      List<RouteCoverageNode> coverage) {
+        Element sourcefile = document.createElement("sourcefile");
+        createAttrString(document, sourcefile, "name", sourceFileName);
+        pack.appendChild(sourcefile);
+
+        int covered = 0;
+        int missed = 0;
+        for (RouteCoverageNode node : coverage) {
+            int missedCount = 0;
+            if (node.getCount() > 0) {
+                covered++;
+            } else {
+                missedCount++;
+                missed++;
+            }
+            // line tag
+            Element line = document.createElement("line");
+            createAttrInt(document, line, "nr", node.getLineNumber());
+            createAttrInt(document, line, "mi", missedCount);
+            createAttrInt(document, line, "ci", node.getCount());
+            // provides no useful information, needed to be read by sonarQube
+            createAttrInt(document, line, "mb", 0);
+            createAttrInt(document, line, "cb", 0);
+            sourcefile.appendChild(line);
+        }
+
+        // counter tag
+        Element counter = document.createElement("counter");
+        createAttrString(document, counter, "type", "LINE");
+        createAttrInt(document, counter, "missed", missed);
+        createAttrInt(document, counter, "covered", covered);
+        sourcefile.appendChild(counter);
+    }
+
+    private static Attr createAttrInt(Document doc, Element e, String name, Integer value) {
+        Attr a = doc.createAttribute(name);
+        a.setValue(value.toString());
+        e.setAttributeNode(a);
+
+        return a;
     }
 
     private static Attr createAttrString(Document doc, Element e, String name, String value) {
