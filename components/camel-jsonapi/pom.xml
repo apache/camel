@@ -22,8 +22,9 @@
   <name>Camel :: JsonApi</name>
   <description>Camel JsonApi data format</description>
 
-  <!-- <properties> <camel.osgi.export.pkg>org.apache.camel.dataformat.thrift.*</camel.osgi.export.pkg> <camel.osgi.export.service>org.apache.camel.spi.DataFormatResolver;dataformat=thrift</camel.osgi.export.service> 
-    </properties> -->
+  <properties> 
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
