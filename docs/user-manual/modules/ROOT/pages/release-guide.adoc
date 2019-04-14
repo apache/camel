@@ -1,0 +1,165 @@
+[[ReleaseGuide-ReleaseGuide]]
+=== How to Create and Announce a Camel Release
+
+[[ReleaseGuide-Prequisites]]
+==== Prequisites
+
+To prepare or perform a release you *must be* at least an Apache Camel committer.
+
+* The artifacts for each and every release must be *signed*.
+* Your public key must be added to the KEYS file.
+* Your public key should also be cross-signed by other Apache committers (this can be done at key signing parties at
+ApacheCon for instance).
+* Make sure you have the correct maven configuration in `~/.m2/settings.xml`.
+* https://github.com/takari/maven-wrapper[Maven Wrapper] is used and bundled with Camel 2.21 onwards and should be used
+for building the release.
+* You may want to get familiar with the release settings in the parent Apache POM.
+* Make sure you are using Java 1.8 for Apache Camel 2.18.0 and later.
+
+[[ReleaseGuide-MavenSetup]]
+==== Maven Setup
+Before you deploy anything to the https://repository.apache.org[Apache Nexus repository] using Maven, you should
+configure your `~/.m2/settings.xml` file so that the file permissions of the deployed artifacts are group writable.
+If you do not do this, other developers will not able to overwrite your SNAPSHOT releases with newer versions.
+
+The settings follow the guidelines used by the Maven project. Please pay particular attention to the
+http://maven.apache.org/guides/mini/guide-encryption.html[password encryption recommendations].
+
+----
+<settings>
+  ...
+  <servers>
+    <!-- Per http://maven.apache.org/developers/committer-settings.html -->
+
+    <!-- To publish a snapshot of some part of Maven -->
+    <server>
+      <id>apache.snapshots.https</id>
+      <username> <!-- YOUR APACHE LDAP USERNAME --> </username>
+      <password> <!-- YOUR APACHE LDAP PASSWORD --> </password>
+    </server>
+    <!-- To publish a website of some part of Maven -->
+    <server>
+      <id>apache.website</id>
+      <username> <!-- YOUR APACHE LDAP USERNAME --> </username>
+      <filePermissions>664</filePermissions>
+      <directoryPermissions>775</directoryPermissions>
+    </server>
+    <!-- To stage a release of some part of Maven -->
+    <server>
+      <id>apache.releases.https</id>
+      <username> <!-- YOUR APACHE LDAP USERNAME --> </username>
+      <password> <!-- YOUR APACHE LDAP PASSWORD --> </password>
+    </server>
+    <!-- To stage a website of some part of Maven -->
+    <server>
+      <id>stagingSite</id> <!-- must match hard-coded repository identifier in site:stage-deploy -->
+      <username> <!-- YOUR APACHE LDAP USERNAME --> </username>
+      <filePermissions>664</filePermissions>
+      <directoryPermissions>775</directoryPermissions>
+    </server>
+
+  </servers>
+  ...
+  <profiles>
+    <profile>
+      <id>apache-release</id>
+      <properties>
+        <gpg.useagent>false</gpg.useagent>
+        <gpg.passphrase><!-- YOUR GPG PASSPHRASE --></gpg.passphrase>
+        <test>false</test>
+      </properties>
+    </profile>
+
+  </profiles>
+...
+</settings>
+----
+
+[[ReleaseGuide-CreatingTheRelease]]
+==== Creating the Release
+
+Complete the following steps to create a new Camel release:
+
+1. Grab the latest source from Git and checkout the target branch (`BRANCH_NAME`) to build from:
+
+----
+$ git clone https://git-wip-us.apache.org/repos/asf/camel.git
+$ cd camel
+$ git checkout BRANCH_NAME
+----
+
+2. Perform a license check with http://creadur.apache.org/rat/apache-rat-plugin[Apache Rat]:
+
+----
+./mvnw -e org.apache.rat:apache-rat-plugin:check
+grep -e ' !?????' target/rat.txt
+----
+
+The latter command will provide a list of all files without valid license headers.
+Ideally this list is empty, otherwise fix the issues by adding valid license headers and rerun the above commands before
+proceeding with the next step.
+
+3. Do a release dry run to check for problems:
+
+----
+./mvnw release:prepare -DdryRun -Prelease
+----
+
+The release plugin will prompt for a release version, an SCM tag and next release version.
+
+Use a three digit release version of the form: `MAJOR.MINOR.PATCH`, e.g. `3.0.0`.
+
+For the tag use a string of the form: `camel-MAJOR.MINOR.PATCH`, e.g. `camel-3.0.0`.
+
+For the next version increase the patch version and append `-SNAPSHOT`, e.g. `3.0.1-SNAPSHOT`.
+
+Make sure to check the generated signature files:
+
+----
+$ gpg camel-core/target/camel-core-3.0.0-SNAPSHOT.jar.asc
+gpg: assuming signed data in `camel-core/target/camel-core-3.0.0.jar'
+gpg: Signature made Sat 06 Apr 2019 03:58:01 AM PDT using RSA key ID 5942C049
+gpg: Good signature from "Gregor Zurowski <gzurowski@apache.org>"
+----
+
+4. Prepare the release:
+
+First clean up the dry run results:
+
+----
+$ ./mvnw release:clean -Prelease
+----
+
+Next prepare the release:
+
+----
+$ ./mvnw release:prepare -Prelease
+----
+
+This command will create the tag and update all pom files with the given version number.
+
+5. Perform the release and publish to the Apache staging repository:
+
+----
+$ ./mvnw release:perform -Prelease
+----
+
+6. Close the Apache staging repository:
+
+Login to https://repository.apache.org using your Apache LDAP credentials.
+Click on "Staging Repositories". Then select "org.apache.camel-xxx" in the list of repositories, where xxx represents
+your username and ip.
+Click "Close" on the tool bar above.
+This will close the repository from future deployments and make it available for others to view.
+If you are staging multiple releases together, skip this step until you have staged everything.
+Enter the name and version of the artifact being released in the "Description" field and then click "Close".
+This will make it easier to identify it later.
+
+7. Verify staged artifacts:
+
+If you click on your repository, a tree view will appear below.
+You can then browse the contents to ensure the artifacts are as you expect them.
+Pay particular attention to the existence of *.asc (signature) files.
+If the you don't like the content of the repository, right click your repository and choose "Drop".
+You can then rollback your release and repeat the process.
+Note the repository URL, you will need this in your vote email.
