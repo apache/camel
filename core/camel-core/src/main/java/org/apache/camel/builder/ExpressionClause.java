@@ -24,16 +24,18 @@ import java.util.function.Supplier;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
-import org.apache.camel.support.builder.xml.Namespaces;
+import org.apache.camel.Predicate;
 import org.apache.camel.model.ExpressionNode;
-import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
+import org.apache.camel.support.builder.xml.Namespaces;
+import org.apache.camel.support.language.ExpressionModel;
 
 /**
  * Represents an expression clause within the DSL which when the expression is
  * complete the clause continues to another part of the DSL
  */
-public class ExpressionClause<T> extends ExpressionDefinition {
+public class ExpressionClause<T> implements Expression, Predicate {
     private ExpressionClauseSupport<T> delegate;
 
     public ExpressionClause(T result) {
@@ -1062,23 +1064,31 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     // Properties
     // -------------------------------------------------------------------------
 
-    @Override
     public Expression getExpressionValue() {
         return delegate.getExpressionValue();
     }
 
-    @Override
-    protected void setExpressionValue(Expression expressionValue) {
-        delegate.setExpressionValue(expressionValue);
-    }
-
-    @Override
-    public ExpressionDefinition getExpressionType() {
+    public ExpressionModel getExpressionType() {
         return delegate.getExpressionType();
     }
 
     @Override
-    protected void setExpressionType(ExpressionDefinition expressionType) {
-        delegate.setExpressionType(expressionType);
+    public <T> T evaluate(Exchange exchange, Class<T> type) {
+        if (getExpressionValue() != null) {
+            return getExpressionValue().evaluate(exchange, type);
+        } else {
+            Expression exp = delegate.getExpressionType().createExpression(exchange.getContext());
+            return exp.evaluate(exchange, type);
+        }
+    }
+
+    @Override
+    public boolean matches(Exchange exchange) {
+        if (getExpressionValue() != null) {
+            return new ExpressionToPredicateAdapter(getExpressionValue()).matches(exchange);
+        } else {
+            Expression exp = delegate.getExpressionType().createExpression(exchange.getContext());
+            return new ExpressionToPredicateAdapter(exp).matches(exchange);
+        }
     }
 }

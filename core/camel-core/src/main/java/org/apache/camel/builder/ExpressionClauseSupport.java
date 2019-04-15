@@ -23,7 +23,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.support.builder.xml.Namespaces;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
-import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.Hl7TerserExpression;
@@ -40,6 +39,7 @@ import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
+import org.apache.camel.support.language.ExpressionModel;
 
 /**
  * A support class for building expression clauses.
@@ -51,7 +51,7 @@ public class ExpressionClauseSupport<T> {
 
     private T result;
     private Expression expressionValue;
-    private ExpressionDefinition expressionType;
+    private ExpressionModel expressionType;
 
     public ExpressionClauseSupport(T result) {
         this.result = result;
@@ -65,10 +65,16 @@ public class ExpressionClauseSupport<T> {
      */
     public T expression(Expression expression) {
         setExpressionValue(expression);
+        if (expression instanceof ExpressionModel) {
+            setExpressionType((ExpressionModel) expression);
+        }
         return result;
     }
 
-    public T expression(ExpressionDefinition expression) {
+    /**
+     * Specify an {@link ExpressionModel} instance
+     */
+    public T language(ExpressionModel expression) {
         setExpressionType(expression);
         return result;
     }
@@ -1081,11 +1087,11 @@ public class ExpressionClauseSupport<T> {
         this.expressionValue = expressionValue;
     }
 
-    public ExpressionDefinition getExpressionType() {
+    public ExpressionModel getExpressionType() {
         return expressionType;
     }
 
-    public void setExpressionType(ExpressionDefinition expressionType) {
+    public void setExpressionType(ExpressionModel expressionType) {
         this.expressionType = expressionType;
     }
 
@@ -1101,6 +1107,7 @@ public class ExpressionClauseSupport<T> {
     }
 
     protected void configureExpression(CamelContext camelContext, Expression expression) {
+        // noop
     }
 
 }
