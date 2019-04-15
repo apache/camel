@@ -49,6 +49,7 @@
         <exclude>**/target/*</exclude>
         <exclude>**/*.ser</exclude>
         <exclude>**/*.log</exclude>
+        <exclude>**/.flattened-pom.xml</exclude>
       </excludes>
       <lineEnding>dos</lineEnding>
     </fileSet>
