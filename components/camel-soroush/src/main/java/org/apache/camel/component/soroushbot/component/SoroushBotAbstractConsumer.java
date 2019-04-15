@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.soroushbot.component;
 
+import java.util.concurrent.ExecutorService;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -41,12 +43,14 @@ import static org.apache.camel.component.soroushbot.utils.StringUtils.ordinal;
  * it calls abstract function {@link SoroushBotAbstractConsumer#sendExchange(Exchange)}
  * each subclass should handle how it will start the processing of the exchange
  */
-public abstract class SoroushBotAbstractConsumer extends DefaultConsumer {
+public abstract class SoroushBotAbstractConsumer extends DefaultConsumer implements org.apache.camel.spi.ShutdownPrepared{
     SoroushBotEndpoint endpoint;
     /**
      * {@link ObjectMapper} for parse message JSON
      */
     ObjectMapper objectMapper = new ObjectMapper();
+    private ExecutorService executorService;
+    boolean shutdown=false;
 
     public SoroushBotAbstractConsumer(SoroushBotEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -68,9 +72,9 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer {
     @Override
     public void doStart() {
 //     create new Thread for listening to Soroush SSE Server so that it release the main camel thread.
-        endpoint.getCamelContext().getExecutorServiceManager()
-                .newSingleThreadExecutor(this,"Soroush Receiver")
-                .execute(() -> {
+        executorService = endpoint.getCamelContext().getExecutorServiceManager()
+                .newSingleThreadExecutor(this, "Soroush Receiver");
+        executorService.execute(() -> {
                     try {
                         SoroushBotAbstractConsumer.this.run();
                     } catch (InterruptedException ignored) {
@@ -100,7 +104,7 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer {
         EventInput event = null;
         int retry = 0;
         //this while handle connectionRetry if connection failed or get closed.
-        while (retry <= endpoint.maxConnectionRetry) {
+        while (retry <= endpoint.maxConnectionRetry && !shutdown) {
             endpoint.waitBeforeRetry(retry);
             try {
                 if (event == null || event.isClosed()) {
@@ -151,6 +155,14 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer {
         }
         //todo how to handle long connection failure
         log.info("max connection retry reached! we are closing the endpoint!");
+    }
+
+    @Override
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        if(!suspendOnly){
+            shutdown=true;
+            executorService.shutdown();
+        }
     }
 }
 
