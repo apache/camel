@@ -61,6 +61,7 @@ import org.jboss.shrinkwrap.impl.base.path.BasicPath;
 import org.jboss.shrinkwrap.resolver.api.maven.ConfigurableMavenResolverSystem;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenResolvedArtifact;
+import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
 import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenCoordinate;
 import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenCoordinates;
@@ -133,7 +134,8 @@ public final class ArquillianPackager {
         }
         if (version == null) {
             // It is missing when launching from IDE
-            List<MavenResolvedArtifact> resolved = Arrays.asList(resolver(config).loadPomFromFile("pom.xml").importCompileAndRuntimeDependencies().resolve().withoutTransitivity().asResolvedArtifact());
+            PomEquippedResolveStage pom = resolver(config).loadPomFromFile("pom.xml");
+            List<MavenResolvedArtifact> resolved = Arrays.asList(pom.importCompileAndRuntimeDependencies().resolve().withoutTransitivity().asResolvedArtifact());
             for (MavenResolvedArtifact dep : resolved) {
                 if (dep.getCoordinate().getGroupId().equals("org.apache.camel")) {
                     version = dep.getCoordinate().getVersion();
