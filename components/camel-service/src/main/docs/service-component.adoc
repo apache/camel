@@ -35,7 +35,7 @@ The Service component supports 3 options, which are listed below.
 The Service endpoint is configured using URI syntax:
 
 ----
-service:serviceName:delegateUri
+service:delegateUri
 ----
 
 with the following path and query parameters:
