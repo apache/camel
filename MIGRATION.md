@@ -42,6 +42,7 @@ We have also modularized many of the core components and moved them out of `came
 - camel-file
 - camel-language
 - camel-log
+- camel-mock
 - camel-properties
 - camel-ref
 - camel-rest

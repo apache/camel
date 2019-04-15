@@ -31,7 +31,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.CamelEvent;
@@ -799,204 +798,6 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition when the provided mock is satisfied based on {@link Exchange}
-     * being sent to it when they are <b>done</b>.
-     * <p/>
-     * The idea is that you can use Mock for setting fine grained expectations
-     * and then use that together with this builder. The mock provided does <b>NOT</b>
-     * have to already exist in the route. You can just create a new pseudo mock
-     * and this builder will send the done {@link Exchange} to it. So its like
-     * adding the mock to the end of your route(s).
-     *
-     * @param mock the mock
-     * @return the builder
-     */
-    public NotifyBuilder whenDoneSatisfied(final MockEndpoint mock) {
-        return doWhenSatisfied(mock, false);
-    }
-
-    /**
-     * Sets a condition when the provided mock is satisfied based on {@link Exchange}
-     * being sent to it when they are <b>received</b>.
-     * <p/>
-     * The idea is that you can use Mock for setting fine grained expectations
-     * and then use that together with this builder. The mock provided does <b>NOT</b>
-     * have to already exist in the route. You can just create a new pseudo mock
-     * and this builder will send the done {@link Exchange} to it. So its like
-     * adding the mock to the end of your route(s).
-     *
-     * @param mock the mock
-     * @return the builder
-     */
-    public NotifyBuilder whenReceivedSatisfied(final MockEndpoint mock) {
-        return doWhenSatisfied(mock, true);
-    }
-
-    private NotifyBuilder doWhenSatisfied(final MockEndpoint mock, final boolean received) {
-        stack.add(new EventPredicateSupport() {
-            private Producer producer;
-
-            @Override
-            public boolean onExchangeCreated(Exchange exchange) {
-                if (received) {
-                    sendToMock(exchange);
-                }
-                return true;
-            }
-
-            @Override
-            public boolean onExchangeFailed(Exchange exchange) {
-                if (!received) {
-                    sendToMock(exchange);
-                }
-                return true;
-            }
-
-            @Override
-            public boolean onExchangeCompleted(Exchange exchange) {
-                if (!received) {
-                    sendToMock(exchange);
-                }
-                return true;
-            }
-
-            private void sendToMock(Exchange exchange) {
-                // send the exchange when its completed to the mock
-                try {
-                    if (producer == null) {
-                        producer = mock.createProducer();
-                    }
-                    producer.process(exchange);
-                } catch (Exception e) {
-                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                }
-            }
-
-            public boolean matches() {
-                try {
-                    return mock.await(0, TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
-                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                }
-            }
-
-            @Override
-            public void reset() {
-                mock.reset();
-            }
-
-            @Override
-            public String toString() {
-                if (received) {
-                    return "whenReceivedSatisfied(" + mock + ")";
-                } else {
-                    return "whenDoneSatisfied(" + mock + ")";
-                }
-            }
-        });
-        return this;
-    }
-
-    /**
-     * Sets a condition when the provided mock is <b>not</b> satisfied based on {@link Exchange}
-     * being sent to it when they are <b>received</b>.
-     * <p/>
-     * The idea is that you can use Mock for setting fine grained expectations
-     * and then use that together with this builder. The mock provided does <b>NOT</b>
-     * have to already exist in the route. You can just create a new pseudo mock
-     * and this builder will send the done {@link Exchange} to it. So its like
-     * adding the mock to the end of your route(s).
-     *
-     * @param mock the mock
-     * @return the builder
-     */
-    public NotifyBuilder whenReceivedNotSatisfied(final MockEndpoint mock) {
-        return doWhenNotSatisfied(mock, true);
-    }
-
-    /**
-     * Sets a condition when the provided mock is <b>not</b> satisfied based on {@link Exchange}
-     * being sent to it when they are <b>done</b>.
-     * <p/>
-     * The idea is that you can use Mock for setting fine grained expectations
-     * and then use that together with this builder. The mock provided does <b>NOT</b>
-     * have to already exist in the route. You can just create a new pseudo mock
-     * and this builder will send the done {@link Exchange} to it. So its like
-     * adding the mock to the end of your route(s).
-     *
-     * @param mock the mock
-     * @return the builder
-     */
-    public NotifyBuilder whenDoneNotSatisfied(final MockEndpoint mock) {
-        return doWhenNotSatisfied(mock, false);
-    }
-
-    private NotifyBuilder doWhenNotSatisfied(final MockEndpoint mock, final boolean received) {
-        stack.add(new EventPredicateSupport() {
-            private Producer producer;
-
-            @Override
-            public boolean onExchangeCreated(Exchange exchange) {
-                if (received) {
-                    sendToMock(exchange);
-                }
-                return true;
-            }
-
-            @Override
-            public boolean onExchangeFailed(Exchange exchange) {
-                if (!received) {
-                    sendToMock(exchange);
-                }
-                return true;
-            }
-
-            @Override
-            public boolean onExchangeCompleted(Exchange exchange) {
-                if (!received) {
-                    sendToMock(exchange);
-                }
-                return true;
-            }
-
-            private void sendToMock(Exchange exchange) {
-                // send the exchange when its completed to the mock
-                try {
-                    if (producer == null) {
-                        producer = mock.createProducer();
-                    }
-                    producer.process(exchange);
-                } catch (Exception e) {
-                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                }
-            }
-
-            public boolean matches() {
-                try {
-                    return !mock.await(0, TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
-                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                }
-            }
-
-            @Override
-            public void reset() {
-                mock.reset();
-            }
-
-            @Override
-            public String toString() {
-                if (received) {
-                    return "whenReceivedNotSatisfied(" + mock + ")";
-                } else {
-                    return "whenDoneNotSatisfied(" + mock + ")";
-                }
-            }
-        });
-        return this;
-    }
-
-    /**
      * Sets a condition that the bodies is expected to be <b>received</b> in the order as well.
      * <p/>
      * This condition will discard any additional messages. If you need a more strict condition
@@ -1227,34 +1028,19 @@ public class NotifyBuilder {
      * This operation will wait until the match is <tt>true</tt> or otherwise a timeout occur
      * which means <tt>false</tt> will be returned.
      * <p/>
-     * The timeout value is by default 10 seconds. But it will use the highest <i>maximum result wait time</i>
-     * from the configured mocks, if such a value has been configured.
-     * <p/>
-     * This method is convenient to use in unit tests to have it adhere and wait
-     * as long as the mock endpoints.
+     * The timeout value is by default 10 seconds.
      *
      * @return <tt>true</tt> if matching, <tt>false</tt> otherwise due to timeout
+     * @deprecated use {@link #matches(long, TimeUnit)} instead
      */
+    @Deprecated
     public boolean matchesMockWaitTime() {
         if (!created) {
             throw new IllegalStateException("NotifyBuilder has not been created. Invoke the create() method before matching.");
         }
-        long timeout = 0;
-        for (Endpoint endpoint : context.getEndpoints()) {
-            if (endpoint instanceof MockEndpoint) {
-                long waitTime = ((MockEndpoint) endpoint).getResultWaitTime();
-                if (waitTime > 0) {
-                    timeout = Math.max(timeout, waitTime);
-                }
-            }
-        }
 
         // use 10 sec as default
-        if (timeout == 0) {
-            timeout = 10000;
-        }
-
-        return matches(timeout, TimeUnit.MILLISECONDS);
+        return matches(10000, TimeUnit.MILLISECONDS);
     }
 
     /**
