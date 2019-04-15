@@ -108,5 +108,19 @@
             </snapshots>
         </repository>
     </repositories>
-
+    <profiles>
+        <profile>
+        <id>jdk9+-build</id>
+        <activation>
+            <jdk>[9,)</jdk>
+        </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>javax.activation</artifactId>
+                    <version>1.2.0</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>
