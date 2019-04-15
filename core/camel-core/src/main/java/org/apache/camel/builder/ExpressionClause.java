@@ -25,7 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
-import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.builder.xml.Namespaces;
@@ -40,12 +39,6 @@ public class ExpressionClause<T> implements Expression, Predicate {
 
     public ExpressionClause(T result) {
         this.delegate = new ExpressionClauseSupport<>(result);
-    }
-
-    public static <T extends ExpressionNode> ExpressionClause<T> createAndSetExpression(T result) {
-        ExpressionClause<T> clause = new ExpressionClause<>(result);
-        result.setExpression(clause);
-        return clause;
     }
 
     // Helper expressions
