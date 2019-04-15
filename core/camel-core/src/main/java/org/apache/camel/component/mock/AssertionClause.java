@@ -25,7 +25,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.StreamCache;
 import org.apache.camel.builder.ExpressionClause;
-import org.apache.camel.builder.ExpressionClauseSupport;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.support.PredicateAssertHelper;
 import org.apache.camel.support.language.ExpressionModel;
@@ -33,7 +32,7 @@ import org.apache.camel.support.language.ExpressionModel;
 /**
  * A builder of assertions on message exchanges
  */
-public abstract class AssertionClause extends ExpressionClauseSupport<ValueBuilder> implements Runnable {
+public abstract class AssertionClause extends MockExpressionClauseSupport<ValueBuilder> implements Runnable {
 
     protected final MockEndpoint mock;
     protected volatile int currentIndex;

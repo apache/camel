@@ -14,46 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder;
+package org.apache.camel.component.mock;
 
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.support.builder.xml.Namespaces;
-import org.apache.camel.model.language.ConstantExpression;
-import org.apache.camel.model.language.ExchangePropertyExpression;
-import org.apache.camel.model.language.GroovyExpression;
-import org.apache.camel.model.language.HeaderExpression;
-import org.apache.camel.model.language.Hl7TerserExpression;
-import org.apache.camel.model.language.JavaScriptExpression;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
-import org.apache.camel.model.language.MvelExpression;
-import org.apache.camel.model.language.OgnlExpression;
-import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
-import org.apache.camel.model.language.SpELExpression;
 import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
+import org.apache.camel.support.builder.xml.Namespaces;
 import org.apache.camel.support.language.ExpressionModel;
 
 /**
  * A support class for building expression clauses.
  */
-public class ExpressionClauseSupport<T> {
+public class MockExpressionClauseSupport<T> {
 
-    // Implementation detail: We must use the specific model.language.xxx classes to make the DSL use these specific types
-    // which ensures that the route model dumped as XML uses these types, eg <header> instead of <language name="header"> etc.
+    // TODO: make the model.language class not here as we want to use this in camel-mock but have similar method api compatability
 
     private T result;
     private Expression expressionValue;
     private ExpressionModel expressionType;
 
-    public ExpressionClauseSupport(T result) {
+    public MockExpressionClauseSupport(T result) {
         this.result = result;
     }
 
@@ -86,11 +76,7 @@ public class ExpressionClauseSupport<T> {
      * do not use this if you want dynamic values during routing.
      */
     public T constant(Object value) {
-        if (value instanceof String) {
-            return expression(new ConstantExpression((String) value));
-        } else {
-            return expression(ExpressionBuilder.constantExpression(value));
-        }
+        return expression(ExpressionBuilder.constantExpression(value));
     }
 
     /**
@@ -118,8 +104,7 @@ public class ExpressionClauseSupport<T> {
      * An expression of an inbound message body
      */
     public T body() {
-        // reuse simple as this allows the model to represent this as a known JAXB type
-        return expression(new SimpleExpression("${body}"));
+        return expression(ExpressionBuilder.bodyExpression());
     }
 
     /**
@@ -147,7 +132,7 @@ public class ExpressionClauseSupport<T> {
      * An expression of an inbound message header of the given name
      */
     public T header(String name) {
-        return expression(new HeaderExpression(name));
+        return expression(ExpressionBuilder.headerExpression(name));
     }
 
     /**
@@ -189,7 +174,7 @@ public class ExpressionClauseSupport<T> {
      * An expression of an exchange property of the given name
      */
     public T exchangeProperty(String name) {
-        return expression(new ExchangePropertyExpression(name));
+        return expression(ExpressionBuilder.exchangePropertyExpression(name));
     }
 
     /**
@@ -212,7 +197,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T method(String bean) {
-        return expression(new MethodCallExpression(bean));
+        return expression(ExpressionBuilder.beanExpression(bean));
     }
 
     /**
@@ -291,7 +276,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T groovy(String text) {
-        return expression(new GroovyExpression(text));
+        return expression(ExpressionBuilder.languageExpression("groovy", text));
     }
 
     /**
@@ -305,7 +290,7 @@ public class ExpressionClauseSupport<T> {
      */
     @Deprecated
     public T javaScript(String text) {
-        return expression(new JavaScriptExpression(text));
+        return expression(ExpressionBuilder.languageExpression("js", text));
     }
 
     /**
@@ -316,7 +301,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T jsonpath(String text) {
-        return jsonpath(text, false);
+        return expression(ExpressionBuilder.languageExpression("jsonpath", text));
     }
 
     /**
@@ -491,7 +476,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T ognl(String text) {
-        return expression(new OgnlExpression(text));
+        return expression(ExpressionBuilder.languageExpression("ognl", text));
     }
 
     /**
@@ -502,7 +487,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T mvel(String text) {
-        return expression(new MvelExpression(text));
+        return expression(ExpressionBuilder.languageExpression("mvel", text));
     }
 
     /**
@@ -513,7 +498,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T ref(String ref) {
-        return expression(new RefExpression(ref));
+        return expression(ExpressionBuilder.languageExpression("ref", ref));
     }
 
     /**
@@ -524,7 +509,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T spel(String text) {
-        return expression(new SpELExpression(text));
+        return expression(ExpressionBuilder.languageExpression("spel", text));
     }
 
     /**
@@ -535,7 +520,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T simple(String text) {
-        return expression(new SimpleExpression(text));
+        return expression(ExpressionBuilder.languageExpression("simple", text));
     }
 
     /**
@@ -561,7 +546,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T hl7terser(String text) {
-        return expression(new Hl7TerserExpression(text));
+        return expression(ExpressionBuilder.languageExpression("hl7terser", text));
     }
 
     /**
@@ -764,11 +749,11 @@ public class ExpressionClauseSupport<T> {
 
     /**
      * Evaluates an XML token expression on the message body with XML content
-     * 
+     *
      * @param path the xpath like path notation specifying the child nodes to tokenize
      * @param mode one of 'i', 'w', or 'u' to inject the namespaces to the token, to
      *        wrap the token with its ancestor contet, or to unwrap to its element child
-     * @param namespaces the namespace map to the namespace bindings 
+     * @param namespaces the namespace map to the namespace bindings
      * @param group to group by the given number
      * @return the builder to continue processing the DSL
      */
@@ -794,11 +779,11 @@ public class ExpressionClauseSupport<T> {
     public T xpath(String text) {
         return expression(new XPathExpression(text));
     }
-    
+
     /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
      * expression</a> on the supplied header name's contents
-     * 
+     *
      * @param text the expression to be evaluated
      * @param headerName the name of the header to apply the expression to
      * @return the builder to continue processing the DSL
@@ -808,7 +793,7 @@ public class ExpressionClauseSupport<T> {
         expression.setHeaderName(headerName);
         return expression(expression);
     }
-    
+
     /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
      * expression</a> with the specified result type
@@ -824,7 +809,7 @@ public class ExpressionClauseSupport<T> {
         return result;
     }
 
-    
+
     /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
      * expression</a> with the specified result type on the supplied
@@ -841,7 +826,7 @@ public class ExpressionClauseSupport<T> {
         setExpressionType(expression);
         return result;
     }
-    
+
 
     /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
@@ -856,7 +841,7 @@ public class ExpressionClauseSupport<T> {
     public T xpath(String text, Class<?> resultType, Namespaces namespaces) {
         return xpath(text, resultType, namespaces.getNamespaces());
     }
-    
+
     /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
      * expression</a> with the specified result type and set of namespace
@@ -937,7 +922,7 @@ public class ExpressionClauseSupport<T> {
     /**
      * Evaluates an <a href="http://camel.apache.org/xquery.html">XQuery
      * expression</a>
-     * 
+     *
      * @param text the expression to be evaluated
      * @param headerName the name of the header to apply the expression to
      * @return the builder to continue processing the DSL
@@ -963,8 +948,8 @@ public class ExpressionClauseSupport<T> {
         setExpressionType(expression);
         return result;
     }
-    
-    
+
+
     /**
      * Evaluates an <a
      * href="http://camel.apache.org/xquery.html">XQuery expression</a>
@@ -995,7 +980,7 @@ public class ExpressionClauseSupport<T> {
     public T xquery(String text, Class<?> resultType, Namespaces namespaces) {
         return xquery(text, resultType, namespaces.getNamespaces());
     }
-    
+
     /**
      * Evaluates an <a
      * href="http://camel.apache.org/xquery.html">XQuery expression</a>

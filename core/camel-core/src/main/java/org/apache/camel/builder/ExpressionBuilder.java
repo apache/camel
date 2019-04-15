@@ -77,6 +77,9 @@ import org.apache.camel.util.StringHelper;
  */
 public final class ExpressionBuilder {
 
+    // TODO: Make this possible to have a base class in camel-support, and then extend it here, so we can have both
+    // and maybe deprecate this and refer to the builder in camel-support
+
     private static final Pattern OFFSET_PATTERN = Pattern.compile("([+-])([^+-]+)");
 
     /**
