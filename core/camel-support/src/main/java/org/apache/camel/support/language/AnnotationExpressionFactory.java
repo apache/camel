@@ -20,7 +20,6 @@ import java.lang.annotation.Annotation;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.support.language.LanguageAnnotation;
 
 /**
  * A factory which creates an {@link Expression} object from an annotation on a field, property or method parameter
