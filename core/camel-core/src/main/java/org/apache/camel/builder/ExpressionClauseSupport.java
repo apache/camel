@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.builder.xml.Namespaces;
+import org.apache.camel.support.builder.xml.Namespaces;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.ExpressionDefinition;

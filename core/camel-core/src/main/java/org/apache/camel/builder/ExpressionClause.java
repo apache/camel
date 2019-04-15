@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
-import org.apache.camel.builder.xml.Namespaces;
+import org.apache.camel.support.builder.xml.Namespaces;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.support.ExpressionAdapter;

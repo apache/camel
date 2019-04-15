@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.xml.Namespaces;
+import org.apache.camel.support.builder.xml.Namespaces;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
