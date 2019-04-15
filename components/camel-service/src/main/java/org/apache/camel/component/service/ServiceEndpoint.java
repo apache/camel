@@ -43,7 +43,7 @@ import org.apache.camel.spi.UriPath;
 @UriEndpoint(
     firstVersion = "2.22.0",
     scheme = "service",
-    syntax = "service:serviceName:delegateUri",
+    syntax = "service:delegateUri",
     consumerClass = ServiceConsumer.class,
     consumerOnly = true,
     title = "Service",
