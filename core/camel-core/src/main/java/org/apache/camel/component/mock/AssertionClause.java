@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.StreamCache;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.support.PredicateAssertHelper;
 import org.apache.camel.support.language.ExpressionModel;
 
@@ -70,8 +69,8 @@ public abstract class AssertionClause extends MockExpressionClauseSupport<MockVa
     /**
      * Adds the given predicate to this assertion clause
      */
-    public ExpressionClause<AssertionClause> predicate() {
-        ExpressionClause<AssertionClause> clause = new ExpressionClause<>(this);
+    public MockExpressionClause<AssertionClause> predicate() {
+        MockExpressionClause<AssertionClause> clause = new MockExpressionClause<>(this);
         addPredicate(clause);
         return clause;
     }

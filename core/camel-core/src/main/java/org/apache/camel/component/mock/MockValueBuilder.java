@@ -24,7 +24,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.builder.ExpressionBuilder;
@@ -67,7 +66,7 @@ public class MockValueBuilder implements Expression, Predicate {
         return onNewPredicate(ExpressionToPredicateAdapter.toPredicate(expression));
     }
 
-    public ExpressionClause<Predicate> matches() {
+    public MockExpressionClause<Predicate> matches() {
         // chicken-and-egg situation as we need to return an ExpressionClause
         // which needs a right-hand side that is being built via the fluent
         // builder that is returned, and therefore we need to use a ref
@@ -75,7 +74,7 @@ public class MockValueBuilder implements Expression, Predicate {
         // in the onNewPredicate where the actual matching is executed
         final AtomicReference<Expression> ref = new AtomicReference<>();
 
-        final ExpressionClause<Predicate> answer = new ExpressionClause<>(
+        final MockExpressionClause<Predicate> answer = new MockExpressionClause<>(
             onNewPredicate(new Predicate() {
                 @Override
                 public boolean matches(Exchange exchange) {
@@ -94,11 +93,6 @@ public class MockValueBuilder implements Expression, Predicate {
             @Override
             public Object evaluate(Exchange exchange) {
                 return answer.evaluate(exchange, Object.class);
-                /*if (answer.getExpressionValue() != null) {
-                    return answer.getExpressionValue().evaluate(exchange, Object.class);
-                } else {
-                    return answer.getExpressionType().evaluate(exchange);
-                }*/
             }
         };
         // okay now we can set the reference to the right-hand-side
