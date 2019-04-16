@@ -37,19 +37,14 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
-import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
-import org.apache.camel.component.bean.BeanInvocation;
-import org.apache.camel.language.bean.BeanLanguage;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.spi.ExchangeFormatter;
@@ -1269,17 +1264,6 @@ public final class ExpressionBuilder {
                     if (exchange.getIn().getBody() == null) {
                         return null;
                     }
-
-                    // if its a bean invocation then if it has no arguments then it should be threaded as null body allowed
-                    if (exchange.getIn().getBody() instanceof BeanInvocation) {
-                        // BeanInvocation would be stored directly as the message body
-                        // do not force any type conversion attempts as it would just be unnecessary and cost a bit performance
-                        // so a regular instanceof check is sufficient
-                        BeanInvocation bi = (BeanInvocation) exchange.getIn().getBody();
-                        if (bi.getArgs() == null || bi.getArgs().length == 0 || bi.getArgs()[0] == null) {
-                            return null;
-                        }
-                    }
                 }
 
                 try {
@@ -2019,64 +2003,6 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "bean(" + expression + ")";
-            }
-        };
-    }
-
-    @Deprecated
-    public static Expression beanExpression(final Class<?> beanType, final String methodName) {
-        return BeanLanguage.bean(beanType, methodName);
-    }
-
-    @Deprecated
-    public static Expression beanExpression(final Object bean, final String methodName) {
-        return BeanLanguage.bean(bean, methodName);
-    }
-
-    @Deprecated
-    public static Expression beanExpression(final String beanRef, final String methodName) {
-        String expression = methodName != null ? beanRef + "." + methodName : beanRef;
-        return beanExpression(expression);
-    }
-
-    /**
-     * Returns an expression processing the exchange to the given endpoint uri
-     *
-     * @param uri endpoint uri to send the exchange to
-     * @return an expression object which will return the OUT body
-     * @deprecated not in use, and not available in XML DSL
-     */
-    @Deprecated
-    public static Expression toExpression(final String uri) {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                String text = simpleExpression(uri).evaluate(exchange, String.class);
-                Endpoint endpoint = exchange.getContext().getEndpoint(text);
-                if (endpoint == null) {
-                    throw new NoSuchEndpointException(text);
-                }
-
-                Producer producer;
-                try {
-                    producer = endpoint.createProducer();
-                    producer.start();
-                    producer.process(exchange);
-                    producer.stop();
-                } catch (Exception e) {
-                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                }
-
-                // return the OUT body, but check for exchange pattern
-                if (ExchangeHelper.isOutCapable(exchange)) {
-                    return exchange.getOut().getBody();
-                } else {
-                    return exchange.getIn().getBody();
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "to(" + uri + ")";
             }
         };
     }

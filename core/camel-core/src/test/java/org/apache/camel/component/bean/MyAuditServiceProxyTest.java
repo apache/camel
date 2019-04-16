@@ -28,8 +28,7 @@ public class MyAuditServiceProxyTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedHeaderReceived("uuid", "1234");
 
-        // must enable binding on proxy
-        MyAuditService service = new ProxyBuilder(context).endpoint("direct:proxy").binding(true).build(MyAuditService.class);
+        MyAuditService service = new ProxyBuilder(context).endpoint("direct:proxy").build(MyAuditService.class);
 
         service.auditMessage("1234", "Hello World");
 
