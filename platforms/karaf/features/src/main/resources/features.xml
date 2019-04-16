@@ -2422,6 +2422,7 @@
   </feature>
   <feature name='camel-telegram' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
+    <feature version='${project.version}'>camel-webhook</feature>
     <feature version='${cxf-version-range}'>cxf-core</feature>
     <feature version='${cxf-version-range}'>cxf-jaxrs</feature>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
