@@ -1153,11 +1153,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-rmi</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-rss</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -2598,11 +2593,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-ribbon-starter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-rmi-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
