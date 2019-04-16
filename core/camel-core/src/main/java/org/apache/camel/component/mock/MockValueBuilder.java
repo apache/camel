@@ -24,13 +24,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ExpressionClause;
-import org.apache.camel.builder.PredicateBuilder;
-import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.apache.camel.support.builder.xml.Namespaces;
+import org.apache.camel.support.builder.ExpressionBuilder;
+import org.apache.camel.support.builder.PredicateBuilder;
 
 /**
  * A builder of expressions or predicates based on values.
@@ -234,26 +232,6 @@ public class MockValueBuilder implements Expression, Predicate {
             newExp = ExpressionBuilder.skipFirstExpression(newExp);
         }
         newExp = ExpressionBuilder.groupIteratorExpression(newExp, token, group, skipFirst);
-        return onNewValueBuilder(newExp);
-    }
-
-    public MockValueBuilder tokenizeXML(String tagName, String inheritNamespaceTagName) {
-        Expression newExp = ExpressionBuilder.tokenizeXMLExpression(tagName, inheritNamespaceTagName);
-        return onNewValueBuilder(newExp);
-    }
-
-    public MockValueBuilder xtokenize(String path, Namespaces namespaces) {
-        return xtokenize(path, 'i', namespaces);
-    }
-
-    public MockValueBuilder xtokenize(String path, char mode, Namespaces namespaces) {
-        Expression newExp = ExpressionBuilder.tokenizeXMLAwareExpression(path, mode);
-        ((NamespaceAware)newExp).setNamespaces(namespaces.getNamespaces());
-        return onNewValueBuilder(newExp);
-    }
-
-    public MockValueBuilder tokenizePair(String startToken, String endToken, boolean includeTokens) {
-        Expression newExp = ExpressionBuilder.tokenizePairExpression(startToken, endToken, includeTokens);
         return onNewValueBuilder(newExp);
     }
 
