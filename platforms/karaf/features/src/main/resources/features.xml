@@ -2558,6 +2558,10 @@
     <bundle dependency='true'>mvn:io.reactivex/rxjava/${rxjava-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-web3j/${project.version}</bundle>
   </feature>
+  <feature name='camel-webhook' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-webhook/${project.version}</bundle>
+  </feature>
   <feature name='camel-wordpress' version='${project.version}' start-level='50'>
     <feature version='${cxf-version-range}'>cxf-core</feature>
     <feature version='${cxf-version-range}'>cxf-jaxrs</feature>
