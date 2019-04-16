@@ -48,7 +48,6 @@ public class SqsComponentVerifierExtensionTest extends CamelTestSupport {
         parameters.put("queueNameOrArn", "bucket1");
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
-
         Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
