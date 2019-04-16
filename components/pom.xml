@@ -264,7 +264,6 @@
         <module>camel-rest</module>
         <module>camel-rest-swagger</module>
         <module>camel-restlet</module>
-        <module>camel-rmi</module>
         <module>camel-rss</module>
         <module>camel-rxjava2</module>
         <module>camel-saga</module>
