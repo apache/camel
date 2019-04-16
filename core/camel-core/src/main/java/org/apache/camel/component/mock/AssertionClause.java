@@ -25,16 +25,13 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.StreamCache;
 import org.apache.camel.builder.ExpressionClause;
-import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.support.PredicateAssertHelper;
 import org.apache.camel.support.language.ExpressionModel;
 
 /**
  * A builder of assertions on message exchanges
  */
-public abstract class AssertionClause extends MockExpressionClauseSupport<ValueBuilder> implements Runnable {
-
-    // TODO: MockValueBuilder
+public abstract class AssertionClause extends MockExpressionClauseSupport<MockValueBuilder> implements Runnable {
 
     protected final MockEndpoint mock;
     protected volatile int currentIndex;
@@ -50,13 +47,13 @@ public abstract class AssertionClause extends MockExpressionClauseSupport<ValueB
     // Builder methods
     // -------------------------------------------------------------------------
 
-    public ValueBuilder expression(Expression expression) {
+    public MockValueBuilder expression(Expression expression) {
         // must override this method as we provide null in the constructor
         super.expression(expression);
         return new PredicateValueBuilder(expression);
     }
 
-    public ValueBuilder language(ExpressionModel expression) {
+    public MockValueBuilder language(ExpressionModel expression) {
         // must override this method as we provide null in the constructor
         super.expression(expression.createExpression(mock.getCamelContext()));
         return new PredicateValueBuilder(getExpressionValue());
@@ -144,7 +141,7 @@ public abstract class AssertionClause extends MockExpressionClauseSupport<ValueB
     /**
      * Public class needed for fluent builders
      */
-    public final class PredicateValueBuilder extends ValueBuilder {
+    public final class PredicateValueBuilder extends MockValueBuilder {
 
         public PredicateValueBuilder(Expression expression) {
             super(expression);
@@ -158,7 +155,7 @@ public abstract class AssertionClause extends MockExpressionClauseSupport<ValueB
         }
 
         @Override
-        protected ValueBuilder onNewValueBuilder(Expression exp) {
+        protected MockValueBuilder onNewValueBuilder(Expression exp) {
             return new PredicateValueBuilder(exp);
         }
     }
