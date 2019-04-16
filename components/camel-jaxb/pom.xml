@@ -42,6 +42,7 @@
 
     <dependencies>
 
+        <!-- needs camel-core due to stax converter -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>

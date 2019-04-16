@@ -19,12 +19,9 @@ package org.apache.camel.dataformat.soap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -33,8 +30,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
@@ -134,14 +129,6 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         checkElementNameStrategy(exchange);
 
         String soapAction = getSoapActionFromExchange(exchange);
-        if (soapAction == null && inputObject instanceof BeanInvocation) {
-            BeanInvocation beanInvocation = (BeanInvocation) inputObject;
-            WebMethod webMethod = beanInvocation.getMethod().getAnnotation(WebMethod.class);
-            if (webMethod != null && webMethod.action() != null) {
-                soapAction = webMethod.action();
-            }
-        }
-
         Object envelope = adapter.doMarshal(exchange, inputObject, stream, soapAction);
 
         // and continue in super
@@ -149,11 +136,8 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     }
 
     /**
-     * Create body content from a non Exception object. If the inputObject is a
-     * BeanInvocation the following should be considered: The first parameter
-     * will be used for the SOAP body. BeanInvocations with more than one
-     * parameter are not supported. So the interface should be in doc lit bare
-     * style.
+     * Create body content from a non Exception object.
+     * So the interface should be in doc lit bare style.
      * 
      * @param inputObject
      *            object to be put into the SOAP body
@@ -168,44 +152,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
                                                          List<Object> headerElements) {
         List<Object> bodyParts = new ArrayList<>();
         List<Object> headerParts = new ArrayList<>();
-        if (inputObject instanceof BeanInvocation) {
-            BeanInvocation bi = (BeanInvocation)inputObject;
-            Annotation[][] annotations = bi.getMethod().getParameterAnnotations();
-
-            List<WebParam> webParams = new ArrayList<>();
-            for (Annotation[] singleParameterAnnotations : annotations) {
-                for (Annotation annotation : singleParameterAnnotations) {
-                    if (annotation instanceof WebParam) {
-                        webParams.add((WebParam)annotation);
-                    }
-                }
-            }
-
-            if (webParams.size() > 0) {
-                if (webParams.size() == bi.getArgs().length) {
-                    int index = -1;
-                    for (Object o : bi.getArgs()) {
-                        if (webParams.get(++index).header()) {
-                            headerParts.add(o);
-                        } else {
-                            bodyParts.add(o);
-                        }
-                    }
-                } else {
-                    throw new RuntimeCamelException("The number of bean invocation parameters does not "
-                                                        + "match the number of parameters annotated with @WebParam for the method [ "
-                                                        + bi.getMethod().getName() + "].");
-                }
-            } else {
-                // try to map all objects for the body
-                for (Object o : bi.getArgs()) {
-                    bodyParts.add(o);
-                }
-            }
-
-        } else {
-            bodyParts.add(inputObject);
-        }
+        bodyParts.add(inputObject);
 
         List<Object> bodyElements = new ArrayList<>();
         for (Object bodyObj : bodyParts) {

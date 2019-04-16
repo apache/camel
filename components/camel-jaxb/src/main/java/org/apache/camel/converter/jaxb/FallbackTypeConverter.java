@@ -43,11 +43,9 @@ import javax.xml.transform.Source;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
-import org.apache.camel.Processor;
 import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ExchangeHelper;
@@ -94,11 +92,6 @@ public class FallbackTypeConverter {
     @FallbackConverter
     @Converter(fallback = true)
     public Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
-        if (BeanInvocation.class.isAssignableFrom(type) || Processor.class.isAssignableFrom(type)) {
-            // JAXB cannot convert to a BeanInvocation / Processor, so we need to indicate this
-            // to avoid Camel trying to do this when using beans with JAXB payloads
-            return null;
-        }
 
         boolean prettyPrint = defaultPrettyPrint;
         String property = exchange != null ? exchange.getContext().getGlobalOption(PRETTY_PRINT) : null;
