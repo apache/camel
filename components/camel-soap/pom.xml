@@ -33,7 +33,10 @@
     <description>Camel SOAP support</description>
 
     <properties>
-        <camel.osgi.import.before.defaults>javax.xml.ws;version="[0.0,3)"</camel.osgi.import.before.defaults>
+        <camel.osgi.import.before.defaults>
+            javax.xml.ws;version="[0.0,3)",
+            javax.xml.soap*;version="[1.3,2)"
+        </camel.osgi.import.before.defaults>
     </properties>
 
     <dependencies>
