@@ -337,17 +337,6 @@ public class ValueBuilder implements Expression, Predicate {
     }
 
     /**
-     * Invokes the method with the given name.
-     *
-     * @param methodName  name of method to invoke.
-     * @return the current builder
-     */
-    public ValueBuilder method(String methodName) {
-        Expression newExp = ExpressionBuilder.beanExpression(expression + "?method=" + methodName);
-        return onNewValueBuilder(newExp);
-    }
-
-    /**
      * Negates the built expression.
      *
      * @return the current builder
