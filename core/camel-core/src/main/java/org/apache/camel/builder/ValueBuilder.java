@@ -343,6 +343,7 @@ public class ValueBuilder implements Expression, Predicate {
      * @return the current builder
      */
     public ValueBuilder method(String methodName) {
+        // TODO: find alternative
         Expression newExp = ExpressionBuilder.ognlExpression(expression, methodName);
         return onNewValueBuilder(newExp);
     }
