@@ -45,7 +45,6 @@ import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
-import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
@@ -57,6 +56,7 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.GroupIterator;
 import org.apache.camel.support.GroupTokenIterator;
+import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.util.FileUtil;
@@ -1970,7 +1970,7 @@ public final class ExpressionBuilder {
     public static Expression simpleExpression(final String expression) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                if (SimpleLanguage.hasSimpleFunction(expression)) {
+                if (LanguageSupport.hasSimpleFunction(expression)) {
                     // resolve language using context to have a clear separation of packages
                     // must call evaluate to return the nested language evaluate when evaluating
                     // stacked expressions
