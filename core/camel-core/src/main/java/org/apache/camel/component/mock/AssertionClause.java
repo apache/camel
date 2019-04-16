@@ -34,6 +34,8 @@ import org.apache.camel.support.language.ExpressionModel;
  */
 public abstract class AssertionClause extends MockExpressionClauseSupport<ValueBuilder> implements Runnable {
 
+    // TODO: MockValueBuilder
+
     protected final MockEndpoint mock;
     protected volatile int currentIndex;
     private final Set<Predicate> predicates = new LinkedHashSet<>();

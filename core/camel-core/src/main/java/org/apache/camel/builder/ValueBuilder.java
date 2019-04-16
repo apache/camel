@@ -337,14 +337,13 @@ public class ValueBuilder implements Expression, Predicate {
     }
 
     /**
-     * Invokes the method with the given name (supports OGNL syntax).
+     * Invokes the method with the given name.
      *
      * @param methodName  name of method to invoke.
      * @return the current builder
      */
     public ValueBuilder method(String methodName) {
-        // TODO: find alternative
-        Expression newExp = ExpressionBuilder.ognlExpression(expression, methodName);
+        Expression newExp = ExpressionBuilder.beanExpression(expression + "?method=" + methodName);
         return onNewValueBuilder(newExp);
     }
 

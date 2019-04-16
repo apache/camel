@@ -36,7 +36,6 @@ import org.apache.camel.Message;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
-import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RouteContext;
@@ -809,31 +808,6 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "bodyExpression (" + bodyType + ")";
-            }
-        };
-    }
-
-    /**
-     * Returns the expression for invoking a method (support OGNL syntax) on the given expression
-     *
-     * @param exp   the expression to evaluate and invoke the method on its result
-     * @param ognl  methods to invoke on the evaluated expression in a simple OGNL syntax
-     */
-    public static Expression ognlExpression(final Expression exp, final String ognl) {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                Object value = exp.evaluate(exchange, Object.class);
-                if (value == null) {
-                    return null;
-                }
-                // ognl is able to evaluate method name if it contains nested functions
-                // so we should not eager evaluate ognl as a string
-                return new MethodCallExpression(value, ognl).evaluate(exchange);
-            }
-
-            @Override
-            public String toString() {
-                return "ognl(" + exp + ", " + ognl + ")";
             }
         };
     }

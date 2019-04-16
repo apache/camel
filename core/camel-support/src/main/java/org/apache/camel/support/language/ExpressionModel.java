@@ -19,11 +19,17 @@ package org.apache.camel.support.language;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 
+/**
+ * Represents a model that can be created as an expression (eg language).
+ */
 public interface ExpressionModel {
 
-    // TODO: move to api, and maybe have a @FunctionalInterface
-
+    /**
+     * Creates an expression
+     *
+     * @param camelContext the camel context
+     * @return the created expression.
+     */
     Expression createExpression(CamelContext camelContext);
-
 
 }
