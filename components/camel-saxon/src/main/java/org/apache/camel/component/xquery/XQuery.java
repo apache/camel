@@ -22,8 +22,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.apache.camel.language.LanguageAnnotation;
-import org.apache.camel.language.NamespacePrefix;
+import org.apache.camel.support.language.LanguageAnnotation;
+import org.apache.camel.support.language.NamespacePrefix;
 
 /**
  * An annotation for injection of an XQuery expressions into a field, property, method or parameter when using

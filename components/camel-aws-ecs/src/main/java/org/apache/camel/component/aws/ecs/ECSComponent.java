@@ -17,6 +17,9 @@
 package org.apache.camel.component.aws.ecs;
 
 import java.util.Map;
+import java.util.Set;
+
+import com.amazonaws.services.ecs.AmazonECS;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -65,6 +68,7 @@ public class ECSComponent extends DefaultComponent {
         if (ObjectHelper.isEmpty(configuration.getRegion())) {
             setRegion(region);
         }
+        checkAndSetRegistryClient(configuration);
         if (configuration.getEcsClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon ecs client or accessKey and secretKey must be specified");
         }
@@ -117,4 +121,10 @@ public class ECSComponent extends DefaultComponent {
         configuration.setRegion(region);
     }
 
+    private void checkAndSetRegistryClient(ECSConfiguration configuration) {
+        Set<AmazonECS> clients = getCamelContext().getRegistry().findByType(AmazonECS.class);
+        if (clients.size() == 1) {
+            configuration.setEcsClient(clients.stream().findFirst().get());
+        }
+    }
 }

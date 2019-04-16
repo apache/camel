@@ -17,7 +17,6 @@
 package org.apache.camel.component.telegram.service;
 
 import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -34,6 +33,8 @@ import org.apache.camel.component.telegram.model.SendLocationMessage;
 import org.apache.camel.component.telegram.model.SendVenueMessage;
 import org.apache.camel.component.telegram.model.StopMessageLiveLocationMessage;
 import org.apache.camel.component.telegram.model.UpdateResult;
+import org.apache.camel.component.telegram.model.WebhookInfo;
+import org.apache.camel.component.telegram.model.WebhookResult;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 
 /**
@@ -52,6 +53,12 @@ public interface RestBotAPI {
             @QueryParam("offset") Long offset,
             @QueryParam("limit") Integer limit,
             @QueryParam("timeout") Integer timeoutSeconds);
+
+    @POST
+    @Path("/bot{authorizationToken}/setWebhook")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    WebhookResult setWebhook(@PathParam("authorizationToken") String authorizationToken, WebhookInfo webhookInfo);
 
     @POST
     @Path("/bot{authorizationToken}/sendMessage")

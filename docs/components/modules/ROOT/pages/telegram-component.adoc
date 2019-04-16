@@ -400,3 +400,36 @@ from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
     })
     .to("telegram:bots/123456789:insertYourAuthorizationTokenHere");
 ---------------------------------------------------------
+
+
+=== Webhook Mode
+
+The Telegram component supports usage in the *webhook mode* using the *camel-webhook* component.
+
+In order to enable webhook mode, users need first to add a REST implementation to their application.
+Maven users, for example, can add *netty4-http* to their `pom.xml` file:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-netty4-http</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+Once done, you need to prepend the webhook URI to the telegram URI you want to use.
+
+In Java DSL:
+
+[source,java]
+---------------------------------------------------------
+from("webhook:telegram:bots/123456789:insertYourAuthorizationTokenHere").to("log:info");
+---------------------------------------------------------
+
+Some endpoints will be exposed by your application and Telegram will be configured to send messages to them.
+You need to ensure that your server is exposed to the internet and to pass the right value of the
+*camel.component.webhook.configuration.webhook-external-url* property.
+
+Refer to the *camel-webhook* component documentation for instructions on how to set it.

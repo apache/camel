@@ -171,7 +171,7 @@
   </feature>
   <feature name='camel-asn1' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.openmuc/jasn1/${jasn1-version}</bundle>
+    <bundle dependency='true'>mvn:com.beanit/jasn1/${jasn1-version}</bundle>
     <bundle dependency='true'>mvn:org.bouncycastle/bcprov-jdk15on/${bouncycastle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-asn1/${project.version}</bundle>
   </feature>
@@ -667,7 +667,6 @@
     <bundle>mvn:org.apache.camel/camel-cometd/${project.version}</bundle>
   </feature>
   <feature name='camel-consul' version='${project.version}' start-level='50'>
-    <details>camel-consul currently do not work in OSGi</details>
     <feature prerequisite='true'>wrap</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:com.google.guava/guava/22.0</bundle>
@@ -1419,8 +1418,6 @@
     <bundle dependency='true'>mvn:org.fusesource.leveldbjni/leveldbjni-all/${jgroups-raft-leveldbjni-version}</bundle>
     <bundle dependency='true'>mvn:org.mapdb/mapdb/${jgroups-raft-mapdb-version}</bundle>
   </feature>
-
-
   <feature name='camel-jibx' version='${project.version}' start-level='50'>
     <details>camel-jibx does not work with Java 8</details>
     <feature version='${project.version}'>camel-core</feature>
@@ -1504,6 +1501,11 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-json-validator/${project.version}</bundle>
+  </feature>
+  <feature name='camel-json-api' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:com.github.jasminb/jsonapi-converter/${jasminb-jsonapi-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-jsonapi/${project.version}</bundle>
   </feature>
   <feature name='camel-jsonpath' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -1978,6 +1980,12 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.retrofit/${squareup-retrofit2-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-pubnub/${project.version}</bundle>
   </feature>
+  <feature name='camel-pulsar' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:org.apache.pulsar/pulsar-client/${pulsar-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.apache.pulsar/pulsar-client-admin/${pulsar-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-pulsar/${project.version}</bundle>
+  </feature>
   <feature name='camel-quartz2' version='${project.version}' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.c3p0/${c3p0-bundle-version}</bundle>
     <bundle dependency='true'>mvn:com.zaxxer/HikariCP-java6/${hikaricp-version}</bundle>
@@ -2414,6 +2422,7 @@
   </feature>
   <feature name='camel-telegram' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
+    <feature version='${project.version}'>camel-webhook</feature>
     <feature version='${cxf-version-range}'>cxf-core</feature>
     <feature version='${cxf-version-range}'>cxf-jaxrs</feature>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -2549,6 +2558,10 @@
     <bundle dependency='true'>wrap:mvn:org.web3j/quorum/${web3j-quorum-version}</bundle>
     <bundle dependency='true'>mvn:io.reactivex/rxjava/${rxjava-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-web3j/${project.version}</bundle>
+  </feature>
+  <feature name='camel-webhook' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-webhook/${project.version}</bundle>
   </feature>
   <feature name='camel-wordpress' version='${project.version}' start-level='50'>
     <feature version='${cxf-version-range}'>cxf-core</feature>

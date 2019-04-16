@@ -245,6 +245,7 @@
     <module>camel-jpa-starter</module>
     <module>camel-jsch-starter</module>
     <module>camel-json-validator-starter</module>
+    <module>camel-jsonapi-starter</module>
     <module>camel-jsonpath-starter</module>
     <module>camel-jt400-starter</module>
     <module>camel-kafka-starter</module>
@@ -292,6 +293,7 @@
     <module>camel-properties-starter</module>
     <module>camel-protobuf-starter</module>
     <module>camel-pubnub-starter</module>
+    <module>camel-pulsar-starter</module>
     <module>camel-quartz2-starter</module>
     <module>camel-quickfix-starter</module>
     <module>camel-rabbitmq-starter</module>
@@ -366,6 +368,7 @@
     <module>camel-vm-starter</module>
     <module>camel-weather-starter</module>
     <module>camel-web3j-starter</module>
+    <module>camel-webhook-starter</module>
     <module>camel-websocket-jsr356-starter</module>
     <module>camel-websocket-starter</module>
     <module>camel-wordpress-starter</module>

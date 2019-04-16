@@ -838,6 +838,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jsonapi</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jsonpath</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -1089,6 +1094,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-pubnub</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-pulsar</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -1499,6 +1509,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-web3j</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-webhook</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -2297,6 +2312,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jsonapi-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jsonpath-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -2528,6 +2548,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-pubnub-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-pulsar-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -2898,6 +2923,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-web3j-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-webhook-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

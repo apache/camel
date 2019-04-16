@@ -215,6 +215,12 @@ The default is 3 seconds.|No
 
 To have a full understanding of how the component works, you may have a look at this https://github.com/apache/camel/blob/master/components/camel-aws/src/test/java/org/apache/camel/component/aws/lambda/integration/LambdaComponentIntegrationTest.java[integration test]
 
+### Automatic detection of AmazonLambda client in registry
+
+From Camel 3.0.0-M3 the component will be able to detect the presence of an AmazonLambda bean into the registry.
+If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
+This may be really useful for smarter configuration of the endpoint.
+
 
 ### Dependencies
 

@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 292 in 228 JAR artifacts (0 deprecated)
+Number of Components: 295 in 231 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -21,6 +21,9 @@ Number of Components: 292 in 228 JAR artifacts (0 deprecated)
 
 | link:camel-flink/src/main/docs/flink-component.adoc[Apache Flink] (camel-flink) +
 `flink:endpointType` | 2.18 | The flink component can be used to send DataSet jobs to Apache Flink cluster.
+
+| link:camel-pulsar/src/main/docs/pulsar-component.adoc[Apache Pulsar] (camel-pulsar) +
+`pulsar:persistence://tenant/namespace/topic` |  | Camel Apache Pulsar Component
 
 | link:camel-spark/src/main/docs/spark-component.adoc[Apache Spark] (camel-spark) +
 `spark:endpointType` | 2.17 | The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
@@ -328,6 +331,9 @@ Number of Components: 292 in 228 JAR artifacts (0 deprecated)
 | link:camel-gora/src/main/docs/gora-component.adoc[Gora] (camel-gora) +
 `gora:name` | 2.14 | The gora component allows you to work with NoSQL databases using the Apache Gora framework.
 
+| link:camel-grape/src/main/docs/grape-component.adoc[Grape] (camel-grape) +
+`grape:defaultCoordinates` | 2.16 | The grape component allows you to fetch, load and manage additional jars when CamelContext is running.
+
 | link:camel-grpc/src/main/docs/grpc-component.adoc[gRPC] (camel-grpc) +
 `grpc:host:port/service` | 2.19 | The gRPC component allows to call and expose remote procedures via HTTP/2 with protobuf dataformat
 
@@ -602,7 +608,7 @@ Number of Components: 292 in 228 JAR artifacts (0 deprecated)
 `netty4-http:protocol:host:port/path` | 2.14 | Netty HTTP server and client using the Netty 4.x library.
 
 | link:camel-nsq/src/main/docs/nsq-component.adoc[NSQ] (camel-nsq) +
-`nsq:lookupServer` | 2.23 | Represents a nsq endpoint.
+`nsq:servers` | 2.23 | Represents a nsq endpoint.
 
 | link:camel-olingo2/camel-olingo2-component/src/main/docs/olingo2-component.adoc[Olingo2] (camel-olingo2) +
 `olingo2:apiName/methodName` | 2.14 | Communicates with OData 2.0 services using Apache Olingo.
@@ -722,7 +728,7 @@ Number of Components: 292 in 228 JAR artifacts (0 deprecated)
 `seda:name` | 1.1 | The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.
 
 | link:camel-service/src/main/docs/service-component.adoc[Service] (camel-service) +
-`service:serviceName:delegateUri` | 2.22 | Represents an endpoint which is registered to a Service Registry such as Consul, Etcd.
+`service:delegateUri` | 2.22 | Represents an endpoint which is registered to a Service Registry such as Consul, Etcd.
 
 | link:camel-servicenow/camel-servicenow-component/src/main/docs/servicenow-component.adoc[ServiceNow] (camel-servicenow) +
 `servicenow:instanceName` | 2.18 | The servicenow component is used to integrate Camel with ServiceNow cloud services.
@@ -853,6 +859,9 @@ Number of Components: 292 in 228 JAR artifacts (0 deprecated)
 | link:camel-web3j/src/main/docs/web3j-component.adoc[Web3j Ethereum Blockchain] (camel-web3j) +
 `web3j:nodeAddress` | 2.22 | The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
 
+| link:camel-webhook/src/main/docs/webhook-component.adoc[Webhook] (camel-webhook) +
+`webhook:endpointUri` | 3.0 | The webhook component allows other Camel components that can receive push notifications to expose webhook endpoints and automatically register them with their own webhook provider.
+
 | link:camel-wordpress/src/main/docs/wordpress-component.adoc[Wordpress] (camel-wordpress) +
 `wordpress:operationDetail` | 2.21 | Integrates Camel with Wordpress.
 
@@ -890,7 +899,7 @@ Number of Components: 292 in 228 JAR artifacts (0 deprecated)
 ==== Data Formats
 
 // dataformats: START
-Number of Data Formats: 45 in 35 JAR artifacts (0 deprecated)
+Number of Data Formats: 46 in 36 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -947,6 +956,8 @@ Number of Data Formats: 45 in 35 JAR artifacts (0 deprecated)
 | link:camel-johnzon/src/main/docs/json-johnzon-dataformat.adoc[JSon Johnzon] (camel-johnzon) | 2.18 | JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
 
 | link:camel-xstream/src/main/docs/json-xstream-dataformat.adoc[JSon XStream] (camel-xstream) | 2.0 | JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
+
+| link:camel-jsonapi/src/main/docs/jsonApi-dataformat.adoc[jsonApi] (camel-jsonapi) | 3.0 | 
 
 | link:camel-lzf/src/main/docs/lzf-dataformat.adoc[LZF Deflate Compression] (camel-lzf) | 2.17 | The LZF data format is a message compression and de-compression format (uses the LZF deflate algorithm).
 
@@ -1040,7 +1051,7 @@ Number of Languages: 18 in 9 JAR artifacts (1 deprecated)
 ==== Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 31 in 31 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 30 in 30 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1051,8 +1062,6 @@ Number of Miscellaneous Components: 31 in 31 JAR artifacts (0 deprecated)
 | link:camel-cdi/src/main/docs/cdi.adoc[CDI] (camel-cdi) | 2.10 | Using Camel with CDI
 
 | link:camel-cxf-transport/src/main/docs/cxf-transport.adoc[CXF Transport] (camel-cxf-transport) | 2.8 | Camel Transport for Apache CXF
-
-| link:camel-grape/src/main/docs/grape.adoc[Grape] (camel-grape) |  | The grape component allows you to fetch, load and manage additional jars when CamelContext is running
 
 | link:camel-hystrix/src/main/docs/hystrix.adoc[Hystrix] (camel-hystrix) | 2.18 | Circuit Breaker EIP using Netflix Hystrix
 

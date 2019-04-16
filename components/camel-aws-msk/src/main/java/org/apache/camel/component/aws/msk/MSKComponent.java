@@ -17,10 +17,12 @@
 package org.apache.camel.component.aws.msk;
 
 import java.util.Map;
+import java.util.Set;
+
+import com.amazonaws.services.kafka.AWSKafka;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -66,6 +68,7 @@ public class MSKComponent extends DefaultComponent {
         if (ObjectHelper.isEmpty(configuration.getRegion())) {
             setRegion(region);
         }
+        checkAndSetRegistryClient(configuration);
         if (configuration.getMskClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon msk client or accessKey and secretKey must be specified");
         }
@@ -118,4 +121,10 @@ public class MSKComponent extends DefaultComponent {
         configuration.setRegion(region);
     }
 
+    private void checkAndSetRegistryClient(MSKConfiguration configuration) {
+        Set<AWSKafka> clients = getCamelContext().getRegistry().findByType(AWSKafka.class);
+        if (clients.size() == 1) {
+            configuration.setMskClient(clients.stream().findFirst().get());
+        }
+    }
 }

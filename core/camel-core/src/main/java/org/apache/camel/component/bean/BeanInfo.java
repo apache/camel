@@ -46,10 +46,12 @@ import org.apache.camel.Message;
 import org.apache.camel.OutHeaders;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.language.LanguageAnnotation;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.language.AnnotationExpressionFactory;
+import org.apache.camel.support.language.DefaultAnnotationExpressionFactory;
+import org.apache.camel.support.language.LanguageAnnotation;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
@@ -985,6 +987,10 @@ public class BeanInfo {
             LanguageAnnotation languageAnnotation = annotation.annotationType().getAnnotation(LanguageAnnotation.class);
             if (languageAnnotation != null) {
                 Class<?> type = languageAnnotation.factory();
+                if (type == Object.class) {
+                    // use the default factory
+                    type = DefaultAnnotationExpressionFactory.class;
+                }
                 Object object = camelContext.getInjector().newInstance(type);
                 if (object instanceof AnnotationExpressionFactory) {
                     AnnotationExpressionFactory expressionFactory = (AnnotationExpressionFactory) object;
