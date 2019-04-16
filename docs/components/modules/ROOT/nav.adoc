@@ -265,7 +265,6 @@
 * xref:rest-component.adoc[REST Component]
 * xref:restlet-component.adoc[Restlet Component]
 * xref:ribbon.adoc[Ribbon Component]
-* xref:rmi-component.adoc[RMI Component]
 * xref:rss-component.adoc[RSS Component]
 * xref:rss-dataformat.adoc[RSS DataFormat]
 * xref:rxjava2.adoc[RxJava2 Component]
