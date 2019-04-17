@@ -120,6 +120,16 @@
                     <artifactId>javax.activation</artifactId>
                     <version>1.2.0</version>
                 </dependency>
+                    <dependency>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                        <version>${jakarta-jaxb-version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.glassfish.jaxb</groupId>
+                        <artifactId>jaxb-runtime</artifactId>
+                        <version>${glassfish-jaxb-runtime-version}</version>
+                    </dependency>
             </dependencies>
         </profile>
     </profiles>
