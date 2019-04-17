@@ -675,7 +675,7 @@ can declare the properties directly in the XML file as shown below:
   </route>
 
 </camelContext>
----
+----
 
 Notice that we have a `<bean>` which refers to one of the properties. And in
 the Camel route we refer to the other using the `{{ }}` notation.
