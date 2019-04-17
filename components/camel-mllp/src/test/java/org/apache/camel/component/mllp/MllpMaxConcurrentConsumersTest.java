@@ -42,7 +42,7 @@ public class MllpMaxConcurrentConsumersTest extends CamelTestSupport {
     @Rule
     public MllpClientResource mllpClient2 = new MllpClientResource();
 
-    @EndpointInject(value = "mock://result")
+    @EndpointInject(uri = "mock://result")
     MockEndpoint result;
 
     @Override
