@@ -17,7 +17,6 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.apache.camel.component.bean.springboot.BeanComponentAutoConfiguration,\
 org.apache.camel.component.beanclass.springboot.ClassComponentAutoConfiguration,\
-org.apache.camel.component.mock.springboot.MockComponentAutoConfiguration,\
 org.apache.camel.impl.springboot.GzipDataFormatAutoConfiguration,\
 org.apache.camel.impl.springboot.SerializationDataFormatAutoConfiguration,\
 org.apache.camel.impl.springboot.StringDataFormatAutoConfiguration,\
