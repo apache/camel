@@ -51,9 +51,12 @@ import org.apache.camel.util.StringHelper;
 /**
  * Expression builder used by the simple language.
  */
-public class SimpleExpressionBuilder {
+public final class SimpleExpressionBuilder {
 
     private static final Pattern OFFSET_PATTERN = Pattern.compile("([+-])([^+-]+)");
+
+    private SimpleExpressionBuilder() {
+    }
 
     /**
      * Returns the expression for the exchanges inbound message header invoking methods defined
