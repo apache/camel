@@ -67,7 +67,7 @@ public class InfluxDbProducer extends DefaultProducer {
             doQuery(exchange, dataBaseName, retentionPolicy);
             break;
         case InfluxDbOperations.PING:
-        	doPing(exchange);
+            doPing(exchange);
             break;
         default:
             throw new IllegalArgumentException("The operation " + endpoint.getOperation() + " is not supported");
