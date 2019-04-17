@@ -44,11 +44,6 @@
             <groupId>com.lmax</groupId>
             <artifactId>disruptor</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.hdrhistogram</groupId>
-            <artifactId>HdrHistogram</artifactId>
-            <version>${hdrhistrogram-version}</version>
-        </dependency>
 
         <!-- Test dependencies -->
         <dependency>
@@ -60,6 +55,12 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
             <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hdrhistogram</groupId>
+            <artifactId>HdrHistogram</artifactId>
+            <version>${hdrhistrogram-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
