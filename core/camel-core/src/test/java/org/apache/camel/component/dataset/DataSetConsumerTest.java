@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.dataset;
 
-import org.apache.camel.BindToRegistry;
+import javax.naming.Context;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,7 +26,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class DataSetConsumerTest extends ContextTestSupport {
-    @BindToRegistry("foo")
+
     protected SimpleDataSet dataSet = new SimpleDataSet(5);
 
     final String dataSetName = "foo";
@@ -35,6 +36,12 @@ public class DataSetConsumerTest extends ContextTestSupport {
     final String dataSetUriWithDataSetIndexSetToStrict = dataSetUri + "&dataSetIndex=strict";
     final String resultUri = "mock://result";
 
+    @Override
+    protected Context createJndiContext() throws Exception {
+        Context context = super.createJndiContext();
+        context.bind("foo", dataSet);
+        return context;
+    }
     /**
      * Ensure the expected message count for a consumer-only endpoint defaults to zero
      */

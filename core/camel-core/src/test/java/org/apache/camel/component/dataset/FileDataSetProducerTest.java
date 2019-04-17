@@ -22,7 +22,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
-import org.apache.camel.BindToRegistry;
+import javax.naming.Context;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -37,7 +38,6 @@ public class FileDataSetProducerTest extends ContextTestSupport {
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
 
-    @BindToRegistry("foo")
     protected FileDataSet dataSet;
 
     final String testPayload = String.format("Line 1%nLine 2%nLine 3%nLine 4%nLine 5%nLine 6%nLine 7%nLine 8%nLine 9%nLine 10%n");
@@ -45,6 +45,13 @@ public class FileDataSetProducerTest extends ContextTestSupport {
     final String sourceUri = "direct://source";
     final String dataSetName = "foo";
     final String dataSetUri = "dataset://" + dataSetName;
+
+    @Override
+    protected Context createJndiContext() throws Exception {
+        Context context = super.createJndiContext();
+        context.bind("foo", dataSet);
+        return context;
+    }
 
     @Test
     public void testDefaultListDataSet() throws Exception {

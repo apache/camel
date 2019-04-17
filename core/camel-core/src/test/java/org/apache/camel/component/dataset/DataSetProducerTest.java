@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.dataset;
 
-import org.apache.camel.BindToRegistry;
+import javax.naming.Context;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchHeaderException;
@@ -26,7 +27,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class DataSetProducerTest extends ContextTestSupport {
-    @BindToRegistry("foo")
+
     protected SimpleDataSet dataSet = new SimpleDataSet(20);
 
     final String dataSetName = "foo";
@@ -36,6 +37,13 @@ public class DataSetProducerTest extends ContextTestSupport {
     final String dataSetUriWithDataSetIndexSetToStrict = dataSetUri + "?dataSetIndex=strict";
     final String sourceUri = "direct://source";
     final String resultUri = "mock://result";
+
+    @Override
+    protected Context createJndiContext() throws Exception {
+        Context context = super.createJndiContext();
+        context.bind("foo", dataSet);
+        return context;
+    }
 
     @Test
     public void testSendingMessagesExplicitlyToDataSetEndpointWithDataSetIndexHeader() throws Exception {

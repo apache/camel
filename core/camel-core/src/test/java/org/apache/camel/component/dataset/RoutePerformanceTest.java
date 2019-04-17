@@ -20,7 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.BindToRegistry;
+import javax.naming.Context;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -35,10 +36,16 @@ public class RoutePerformanceTest extends ContextTestSupport {
 
     private int size = 250;
 
-    @BindToRegistry("foo")
     private SimpleDataSet dataSet = new SimpleDataSet(size);
 
     private String uri = "mock:results";
+
+    @Override
+    protected Context createJndiContext() throws Exception {
+        Context context = super.createJndiContext();
+        context.bind("foo", dataSet);
+        return context;
+    }
 
     @Test
     public void testPerformance() throws Exception {

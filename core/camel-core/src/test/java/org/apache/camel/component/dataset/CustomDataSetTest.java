@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.dataset;
 
-import org.apache.camel.BindToRegistry;
+import javax.naming.Context;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -30,7 +31,6 @@ import org.junit.Test;
 
 public class CustomDataSetTest extends ContextTestSupport {
 
-    @BindToRegistry("foo")
     protected DataSet dataSet = new DataSetSupport() {
         Expression expression = new XPathBuilder("/message/@index").resultType(Long.class);
 
@@ -46,6 +46,13 @@ public class CustomDataSetTest extends ContextTestSupport {
             return "<message index='" + messageIndex + "'>someBody" + messageIndex + "</message>";
         }
     };
+
+    @Override
+    protected Context createJndiContext() throws Exception {
+        Context context = super.createJndiContext();
+        context.bind("foo", dataSet);
+        return context;
+    }
 
     @Test
     public void testUsingCustomDataSet() throws Exception {

@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.dataset;
 
-import org.apache.camel.BindToRegistry;
+import javax.naming.Context;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,7 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class FileDataSetConsumerTest extends ContextTestSupport {
-    @BindToRegistry("foo")
+
     protected FileDataSet dataSet;
 
     final String testDataFileName = "src/test/data/file-dataset-test.txt";
@@ -33,6 +34,13 @@ public class FileDataSetConsumerTest extends ContextTestSupport {
     final String resultUri = "mock://result";
     final String dataSetName = "foo";
     final String dataSetUri = "dataset://" + dataSetName;
+
+    @Override
+    protected Context createJndiContext() throws Exception {
+        Context context = super.createJndiContext();
+        context.bind("foo", dataSet);
+        return context;
+    }
 
     @Test
     public void testDefaultListDataSet() throws Exception {
