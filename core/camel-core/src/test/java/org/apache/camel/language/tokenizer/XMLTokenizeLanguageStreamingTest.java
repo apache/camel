@@ -17,7 +17,7 @@
 package org.apache.camel.language.tokenizer;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.xml.Namespaces;
+import org.apache.camel.support.builder.xml.Namespaces;
 
 public class XMLTokenizeLanguageStreamingTest extends XMLTokenizeLanguageTest {
 

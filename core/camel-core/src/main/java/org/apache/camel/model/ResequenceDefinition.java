@@ -331,4 +331,11 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         this.expression = expression;
     }
 
+    /**
+     * Expression to use for re-ordering the messages, such as a header with a sequence number
+     */
+    public void setExpression(Expression expression) {
+        setExpression(new ExpressionDefinition(expression));
+    }
+
 }

@@ -25,7 +25,7 @@ public class MockAssertionClauseTest extends ContextTestSupport {
     @Test
     public void testAssertionClauseAll() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.allMessages().xpath("/person[@name='James']", Boolean.class);
+        mock.allMessages().xpath("/person[@name='James']");
 
         template.sendBody("direct:start", "<person name='James' last='Hanson'/>");
         template.sendBody("direct:start", "<person name='James' last='Jackson'/>");
@@ -37,10 +37,10 @@ public class MockAssertionClauseTest extends ContextTestSupport {
     public void testAssertionClausePer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
 
-        mock.message(0).xpath("/person[@last='Hanson']", Boolean.class);
+        mock.message(0).xpath("/person[@last='Hanson']");
         mock.message(0).body().contains("Hanson");
 
-        mock.message(1).xpath("/person[@last='Jackson']", Boolean.class);
+        mock.message(1).xpath("/person[@last='Jackson']");
         mock.message(1).body().contains("Jackson");
 
         template.sendBody("direct:start", "<person name='James' last='Hanson'/>");

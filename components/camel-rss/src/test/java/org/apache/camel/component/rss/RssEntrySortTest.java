@@ -33,7 +33,7 @@ public class RssEntrySortTest extends CamelTestSupport {
     @Test
     public void testSortedEntries() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:sorted");
-        mock.expectsAscending(ExpressionBuilder.beanExpression("myBean", "getPubDate"));
+        mock.expectsAscending(ExpressionBuilder.beanExpression("myBean?method=getPubDate"));
         mock.expectedMessageCount(10);
         mock.setResultWaitTime(15000L);
         mock.assertIsSatisfied();
@@ -42,7 +42,7 @@ public class RssEntrySortTest extends CamelTestSupport {
     @Test
     public void testUnSortedEntries() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:unsorted");
-        mock.expectsAscending(ExpressionBuilder.beanExpression("myBean", "getPubDate"));
+        mock.expectsAscending(ExpressionBuilder.beanExpression("myBean?method=getPubDate"));
         mock.expectedMessageCount(10);
         mock.setResultWaitTime(2000L);
         mock.assertIsNotSatisfied(2000L);

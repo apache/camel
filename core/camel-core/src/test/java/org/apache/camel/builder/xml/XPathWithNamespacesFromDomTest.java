@@ -20,6 +20,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.support.builder.xml.Namespaces;
 import org.junit.Test;
 
 public class XPathWithNamespacesFromDomTest extends ContextTestSupport {
