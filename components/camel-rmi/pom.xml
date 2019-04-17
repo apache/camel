@@ -28,7 +28,7 @@
 
   <artifactId>camel-rmi</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: RMI</name>
+  <name>Camel :: RMI (deprecated)</name>
   <description>Camel RMI support</description>
 
   <properties>
