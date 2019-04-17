@@ -42,12 +42,12 @@ public class SedaNoConsumerTest extends ContextTestSupport {
         });
 
         context.start();
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).waitTime(2000).create();
 
         // no problem for in only as we do not expect a reply
         template.sendBody("direct:start", "Hello World");
-        notify.matches(2, TimeUnit.SECONDS);
 
+        assertTrue(notify.matchesWaitTime());
     }
 
     public void testInOut() throws Exception {

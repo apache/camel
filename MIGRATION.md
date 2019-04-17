@@ -92,6 +92,10 @@ We have also renamed `camel-jetty9` to `camel-jetty`.
 
 The `dataset` component has been moved out of `camel-core`, and is no longer a transient dependency from `camel-core`, and therefore you should add `camel-dataset` as dependency if you use this component.
 
+### Mock component
+
+The `mock` component has been moved out of `camel-core` and as part of this work, we had to remove a number of methods on its _assertion clause builder_ that were seldom in use. Also we had to remove a few methods on `NotifyBuilder` that were using the `mock` component.
+
 ### ActiveMQ
 
 If you are using the `activemq-camel` component, then you should migrate to use `camel-activemq` component, where the component name has changed from `org.apache.activemq.camel.component.ActiveMQComponent` to `org.apache.camel.component.activemq.ActiveMQComponent`.
