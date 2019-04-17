@@ -53,15 +53,15 @@
   <!--START OF GENERATED CODE-->
   <repositories>
     <repository>
-      <id>jboss.thirdparty</id>
-      <name>JBoss Repository</name>
-      <url>https://repository.jboss.org/nexus/service/local/repositories/thirdparty-releases/content/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
       <releases>
         <enabled>true</enabled>
       </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>jboss.thirdparty</id>
+      <name>JBoss Repository</name>
+      <url>https://repository.jboss.org/nexus/service/local/repositories/thirdparty-releases/content/</url>
     </repository>
   </repositories>
   <!--END OF GENERATED CODE-->

@@ -53,11 +53,11 @@
   <!--START OF GENERATED CODE-->
   <repositories>
     <repository>
-      <id>eclipse-paho</id>
-      <url>https://repo.eclipse.org/content/repositories/paho-releases</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
+      <id>eclipse-paho</id>
+      <url>https://repo.eclipse.org/content/repositories/paho-releases</url>
     </repository>
   </repositories>
   <!--END OF GENERATED CODE-->
