@@ -23,16 +23,16 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.test.junit4.TestSupport;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-public class FileDataSetProducerWithSplitTest extends CamelTestSupport {
+public class FileDataSetProducerWithSplitTest extends ContextTestSupport {
 
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
@@ -40,7 +40,6 @@ public class FileDataSetProducerWithSplitTest extends CamelTestSupport {
     @BindToRegistry("foo")
     protected FileDataSet dataSet;
 
-    final String testDataFileName = "src/test/data/file-dataset-test.txt";
     final int testDataFileRecordCount = 10;
 
     final String sourceUri = "direct://source";
@@ -74,8 +73,8 @@ public class FileDataSetProducerWithSplitTest extends CamelTestSupport {
     @Before
     public void setUp() throws Exception {
         File fileDataset = createFileDatasetWithSystemEndOfLine();
-        dataSet = new FileDataSet(fileDataset, TestSupport.LS);
-        assertEquals("Unexpected DataSet size", testDataFileRecordCount, dataSet.getSize());
+        dataSet = new FileDataSet(fileDataset, LS);
+        Assert.assertEquals("Unexpected DataSet size", testDataFileRecordCount, dataSet.getSize());
         super.setUp();
     }
 

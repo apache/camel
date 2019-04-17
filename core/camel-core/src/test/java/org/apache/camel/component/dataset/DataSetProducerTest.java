@@ -17,14 +17,15 @@
 package org.apache.camel.component.dataset;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Assert;
 import org.junit.Test;
 
-public class DataSetProducerTest extends CamelTestSupport {
+public class DataSetProducerTest extends ContextTestSupport {
     @BindToRegistry("foo")
     protected SimpleDataSet dataSet = new SimpleDataSet(20);
 
@@ -173,7 +174,7 @@ public class DataSetProducerTest extends CamelTestSupport {
             }
         }
 
-        fail("AssertionError should have been generated");
+        Assert.fail("AssertionError should have been generated");
     }
 
     @Test
@@ -327,7 +328,7 @@ public class DataSetProducerTest extends CamelTestSupport {
             }
         }
 
-        fail("AssertionError should have been generated");
+        Assert.fail("AssertionError should have been generated");
     }
 
     @Test
@@ -401,7 +402,7 @@ public class DataSetProducerTest extends CamelTestSupport {
             }
         }
 
-        fail("AssertionError should have been generated");
+        Assert.fail("AssertionError should have been generated");
     }
 
     @Test
@@ -446,6 +447,6 @@ public class DataSetProducerTest extends CamelTestSupport {
             }
         }
 
-        fail("AssertionError should have been generated");
+        Assert.fail("AssertionError should have been generated");
     }
 }

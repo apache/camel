@@ -17,44 +17,55 @@
 package org.apache.camel.component.dataset;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
-public class DataSetPreloadTest extends CamelTestSupport {
-
+public class FileDataSetConsumerTest extends ContextTestSupport {
     @BindToRegistry("foo")
-    private SimpleDataSet dataSet = new SimpleDataSet(20);
+    protected FileDataSet dataSet;
 
-    private String uri = "dataset:foo?initialDelay=0&preloadSize=5";
+    final String testDataFileName = "src/test/data/file-dataset-test.txt";
+
+    final String resultUri = "mock://result";
+    final String dataSetName = "foo";
+    final String dataSetUri = "dataset://" + dataSetName;
 
     @Test
-    public void testDataSetPreloadSize() throws Exception {
-        MockEndpoint endpoint = getMockEndpoint(uri);
-        endpoint.expectedMessageCount((int) dataSet.getSize());
+    public void testDefaultListDataSet() throws Exception {
+        MockEndpoint result = getMockEndpoint(resultUri);
+        result.expectedMinimumMessageCount((int) dataSet.getSize());
 
-        context.getRouteController().startAllRoutes();
+        result.assertIsSatisfied();
+    }
 
-        assertMockEndpointsSatisfied();
+    @Test
+    public void testDefaultListDataSetWithSizeGreaterThanListSize() throws Exception {
+        MockEndpoint result = getMockEndpoint(resultUri);
+        dataSet.setSize(20);
+        result.expectedMinimumMessageCount((int) dataSet.getSize());
 
-        DataSetEndpoint ds = context.getEndpoint(uri, DataSetEndpoint.class);
-        assertEquals(5, ds.getPreloadSize());
+        result.assertIsSatisfied();
+    }
 
-        // test getter/setter
-        ds.setPreloadSize(7);
-        assertEquals(7, ds.getPreloadSize());
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        dataSet = new FileDataSet(testDataFileName);
+        Assert.assertEquals("Unexpected DataSet size", 1, dataSet.getSize());
+        super.setUp();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(uri).to("seda:test").noAutoStartup();
-
-                from("seda:test").to(uri);
+                from(dataSetUri)
+                        .to("mock://result");
             }
         };
     }
-
 }

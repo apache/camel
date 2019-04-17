@@ -17,27 +17,19 @@
 package org.apache.camel.component.dataset;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * Unit test to demonstrate high concurrency with seda. Offspring by CAMEL-605.
- */
-public class DataSetSedaTest extends CamelTestSupport {
-    @BindToRegistry("foo")
-    private SimpleDataSet dataSet = new SimpleDataSet(200);
+public class DataSetTest extends ContextTestSupport {
 
-    private String uri = "dataset:foo?initialDelay=0&produceDelay=1";
+    @BindToRegistry("foo")
+    protected SimpleDataSet dataSet = new SimpleDataSet(20);
 
     @Test
-    public void testDataSetWithSeda() throws Exception {
-        MockEndpoint endpoint = getMockEndpoint(uri);
-        endpoint.expectedMessageCount((int) dataSet.getSize());
-
-        context.getRouteController().startAllRoutes();
-
+    public void testDataSet() throws Exception {
+        // data set will itself set its assertions so we should just
+        // assert that all mocks is ok
         assertMockEndpointsSatisfied();
     }
 
@@ -45,9 +37,9 @@ public class DataSetSedaTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(uri).to("seda:test").noAutoStartup();
-
-                from("seda:test").to(uri);
+                // start this first to make sure the "direct:foo" consumer is ready
+                from("direct:foo").to("dataset:foo?minRate=50");
+                from("dataset:foo?initialDelay=0&minRate=50").to("direct:foo");
             }
         };
     }

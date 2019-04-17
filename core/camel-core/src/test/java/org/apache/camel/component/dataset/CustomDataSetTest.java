@@ -17,6 +17,7 @@
 package org.apache.camel.component.dataset;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -25,10 +26,9 @@ import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.support.PredicateAssertHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class CustomDataSetTest extends CamelTestSupport {
+public class CustomDataSetTest extends ContextTestSupport {
 
     @BindToRegistry("foo")
     protected DataSet dataSet = new DataSetSupport() {

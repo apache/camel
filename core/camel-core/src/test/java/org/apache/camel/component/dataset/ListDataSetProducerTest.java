@@ -20,36 +20,39 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ListDataSetConsumerTest extends CamelTestSupport {
+public class ListDataSetProducerTest extends ContextTestSupport {
 
     @BindToRegistry("foo")
-    protected ListDataSet dataSet;
+    protected ListDataSet dataSet = new ListDataSet();
 
-    final String resultUri = "mock://result";
+    final String sourceUri = "direct://source";
     final String dataSetName = "foo";
     final String dataSetUri = "dataset://" + dataSetName;
 
     @Test
     public void testDefaultListDataSet() throws Exception {
-        MockEndpoint result = getMockEndpoint(resultUri);
-        result.expectedMinimumMessageCount((int) dataSet.getSize());
+        template.sendBodyAndHeader(dataSetUri, "<hello>world!</hello>", Exchange.DATASET_INDEX, 0);
 
-        result.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testDefaultListDataSetWithSizeGreaterThanListSize() throws Exception {
-        MockEndpoint result = getMockEndpoint(resultUri);
-        dataSet.setSize(10);
-        result.expectedMinimumMessageCount((int) dataSet.getSize());
+        int messageCount = 10;
+        getMockEndpoint(dataSetUri).expectedMessageCount(messageCount);
+        dataSet.setSize(messageCount);
+        long size = dataSet.getSize();
+        for (long i = 0; i < size; i++) {
+            template.sendBodyAndHeader(sourceUri, "<hello>world!</hello>", Exchange.DATASET_INDEX, i);
+        }
 
-        result.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -66,8 +69,8 @@ public class ListDataSetConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(dataSetUri)
-                        .to("mock://result");
+                from(sourceUri)
+                        .to(dataSetUri);
             }
         };
     }

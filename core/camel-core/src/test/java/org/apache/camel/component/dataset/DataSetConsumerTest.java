@@ -17,15 +17,14 @@
 package org.apache.camel.component.dataset;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class DataSetConsumerTest extends CamelTestSupport {
+public class DataSetConsumerTest extends ContextTestSupport {
     @BindToRegistry("foo")
     protected SimpleDataSet dataSet = new SimpleDataSet(5);
 
@@ -54,7 +53,7 @@ public class DataSetConsumerTest extends CamelTestSupport {
 
         MockEndpoint result = getMockEndpoint(resultUri);
         result.expectedMessageCount((int) dataSet.getSize());
-        result.assertMessagesAscending(TestSupport.header(Exchange.DATASET_INDEX));
+        result.assertMessagesAscending(header(Exchange.DATASET_INDEX));
 
         context.start();
 
@@ -75,11 +74,11 @@ public class DataSetConsumerTest extends CamelTestSupport {
             }
         });
 
-        assertEquals("expectedMessageCount should be the same as the DataSet size for a consumer-producer endpoint", dataSet.getSize(), getMockEndpoint(dataSetUri).getExpectedCount());
+        Assert.assertEquals("expectedMessageCount should be the same as the DataSet size for a consumer-producer endpoint", dataSet.getSize(), getMockEndpoint(dataSetUri).getExpectedCount());
 
         MockEndpoint result = getMockEndpoint(resultUri);
         result.expectedMessageCount((int) dataSet.getSize());
-        result.expectsAscending(TestSupport.header(Exchange.DATASET_INDEX).convertTo(Number.class));
+        result.expectsAscending(header(Exchange.DATASET_INDEX).convertTo(Number.class));
 
         context.start();
 
@@ -99,7 +98,7 @@ public class DataSetConsumerTest extends CamelTestSupport {
         MockEndpoint result = getMockEndpoint(resultUri);
         result.expectedMessageCount((int) dataSet.getSize());
         result.allMessages().header(Exchange.DATASET_INDEX).isNotNull();
-        result.expectsAscending(TestSupport.header(Exchange.DATASET_INDEX).convertTo(Number.class));
+        result.expectsAscending(header(Exchange.DATASET_INDEX).convertTo(Number.class));
 
         context.start();
 
@@ -138,7 +137,7 @@ public class DataSetConsumerTest extends CamelTestSupport {
         MockEndpoint result = getMockEndpoint(resultUri);
         result.expectedMessageCount((int) dataSet.getSize());
         result.allMessages().header(Exchange.DATASET_INDEX).isNotNull();
-        result.expectsAscending(TestSupport.header(Exchange.DATASET_INDEX).convertTo(Number.class));
+        result.expectsAscending(header(Exchange.DATASET_INDEX).convertTo(Number.class));
 
         context.start();
 
@@ -158,7 +157,7 @@ public class DataSetConsumerTest extends CamelTestSupport {
         MockEndpoint result = getMockEndpoint(resultUri);
         result.expectedMessageCount((int) dataSet.getSize());
         result.allMessages().header(Exchange.DATASET_INDEX).isNotNull();
-        result.expectsAscending(TestSupport.header(Exchange.DATASET_INDEX).convertTo(Number.class));
+        result.expectsAscending(header(Exchange.DATASET_INDEX).convertTo(Number.class));
 
         context.start();
 

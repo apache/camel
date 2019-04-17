@@ -21,18 +21,17 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.Test;
-import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 
 /**
  * A route for simple performance testing that can be used when we suspect
  * something is wrong. Inspired by end user on forum doing this as proof of concept.
  */
-public class RoutePerformanceTest extends CamelTestSupport {
+public class RoutePerformanceTest extends ContextTestSupport {
 
     private int size = 250;
 
@@ -50,7 +49,7 @@ public class RoutePerformanceTest extends CamelTestSupport {
         endpoint.expectedHeaderReceived("foo", 123);
 
         // wait 30 sec for slow servers
-        assertIsSatisfied(context, 30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         log.info("RoutePerformanceTest: Sent: {} Took: {} ms", size, watch.taken());
     }

@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.dataset;
 
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class DataSetTestAnyOrderTest extends CamelTestSupport {
+public class DataSetTestSedaTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -28,21 +28,19 @@ public class DataSetTestAnyOrderTest extends CamelTestSupport {
     }
 
     @Test
-    public void testAnyOrder() throws Exception {
-        template.sendBody("seda:testme", "Bye World");
+    public void testSeda() throws Exception {
         template.sendBody("seda:testme", "Hello World");
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("dataset-test:seda:testme?anyOrder=true&timeout=0");
+                        .to("dataset-test:seda:testme?timeout=0");
             }
         });
         context.start();
 
         template.sendBody("direct:start", "Hello World");
-        template.sendBody("direct:start", "Bye World");
 
         assertMockEndpointsSatisfied();
     }

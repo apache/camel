@@ -16,20 +16,31 @@
  */
 package org.apache.camel.component.dataset;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
-public class ListDataSetProducerTest extends CamelTestSupport {
+public class FileDataSetProducerTest extends ContextTestSupport {
+
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder();
 
     @BindToRegistry("foo")
-    protected ListDataSet dataSet = new ListDataSet();
+    protected FileDataSet dataSet;
+
+    final String testPayload = String.format("Line 1%nLine 2%nLine 3%nLine 4%nLine 5%nLine 6%nLine 7%nLine 8%nLine 9%nLine 10%n");
 
     final String sourceUri = "direct://source";
     final String dataSetName = "foo";
@@ -37,19 +48,20 @@ public class ListDataSetProducerTest extends CamelTestSupport {
 
     @Test
     public void testDefaultListDataSet() throws Exception {
-        template.sendBodyAndHeader(dataSetUri, "<hello>world!</hello>", Exchange.DATASET_INDEX, 0);
+        template.sendBodyAndHeader(sourceUri, testPayload, Exchange.DATASET_INDEX, 0);
 
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testDefaultListDataSetWithSizeGreaterThanListSize() throws Exception {
-        int messageCount = 10;
-        getMockEndpoint(dataSetUri).expectedMessageCount(messageCount);
+        int messageCount = 20;
         dataSet.setSize(messageCount);
-        long size = dataSet.getSize();
-        for (long i = 0; i < size; i++) {
-            template.sendBodyAndHeader(sourceUri, "<hello>world!</hello>", Exchange.DATASET_INDEX, i);
+
+        getMockEndpoint(dataSetUri).expectedMessageCount(messageCount);
+
+        for (int i = 0; i < messageCount; ++i) {
+            template.sendBodyAndHeader(sourceUri, testPayload, Exchange.DATASET_INDEX, i);
         }
 
         assertMockEndpointsSatisfied();
@@ -58,11 +70,17 @@ public class ListDataSetProducerTest extends CamelTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        List<Object> bodies = new LinkedList<>();
-        bodies.add("<hello>world!</hello>");
-        dataSet = new ListDataSet(bodies);
-
+        File fileDataset = createFileDatasetWithSystemEndOfLine();
+        dataSet = new FileDataSet(fileDataset);
+        Assert.assertEquals("Unexpected DataSet size", 1, dataSet.getSize());
         super.setUp();
+    }
+
+    private File createFileDatasetWithSystemEndOfLine() throws IOException {
+        tempFolder.create();
+        File fileDataset = tempFolder.newFile("file-dataset-test.txt");
+        Files.copy(new ByteArrayInputStream(testPayload.getBytes()), fileDataset.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        return fileDataset;
     }
 
     @Override

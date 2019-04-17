@@ -16,43 +16,46 @@
  */
 package org.apache.camel.component.dataset;
 
-import java.util.concurrent.TimeUnit;
-
-import javax.naming.Context;
-
+import org.apache.camel.BindToRegistry;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
+import org.junit.Assert;
 import org.junit.Test;
 
-@Ignore("Manual test")
-public class BigDataSetTest extends CamelTestSupport {
-    protected SimpleDataSet dataSet = new SimpleDataSet(20000);
+public class DataSetPreloadTest extends ContextTestSupport {
+
+    @BindToRegistry("foo")
+    private SimpleDataSet dataSet = new SimpleDataSet(20);
+
+    private String uri = "dataset:foo?initialDelay=0&preloadSize=5";
 
     @Test
-    public void testDataSet() throws Exception {
-        // data set will itself set its assertions so we should just
-        // assert that all mocks is ok
-        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
-    }
+    public void testDataSetPreloadSize() throws Exception {
+        MockEndpoint endpoint = getMockEndpoint(uri);
+        endpoint.expectedMessageCount((int) dataSet.getSize());
 
-    @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind("foo", dataSet);
-        return context;
+        context.getRouteController().startAllRoutes();
+
+        assertMockEndpointsSatisfied();
+
+        DataSetEndpoint ds = context.getEndpoint(uri, DataSetEndpoint.class);
+        Assert.assertEquals(5, ds.getPreloadSize());
+
+        // test getter/setter
+        ds.setPreloadSize(7);
+        Assert.assertEquals(7, ds.getPreloadSize());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // start this first to make sure the "direct:foo" consumer is ready
-                from("direct:foo").to("dataset:foo");
+                from(uri).to("seda:test").noAutoStartup();
 
-                from("dataset:foo").to("direct:foo");
+                from("seda:test").to(uri);
             }
         };
     }
+
 }

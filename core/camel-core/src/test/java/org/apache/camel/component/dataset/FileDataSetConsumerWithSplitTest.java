@@ -17,13 +17,14 @@
 package org.apache.camel.component.dataset;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class FileDataSetConsumerWithSplitTest extends CamelTestSupport {
+public class FileDataSetConsumerWithSplitTest extends ContextTestSupport {
     @BindToRegistry("foo")
     protected FileDataSet dataSet;
 
@@ -55,7 +56,7 @@ public class FileDataSetConsumerWithSplitTest extends CamelTestSupport {
     @Before
     public void setUp() throws Exception {
         dataSet = new FileDataSet(testDataFileName, "\n");
-        assertEquals("Unexpected DataSet size", testDataFileRecordCount, dataSet.getSize());
+        Assert.assertEquals("Unexpected DataSet size", testDataFileRecordCount, dataSet.getSize());
         super.setUp();
     }
 

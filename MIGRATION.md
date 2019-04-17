@@ -88,10 +88,6 @@ The `test` component has been renamed to `dataset-test` and moved out of `camel-
 
 We have also renamed `camel-jetty9` to `camel-jetty`.
 
-### DataSet component
-
-The `dataset` component has been moved out of `camel-core`, and is no longer a transient dependency from `camel-core`, and therefore you should add `camel-dataset` as dependency if you use this component.
-
 ### Mock component
 
 The `mock` component has been moved out of `camel-core` and as part of this work, we had to remove a number of methods on its _assertion clause builder_ that were seldom in use. Also we had to remove a few methods on `NotifyBuilder` that were using the `mock` component.

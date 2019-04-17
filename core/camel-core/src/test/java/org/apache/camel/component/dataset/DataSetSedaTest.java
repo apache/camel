@@ -16,33 +16,39 @@
  */
 package org.apache.camel.component.dataset;
 
+import org.apache.camel.BindToRegistry;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-public class DataSetTestSedaTest extends CamelTestSupport {
+/**
+ * Unit test to demonstrate high concurrency with seda. Offspring by CAMEL-605.
+ */
+public class DataSetSedaTest extends ContextTestSupport {
+    @BindToRegistry("foo")
+    private SimpleDataSet dataSet = new SimpleDataSet(200);
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
+    private String uri = "dataset:foo?initialDelay=0&produceDelay=1";
 
     @Test
-    public void testSeda() throws Exception {
-        template.sendBody("seda:testme", "Hello World");
+    public void testDataSetWithSeda() throws Exception {
+        MockEndpoint endpoint = getMockEndpoint(uri);
+        endpoint.expectedMessageCount((int) dataSet.getSize());
 
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                        .to("dataset-test:seda:testme?timeout=0");
-            }
-        });
-        context.start();
-
-        template.sendBody("direct:start", "Hello World");
+        context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
     }
 
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                from(uri).to("seda:test").noAutoStartup();
+
+                from("seda:test").to(uri);
+            }
+        };
+    }
 }

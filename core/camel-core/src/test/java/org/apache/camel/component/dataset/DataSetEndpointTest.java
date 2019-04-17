@@ -18,14 +18,14 @@ package org.apache.camel.component.dataset;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class DataSetEndpointTest extends CamelTestSupport {
+public class DataSetEndpointTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -38,9 +38,9 @@ public class DataSetEndpointTest extends CamelTestSupport {
         endpoint.setCamelContext(context);
         endpoint.setInitialDelay(0);
 
-        assertEquals(0, endpoint.getPreloadSize());
-        assertEquals(0, endpoint.getConsumeDelay());
-        assertEquals(3, endpoint.getProduceDelay());
+        Assert.assertEquals(0, endpoint.getPreloadSize());
+        Assert.assertEquals(0, endpoint.getConsumeDelay());
+        Assert.assertEquals(3, endpoint.getProduceDelay());
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -59,11 +59,11 @@ public class DataSetEndpointTest extends CamelTestSupport {
         final DataSetEndpoint endpoint = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), new SimpleDataSet(2));
 
         endpoint.setConsumeDelay(2);
-        assertEquals(2, endpoint.getConsumeDelay());
+        Assert.assertEquals(2, endpoint.getConsumeDelay());
         endpoint.setProduceDelay(5);
-        assertEquals(5, endpoint.getProduceDelay());
+        Assert.assertEquals(5, endpoint.getProduceDelay());
         endpoint.setInitialDelay(1);
-        assertEquals(1, endpoint.getInitialDelay());
+        Assert.assertEquals(1, endpoint.getInitialDelay());
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -107,7 +107,7 @@ public class DataSetEndpointTest extends CamelTestSupport {
         SimpleDataSet ds = new SimpleDataSet();
         ds.setSize(2);
         ds.setDefaultBody("Hi");
-        assertEquals("Hi", ds.getDefaultBody());
+        Assert.assertEquals("Hi", ds.getDefaultBody());
     }
 
     @Test

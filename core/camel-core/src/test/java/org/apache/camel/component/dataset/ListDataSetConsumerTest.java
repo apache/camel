@@ -16,18 +16,20 @@
  */
 package org.apache.camel.component.dataset;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
-public class FileDataSetConsumerTest extends CamelTestSupport {
-    @BindToRegistry("foo")
-    protected FileDataSet dataSet;
+public class ListDataSetConsumerTest extends ContextTestSupport {
 
-    final String testDataFileName = "src/test/data/file-dataset-test.txt";
+    @BindToRegistry("foo")
+    protected ListDataSet dataSet;
 
     final String resultUri = "mock://result";
     final String dataSetName = "foo";
@@ -44,7 +46,7 @@ public class FileDataSetConsumerTest extends CamelTestSupport {
     @Test
     public void testDefaultListDataSetWithSizeGreaterThanListSize() throws Exception {
         MockEndpoint result = getMockEndpoint(resultUri);
-        dataSet.setSize(20);
+        dataSet.setSize(10);
         result.expectedMinimumMessageCount((int) dataSet.getSize());
 
         result.assertIsSatisfied();
@@ -53,8 +55,10 @@ public class FileDataSetConsumerTest extends CamelTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        dataSet = new FileDataSet(testDataFileName);
-        assertEquals("Unexpected DataSet size", 1, dataSet.getSize());
+        List<Object> bodies = new LinkedList<>();
+        bodies.add("<hello>world!</hello>");
+        dataSet = new ListDataSet(bodies);
+
         super.setUp();
     }
 
