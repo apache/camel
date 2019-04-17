@@ -27,44 +27,17 @@
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-dataset</artifactId>
+    <artifactId>camel-mock</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: DataSet</name>
-    <description>Camel DataSet component</description>
+    <name>Camel :: Mock</name>
+    <description>Camel Mock component</description>
 
     <dependencies>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-mock</artifactId>
-        </dependency>
-
-        <!-- testing -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
+            <artifactId>camel-support</artifactId>
         </dependency>
 
     </dependencies>

@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 293 in 229 JAR artifacts (0 deprecated)
+Number of Components: 293 in 230 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -568,7 +568,7 @@ Number of Components: 293 in 229 JAR artifacts (0 deprecated)
 | link:camel-mllp/src/main/docs/mllp-component.adoc[MLLP] (camel-mllp) +
 `mllp:hostname:port` | 2.17 | Provides functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.
 
-| link:../core/camel-core/src/main/docs/mock-component.adoc[Mock] (camel-core) +
+| link:camel-mock/src/main/docs/mock-component.adoc[Mock] (camel-mock) +
 `mock:name` | 1.0 | The mock component is used for testing routes and mediation rules using mocks.
 
 | link:camel-mongodb3/src/main/docs/mongodb3-component.adoc[MongoDB] (camel-mongodb3) +
