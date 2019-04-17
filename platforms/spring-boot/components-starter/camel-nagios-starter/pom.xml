@@ -53,15 +53,15 @@
   <!--START OF GENERATED CODE-->
   <repositories>
     <repository>
-      <id>jboss.fs</id>
-      <name>JBoss FuseSource Public Release Repository</name>
-      <url>https://repository.jboss.org/nexus/content/groups/fs-public</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
       <releases>
         <enabled>true</enabled>
       </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>jboss.fs</id>
+      <name>JBoss FuseSource Public Release Repository</name>
+      <url>https://repository.jboss.org/nexus/content/groups/fs-public</url>
     </repository>
   </repositories>
   <!--END OF GENERATED CODE-->
