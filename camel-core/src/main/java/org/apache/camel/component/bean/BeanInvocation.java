@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Invocation of beans that can handle being serialized.
  */
+@Deprecated
 public class BeanInvocation implements Externalizable {
     private static final Logger LOG = LoggerFactory.getLogger(BeanInvocation.class);
     private Object[] args;

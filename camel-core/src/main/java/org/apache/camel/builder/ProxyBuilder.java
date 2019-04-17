@@ -69,7 +69,9 @@ public final class ProxyBuilder {
      * @param binding <tt>true</tt> to use binding, <tt>false</tt> to use the old behavior with using a {@link org.apache.camel.component.bean.BeanInvocation}
      *                as a provisional message body
      * @return the builder
+     * @deprecated binding will be default true in Camel 3 onwards
      */
+    @Deprecated
     public ProxyBuilder binding(boolean binding) {
         this.binding = binding;
         return this;
