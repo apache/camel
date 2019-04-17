@@ -23,6 +23,9 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 
 /**
  * A support class for building expression clauses.
+ * <p/>
+ * This implementation is a derived copy of the <tt>org.apache.camel.builder.ExpressionClauseSupport</tt> from camel-core,
+ * that are specialized for being used with the mock component and separated from camel-core.
  */
 public class MockExpressionClauseSupport<T> {
 

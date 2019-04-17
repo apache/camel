@@ -21,6 +21,8 @@ package org.apache.camel.builder;
  */
 public final class PredicateBuilder extends org.apache.camel.support.builder.PredicateBuilder {
 
+    // this class is included in camel-core to be backwards compatible by extending from camel-support
+
     /**
      * Utility classes should not have a public constructor.
      */

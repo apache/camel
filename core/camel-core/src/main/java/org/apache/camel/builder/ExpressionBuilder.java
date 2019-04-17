@@ -24,6 +24,8 @@ import org.apache.camel.util.StringHelper;
  */
 public final class ExpressionBuilder extends org.apache.camel.support.builder.ExpressionBuilder {
 
+    // this class is included in camel-core to be backwards compatible by extending from camel-support
+
     /**
      * Utility classes should not have a public constructor.
      */

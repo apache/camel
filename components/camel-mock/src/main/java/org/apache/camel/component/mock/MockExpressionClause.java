@@ -32,6 +32,9 @@ import org.apache.camel.support.ExpressionToPredicateAdapter;
 /**
  * Represents an expression clause within the DSL which when the expression is
  * complete the clause continues to another part of the DSL
+ * <p/>
+ * This implementation is a derived copy of the <tt>org.apache.camel.builder.ExpressionClause</tt> from camel-core,
+ * that are specialized for being used with the mock component and separated from camel-core.
  */
 public class MockExpressionClause<T> implements Expression, Predicate {
     private MockExpressionClauseSupport<T> delegate;

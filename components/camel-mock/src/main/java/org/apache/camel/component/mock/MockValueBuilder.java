@@ -31,6 +31,9 @@ import org.apache.camel.support.builder.PredicateBuilder;
 
 /**
  * A builder of expressions or predicates based on values.
+ * <p/>
+ * This implementation is a derived copy of the <tt>org.apache.camel.builder.ValueBuilder</tt> from camel-core,
+ * that are specialized for being used with the mock component and separated from camel-core.
  */
 public class MockValueBuilder implements Expression, Predicate {
     private Expression expression;
