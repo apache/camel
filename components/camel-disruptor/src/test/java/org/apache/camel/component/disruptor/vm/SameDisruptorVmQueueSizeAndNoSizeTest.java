@@ -17,15 +17,15 @@
 package org.apache.camel.component.disruptor.vm;
 
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  *
  */
-public class SameDisruptorVmQueueSizeAndNoSizeTest extends ContextTestSupport {
+public class SameDisruptorVmQueueSizeAndNoSizeTest extends CamelTestSupport {
 
     @Test
     public void testSameQueue() throws Exception {
