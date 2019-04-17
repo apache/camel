@@ -26,12 +26,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.support.language.ExpressionModel;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
@@ -267,7 +267,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
                     // ExpressionClause which is a fancy builder to define expressions and predicates
                     // using fluent builders in the DSL. However we need afterwards a callback to
                     // reset the expression to the expression type the ExpressionClause did build for us
-                    ExpressionModel model = clause.getExpressionType();
+                    ExpressionFactory model = clause.getExpressionType();
                     if (model instanceof ExpressionDefinition) {
                         when.setExpression((ExpressionDefinition) model);
                     }

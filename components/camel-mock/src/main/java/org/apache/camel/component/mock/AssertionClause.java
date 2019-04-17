@@ -22,10 +22,10 @@ import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.StreamCache;
 import org.apache.camel.support.PredicateAssertHelper;
-import org.apache.camel.support.language.ExpressionModel;
 
 /**
  * A builder of assertions on message exchanges
@@ -52,7 +52,7 @@ public abstract class AssertionClause extends MockExpressionClauseSupport<MockVa
         return new PredicateValueBuilder(expression);
     }
 
-    public MockValueBuilder language(ExpressionModel expression) {
+    public MockValueBuilder language(ExpressionFactory expression) {
         // must override this method as we provide null in the constructor
         super.expression(expression.createExpression(mock.getCamelContext()));
         return new PredicateValueBuilder(getExpressionValue());

@@ -18,8 +18,8 @@ package org.apache.camel.component.mock;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionFactory;
 import org.apache.camel.support.builder.ExpressionBuilder;
-import org.apache.camel.support.language.ExpressionModel;
 
 /**
  * A support class for building expression clauses.
@@ -28,7 +28,7 @@ public class MockExpressionClauseSupport<T> {
 
     private T result;
     private Expression expressionValue;
-    private ExpressionModel expressionType;
+    private ExpressionFactory expressionType;
 
     public MockExpressionClauseSupport(T result) {
         this.result = result;
@@ -42,16 +42,16 @@ public class MockExpressionClauseSupport<T> {
      */
     public T expression(Expression expression) {
         setExpressionValue(expression);
-        if (expression instanceof ExpressionModel) {
-            setExpressionType((ExpressionModel) expression);
+        if (expression instanceof ExpressionFactory) {
+            setExpressionType((ExpressionFactory) expression);
         }
         return result;
     }
 
     /**
-     * Specify an {@link ExpressionModel} instance
+     * Specify an {@link ExpressionFactory} instance
      */
-    public T language(ExpressionModel expression) {
+    public T language(ExpressionFactory expression) {
         setExpressionType(expression);
         return result;
     }
@@ -351,11 +351,11 @@ public class MockExpressionClauseSupport<T> {
         this.expressionValue = expressionValue;
     }
 
-    public ExpressionModel getExpressionType() {
+    public ExpressionFactory getExpressionType() {
         return expressionType;
     }
 
-    public void setExpressionType(ExpressionModel expressionType) {
+    public void setExpressionType(ExpressionFactory expressionType) {
         this.expressionType = expressionType;
     }
 

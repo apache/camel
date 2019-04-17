@@ -35,6 +35,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionFactory;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ScriptHelper;
@@ -44,7 +45,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.IntrospectionSupport;
-import org.apache.camel.support.language.ExpressionModel;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
@@ -55,7 +55,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement
 @XmlType(name = "expression") // must be named expression
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExpressionDefinition implements Expression, Predicate, OtherAttributesAware, ExpressionModel {
+public class ExpressionDefinition implements Expression, Predicate, OtherAttributesAware, ExpressionFactory {
     @XmlAttribute
     @XmlID
     private String id;

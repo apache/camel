@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.AggregationStrategyClause;
 import org.apache.camel.builder.ExpressionClause;
@@ -41,7 +42,6 @@ import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.support.language.ExpressionModel;
 
 /**
  * Aggregates many messages into a single message
@@ -176,7 +176,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
                 // ExpressionClause which is a fancy builder to define expressions and predicates
                 // using fluent builders in the DSL. However we need afterwards a callback to
                 // reset the expression to the expression type the ExpressionClause did build for us
-                ExpressionModel model = clause.getExpressionType();
+                ExpressionFactory model = clause.getExpressionType();
                 if (model instanceof ExpressionDefinition) {
                     correlationExpression = new ExpressionSubElementDefinition();
                     correlationExpression.setExpressionType((ExpressionDefinition) model);

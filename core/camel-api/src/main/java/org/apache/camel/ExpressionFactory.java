@@ -14,15 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support.language;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
+package org.apache.camel;
 
 /**
- * Represents a model that can be created as an expression (eg language).
+ * A factory for creating {@link Expression}
  */
-public interface ExpressionModel {
+@FunctionalInterface
+public interface ExpressionFactory {
 
     /**
      * Creates an expression

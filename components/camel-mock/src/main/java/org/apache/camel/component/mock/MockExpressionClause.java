@@ -23,11 +23,11 @@ import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.apache.camel.support.language.ExpressionModel;
 
 /**
  * Represents an expression clause within the DSL which when the expression is
@@ -474,7 +474,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
         return delegate.getExpressionValue();
     }
 
-    public ExpressionModel getExpressionType() {
+    public ExpressionFactory getExpressionType() {
         return delegate.getExpressionType();
     }
 

@@ -19,12 +19,11 @@ package org.apache.camel.reifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.Expression;
+import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.ChoiceDefinition;
-import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.WhenDefinition;
@@ -32,7 +31,6 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.language.ExpressionModel;
 
 class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
 
@@ -56,7 +54,7 @@ class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
                     // ExpressionClause which is a fancy builder to define expressions and predicates
                     // using fluent builders in the DSL. However we need afterwards a callback to
                     // reset the expression to the expression type the ExpressionClause did build for us
-                    ExpressionModel model = clause.getExpressionType();
+                    ExpressionFactory model = clause.getExpressionType();
                     if (model instanceof ExpressionDefinition) {
                         whenClause.setExpression((ExpressionDefinition) model);
                     }
