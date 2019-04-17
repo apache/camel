@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 106 (0 deprecated)
+Number of Examples: 107 (0 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
@@ -24,6 +24,8 @@ Number of Examples: 106 (0 deprecated)
 | link:camel-example-billboard-aggr/README.md[Billboard Aggr] (camel-example-billboard-aggr) |  | Billboard aggregation example
 
 | link:camel-example-telegram/README.adoc[Telegram] (camel-example-telegram) |  | An example that uses Telegram API
+
+| link:camel-example-webhook/readme.adoc[Webhook] (camel-example-webhook) |  | Example on how to use the Camel Webhook component
 
 | link:camel-example-micrometer/README.md[Micrometer] (camel-example-micrometer) | Advanced | An example showing how to work with Camel, Spring Java Config and Micrometer monitoring
 

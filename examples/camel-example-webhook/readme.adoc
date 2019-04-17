@@ -1,0 +1,66 @@
+# Camel Example Webhook
+
+This example shows the webhook meta-component in action using one of the supported components: telegram.
+
+The example starts up a spring-boot application that configures automatically a webhook using the Telegram API to point to the local application and
+waits for messages.
+
+## Setting up a Telegram Bot
+
+Creating a Telegram Bot is the first step for running this demo. You need to follow the instructions at
+the link:https://core.telegram.org/bots#3-how-do-i-create-a-bot[Telegram Bot developers home].
+
+When a new Bot is created, the link:https://telegram.me/botfather[BotFather] provides an
+**authorization token** corresponding to the Bot. The authorization token is a mandatory parameter
+for the camel-telegram endpoint and should be put in the `application.properties` file of the example application.
+
+The full property should look like:
+
+----
+camel.component.telegram.authorization-token=<put-here-your-token>
+----
+
+## Setting up a webhook tunnel
+
+In order to use this example from a standard workstation machine, you need it to be exposed to the internet, for the Telegram servers to be
+able to contact it. Moreover, Telegram requires that the endpoint is exposed using *HTTPS*.
+
+The best way to expose your workstation through a internet HTTPS endpoint is using some tunneling tool, like link:https://serveo.net/[Serveo].
+A more popular option is link:https://ngrok.com/[Ngrok] but HTTPS endpoints currently require a paid subscription.
+
+With Serveo, you can run in a terminal the following command:
+
+----
+ssh -R 80:localhost:8080 serveo.net
+----
+
+Your ssh client will print in the console a message like the following:
+
+----
+Hi there
+Forwarding HTTP traffic from https://xxx.serveo.net
+----
+
+Take note of the URL that is returned and place it in the `application.properties` file of the example.
+
+The full property should look like:
+
+----
+camel.component.webhook.configuration.webhook-external-url=https://the-subdomain-returned.serveo.net
+----
+
+## Running the example
+
+Now that everything is set up, you can run the example using
+
+----
+mvn spring-boot:run
+----
+
+You can now contat your bot using a Telegram client and you'll see all your messages printed in the console.
+
+What's interesting to notice is that in this example, *the Telegram component is not doing any long polling** to the Telegram API, it's just receiving *push notifications*.
+
+## More information
+
+You can find more information about Apache Camel at the website: http://camel.apache.org/

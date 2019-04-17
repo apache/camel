@@ -324,6 +324,7 @@
         <include>org.apache.camel:camel-vm</include>
         <include>org.apache.camel:camel-weather</include>
         <include>org.apache.camel:camel-web3j</include>
+        <include>org.apache.camel:camel-webhook</include>
         <include>org.apache.camel:camel-websocket</include>
         <include>org.apache.camel:camel-websocket-jsr356</include>
         <include>org.apache.camel:camel-wordpress</include>
@@ -644,6 +645,7 @@
         <include>org.apache.camel:camel-vm-starter</include>
         <include>org.apache.camel:camel-weather-starter</include>
         <include>org.apache.camel:camel-web3j-starter</include>
+        <include>org.apache.camel:camel-webhook-starter</include>
         <include>org.apache.camel:camel-websocket-jsr356-starter</include>
         <include>org.apache.camel:camel-websocket-starter</include>
         <include>org.apache.camel:camel-wordpress-starter</include>

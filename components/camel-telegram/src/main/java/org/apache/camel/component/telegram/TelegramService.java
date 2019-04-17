@@ -27,4 +27,9 @@ public interface TelegramService {
     UpdateResult getUpdates(String authorizationToken, Long offset, Integer limit, Integer timeoutSeconds);
 
     Object sendMessage(String authorizationToken, OutgoingMessage message);
+
+    boolean setWebhook(String authorizationToken, String url);
+
+    boolean removeWebhook(String authorizationToken);
+
 }

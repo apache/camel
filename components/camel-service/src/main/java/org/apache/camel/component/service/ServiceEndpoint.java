@@ -43,7 +43,7 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(
     firstVersion = "2.22.0",
     scheme = "service",
-    syntax = "service:serviceName:delegateUri",
+    syntax = "service:delegateUri",
     consumerOnly = true,
     title = "Service",
     lenientProperties = true,

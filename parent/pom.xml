@@ -321,7 +321,7 @@
         <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
         <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
         <jasminb-jsonapi-version>0.9</jasminb-jsonapi-version>
-        <jandex-version>2.1.0.Final</jandex-version>
+        <jandex-version>2.1.1.Final</jandex-version>
         <jasn1-version>1.11.0</jasn1-version>
         <jasper-bundle-version>6.0.44_1</jasper-bundle-version>
         <jasypt-bundle-version>1.9.2_1</jasypt-bundle-version>
@@ -343,11 +343,12 @@
         <javax.el3-version>3.0.0</javax.el3-version>
         <javax.el-api-hibernate-validator-version>3.0.1-b04</javax.el-api-hibernate-validator-version>
         <javax.el-hibernate-validator-version>3.0.1-b10</javax.el-hibernate-validator-version>
+        <javax-annotation-api-version>1.3.2</javax-annotation-api-version>
         <javax-inject-bundle-version>1_2</javax-inject-bundle-version>
         <javax-mail-version>1.6.1</javax-mail-version>
         <javax.servlet-api-version>3.1.0</javax.servlet-api-version>
         <javax.ws.rs-api-version>2.1.1</javax.ws.rs-api-version>
-        <jaxb-bundle-version>2.2.11_1</jaxb-bundle-version>
+        <jaxb-bundle-version>2.3.1_1</jaxb-bundle-version>
         <jakarta-jaxb-version>2.3.2</jakarta-jaxb-version>
         <glassfish-jaxb-runtime-version>${jakarta-jaxb-version}</glassfish-jaxb-runtime-version>
         <glassfish-jaxb-xjc-version>${jakarta-jaxb-version}</glassfish-jaxb-xjc-version>
@@ -516,7 +517,7 @@
         <netty-version>4.1.34.Final</netty-version>
         <netty-reactive-streams-version>2.0.3</netty-reactive-streams-version>
         <netty40-version>4.0.56.Final</netty40-version>
-        <networknt-json-schema-validator-version>1.0.4</networknt-json-schema-validator-version>
+        <networknt-json-schema-validator-version>1.0.6</networknt-json-schema-validator-version>
         <noggit-bundle-version>0.5_1</noggit-bundle-version>
         <objenesis-version>2.6</objenesis-version>
         <!-- should be in-sync with deltaspike -->
@@ -610,7 +611,7 @@
         <sip-api-version>1.1</sip-api-version>
         <slf4j-api-version>1.7.25</slf4j-api-version>
         <slf4j-version>1.7.25</slf4j-version>
-        <smack-version>4.3.2</smack-version>
+        <smack-version>4.3.3</smack-version>
         <snakeyaml-version>1.24</snakeyaml-version>
         <snappy-version>1.1.4</snappy-version>
         <snmp4j-version>2.6.3_1</snmp4j-version>
@@ -667,7 +668,7 @@
         <tagsoup-bundle-version>1.2.1_1</tagsoup-bundle-version>
         <tagsoup-version>1.2.1</tagsoup-version>
         <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
-        <testcontainers-version>1.11.1</testcontainers-version>
+        <testcontainers-version>1.11.2</testcontainers-version>
         <testng-version>6.14.2</testng-version>
         <tinybundles-version>2.1.1</tinybundles-version>
         <tika-version>1.20</tika-version>
@@ -703,7 +704,7 @@
         <!-- xbean-asm4-bundle is used by openjpa -->
         <xbean-asm4-bundle-version>3.14</xbean-asm4-bundle-version>
         <xbean-asm5-shaded-version>4.5</xbean-asm5-shaded-version>
-        <xchange-version>4.3.16</xchange-version>
+        <xchange-version>4.3.17</xchange-version>
         <xerces-bundle-version>2.11.0_1</xerces-bundle-version>
         <xerces-version>2.11.0</xerces-version>
         <!-- needed to manage the xml-apis version in camel-xmljson -->
@@ -723,7 +724,7 @@
         <xom-version>1.2.5</xom-version>
         <zendesk-client-version>0.6.2</zendesk-client-version>
         <zipkin-reporter-version>2.8.2</zipkin-reporter-version>
-        <zipkin-version>2.12.7</zipkin-version>
+        <zipkin-version>2.12.9</zipkin-version>
         <zjsonpatch-version>0.3.0</zjsonpatch-version>
         <zookeeper-version>3.4.13</zookeeper-version>
         <zookeeper-guava-version>16.0</zookeeper-guava-version>
@@ -2314,6 +2315,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-webhook</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-websocket</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3719,6 +3725,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-web3j-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-webhook-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -6015,7 +6026,7 @@
                 <dependency>
                     <groupId>javax.annotation</groupId>
                     <artifactId>javax.annotation-api</artifactId>
-                    <version>1.3.2</version>
+                    <version>${javax-annotation-api-version}</version>
                 </dependency>
                 <dependency>
                     <groupId>javax.xml.ws</groupId>

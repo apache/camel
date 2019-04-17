@@ -54,6 +54,7 @@
         <exclude>**/cobertura.ser</exclude>
 
         <exclude>**/node_modules/**</exclude>
+        <exclude>**/.flattened-pom.xml</exclude>
       </excludes>
     </fileSet>
 
