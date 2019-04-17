@@ -268,6 +268,7 @@
     <module>camel-milo-starter</module>
     <module>camel-mina2-starter</module>
     <module>camel-mllp-starter</module>
+    <module>camel-mock-starter</module>
     <module>camel-mongodb-gridfs-starter</module>
     <module>camel-mongodb3-starter</module>
     <module>camel-mqtt-starter</module>
@@ -304,7 +305,6 @@
     <module>camel-rest-swagger-starter</module>
     <module>camel-restlet-starter</module>
     <module>camel-ribbon-starter</module>
-    <module>camel-rmi-starter</module>
     <module>camel-rss-starter</module>
     <module>camel-rxjava2-starter</module>
     <module>camel-saga-starter</module>

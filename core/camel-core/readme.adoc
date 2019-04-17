@@ -5,7 +5,7 @@
 
 
 // components: START
-Number of Components: 3 in 1 JAR artifacts (0 deprecated)
+Number of Components: 2 in 1 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -16,9 +16,6 @@ Number of Components: 3 in 1 JAR artifacts (0 deprecated)
 
 | link:src/main/docs/class-component.adoc[Class] (camel-core) +
 `class:beanName` | 2.4 | The Class Component is for invoking Java Classes (Java beans) from Camel.
-
-| link:src/main/docs/mock-component.adoc[Mock] (camel-core) +
-`mock:name` | 1.0 | The mock component is used for testing routes and mediation rules using mocks.
 
 |===
 // components: END

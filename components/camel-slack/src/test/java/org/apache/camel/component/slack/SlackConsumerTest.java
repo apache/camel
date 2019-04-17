@@ -34,8 +34,6 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
-
-
 public class SlackConsumerTest extends CamelTestSupport {
 
     private String token;
@@ -57,7 +55,7 @@ public class SlackConsumerTest extends CamelTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).body(SlackMessage.class).method("getText").isEqualTo(message);
+        mock.message(0).simple("${body.getText()}").isEqualTo(message);
 
         assertMockEndpointsSatisfied();
     }

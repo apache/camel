@@ -568,7 +568,7 @@ Number of Components: 295 in 231 JAR artifacts (0 deprecated)
 | link:camel-mllp/src/main/docs/mllp-component.adoc[MLLP] (camel-mllp) +
 `mllp:hostname:port` | 2.17 | Provides functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.
 
-| link:../core/camel-core/src/main/docs/mock-component.adoc[Mock] (camel-core) +
+| link:camel-mock/src/main/docs/mock-component.adoc[Mock] (camel-mock) +
 `mock:name` | 1.0 | The mock component is used for testing routes and mediation rules using mocks.
 
 | link:camel-mongodb3/src/main/docs/mongodb3-component.adoc[MongoDB] (camel-mongodb3) +
@@ -699,9 +699,6 @@ Number of Components: 295 in 231 JAR artifacts (0 deprecated)
 
 | link:camel-restlet/src/main/docs/restlet-component.adoc[Restlet] (camel-restlet) +
 `restlet:protocol:host:port/uriPattern` | 2.0 | Component for consuming and producing Restful resources using Restlet.
-
-| link:camel-rmi/src/main/docs/rmi-component.adoc[RMI] (camel-rmi) +
-`rmi:hostname:port/name` | 1.0 | The rmi component is for invoking Java RMI beans from Camel.
 
 | link:camel-rss/src/main/docs/rss-component.adoc[RSS] (camel-rss) +
 `rss:feedUri` | 2.0 | The rss component is used for consuming RSS feeds.

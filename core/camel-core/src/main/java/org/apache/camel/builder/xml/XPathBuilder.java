@@ -61,6 +61,7 @@ import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.builder.xml.Namespaces;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -68,11 +69,11 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.builder.xml.Namespaces.DEFAULT_NAMESPACE;
-import static org.apache.camel.builder.xml.Namespaces.FUNCTION_NAMESPACE;
-import static org.apache.camel.builder.xml.Namespaces.IN_NAMESPACE;
-import static org.apache.camel.builder.xml.Namespaces.OUT_NAMESPACE;
-import static org.apache.camel.builder.xml.Namespaces.isMatchingNamespaceOrEmptyNamespace;
+import static org.apache.camel.support.builder.xml.Namespaces.DEFAULT_NAMESPACE;
+import static org.apache.camel.support.builder.xml.Namespaces.FUNCTION_NAMESPACE;
+import static org.apache.camel.support.builder.xml.Namespaces.IN_NAMESPACE;
+import static org.apache.camel.support.builder.xml.Namespaces.OUT_NAMESPACE;
+import static org.apache.camel.support.builder.xml.Namespaces.isMatchingNamespaceOrEmptyNamespace;
 
 /**
  * Creates an XPath expression builder which creates a nodeset result by

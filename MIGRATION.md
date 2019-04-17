@@ -42,6 +42,7 @@ We have also modularized many of the core components and moved them out of `came
 - camel-file
 - camel-language
 - camel-log
+- camel-mock
 - camel-properties
 - camel-ref
 - camel-rest
@@ -87,9 +88,9 @@ The `test` component has been renamed to `dataset-test` and moved out of `camel-
 
 We have also renamed `camel-jetty9` to `camel-jetty`.
 
-### DataSet component
+### Mock component
 
-The `dataset` component has been moved out of `camel-core`, and is no longer a transient dependency from `camel-core`, and therefore you should add `camel-dataset` as dependency if you use this component.
+The `mock` component has been moved out of `camel-core` and as part of this work, we had to remove a number of methods on its _assertion clause builder_ that were seldom in use. Also we had to remove a few methods on `NotifyBuilder` that were using the `mock` component.
 
 ### ActiveMQ
 
