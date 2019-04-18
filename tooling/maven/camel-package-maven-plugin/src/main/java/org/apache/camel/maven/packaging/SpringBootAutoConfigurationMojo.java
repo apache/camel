@@ -1336,8 +1336,12 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             String type = option.getJavaType();
             type = getSimpleJavaType(type);
 
-            // skip options for json based-data formats as these are implied
-            if ("org.apache.camel.model.dataformat.JsonLibrary".equals(type)) {
+            // special for bindy
+            if ("org.apache.camel.model.dataformat.BindyType".equals(option.getJavaType())) {
+                // force to use a string type
+                type = "java.lang.String";
+            } else if (option.getJavaType().contains("org.apache.camel.model.dataformat")) {
+                // skip options that are from the model as they are not possible to configure anyway
                 continue;
             }
 
@@ -1355,7 +1359,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 // force to use a string type
                 type = "java.lang.String";
             }
-
 
             Property prop = javaClass.addProperty(type, option.getName());
             if ("true".equals(option.getDeprecated())) {

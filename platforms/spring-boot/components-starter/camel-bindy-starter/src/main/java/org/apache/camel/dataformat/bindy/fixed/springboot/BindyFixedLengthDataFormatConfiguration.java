@@ -17,7 +17,6 @@
 package org.apache.camel.dataformat.bindy.fixed.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.spring.boot.DataFormatConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -39,9 +38,9 @@ public class BindyFixedLengthDataFormatConfiguration
      */
     private Boolean enabled;
     /**
-     * Whether to use csv, fixed or key value pairs mode.
+     * Whether to use Csv, Fixed, or KeyValue.
      */
-    private BindyType type;
+    private String type;
     /**
      * Name of model class to use.
      */
@@ -64,11 +63,11 @@ public class BindyFixedLengthDataFormatConfiguration
      */
     private Boolean contentTypeHeader = false;
 
-    public BindyType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(BindyType type) {
+    public void setType(String type) {
         this.type = type;
     }
 
