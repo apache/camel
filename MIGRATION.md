@@ -161,6 +161,10 @@ also been deprecated in Camel 2.x. In Camel 3 we have removed the remaining code
 
 The default JSon library with the JSon dataformat has changed from `XStream` to `Jackson`.
 
+### Simple language
+
+The functionality to change the simple language tokens for start/end functions has been removed. The default tokens with `${xxx}` and `$simple{xxx}` is now hardcoded (optimized). The functionality to change these tokens was never really in use and would only confuse Camel users if a new syntax are in use.
+
 ### Moved APIs
 
 The following API changes may affect your existing Camel applications, which needs to be migrated.
