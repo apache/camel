@@ -77,10 +77,16 @@ public class JsonApiDataFormat extends ServiceSupport implements DataFormat, Dat
         // noop
     }
 
+    /**
+     * The classes to take into account while marshalling
+     */
     public void setDataFormatTypes(Class<?>[] dataFormatTypes) {
         this.dataFormatTypes = dataFormatTypes;
     }
 
+    /**
+     * The classes to take into account while unmarshalling
+     */
     public void setMainFormatType(Class<?> mainFormatType) {
         this.mainFormatType = mainFormatType;
     }
