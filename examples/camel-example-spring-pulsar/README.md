@@ -8,12 +8,14 @@ with the received message.
 
 You can run the Pulsar cluster through docker:
 
+```
 docker run -it \
   -p 6650:6650 \
   -p 8080:8080 \
   -v $PWD/data:/pulsar/data \
   apachepulsar/pulsar:2.0.1-incubating \
   bin/pulsar standalone
+```
 
 The Server is required to be running when you try the clients.
 
