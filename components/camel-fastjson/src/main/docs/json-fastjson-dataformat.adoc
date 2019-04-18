@@ -61,7 +61,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 20 options, which are listed below.
+The component supports 19 options, which are listed below.
 
 
 
@@ -78,7 +78,6 @@ The component supports 20 options, which are listed below.
 | *camel.dataformat.json-fastjson.enabled* | Whether to enable auto configuration of the json-fastjson data format. This is enabled by default. |  | Boolean
 | *camel.dataformat.json-fastjson.include* | If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL |  | String
 | *camel.dataformat.json-fastjson.json-view* | When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations |  | Class
-| *camel.dataformat.json-fastjson.library* | Which json library to use. |  | JsonLibrary
 | *camel.dataformat.json-fastjson.module-class-names* | To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma. |  | String
 | *camel.dataformat.json-fastjson.module-refs* | To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma. |  | String
 | *camel.dataformat.json-fastjson.object-mapper* | Lookup and use the existing ObjectMapper with the given id when using Jackson. |  | String
