@@ -32,7 +32,7 @@ public class FileToFtpsImplicitTLSWithoutClientAuthAndSSLContextParametersTest e
         tmp.setKeyStore(ksp);
         
         SSLContextParameters sslContextParameters = new SSLContextParameters();
-        sslContextParameters.setSecureSocketProtocol("TLS");
+        sslContextParameters.setSecureSocketProtocol("TLSv1.2");
         sslContextParameters.setTrustManagers(tmp);
         
         JndiRegistry registry = super.createRegistry();

@@ -63,7 +63,7 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertNull(config.getPassword());
         assertEquals(false, config.isBinary());
         assertEquals(false, config.isImplicit());
-        assertEquals("TLS", config.getSecurityProtocol());
+        assertEquals("TLSv1.2", config.getSecurityProtocol());
         assertEquals(RemoteFileConfiguration.PathSeparator.UNIX, config.getSeparator());
     }
 
@@ -79,7 +79,7 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertNull(config.getPassword());
         assertEquals(false, config.isBinary());
         assertEquals(true, config.isImplicit());
-        assertEquals("TLS", config.getSecurityProtocol());
+        assertEquals("TLSv1.2", config.getSecurityProtocol());
     }
 
     @Test
