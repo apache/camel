@@ -29,22 +29,26 @@ You can append query options to the URI in the following format,
 *Only directories*
 
 Camel supports only endpoints configured with a starting directory. So
-the *directoryName* must be a directory. +
+the *directoryName* must be a directory.
  If you want to consume a single file only, you can use the *fileName*
-option, e.g. by setting `fileName=thefilename`. +
+option, e.g. by setting `fileName=thefilename`.
  Also, the starting directory must not contain dynamic expressions with
-$\{ } placeholders. Again use the `fileName` option to specify the
+`${ }` placeholders. Again use the `fileName` option to specify the
 dynamic part of the filename.
 
-WARNING: *Avoid reading files currently being written by another
-application* Beware the JDK File IO API is a bit limited in detecting whether another
+[WARNING]
+====
+*Avoid reading files currently being written by another application*
+
+Beware the JDK File IO API is a bit limited in detecting whether another
 application is currently writing/copying a file. And the implementation
 can be different depending on OS platform as well. This could lead to
 that Camel thinks the file is not locked by another process and start
 consuming it. Therefore you have to do you own investigation what suites
 your environment. To help with this Camel provides different `readLock`
 options and `doneFileName` option that you can use. See also the section
-_Consuming files from folders where others drop files directly_.
+<<File2-Consumingfilesfromfolderswhereothersdropfilesdirectly,Consuming files from folders where others drop files directly>>.
+====
 
 === URI Options
 
@@ -518,6 +522,7 @@ string-based <<file-language,File Language>> expression in the
 `CamelFileName` header. See the <<file-language,File Language>>
 for syntax and samples.
 
+[[File2-Consumingfilesfromfolderswhereothersdropfilesdirectly]]
 === Consuming files from folders where others drop files directly
 
 Beware if you consume files from a folder where other applications write
