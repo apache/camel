@@ -169,14 +169,17 @@ http://quartz-scheduler.org/api/2.0.0/org/quartz/JobDataMap.html[JobDataMap]
 is re-persisted after every execution of the job, thus preserving state
 for the next execution.
 
-INFO: *Running in OSGi and having multiple bundles with quartz
-routes*
+[NOTE]
+====
+*Running in OSGi and having multiple bundles with quartz routes*
+
 If you run in OSGi such as Apache ServiceMix, or Apache Karaf, and have
 multiple bundles with Camel routes that start from
 <<quartz2-component,Quartz2>> endpoints, then make sure if you assign an `id` 
-to the <camelContext> that this id is unique, as this is
+to the `<camelContext>` that this id is unique, as this is
 required by the `QuartzScheduler` in the OSGi container. If you do not
-set any `id` on <camelContext> then a unique id is auto assigned, and there is no problem.
+set any `id` on `<camelContext>` then a unique id is auto assigned, and there is no problem.
+====
 
 === Configuring quartz.properties file
 

@@ -9,7 +9,11 @@ component to facilitiate HTTP transport with <<netty4-component,Netty4>>.
 This camel component supports both producer and consumer endpoints.
 
 
-INFO: *Stream*. Netty is stream based, which means the input it receives is submitted to
+[NOTE]
+====
+*Stream*
+
+Netty is stream based, which means the input it receives is submitted to
 Camel as a stream. That means you will only be able to read the content
 of the stream *once*. If you find a situation where the message body appears to be empty or
 you need to access the data multiple times (eg: doing multicasting, or
@@ -19,6 +23,7 @@ Notice Netty4 HTTP reads the entire stream into memory using
 `io.netty.handler.codec.http.HttpObjectAggregator` to build the entire
 full http message. But the resulting message is still a stream based
 message which is readable once.
+====
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -33,7 +38,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+=== URI format
 
 The URI scheme for a netty component is as follows
 
@@ -46,31 +51,38 @@ You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
 
-INFO: *Query parameters vs endpoint options*. 
+[NOTE]
+====
+*Query parameters vs endpoint options*
+
 You may be wondering how Camel recognizes URI query parameters and
-endpoint options. For example you might create endpoint URI as follows -
+endpoint options. For example you might create endpoint URI as follows:
 `netty4-http:http//example.com?myParam=myValue&compression=true` . In
 this example `myParam` is the HTTP parameter, while `compression` is the
 Camel endpoint option. The strategy used by Camel in such situations is
 to resolve available endpoint options and remove them from the URI. It
 means that for the discussed example, the HTTP request sent by Netty
-HTTP producer to the endpoint will look as follows
-- `http//example.com?myParam=myValue` , because `compression` endpoint
+HTTP producer to the endpoint will look as follows:
+`http//example.com?myParam=myValue`, because `compression` endpoint
 option will be resolved and removed from the target URL.
 Keep also in mind that you cannot specify endpoint options using dynamic
 headers (like `CamelHttpQuery`). Endpoint options can be specified only
 at the endpoint URI definition level (like `to` or `from` DSL elements).
+====
 
-### HTTP Options
+=== HTTP Options
 
+[IMPORTANT]
+====
+*A lot more options*
 
-INFO: *A lot more options*. *Important:* This component inherits all the options from
-<<netty4-component,Netty4>>. So make sure to look at
-the <<netty4-component,Netty4>> documentation as well. +
- Notice that some options from <<netty4-component,Netty4>> is not
+This component inherits all the options from
+<<netty4-component,Netty4>>, so make sure to look at
+the <<netty4-component,Netty4>> documentation as well.
+Notice that some options from <<netty4-component,Netty4>> is not
 applicable when using this Netty4 HTTP component, such as options
 related to UDP transport.
-
+====
 
 
 
@@ -277,7 +289,7 @@ The component supports 32 options, which are listed below.
 
 
 
-### Message Headers
+=== Message Headers
 
 The following headers can be used on the producer to control the HTTP
 request.
@@ -343,7 +355,7 @@ with the value `Basic`.
 `text/plain; charset="UTF-8"`.
 |=======================================================================
 
-### Access to Netty types
+=== Access to Netty types
 
 This component uses the
 `org.apache.camel.component.netty4.http.NettyHttpMessage` as the message
@@ -357,7 +369,7 @@ accessible at all times.
 io.netty.handler.codec.http.HttpRequest request = exchange.getIn(NettyHttpMessage.class).getHttpRequest();
 ----------------------------------------------------------------------------------------------------------
 
-### Examples
+=== Examples
 
 In the route below we use Netty4 HTTP as a HTTP server, which returns
 back a hardcoded "Bye World" message.
@@ -379,7 +391,7 @@ ProducerTemplate as shown below:
 
 And we get back "Bye World" as the output.
 
-### How do I let Netty match wildcards
+=== How do I let Netty match wildcards
 
 By default Netty4 HTTP will only match on exact uri's. But you can
 instruct Netty to match prefixes. For example
@@ -410,7 +422,7 @@ To match *any* endpoint you can do:
 from("netty4-http:http://0.0.0.0:8123?matchOnUriPrefix=true").to("mock:foo");
 -----------------------------------------------------------------------------
 
-### Using multiple routes with same port
+=== Using multiple routes with same port
 
 In the same CamelContext you can have multiple
 routes from Netty4 HTTP that shares the same port (eg a
@@ -463,7 +475,7 @@ from("netty4-http:http://0.0.0.0:{{port}}/bar?ssl=true")
   .transform().constant("Bye Camel");
 --------------------------------------------------------------------------------------
 
-#### Reusing same server bootstrap configuration with multiple routes
+==== Reusing same server bootstrap configuration with multiple routes
 
 By configuring the common server bootstrap option in an single instance
 of a
@@ -500,12 +512,12 @@ And in the routes you refer to this option as shown below
 </route>
 ----------------------------------------------------------------------------------------------------------
 
-#### Reusing same server bootstrap configuration with multiple routes across multiple bundles in OSGi container
+==== Reusing same server bootstrap configuration with multiple routes across multiple bundles in OSGi container
 
 See the Netty HTTP Server Example
 for more details and example how to do that.
 
-### Using HTTP Basic Authentication
+=== Using HTTP Basic Authentication
 
 The Netty HTTP consumer supports HTTP basic authentication by specifying
 the security realm name to use, as shown below
@@ -527,7 +539,7 @@ End user of Apache Karaf / ServiceMix has a karaf realm out of the box,
 and hence why the example above would work out of the box in these
 containers.
 
-#### Specifying ACL on web resources
+==== Specifying ACL on web resources
 
 The `org.apache.camel.component.netty4.http.SecurityConstraint` allows
 to define constrains on web resources. And the
@@ -579,7 +591,7 @@ below:
 </route>
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-### See Also
+=== See Also
 
 * Configuring Camel
 * Component

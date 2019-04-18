@@ -9,7 +9,7 @@ https://vertx.io/docs/vertx-core/java/#event_bus[EventBus].
 The vertx https://vertx.io/docs/vertx-core/java/#event_bus[EventBus]
 sends and receives JSON events.
 
-INFO:From *Camel 2.16* onwards vertx 3 is in use which requires Java 1.8 at
+NOTE: From *Camel 2.16* onwards vertx 3 is in use which requires Java 1.8 at
 runtime.
 
 Maven users will need to add the following dependency to their `pom.xml`

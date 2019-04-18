@@ -7,9 +7,9 @@ The *mina2:* component is a transport for working with
 http://mina.apache.org/[Apache MINA 2.x]
 
 TIP: Favor using <<netty-component,Netty>> as Netty is a much more active
-maintained and popular project than Apache Mina currently is
+maintained and popular project than Apache Mina currently is.
 
-INFO: Be careful with sync=false on consumer endpoints. Since camel-mina2 all
+WARNING: Be careful with `sync=false` on consumer endpoints. Since camel-mina2 all
 consumer exchanges are InOut. This is different to camel-mina.
 
 Maven users will need to add the following dependency to their `pom.xml`
