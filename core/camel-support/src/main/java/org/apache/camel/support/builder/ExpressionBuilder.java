@@ -53,7 +53,10 @@ import org.apache.camel.util.StringHelper;
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
  */
-public class ExpressionBuilder {
+public final class ExpressionBuilder {
+
+    private ExpressionBuilder() {
+    }
 
     /**
      * Returns an expression for the inbound message attachments
