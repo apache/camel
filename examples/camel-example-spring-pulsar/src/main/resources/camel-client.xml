@@ -61,8 +61,8 @@
   <bean id="pulsarClient" factory-bean="pulsarClientBuilder" factory-method="build"/>
   <bean id="pulsar" class="org.apache.camel.component.pulsar.PulsarComponent">
     <constructor-arg ref="camel-client"/>
-    <constructor-arg ref="autoconfig"/>
-    <constructor-arg ref="pulsarClient"/>
+    <property name="autoConfiguration" ref="autoconfig"/>
+    <property name="pulsarClient" ref="pulsarClient"/>
   </bean>
 
 </beans>
