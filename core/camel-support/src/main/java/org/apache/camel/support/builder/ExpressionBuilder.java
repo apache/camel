@@ -53,6 +53,7 @@ import org.apache.camel.util.StringHelper;
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
  */
+//CHECKSTYLE:OFF
 public class ExpressionBuilder {
 
     /**
