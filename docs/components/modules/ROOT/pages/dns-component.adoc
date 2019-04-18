@@ -5,19 +5,23 @@
 
 This is an additional component for Camel to run DNS queries, using
 DNSJava. The component is a thin layer on top of
-http://www.xbill.org/dnsjava/[DNSJava]. +
- The component offers the following operations:
+http://www.xbill.org/dnsjava/[DNSJava].
+The component offers the following operations:
 
 * ip, to resolve a domain by its ip
 * lookup, to lookup information about the domain
 * dig, to run DNS queries
 
-INFO:*Requires SUN JVM*
-The DNSJava library requires running on the SUN JVM. +
+[NOTE]
+====
+*Requires SUN JVM*
+
+The DNSJava library requires running on the SUN JVM.
  If you use Apache ServiceMix or Apache Karaf, you'll need to adjust the
 `etc/jre.properties` file, to add `sun.net.spi.nameservice` to the list
 of Java platform packages exported. The server will need restarting
 before this change takes effect.
+====
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
