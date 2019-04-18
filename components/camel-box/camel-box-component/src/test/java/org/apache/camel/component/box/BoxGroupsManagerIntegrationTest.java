@@ -177,7 +177,7 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
 
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
-        headers.put("CamelBox.groupMemebershipId", info.getID());
+        headers.put("CamelBox.groupMembershipId", info.getID());
         // parameter type is com.box.sdk.BoxGroupMembership.Info
         headers.put("CamelBox.info", info);
 
@@ -218,6 +218,9 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
                 // test route for getGroupMemberships
                 from("direct://GETGROUPMEMBERSHIPS")
                     .to("box://" + PATH_PREFIX + "/getGroupMemberships?inBody=groupId");
+
+                // test route for updateGroupInfo
+                from("direct://UPDATEGROUPINFO").to("box://" + PATH_PREFIX + "/updateGroupInfo");
 
                 // test route for updateGroupMembershipInfo
                 from("direct://UPDATEGROUPMEMBERSHIPINFO").to("box://" + PATH_PREFIX + "/updateGroupMembershipInfo");

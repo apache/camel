@@ -382,7 +382,6 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
     @Test
     public void testUpdateFileMetadata() throws Exception {
         Metadata metadata = new Metadata();
-        // metadata.add("/foo", "bar");
         metadata = testFile.createMetadata(metadata);
 
         final Map<String, Object> headers = new HashMap<>();
@@ -391,9 +390,14 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         // parameter type is com.box.sdk.Metadata
         headers.put("CamelBox.metadata", metadata);
 
+        //metada has to contain some value, otherwise response result will be error code 400
+        metadata.add("/foo", "bar");
+
         final com.box.sdk.Metadata result = requestBodyAndHeaders("direct://UPDATEFILEMETADATA", null, headers);
 
         assertNotNull("updateFileMetadata result", result);
+        assertNotNull("updateFileMetadata property foo", result.get("/foo"));
+        assertEquals("bar", metadata.get("/foo"));
         LOG.debug("updateFileMetadata: " + result);
     }
 
