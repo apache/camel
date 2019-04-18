@@ -31,7 +31,10 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * A helper class for working with predicates
  */
-public class PredicateBuilder {
+public final class PredicateBuilder {
+
+    private PredicateBuilder() {
+    }
 
     /**
      * Converts the given expression into an {@link Predicate}
