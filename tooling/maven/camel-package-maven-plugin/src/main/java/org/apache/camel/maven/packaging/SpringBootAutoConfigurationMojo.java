@@ -1057,8 +1057,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             } else if (type.getRawClass() == Class.class) {
                 return defaultValue + ".class";
             } else {
-//                throw new UnsupportedOperationException("Unsupported default value for type: "
-//                        + type.toString() + ": " + defaultValue);
                 return null;
             }
         }
@@ -1116,8 +1114,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     private String getSimpleJavaType(String type) {
-        // remove <?> as generic type as Roaster (Eclipse JDT) cannot use that
-//        type = type.replaceAll("\\<\\?\\>", "");
         // use wrapper types for primitive types so a null mean that the option
         // has not been configured
         String wrapper = PRIMITIVEMAP.get(type);
@@ -1340,6 +1336,11 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             String type = option.getJavaType();
             type = getSimpleJavaType(type);
 
+            // skip options for json based-data formats as these are implied
+            if ("org.apache.camel.model.dataformat.JsonLibrary".equals(type)) {
+                continue;
+            }
+
             // spring-boot auto configuration does not support complex types
             // (unless they are enum, nested)
             // and if so then we should use a String type so spring-boot and its
@@ -1354,6 +1355,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 // force to use a string type
                 type = "java.lang.String";
             }
+
 
             Property prop = javaClass.addProperty(type, option.getName());
             if ("true".equals(option.getDeprecated())) {

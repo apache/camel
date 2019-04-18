@@ -17,8 +17,6 @@
 package org.apache.camel.dataformat.xstream.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.dataformat.xstream.JsonDataFormat;
-import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.spring.boot.DataFormatConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -52,10 +50,6 @@ public class JsonDataFormatConfiguration
      * To enable pretty printing output nicely formatted. Is by default false.
      */
     private Boolean prettyPrint = false;
-    /**
-     * Which json library to use.
-     */
-    private JsonLibrary library = JsonLibrary.Jackson;
     /**
      * Class name of the java type to use when unarmshalling
      */
@@ -179,14 +173,6 @@ public class JsonDataFormatConfiguration
 
     public void setPrettyPrint(Boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
-    }
-
-    public JsonLibrary getLibrary() {
-        return library;
-    }
-
-    public void setLibrary(JsonLibrary library) {
-        this.library = library;
     }
 
     public String getUnmarshalTypeName() {
