@@ -271,7 +271,9 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
      * The default start tokens is <tt>${</tt> and <tt>$simple{</tt>.
      *
      * @param startToken new start token(s) to be used for functions
+     * @deprecated will be removed in Camel 3
      */
+    @Deprecated
     public static void changeFunctionStartToken(String... startToken) {
         SimpleTokenizer.changeFunctionStartToken(startToken);
     }
@@ -285,7 +287,9 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
      * The default end token is <tt>}</tt>
      *
      * @param endToken new end token(s) to be used for functions
+     * @deprecated will be removed in Camel 3
      */
+    @Deprecated
     public static void changeFunctionEndToken(String... endToken) {
         SimpleTokenizer.changeFunctionEndToken(endToken);
     }
@@ -299,7 +303,9 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
      * The default start tokens is <tt>${</tt> and <tt>$simple{</tt>.
      *
      * @param startToken new start token to be used for functions
+     * @deprecated will be removed in Camel 3
      */
+    @Deprecated
     public void setFunctionStartToken(String startToken) {
         changeFunctionStartToken(startToken);
     }
@@ -313,7 +319,9 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
      * The default end token is <tt>}</tt>
      *
      * @param endToken new end token to be used for functions
+     * @deprecated will be removed in Camel 3
      */
+    @Deprecated
     public void setFunctionEndToken(String endToken) {
         changeFunctionEndToken(endToken);
     }
