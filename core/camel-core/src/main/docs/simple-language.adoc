@@ -868,31 +868,6 @@ And in XML DSL
 </setHeader>
 ----
 
-=== Changing function start and end tokens
-
-*Available as of Camel 2.9.1*
-
-You can configure the function start and end tokens - $\{ } using the
-setters `changeFunctionStartToken` and `changeFunctionEndToken` on
-`SimpleLanguage`, using Java code. From Spring XML you can define a
-<bean> tag with the new changed tokens in the properties as shown below:
-
-[source,xml]
-----
-<!-- configure Simple to use custom prefix/suffix tokens -->
-<bean id="simple" class="org.apache.camel.language.simple.SimpleLanguage">
-  <property name="functionStartToken" value="["/>
-  <property name="functionEndToken" value="]"/>
-</bean>
-----
-
-In the example above we use [ ] as the changed tokens.
-
-Notice by changing the start/end token you change those in all the Camel
-applications which share the same *camel-core* on their classpath. +
- For example in an OSGi server this may affect many applications, where
-as a Web Application as a WAR file it only affects the Web Application.
-
 === Loading script from external resource
 
 *Available as of Camel 2.11*
