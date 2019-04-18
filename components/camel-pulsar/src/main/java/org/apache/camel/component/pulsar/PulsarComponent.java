@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,24 +16,29 @@
  */
 package org.apache.camel.component.pulsar;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.pulsar.client.api.PulsarClient;
-
-import java.util.Map;
 
 public class PulsarComponent extends DefaultComponent {
 
-    private final AutoConfiguration autoConfiguration;
-    private final PulsarClient pulsarClient;
+    @Metadata
+    private AutoConfiguration autoConfiguration;
+    @Metadata
+    private PulsarClient pulsarClient;
 
-    PulsarComponent(CamelContext context, AutoConfiguration autoConfiguration, PulsarClient pulsarClient) {
+    public PulsarComponent() {
+        this(null);
+    }
+
+    public PulsarComponent(CamelContext context) {
         super(context);
-        this.autoConfiguration = autoConfiguration;
-        this.pulsarClient = pulsarClient;
     }
 
     @Override
@@ -50,5 +55,27 @@ public class PulsarComponent extends DefaultComponent {
         }
 
         return PulsarEndpoint.create(uri, path, configuration, this, pulsarClient);
+    }
+
+    public AutoConfiguration getAutoConfiguration() {
+        return autoConfiguration;
+    }
+
+    /**
+     * The pulsar autoconfiguration
+     */
+    public void setAutoConfiguration(AutoConfiguration autoConfiguration) {
+        this.autoConfiguration = autoConfiguration;
+    }
+
+    public PulsarClient getPulsarClient() {
+        return pulsarClient;
+    }
+
+    /**
+     * The pulsar client
+     */
+    public void setPulsarClient(PulsarClient pulsarClient) {
+        this.pulsarClient = pulsarClient;
     }
 }

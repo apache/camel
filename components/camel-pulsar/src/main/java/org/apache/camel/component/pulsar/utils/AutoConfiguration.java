@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.pulsar.utils;
 
+import java.util.List;
+import java.util.Set;
+
 import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.admin.PulsarAdminException;
 import org.apache.pulsar.client.admin.Tenants;
 import org.apache.pulsar.common.policies.data.TenantInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * Automatically create Pulsar tenant and namespace if enabled
@@ -42,7 +42,7 @@ public class AutoConfiguration {
     }
 
     public void ensureNameSpaceAndTenant(String path) {
-        if(pulsarAdmin != null) {
+        if (pulsarAdmin != null) {
             PulsarPath pulsarPath = new PulsarPath(path);
             if (pulsarPath.isAutoConfigurable()) {
                 String tenant = pulsarPath.getTenant();

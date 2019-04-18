@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,18 +24,14 @@ import org.apache.pulsar.client.api.ConsumerBuilder;
 
 public final class CommonCreationStrategyImpl {
 
-    public static ConsumerBuilder<byte[]> create(final String name,
-                                                 final PulsarEndpoint pulsarEndpoint,
-                                                 final PulsarConsumer pulsarConsumer) {
-        final PulsarConfiguration endpointConfiguration = pulsarEndpoint.getConfiguration();
+    private CommonCreationStrategyImpl() {
+    }
 
-        return pulsarEndpoint
-            .getPulsarClient()
-            .newConsumer()
-            .topic(pulsarEndpoint.getTopic())
-            .subscriptionName(endpointConfiguration.getSubscriptionName())
-            .receiverQueueSize(endpointConfiguration.getConsumerQueueSize())
-            .consumerName(name)
+    public static ConsumerBuilder<byte[]> create(final String name, final PulsarEndpoint pulsarEndpoint, final PulsarConsumer pulsarConsumer) {
+        final PulsarConfiguration endpointConfiguration = pulsarEndpoint.getPulsarConfiguration();
+
+        return pulsarEndpoint.getPulsarClient().newConsumer().topic(pulsarEndpoint.getTopic()).subscriptionName(endpointConfiguration.getSubscriptionName())
+            .receiverQueueSize(endpointConfiguration.getConsumerQueueSize()).consumerName(name)
             .messageListener(new PulsarMessageListener(pulsarEndpoint, pulsarConsumer.getExceptionHandler(), pulsarConsumer.getProcessor()));
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,33 +39,36 @@ public class PulsarComponentTest extends CamelTestSupport {
 
     @Test
     public void testPulsarEndpointConfiguration() throws Exception {
-        PulsarComponent component = new PulsarComponent(context, autoConfiguration, null);
+        PulsarComponent component = new PulsarComponent(context);
+        component.setAutoConfiguration(autoConfiguration);
 
-        PulsarEndpoint endpoint = (PulsarEndpoint) component.createEndpoint("pulsar://persistent/test/foobar/BatchCreated?numberOfConsumers=10&subscriptionName=batch-created-subscription&subscriptionType=Shared");
+        PulsarEndpoint endpoint = (PulsarEndpoint)component
+            .createEndpoint("pulsar://persistent/test/foobar/BatchCreated?numberOfConsumers=10&subscriptionName=batch-created-subscription&subscriptionType=Shared");
 
         assertNotNull(endpoint);
     }
 
     @Test
     public void testPulsarEndpointDefaultConfiguration() throws Exception {
-        PulsarComponent component = new PulsarComponent(context, null, null);
+        PulsarComponent component = new PulsarComponent(context);
 
-        PulsarEndpoint endpoint = (PulsarEndpoint) component.createEndpoint("pulsar://persistent/test/foobar/BatchCreated");
+        PulsarEndpoint endpoint = (PulsarEndpoint)component.createEndpoint("pulsar://persistent/test/foobar/BatchCreated");
 
         assertNotNull(endpoint);
-        assertEquals("sole-consumer", endpoint.getConfiguration().getConsumerName());
-        assertEquals("cons", endpoint.getConfiguration().getConsumerNamePrefix());
-        assertEquals(10, endpoint.getConfiguration().getConsumerQueueSize());
-        assertEquals(1, endpoint.getConfiguration().getNumberOfConsumers());
-        assertEquals("default-producer", endpoint.getConfiguration().getProducerName());
-        assertEquals("subs", endpoint.getConfiguration().getSubscriptionName());
-        assertEquals(SubscriptionType.EXCLUSIVE, endpoint.getConfiguration().getSubscriptionType());
+        assertEquals("sole-consumer", endpoint.getPulsarConfiguration().getConsumerName());
+        assertEquals("cons", endpoint.getPulsarConfiguration().getConsumerNamePrefix());
+        assertEquals(10, endpoint.getPulsarConfiguration().getConsumerQueueSize());
+        assertEquals(1, endpoint.getPulsarConfiguration().getNumberOfConsumers());
+        assertEquals("default-producer", endpoint.getPulsarConfiguration().getProducerName());
+        assertEquals("subs", endpoint.getPulsarConfiguration().getSubscriptionName());
+        assertEquals(SubscriptionType.EXCLUSIVE, endpoint.getPulsarConfiguration().getSubscriptionType());
     }
 
     @Test
     public void testProducerAutoConfigures() throws Exception {
         when(autoConfiguration.isAutoConfigurable()).thenReturn(true);
-        PulsarComponent component = new PulsarComponent(context, autoConfiguration, null);
+        PulsarComponent component = new PulsarComponent(context);
+        component.setAutoConfiguration(autoConfiguration);
 
         component.createEndpoint("pulsar://persistent/test/foobar/BatchCreated?numberOfConsumers=10&subscriptionName=batch-created-subscription&subscriptionType=Shared");
 

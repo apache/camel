@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.pulsar;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -31,8 +33,6 @@ import org.apache.pulsar.client.impl.ClientBuilderImpl;
 import org.junit.Rule;
 import org.junit.Test;
 import org.testcontainers.containers.PulsarContainer;
-
-import java.util.concurrent.TimeUnit;
 
 public class PulsarProducerInTest extends CamelTestSupport {
 
@@ -82,7 +82,10 @@ public class PulsarProducerInTest extends CamelTestSupport {
         AutoConfiguration autoConfiguration = new AutoConfiguration(null, null);
 
         jndi.bind("pulsarClient", pulsarClient);
-        jndi.bind("pulsar", new PulsarComponent(context(), autoConfiguration, pulsarClient));
+        PulsarComponent comp = new PulsarComponent(context);
+        comp.setAutoConfiguration(autoConfiguration);
+        comp.setPulsarClient(pulsarClient);
+        jndi.bind("pulsar", comp);
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {

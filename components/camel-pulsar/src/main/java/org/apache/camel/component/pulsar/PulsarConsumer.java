@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,17 +16,18 @@
  */
 package org.apache.camel.component.pulsar;
 
-import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopConsumers;
-
 import java.util.Collection;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
 import org.apache.camel.Processor;
 import org.apache.camel.component.pulsar.utils.consumers.ConsumerCreationStrategy;
 import org.apache.camel.component.pulsar.utils.consumers.ConsumerCreationStrategyFactory;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.PulsarClientException;
+
+import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopConsumers;
 
 public class PulsarConsumer extends DefaultConsumer {
 
@@ -35,15 +36,11 @@ public class PulsarConsumer extends DefaultConsumer {
 
     private Queue<Consumer<byte[]>> pulsarConsumers;
 
-    private PulsarConsumer(PulsarEndpoint pulsarEndpoint, Processor processor) {
+    public PulsarConsumer(PulsarEndpoint pulsarEndpoint, Processor processor) {
         super(pulsarEndpoint, processor);
         this.pulsarEndpoint = pulsarEndpoint;
         this.pulsarConsumers = new ConcurrentLinkedQueue<>();
         this.consumerCreationStrategyFactory = ConsumerCreationStrategyFactory.create(this);
-    }
-
-    public static PulsarConsumer create(final PulsarEndpoint pulsarEndpoint, final Processor processor) {
-        return new PulsarConsumer(pulsarEndpoint, processor);
     }
 
     @Override
@@ -74,11 +71,9 @@ public class PulsarConsumer extends DefaultConsumer {
         pulsarConsumers.addAll(consumers);
     }
 
-    private Collection<Consumer<byte[]>> createConsumers(final PulsarEndpoint endpoint,
-        final ConsumerCreationStrategyFactory factory) throws Exception {
+    private Collection<Consumer<byte[]>> createConsumers(final PulsarEndpoint endpoint, final ConsumerCreationStrategyFactory factory) throws Exception {
 
-        ConsumerCreationStrategy strategy = factory
-            .getStrategy(endpoint.getConfiguration().getSubscriptionType());
+        ConsumerCreationStrategy strategy = factory.getStrategy(endpoint.getPulsarConfiguration().getSubscriptionType());
 
         return strategy.create(endpoint);
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.pulsar;
+
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
@@ -36,25 +38,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.PulsarContainer;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 public class PulsarConcurrentConsumerInTest extends CamelTestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConcurrentConsumerInTest.class);
 
     private static final String TOPIC_URI = "non-persistent://public/default/concurrent-camel-topic";
     private static final String PRODUCER = "camel-producer";
-    private static final int NUMBER_OF_CONSUMERS=5;
+    private static final int NUMBER_OF_CONSUMERS = 5;
 
     @Rule
     public PulsarContainer pulsarContainer = new PulsarContainer();
 
-    @EndpointInject(uri = "pulsar:" + TOPIC_URI
-        + "?numberOfConsumers=5&subscriptionType=Shared"
-        + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerNamePrefix=camel-consumer-"
-    )
+    @EndpointInject(uri = "pulsar:" + TOPIC_URI + "?numberOfConsumers=5&subscriptionType=Shared"
+                          + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerNamePrefix=camel-consumer-")
     private Endpoint from;
 
     @EndpointInject(uri = "mock:result")
@@ -92,26 +88,22 @@ public class PulsarConcurrentConsumerInTest extends CamelTestSupport {
         AutoConfiguration autoConfiguration = new AutoConfiguration(null, null);
 
         jndi.bind("pulsarClient", pulsarClient);
-        jndi.bind("pulsar", new PulsarComponent(context(), autoConfiguration, pulsarClient));
+        PulsarComponent comp = new PulsarComponent(context);
+        comp.setAutoConfiguration(autoConfiguration);
+        comp.setPulsarClient(pulsarClient);
+        jndi.bind("pulsar", comp);
+
     }
 
     private PulsarClient concurrentPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl()
-            .serviceUrl(pulsarContainer.getPulsarBrokerUrl())
-            .ioThreads(2)
-            .listenerThreads(5)
-            .build();
+        return new ClientBuilderImpl().serviceUrl(pulsarContainer.getPulsarBrokerUrl()).ioThreads(2).listenerThreads(5).build();
     }
 
     @Test
-    public void testMultipleMessageConsumedByCluster_withConcurrentConfiguration() throws Exception {
+    public void testMultipleMessageConsumedByClusterwithConcurrentConfiguration() throws Exception {
         to.expectedMessageCount(NUMBER_OF_CONSUMERS);
 
-        Producer<String> producer = concurrentPulsarClient()
-            .newProducer(Schema.STRING)
-            .producerName(PRODUCER)
-            .topic(TOPIC_URI)
-            .create();
+        Producer<String> producer = concurrentPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
 
         for (int i = 0; i < NUMBER_OF_CONSUMERS; i++) {
             producer.send("Hello World!");
