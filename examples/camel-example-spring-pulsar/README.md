@@ -6,6 +6,15 @@ This example shows how to work with the Camel-Pulsar Component.
 The example consumes messages from a topic and invoke the bean
 with the received message.
 
+You can run the Pulsar cluster through docker:
+
+docker run -it \
+  -p 6650:6650 \
+  -p 8080:8080 \
+  -v $PWD/data:/pulsar/data \
+  apachepulsar/pulsar:2.0.1-incubating \
+  bin/pulsar standalone
+
 The Server is required to be running when you try the clients.
 
 And for the Client we have a total of three flavors: NB only 1st one working at the moment
