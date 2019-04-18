@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.AuthenticationValidationHandler;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
@@ -72,6 +73,7 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
         registry.bind("x509HostnameVerifier", new NoopHostnameVerifier());
+        registry.bind("sslContextParameters", new SSLContextParameters());
 
         return registry;
     }
@@ -80,7 +82,7 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
     public void httpsGetWithAuthentication() throws Exception {
 
         Exchange exchange = template.request("https4://127.0.0.1:" + localServer.getLocalPort() 
-            + "/?authUsername=camel&authPassword=password&x509HostnameVerifier=#x509HostnameVerifier", new Processor() {
+            + "/?authUsername=camel&authPassword=password&x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters", new Processor() {
                 public void process(Exchange exchange) throws Exception {
                 }
             });
