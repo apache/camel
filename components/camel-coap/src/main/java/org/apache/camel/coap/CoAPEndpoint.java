@@ -268,17 +268,21 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
     
     private Certificate[] getTrustedCerts() throws KeyStoreException {
-        Enumeration<String> aliases = truststore.aliases();
-        List<Certificate> trustCerts = new ArrayList<>();
-        while (aliases.hasMoreElements()) {
-            String alias = aliases.nextElement();
-            X509Certificate cert = (X509Certificate) truststore.getCertificate(alias);
-            if (cert != null) {
-                trustCerts.add(cert);
+        if (truststore != null) {
+            Enumeration<String> aliases = truststore.aliases();
+            List<Certificate> trustCerts = new ArrayList<>();
+            while (aliases.hasMoreElements()) {
+                String alias = aliases.nextElement();
+                X509Certificate cert = (X509Certificate) truststore.getCertificate(alias);
+                if (cert != null) {
+                    trustCerts.add(cert);
+                }
             }
+            
+            return trustCerts.toArray(new Certificate[0]);
         }
         
-        return trustCerts.toArray(new Certificate[0]);
+        return new Certificate[0];
     }
     
     public static boolean enableTLS(URI uri) {
@@ -286,10 +290,15 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
 
     public DTLSConnector createDTLSConnector(InetSocketAddress address, boolean client) {
-        if (getTruststore() == null) {
-            throw new IllegalStateException("A truststore must be configured to use TLS");
-        }
-        if (!client) {
+
+        DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder();
+        if (client) {
+            if (getTruststore() == null) {
+                throw new IllegalStateException("A truststore must be configured to use TLS");
+            }
+            
+            builder.setClientOnly();
+        } else {
             if (getKeystore() == null) {
                 throw new IllegalStateException("A keystore must be configured to use TLS");
             }
@@ -299,12 +308,11 @@ public class CoAPEndpoint extends DefaultEndpoint {
             if (getPassword() == null) {
                 throw new IllegalStateException("A password must be configured to use TLS");
             }
-        }
-
-        DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder();
-        if (client) {
-            builder.setClientOnly();
-        } else {
+            if ((isClientAuthenticationRequired() || isClientAuthenticationWanted())
+                && getTruststore() == null) {
+                throw new IllegalStateException("A truststore must be configured to support TLS client authentication");
+            }
+            
             builder.setAddress(address);
             builder.setClientAuthenticationRequired(isClientAuthenticationRequired());
             builder.setClientAuthenticationWanted(isClientAuthenticationWanted());
