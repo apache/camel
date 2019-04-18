@@ -79,6 +79,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
         }
     }
 
+    @Ignore //creation of app users could be used only with JWT authentication, which is not possible in this time
     @Test
     public void testCreateAppUser() throws Exception {
         com.box.sdk.BoxUser result = null;
@@ -107,6 +108,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
         }
     }
 
+    @Ignore //newly created user has to have unique and existing email address to be created. In manual execution, test could be un-ignored, but value for the "CamelBox.login" has to be changed.
     @Test
     public void testCreateEnterpriseUser() throws Exception {
         com.box.sdk.BoxUser result = null;
@@ -137,6 +139,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
         }
     }
 
+    @Ignore //creation of app users could be used only with JWT authentication, which is not possible in this time
     @Test
     public void testDeleteUser() throws Exception {
         BoxUser.Info info = BoxUser.createAppUser(getConnection(), CAMEL_TEST_CREATE_APP_USER_NAME);
@@ -242,6 +245,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
         }
     }
 
+    @Ignore //newly created user has to have unique and existing email address to be created. In manual execution, test could be un-ignored, but values for emails have to be changed.
     @Test
     public void testmMoveFolderToUser() throws Exception {
         BoxUser.Info user1 = BoxUser.createEnterpriseUser(getConnection(),
