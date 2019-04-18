@@ -56,7 +56,7 @@ public class BindyDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether to use csv, fixed or key value pairs mode.
+     * Whether to use Csv, Fixed, or KeyValue.
      */
     public void setType(BindyType type) {
         this.type = type;
