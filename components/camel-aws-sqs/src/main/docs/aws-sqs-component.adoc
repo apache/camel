@@ -334,7 +334,7 @@ of the route, use a Filter:
 
 [source,java]
 ------------------------------------------------------------------------------------------------------
-from("aws-sqs://MyQueue?amazonSQSClient=#client&defaultVisibilityTimeout=5000&deleteIfFiltered=false")
+from("aws-sqs://MyQueue?amazonSQSClient=#client&defaultVisibilityTimeout=5000&deleteIfFiltered=false&deleteAfterRead=false")
 .filter("${header.login} == true")
 .to("mock:result");
 ------------------------------------------------------------------------------------------------------
