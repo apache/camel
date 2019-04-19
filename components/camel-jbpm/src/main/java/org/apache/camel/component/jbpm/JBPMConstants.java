@@ -37,16 +37,16 @@ public interface JBPMConstants {
     String STATUS_LIST = "CamelJBPMStatusList";
     String RESULT_PAGE = "CamelJBPMResultPage";
     String RESULT_PAGE_SIZE = "CamelJBPMResultPageSize";
-    
-    
+
     String JBPM_PROCESS_EVENT_LISTENER = "process";
     String JBPM_TASK_EVENT_LISTENER = "task";
     String JBPM_CASE_EVENT_LISTENER = "case";
     String JBPM_EVENT_EMITTER = "emitter";
-    
+
     String GLOBAL_CAMEL_CONTEXT_SERVICE_KEY = "GlobalCamelService";
     String DEPLOYMENT_CAMEL_CONTEXT_SERVICE_KEY_POSTFIX = "_CamelService";
     String CAMEL_ENDPOINT_ID_WI_PARAM = "CamelEndpointId";
+    String HANDLE_EXCEPTION_WI_PARAM = "HandleExceptions";
     String RESPONSE_WI_PARAM = "Response";
     String MESSAGE_WI_PARAM = "Message";
     
