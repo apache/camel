@@ -26,6 +26,7 @@ import org.apache.camel.component.jbpm.JBPMConstants;
 import org.apache.camel.impl.DefaultHeadersMapFactory;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.drools.core.process.instance.impl.WorkItemImpl;
+import org.jbpm.bpmn2.handler.WorkItemHandlerRuntimeException;
 import org.jbpm.process.workitem.core.TestWorkItemManager;
 import org.jbpm.services.api.service.ServiceRegistry;
 import org.junit.Test;
@@ -36,6 +37,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.isA;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -226,6 +228,156 @@ public class InOutCamelWorkItemHandlerTest {
         // This is expected to throw an exception.
         handler.executeWorkItem(workItem, manager);
 
+    }
+    
+    @Test
+    public void testExecuteInOutLocalCamelContextDefaultHandleException() throws Exception {
+
+        String camelEndpointId = "testCamelRoute";
+        String camelRouteUri = "direct:" + camelEndpointId;
+
+        String testReponse = "testResponse";
+
+        String runtimeManagerId = "testRuntimeManager";
+        
+
+        when(runtimeManager.getIdentifier()).thenReturn(runtimeManagerId);
+
+        //Throw an error back to the WIH
+        when(producerTemplate.send(eq(camelRouteUri), ArgumentMatchers.any(Exchange.class))).thenThrow(new ToBeHandledException());
+        when(producerTemplate.getCamelContext()).thenReturn(camelContext);
+
+        when(camelContext.createProducerTemplate()).thenReturn(producerTemplate);
+        HeadersMapFactory hmf = new DefaultHeadersMapFactory();
+        when(camelContext.getHeadersMapFactory()).thenReturn(hmf);
+
+        // Register the RuntimeManager bound camelcontext.
+        try {
+            ServiceRegistry.get().register(runtimeManagerId + "_CamelService", camelContext);
+
+            WorkItemImpl workItem = new WorkItemImpl();
+            workItem.setParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM, camelEndpointId);
+            workItem.setParameter("Request", "someRequest");
+            workItem.setDeploymentId("testDeploymentId");
+            workItem.setProcessInstanceId(1L);
+            workItem.setId(1L);
+
+            AbstractCamelWorkItemHandler handler = new InOutCamelWorkItemHandler(runtimeManager);
+
+            TestWorkItemManager manager = new TestWorkItemManager();
+            try {
+            	handler.executeWorkItem(workItem, manager);
+            	throw new RuntimeException("The test expects an exception. This code should never be reached.");
+            } catch (Throwable wihRe) {
+            	assertThat(wihRe, is(instanceOf(WorkItemHandlerRuntimeException.class)));
+            	assertThat(wihRe.getCause(), is(instanceOf(ToBeHandledException.class)));
+            }
+
+        } finally {
+            ServiceRegistry.get().remove(runtimeManagerId + "_CamelService");
+        }
+    }
+
+    @Test
+    public void testExecuteInOutLocalCamelContextExplicitHandleException() throws Exception {
+
+        String camelEndpointId = "testCamelRoute";
+        String camelRouteUri = "direct:" + camelEndpointId;
+
+        String testReponse = "testResponse";
+
+        String runtimeManagerId = "testRuntimeManager";
+        
+
+        when(runtimeManager.getIdentifier()).thenReturn(runtimeManagerId);
+
+        //Throw an error back to the WIH
+        when(producerTemplate.send(eq(camelRouteUri), ArgumentMatchers.any(Exchange.class))).thenThrow(new ToBeHandledException());
+        when(producerTemplate.getCamelContext()).thenReturn(camelContext);
+
+        when(camelContext.createProducerTemplate()).thenReturn(producerTemplate);
+        HeadersMapFactory hmf = new DefaultHeadersMapFactory();
+        when(camelContext.getHeadersMapFactory()).thenReturn(hmf);
+
+        // Register the RuntimeManager bound camelcontext.
+        try {
+            ServiceRegistry.get().register(runtimeManagerId + "_CamelService", camelContext);
+
+            WorkItemImpl workItem = new WorkItemImpl();
+            workItem.setParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM, camelEndpointId);
+            workItem.setParameter("Request", "someRequest");
+            workItem.setParameter("HandleExceptions", true);
+            workItem.setDeploymentId("testDeploymentId");
+            workItem.setProcessInstanceId(1L);
+            workItem.setId(1L);
+
+            AbstractCamelWorkItemHandler handler = new InOutCamelWorkItemHandler(runtimeManager);
+
+            TestWorkItemManager manager = new TestWorkItemManager();
+            try {
+            	handler.executeWorkItem(workItem, manager);
+            	throw new RuntimeException("The test expects an exception. This code should never be reached.");
+            } catch (Throwable wihRe) {
+            	assertThat(wihRe, is(instanceOf(WorkItemHandlerRuntimeException.class)));
+            	assertThat(wihRe.getCause(), is(instanceOf(ToBeHandledException.class)));
+            }
+
+        } finally {
+            ServiceRegistry.get().remove(runtimeManagerId + "_CamelService");
+        }
+    }
+    
+    @Test
+    public void testExecuteInOutLocalCamelContextNotHandleException() throws Exception {
+
+        String camelEndpointId = "testCamelRoute";
+        String camelRouteUri = "direct:" + camelEndpointId;
+
+        String testReponse = "testResponse";
+
+        String runtimeManagerId = "testRuntimeManager";
+
+        when(runtimeManager.getIdentifier()).thenReturn(runtimeManagerId);
+
+        //Throw an error back to the WIH
+        when(producerTemplate.send(eq(camelRouteUri), ArgumentMatchers.any(Exchange.class))).thenThrow(new NotToBeHandledException());
+        when(producerTemplate.getCamelContext()).thenReturn(camelContext);
+
+        when(camelContext.createProducerTemplate()).thenReturn(producerTemplate);
+        HeadersMapFactory hmf = new DefaultHeadersMapFactory();
+        when(camelContext.getHeadersMapFactory()).thenReturn(hmf);
+
+        // Register the RuntimeManager bound camelcontext.
+        try {
+            ServiceRegistry.get().register(runtimeManagerId + "_CamelService", camelContext);
+
+            WorkItemImpl workItem = new WorkItemImpl();
+            workItem.setParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM, camelEndpointId);
+            workItem.setParameter("Request", "someRequest");
+            workItem.setParameter("HandleExceptions", false);
+            workItem.setDeploymentId("testDeploymentId");
+            workItem.setProcessInstanceId(1L);
+            workItem.setId(1L);
+
+            AbstractCamelWorkItemHandler handler = new InOutCamelWorkItemHandler(runtimeManager);
+
+            TestWorkItemManager manager = new TestWorkItemManager();
+            try {
+            	handler.executeWorkItem(workItem, manager);
+            	throw new RuntimeException("The test expects an exception. This code should never be reached.");
+            } catch (Throwable wihRe) {
+            	assertThat(wihRe, is(instanceOf(NotToBeHandledException.class)));
+            }
+
+        } finally {
+            ServiceRegistry.get().remove(runtimeManagerId + "_CamelService");
+        }
+    }
+    
+    public static class ToBeHandledException extends RuntimeException {
+    }
+    
+    public static class NotToBeHandledException extends RuntimeException {
     }
 
 }
