@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.jbpm.JBPMConstants;
+import org.jbpm.bpmn2.handler.WorkItemHandlerRuntimeException;
 import org.jbpm.process.workitem.core.AbstractLogOrThrowWorkItemHandler;
 import org.jbpm.services.api.service.ServiceRegistry;
 import org.kie.api.runtime.manager.RuntimeManager;
@@ -43,6 +44,11 @@ import org.slf4j.LoggerFactory;
  * {@link Message} is provided via the <code>Message</code> parameter. This gives the user access to more advanced fields like message
  * headers and attachments.
  * <p/>
+ * The handler can be configured to always wrap exceptions coming from Camel in a {@link WorkItemHandlerRuntimeException}. This is the default behaviour, but
+ * can also be explicitly configured by setting the <code>HandleExceptions</code> workitem parameter to <code>true</code>/ When
+ * the <code>HandleExceptions</code> workitem parameter is set to <code>false</code>, any exceptions coming from the Camel route will simply be
+ * re-thrown. This makes the Camel route's exception handling logic responsible for correctly handling any exceptions.
+ * <p/>
  * This handler can be constructed in multiple ways. When you don't pass a {@link RuntimeManager} to the constructor, the handler will try
  * to find the global KIE {@link CamelContext} from the <code>jBPM</code> {@link ServiceRegistry}. When the {@link RuntimeManager} is passed
  * to the constructor, the handler will retrieve and use the {@link CamelContext} bound to the {@link RuntimeManage} from the
@@ -58,11 +64,11 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
     private ProducerTemplate producerTemplate;
 
     private final String camelEndpointId;
-    
+
     private final String camelContextKey;
-    
+
     private boolean initialized;
-    
+
     /**
      * Default Constructor. This creates a {@link ProducerTemplate} for the global {@link CamelContext}.
      */
@@ -107,12 +113,31 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
         CamelContext camelContext = (CamelContext) ServiceRegistry.get().service(key);
         return this.producerTemplate = camelContext.createProducerTemplate();
     }
-    
-    
+
+
     public void executeWorkItem(WorkItem workItem, final WorkItemManager manager) {
         if (!initialized) {
             this.producerTemplate = buildProducerTemplate(camelContextKey);
             initialized = true;
+        }
+
+        /*
+         * By default we handle exceptions via the AbstractLogOrThrow superclass.
+         * However, the user can specify not to handle exceptions. This makes the Camel
+         * route responsible for implementing the handler logic and passing the {@link
+         * RuntimeExceotion) to be handled by the process.
+         */
+        Object isHandleExceptionParamValue = workItem.getParameter(JBPMConstants.HANDLE_EXCEPTION_WI_PARAM);
+        boolean isHandleException;
+        if (isHandleExceptionParamValue == null) {
+            isHandleException = true;
+        } else if (isHandleExceptionParamValue instanceof String) {
+            isHandleException = Boolean.parseBoolean((String)isHandleExceptionParamValue);
+        } else if (isHandleExceptionParamValue instanceof Boolean) {
+            isHandleException = ((Boolean)isHandleExceptionParamValue).booleanValue();
+        } else {
+            throw new IllegalArgumentException("Unsupported type '" + isHandleExceptionParamValue.getClass().getCanonicalName() + "' for workitem parameter '"
+                + JBPMConstants.HANDLE_EXCEPTION_WI_PARAM + "'.");
         }
 
         String workItemCamelEndpointId = getCamelEndpointId(workItem);
@@ -130,7 +155,16 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
             }
             handleResponse(responseExchange, workItem, manager);
         } catch (Exception e) {
-            handleException(e);
+            /*
+             * Handle the exception if 'HandleException' is enabled (which is the default).
+             * If it's not enabled, simply throw the exception. Note that in that case, the
+             * exception needs to be a RuntimeException.
+             */
+            if (isHandleException) {
+                handleException(e);
+            } else {
+                throw (RuntimeException)e;
+            }
         }
     }
 
