@@ -375,6 +375,17 @@ From Camel 3.0.0-M3 the component will be able to detect the presence of an Amaz
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
 This may be really useful for smarter configuration of the endpoint.
 
+### Send Batch Message and Message Deduplication Strategy
+
+In case you're using a SendBatchMessage Operation, you can set two different kind of Message Deduplication Strategy:
+- useExchangeId
+- useContentBasedDeduplication
+
+The first one will use a ExchangeIdMessageDeduplicationIdStrategy, that will use the Exchange ID as parameter
+The other one will use a NullMessageDeduplicationIdStrategy, that will use the body as deduplication element.
+
+In case of send batch message operation, you'll need to use the `useContentBasedDeduplication` and on the Queue you're pointing you'll need to enable the `content based deduplication` option.
+
 ### See Also
 
 * Configuring Camel
