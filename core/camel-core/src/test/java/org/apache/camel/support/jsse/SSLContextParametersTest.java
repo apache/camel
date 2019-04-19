@@ -175,7 +175,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
     @Test
     public void testServerParameters() throws Exception {
-        SSLContext controlContext = SSLContext.getInstance("TLS");
+        SSLContext controlContext = SSLContext.getInstance("TLSv1.2");
         controlContext.init(null, null, null);
         SSLEngine controlEngine = controlContext.createSSLEngine();
         SSLSocket controlSocket = (SSLSocket) controlContext.getSocketFactory().createSocket();
@@ -316,7 +316,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
     @Test
     public void testClientParameters() throws Exception {
-        SSLContext controlContext = SSLContext.getInstance("TLS");
+        SSLContext controlContext = SSLContext.getInstance("TLSv1.2");
         controlContext.init(null, null, null);
         SSLEngine controlEngine = controlContext.createSSLEngine();
         SSLSocket controlSocket = (SSLSocket) controlContext.getSocketFactory().createSocket();
@@ -440,7 +440,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
     @Test
     public void testCipherSuites() throws Exception {
-        SSLContext controlContext = SSLContext.getInstance("TLS");
+        SSLContext controlContext = SSLContext.getInstance("TLSv1.2");
         controlContext.init(null, null, null);
         SSLEngine controlEngine = controlContext.createSSLEngine();
         SSLSocket controlSocket = (SSLSocket) controlContext.getSocketFactory().createSocket();
@@ -508,7 +508,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
     @Test
     public void testCipherSuitesFilter() throws Exception {
-        SSLContext controlContext = SSLContext.getInstance("TLS");
+        SSLContext controlContext = SSLContext.getInstance("TLSv1.2");
         controlContext.init(null, null, null);
         SSLEngine controlEngine = controlContext.createSSLEngine();
         SSLSocket controlSocket = (SSLSocket) controlContext.getSocketFactory().createSocket();
@@ -658,7 +658,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
     @Test
     public void testSecureSocketProtocolsFilter() throws Exception {
-        SSLContext controlContext = SSLContext.getInstance("TLS");
+        SSLContext controlContext = SSLContext.getInstance("TLSv1.2");
         controlContext.init(null, null, null);
         SSLEngine controlEngine = controlContext.createSSLEngine();
         SSLSocket controlSocket = (SSLSocket) controlContext.getSocketFactory().createSocket();
@@ -759,7 +759,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
         SSLContext context = scp.createSSLContext(null);
 
-        assertEquals("TLS", context.getProtocol());
+        assertEquals("TLSv1.2", context.getProtocol());
 
         SSLEngine engine = context.createSSLEngine();
         SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
