@@ -22,8 +22,11 @@ import java.io.InputStream;
 import java.net.SocketException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -129,7 +132,12 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         }
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        InputStream is = new URL("https://localhost:" + port1 + "/hello").openStream();
+        URL url = new URL("https://localhost:" + port1 + "/hello");
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        SSLContext ssl = SSLContext.getInstance("TLSv1.2");
+        ssl.init(null, null, null);
+        connection.setSSLSocketFactory(ssl.getSocketFactory());
+        InputStream is = connection.getInputStream();
         int c;
         while ((c = is.read()) >= 0) {
             os.write(c);
@@ -157,19 +165,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
         template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port2 + "/test", expectedBody, "Content-Type", "application/xml");
     }
-    
-    protected void configureSslContextFactory(SslContextFactory sslContextFactory) {
-        sslContextFactory.setKeyManagerPassword(pwd);
-        sslContextFactory.setKeyStorePassword(pwd);
-        URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
-        try {
-            sslContextFactory.setKeyStorePath(keyStoreUrl.toURI().getPath());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-        sslContextFactory.setTrustStoreType("JKS");
-    }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
