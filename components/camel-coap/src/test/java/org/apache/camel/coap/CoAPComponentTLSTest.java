@@ -17,6 +17,8 @@
 package org.apache.camel.coap;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,20 +32,80 @@ import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.junit.Test;
 
 public class CoAPComponentTLSTest extends CamelTestSupport {
-    
+
     protected static final int PORT = AvailablePortFinder.getNextAvailable();
+    protected static final int PORT2 = AvailablePortFinder.getNextAvailable();
+    protected static final int PORT3 = AvailablePortFinder.getNextAvailable();
+    protected static final int PORT4 = AvailablePortFinder.getNextAvailable();
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate sender;
-    
+
     @Test
-    public void testTLS() throws Exception {
+    public void testSuccessfulCall() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello Camel CoAP");
         mock.expectedHeaderReceived(Exchange.CONTENT_TYPE, MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
         mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
-        sender.sendBodyAndHeader("Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
+        sendBodyAndHeader("direct:start", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testNoTruststore() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+        sendBodyAndHeader("direct:notruststore", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testTrustValidationFailed() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+        sendBodyAndHeader("direct:failedtrust", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testSelfSigned() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived("Hello Camel CoAP");
+        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE, MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
+        mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
+        sendBodyAndHeader("direct:selfsigned", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testClientAuthentication() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived("Hello Camel CoAP");
+        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE, MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
+        mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
+        sendBodyAndHeader("direct:clientauth", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testFailedClientAuthentication() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+        sendBodyAndHeader("direct:failedclientauth", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testCipherSuites() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived("Hello Camel CoAP");
+        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE, MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
+        mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
+        sendBodyAndHeader("direct:ciphersuites", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
         assertMockEndpointsSatisfied();
     }
 
@@ -54,13 +116,28 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
         KeyStoreParameters keystoreParameters = new KeyStoreParameters();
         keystoreParameters.setResource("service.jks");
         keystoreParameters.setPassword("security");
-        
+
+        KeyStoreParameters keystoreParameters2 = new KeyStoreParameters();
+        keystoreParameters2.setResource("selfsigned.jks");
+        keystoreParameters2.setPassword("security");
+
+        KeyStoreParameters keystoreParameters3 = new KeyStoreParameters();
+        keystoreParameters3.setResource("client.jks");
+        keystoreParameters3.setPassword("security");
+
         KeyStoreParameters truststoreParameters = new KeyStoreParameters();
         truststoreParameters.setResource("truststore.jks");
         truststoreParameters.setPassword("storepass");
-        
+
+        KeyStoreParameters truststoreParameters2 = new KeyStoreParameters();
+        truststoreParameters2.setResource("truststore2.jks");
+        truststoreParameters2.setPassword("storepass");
+
         registry.bind("keyParams", keystoreParameters);
+        registry.bind("keyParams2", keystoreParameters2);
+        registry.bind("keyParams3", keystoreParameters3);
         registry.bind("trustParams", truststoreParameters);
+        registry.bind("trustParams2", truststoreParameters2);
 
         return registry;
     }
@@ -75,10 +152,60 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
                       + "keyStoreParameters=#keyParams", PORT)
                     .transform(body().prepend("Hello "));
 
+                fromF("coaps://localhost:%d/TestResource?alias=selfsigned&password=security&"
+                    + "keyStoreParameters=#keyParams2", PORT2)
+                  .transform(body().prepend("Hello "));
+
+                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&"
+                    + "trustStoreParameters=#trustParams&"
+                    + "keyStoreParameters=#keyParams&clientAuthentication=REQUIRE", PORT3)
+                  .transform(body().prepend("Hello "));
+
+                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&"
+                    + "keyStoreParameters=#keyParams&cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8", PORT4)
+                  .transform(body().prepend("Hello "));
+
                 from("direct:start")
                     .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams", PORT)
                     .to("mock:result");
+
+                from("direct:notruststore")
+                    .toF("coaps://localhost:%d/TestResource", PORT)
+                    .to("mock:result");
+
+                from("direct:failedtrust")
+                    .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams2", PORT)
+                    .to("mock:result");
+
+                from("direct:selfsigned")
+                    .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#keyParams2", PORT2)
+                    .to("mock:result");
+
+                from("direct:clientauth")
+                    .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams&"
+                         + "keyStoreParameters=#keyParams3&alias=client&password=security", PORT3)
+                    .to("mock:result");
+
+                from("direct:failedclientauth")
+                    .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams&"
+                         + "keyStoreParameters=#keyParams2&alias=selfsigned&password=security", PORT3)
+                    .to("mock:result");
+
+                from("direct:ciphersuites")
+                    .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams&"
+                         + "cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8", PORT4)
+                    .to("mock:result");
             }
         };
+    }
+
+    protected void sendBodyAndHeader(String endpointUri, final Object body, String headerName, String headerValue) {
+        template.send(endpointUri, new Processor() {
+            public void process(Exchange exchange) {
+                Message in = exchange.getIn();
+                in.setBody(body);
+                in.setHeader(headerName, headerValue);
+            }
+        });
     }
 }
