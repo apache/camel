@@ -344,6 +344,11 @@ will not make it through the filter AND also not be deleted from the SQS
 queue. After 5000 miliseconds, the message will become visible to other
 consumers.
 
+### Available Producer Operations
+- single message (default)
+- sendBatchMessage (from Camel 3)
+- deleteMessage (from Camel 3)
+
 ### Send Batch Message
 
 From Camel 3.x we introduce the sendBatchMessage operation. You can set a `SendMessageBatchRequest` or an `Iterable`
