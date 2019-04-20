@@ -281,7 +281,7 @@
         <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
         <hibernate-validator-version>6.0.16.Final</hibernate-validator-version>
         <hibernate-version>5.2.16.Final</hibernate-version>
-        <hikaricp-version>2.3.13</hikaricp-version>
+        <hikaricp-version>2.4.13</hikaricp-version>
         <hk2-version>2.3.0</hk2-version>
         <hk2-osgi-resource-version>1.0.1</hk2-osgi-resource-version>
         <hsqldb-version>2.4.1</hsqldb-version>
