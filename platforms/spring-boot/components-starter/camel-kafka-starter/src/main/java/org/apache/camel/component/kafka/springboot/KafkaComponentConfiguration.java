@@ -422,8 +422,6 @@ public class KafkaComponentConfiguration
          * Default value is JKS
          */
         private String sslKeystoreType = "JKS";
-
-        // TODO : switch to TLSv1.3 when we fully upgrade to JDK11
         /**
          * The SSL protocol used to generate the SSLContext. Default setting is
          * TLS, which is fine for most cases. Allowed values in recent JVMs are
@@ -431,7 +429,7 @@ public class KafkaComponentConfiguration
          * older JVMs, but their usage is discouraged due to known security
          * vulnerabilities.
          */
-        private String sslProtocol = "TLSv1.2";
+        private String sslProtocol = "TLS";
         /**
          * The name of the security provider used for SSL connections. Default
          * value is the default security provider of the JVM.

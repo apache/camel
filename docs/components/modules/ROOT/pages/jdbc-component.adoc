@@ -150,7 +150,7 @@ header.
 |`CamelJdbcUpdateCount` |If the query is an `UPDATE`, query the update count is returned in this
 OUT header.
 
-|`CamelGeneratedKeysRows` |*Camel 2.10:* Rows that contains the generated kets.
+|`CamelGeneratedKeysRows` |*Camel 2.10:* Rows that contains the generated keys.
 
 |`CamelGeneratedKeysRowCount` |*Camel 2.10:* The number of rows in the header that contains generated
 keys.
