@@ -127,6 +127,9 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
                     event = null;
                     retry++;
                 } else {
+                    if(retry!=0){
+                        log.info("successfully connect to server");
+                    }
                     //if read the message successfully then we reset the retry count to 0.
                     retry = 0;
                     Exchange exchange = endpoint.createExchange();
@@ -153,7 +156,6 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
             }
 
         }
-        //todo how to handle long connection failure
         log.info("max connection retry reached! we are closing the endpoint!");
     }
 
