@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.apache.camel.language.LanguageAnnotation;
+import org.apache.camel.support.language.LanguageAnnotation;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

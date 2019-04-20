@@ -53,7 +53,7 @@ public class ConsumerTemplateMaximumCacheSizeTest extends SpringRunWithTestSuppo
         template.cleanUp();
 
         // eviction may still run a bit
-        assertTrue("Size should be around 50", (template.getCurrentCacheSize() <= 51));
+        assertTrue("Size should be around 50", template.getCurrentCacheSize() <= 51);
         template.stop();
 
         // should be 0

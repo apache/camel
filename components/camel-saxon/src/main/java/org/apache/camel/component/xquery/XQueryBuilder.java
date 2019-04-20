@@ -51,7 +51,6 @@ import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.IgnorableSpaceStrippingRule;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
-import net.sf.saxon.om.SpaceStrippingRule;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.query.DynamicQueryContext;
 import net.sf.saxon.query.StaticQueryContext;
@@ -64,7 +63,6 @@ import net.sf.saxon.value.Int64Value;
 import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.ObjectValue;
 import net.sf.saxon.value.StringValue;
-import net.sf.saxon.value.Whitespace;
 import org.apache.camel.BytesSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -74,7 +72,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.StringSource;
-import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.MessageHelper;
@@ -525,18 +522,6 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
                     source = getSource(exchange, is);
                 } else {
                     source = getSource(exchange, body);
-                }
-
-                // special for bean invocation
-                if (source == null) {
-                    if (body instanceof BeanInvocation) {
-                        // if its a null bean invocation then handle that
-                        BeanInvocation bi = exchange.getContext().getTypeConverter().convertTo(BeanInvocation.class, body);
-                        if (bi.getArgs() != null && bi.getArgs().length == 1 && bi.getArgs()[0] == null) {
-                            // its a null argument from the bean invocation so use null as answer
-                            source = null;
-                        }
-                    }
                 }
 
                 if (source == null) {

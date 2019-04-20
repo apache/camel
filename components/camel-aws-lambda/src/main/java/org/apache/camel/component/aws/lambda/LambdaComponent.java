@@ -17,10 +17,12 @@
 package org.apache.camel.component.aws.lambda;
 
 import java.util.Map;
+import java.util.Set;
+
+import com.amazonaws.services.lambda.AWSLambda;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -64,6 +66,7 @@ public class LambdaComponent extends DefaultComponent {
         if (ObjectHelper.isEmpty(configuration.getRegion())) {
             setRegion(region);
         }
+        checkAndSetRegistryClient(configuration);
         if (ObjectHelper.isEmpty(configuration.getAwsLambdaClient()) && (ObjectHelper.isEmpty(configuration.getAccessKey()) || ObjectHelper.isEmpty(configuration.getSecretKey()))) {
             throw new IllegalArgumentException("accessKey/secretKey or awsLambdaClient must be specified");
         }
@@ -114,5 +117,12 @@ public class LambdaComponent extends DefaultComponent {
      */
     public void setRegion(String region) {
         configuration.setRegion(region);
+    }
+    
+    private void checkAndSetRegistryClient(LambdaConfiguration configuration) {
+        Set<AWSLambda> clients = getCamelContext().getRegistry().findByType(AWSLambda.class);
+        if (clients.size() == 1) {
+            configuration.setAwsLambdaClient(clients.stream().findFirst().get());
+        }
     }
 }

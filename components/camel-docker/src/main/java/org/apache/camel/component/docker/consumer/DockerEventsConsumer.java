@@ -54,7 +54,7 @@ public class DockerEventsConsumer extends DefaultConsumer {
      * Determine the point in time to begin streaming events
      */
     private long processInitialEvent() {
-        long currentTime = new Date().getTime();
+        long currentTime = System.currentTimeMillis();
         Long initialRange = DockerHelper.getProperty(DockerConstants.DOCKER_INITIAL_RANGE, endpoint.getConfiguration(), null, Long.class);
         if (initialRange != null) {
             currentTime = currentTime - initialRange;

@@ -17,11 +17,13 @@
 package org.apache.camel.component.aws.sqs;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.amazonaws.regions.Regions;
+import com.amazonaws.services.sqs.AmazonSQS;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -80,7 +82,7 @@ public class SqsComponent extends DefaultComponent {
         if (ObjectHelper.isEmpty(configuration.getRegion())) {
             setRegion(region);
         }
-        
+        checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonSQSClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSQSClient or accessKey and secretKey must be specified.");
         }
@@ -137,5 +139,12 @@ public class SqsComponent extends DefaultComponent {
      */
     public void setRegion(String region) {
         configuration.setRegion(region);
+    }
+    
+    private void checkAndSetRegistryClient(SqsConfiguration configuration) {
+        Set<AmazonSQS> clients = getCamelContext().getRegistry().findByType(AmazonSQS.class);
+        if (clients.size() == 1) {
+            configuration.setAmazonSQSClient(clients.stream().findFirst().get());
+        }
     }
 }

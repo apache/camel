@@ -39,13 +39,11 @@
 	</camelContext>
 
   <camel:proxy id="sayProxy1"
-               binding="false"
  	             serviceInterface="org.apache.camel.spring.remoting.ISay"
  	             serviceUrl="direct:foo"
 	             camelContextId="context-1"/>
 
   <camel:proxy id="sayProxy2"
-               binding="false"
 	             serviceInterface="org.apache.camel.spring.remoting.ISay"
 	             serviceUrl="direct:foo"
 	             camelContextId="context-2"/>
@@ -58,11 +56,11 @@
 	   <property name="message" value="context-2" />
 	</bean>
 
-    <camel:export id="say1" uri="direct:sayImpl" serviceRef="sayService1"
+    <camel:export id="say1" uri="direct:sayImpl" serviceRef="sayService1" method="say"
                          serviceInterface="org.apache.camel.spring.remoting.ISay"
                          camelContextId="context-1"/>
     
-    <camel:export id="say2" uri="direct:sayImpl" serviceRef="sayService2"
+    <camel:export id="say2" uri="direct:sayImpl" serviceRef="sayService2" method="say"
                          serviceInterface="org.apache.camel.spring.remoting.ISay"
                          camelContextId="context-2"/>
  

@@ -19,4 +19,5 @@ package org.apache.camel.component.influxdb;
 public interface InfluxDbOperations {
     String INSERT = "insert";
     String QUERY = "query";
+    String PING = "ping";
 }

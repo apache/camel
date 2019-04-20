@@ -116,6 +116,9 @@
                 <includes>
                     <include>**/*</include>
                 </includes>
+                <excludes>
+                    <exclude>**/*.class</exclude>
+                </excludes>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
@@ -332,6 +335,7 @@
                                         <echo>Copying to code together for the XSD generation</echo>
                                         <mkdir dir="${project.build.directory}/schema-src"/>
                                         <mkdir dir="${project.build.directory}/schema"/>
+                                        <mkdir dir="${project.build.directory}/schema/META-INF/JAXB"/>
                                         <copy todir="${project.build.directory}/schema-src">
                                             <fileset dir="${basedir}/src/main/java">
                                                 <include name="org/apache/camel/blueprint/Camel*.java"/>
@@ -384,7 +388,7 @@
                                     <goal>run</goal>
                                 </goals>
                             </execution>
-                            <!-- after the eip-documentation-enricher we need to copy some shchema files -->
+                            <!-- after the eip-documentation-enricher we need to copy some schema files -->
                             <execution>
                                 <id>include-schemas</id>
                                 <phase>prepare-package</phase>
@@ -398,12 +402,14 @@
                                                  token="http://camel.apache.org/schema/spring"
                                                  value="http://camel.apache.org/schema/blueprint"/>
                                         <copy todir="${project.build.directory}/classes">
-                                            <fileset dir="${project.build.directory}/schema"/>
+                                            <fileset dir="${project.build.directory}/schema">
+                                                <exclude name="**/*.class"/>
+                                            </fileset>
                                         </copy>
                                         <!-- copy modified schemas back again in classes so they are included in the JAR -->
-                                        <copy todir="${project.build.directory}/classes">
-                                            <fileset dir="${project.build.directory}/schema"/>
-                                        </copy>
+                                        <fileset dir="${project.build.directory}/schema">
+                                            <exclude name="**/*.class"/>
+                                        </fileset>
                                     </target>
                                 </configuration>
                                 <goals>
@@ -535,6 +541,8 @@
                             <arguments>
                                 <argument>-d</argument>
                                 <argument>${project.build.directory}/schema</argument>
+                                <argument>-episode</argument>
+                                <argument>${project.build.directory}/schema/META-INF/JAXB/episode_generate-schema.xjb</argument>
                             </arguments>
                         </configuration>
                     </plugin>

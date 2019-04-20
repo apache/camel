@@ -93,7 +93,6 @@ public class ChatScriptBot {
     }
 
     public void reset() {
-        //TODO
     }
 
     public String getHost() {

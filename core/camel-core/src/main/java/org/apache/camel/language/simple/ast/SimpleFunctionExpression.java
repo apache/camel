@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.language.simple.SimpleExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.util.ObjectHelper;
@@ -102,7 +103,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${camelContext.OGNL} was: " + function, token.getIndex());
             }
-            return ExpressionBuilder.camelContextOgnlExpression(remainder);
+            return SimpleExpressionBuilder.camelContextOgnlExpression(remainder);
         }
 
         // Exception OGNL
@@ -112,7 +113,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${exception.OGNL} was: " + function, token.getIndex());
             }
-            return ExpressionBuilder.exchangeExceptionOgnlExpression(remainder);
+            return SimpleExpressionBuilder.exchangeExceptionOgnlExpression(remainder);
         }
 
         // exchange property
@@ -135,7 +136,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
             if (OgnlHelper.isValidOgnlExpression(remainder)) {
                 // ognl based property
-                return ExpressionBuilder.propertyOgnlExpression(remainder);
+                return SimpleExpressionBuilder.propertyOgnlExpression(remainder);
             } else {
                 // regular property
                 return ExpressionBuilder.exchangePropertyExpression(remainder);
@@ -159,7 +160,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${exchange.OGNL} was: " + function, token.getIndex());
             }
-            return ExpressionBuilder.exchangeOgnlExpression(remainder);
+            return SimpleExpressionBuilder.exchangeOgnlExpression(remainder);
         }
 
         // file: prefix
@@ -176,9 +177,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             String[] parts = remainder.split(":", 2);
             if (parts.length == 1) {
-                return ExpressionBuilder.dateExpression(parts[0]);
+                return SimpleExpressionBuilder.dateExpression(parts[0]);
             } else if (parts.length == 2) {
-                return ExpressionBuilder.dateExpression(parts[0], parts[1]);
+                return SimpleExpressionBuilder.dateExpression(parts[0], parts[1]);
             }
         }
 
@@ -189,7 +190,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (parts.length < 3) {
                 throw new SimpleParserException("Valid syntax: ${date-with-timezone:command:timezone:pattern} was: " + function, token.getIndex());
             }
-            return ExpressionBuilder.dateExpression(parts[0], parts[1], parts[2]);
+            return SimpleExpressionBuilder.dateExpression(parts[0], parts[1], parts[2]);
         }
 
         // bean: prefix
@@ -241,9 +242,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // const: prefix
         remainder = ifStartsWithReturnRemainder("type:", function);
         if (remainder != null) {
-            Expression exp = ExpressionBuilder.typeExpression(remainder);
+            Expression exp = SimpleExpressionBuilder.typeExpression(remainder);
             // we want to cache this expression so we wont re-evaluate it as the type/constant wont change
-            return ExpressionBuilder.cacheExpression(exp);
+            return SimpleExpressionBuilder.cacheExpression(exp);
         }
 
         // miscellaneous functions
@@ -274,7 +275,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 if (invalid) {
                     throw new SimpleParserException("Valid syntax: ${bodyAs(type).OGNL} was: " + function, token.getIndex());
                 }
-                return ExpressionBuilder.bodyOgnlExpression(type, remainder);
+                return SimpleExpressionBuilder.bodyOgnlExpression(type, remainder);
             } else {
                 return ExpressionBuilder.bodyExpression(type);
             }
@@ -294,9 +295,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 if (invalid) {
                     throw new SimpleParserException("Valid syntax: ${mandatoryBodyAs(type).OGNL} was: " + function, token.getIndex());
                 }
-                return ExpressionBuilder.mandatoryBodyOgnlExpression(type, remainder);
+                return SimpleExpressionBuilder.mandatoryBodyOgnlExpression(type, remainder);
             } else {
-                return ExpressionBuilder.mandatoryBodyExpression(type);
+                return SimpleExpressionBuilder.mandatoryBodyExpression(type);
             }
         }
 
@@ -312,7 +313,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${body.OGNL} was: " + function, token.getIndex());
             }
-            return ExpressionBuilder.bodyOgnlExpression(remainder);
+            return SimpleExpressionBuilder.bodyOgnlExpression(remainder);
         }
 
         // headerAs
@@ -370,7 +371,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
             if (OgnlHelper.isValidOgnlExpression(key)) {
                 // ognl based header
-                return ExpressionBuilder.headersOgnlExpression(key);
+                return SimpleExpressionBuilder.headersOgnlExpression(key);
             } else {
                 // regular header
                 return ExpressionBuilder.headerExpression(key);
@@ -415,7 +416,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         } else if (ObjectHelper.equal(expression, "stepId")) {
             return ExpressionBuilder.stepIdExpression();
         } else if (ObjectHelper.equal(expression, "null")) {
-            return ExpressionBuilder.nullExpression();
+            return SimpleExpressionBuilder.nullExpression();
         }
 
         return null;
@@ -423,33 +424,33 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
     private Expression createSimpleFileExpression(String remainder, boolean strict) {
         if (ObjectHelper.equal(remainder, "name")) {
-            return ExpressionBuilder.fileNameExpression();
+            return SimpleExpressionBuilder.fileNameExpression();
         } else if (ObjectHelper.equal(remainder, "name.noext")) {
-            return ExpressionBuilder.fileNameNoExtensionExpression();
+            return SimpleExpressionBuilder.fileNameNoExtensionExpression();
         } else if (ObjectHelper.equal(remainder, "name.noext.single")) {
-            return ExpressionBuilder.fileNameNoExtensionSingleExpression();
+            return SimpleExpressionBuilder.fileNameNoExtensionSingleExpression();
         } else if (ObjectHelper.equal(remainder, "name.ext") || ObjectHelper.equal(remainder, "ext")) {
-            return ExpressionBuilder.fileExtensionExpression();
+            return SimpleExpressionBuilder.fileExtensionExpression();
         } else if (ObjectHelper.equal(remainder, "name.ext.single")) {
-            return ExpressionBuilder.fileExtensionSingleExpression();
+            return SimpleExpressionBuilder.fileExtensionSingleExpression();
         } else if (ObjectHelper.equal(remainder, "onlyname")) {
-            return ExpressionBuilder.fileOnlyNameExpression();
+            return SimpleExpressionBuilder.fileOnlyNameExpression();
         } else if (ObjectHelper.equal(remainder, "onlyname.noext")) {
-            return ExpressionBuilder.fileOnlyNameNoExtensionExpression();
+            return SimpleExpressionBuilder.fileOnlyNameNoExtensionExpression();
         } else if (ObjectHelper.equal(remainder, "onlyname.noext.single")) {
-            return ExpressionBuilder.fileOnlyNameNoExtensionSingleExpression();
+            return SimpleExpressionBuilder.fileOnlyNameNoExtensionSingleExpression();
         } else if (ObjectHelper.equal(remainder, "parent")) {
-            return ExpressionBuilder.fileParentExpression();
+            return SimpleExpressionBuilder.fileParentExpression();
         } else if (ObjectHelper.equal(remainder, "path")) {
-            return ExpressionBuilder.filePathExpression();
+            return SimpleExpressionBuilder.filePathExpression();
         } else if (ObjectHelper.equal(remainder, "absolute")) {
-            return ExpressionBuilder.fileAbsoluteExpression();
+            return SimpleExpressionBuilder.fileAbsoluteExpression();
         } else if (ObjectHelper.equal(remainder, "absolute.path")) {
-            return ExpressionBuilder.fileAbsolutePathExpression();
+            return SimpleExpressionBuilder.fileAbsolutePathExpression();
         } else if (ObjectHelper.equal(remainder, "length") || ObjectHelper.equal(remainder, "size")) {
-            return ExpressionBuilder.fileSizeExpression();
+            return SimpleExpressionBuilder.fileSizeExpression();
         } else if (ObjectHelper.equal(remainder, "modified")) {
-            return ExpressionBuilder.fileLastModifiedExpression();
+            return SimpleExpressionBuilder.fileLastModifiedExpression();
         }
         if (strict) {
             throw new SimpleParserException("Unknown file language syntax: " + remainder, token.getIndex());
@@ -472,9 +473,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 if (tokens.length > 2) {
                     throw new SimpleParserException("Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
                 }
-                return ExpressionBuilder.randomExpression(tokens[0].trim(), tokens[1].trim());
+                return SimpleExpressionBuilder.randomExpression(tokens[0].trim(), tokens[1].trim());
             } else {
-                return ExpressionBuilder.randomExpression("0", values.trim());
+                return SimpleExpressionBuilder.randomExpression("0", values.trim());
             }
         }
 
@@ -487,7 +488,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             String exp = "${body}";
             int num = Integer.parseInt(values.trim());
-            return ExpressionBuilder.skipExpression(exp, num);
+            return SimpleExpressionBuilder.skipExpression(exp, num);
         }
 
         // collate function
@@ -499,7 +500,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             String exp = "${body}";
             int num = Integer.parseInt(values.trim());
-            return ExpressionBuilder.collateExpression(exp, num);
+            return SimpleExpressionBuilder.collateExpression(exp, num);
         }
 
         // messageHistory function
@@ -512,9 +513,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
             } else {
                 detailed = Boolean.valueOf(values);
             }
-            return ExpressionBuilder.messageHistoryExpression(detailed);
+            return SimpleExpressionBuilder.messageHistoryExpression(detailed);
         } else if (ObjectHelper.equal(function, "messageHistory")) {
-            return ExpressionBuilder.messageHistoryExpression(true);
+            return SimpleExpressionBuilder.messageHistoryExpression(true);
         }
         return null;
     }

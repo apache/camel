@@ -17,10 +17,12 @@
 package org.apache.camel.component.aws.swf;
 
 import java.util.Map;
+import java.util.Set;
+
+import com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -71,6 +73,7 @@ public class SWFComponent extends DefaultComponent {
         if (ObjectHelper.isEmpty(configuration.getRegion())) {
             setRegion(region);
         }
+        checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonSWClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSWClient or accessKey and secretKey must be specified.");
         }
@@ -119,5 +122,12 @@ public class SWFComponent extends DefaultComponent {
      */
     public void setRegion(String region) {
         configuration.setRegion(region);
+    }
+    
+    private void checkAndSetRegistryClient(SWFConfiguration configuration) {
+        Set<AmazonSimpleWorkflow> clients = getCamelContext().getRegistry().findByType(AmazonSimpleWorkflow.class);
+        if (clients.size() == 1) {
+            configuration.setAmazonSWClient(clients.stream().findFirst().get());
+        }
     }
 }

@@ -110,20 +110,7 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-
-
-
-### Message Headers
-
-[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
-|=======================================================================
-|Name |Default Value |Type |Context |Description
-
-| | | | |
-|=======================================================================
-
 ### Example
-
 
 Below is an example route that stores a point into the db (taking the db name from the URI)
 specific key:

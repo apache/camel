@@ -102,7 +102,7 @@ with the following path and query parameters:
 | *includeBody* (consumer) | If it is true, the exchange body will be set to a stream to the contents of the file. If false, the headers will be set with the S3 object metadata, but the body will be null. This option is strongly related to autocloseBody option. In case of setting includeBody to true and autocloseBody to false, it will be up to the caller to close the S3Object stream. Setting autocloseBody to true, will close the S3Object stream automatically. | true | boolean
 | *maxConnections* (consumer) | Set the maxConnections parameter in the S3 client configuration | 60 | int
 | *maxMessagesPerPoll* (consumer) | Gets the maximum number of messages as a limit to poll at each polling. Is default unlimited, but use 0 or negative number to disable it as unlimited. | 10 | int
-| *prefix* (consumer) | The delimiter which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
+| *prefix* (consumer) | The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *autocloseBody* (consumer) | If this option is true and includeBody is true, then the S3Object.close() method will be called on exchange completion. This option is strongly related to includeBody option. In case of setting includeBody to true and autocloseBody to false, it will be up to the caller to close the S3Object stream. Setting autocloseBody to true, will close the S3Object stream automatically. | true | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
@@ -184,7 +184,7 @@ The component supports 36 options, which are listed below.
 | *camel.component.aws-s3.configuration.path-style-access* | Whether or not the S3 client should use path style access | false | Boolean
 | *camel.component.aws-s3.configuration.payload-signing-enabled* | Define if Payload Signing enabled is true or false | false | Boolean
 | *camel.component.aws-s3.configuration.policy* | The policy for this queue to set in the `com.amazonaws.services.s3.AmazonS3#setBucketPolicy()` method. |  | String
-| *camel.component.aws-s3.configuration.prefix* | The delimiter which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
+| *camel.component.aws-s3.configuration.prefix* | The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
 | *camel.component.aws-s3.configuration.proxy-host* | To define a proxy host when instantiating the SQS client |  | String
 | *camel.component.aws-s3.configuration.proxy-port* | Specify a proxy port to be used inside the client definition. |  | Integer
 | *camel.component.aws-s3.configuration.region* | The region in which S3 client needs to work |  | String

@@ -16,11 +16,7 @@
  */
 package org.apache.camel.component.snakeyaml.springboot;
 
-import java.util.List;
 import javax.annotation.Generated;
-import org.apache.camel.component.snakeyaml.SnakeYAMLDataFormat;
-import org.apache.camel.model.dataformat.YAMLLibrary;
-import org.apache.camel.model.dataformat.YAMLTypeFilterDefinition;
 import org.apache.camel.spring.boot.DataFormatConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -40,10 +36,6 @@ public class SnakeYAMLDataFormatConfiguration
      * This is enabled by default.
      */
     private Boolean enabled;
-    /**
-     * Which yaml library to use. By default it is SnakeYAML
-     */
-    private YAMLLibrary library = YAMLLibrary.SnakeYAML;
     /**
      * Class name of the java type to use when unarmshalling
      */
@@ -78,24 +70,12 @@ public class SnakeYAMLDataFormatConfiguration
      */
     private Boolean allowAnyType = false;
     /**
-     * Set the types SnakeYAML is allowed to un-marshall
-     */
-    private List<YAMLTypeFilterDefinition> typeFilter;
-    /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
      * example application/xml for data formats marshalling to XML, or
      * application/json for data formats marshalling to JSon etc.
      */
     private Boolean contentTypeHeader = false;
-
-    public YAMLLibrary getLibrary() {
-        return library;
-    }
-
-    public void setLibrary(YAMLLibrary library) {
-        this.library = library;
-    }
 
     public String getUnmarshalTypeName() {
         return unmarshalTypeName;
@@ -160,14 +140,6 @@ public class SnakeYAMLDataFormatConfiguration
 
     public void setAllowAnyType(Boolean allowAnyType) {
         this.allowAnyType = allowAnyType;
-    }
-
-    public List<YAMLTypeFilterDefinition> getTypeFilter() {
-        return typeFilter;
-    }
-
-    public void setTypeFilter(List<YAMLTypeFilterDefinition> typeFilter) {
-        this.typeFilter = typeFilter;
     }
 
     public Boolean getContentTypeHeader() {

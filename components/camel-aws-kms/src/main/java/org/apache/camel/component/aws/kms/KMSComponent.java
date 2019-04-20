@@ -17,10 +17,12 @@
 package org.apache.camel.component.aws.kms;
 
 import java.util.Map;
+import java.util.Set;
+
+import com.amazonaws.services.kms.AWSKMS;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -66,6 +68,7 @@ public class KMSComponent extends DefaultComponent {
         if (ObjectHelper.isEmpty(configuration.getRegion())) {
             setRegion(region);
         }
+        checkAndSetRegistryClient(configuration);
         if (configuration.getKmsClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon kms client or accessKey and secretKey must be specified");
         }
@@ -118,4 +121,10 @@ public class KMSComponent extends DefaultComponent {
         configuration.setRegion(region);
     }
 
+    private void checkAndSetRegistryClient(KMSConfiguration configuration) {
+        Set<AWSKMS> clients = getCamelContext().getRegistry().findByType(AWSKMS.class);
+        if (clients.size() == 1) {
+            configuration.setKmsClient(clients.stream().findFirst().get());
+        }
+    }
 }

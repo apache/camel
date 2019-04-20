@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.disruptor.vm;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  *
  */
-public class DisruptorVmMultipleConsumersIssueTest extends ContextTestSupport {
+public class DisruptorVmMultipleConsumersIssueTest extends CamelTestSupport {
 
     @Test
     public void testDisruptorVmMultipleConsumersIssue() throws Exception {

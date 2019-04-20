@@ -369,12 +369,15 @@ protected RouteBuilder createRouteBuilder() throws Exception {
 
 And the corresponding resource class used to configure the endpoint...
 
-INFO:*Note about resource classes*
+[NOTE]
+====
+*Note about resource classes*
 
-By default, JAX-RS resource classes are *only*used to configure JAX-RS
+By default, JAX-RS resource classes are *only* used to configure JAX-RS
 properties. Methods will *not* be executed during routing of messages to
 the endpoint. Instead, it is the responsibility of the route to do all
 processing.
+====
 
 Note that starting from Camel 2.15 it is also sufficient to provide an
 interface only as opposed to a no-op service implementation class for

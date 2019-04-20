@@ -18,16 +18,16 @@ package org.apache.camel.component.disruptor.vm;
 
 import java.util.Iterator;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.disruptor.DisruptorComponent;
 import org.apache.camel.component.disruptor.DisruptorReference;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  *
  */
-public class DisruptorVmComponentReferenceEndpointTest extends ContextTestSupport {
+public class DisruptorVmComponentReferenceEndpointTest extends CamelTestSupport {
 
     @Test
     public void testDisruptorVmComponentReference() throws Exception {

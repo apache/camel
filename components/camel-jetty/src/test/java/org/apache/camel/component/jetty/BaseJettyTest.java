@@ -71,11 +71,13 @@ public abstract class BaseJettyTest extends CamelTestSupport {
 
     public void setSSLProps(JettyHttpComponent jetty, String path, String keyStorePasswd, String keyPasswd) {
         if (jettyVersion() == 9) {
+            jetty.addSslSocketConnectorProperty("protocol", "TLSv1.2");
             jetty.addSslSocketConnectorProperty("keyStorePassword", keyStorePasswd);
             jetty.addSslSocketConnectorProperty("keyManagerPassword", keyPasswd);
             jetty.addSslSocketConnectorProperty("keyStorePath", path);
             jetty.addSslSocketConnectorProperty("trustStoreType", "JKS");
         } else {
+            jetty.addSslSocketConnectorProperty("protocol", "TLSv1.2");
             jetty.addSslSocketConnectorProperty("password", keyStorePasswd);
             jetty.addSslSocketConnectorProperty("keyPassword", keyPasswd);
             jetty.addSslSocketConnectorProperty("keystore", path);

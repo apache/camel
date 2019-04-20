@@ -189,6 +189,7 @@
         <include>org.apache.camel:camel-jpa</include>
         <include>org.apache.camel:camel-jsch</include>
         <include>org.apache.camel:camel-json-validator</include>
+        <include>org.apache.camel:camel-jsonapi</include>
         <include>org.apache.camel:camel-jsonpath</include>
         <include>org.apache.camel:camel-jt400</include>
         <include>org.apache.camel:camel-kafka</include>
@@ -212,6 +213,7 @@
         <include>org.apache.camel:camel-milo</include>
         <include>org.apache.camel:camel-mina2</include>
         <include>org.apache.camel:camel-mllp</include>
+        <include>org.apache.camel:camel-mock</include>
         <include>org.apache.camel:camel-mongodb-gridfs</include>
         <include>org.apache.camel:camel-mongodb3</include>
         <include>org.apache.camel:camel-mqtt</include>
@@ -240,6 +242,7 @@
         <include>org.apache.camel:camel-properties</include>
         <include>org.apache.camel:camel-protobuf</include>
         <include>org.apache.camel:camel-pubnub</include>
+        <include>org.apache.camel:camel-pulsar</include>
         <include>org.apache.camel:camel-quartz2</include>
         <include>org.apache.camel:camel-quickfix</include>
         <include>org.apache.camel:camel-rabbitmq</include>
@@ -250,7 +253,6 @@
         <include>org.apache.camel:camel-rest-swagger</include>
         <include>org.apache.camel:camel-restlet</include>
         <include>org.apache.camel:camel-ribbon</include>
-        <include>org.apache.camel:camel-rmi</include>
         <include>org.apache.camel:camel-rss</include>
         <include>org.apache.camel:camel-rxjava2</include>
         <include>org.apache.camel:camel-saga</include>
@@ -323,6 +325,7 @@
         <include>org.apache.camel:camel-vm</include>
         <include>org.apache.camel:camel-weather</include>
         <include>org.apache.camel:camel-web3j</include>
+        <include>org.apache.camel:camel-webhook</include>
         <include>org.apache.camel:camel-websocket</include>
         <include>org.apache.camel:camel-websocket-jsr356</include>
         <include>org.apache.camel:camel-wordpress</include>
@@ -520,6 +523,7 @@
         <include>org.apache.camel:camel-jpa-starter</include>
         <include>org.apache.camel:camel-jsch-starter</include>
         <include>org.apache.camel:camel-json-validator-starter</include>
+        <include>org.apache.camel:camel-jsonapi-starter</include>
         <include>org.apache.camel:camel-jsonpath-starter</include>
         <include>org.apache.camel:camel-jt400-starter</include>
         <include>org.apache.camel:camel-kafka-starter</include>
@@ -542,6 +546,7 @@
         <include>org.apache.camel:camel-milo-starter</include>
         <include>org.apache.camel:camel-mina2-starter</include>
         <include>org.apache.camel:camel-mllp-starter</include>
+        <include>org.apache.camel:camel-mock-starter</include>
         <include>org.apache.camel:camel-mongodb-gridfs-starter</include>
         <include>org.apache.camel:camel-mongodb3-starter</include>
         <include>org.apache.camel:camel-mqtt-starter</include>
@@ -567,6 +572,7 @@
         <include>org.apache.camel:camel-properties-starter</include>
         <include>org.apache.camel:camel-protobuf-starter</include>
         <include>org.apache.camel:camel-pubnub-starter</include>
+        <include>org.apache.camel:camel-pulsar-starter</include>
         <include>org.apache.camel:camel-quartz2-starter</include>
         <include>org.apache.camel:camel-quickfix-starter</include>
         <include>org.apache.camel:camel-rabbitmq-starter</include>
@@ -577,7 +583,6 @@
         <include>org.apache.camel:camel-rest-swagger-starter</include>
         <include>org.apache.camel:camel-restlet-starter</include>
         <include>org.apache.camel:camel-ribbon-starter</include>
-        <include>org.apache.camel:camel-rmi-starter</include>
         <include>org.apache.camel:camel-rss-starter</include>
         <include>org.apache.camel:camel-rxjava2-starter</include>
         <include>org.apache.camel:camel-saga-starter</include>
@@ -642,6 +647,7 @@
         <include>org.apache.camel:camel-vm-starter</include>
         <include>org.apache.camel:camel-weather-starter</include>
         <include>org.apache.camel:camel-web3j-starter</include>
+        <include>org.apache.camel:camel-webhook-starter</include>
         <include>org.apache.camel:camel-websocket-jsr356-starter</include>
         <include>org.apache.camel:camel-websocket-starter</include>
         <include>org.apache.camel:camel-wordpress-starter</include>

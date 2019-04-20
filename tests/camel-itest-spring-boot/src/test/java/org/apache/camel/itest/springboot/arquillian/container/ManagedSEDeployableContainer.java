@@ -319,6 +319,10 @@ public class ManagedSEDeployableContainer implements DeployableContainer<Managed
         final List<String> command = new ArrayList<>();
         final File javaHome = new File(System.getProperty(SYSPROP_KEY_JAVA_HOME));
         command.add(javaHome.getAbsolutePath() + File.separator + "bin" + File.separator + "java");
+        if (getJavaMajorVersion() >= 9) {
+            command.add("--add-modules");
+            command.add("java.sql");
+        }
         command.add("-cp");
         StringBuilder builder = new StringBuilder();
         Set<File> classPathEntries = new HashSet<>(materializedFiles);
@@ -394,4 +398,12 @@ public class ManagedSEDeployableContainer implements DeployableContainer<Managed
         }
     }
 
+    private static int getJavaMajorVersion() {
+        String javaSpecVersion = System.getProperty("java.specification.version");
+        if (javaSpecVersion.contains(".")) { //before jdk 9
+            return Integer.parseInt(javaSpecVersion.split("\\.")[1]);
+        } else {
+            return Integer.parseInt(javaSpecVersion);
+        }
+    }
 }

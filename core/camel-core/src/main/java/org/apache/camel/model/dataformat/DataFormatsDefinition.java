@@ -59,6 +59,7 @@ public class DataFormatsDefinition {
         @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
         @XmlElement(required = false, name = "jibx", type = JibxDataFormat.class),
         @XmlElement(required = false, name = "json", type = JsonDataFormat.class),
+        @XmlElement(required = false, name = "jsonApi", type = JsonApiDataFormat.class),
         @XmlElement(required = false, name = "lzf", type = LZFDataFormat.class),
         @XmlElement(required = false, name = "mimeMultipart", type = MimeMultipartDataFormat.class),
         @XmlElement(required = false, name = "protobuf", type = ProtobufDataFormat.class),

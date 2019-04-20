@@ -18,7 +18,7 @@ package org.apache.camel.component.aws.swf.springboot;
 
 import java.util.Map;
 import javax.annotation.Generated;
-import com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient;
+import com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow;
 import com.amazonaws.services.simpleworkflow.flow.ActivitySchedulingOptions;
 import com.amazonaws.services.simpleworkflow.flow.DataConverter;
 import com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions;
@@ -160,7 +160,7 @@ public class SWFComponentConfiguration
         /**
          * To use the given AmazonSimpleWorkflowClient as client
          */
-        private AmazonSimpleWorkflowClient amazonSWClient;
+        private AmazonSimpleWorkflow amazonSWClient;
         /**
          * To configure the StartWorkflowOptions using the key/values from the
          * Map.
@@ -314,11 +314,11 @@ public class SWFComponentConfiguration
             this.sWClientParameters = sWClientParameters;
         }
 
-        public AmazonSimpleWorkflowClient getAmazonSWClient() {
+        public AmazonSimpleWorkflow getAmazonSWClient() {
             return amazonSWClient;
         }
 
-        public void setAmazonSWClient(AmazonSimpleWorkflowClient amazonSWClient) {
+        public void setAmazonSWClient(AmazonSimpleWorkflow amazonSWClient) {
             this.amazonSWClient = amazonSWClient;
         }
 

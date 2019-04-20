@@ -133,7 +133,7 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
     @Test
     public void testProxyBuilderProxyCallAnotherBean() throws Exception {
         // use ProxyBuilder to easily create the proxy
-        OrderService service = new ProxyBuilder(context).endpoint("direct:bean").binding(false).build(OrderService.class);
+        OrderService service = new ProxyBuilder(context).endpoint("direct:bean").build(OrderService.class);
 
         String reply = service.submitOrderStringReturnString("World");
         assertEquals("Hello World", reply);
@@ -152,7 +152,7 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
     @Test
     public void testProxyBuilderProxyCallAnotherBeanWithNoArgs() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:bean");
-        OrderService service = new ProxyBuilder(context).endpoint(endpoint).binding(false).build(OrderService.class);
+        OrderService service = new ProxyBuilder(context).endpoint(endpoint).build(OrderService.class);
 
         String reply = service.doAbsolutelyNothing();
         assertEquals("Hi nobody", reply);
@@ -174,7 +174,7 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
     @Test
     public void testProxyBuilderVoidAsInOut() throws Exception {
         // will by default let all exchanges be InOut
-        OrderService service = new ProxyBuilder(context).endpoint("seda:delay").binding(false).build(OrderService.class);
+        OrderService service = new ProxyBuilder(context).endpoint("seda:delay").build(OrderService.class);
 
         getMockEndpoint("mock:delay").expectedBodiesReceived("Hello World", "Bye World");
         service.doNothing("Hello World");

@@ -17,10 +17,12 @@
 package org.apache.camel.component.aws.iam;
 
 import java.util.Map;
+import java.util.Set;
+
+import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -66,6 +68,7 @@ public class IAMComponent extends DefaultComponent {
         if (ObjectHelper.isEmpty(configuration.getRegion())) {
             setRegion(region);
         }
+        checkAndSetRegistryClient(configuration);
         if (configuration.getIamClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon IAM client or accessKey and secretKey must be specified");
         }
@@ -118,4 +121,10 @@ public class IAMComponent extends DefaultComponent {
         configuration.setRegion(region);
     }
 
+    private void checkAndSetRegistryClient(IAMConfiguration configuration) {
+        Set<AmazonIdentityManagement> clients = getCamelContext().getRegistry().findByType(AmazonIdentityManagement.class);
+        if (clients.size() == 1) {
+            configuration.setIamClient(clients.stream().findFirst().get());
+        }
+    }
 }

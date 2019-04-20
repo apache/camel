@@ -19,6 +19,7 @@ package org.apache.camel.component.http4;
 import java.io.File;
 import java.io.FileInputStream;
 import java.security.KeyStore;
+import java.security.SecureRandom;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -30,7 +31,7 @@ public abstract class HttpsServerTestSupport extends HttpServerTestSupport {
 
     protected static final String KEYSTORE_PATH = "./src/test/resources/localhost.ks";
     protected static final File KEYSTORE = new File(KEYSTORE_PATH);
-    protected static final String SECURE_SOCKET_PROTOCOL = "TLS";
+    protected static final String SECURE_SOCKET_PROTOCOL = "TLSv1.2";
     protected static final String PASSWORD = "changeit";
 
     @Before

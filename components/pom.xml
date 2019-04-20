@@ -44,6 +44,7 @@
         <module>camel-directvm</module>
         <module>camel-language</module>
         <module>camel-log</module>
+        <module>camel-mock</module>
         <module>camel-ref</module>
         <module>camel-seda</module>
         <module>camel-stub</module>
@@ -208,6 +209,7 @@
         <module>camel-johnzon</module>
         <module>camel-jooq</module>
         <module>camel-jpa</module>
+        <module>camel-jsonapi</module>
         <module>camel-jsonpath</module>
         <module>camel-jsch</module>
         <module>camel-jt400</module>
@@ -254,6 +256,7 @@
         <module>camel-properties</module>
         <module>camel-protobuf</module>
         <module>camel-pubnub</module>
+        <module>camel-pulsar</module>
         <module>camel-quartz2</module>
         <module>camel-quickfix</module>
         <module>camel-rabbitmq</module>
@@ -262,7 +265,6 @@
         <module>camel-rest</module>
         <module>camel-rest-swagger</module>
         <module>camel-restlet</module>
-        <module>camel-rmi</module>
         <module>camel-rss</module>
         <module>camel-rxjava2</module>
         <module>camel-saga</module>
@@ -319,6 +321,7 @@
         <module>camel-vertx</module>
         <module>camel-weather</module>
         <module>camel-web3j</module>
+        <module>camel-webhook</module>
         <module>camel-websocket</module>
         <module>camel-websocket-jsr356</module>
         <module>camel-wordpress</module>

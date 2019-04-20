@@ -19,8 +19,6 @@ package org.apache.camel.component.http4;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.After;
@@ -54,14 +52,6 @@ public class HttpsSslContextParametersGetTest extends HttpsGetTest {
         if (localServer != null) {
             localServer.stop();
         }
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("sslContextParameters", new SSLContextParameters());
-
-        return registry;
     }
 
     @Test

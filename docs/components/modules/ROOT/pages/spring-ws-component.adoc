@@ -22,7 +22,10 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-INFO:*Dependencies*
+[NOTE]
+====
+*Dependencies*
+
 As of Camel 2.8 this component ships with Spring-WS 2.0.x which (like
 the rest of Camel) requires Spring 3.0.x.
 Earlier Camel versions shipped Spring-WS 1.5.9 which is compatible with
@@ -32,7 +35,8 @@ module from Spring 2.5.x. In order to run Spring-WS 1.5.9 on Spring
 3.0.x you need to exclude the OXM module from Spring 3.0.x as this
 module is also included in Spring-WS 1.5.9 (see
 http://stackoverflow.com/questions/3313314/can-spring-ws-1-5-be-used-with-spring-3[this
-post])
+post]).
+====
 
 ### URI format
 

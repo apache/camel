@@ -178,6 +178,24 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
     void setRoutePolicyList(List<RoutePolicy> routePolicyList);
 
     /**
+     * Sets whether the route should automatically start when Camel starts.
+     * <p/>
+     * Default is <tt>true</tt> to always start up.
+     *
+     * @param autoStartup whether to start up automatically.
+     */
+    void setAutoStartup(Boolean autoStartup);
+
+    /**
+     * Gets whether the route should automatically start when Camel starts.
+     * <p/>
+     * Default is <tt>true</tt> to always start up.
+     *
+     * @return <tt>true</tt> if route should automatically start
+     */
+    Boolean isAutoStartup();
+
+    /**
      * A private counter that increments, is used to as book keeping
      * when building a route based on the model
      * <p/>

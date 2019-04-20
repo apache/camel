@@ -20,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -40,6 +39,8 @@ import org.apache.camel.component.telegram.model.SendLocationMessage;
 import org.apache.camel.component.telegram.model.SendVenueMessage;
 import org.apache.camel.component.telegram.model.StopMessageLiveLocationMessage;
 import org.apache.camel.component.telegram.model.UpdateResult;
+import org.apache.camel.component.telegram.model.WebhookInfo;
+import org.apache.camel.component.telegram.model.WebhookResult;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
@@ -64,6 +65,18 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     @Override
     public UpdateResult getUpdates(String authorizationToken, Long offset, Integer limit, Integer timeoutSeconds) {
         return api.getUpdates(authorizationToken, offset, limit, timeoutSeconds);
+    }
+
+    @Override
+    public boolean setWebhook(String authorizationToken, String url) {
+        WebhookResult res = api.setWebhook(authorizationToken, new WebhookInfo(url));
+        return res.isOk() && res.isResult();
+    }
+
+    @Override
+    public boolean removeWebhook(String authorizationToken) {
+        WebhookResult res = api.setWebhook(authorizationToken, new WebhookInfo(""));
+        return res.isOk() && res.isResult();
     }
 
     @Override

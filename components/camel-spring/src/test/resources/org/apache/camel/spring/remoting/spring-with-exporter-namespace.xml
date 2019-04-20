@@ -31,11 +31,11 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
      <!-- START SNIPPET: proxy -->
      <!--  Creates a proxy to the direct:say endpoint. -->
-     <camel:proxy id="sayProxy" serviceUrl="direct:say" binding="false"
+     <camel:proxy id="sayProxy" serviceUrl="direct:say"
                       serviceInterface="org.apache.camel.spring.remoting.ISay"/>
      <!-- END SNIPPET: proxy -->
      <!-- START SNIPPET: export --> 
-     <camel:export id="say" uri="direct:sayImpl" serviceRef="sayService"
+     <camel:export id="say" uri="direct:sayImpl" serviceRef="sayService" method="say"
                          serviceInterface="org.apache.camel.spring.remoting.ISay"/>
      <!--
        The bean is defined out side of the camel  

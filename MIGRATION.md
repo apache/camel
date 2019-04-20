@@ -42,6 +42,7 @@ We have also modularized many of the core components and moved them out of `came
 - camel-file
 - camel-language
 - camel-log
+- camel-mock
 - camel-properties
 - camel-ref
 - camel-rest
@@ -64,6 +65,11 @@ The classes from `org.apache.camel.impl` that was intended to support Camel deve
 
 // TODO: Should we create a camel2-support JAR with an adapter to bridge between 2.x and 3.0
 
+Migrating custom languages
+--------------------------
+
+The `LanguageAnnotation` annotation class has been moved from packge `org.apache.camel.language` to `org.apache.camel.support.language`.
+
 Deprecated APIs and Components
 ------------------------------
 
@@ -82,9 +88,9 @@ The `test` component has been renamed to `dataset-test` and moved out of `camel-
 
 We have also renamed `camel-jetty9` to `camel-jetty`.
 
-### DataSet component
+### Mock component
 
-The `dataset` component has been moved out of `camel-core`, and is no longer a transient dependency from `camel-core`, and therefore you should add `camel-dataset` as dependency if you use this component.
+The `mock` component has been moved out of `camel-core` and as part of this work, we had to remove a number of methods on its _assertion clause builder_ that were seldom in use. Also we had to remove a few methods on `NotifyBuilder` that were using the `mock` component.
 
 ### ActiveMQ
 
@@ -154,6 +160,10 @@ also been deprecated in Camel 2.x. In Camel 3 we have removed the remaining code
 ### JSon DataFormat
 
 The default JSon library with the JSon dataformat has changed from `XStream` to `Jackson`.
+
+### Simple language
+
+The functionality to change the simple language tokens for start/end functions has been removed. The default tokens with `${xxx}` and `$simple{xxx}` is now hardcoded (optimized). The functionality to change these tokens was never really in use and would only confuse Camel users if a new syntax are in use.
 
 ### Moved APIs
 

@@ -21,7 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.vm.AbstractVmTestSupport;
 import org.junit.Test;
 
 public class DisruptorVmTimeoutIssueTest extends AbstractVmTestSupport {

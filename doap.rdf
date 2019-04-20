@@ -49,6 +49,12 @@ Rules for Camel's routing engine can be defined in either a Java based DSL or XM
     <category rdf:resource="http://projects.apache.org/category/osgi" />
     <category rdf:resource="http://projects.apache.org/category/network-server" />
     <category rdf:resource="http://projects.apache.org/category/network-client" />
+    <category rdf:resource="http://projects.apache.org/category/integration" />
+    <category rdf:resource="http://projects.apache.org/category/big-data" />
+    <category rdf:resource="http://projects.apache.org/category/cloud" />
+    <category rdf:resource="http://projects.apache.org/category/iot" />
+    <category rdf:resource="http://projects.apache.org/category/java" />
+    <category rdf:resource="http://projects.apache.org/category/library" />
     <maintainer>
       <foaf:Person>
         <foaf:name>Christian Mueller</foaf:name>

@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -61,6 +62,10 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
 
     public ExpressionDefinition getExpression() {
         return expression;
+    }
+
+    public void setExpression(Expression expression) {
+        setExpression(new ExpressionDefinition(expression));
     }
 
     public void setExpression(ExpressionDefinition expression) {
@@ -110,7 +115,10 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
                 // ExpressionClause which is a fancy builder to define expressions and predicates
                 // using fluent builders in the DSL. However we need afterwards a callback to
                 // reset the expression to the expression type the ExpressionClause did build for us
-                setExpression(clause.getExpressionType());
+                ExpressionFactory model = clause.getExpressionType();
+                if (model instanceof ExpressionDefinition) {
+                    setExpression((ExpressionDefinition) model);
+                }
             }
         }
 

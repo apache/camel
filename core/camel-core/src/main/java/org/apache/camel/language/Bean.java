@@ -23,6 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.apache.camel.component.bean.BeanAnnotationExpressionFactory;
+import org.apache.camel.support.language.LanguageAnnotation;
 
 /**
  * Used to inject a bean expression into a field, property, method or parameter when using

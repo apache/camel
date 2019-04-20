@@ -159,15 +159,19 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
                 index++;
             }
         } else {
-            // no binding so use the old behavior with BeanInvocation as the body
-            BeanInvocation invocation = new BeanInvocation(method, args);
-            exchange.getIn().setBody(invocation);
+            if (args != null) {
+                if (args.length == 1) {
+                    exchange.getIn().setBody(args[0]);
+                } else {
+                    exchange.getIn().setBody(args);
+                }
+            }
         }
 
         if (binding) {
             LOG.trace("Binding to service interface as @Body,@Header,@ExchangeProperty detected when calling proxy method: {}", method);
         } else {
-            LOG.trace("No binding to service interface as @Body,@Header,@ExchangeProperty not detected. Using BeanInvocation as message body when calling proxy method: {}", method);
+            LOG.trace("No binding to service interface as @Body,@Header,@ExchangeProperty not detected when calling proxy method: {}", method);
         }
 
         return doInvoke(method, exchange);

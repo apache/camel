@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.swf;
 
 import java.util.Map;
 
+import com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow;
 import com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient;
 import com.amazonaws.services.simpleworkflow.flow.ActivitySchedulingOptions;
 import com.amazonaws.services.simpleworkflow.flow.DataConverter;
@@ -38,7 +39,7 @@ public class SWFConfiguration implements Cloneable {
     @Metadata(required = true)
     private String type;
     @UriParam
-    private AmazonSimpleWorkflowClient amazonSWClient;
+    private AmazonSimpleWorkflow amazonSWClient;
     @UriParam(label = "security", secret = true)
     private String accessKey;
     @UriParam(label = "security", secret = true)
@@ -213,14 +214,14 @@ public class SWFConfiguration implements Cloneable {
         this.sWClientParameters = sWClientParameters;
     }
 
-    public AmazonSimpleWorkflowClient getAmazonSWClient() {
+    public AmazonSimpleWorkflow getAmazonSWClient() {
         return amazonSWClient;
     }
 
     /**
      * To use the given AmazonSimpleWorkflowClient as client
      */
-    public void setAmazonSWClient(AmazonSimpleWorkflowClient amazonSWClient) {
+    public void setAmazonSWClient(AmazonSimpleWorkflow amazonSWClient) {
         this.amazonSWClient = amazonSWClient;
     }
 

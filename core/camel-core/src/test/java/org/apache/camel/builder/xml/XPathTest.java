@@ -41,6 +41,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.support.builder.xml.Namespaces;
 import org.apache.camel.util.StringHelper;
 import org.junit.Test;
 

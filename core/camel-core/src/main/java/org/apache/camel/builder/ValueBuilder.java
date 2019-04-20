@@ -24,10 +24,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
+import org.apache.camel.support.builder.xml.Namespaces;
 
 /**
  * A builder of expressions or predicates based on values.
@@ -92,11 +92,12 @@ public class ValueBuilder implements Expression, Predicate {
         final Expression right = new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
-                if (answer.getExpressionValue() != null) {
+                return answer.evaluate(exchange, Object.class);
+                /*if (answer.getExpressionValue() != null) {
                     return answer.getExpressionValue().evaluate(exchange, Object.class);
                 } else {
                     return answer.getExpressionType().evaluate(exchange);
-                }
+                }*/
             }
         };
         // okay now we can set the reference to the right-hand-side
@@ -332,17 +333,6 @@ public class ValueBuilder implements Expression, Predicate {
      */
     public ValueBuilder sort(Comparator<?> comparator) {
         Expression newExp = ExpressionBuilder.sortExpression(expression, comparator);
-        return onNewValueBuilder(newExp);
-    }
-
-    /**
-     * Invokes the method with the given name (supports OGNL syntax).
-     *
-     * @param methodName  name of method to invoke.
-     * @return the current builder
-     */
-    public ValueBuilder method(String methodName) {
-        Expression newExp = ExpressionBuilder.ognlExpression(expression, methodName);
         return onNewValueBuilder(newExp);
     }
 

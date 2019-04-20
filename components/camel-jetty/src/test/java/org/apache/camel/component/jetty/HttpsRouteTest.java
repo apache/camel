@@ -25,13 +25,19 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.After;
@@ -70,6 +76,16 @@ public class HttpsRouteTest extends BaseJettyTest {
     public void tearDown() throws Exception {
         restoreSystemProperties();
         super.tearDown();
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        SSLContextParameters sslContextParameters = new SSLContextParameters();
+        sslContextParameters.setSecureSocketProtocol("TLSv1.2");
+        context.setSSLContextParameters(sslContextParameters);
+        ((SSLContextParametersAware) context.getComponent("https")).setUseGlobalSslContextParameters(true);
+        return context;
     }
 
     protected void setSystemProp(String key, String value) {
@@ -142,7 +158,12 @@ public class HttpsRouteTest extends BaseJettyTest {
         }
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        InputStream is = new URL("https://localhost:" + port1 + "/hello").openStream();
+        URL url = new URL("https://localhost:" + port1 + "/hello");
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        SSLContext ssl = SSLContext.getInstance("TLSv1.2");
+        ssl.init(null, null, null);
+        connection.setSSLSocketFactory(ssl.getSocketFactory());
+        InputStream is = connection.getInputStream();
         int c;
         while ((c = is.read()) >= 0) {
             os.write(c);
@@ -181,6 +202,7 @@ public class HttpsRouteTest extends BaseJettyTest {
             throw new RuntimeException(e.getMessage(), e);
         }
         sslContextFactory.setTrustStoreType("JKS");
+        sslContextFactory.setProtocol("TLSv1.2");
     }
     
     @Override

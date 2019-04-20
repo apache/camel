@@ -105,56 +105,6 @@ public final class SimpleTokenizer {
     }
 
     /**
-     * @see SimpleLanguage#changeFunctionStartToken(String...)
-     */
-    public static void changeFunctionStartToken(String... startToken) {
-        for (SimpleTokenType type : KNOWN_TOKENS) {
-            if (type.getType() == TokenType.functionStart) {
-                KNOWN_TOKENS.remove(type);
-            }
-        }
-
-        if (startToken.length > 2) {
-            throw new IllegalArgumentException("At most 2 start tokens is allowed");
-        }
-
-        // reset
-        FUNCTION_START[0] = "";
-        FUNCTION_START[1] = "";
-
-        // add in start of list as its a more common token to be used
-        for (int i = 0; i < startToken.length; i++) {
-            String token = startToken[i];
-            FUNCTION_START[i] = token;
-            KNOWN_TOKENS.add(0, new SimpleTokenType(TokenType.functionStart, token));
-        }
-    }
-
-    /**
-     * @see SimpleLanguage#changeFunctionEndToken(String...)
-     */
-    public static void changeFunctionEndToken(String... endToken) {
-        for (SimpleTokenType type : KNOWN_TOKENS) {
-            if (type.getType() == TokenType.functionEnd) {
-                KNOWN_TOKENS.remove(type);
-            }
-        }
-
-        // add after the start tokens
-        int pos = 0;
-        for (SimpleTokenType type : KNOWN_TOKENS) {
-            if (type.getType() == TokenType.functionStart) {
-                pos++;
-            }
-        }
-
-        // add after function start of list as its a more common token to be used
-        for (String token : endToken) {
-            KNOWN_TOKENS.add(pos, new SimpleTokenType(TokenType.functionEnd, token));
-        }
-    }
-
-    /**
      * Create the next token
      *
      * @param expression  the input expression

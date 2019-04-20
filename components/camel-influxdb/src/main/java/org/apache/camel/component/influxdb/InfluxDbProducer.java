@@ -24,6 +24,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.influxdb.InfluxDB;
 import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
+import org.influxdb.dto.Pong;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 
@@ -65,6 +66,9 @@ public class InfluxDbProducer extends DefaultProducer {
         case InfluxDbOperations.QUERY:
             doQuery(exchange, dataBaseName, retentionPolicy);
             break;
+        case InfluxDbOperations.PING:
+            doPing(exchange);
+            break;
         default:
             throw new IllegalArgumentException("The operation " + endpoint.getOperation() + " is not supported");
         }
@@ -104,6 +108,12 @@ public class InfluxDbProducer extends DefaultProducer {
         QueryResult resultSet = connection.query(influxdbQuery);
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(resultSet);
+    }
+    
+    private void doPing(Exchange exchange) {
+        Pong result = connection.ping();
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
+        exchange.getOut().setBody(result);
     }
 
     private String calculateRetentionPolicy(Exchange exchange) {

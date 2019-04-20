@@ -308,5 +308,6 @@ The maven plugin *coverage* goal supports the following options which can be con
  By using route id's then its safer to match the route cover data with the route source code.
  Anonymous routes are less safe to use for route coverage as its harder to know exactly which route
  that was tested corresponds to which of the routes from the source code.
+| generateJacocoXmlReport | false | Whether to generate a coverage-report in Jacoco XML format, when enabled it will generate a file: `target/site/jacoco/xmlJacoco.xml`
 |===
 

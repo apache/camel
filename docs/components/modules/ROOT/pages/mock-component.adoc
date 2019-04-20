@@ -1,0 +1,486 @@
+[[mock-component]]
+== Mock Component
+
+*Available as of Camel version 1.0*
+
+Testing of distributed and asynchronous processing is
+notoriously difficult. The <<mock-component,Mock>>, <<mock-component,Test>>
+and <<dataset-component,DataSet>> endpoints work great with the
+Camel Testing Framework to simplify your unit and
+integration testing using
+link:enterprise-integration-patterns.html[Enterprise Integration
+Patterns] and Camel's large range of Components
+together with the powerful Bean Integration.
+
+The Mock component provides a powerful declarative testing mechanism,
+which is similar to http://www.jmock.org[jMock] in
+that it allows declarative expectations to be created on any Mock
+endpoint before a test begins. Then the test is run, which typically
+fires messages to one or more endpoints, and finally the expectations
+can be asserted in a test case to ensure the system worked as expected.
+
+This allows you to test various things like:
+
+* The correct number of messages are received on each endpoint,
+* The correct payloads are received, in the right order,
+* Messages arrive on an endpoint in order, using some
+Expression to create an order testing function,
+* Messages arrive match some kind of Predicate such
+as that specific headers have certain values, or that parts of the
+messages match some predicate, such as by evaluating an
+<<xpath-language,XPath>> or <<xpath-language,XQuery>>
+Expression.
+
+[NOTE]
+There is also the <<test-component,Test endpoint>> which is a
+Mock endpoint, but which uses a second endpoint to provide the list of
+expected message bodies and automatically sets up the Mock endpoint
+assertions. In other words, it's a Mock endpoint that automatically sets
+up its assertions from some sample messages in a File
+or <<jpa-component,database>>, for example.
+
+[CAUTION]
+*Mock endpoints keep received Exchanges in memory indefinitely.* +
+ +
+Remember that Mock is designed for testing. When you add Mock endpoints
+to a route, each Exchange sent to the endpoint will
+be stored (to allow for later validation) in memory until explicitly
+reset or the JVM is restarted. If you are sending high volume and/or
+large messages, this may cause excessive memory use. If your goal is to
+test deployable routes inline, consider using
+NotifyBuilder or
+AdviceWith in your tests instead of adding Mock
+endpoints to routes directly. +
+ +
+From Camel 2.10 onwards there are two new options `retainFirst`, and
+`retainLast` that can be used to limit the number of messages the Mock
+endpoints keep in memory.
+
+
+=== URI format
+
+[source]
+----
+mock:someName[?options]
+----
+
+Where `someName` can be any string that uniquely identifies the
+endpoint.
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+=== Options
+
+
+
+
+// component options: START
+The Mock component has no options.
+// component options: END
+
+
+
+
+
+
+// endpoint options: START
+The Mock endpoint is configured using URI syntax:
+
+----
+mock:name
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | *Required* Name of mock endpoint |  | String
+|===
+
+
+==== Query Parameters (10 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *assertPeriod* (producer) | Sets a grace period after which the mock endpoint will re-assert to ensure the preliminary assertion is still valid. This is used for example to assert that exactly a number of messages arrives. For example if expectedMessageCount(int) was set to 5, then the assertion is satisfied when 5 or more message arrives. To ensure that exactly 5 messages arrives, then you would need to wait a little period to ensure no further message arrives. This is what you can use this method for. By default this period is disabled. | 0 | long
+| *expectedCount* (producer) | Specifies the expected number of message exchanges that should be received by this endpoint. Beware: If you want to expect that 0 messages, then take extra care, as 0 matches when the tests starts, so you need to set a assert period time to let the test run for a while to make sure there are still no messages arrived; for that use setAssertPeriod(long). An alternative is to use NotifyBuilder, and use the notifier to know when Camel is done routing some messages, before you call the assertIsSatisfied() method on the mocks. This allows you to not use a fixed assert period, to speedup testing times. If you want to assert that exactly n'th message arrives to this mock endpoint, then see also the setAssertPeriod(long) method for further details. | -1 | int
+| *reportGroup* (producer) | A number that is used to turn on throughput logging based on groups of the size. |  | int
+| *resultMinimumWaitTime* (producer) | Sets the minimum expected amount of time (in millis) the assertIsSatisfied() will wait on a latch until it is satisfied | 0 | long
+| *resultWaitTime* (producer) | Sets the maximum amount of time (in millis) the assertIsSatisfied() will wait on a latch until it is satisfied | 0 | long
+| *retainFirst* (producer) | Specifies to only retain the first n'th number of received Exchanges. This is used when testing with big data, to reduce memory consumption by not storing copies of every Exchange this mock endpoint receives. Important: When using this limitation, then the getReceivedCounter() will still return the actual number of received Exchanges. For example if we have received 5000 Exchanges, and have configured to only retain the first 10 Exchanges, then the getReceivedCounter() will still return 5000 but there is only the first 10 Exchanges in the getExchanges() and getReceivedExchanges() methods. When using this method, then some of the other expectation methods is not supported, for example the expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received. You can configure both setRetainFirst(int) and setRetainLast(int) methods, to limit both the first and last received. | -1 | int
+| *retainLast* (producer) | Specifies to only retain the last n'th number of received Exchanges. This is used when testing with big data, to reduce memory consumption by not storing copies of every Exchange this mock endpoint receives. Important: When using this limitation, then the getReceivedCounter() will still return the actual number of received Exchanges. For example if we have received 5000 Exchanges, and have configured to only retain the last 20 Exchanges, then the getReceivedCounter() will still return 5000 but there is only the last 20 Exchanges in the getExchanges() and getReceivedExchanges() methods. When using this method, then some of the other expectation methods is not supported, for example the expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received. You can configure both setRetainFirst(int) and setRetainLast(int) methods, to limit both the first and last received. | -1 | int
+| *sleepForEmptyTest* (producer) | Allows a sleep to be specified to wait to check that this endpoint really is empty when expectedMessageCount(int) is called with zero | 0 | long
+| *copyOnExchange* (producer) | Sets whether to make a deep copy of the incoming Exchange when received at this mock endpoint. Is by default true. | true | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+
+
+=== Simple Example
+
+Here's a simple example of Mock endpoint in use. First, the endpoint is
+resolved on the context. Then we set an expectation, and then, after the
+test has run, we assert that our expectations have been met:
+
+[source,java]
+----
+MockEndpoint resultEndpoint = context.resolveEndpoint("mock:foo", MockEndpoint.class);
+
+// set expectations
+resultEndpoint.expectedMessageCount(2);
+
+// send some messages
+
+// now lets assert that the mock:foo endpoint received 2 messages
+resultEndpoint.assertIsSatisfied();
+----
+
+You typically always call the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#assertIsSatisfied()[`assertIsSatisfied()`]
+method to test that the expectations were met after running a test.
+
+Camel will by default wait 10 seconds when the `assertIsSatisfied()` is
+invoked. This can be configured by setting the
+`setResultWaitTime(millis)` method.
+
+=== Using assertPeriod
+
+*Available as of Camel 2.7* +
+When the assertion is satisfied then Camel will stop waiting and
+continue from the `assertIsSatisfied` method. That means if a new
+message arrives on the mock endpoint, just a bit later, that arrival
+will not affect the outcome of the assertion. Suppose you do want to
+test that no new messages arrives after a period thereafter, then you
+can do that by setting the `setAssertPeriod` method, for example:
+
+[source,java]
+----
+MockEndpoint resultEndpoint = context.resolveEndpoint("mock:foo", MockEndpoint.class);
+resultEndpoint.setAssertPeriod(5000);
+resultEndpoint.expectedMessageCount(2);
+
+// send some messages
+
+// now lets assert that the mock:foo endpoint received 2 messages
+resultEndpoint.assertIsSatisfied();
+----
+
+=== Setting expectations
+
+You can see from the Javadoc of
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html[MockEndpoint]
+the various helper methods you can use to set expectations. The main
+methods are as follows:
+
+[width="100%",cols="1m,1",options="header",]
+|===
+|Method |Description
+|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#expectedMessageCount(int)[expectedMessageCount(int)]
+|To define the expected message count on the endpoint.
+
+|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#expectedMinimumMessageCount(int)[expectedMinimumMessageCount(int)]
+|To define the minimum number of expected messages on the endpoint.
+
+|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#expectedBodiesReceived(java.lang.Object...)[expectedBodiesReceived(...)]
+|To define the expected bodies that should be received (in order).
+
+|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#expectedHeaderReceived(java.lang.String,%20java.lang.String)[expectedHeaderReceived(...)]
+|To define the expected header that should be received
+
+|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#expectsAscending(org.apache.camel.Expression)[expectsAscending(Expression)]
+|To add an expectation that messages are received in order, using the
+given Expression to compare messages.
+
+|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#expectsDescending(org.apache.camel.Expression)[expectsDescending(Expression)]
+|To add an expectation that messages are received in order, using the
+given Expression to compare messages.
+
+|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#expectsNoDuplicates(org.apache.camel.Expression)[expectsNoDuplicates(Expression)]
+|To add an expectation that no duplicate messages are received; using an
+Expression to calculate a unique identifier for
+each message. This could be something like the `JMSMessageID` if using
+JMS, or some unique reference number within the message.
+|===
+
+Here's another example:
+
+[source,java]
+----
+resultEndpoint.expectedBodiesReceived("firstMessageBody", "secondMessageBody", "thirdMessageBody");
+----
+
+=== Adding expectations to specific messages
+
+In addition, you can use the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#message(int)[`message(int
+messageIndex)`] method to add assertions about a specific message that is
+received.
+
+For example, to add expectations of the headers or body of the first
+message (using zero-based indexing like `java.util.List`), you can use
+the following code:
+
+[source,java]
+----
+resultEndpoint.message(0).header("foo").isEqualTo("bar");
+----
+
+There are some examples of the Mock endpoint in use in the
+https://github.com/apache/camel/tree/master/camel-core/src/test/java/org/apache/camel/processor/[`camel-core`
+processor tests].
+
+=== Mocking existing endpoints
+
+*Available as of Camel 2.7*
+
+Camel now allows you to automatically mock existing endpoints in your
+Camel routes.
+
+[NOTE]
+*How it works* The endpoints are still in action. What happens differently
+is that a <<mock-component,Mock>> endpoint is injected and receives the
+message first and then delegates the message to the target endpoint. You
+can view this as a kind of intercept and delegate or endpoint listener.
+
+Suppose you have the given route below:
+
+[source,java]
+.*Route*
+----
+include::../../test/java/org/apache/camel/processor/interceptor/AdviceWithMockEndpointsTest.java[tags=route]
+----
+
+You can then use the `adviceWith` feature in Camel to mock all the
+endpoints in a given route from your unit test, as shown below:
+
+[source,java]
+.*`adviceWith` mocking all endpoints*
+----
+include::../../test/java/org/apache/camel/processor/interceptor/AdviceWithMockEndpointsTest.java[tags=e1]
+----
+
+Notice that the mock endpoints is given the URI `mock:<endpoint>`, for
+example `mock:direct:foo`. Camel logs at `INFO` level the endpoints
+being mocked:
+
+[source]
+----
+INFO  Adviced endpoint [direct://foo] with mock endpoint [mock:direct:foo]
+----
+
+[NOTE]
+ **Mocked endpoints are without parameters** +
+Endpoints which are mocked will have their parameters stripped off. For
+example the endpoint `log:foo?showAll=true` will be mocked to the
+following endpoint `mock:log:foo`. Notice the parameters have been
+removed.
+
+Its also possible to only mock certain endpoints using a pattern. For
+example to mock all `log` endpoints you do as shown:
+
+[source,java]
+.*`adviceWith` mocking only log endpoints using a pattern*
+----
+include::../../test/java/org/apache/camel/processor/interceptor/AdviceWithMockEndpointsTest.java[tags=e2]
+----
+
+The pattern supported can be a wildcard or a regular expression. See
+more details about this at Intercept as its the
+same matching function used by Camel.
+
+[NOTE]
+Mind that mocking endpoints causes the messages to be copied when they
+arrive on the mock. +
+That means Camel will use more memory. This may not be suitable when you
+send in a lot of messages.
+
+
+=== Mocking existing endpoints using the `camel-test` component
+
+Instead of using the `adviceWith` to instruct Camel to mock endpoints,
+you can easily enable this behavior when using the `camel-test` Test
+Kit.
+
+The same route can be tested as follows. Notice that we return `"*"`
+from the `isMockEndpoints` method, which tells Camel to mock all
+endpoints.
+
+If you only want to mock all `log` endpoints you can return `"log*"`
+instead.
+
+[source,java]
+.*`isMockEndpoints` using camel-test kit*
+----
+include::../../../../components/camel-test/src/test/java/org/apache/camel/test/patterns/IsMockEndpointsJUnit4Test.java[tags=e1]
+----
+
+
+=== Mocking existing endpoints with XML DSL
+
+If you do not use the `camel-test` component for unit testing (as shown
+above) you can use a different approach when using XML files for
+routes. +
+The solution is to create a new XML file used by the unit test and then
+include the intended XML file which has the route you want to test.
+
+Suppose we have the route in the `camel-route.xml` file:
+
+[source,xml]
+.*camel-route.xml*
+----
+include::../../../../components/camel-spring/src/test/resources/org/apache/camel/spring/mock/camel-route.xml[tags=e1]
+----
+
+Then we create a new XML file as follows, where we include the
+`camel-route.xml` file and define a spring bean with the class
+`org.apache.camel.impl.InterceptSendToMockEndpointStrategy` which tells
+Camel to mock all endpoints:
+
+[source,xml]
+.*test-camel-route.xml*
+----
+include::../../../../components/camel-spring/src/test/resources/org/apache/camel/spring/mock/InterceptSendToMockEndpointStrategyTest.xml[tags=e1]
+----
+
+Then in your unit test you load the new XML file
+(`test-camel-route.xml`) instead of `camel-route.xml`.
+
+To only mock all <<log-component,Log>> endpoints you can define the pattern
+in the constructor for the bean:
+
+[source,xml]
+----
+<bean id="mockAllEndpoints" class="org.apache.camel.impl.InterceptSendToMockEndpointStrategy">
+    <constructor-arg index="0" value="log*"/>
+</bean>
+----
+
+=== Mocking endpoints and skip sending to original endpoint
+
+*Available as of Camel 2.10*
+
+Sometimes you want to easily mock and skip sending to a certain
+endpoints. So the message is detoured and send to the mock endpoint
+only. From Camel 2.10 onwards you can now use the `mockEndpointsAndSkip`
+method using AdviceWith or the
+https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=Test+Kit&linkCreation=true&fromPageId=52081[Test
+Kit]. The example below will skip sending to the two endpoints
+`"direct:foo"`, and `"direct:bar"`.
+
+[source,java]
+.*adviceWith mock and skip sending to endpoints*
+----
+include::../../test/java/org/apache/camel/processor/interceptor/AdviceWithMockMultipleEndpointsWithSkipTest.java[tags=e1]
+----
+
+The same example using the Test Kit
+
+[source,java]
+.*isMockEndpointsAndSkip using camel-test kit*
+----
+include::../../../../components/camel-test/src/test/java/org/apache/camel/test/patterns/IsMockEndpointsAndSkipJUnit4Test.java[tags=e1]
+----
+
+=== Limiting the number of messages to keep
+
+*Available as of Camel 2.10*
+
+The <<mock-component,Mock>> endpoints will by default keep a copy of every
+Exchange that it received. So if you test with a lot
+of messages, then it will consume memory. +
+From Camel 2.10 onwards we have introduced two options `retainFirst` and
+`retainLast` that can be used to specify to only keep N'th of the first
+and/or last Exchanges.
+
+For example in the code below, we only want to retain a copy of the
+first 5 and last 5 Exchanges the mock receives.
+
+[source,java]
+----
+  MockEndpoint mock = getMockEndpoint("mock:data");
+  mock.setRetainFirst(5);
+  mock.setRetainLast(5);
+  mock.expectedMessageCount(2000);
+
+  mock.assertIsSatisfied();
+----
+
+Using this has some limitations. The `getExchanges()` and
+`getReceivedExchanges()` methods on the `MockEndpoint` will return only
+the retained copies of the Exchanges. So in the
+example above, the list will contain 10 Exchanges;
+the first five, and the last five. +
+The `retainFirst` and `retainLast` options also have limitations on
+which expectation methods you can use. For example the `expectedXXX`
+methods that work on message bodies, headers, etc. will only operate on
+the retained messages. In the example above they can test only the
+expectations on the 10 retained messages.
+
+=== Testing with arrival times
+
+*Available as of Camel 2.7*
+
+The <<mock-component,Mock>> endpoint stores the arrival time of the message
+as a property on the Exchange.
+
+[source,java]
+----
+Date time = exchange.getProperty(Exchange.RECEIVED_TIMESTAMP, Date.class);
+----
+
+You can use this information to know when the message arrived on the
+mock. But it also provides foundation to know the time interval between
+the previous and next message arrived on the mock. You can use this to
+set expectations using the `arrives` DSL on the <<mock-component,Mock>>
+endpoint.
+
+For example to say that the first message should arrive between 0-2
+seconds before the next you can do:
+
+[source,java]
+----
+mock.message(0).arrives().noLaterThan(2).seconds().beforeNext();
+----
+
+You can also define this as that 2nd message (0 index based) should
+arrive no later than 0-2 seconds after the previous:
+
+[source,java]
+----
+mock.message(1).arrives().noLaterThan(2).seconds().afterPrevious();
+----
+
+You can also use between to set a lower bound. For example suppose that
+it should be between 1-4 seconds:
+
+[source,java]
+----
+mock.message(1).arrives().between(1, 4).seconds().afterPrevious();
+----
+
+You can also set the expectation on all messages, for example to say
+that the gap between them should be at most 1 second:
+
+[source,java]
+----
+mock.allMessages().arrives().noLaterThan(1).seconds().beforeNext();
+----
+
+[TIP]
+*Time units* +
+In the example above we use `seconds` as the time unit, but Camel offers
+`milliseconds`, and `minutes` as well.
+
+
+=== See Also
+
+* Spring Testing
+* Testing

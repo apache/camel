@@ -29,7 +29,7 @@
   <bean id="sayProxy" class="org.apache.camel.spring.remoting.CamelProxyFactoryBean">
     <property name="serviceUrl" value="direct:say"/>
     <property name="serviceInterface" value="org.apache.camel.spring.remoting.ISay"/>
-    <property name="binding" value="false"/>
+    <property name="binding" value="true"/>
   </bean>
   <!-- END SNIPPET: proxy -->
 
@@ -41,6 +41,7 @@
     <property name="service">
       <bean class="org.apache.camel.spring.remoting.SayService"/>
     </property>
+    <property name="method" value="say"/>
     <property name="serviceInterface" value="org.apache.camel.spring.remoting.ISay"/>
   </bean>
   <!-- END SNIPPET: export -->

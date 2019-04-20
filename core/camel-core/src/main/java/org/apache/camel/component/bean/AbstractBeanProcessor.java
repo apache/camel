@@ -118,43 +118,6 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
 
         Message in = exchange.getIn();
 
-        // is the message proxied using a BeanInvocation?
-        BeanInvocation beanInvoke = null;
-        if (in.getBody() instanceof BeanInvocation) {
-            // BeanInvocation would be stored directly as the message body
-            // do not force any type conversion attempts as it would just be unnecessary and cost a bit performance
-            // so a regular instanceof check is sufficient
-            beanInvoke = (BeanInvocation) in.getBody();
-        }
-        if (beanInvoke != null) {
-            // Now it gets a bit complicated as ProxyHelper can proxy beans which we later
-            // intend to invoke (for example to proxy and invoke using spring remoting).
-            // and therefore the message body contains a BeanInvocation object.
-            // However this can causes problem if we in a Camel route invokes another bean,
-            // so we must test whether BeanHolder and BeanInvocation is the same bean or not
-            if (log.isTraceEnabled()) {
-                log.trace("Exchange IN body is a BeanInvocation instance: {}", beanInvoke);
-            }
-            Class<?> clazz = beanInvoke.getMethod().getDeclaringClass();
-            boolean sameBean = clazz.isInstance(bean);
-            if (log.isDebugEnabled()) {
-                log.debug("BeanHolder bean: {} and beanInvocation bean: {} is same instance: {}", bean.getClass(), clazz, sameBean);
-            }
-            if (sameBean) {
-                try {
-                    beanInvoke.invoke(bean, exchange);
-                    if (exchange.hasOut()) {
-                        // propagate headers
-                        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-                    }
-                } catch (Throwable e) {
-                    exchange.setException(e);
-                }
-                callback.done(true);
-                return true;
-            }
-        }
-
         // set explicit method name to invoke as a header, which is how BeanInfo can detect it
         if (explicitMethodName != null) {
             in.setHeader(Exchange.BEAN_METHOD_NAME, explicitMethodName);

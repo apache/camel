@@ -1057,8 +1057,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             } else if (type.getRawClass() == Class.class) {
                 return defaultValue + ".class";
             } else {
-//                throw new UnsupportedOperationException("Unsupported default value for type: "
-//                        + type.toString() + ": " + defaultValue);
                 return null;
             }
         }
@@ -1116,8 +1114,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     private String getSimpleJavaType(String type) {
-        // remove <?> as generic type as Roaster (Eclipse JDT) cannot use that
-//        type = type.replaceAll("\\<\\?\\>", "");
         // use wrapper types for primitive types so a null mean that the option
         // has not been configured
         String wrapper = PRIMITIVEMAP.get(type);
@@ -1339,6 +1335,15 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             }
             String type = option.getJavaType();
             type = getSimpleJavaType(type);
+
+            // special for bindy
+            if ("org.apache.camel.model.dataformat.BindyType".equals(option.getJavaType())) {
+                // force to use a string type
+                type = "java.lang.String";
+            } else if (option.getJavaType().contains("org.apache.camel.model.dataformat")) {
+                // skip options that are from the model as they are not possible to configure anyway
+                continue;
+            }
 
             // spring-boot auto configuration does not support complex types
             // (unless they are enum, nested)
