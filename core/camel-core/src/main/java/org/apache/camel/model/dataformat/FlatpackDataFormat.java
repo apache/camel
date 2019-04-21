@@ -151,12 +151,12 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     }
 
     @Override
-    protected DataFormat createDataFormat(RouteContext routeContext) {
-        DataFormat flatpack = super.createDataFormat(routeContext);
+    protected DataFormat createDataFormat(CamelContext camelContext) {
+        DataFormat flatpack = super.createDataFormat(camelContext);
 
         if (ObjectHelper.isNotEmpty(parserFactoryRef)) {
-            Object parserFactory = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), parserFactoryRef);
-            setProperty(routeContext.getCamelContext(), flatpack, "parserFactory", parserFactory);
+            Object parserFactory = CamelContextHelper.mandatoryLookup(camelContext, parserFactoryRef);
+            setProperty(camelContext, flatpack, "parserFactory", parserFactory);
         }
 
         return flatpack;
