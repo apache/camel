@@ -93,13 +93,16 @@ public class DataFormatTransformer extends Transformer {
         }
     }
 
-    /**
-     * A bit dirty hack to create DataFormat instance, as it requires a RouteContext anyway.
-     */
     private DataFormat getDataFormat(Exchange exchange) throws Exception {
+        // TODO: Move this to doStart and remove this method
         if (this.dataFormat == null) {
-            this.dataFormat = DataFormatDefinition.getDataFormat(
-                exchange.getUnitOfWork().getRouteContext(), this.dataFormatType, this.dataFormatRef);
+            if (this.dataFormatType != null) {
+                this.dataFormat = this.dataFormatType.getDataFormat(exchange.getContext());
+            } else if (this.dataFormatRef != null) {
+                this.dataFormat = exchange.getContext().resolveDataFormat(this.dataFormatRef);
+            }
+//            this.dataFormat = DataFormatDefinition.getDataFormat(
+//                exchange.getContext(), this.dataFormatType, this.dataFormatRef);
             if (this.dataFormat != null && !getCamelContext().hasService(this.dataFormat)) {
                 getCamelContext().addService(this.dataFormat, false);
             }

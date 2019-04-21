@@ -18,6 +18,7 @@ package org.apache.camel.model.dataformat;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
@@ -36,7 +37,7 @@ public class SerializationDataFormat extends DataFormatDefinition {
     }
 
     @Override
-    protected DataFormat createDataFormat(RouteContext routeContext) {
+    protected DataFormat createDataFormat(CamelContext camelContext) {
         return new org.apache.camel.impl.SerializationDataFormat();
     }
 }

@@ -276,24 +276,24 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     }
 
     @Override
-    protected DataFormat createDataFormat(RouteContext routeContext) {
+    protected DataFormat createDataFormat(CamelContext camelContext) {
 
         if (unmarshalType == null && unmarshalTypeName != null) {
             try {
-                unmarshalType = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(unmarshalTypeName);
+                unmarshalType = camelContext.getClassResolver().resolveMandatoryClass(unmarshalTypeName);
             } catch (ClassNotFoundException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
         if (collectionType == null && collectionTypeName != null) {
             try {
-                collectionType = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(collectionTypeName);
+                collectionType = camelContext.getClassResolver().resolveMandatoryClass(collectionTypeName);
             } catch (ClassNotFoundException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 
-        return super.createDataFormat(routeContext);
+        return super.createDataFormat(camelContext);
     }
 
     @Override

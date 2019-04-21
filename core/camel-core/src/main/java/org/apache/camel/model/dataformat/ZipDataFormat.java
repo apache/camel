@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
@@ -47,7 +48,7 @@ public class ZipDataFormat extends DataFormatDefinition {
     }
 
     @Override
-    protected DataFormat createDataFormat(RouteContext routeContext) {
+    protected DataFormat createDataFormat(CamelContext camelContext) {
         if (compressionLevel == null) {
             return new org.apache.camel.impl.ZipDataFormat(Deflater.DEFAULT_COMPRESSION);
         } else {

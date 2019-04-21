@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.dataformat.ASN1DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
+import org.apache.camel.model.dataformat.BarcodeDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
@@ -42,6 +43,8 @@ import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JibxDataFormat;
 import org.apache.camel.model.dataformat.JsonApiDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
+import org.apache.camel.model.dataformat.LZFDataFormat;
+import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
@@ -74,6 +77,7 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
     @XmlElements({
         @XmlElement(required = false, name = "asn1", type = ASN1DataFormat.class),
         @XmlElement(required = false, name = "avro", type = AvroDataFormat.class),
+        @XmlElement(required = false, name = "barcode", type = BarcodeDataFormat.class),
         @XmlElement(required = false, name = "base64", type = Base64DataFormat.class),
         @XmlElement(required = false, name = "beanio", type = BeanioDataFormat.class),
         @XmlElement(required = false, name = "bindy", type = BindyDataFormat.class),
@@ -92,6 +96,8 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         @XmlElement(required = false, name = "jibx", type = JibxDataFormat.class),
         @XmlElement(required = false, name = "json", type = JsonDataFormat.class),
         @XmlElement(required = false, name = "jsonApi", type = JsonApiDataFormat.class),
+        @XmlElement(required = false, name = "lzf", type = LZFDataFormat.class),
+        @XmlElement(required = false, name = "mimeMultipart", type = MimeMultipartDataFormat.class),
         @XmlElement(required = false, name = "protobuf", type = ProtobufDataFormat.class),
         @XmlElement(required = false, name = "rss", type = RssDataFormat.class),
         @XmlElement(required = false, name = "secureXML", type = XMLSecurityDataFormat.class),
