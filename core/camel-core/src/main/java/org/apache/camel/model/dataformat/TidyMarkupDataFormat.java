@@ -96,16 +96,16 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
     }
 
     @Override
-    protected DataFormat createDataFormat(RouteContext routeContext) {
+    protected DataFormat createDataFormat(CamelContext camelContext) {
         if (dataObjectType == null && dataObjectTypeName != null) {
             try {
-                dataObjectType = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(dataObjectTypeName);
+                dataObjectType = camelContext.getClassResolver().resolveMandatoryClass(dataObjectTypeName);
             } catch (ClassNotFoundException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 
-        return super.createDataFormat(routeContext);
+        return super.createDataFormat(camelContext);
     }
 
     @Override

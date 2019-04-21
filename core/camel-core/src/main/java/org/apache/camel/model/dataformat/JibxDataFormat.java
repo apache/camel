@@ -86,16 +86,16 @@ public class JibxDataFormat extends DataFormatDefinition {
     }
 
     @Override
-    protected DataFormat createDataFormat(RouteContext routeContext) {
+    protected DataFormat createDataFormat(CamelContext camelContext) {
         if (unmarshallClass == null && unmarshallTypeName != null) {
             try {
-                unmarshallClass = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(unmarshallTypeName);
+                unmarshallClass = camelContext.getClassResolver().resolveMandatoryClass(unmarshallTypeName);
             } catch (ClassNotFoundException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 
-        return super.createDataFormat(routeContext);
+        return super.createDataFormat(camelContext);
     }
 
     @Override

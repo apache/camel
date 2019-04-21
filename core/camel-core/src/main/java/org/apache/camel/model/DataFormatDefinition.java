@@ -29,11 +29,8 @@ import javax.xml.namespace.QName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-
-
 import static org.apache.camel.support.EndpointHelper.isReferenceParameter;
 
 /**
@@ -67,55 +64,55 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
     /**
      * Factory method to create the data format
      *
-     * @param routeContext route context
+     * @param camelContext the camel context
      * @param type         the data format type
      * @param ref          reference to lookup for a data format
      * @return the data format or null if not possible to create
      */
-    public static DataFormat getDataFormat(RouteContext routeContext, DataFormatDefinition type, String ref) {
+    public static DataFormat getDataFormat(CamelContext camelContext, DataFormatDefinition type, String ref) {
         if (type == null) {
             ObjectHelper.notNull(ref, "ref or type");
 
             // try to let resolver see if it can resolve it, its not always possible
-            type = routeContext.getCamelContext().adapt(ModelCamelContext.class).resolveDataFormatDefinition(ref);
+            type = camelContext.adapt(ModelCamelContext.class).resolveDataFormatDefinition(ref);
 
             if (type != null) {
-                return type.getDataFormat(routeContext);
+                return type.getDataFormat(camelContext);
             }
 
-            DataFormat dataFormat = routeContext.getCamelContext().resolveDataFormat(ref);
+            DataFormat dataFormat = camelContext.resolveDataFormat(ref);
             if (dataFormat == null) {
                 throw new IllegalArgumentException("Cannot find data format in registry with ref: " + ref);
             }
 
             return dataFormat;
         } else {
-            return type.getDataFormat(routeContext);
+            return type.getDataFormat(camelContext);
         }
     }
 
-    public DataFormat getDataFormat(RouteContext routeContext) {
+    public DataFormat getDataFormat(CamelContext camelContext) {
         if (dataFormat == null) {
             Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
 
             // resolve properties before we create the data format
             try {
-                ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), this);
+                ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, this);
             } catch (Exception e) {
                 throw new IllegalArgumentException("Error resolving property placeholders on data format: " + this, e);
             }
             try {
-                dataFormat = createDataFormat(routeContext);
+                dataFormat = createDataFormat(camelContext);
                 if (dataFormat != null) {
                     // is enabled by default so assume true if null
                     final boolean contentTypeHeader = this.contentTypeHeader == null || this.contentTypeHeader;
                     try {
-                        setProperty(routeContext.getCamelContext(), dataFormat, "contentTypeHeader", contentTypeHeader);
+                        setProperty(camelContext, dataFormat, "contentTypeHeader", contentTypeHeader);
                     } catch (Exception e) {
                         // ignore as this option is optional and not all data formats support this
                     }
                     // configure the rest of the options
-                    configureDataFormat(dataFormat, routeContext.getCamelContext());
+                    configureDataFormat(dataFormat, camelContext);
                 } else {
                     throw new IllegalArgumentException(
                             "Data format '" + (dataFormatName != null ? dataFormatName : "<null>") + "' could not be created. "
@@ -131,10 +128,10 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
     /**
      * Factory method to create the data format instance
      */
-    protected DataFormat createDataFormat(RouteContext routeContext) {
+    protected DataFormat createDataFormat(CamelContext camelContext) {
         // must use getDataFormatName() as we need special logic in json dataformat
         if (getDataFormatName() != null) {
-            return routeContext.getCamelContext().createDataFormat(getDataFormatName());
+            return camelContext.createDataFormat(getDataFormatName());
         }
         return null;
     }

@@ -2555,6 +2555,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         }
 
         // Start runtime catalog
+        // TODO: remove me as already started earlier
         getExtension(RuntimeCamelCatalog.class);
 
         // re-create endpoint registry as the cache size limit may be set after the constructor of this instance was called.
@@ -2588,6 +2589,16 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         if (existing != null) {
             // store reference to the existing properties component
             propertiesComponent = existing;
+        }
+
+        // eager lookup data formats and bind to registry so the dataformats can be looked up and used
+        for (Map.Entry<String, DataFormatDefinition> e : dataFormats.entrySet()) {
+            String id = e.getKey();
+            DataFormatDefinition def = e.getValue();
+            log.debug("Creating Dataformat with id: {} and definition: {}", id, def);
+            DataFormat df = def.getDataFormat(this);
+            addService(df, true);
+            getRegistry().bind(id, df);
         }
 
         // start components

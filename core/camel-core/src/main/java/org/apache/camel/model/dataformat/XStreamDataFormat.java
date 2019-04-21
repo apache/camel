@@ -219,14 +219,14 @@ public class XStreamDataFormat extends DataFormatDefinition {
     }
 
     @Override
-    protected DataFormat createDataFormat(RouteContext routeContext) {
+    protected DataFormat createDataFormat(CamelContext camelContext) {
         if ("json".equals(this.driver)) {
-            setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-xstream");
+            setProperty(camelContext, this, "dataFormatName", "json-xstream");
         }
-        DataFormat answer = super.createDataFormat(routeContext);
+        DataFormat answer = super.createDataFormat(camelContext);
         // need to lookup the reference for the xstreamDriver
         if (ObjectHelper.isNotEmpty(driverRef)) {
-            setProperty(routeContext.getCamelContext(), answer, "xstreamDriver", CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), driverRef));
+            setProperty(camelContext, answer, "xstreamDriver", CamelContextHelper.mandatoryLookup(camelContext, driverRef));
         }
         return answer;
     }

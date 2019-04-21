@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Converter;
@@ -39,7 +40,6 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultComponent;
@@ -249,12 +249,12 @@ public class TransformerRouteTest extends ContextTestSupport {
     }
 
     public static class MyJsonDataFormatDefinition extends DataFormatDefinition {
-        public static DataFormat getDataFormat(RouteContext routeContext, DataFormatDefinition type, String ref) {
-            return new MyJsonDataFormatDefinition().createDataFormat();
-        }
-        public DataFormat getDataFormat(RouteContext routeContext) {
+
+        @Override
+        public DataFormat getDataFormat(CamelContext camelContext) {
             return createDataFormat();
         }
+
         private DataFormat createDataFormat() {
             return new DataFormat() {
                 @Override
@@ -263,6 +263,7 @@ public class TransformerRouteTest extends ContextTestSupport {
                     LOG.info("DataFormat: XOrderResponse -> JSON");
                     stream.write("{name:XOrderResponse}".getBytes());
                 }
+
                 @Override
                 public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
@@ -285,7 +286,6 @@ public class TransformerRouteTest extends ContextTestSupport {
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
             return new MyXmlEndpoint();
         }
-        
     }
     
     public static class MyXmlEndpoint extends DefaultEndpoint {
