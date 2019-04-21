@@ -2555,7 +2555,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         }
 
         // Start runtime catalog
-        // TODO: remove me as already started earlier
         getExtension(RuntimeCamelCatalog.class);
 
         // re-create endpoint registry as the cache size limit may be set after the constructor of this instance was called.
@@ -2566,7 +2565,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         // Initialize declarative validator registry
         validatorRegistry = doAddService(createValidatorRegistry(validators));
 
-        // optimised to not include runtimeEndpointRegistry unlesstartServices its enabled or JMX statistics is in extended mode
+        // optimised to not include runtimeEndpointRegistry unless startServices its enabled or JMX statistics is in extended mode
         if (runtimeEndpointRegistry == null && getManagementStrategy() != null && getManagementStrategy().getManagementAgent() != null) {
             Boolean isEnabled = getManagementStrategy().getManagementAgent().getEndpointRuntimeStatisticsEnabled();
             boolean isExtended = getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
@@ -2577,7 +2576,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
             }
         }
         if (runtimeEndpointRegistry != null) {
-            if (runtimeEndpointRegistry instanceof EventNotifier) {
+            if (runtimeEndpointRegistry instanceof EventNotifier && getManagementStrategy() != null) {
                 getManagementStrategy().addEventNotifier((EventNotifier) runtimeEndpointRegistry);
             }
             addService(runtimeEndpointRegistry, true, true);
