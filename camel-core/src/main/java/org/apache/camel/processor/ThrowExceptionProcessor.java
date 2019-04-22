@@ -64,7 +64,7 @@ public class ThrowExceptionProcessor extends ServiceSupport implements AsyncProc
                 // create the message using simple language so it can be dynamic
                 String text = simple.evaluate(exchange, String.class);
                 // create a new exception of that type, and provide the message as
-                Constructor<?> constructor = type.getDeclaredConstructor(String.class);
+                Constructor<?> constructor = type.getConstructor(String.class);
                 cause = (Exception) constructor.newInstance(text);
                 exchange.setException(cause);
             } else if (cause == null && type != null) {
