@@ -88,6 +88,10 @@ The `test` component has been renamed to `dataset-test` and moved out of `camel-
 
 We have also renamed `camel-jetty9` to `camel-jetty`.
 
+### javax.script
+
+The `camel-script` component has been removed and there is no support for javax.script, which is also deprecated in the JDK and to be removed from Java 11 onwards.
+
 ### Mock component
 
 The `mock` component has been moved out of `camel-core` and as part of this work, we had to remove a number of methods on its _assertion clause builder_ that were seldom in use. Also we had to remove a few methods on `NotifyBuilder` that were using the `mock` component.

@@ -26,7 +26,6 @@ import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.Hl7TerserExpression;
-import org.apache.camel.model.language.JavaScriptExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
@@ -292,20 +291,6 @@ public class ExpressionClauseSupport<T> {
      */
     public T groovy(String text) {
         return expression(new GroovyExpression(text));
-    }
-
-    /**
-     * Evaluates a <a
-     * href="http://camel.apache.org/java-script.html">JavaScript
-     * expression</a>
-     *
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
-     * @deprecated JavaScript is deprecated in Java 11 onwards
-     */
-    @Deprecated
-    public T javaScript(String text) {
-        return expression(new JavaScriptExpression(text));
     }
 
     /**
