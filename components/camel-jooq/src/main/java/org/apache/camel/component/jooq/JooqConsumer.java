@@ -19,7 +19,6 @@ package org.apache.camel.component.jooq;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ObjectHelper;
@@ -33,6 +32,7 @@ import org.jooq.UpdatableRecord;
 import org.jooq.impl.DSL;
 
 public class JooqConsumer extends ScheduledBatchPollingConsumer {
+
     private static final class DataHolder {
         private Exchange exchange;
         private Object result;
@@ -40,28 +40,19 @@ public class JooqConsumer extends ScheduledBatchPollingConsumer {
         }
     }
 
-    private final Processor processor;
-    private final JooqEndpoint endpoint;
-
     public JooqConsumer(JooqEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        this.endpoint = endpoint;
-        this.processor = processor;
     }
 
     @Override
-    public Processor getProcessor() {
-        return processor;
+    public JooqEndpoint getEndpoint() {
+        return (JooqEndpoint) super.getEndpoint();
     }
 
     @Override
-    public Endpoint getEndpoint() {
-        return endpoint;
-    }
-
-    @Override
+    @SuppressWarnings("unchecked")
     protected int poll() throws Exception {
-        JooqConfiguration configuration = endpoint.getConfiguration();
+        JooqConfiguration configuration = getEndpoint().getConfiguration();
         Configuration dbConfig = configuration.getDatabaseConfiguration();
         Class<?> entityType = configuration.getEntityType();
         DSLContext context = DSL.using(dbConfig);
