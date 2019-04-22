@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder;
+package org.apache.camel.support;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,9 +22,7 @@ import java.io.InputStream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.spi.Language;
-import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 
@@ -72,8 +70,7 @@ public final class ScriptHelper {
             external = external.substring(9);
 
             if (ResourceHelper.hasScheme(external)) {
-
-                if (exchange != null && SimpleLanguage.hasSimpleFunction(external)) {
+                if (exchange != null && LanguageSupport.hasSimpleFunction(external)) {
                     Language simple = exchange.getContext().resolveLanguage("simple");
                     external = simple.createExpression(external).evaluate(exchange, String.class);
                 }
