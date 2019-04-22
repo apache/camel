@@ -17,7 +17,6 @@
 package org.apache.camel.component.xquery;
 
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
