@@ -22,11 +22,11 @@
     <from uri="seda:a"/>
     <choice>
       <when>
-        <javaScript>in.header == 'bar'</javaScript>
+        <simple>${header.foo} == 'bar'</simple>
         <to uri="seda:b"/>
       </when>
       <when>
-        <ognl>in.header == 'cheese'</ognl>
+        <ognl>header[foo] == 'cheese'</ognl>
         <to uri="seda:c"/>
       </when>
       <otherwise>

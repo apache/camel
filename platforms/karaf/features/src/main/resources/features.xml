@@ -2122,31 +2122,6 @@
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-schematron/${project.version}</bundle>
   </feature>
-   <feature name='camel-script-jruby' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-script</feature>
-    <bundle>mvn:org.jruby/jruby-complete/${jruby-version}</bundle>
-  </feature>
-  <feature name='camel-script-javascript' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-script</feature>
-    <bundle>mvn:com.google.code.scriptengines/scriptengines-javascript/${scriptengines-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rhino/${rhino-bundle-version}</bundle>
-  </feature>
-  <feature name='camel-script-groovy' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-script</feature>
-    <bundle>mvn:org.codehaus.groovy/groovy/${groovy-version}</bundle>
-    <bundle>mvn:org.codehaus.groovy/groovy-jsr223/${groovy-version}</bundle>
-    <bundle dependency='true'>mvn:org.ow2.asm/asm-commons/${asm-version}</bundle>
-    <bundle dependency='true'>mvn:org.ow2.asm/asm-tree/${asm-version}</bundle>
-    <bundle dependency='true'>mvn:org.ow2.asm/asm/${asm-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.aries/org.apache.aries.util/${aries-util-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.aries.spifly/org.apache.aries.spifly.dynamic.bundle/${aries-spifly-version}</bundle>
-  </feature>
-  <feature name='camel-script' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.antlr/${antlr-bundle-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rhino/${rhino-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-script/${project.version}</bundle>
-  </feature>
   <feature name='camel-service' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-service/${project.version}</bundle>

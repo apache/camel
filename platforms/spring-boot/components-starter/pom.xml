@@ -313,7 +313,6 @@
     <module>camel-saxon-starter</module>
     <module>camel-scheduler-starter</module>
     <module>camel-schematron-starter</module>
-    <module>camel-script-starter</module>
     <module>camel-seda-starter</module>
     <module>camel-service-starter</module>
     <module>camel-servicenow-starter</module>

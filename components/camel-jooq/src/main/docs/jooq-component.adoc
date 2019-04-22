@@ -126,11 +126,11 @@ The component supports 7 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.jooq.configuration.consume-delete* | Delete entity after it is consumed. | true | Boolean
+| *camel.component.jooq.configuration.consume-delete* | Delete entity after it is consumed | true | Boolean
 | *camel.component.jooq.configuration.database-configuration* |  |  | Configuration
-| *camel.component.jooq.configuration.entity-type* | JOOQ entity class. |  | Class
-| *camel.component.jooq.configuration.operation* | Type of operation to execute on query: execute, fetch, etc. |  | JooqOperation
-| *camel.component.jooq.configuration.query* | SQL query. |  | String
+| *camel.component.jooq.configuration.entity-type* | JOOQ entity class |  | Class
+| *camel.component.jooq.configuration.operation* | Type of operation to execute on query |  | JooqOperation
+| *camel.component.jooq.configuration.query* | To execute plain SQL query |  | String
 | *camel.component.jooq.enabled* | Whether to enable auto configuration of the jooq component. This is enabled by default. |  | Boolean
 | *camel.component.jooq.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===

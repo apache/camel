@@ -261,7 +261,6 @@
         <include>org.apache.camel:camel-saxon</include>
         <include>org.apache.camel:camel-scheduler</include>
         <include>org.apache.camel:camel-schematron</include>
-        <include>org.apache.camel:camel-script</include>
         <include>org.apache.camel:camel-seda</include>
         <include>org.apache.camel:camel-service</include>
         <include>org.apache.camel:camel-servicenow</include>
@@ -590,7 +589,6 @@
         <include>org.apache.camel:camel-saxon-starter</include>
         <include>org.apache.camel:camel-scheduler-starter</include>
         <include>org.apache.camel:camel-schematron-starter</include>
-        <include>org.apache.camel:camel-script-starter</include>
         <include>org.apache.camel:camel-seda-starter</include>
         <include>org.apache.camel:camel-service-starter</include>
         <include>org.apache.camel:camel-servicenow-starter</include>

@@ -273,7 +273,6 @@
         <module>camel-scheduler</module>
         <module>camel-salesforce</module>
         <module>camel-schematron</module>
-        <module>camel-script</module>
         <module>camel-servicenow</module>
         <module>camel-servlet</module>
         <module>camel-shiro</module>
