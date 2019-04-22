@@ -25,16 +25,16 @@ import org.jooq.Configuration;
 @UriParams
 public class JooqConfiguration implements Cloneable {
 
-    @UriPath(description = "Type of operation to execute on query: execute, fetch, etc.", label = "Operation", name = "operation", displayName = "Operation")
-    private JooqOperation operation = JooqOperation.NONE;
-
-    @UriPath(name = "entityType", description = "JOOQ entity class.", label = "Entity type", displayName = "Entity type")
+    @UriPath(label = "common", description = "JOOQ entity class")
     private Class<?> entityType;
 
-    @UriParam(label = "consumer", defaultValue = "true", description = "Delete entity after it is consumed.")
+    @UriParam(label = "consumer", defaultValue = "true", description = "Delete entity after it is consumed")
     private boolean consumeDelete = true;
 
-    @UriParam(description = "SQL query.")
+    @UriPath(label = "producer", description = "Type of operation to execute on query", defaultValue = "NONE")
+    private JooqOperation operation = JooqOperation.NONE;
+
+    @UriParam(label = "producer", description = "To execute plain SQL query")
     private String query;
 
     private Configuration databaseConfiguration;

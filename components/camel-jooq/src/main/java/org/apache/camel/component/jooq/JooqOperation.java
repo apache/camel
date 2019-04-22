@@ -16,32 +16,9 @@
  */
 package org.apache.camel.component.jooq;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public enum JooqOperation {
-    EXECUTE("execute"),
-    FETCH("fetch"),
-    NONE("");
+    EXECUTE,
+    FETCH,
+    NONE;
 
-    private static final Map<String, JooqOperation> MAP = new HashMap<>();
-    static {
-        for (JooqOperation myEnum : values()) {
-            MAP.put(myEnum.getValue(), myEnum);
-        }
-    }
-
-    private String value;
-
-    JooqOperation(String value) {
-        this.value = value;
-    }
-
-    public static JooqOperation getByValue(String value) {
-        return MAP.get(value);
-    }
-
-    public String getValue() {
-        return value;
-    }
 }

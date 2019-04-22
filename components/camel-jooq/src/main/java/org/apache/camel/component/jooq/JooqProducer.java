@@ -80,7 +80,7 @@ public class JooqProducer extends DefaultProducer {
             context.batchStore(entity).execute();
             break;
         default:
-            throw new IllegalArgumentException("Wrong operation: " + operation.getValue());
+            throw new IllegalArgumentException("Wrong operation: " + operation);
         }
     }
 }
