@@ -94,19 +94,6 @@ public class DataFormatTransformer extends Transformer {
     }
 
     private DataFormat getDataFormat(Exchange exchange) throws Exception {
-        // TODO: Move this to doStart and remove this method
-        if (this.dataFormat == null) {
-            if (this.dataFormatType != null) {
-                this.dataFormat = this.dataFormatType.getDataFormat(exchange.getContext());
-            } else if (this.dataFormatRef != null) {
-                this.dataFormat = exchange.getContext().resolveDataFormat(this.dataFormatRef);
-            }
-//            this.dataFormat = DataFormatDefinition.getDataFormat(
-//                exchange.getContext(), this.dataFormatType, this.dataFormatRef);
-            if (this.dataFormat != null && !getCamelContext().hasService(this.dataFormat)) {
-                getCamelContext().addService(this.dataFormat, false);
-            }
-        }
         return this.dataFormat;
     }
 
@@ -144,7 +131,14 @@ public class DataFormatTransformer extends Transformer {
 
     @Override
     public void doStart() throws Exception {
-        // no-op
+        if (this.dataFormat == null) {
+            if (this.dataFormatRef != null) {
+                this.dataFormat = getCamelContext().resolveDataFormat(this.dataFormatRef);
+            } else if (this.dataFormatType != null) {
+                this.dataFormat = dataFormatType.getDataFormat(getCamelContext());
+                getCamelContext().addService(this.dataFormat, false);
+            }
+        }
     }
 
     @Override
