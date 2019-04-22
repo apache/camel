@@ -20,7 +20,9 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.language.simple.SimpleLanguage;
+import org.apache.camel.spi.Language;
+import org.apache.camel.support.PredicateToExpressionAdapter;
+import org.apache.camel.support.ScriptHelper;
 
 /**
  * Creates an {@link org.apache.camel.language.Simple} language builder.
@@ -90,12 +92,12 @@ public class SimpleBuilder implements Predicate, Expression {
     }
 
     private Predicate createPredicate(Exchange exchange) {
-        SimpleLanguage simple = (SimpleLanguage) exchange.getContext().resolveLanguage("simple");
         try {
             // resolve property placeholders
             String resolve = exchange.getContext().resolvePropertyPlaceholders(text);
             // and optional it be refer to an external script on the file/classpath
             resolve = ScriptHelper.resolveOptionalExternalScript(exchange.getContext(), exchange, resolve);
+            Language simple = exchange.getContext().resolveLanguage("simple");
             return simple.createPredicate(resolve);
         } catch (Exception e) {
             throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
@@ -103,15 +105,29 @@ public class SimpleBuilder implements Predicate, Expression {
     }
 
     private Expression createExpression(Exchange exchange) {
-        SimpleLanguage simple = (SimpleLanguage) exchange.getContext().resolveLanguage("simple");
         try {
             // resolve property placeholders
             String resolve = exchange.getContext().resolvePropertyPlaceholders(text);
             // and optional it be refer to an external script on the file/classpath
             resolve = ScriptHelper.resolveOptionalExternalScript(exchange.getContext(), exchange, resolve);
-            return simple.createExpression(resolve, resultType);
+            Language simple = exchange.getContext().resolveLanguage("simple");
+            return createSimpleExpression(simple, resolve, resultType);
         } catch (Exception e) {
             throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
+        }
+    }
+
+    private static Expression createSimpleExpression(Language simple, String expression, Class<?> resultType) {
+        if (resultType == Boolean.class || resultType == boolean.class) {
+            // if its a boolean as result then its a predicate
+            Predicate predicate = simple.createPredicate(expression);
+            return PredicateToExpressionAdapter.toExpression(predicate);
+        } else {
+            Expression exp = simple.createExpression(expression);
+            if (resultType != null) {
+                exp = ExpressionBuilder.convertToExpression(exp, resultType);
+            }
+            return exp;
         }
     }
 
