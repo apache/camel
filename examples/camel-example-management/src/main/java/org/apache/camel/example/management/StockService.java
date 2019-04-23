@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.camel.language.XPath;
+import org.apache.camel.language.xpath.XPath;
 
 public class StockService {
 
