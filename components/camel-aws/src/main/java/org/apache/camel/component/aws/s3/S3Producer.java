@@ -227,9 +227,16 @@ public class S3Producer extends DefaultProducer {
             is = new FileInputStream(filePayload);
         } else {
             is = exchange.getIn().getMandatoryBody(InputStream.class);
-            baos = determineLengthInputStream(is);
-            objectMetadata.setContentLength(baos.size());
-            is = new ByteArrayInputStream(baos.toByteArray());
+            if (objectMetadata.getContentLength() == 0 && ObjectHelper.isEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
+                log.debug("The content length is not defined. It needs to be determined by reading the data into memory");
+                baos = determineLengthInputStream(is);
+                objectMetadata.setContentLength(baos.size());
+                is = new ByteArrayInputStream(baos.toByteArray());
+            } else {
+                if (ObjectHelper.isNotEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
+                    objectMetadata.setContentLength(Long.valueOf(exchange.getProperty(Exchange.CONTENT_LENGTH, String.class)));
+                }
+            }
         }
 
         String bucketName = exchange.getIn().getHeader(S3Constants.BUCKET_NAME, String.class);
