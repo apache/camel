@@ -1,0 +1,72 @@
+:experimental:
+= JOOQ Example
+
+== Introduction
+
+This example shows how to use JOOQ library with Camel to build type safe SQL queries through its API.
+
+Example project contains SQL script to create database.
+Database is generated every time when Maven `generate-sources` phase is triggered.
+JOOQ classes are generated inside `target/generated-sources/jooq` directory by `jooq-codegen-maven` plugin.
+
+== Build
+You will need to compile this example first:
+
+	mvn clean install
+
+This command will generate database and JOOQ classes.
+
+== Run with maven
+To run the example using Maven type
+
+	mvn camel:run
+
+To stop the example hit kbd:[Ctrl+c]
+
+== Example routes
+
+[source,xml]
+------------------------------------------------------------
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <!-- Producer -->
+    <route id="produce-route">
+        <from uri="timer://insert?fixedRate=true&amp;period=1000"/>
+
+        <!-- Insert -->
+        <transform>
+            <method ref="book-store" method="generate"/>
+        </transform>
+        <to uri="jooq://org.apache.camel.examples.jooq.db.tables.records.BookStoreRecord"/>
+        <log message="Inserted: ${body}"/>
+
+        <!-- Select -->
+        <transform>
+            <method ref="book-store" method="select"/>
+        </transform>
+        <to uri="jooq://org.apache.camel.examples.jooq.db.tables.records.BookStoreRecord/fetch"/>
+        <log message="Selected: ${body}"/>
+    </route>
+
+    <!-- Consumer -->
+    <route id="consume-route">
+        <from uri="jooq://org.apache.camel.examples.jooq.db.tables.records.BookStoreRecord?consumer.delay=5000&amp;consumeDelete=true"/>
+        <log message="Consumed: ${body}"/>
+    </route>
+</camelContext>
+------------------------------------------------------------
+
+In this example route `produce-route` inserts and selects new entity every 1s.
+
+And the consumer route `consume-route` selects and deletes all entities from database every 5s.
+
+== Forum, Help, etc
+
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
+
+Please help us make Apache Camel better - we appreciate any feedback you may
+have.  Enjoy!
+
+
+
+The Camel riders!
