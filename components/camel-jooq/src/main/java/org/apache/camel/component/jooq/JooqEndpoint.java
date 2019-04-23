@@ -125,8 +125,10 @@ public class JooqEndpoint extends ScheduledPollEndpoint {
     }
 
     @Override
-    public Consumer createConsumer(Processor processor) {
-        return new JooqConsumer(this, processor);
+    public Consumer createConsumer(Processor processor) throws Exception {
+        JooqConsumer consumer = new JooqConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override
