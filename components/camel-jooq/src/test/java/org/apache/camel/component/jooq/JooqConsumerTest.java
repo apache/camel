@@ -31,6 +31,13 @@ import org.junit.Test;
 public class JooqConsumerTest extends BaseJooqTest {
 
     @Test
+    public void testConsumerConfig() {
+        JooqConsumer consumer = (JooqConsumer) context.getRoute("consumer-config").getConsumer();
+        Assert.assertEquals(1000, consumer.getInitialDelay());
+        Assert.assertEquals(2000, consumer.getDelay());
+    }
+
+    @Test
     public void testConsumerNoDelete() throws InterruptedException {
         MockEndpoint mockResult = getMockEndpoint("mock:resultBookStoreRecord");
         MockEndpoint mockInserted = getMockEndpoint("mock:insertedBookStoreRecord");
@@ -76,11 +83,16 @@ public class JooqConsumerTest extends BaseJooqTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                // Only for configuration test
+                from("jooq://org.apache.camel.component.jooq.db.tables.records.BookRecord?initialDelay=1000&delay=2000")
+                        .id("consumer-config")
+                        .to("log:foo");
+
                 // Book store
                 from("direct:insertBookStoreRecord")
                         .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord");
 
-                from("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?consumeDelete=false")
+                from("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?consumeDelete=false&initialDelay=0&delay=100")
                         .to("mock:insertedBookStoreRecord")
                         .transform()
                         .method(BookStoreRecordBean.class, "select")
@@ -91,7 +103,7 @@ public class JooqConsumerTest extends BaseJooqTest {
                 from("direct:insertAuthorRecord")
                         .to("jooq://org.apache.camel.component.jooq.db.tables.records.AuthorRecord");
 
-                from("jooq://org.apache.camel.component.jooq.db.tables.records.AuthorRecord")
+                from("jooq://org.apache.camel.component.jooq.db.tables.records.AuthorRecord?initialDelay=0&delay=100")
                         .to("mock:insertedAuthorRecord")
                         .transform()
                         .method(BookStoreRecordBean.class, "select")

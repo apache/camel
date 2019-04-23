@@ -87,7 +87,7 @@ public class JooqPlainSQLTest extends BaseJooqTest {
                         .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/execute?query=delete from book_store x where x.name = 'test'");
 
                 // Consumer SQL query
-                from("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?query=select * from book_store x where x.name = 'test'")
+                from("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?query=select * from book_store x where x.name = 'test'&initialDelay=0&delay=100")
                         .to("mock:result");
             }
         };
