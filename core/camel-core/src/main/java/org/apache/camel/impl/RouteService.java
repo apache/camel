@@ -45,6 +45,7 @@ import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ChildServiceSupport;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -97,6 +98,10 @@ public class RouteService extends ChildServiceSupport {
         return route;
     }
 
+    public Integer getStartupOrder() {
+        return routeDefinition.getStartupOrder();
+    }
+
     /**
      * Gather all the endpoints this route service uses
      * <p/>
@@ -140,6 +145,18 @@ public class RouteService extends ChildServiceSupport {
         } catch (Exception e) {
             throw new FailedToCreateRouteException(routeDefinition.getId(), RouteDefinitionHelper.getRouteMessage(routeDefinition.toString()), e);
         }
+    }
+
+    public boolean isAutoStartup() throws Exception {
+        if (!camelContext.isAutoStartup()) {
+            return false;
+        }
+        if (routeDefinition.getAutoStartup() == null) {
+            // should auto startup by default
+            return true;
+        }
+        Boolean isAutoStartup = CamelContextHelper.parseBoolean(camelContext, routeDefinition.getAutoStartup());
+        return isAutoStartup != null && isAutoStartup;
     }
 
     protected synchronized void doWarmUp() throws Exception {

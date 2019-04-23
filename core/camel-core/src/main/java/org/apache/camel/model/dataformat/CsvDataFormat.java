@@ -24,12 +24,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * The CSV data format is used for handling CSV payloads.
@@ -110,106 +106,6 @@ public class CsvDataFormat extends DataFormatDefinition {
     public CsvDataFormat(boolean lazyLoad) {
         this();
         setLazyLoad(lazyLoad);
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        // Format options
-        if (ObjectHelper.isNotEmpty(formatRef)) {
-            Object format = CamelContextHelper.mandatoryLookup(camelContext, formatRef);
-            setProperty(camelContext, dataFormat, "format", format);
-        } else if (ObjectHelper.isNotEmpty(formatName)) {
-            setProperty(camelContext, dataFormat, "formatName", formatName);
-        }
-        if (commentMarkerDisabled != null) {
-            setProperty(camelContext, dataFormat, "commentMarkerDisabled", commentMarkerDisabled);
-        }
-        if (commentMarker != null) {
-            setProperty(camelContext, dataFormat, "commentMarker", singleChar(commentMarker, "commentMarker"));
-        }
-        if (delimiter != null) {
-            setProperty(camelContext, dataFormat, "delimiter", singleChar(delimiter, "delimiter"));
-        }
-        if (escapeDisabled != null) {
-            setProperty(camelContext, dataFormat, "escapeDisabled", escapeDisabled);
-        }
-        if (escape != null) {
-            setProperty(camelContext, dataFormat, "escape", singleChar(escape, "escape"));
-        }
-        if (headerDisabled != null) {
-            setProperty(camelContext, dataFormat, "headerDisabled", headerDisabled);
-        }
-        if (header != null && !header.isEmpty()) {
-            setProperty(camelContext, dataFormat, "header", header.toArray(new String[header.size()]));
-        }
-        if (allowMissingColumnNames != null) {
-            setProperty(camelContext, dataFormat, "allowMissingColumnNames", allowMissingColumnNames);
-        }
-        if (ignoreEmptyLines != null) {
-            setProperty(camelContext, dataFormat, "ignoreEmptyLines", ignoreEmptyLines);
-        }
-        if (ignoreSurroundingSpaces != null) {
-            setProperty(camelContext, dataFormat, "ignoreSurroundingSpaces", ignoreSurroundingSpaces);
-        }
-        if (nullStringDisabled != null) {
-            setProperty(camelContext, dataFormat, "nullStringDisabled", nullStringDisabled);
-        }
-        if (nullString != null) {
-            setProperty(camelContext, dataFormat, "nullString", nullString);
-        }
-        if (quoteDisabled != null) {
-            setProperty(camelContext, dataFormat, "quoteDisabled", quoteDisabled);
-        }
-        if (quote != null) {
-            setProperty(camelContext, dataFormat, "quote", singleChar(quote, "quote"));
-        }
-        if (recordSeparatorDisabled != null) {
-            setProperty(camelContext, dataFormat, "recordSeparatorDisabled", recordSeparatorDisabled);
-        }
-        if (recordSeparator != null) {
-            setProperty(camelContext, dataFormat, "recordSeparator", recordSeparator);
-        }
-        if (skipHeaderRecord != null) {
-            setProperty(camelContext, dataFormat, "skipHeaderRecord", skipHeaderRecord);
-        }
-        if (quoteMode != null) {
-            setProperty(camelContext, dataFormat, "quoteMode", quoteMode);
-        }
-        if (trim != null) {
-            setProperty(camelContext, dataFormat, "trim", trim);
-        }
-        if (ignoreHeaderCase != null) {
-            setProperty(camelContext, dataFormat, "ignoreHeaderCase", ignoreHeaderCase);
-        }
-        if (trailingDelimiter != null) {
-            setProperty(camelContext, dataFormat, "trailingDelimiter", trailingDelimiter);
-        }
-
-        // Unmarshall options
-        if (lazyLoad != null) {
-            setProperty(camelContext, dataFormat, "lazyLoad", lazyLoad);
-        }
-        if (useMaps != null) {
-            setProperty(camelContext, dataFormat, "useMaps", useMaps);
-        }
-        if (useOrderedMaps != null) {
-            setProperty(camelContext, dataFormat, "useOrderedMaps", useOrderedMaps);
-        }
-        if (ObjectHelper.isNotEmpty(recordConverterRef)) {
-            Object recordConverter = CamelContextHelper.mandatoryLookup(camelContext, recordConverterRef);
-            setProperty(camelContext, dataFormat, "recordConverter", recordConverter);
-        }
-        if (ObjectHelper.isNotEmpty(marshallerFactoryRef)) {
-            Object marshallerFactory = CamelContextHelper.mandatoryLookup(camelContext, marshallerFactoryRef.trim());
-            setProperty(camelContext, dataFormat, "marshallerFactory", marshallerFactory);
-        }
-    }
-
-    private static Character singleChar(String value, String attributeName) {
-        if (value.length() != 1) {
-            throw new IllegalArgumentException(String.format("The '%s' attribute must be exactly one character long.", attributeName));
-        }
-        return value.charAt(0);
     }
 
     /**

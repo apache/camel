@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model.dataformat;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,13 +25,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * YAML is a data format to marshal and unmarshal Java objects to and from YAML.
@@ -215,78 +209,6 @@ public class YAMLDataFormat extends DataFormatDefinition {
      */
     public void setTypeFilters(List<YAMLTypeFilterDefinition> typeFilters) {
         this.typeFilters = typeFilters;
-    }
-
-    @Override
-    protected DataFormat createDataFormat(CamelContext camelContext) {
-        if (library == YAMLLibrary.SnakeYAML) {
-            setProperty(camelContext, this, "dataFormatName", "yaml-snakeyaml");
-        }
-
-        return super.createDataFormat(camelContext);
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (library == YAMLLibrary.SnakeYAML) {
-            configureSnakeDataFormat(dataFormat, camelContext);
-        }
-    }
-
-    protected void configureSnakeDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        Class<?> yamlUnmarshalType =  unmarshalType;
-        if (yamlUnmarshalType == null && unmarshalTypeName != null) {
-            try {
-                yamlUnmarshalType = camelContext.getClassResolver().resolveMandatoryClass(unmarshalTypeName);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-
-        setProperty(dataFormat, camelContext, "unmarshalType", yamlUnmarshalType);
-        setProperty(dataFormat, camelContext, "classLoader", classLoader);
-        setProperty(dataFormat, camelContext, "useApplicationContextClassLoader", useApplicationContextClassLoader);
-        setProperty(dataFormat, camelContext, "prettyFlow", prettyFlow);
-        setProperty(dataFormat, camelContext, "allowAnyType", allowAnyType);
-
-        if (typeFilters != null && !typeFilters.isEmpty()) {
-            List<String> typeFilterDefinitions = new ArrayList<>(typeFilters.size());
-            for (YAMLTypeFilterDefinition definition : typeFilters) {
-                String value = definition.getValue();
-
-                if (!value.startsWith("type") && !value.startsWith("regexp")) {
-                    YAMLTypeFilterType type = definition.getType();
-                    if (type == null) {
-                        type = YAMLTypeFilterType.type;
-                    }
-
-                    value = type.name() + ":" + value;
-                }
-
-                typeFilterDefinitions.add(value);
-            }
-
-            setProperty(dataFormat, camelContext, "typeFilterDefinitions", typeFilterDefinitions);
-        }
-
-        setPropertyRef(dataFormat, camelContext, "constructor", constructor);
-        setPropertyRef(dataFormat, camelContext, "representer", representer);
-        setPropertyRef(dataFormat, camelContext, "dumperOptions", dumperOptions);
-        setPropertyRef(dataFormat, camelContext, "resolver", resolver);
-    }
-
-    protected void setProperty(DataFormat dataFormat, CamelContext camelContext, String propertyName, Object propertyValue) {
-        if (ObjectHelper.isNotEmpty(propertyValue)) {
-            setProperty(camelContext, dataFormat, propertyName, propertyValue);
-        }
-    }
-
-    protected void setPropertyRef(DataFormat dataFormat, CamelContext camelContext, String propertyName, String propertyValue) {
-        if (ObjectHelper.isNotEmpty(propertyValue)) {
-            // must be a reference value
-            String ref = propertyValue.startsWith("#") ? propertyValue : "#" + propertyValue;
-            setProperty(camelContext, dataFormat, propertyName, ref);
-        }
     }
 
 }

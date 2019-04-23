@@ -71,7 +71,7 @@ import org.apache.camel.support.DefaultRegistry;
 /**
  * Represents the context used to configure routes and the policies to use.
  */
-public class DefaultCamelContext extends AbstractCamelContext {
+public class DefaultCamelContext extends AbstractModelCamelContext {
 
     /**
      * Creates the {@link CamelContext} using {@link DefaultRegistry} as registry.
@@ -289,12 +289,12 @@ public class DefaultCamelContext extends AbstractCamelContext {
         return new DefaultEndpointRegistry(this, endpoints);
     }
 
-    protected ValidatorRegistry<ValidatorKey> createValidatorRegistry(List<ValidatorDefinition> validators) throws Exception {
-        return new DefaultValidatorRegistry(this, validators);
+    protected ValidatorRegistry<ValidatorKey> createValidatorRegistry() throws Exception {
+        return new DefaultValidatorRegistry(this, getValidators());
     }
 
-    protected TransformerRegistry<TransformerKey> createTransformerRegistry(List<TransformerDefinition> transformers) throws Exception {
-        return new DefaultTransformerRegistry(this, transformers);
+    protected TransformerRegistry<TransformerKey> createTransformerRegistry() throws Exception {
+        return new DefaultTransformerRegistry(this, getTransformers());
     }
 
     @Override

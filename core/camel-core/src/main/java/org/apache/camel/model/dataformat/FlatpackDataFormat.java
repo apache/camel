@@ -21,13 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * The Flatpack data format is used for working with flat payloads (such as CSV, delimited, or fixed length formats).
@@ -150,46 +145,4 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         this.parserFactoryRef = parserFactoryRef;
     }
 
-    @Override
-    protected DataFormat createDataFormat(CamelContext camelContext) {
-        DataFormat flatpack = super.createDataFormat(camelContext);
-
-        if (ObjectHelper.isNotEmpty(parserFactoryRef)) {
-            Object parserFactory = CamelContextHelper.mandatoryLookup(camelContext, parserFactoryRef);
-            setProperty(camelContext, flatpack, "parserFactory", parserFactory);
-        }
-
-        return flatpack;
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (ObjectHelper.isNotEmpty(definition)) {
-            setProperty(camelContext, dataFormat, "definition", definition);
-        }
-        if (fixed != null) {
-            setProperty(camelContext, dataFormat, "fixed", fixed);
-        }
-        if (ignoreFirstRecord != null) {
-            setProperty(camelContext, dataFormat, "ignoreFirstRecord", ignoreFirstRecord);
-        }
-        if (ObjectHelper.isNotEmpty(textQualifier)) {
-            if (textQualifier.length() > 1) {
-                throw new IllegalArgumentException("Text qualifier must be one character long!");
-            }
-            setProperty(camelContext, dataFormat, "textQualifier", textQualifier.charAt(0));
-        }
-        if (ObjectHelper.isNotEmpty(delimiter)) {
-            if (delimiter.length() > 1) {
-                throw new IllegalArgumentException("Delimiter must be one character long!");
-            }
-            setProperty(camelContext, dataFormat, "delimiter", delimiter.charAt(0));
-        }
-        if (allowShortLines != null) {
-            setProperty(camelContext, dataFormat, "allowShortLines", allowShortLines);
-        }
-        if (ignoreExtraColumns != null) {
-            setProperty(camelContext, dataFormat, "ignoreExtraColumns", ignoreExtraColumns);
-        }
-    }
 }

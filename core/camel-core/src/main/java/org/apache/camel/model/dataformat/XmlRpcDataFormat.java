@@ -21,9 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -40,13 +38,6 @@ public class XmlRpcDataFormat extends DataFormatDefinition {
         super("xmlrpc");
     }
     
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (request != null) {
-            setProperty(camelContext, dataFormat, "request", request);
-        }
-    }
-
     public Boolean getRequest() {
         return request;
     }

@@ -22,12 +22,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Boon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
@@ -79,6 +75,10 @@ public class BoonDataFormat extends DataFormatDefinition {
         return useList;
     }
 
+    public Boolean getUseList() {
+        return useList;
+    }
+
     /**
      * To unarmshal to a List of Map or a List of Pojo.
      */
@@ -86,25 +86,4 @@ public class BoonDataFormat extends DataFormatDefinition {
         this.useList = useList;
     }  
 
-    @Override
-    protected DataFormat createDataFormat(CamelContext camelContext) {
-        if (unmarshalType == null && unmarshalTypeName != null) {
-            try {
-                unmarshalType = camelContext.getClassResolver().resolveMandatoryClass(unmarshalTypeName);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-        return super.createDataFormat(camelContext);
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (unmarshalType != null) {
-            setProperty(camelContext, dataFormat, "unmarshalType", unmarshalType);
-        }
-        if (useList != null) {
-            setProperty(camelContext, dataFormat, "useList", useList);
-        }
-    }
 }

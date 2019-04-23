@@ -21,11 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * String data format is a textual based format that supports character encoding.
@@ -39,11 +36,6 @@ public class StringDataFormat extends DataFormatDefinition {
 
     public StringDataFormat() {
         super("string");
-    }
-
-    @Override
-    protected DataFormat createDataFormat(CamelContext camelContext) {
-        return new org.apache.camel.impl.StringDataFormat(charset);
     }
 
     public String getCharset() {

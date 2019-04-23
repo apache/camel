@@ -143,13 +143,8 @@ public class TransformerContractTest extends ContextTestSupport {
 
     public static class MyDataFormatDefinition extends DataFormatDefinition {
 
-        @Override
-        public DataFormat getDataFormat(CamelContext camelContext) {
-            return createDataFormat();
-        }
-
-        private DataFormat createDataFormat() {
-            return new DataFormat() {
+        public MyDataFormatDefinition() {
+            super(new DataFormat() {
                 @Override
                 public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
                     assertEquals(B.class, graph.getClass());
@@ -164,7 +159,7 @@ public class TransformerContractTest extends ContextTestSupport {
                     assertEquals("<foo/>", br.readLine());
                     return new A();
                 }
-            };
+            });
         }
     }
 

@@ -33,14 +33,9 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.CollectionStringBuffer;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * XSTream data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
@@ -218,45 +213,6 @@ public class XStreamDataFormat extends DataFormatDefinition {
         setPermissions(csb.toString());
     }
 
-    @Override
-    protected DataFormat createDataFormat(CamelContext camelContext) {
-        if ("json".equals(this.driver)) {
-            setProperty(camelContext, this, "dataFormatName", "json-xstream");
-        }
-        DataFormat answer = super.createDataFormat(camelContext);
-        // need to lookup the reference for the xstreamDriver
-        if (ObjectHelper.isNotEmpty(driverRef)) {
-            setProperty(camelContext, answer, "xstreamDriver", CamelContextHelper.mandatoryLookup(camelContext, driverRef));
-        }
-        return answer;
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (this.permissions != null) {
-            setProperty(camelContext, dataFormat, "permissions", this.permissions);
-        }
-        if (encoding != null) {
-            setProperty(camelContext, dataFormat, "encoding", encoding);
-        }
-        if (this.converters != null) {
-            setProperty(camelContext, dataFormat, "converters", this.converters);
-        }
-        if (this.aliases != null) {
-            setProperty(camelContext, dataFormat, "aliases", this.aliases);
-        }
-        if (this.omitFields != null) {
-            setProperty(camelContext, dataFormat, "omitFields", this.omitFields);
-        }
-        if (this.implicitCollections != null) {
-            setProperty(camelContext, dataFormat, "implicitCollections", this.implicitCollections);
-        }
-        if (this.mode != null) {
-            setProperty(camelContext, dataFormat, "mode", mode);
-        }
-    }
-    
-    
 
     @XmlTransient
     public static class ConvertersAdapter extends XmlAdapter<ConverterList, List<String>> {

@@ -24,12 +24,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.w3c.dom.Node;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * TidyMarkup data format is used for parsing HTML and return it as pretty well-formed HTML.
@@ -93,29 +89,6 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
      */
     public void setOmitXmlDeclaration(Boolean omitXmlDeclaration) {
         this.omitXmlDeclaration = omitXmlDeclaration;
-    }
-
-    @Override
-    protected DataFormat createDataFormat(CamelContext camelContext) {
-        if (dataObjectType == null && dataObjectTypeName != null) {
-            try {
-                dataObjectType = camelContext.getClassResolver().resolveMandatoryClass(dataObjectTypeName);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-
-        return super.createDataFormat(camelContext);
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (dataObjectType != null) {
-            setProperty(camelContext, dataFormat, "dataObjectType", dataObjectType);
-        }
-        if (omitXmlDeclaration != null) {
-            setProperty(camelContext, dataFormat, "omitXmlDeclaration", omitXmlDeclaration);
-        }
     }
 
 }

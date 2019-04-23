@@ -21,9 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -41,11 +39,6 @@ public class CustomDataFormat extends DataFormatDefinition {
 
     public CustomDataFormat(String ref) {
         this.ref = ref;
-    }
-
-    @Override
-    protected DataFormat createDataFormat(CamelContext camelContext) {
-        return DataFormatDefinition.getDataFormat(camelContext, null, ref);
     }
 
     /**

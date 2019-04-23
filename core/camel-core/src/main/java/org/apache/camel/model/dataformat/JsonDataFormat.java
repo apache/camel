@@ -22,12 +22,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
@@ -210,6 +206,14 @@ public class JsonDataFormat extends DataFormatDefinition {
         this.collectionTypeName = collectionTypeName;
     }
 
+    public Class<?> getCollectionType() {
+        return collectionType;
+    }
+
+    public void setCollectionType(Class<?> collectionType) {
+        this.collectionType = collectionType;
+    }
+
     public Boolean getUseList() {
         return useList;
     }
@@ -366,98 +370,6 @@ public class JsonDataFormat extends DataFormatDefinition {
     public String getDataFormatName() {
         // json data format is special as the name can be from different bundles
         return "json-" + library.name().toLowerCase();
-    }
-
-    @Override
-    protected DataFormat createDataFormat(CamelContext camelContext) {
-        if (library == JsonLibrary.XStream) {
-            setProperty(camelContext, this, "dataFormatName", "json-xstream");
-        } else if (library == JsonLibrary.Jackson) {
-            setProperty(camelContext, this, "dataFormatName", "json-jackson");
-        } else if (library == JsonLibrary.Gson) {
-            setProperty(camelContext, this, "dataFormatName", "json-gson");
-        } else if (library == JsonLibrary.Fastjson) {
-            setProperty(camelContext, this, "dataFormatName", "json-fastjson");
-        } else {
-            setProperty(camelContext, this, "dataFormatName", "json-johnzon");
-        }
-
-        if (unmarshalType == null && unmarshalTypeName != null) {
-            try {
-                unmarshalType = camelContext.getClassResolver().resolveMandatoryClass(unmarshalTypeName);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-        if (collectionType == null && collectionTypeName != null) {
-            try {
-                collectionType = camelContext.getClassResolver().resolveMandatoryClass(collectionTypeName);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-
-        return super.createDataFormat(camelContext);
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (objectMapper != null) {
-            // must be a reference value
-            String ref = objectMapper.startsWith("#") ? objectMapper : "#" + objectMapper;
-            setProperty(camelContext, dataFormat, "objectMapper", ref);
-        }
-        if (useDefaultObjectMapper != null) {
-            setProperty(camelContext, dataFormat, "useDefaultObjectMapper", useDefaultObjectMapper);
-        }
-        if (unmarshalType != null) {
-            setProperty(camelContext, dataFormat, "unmarshalType", unmarshalType);
-        }
-        if (prettyPrint != null) {
-            setProperty(camelContext, dataFormat, "prettyPrint", prettyPrint);
-        }
-        if (jsonView != null) {
-            setProperty(camelContext, dataFormat, "jsonView", jsonView);
-        }
-        if (include != null) {
-            setProperty(camelContext, dataFormat, "include", include);
-        }
-        if (allowJmsType != null) {
-            setProperty(camelContext, dataFormat, "allowJmsType", allowJmsType);
-        }
-        if (collectionType != null) {
-            setProperty(camelContext, dataFormat, "collectionType", collectionType);
-        }
-        if (useList != null) {
-            setProperty(camelContext, dataFormat, "useList", useList);
-        }
-        if (enableJaxbAnnotationModule != null) {
-            setProperty(camelContext, dataFormat, "enableJaxbAnnotationModule", enableJaxbAnnotationModule);
-        }
-        if (moduleClassNames != null) {
-            setProperty(camelContext, dataFormat, "moduleClassNames", moduleClassNames);
-        }
-        if (moduleRefs != null) {
-            setProperty(camelContext, dataFormat, "moduleRefs", moduleRefs);
-        }
-        if (enableFeatures != null) {
-            setProperty(camelContext, dataFormat, "enableFeatures", enableFeatures);
-        }
-        if (disableFeatures != null) {
-            setProperty(camelContext, dataFormat, "disableFeatures", disableFeatures);
-        }
-        if (permissions != null) {
-            setProperty(camelContext, dataFormat, "permissions", permissions);
-        }
-        if (allowUnmarshallType != null) {
-            setProperty(camelContext, dataFormat, "allowUnmarshallType", allowUnmarshallType);
-        }
-        // if we have the unmarshal type, but no permission set, then use it to
-        // be allowed
-        if (permissions == null && unmarshalType != null) {
-            String allow = "+" + unmarshalType.getName();
-            setProperty(camelContext, dataFormat, "permissions", allow);
-        }
     }
 
 }

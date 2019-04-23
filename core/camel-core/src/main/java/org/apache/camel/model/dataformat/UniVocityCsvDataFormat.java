@@ -21,8 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -89,21 +87,4 @@ public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {
         this.delimiter = delimiter;
     }
 
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        super.configureDataFormat(dataFormat, camelContext);
-
-        if (quoteAllFields != null) {
-            setProperty(camelContext, dataFormat, "quoteAllFields", quoteAllFields);
-        }
-        if (quote != null) {
-            setProperty(camelContext, dataFormat, "quote", singleCharOf("quote", quote));
-        }
-        if (quoteEscape != null) {
-            setProperty(camelContext, dataFormat, "quoteEscape", singleCharOf("quoteEscape", quoteEscape));
-        }
-        if (delimiter != null) {
-            setProperty(camelContext, dataFormat, "delimiter", singleCharOf("delimiter", delimiter));
-        }
-    }
 }

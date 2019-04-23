@@ -16,21 +16,13 @@
  */
 package org.apache.camel.model.dataformat;
 
-import java.security.Key;
-import java.security.spec.AlgorithmParameterSpec;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Crypto data format is used for encrypting and decrypting of messages using Java Cryptographic Extension.
@@ -60,54 +52,6 @@ public class CryptoDataFormat extends DataFormatDefinition {
 
     public CryptoDataFormat() {
         super("crypto");
-    }
-
-    @Override
-    protected DataFormat createDataFormat(CamelContext camelContext) {
-        DataFormat cryptoFormat = super.createDataFormat(camelContext);
-
-        if (ObjectHelper.isNotEmpty(keyRef)) {
-            Key key = CamelContextHelper.mandatoryLookup(camelContext, keyRef, Key.class);
-            setProperty(camelContext, cryptoFormat, "key", key);
-        }
-        if (ObjectHelper.isNotEmpty(algorithmParameterRef)) {
-            AlgorithmParameterSpec spec = CamelContextHelper.mandatoryLookup(camelContext,
-                    algorithmParameterRef, AlgorithmParameterSpec.class);
-            setProperty(camelContext, cryptoFormat, "AlgorithmParameterSpec", spec);
-        }
-        if (ObjectHelper.isNotEmpty(initVectorRef)) {
-            byte[] iv = CamelContextHelper.mandatoryLookup(camelContext, initVectorRef, byte[].class);
-            setProperty(camelContext, cryptoFormat, "InitializationVector", iv);
-        }
-        return cryptoFormat;
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        Boolean answer = ObjectHelper.toBoolean(shouldAppendHMAC);
-        if (answer != null && !answer) {
-            setProperty(camelContext, dataFormat, "shouldAppendHMAC", Boolean.FALSE);
-        } else {
-            setProperty(camelContext, dataFormat, "shouldAppendHMAC", Boolean.TRUE);
-        }
-        answer = ObjectHelper.toBoolean(inline);
-        if (answer != null && answer) {
-            setProperty(camelContext, dataFormat, "shouldInlineInitializationVector", Boolean.TRUE);
-        } else {
-            setProperty(camelContext, dataFormat, "shouldInlineInitializationVector", Boolean.FALSE);
-        }
-        if (algorithm != null) {
-            setProperty(camelContext, dataFormat, "algorithm", algorithm);
-        }
-        if (cryptoProvider != null) {
-            setProperty(camelContext, dataFormat, "cryptoProvider", cryptoProvider);
-        }
-        if (macAlgorithm != null) {
-            setProperty(camelContext, dataFormat, "macAlgorithm", macAlgorithm);
-        }
-        if (buffersize != null) {
-            setProperty(camelContext, dataFormat, "buffersize", buffersize);
-        }
     }
 
     public String getAlgorithm() {

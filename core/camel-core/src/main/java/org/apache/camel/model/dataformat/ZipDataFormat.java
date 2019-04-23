@@ -16,18 +16,13 @@
  */
 package org.apache.camel.model.dataformat;
 
-import java.util.zip.Deflater;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Zip Deflate Compression data format is a message compression and de-compression format (not zip files).
@@ -45,15 +40,6 @@ public class ZipDataFormat extends DataFormatDefinition {
 
     public ZipDataFormat(int compressionLevel) {
         this.compressionLevel = compressionLevel;
-    }
-
-    @Override
-    protected DataFormat createDataFormat(CamelContext camelContext) {
-        if (compressionLevel == null) {
-            return new org.apache.camel.impl.ZipDataFormat(Deflater.DEFAULT_COMPRESSION);
-        } else {
-            return new org.apache.camel.impl.ZipDataFormat(compressionLevel);
-        }
     }
 
     public Integer getCompressionLevel() {

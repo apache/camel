@@ -25,9 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.jsse.KeyStoreParameters;
@@ -39,8 +37,6 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 @XmlRootElement(name = "secureXML")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLSecurityDataFormat extends DataFormatDefinition implements NamespaceAware {
-
-    private static final String TRIPLEDES = "http://www.w3.org/2001/04/xmlenc#tripledes-cbc";
 
     @XmlAttribute @Metadata(defaultValue = "TRIPLEDES")
     private String xmlCipherAlgorithm;
@@ -73,60 +69,6 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
 
     public XMLSecurityDataFormat() {
         super("secureXML");
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (getSecureTag() != null) {
-            setProperty(camelContext, dataFormat, "secureTag", getSecureTag());
-        } else {
-            setProperty(camelContext, dataFormat, "secureTag", "");
-        }
-
-        boolean isSecureTagContents = getSecureTagContents() != null && getSecureTagContents();
-        setProperty(camelContext, dataFormat, "secureTagContents", isSecureTagContents);
-
-        if (passPhrase != null || passPhraseByte != null) {
-            if (passPhraseByte != null) {
-                setProperty(camelContext, dataFormat, "passPhrase", passPhraseByte);
-            } else {
-                setProperty(camelContext, dataFormat, "passPhrase", passPhrase.getBytes());
-            }
-        } else {
-            setProperty(camelContext, dataFormat, "passPhrase", "Just another 24 Byte key".getBytes());
-        }
-        if (getXmlCipherAlgorithm() != null) {
-            setProperty(camelContext, dataFormat, "xmlCipherAlgorithm", getXmlCipherAlgorithm());
-        } else {
-            setProperty(camelContext, dataFormat, "xmlCipherAlgorithm", TRIPLEDES);
-        }
-        if (getKeyCipherAlgorithm() != null) {
-            setProperty(camelContext, dataFormat, "keyCipherAlgorithm", getKeyCipherAlgorithm());
-        }
-        if (getRecipientKeyAlias() != null) {
-            setProperty(camelContext, dataFormat, "recipientKeyAlias", getRecipientKeyAlias());
-        }
-        if (getKeyOrTrustStoreParametersRef() != null) {
-            setProperty(camelContext, dataFormat, "keyOrTrustStoreParametersRef", getKeyOrTrustStoreParametersRef());
-        }
-        if (keyOrTrustStoreParameters != null) {
-            setProperty(camelContext, dataFormat, "keyOrTrustStoreParameters", this.keyOrTrustStoreParameters);
-        }
-        if (namespaces != null) {
-            setProperty(camelContext, dataFormat, "namespaces", this.namespaces);
-        }
-        if (keyPassword != null) {
-            setProperty(camelContext, dataFormat, "keyPassword", this.getKeyPassword());
-        }
-        if (digestAlgorithm != null) {
-            setProperty(camelContext, dataFormat, "digestAlgorithm", this.getDigestAlgorithm());
-        }
-        if (mgfAlgorithm != null) {
-            setProperty(camelContext, dataFormat, "mgfAlgorithm", this.getMgfAlgorithm());
-        }
-        // should be true by default
-        boolean isAddKeyValueForEncryptedKey = getAddKeyValueForEncryptedKey() == null || getAddKeyValueForEncryptedKey();
-        setProperty(camelContext, dataFormat, "addKeyValueForEncryptedKey", isAddKeyValueForEncryptedKey);
     }
 
     public String getXmlCipherAlgorithm() {

@@ -21,9 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -42,16 +40,6 @@ public class TarFileDataFormat extends DataFormatDefinition {
 
     public TarFileDataFormat() {
         super("tarfile");
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (usingIterator != null) {
-            setProperty(camelContext, dataFormat, "usingIterator", usingIterator);
-        }
-        if (preservePathElements != null) {
-            setProperty(camelContext, dataFormat, "preservePathElements", preservePathElements);
-        }
     }
 
     public Boolean getUsingIterator() {
