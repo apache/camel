@@ -35,6 +35,8 @@ public class XPathLanguage extends LanguageSupport {
     private Boolean useSaxon;
     private String objectModelUri;
     private Boolean threadSafety;
+    private Boolean logNamespaces;
+    private String headerName;
 
     public Predicate createPredicate(String expression) {
         expression = loadResource(expression);
@@ -76,10 +78,6 @@ public class XPathLanguage extends LanguageSupport {
         return useSaxon;
     }
 
-    public Boolean isUseSaxon() {
-        return useSaxon != null && useSaxon;
-    }
-
     public String getObjectModelUri() {
         return objectModelUri;
     }
@@ -96,12 +94,38 @@ public class XPathLanguage extends LanguageSupport {
         this.threadSafety = threadSafety;
     }
 
+    public Boolean getLogNamespaces() {
+        return logNamespaces;
+    }
+
+    public void setLogNamespaces(Boolean logNamespaces) {
+        this.logNamespaces = logNamespaces;
+    }
+
+    public String getHeaderName() {
+        return headerName;
+    }
+
+    public void setHeaderName(String headerName) {
+        this.headerName = headerName;
+    }
+
+    private boolean isUseSaxon() {
+        return useSaxon != null && useSaxon;
+    }
+
     protected void configureBuilder(XPathBuilder builder) {
         if (threadSafety != null) {
             builder.setThreadSafety(threadSafety);
         }
         if (resultType != null) {
             builder.setResultQName(resultType);
+        }
+        if (logNamespaces != null) {
+            builder.setLogNamespaces(logNamespaces);
+        }
+        if (headerName != null) {
+            builder.setHeaderName(headerName);
         }
 
         if (isUseSaxon()) {
