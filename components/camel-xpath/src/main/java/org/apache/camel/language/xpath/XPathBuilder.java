@@ -55,6 +55,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.spi.ExpressionResultTypeAware;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.DefaultExchange;
@@ -93,7 +94,7 @@ import static org.apache.camel.support.builder.xml.Namespaces.isMatchingNamespac
  *
  * @see XPathConstants#NODESET
  */
-public class XPathBuilder extends ServiceSupport implements CamelContextAware, Expression, Predicate, NamespaceAware {
+public class XPathBuilder extends ServiceSupport implements CamelContextAware, Expression, Predicate, NamespaceAware, ExpressionResultTypeAware {
     private static final Logger LOG = LoggerFactory.getLogger(XPathBuilder.class);
     private static final String SAXON_OBJECT_MODEL_URI = "http://saxon.sf.net/jaxp/xpath/om";
     private static final String SAXON_FACTORY_CLASS_NAME = "net.sf.saxon.xpath.XPathFactoryImpl";
@@ -796,6 +797,12 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
         this.simpleFunction = simpleFunction;
     }
 
+    @Override
+    public String getExpressionText() {
+        return text;
+    }
+
+    @Override
     public Class<?> getResultType() {
         return resultType;
     }
