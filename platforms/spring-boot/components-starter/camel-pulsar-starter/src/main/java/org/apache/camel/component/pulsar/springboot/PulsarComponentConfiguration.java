@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -37,10 +37,9 @@ public class PulsarComponentConfiguration
      */
     private Boolean enabled;
     /**
-     * The pulsar autoconfiguration. The option is a
-     * org.apache.camel.component.pulsar.utils.AutoConfiguration type.
+     * The pulsar autoconfiguration
      */
-    private String autoConfiguration;
+    private AutoConfigurationNestedConfiguration autoConfiguration;
     /**
      * The pulsar client. The option is a
      * org.apache.pulsar.client.api.PulsarClient type.
@@ -53,11 +52,12 @@ public class PulsarComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public String getAutoConfiguration() {
+    public AutoConfigurationNestedConfiguration getAutoConfiguration() {
         return autoConfiguration;
     }
 
-    public void setAutoConfiguration(String autoConfiguration) {
+    public void setAutoConfiguration(
+            AutoConfigurationNestedConfiguration autoConfiguration) {
         this.autoConfiguration = autoConfiguration;
     }
 
@@ -76,5 +76,9 @@ public class PulsarComponentConfiguration
     public void setResolvePropertyPlaceholders(
             Boolean resolvePropertyPlaceholders) {
         this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    }
+
+    public static class AutoConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.pulsar.utils.AutoConfiguration.class;
     }
 }
