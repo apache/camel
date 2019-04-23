@@ -33,16 +33,21 @@
     <name>Camel :: XML Security</name>
     <description>Camel Partial XML Encryption/Decryption and XML Signature support</description>
 
-    <properties>
-    </properties>
-
     <dependencies>
 
-        <!-- requires camel-core -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
+            <artifactId>camel-support</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xpath</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-validator</artifactId>
+        </dependency>
+
         <!-- for base 64 in XAdES -->
         <dependency>
             <groupId>commons-codec</groupId>
