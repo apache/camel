@@ -86,27 +86,14 @@ with the following path and query parameters:
 // spring-boot-auto-configure options: START
 === Spring Boot Auto-Configuration
 
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel</groupId>
-  <artifactId>camel-pulsar-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 4 options, which are listed below.
+The component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.pulsar.auto-configuration* | The pulsar autoconfiguration. The option is a org.apache.camel.component.pulsar.utils.AutoConfiguration type. |  | String
 | *camel.component.pulsar.enabled* | Whether to enable auto configuration of the pulsar component. This is enabled by default. |  | Boolean
 | *camel.component.pulsar.pulsar-client* | The pulsar client. The option is a org.apache.pulsar.client.api.PulsarClient type. |  | String
 | *camel.component.pulsar.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
