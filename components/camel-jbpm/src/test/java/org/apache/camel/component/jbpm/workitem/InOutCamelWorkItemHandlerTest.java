@@ -266,11 +266,11 @@ public class InOutCamelWorkItemHandlerTest {
 
             TestWorkItemManager manager = new TestWorkItemManager();
             try {
-            	handler.executeWorkItem(workItem, manager);
-            	throw new RuntimeException("The test expects an exception. This code should never be reached.");
+                handler.executeWorkItem(workItem, manager);
+                throw new RuntimeException("The test expects an exception. This code should never be reached.");
             } catch (Throwable wihRe) {
-            	assertThat(wihRe, is(instanceOf(WorkItemHandlerRuntimeException.class)));
-            	assertThat(wihRe.getCause(), is(instanceOf(ToBeHandledException.class)));
+                assertThat(wihRe, is(instanceOf(WorkItemHandlerRuntimeException.class)));
+                assertThat(wihRe.getCause(), is(instanceOf(ToBeHandledException.class)));
             }
 
         } finally {
@@ -315,11 +315,11 @@ public class InOutCamelWorkItemHandlerTest {
 
             TestWorkItemManager manager = new TestWorkItemManager();
             try {
-            	handler.executeWorkItem(workItem, manager);
-            	throw new RuntimeException("The test expects an exception. This code should never be reached.");
+                handler.executeWorkItem(workItem, manager);
+                throw new RuntimeException("The test expects an exception. This code should never be reached.");
             } catch (Throwable wihRe) {
-            	assertThat(wihRe, is(instanceOf(WorkItemHandlerRuntimeException.class)));
-            	assertThat(wihRe.getCause(), is(instanceOf(ToBeHandledException.class)));
+                assertThat(wihRe, is(instanceOf(WorkItemHandlerRuntimeException.class)));
+                assertThat(wihRe.getCause(), is(instanceOf(ToBeHandledException.class)));
             }
 
         } finally {
@@ -363,10 +363,10 @@ public class InOutCamelWorkItemHandlerTest {
 
             TestWorkItemManager manager = new TestWorkItemManager();
             try {
-            	handler.executeWorkItem(workItem, manager);
-            	throw new RuntimeException("The test expects an exception. This code should never be reached.");
+                handler.executeWorkItem(workItem, manager);
+                throw new RuntimeException("The test expects an exception. This code should never be reached.");
             } catch (Throwable wihRe) {
-            	assertThat(wihRe, is(instanceOf(NotToBeHandledException.class)));
+                assertThat(wihRe, is(instanceOf(NotToBeHandledException.class)));
             }
 
         } finally {

@@ -260,7 +260,7 @@ public class CamelWorkItemHandlerIntegrationTests extends CamelTestSupport {
                         .doTry()
                             .throwException(new IllegalArgumentException("Illegal contennt!"))
                         .doCatch(IllegalArgumentException.class)
-                            .process(new Processor(){
+                            .process(new Processor() {
                             
                                 @Override
                                 public void process(Exchange exchange) throws Exception {
