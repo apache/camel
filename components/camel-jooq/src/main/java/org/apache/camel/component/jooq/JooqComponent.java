@@ -46,6 +46,10 @@ public class JooqComponent extends DefaultComponent {
         return endpoint;
     }
 
+    public JooqConfiguration getConfiguration() {
+        return configuration;
+    }
+
     public void setConfiguration(JooqConfiguration jooqConfiguration) {
         this.configuration = jooqConfiguration;
     }

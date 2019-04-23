@@ -19,7 +19,6 @@ package org.apache.camel.component.disruptor.vm;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.vm.AbstractVmTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 

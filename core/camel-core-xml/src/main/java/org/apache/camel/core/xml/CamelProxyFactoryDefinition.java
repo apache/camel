@@ -31,14 +31,10 @@ public class CamelProxyFactoryDefinition extends IdentifiedType {
 
     @XmlAttribute
     private String serviceUrl;
-    @XmlAttribute @Deprecated
-    private String serviceRef;
     @XmlAttribute
     private Class<?> serviceInterface;
     @XmlAttribute
     private String camelContextId;
-    @XmlAttribute @Metadata(defaultValue = "true")
-    private Boolean binding;
 
     public String getServiceUrl() {
         return serviceUrl;
@@ -49,20 +45,6 @@ public class CamelProxyFactoryDefinition extends IdentifiedType {
      */
     public void setServiceUrl(String serviceUrl) {
         this.serviceUrl = serviceUrl;
-    }
-
-    public String getServiceRef() {
-        return serviceRef;
-    }
-
-    /**
-     * The camel endpoint reference used to send the message to when calling the service from the interface.
-     *
-     * @deprecated use serviceUrl instead with the ref endpoint.
-     */
-    @Deprecated
-    public void setServiceRef(String serviceRef) {
-        this.serviceRef = serviceRef;
     }
 
     public Class<?> getServiceInterface() {
@@ -87,16 +69,4 @@ public class CamelProxyFactoryDefinition extends IdentifiedType {
         this.camelContextId = camelContextId;
     }
 
-    public Boolean getBinding() {
-        return binding;
-    }
-
-    /**
-     * Camel parameter binding is enabled by default, which will use binding information from the method signature
-     * parameters to bind to the Exchange/Message with the following annotations.
-     * If disabled then a {@link org.apache.camel.component.bean.CamelInvocationHandler} is used.
-     */
-    public void setBinding(Boolean binding) {
-        this.binding = binding;
-    }
 }

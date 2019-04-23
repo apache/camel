@@ -63,21 +63,21 @@ public class CryptoDataFormat extends DataFormatDefinition {
     }
 
     @Override
-    protected DataFormat createDataFormat(RouteContext routeContext) {
-        DataFormat cryptoFormat = super.createDataFormat(routeContext);
+    protected DataFormat createDataFormat(CamelContext camelContext) {
+        DataFormat cryptoFormat = super.createDataFormat(camelContext);
 
         if (ObjectHelper.isNotEmpty(keyRef)) {
-            Key key = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), keyRef, Key.class);
-            setProperty(routeContext.getCamelContext(), cryptoFormat, "key", key);
+            Key key = CamelContextHelper.mandatoryLookup(camelContext, keyRef, Key.class);
+            setProperty(camelContext, cryptoFormat, "key", key);
         }
         if (ObjectHelper.isNotEmpty(algorithmParameterRef)) {
-            AlgorithmParameterSpec spec = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(),
+            AlgorithmParameterSpec spec = CamelContextHelper.mandatoryLookup(camelContext,
                     algorithmParameterRef, AlgorithmParameterSpec.class);
-            setProperty(routeContext.getCamelContext(), cryptoFormat, "AlgorithmParameterSpec", spec);
+            setProperty(camelContext, cryptoFormat, "AlgorithmParameterSpec", spec);
         }
         if (ObjectHelper.isNotEmpty(initVectorRef)) {
-            byte[] iv = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), initVectorRef, byte[].class);
-            setProperty(routeContext.getCamelContext(), cryptoFormat, "InitializationVector", iv);
+            byte[] iv = CamelContextHelper.mandatoryLookup(camelContext, initVectorRef, byte[].class);
+            setProperty(camelContext, cryptoFormat, "InitializationVector", iv);
         }
         return cryptoFormat;
     }

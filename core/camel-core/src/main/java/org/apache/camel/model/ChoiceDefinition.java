@@ -26,8 +26,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionClause;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CollectionStringBuffer;
@@ -253,14 +255,22 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
             return;
         }
         for (WhenDefinition when : whenClauses) {
-            if (when.getExpression() instanceof ExpressionClause) {
-                ExpressionClause<?> clause = (ExpressionClause<?>) when.getExpression();
+            ExpressionDefinition exp = when.getExpression();
+            if (exp.getExpressionType() != null) {
+                exp = exp.getExpressionType();
+            }
+            Predicate pre = exp.getPredicate();
+            if (pre instanceof ExpressionClause) {
+                ExpressionClause<?> clause = (ExpressionClause<?>) pre;
                 if (clause.getExpressionType() != null) {
                     // if using the Java DSL then the expression may have been set using the
                     // ExpressionClause which is a fancy builder to define expressions and predicates
                     // using fluent builders in the DSL. However we need afterwards a callback to
                     // reset the expression to the expression type the ExpressionClause did build for us
-                    when.setExpression(clause.getExpressionType());
+                    ExpressionFactory model = clause.getExpressionType();
+                    if (model instanceof ExpressionDefinition) {
+                        when.setExpression((ExpressionDefinition) model);
+                    }
                 }
             }
         }

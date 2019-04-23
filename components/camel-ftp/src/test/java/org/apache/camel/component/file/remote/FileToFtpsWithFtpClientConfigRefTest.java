@@ -37,8 +37,8 @@ public class FileToFtpsWithFtpClientConfigRefTest extends FtpsServerExplicitSSLW
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
 
-        jndi.bind("ftpsClient", new FTPSClient("SSL"));
-        jndi.bind("ftpsClientIn", new FTPSClient("SSL"));
+        jndi.bind("ftpsClient", new FTPSClient("SSLv3"));
+        jndi.bind("ftpsClientIn", new FTPSClient("SSLv3"));
         return jndi;
     }
     

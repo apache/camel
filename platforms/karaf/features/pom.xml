@@ -127,16 +127,14 @@
                         <descriptor>mvn:org.apache.karaf.features/spring/${karaf4-version}/xml/features</descriptor>
                     </descriptors>
                     <distribution>org.apache.karaf.features:framework</distribution>
-                    <javase>1.8</javase>
+                    <javase>9</javase>
                     <framework>
                         <feature>framework</feature>
                     </framework>
                     <features>
                         <!-- camel-ignite requires to install apache ignite first -->
-                        <feature>camel|camel-(?!(ignite|nats|pgevent|script-groovy|spring-redis|spring-security))*
-                        </feature>
+                        <feature>camel|camel-(?!(ignite|nats|pgevent|script-groovy|spring-redis|spring-security|cdi))*</feature>
                     </features>
-                    <configuration>file://${project.build.directory}/classes/config.properties</configuration>
                 </configuration>
                 <executions>
                     <execution>

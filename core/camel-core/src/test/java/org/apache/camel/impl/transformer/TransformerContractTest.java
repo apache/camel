@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -33,7 +34,6 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
-import org.apache.camel.spi.RouteContext;
 import org.junit.Test;
 
 public class TransformerContractTest extends ContextTestSupport {
@@ -142,12 +142,12 @@ public class TransformerContractTest extends ContextTestSupport {
     }
 
     public static class MyDataFormatDefinition extends DataFormatDefinition {
-        public static DataFormat getDataFormat(RouteContext routeContext, DataFormatDefinition type, String ref) {
-            return new MyDataFormatDefinition().createDataFormat();
-        }
-        public DataFormat getDataFormat(RouteContext routeContext) {
+
+        @Override
+        public DataFormat getDataFormat(CamelContext camelContext) {
             return createDataFormat();
         }
+
         private DataFormat createDataFormat() {
             return new DataFormat() {
                 @Override
@@ -157,6 +157,7 @@ public class TransformerContractTest extends ContextTestSupport {
                     pw.print("<fooResponse/>");
                     pw.close();
                 }
+
                 @Override
                 public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
                     BufferedReader br = new BufferedReader(new InputStreamReader(stream));
@@ -168,5 +169,6 @@ public class TransformerContractTest extends ContextTestSupport {
     }
 
     public static class A { }
+
     public static class B { }
 }

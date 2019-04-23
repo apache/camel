@@ -71,18 +71,22 @@ public class JooqComponentConfiguration
     public static class JooqConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.jooq.JooqConfiguration.class;
         /**
-         * Type of operation to execute on query: execute, fetch, etc.
+         * Type of operation to execute on query
          */
-        private JooqOperation operation;
+        private JooqOperation operation = JooqOperation.NONE;
         private Configuration databaseConfiguration;
         /**
-         * JOOQ entity class.
+         * JOOQ entity class
          */
         private Class entityType;
         /**
-         * Delete entity after it is consumed.
+         * Delete entity after it is consumed
          */
         private Boolean consumeDelete = true;
+        /**
+         * To execute plain SQL query
+         */
+        private String query;
 
         public JooqOperation getOperation() {
             return operation;
@@ -114,6 +118,14 @@ public class JooqComponentConfiguration
 
         public void setConsumeDelete(Boolean consumeDelete) {
             this.consumeDelete = consumeDelete;
+        }
+
+        public String getQuery() {
+            return query;
+        }
+
+        public void setQuery(String query) {
+            this.query = query;
         }
     }
 }

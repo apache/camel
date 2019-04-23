@@ -27,11 +27,11 @@ import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.builder.xml.Namespaces.ENVIRONMENT_VARIABLES;
-import static org.apache.camel.builder.xml.Namespaces.EXCHANGE_PROPERTY;
-import static org.apache.camel.builder.xml.Namespaces.IN_NAMESPACE;
-import static org.apache.camel.builder.xml.Namespaces.OUT_NAMESPACE;
-import static org.apache.camel.builder.xml.Namespaces.SYSTEM_PROPERTIES_NAMESPACE;
+import static org.apache.camel.support.builder.xml.Namespaces.ENVIRONMENT_VARIABLES;
+import static org.apache.camel.support.builder.xml.Namespaces.EXCHANGE_PROPERTY;
+import static org.apache.camel.support.builder.xml.Namespaces.IN_NAMESPACE;
+import static org.apache.camel.support.builder.xml.Namespaces.OUT_NAMESPACE;
+import static org.apache.camel.support.builder.xml.Namespaces.SYSTEM_PROPERTIES_NAMESPACE;
 
 /**
  * A variable resolver for XPath expressions which support properties on the

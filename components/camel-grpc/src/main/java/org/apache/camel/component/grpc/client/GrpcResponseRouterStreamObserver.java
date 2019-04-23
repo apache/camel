@@ -17,31 +17,28 @@
 package org.apache.camel.component.grpc.client;
 
 import io.grpc.stub.StreamObserver;
-import org.apache.camel.AsyncProcessor;
+import org.apache.camel.AsyncProducer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.grpc.GrpcConfiguration;
 import org.apache.camel.component.grpc.GrpcConstants;
-import org.apache.camel.impl.DefaultProducerCache;
-import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * A stream observer that routes all responses to another endpoint.
  */
-public class GrpcResponseRouterStreamObserver implements StreamObserver<Object> {
+public class GrpcResponseRouterStreamObserver extends ServiceSupport implements StreamObserver<Object> {
 
     private final Endpoint sourceEndpoint;
     private final GrpcConfiguration configuration;
-    private final Endpoint endpoint;
-    private final ProducerCache producerCache;
+    private Endpoint endpoint;
+    private AsyncProducer producer;
 
-    public GrpcResponseRouterStreamObserver(GrpcConfiguration configuration, Endpoint sourceEndpoint) {
+    public GrpcResponseRouterStreamObserver(GrpcConfiguration configuration, Endpoint sourceEndpoint) throws Exception {
         this.configuration = configuration;
         this.sourceEndpoint = sourceEndpoint;
-        this.endpoint = CamelContextHelper.getMandatoryEndpoint(sourceEndpoint.getCamelContext(), configuration.getStreamRepliesTo());
-        sourceEndpoint.getCamelContext().createProducerTemplate(-1);
-        this.producerCache = new DefaultProducerCache(this, sourceEndpoint.getCamelContext(), -1);
     }
 
     @Override
@@ -50,7 +47,6 @@ public class GrpcResponseRouterStreamObserver implements StreamObserver<Object> 
         exchange.getIn().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_NEXT);
         exchange.getIn().setBody(o);
         doSend(exchange);
-
     }
 
     @Override
@@ -72,10 +68,19 @@ public class GrpcResponseRouterStreamObserver implements StreamObserver<Object> 
         }
     }
 
-
     private void doSend(Exchange exchange) {
-
-        producerCache.doInAsyncProducer(endpoint, exchange, doneSync -> { }, AsyncProcessor::process);
+        producer.processAsync(exchange);
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        this.endpoint = CamelContextHelper.getMandatoryEndpoint(sourceEndpoint.getCamelContext(), configuration.getStreamRepliesTo());
+        this.producer = endpoint.createAsyncProducer();
+        ServiceHelper.startService(producer);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(producer);
+    }
 }

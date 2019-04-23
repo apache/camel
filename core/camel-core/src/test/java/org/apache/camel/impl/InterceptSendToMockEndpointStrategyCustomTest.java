@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 public class InterceptSendToMockEndpointStrategyCustomTest extends ContextTestSupport {
@@ -30,7 +29,7 @@ public class InterceptSendToMockEndpointStrategyCustomTest extends ContextTestSu
     private class MyStrategy extends InterceptSendToMockEndpointStrategy {
 
         @Override
-        protected Producer onInterceptEndpoint(String uri, Endpoint endpoint, MockEndpoint mockEndpoint, Producer mockProducer) {
+        protected Producer onInterceptEndpoint(String uri, Endpoint endpoint, Endpoint mockEndpoint, Producer mockProducer) {
             called = true;
             return mockProducer;
         }

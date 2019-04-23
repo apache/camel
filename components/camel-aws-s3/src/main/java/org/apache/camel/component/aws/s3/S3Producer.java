@@ -158,7 +158,7 @@ public class S3Producer extends DefaultProducer {
             // PutObjectRequest#setAccessControlList for more details
             initRequest.setAccessControlList(acl);
         }
-        
+
         if (getConfiguration().isUseAwsKMS()) {
             SSEAwsKeyManagementParams keyManagementParams;
             if (ObjectHelper.isNotEmpty(getConfiguration().getAwsKMSKeyId())) {
@@ -229,9 +229,16 @@ public class S3Producer extends DefaultProducer {
             is = new FileInputStream(filePayload);
         } else {
             is = exchange.getIn().getMandatoryBody(InputStream.class);
-            baos = determineLengthInputStream(is);
-            objectMetadata.setContentLength(baos.size());
-            is = new ByteArrayInputStream(baos.toByteArray());
+            if (objectMetadata.getContentLength() == 0 && ObjectHelper.isEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
+                log.debug("The content length is not defined. It needs to be determined by reading the data into memory");
+                baos = determineLengthInputStream(is);
+                objectMetadata.setContentLength(baos.size());
+                is = new ByteArrayInputStream(baos.toByteArray());
+            } else {
+                if (ObjectHelper.isNotEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
+                    objectMetadata.setContentLength(Long.valueOf(exchange.getProperty(Exchange.CONTENT_LENGTH, String.class)));
+                }
+            }
         }
 
         final String bucketName = determineBucketName(exchange);
@@ -256,7 +263,7 @@ public class S3Producer extends DefaultProducer {
             // PutObjectRequest#setAccessControlList for more details
             putObjectRequest.setAccessControlList(acl);
         }
-        
+
         if (getConfiguration().isUseAwsKMS()) {
             SSEAwsKeyManagementParams keyManagementParams;
             if (ObjectHelper.isNotEmpty(getConfiguration().getAwsKMSKeyId())) {
@@ -266,7 +273,7 @@ public class S3Producer extends DefaultProducer {
             }
             putObjectRequest.setSSEAwsKeyManagementParams(keyManagementParams);
         }
-        
+
         LOG.trace("Put object [{}] from exchange [{}]...", putObjectRequest, exchange);
 
         PutObjectResult putObjectResult = getEndpoint().getS3Client().putObject(putObjectRequest);
@@ -317,7 +324,7 @@ public class S3Producer extends DefaultProducer {
             }
             copyObjectRequest.setSSEAwsKeyManagementParams(keyManagementParams);
         }
-        
+
         CopyObjectResult copyObjectResult = s3Client.copyObject(copyObjectRequest);
 
         Message message = getMessageForResponse(exchange);
@@ -352,18 +359,18 @@ public class S3Producer extends DefaultProducer {
         DeleteBucketRequest deleteBucketRequest = new DeleteBucketRequest(bucketName);
         s3Client.deleteBucket(deleteBucketRequest);
     }
-    
+
     private void getObject(AmazonS3 s3Client, Exchange exchange) {
         final String bucketName = determineBucketName(exchange);
         final String sourceKey = determineKey(exchange);
 
         GetObjectRequest req = new GetObjectRequest(bucketName, sourceKey);
         S3Object res = s3Client.getObject(req);
-        
+
         Message message = getMessageForResponse(exchange);
         message.setBody(res);
     }
-    
+
     private void listObjects(AmazonS3 s3Client, Exchange exchange) {
         final String bucketName = determineBucketName(exchange);
 
@@ -440,8 +447,8 @@ public class S3Producer extends DefaultProducer {
     }
 
     /**
-     * Reads the bucket name from the header of the given exchange. If not provided, it's read from the endpoint
-     * configuration.
+     * Reads the bucket name from the header of the given exchange. If not
+     * provided, it's read from the endpoint configuration.
      *
      * @param exchange The exchange to read the header from.
      * @return The bucket name.
@@ -491,30 +498,30 @@ public class S3Producer extends DefaultProducer {
 
     private void createDownloadLink(AmazonS3 s3Client, Exchange exchange) {
         final String bucketName = determineBucketName(exchange);
-        
+
         String key = exchange.getIn().getHeader(S3Constants.KEY, String.class);
         if (key == null) {
             throw new IllegalArgumentException("AWS S3 Key header is missing.");
         }
-        
+
         Date expiration = new Date();
         long milliSeconds = expiration.getTime();
-        
+
         Long expirationMillis = exchange.getIn().getHeader(S3Constants.DOWNLOAD_LINK_EXPIRATION, Long.class);
         if (expirationMillis != null) {
             milliSeconds += expirationMillis;
         } else {
             milliSeconds += 1000 * 60 * 60; // Default: Add 1 hour.
         }
-        
+
         expiration.setTime(milliSeconds);
-        
+
         GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucketName, key);
-        generatePresignedUrlRequest.setMethod(HttpMethod.GET); 
+        generatePresignedUrlRequest.setMethod(HttpMethod.GET);
         generatePresignedUrlRequest.setExpiration(expiration);
 
-        URL url = s3Client.generatePresignedUrl(generatePresignedUrlRequest); 
-        
+        URL url = s3Client.generatePresignedUrl(generatePresignedUrlRequest);
+
         Message message = getMessageForResponse(exchange);
         message.setHeader(S3Constants.DOWNLOAD_LINK, url.toString());
     }
@@ -535,7 +542,7 @@ public class S3Producer extends DefaultProducer {
     public S3Endpoint getEndpoint() {
         return (S3Endpoint)super.getEndpoint();
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
         if (exchange.getPattern().isOutCapable()) {
             Message out = exchange.getOut();

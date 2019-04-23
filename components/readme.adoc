@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 295 in 231 JAR artifacts (0 deprecated)
+Number of Components: 294 in 231 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -568,7 +568,7 @@ Number of Components: 295 in 231 JAR artifacts (0 deprecated)
 | link:camel-mllp/src/main/docs/mllp-component.adoc[MLLP] (camel-mllp) +
 `mllp:hostname:port` | 2.17 | Provides functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.
 
-| link:../core/camel-core/src/main/docs/mock-component.adoc[Mock] (camel-core) +
+| link:camel-mock/src/main/docs/mock-component.adoc[Mock] (camel-mock) +
 `mock:name` | 1.0 | The mock component is used for testing routes and mediation rules using mocks.
 
 | link:camel-mongodb3/src/main/docs/mongodb3-component.adoc[MongoDB] (camel-mongodb3) +
@@ -699,9 +699,6 @@ Number of Components: 295 in 231 JAR artifacts (0 deprecated)
 
 | link:camel-restlet/src/main/docs/restlet-component.adoc[Restlet] (camel-restlet) +
 `restlet:protocol:host:port/uriPattern` | 2.0 | Component for consuming and producing Restful resources using Restlet.
-
-| link:camel-rmi/src/main/docs/rmi-component.adoc[RMI] (camel-rmi) +
-`rmi:hostname:port/name` | 1.0 | The rmi component is for invoking Java RMI beans from Camel.
 
 | link:camel-rss/src/main/docs/rss-component.adoc[RSS] (camel-rss) +
 `rss:feedUri` | 2.0 | The rss component is used for consuming RSS feeds.
@@ -957,7 +954,7 @@ Number of Data Formats: 46 in 36 JAR artifacts (0 deprecated)
 
 | link:camel-xstream/src/main/docs/json-xstream-dataformat.adoc[JSon XStream] (camel-xstream) | 2.0 | JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
 
-| link:camel-jsonapi/src/main/docs/jsonApi-dataformat.adoc[jsonApi] (camel-jsonapi) | 3.0 | 
+| link:camel-jsonapi/src/main/docs/jsonApi-dataformat.adoc[jsonApi] (camel-jsonapi) | 3.0 | JsonApi data format is used for marshal and unmarshal Json API object.
 
 | link:camel-lzf/src/main/docs/lzf-dataformat.adoc[LZF Deflate Compression] (camel-lzf) | 2.17 | The LZF data format is a message compression and de-compression format (uses the LZF deflate algorithm).
 
@@ -1003,7 +1000,7 @@ Number of Data Formats: 46 in 36 JAR artifacts (0 deprecated)
 ==== Expression Languages
 
 // languages: START
-Number of Languages: 18 in 9 JAR artifacts (1 deprecated)
+Number of Languages: 17 in 8 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1022,8 +1019,6 @@ Number of Languages: 18 in 9 JAR artifacts (1 deprecated)
 | link:../core/camel-core/src/main/docs/header-language.adoc[Header] (camel-core) | 1.5 | To use a Camel Message header in expressions or predicates.
 
 | link:camel-hl7/src/main/docs/hl7terser-language.adoc[HL7 Terser] (camel-hl7) | 2.11 | To use HL7 terser scripts in Camel expressions or predicates.
-
-| link:camel-script/src/main/docs/javaScript-language.adoc[JavaScript] (camel-script) | 1.0 | *deprecated* To use JavaScript in Camel expressions or predicates.
 
 | link:camel-jsonpath/src/main/docs/jsonpath-language.adoc[JsonPath] (camel-jsonpath) | 2.13 | To use JsonPath in Camel expressions or predicates.
 

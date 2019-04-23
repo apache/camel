@@ -30,8 +30,9 @@ import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.ConstantBeanHolder;
 import org.apache.camel.component.bean.ConstantTypeBeanHolder;
 import org.apache.camel.component.bean.RegistryBean;
-import org.apache.camel.language.simple.SimpleLanguage;
+import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
@@ -223,7 +224,7 @@ public class BeanExpression implements Expression, Predicate {
      * To invoke a bean using a OGNL notation which denotes the chain of methods to invoke.
      * <p/>
      * For more advanced OGNL you may have to look for a real framework such as OGNL, Mvel or dynamic
-     * programming language such as Groovy, JuEL, JavaScript.
+     * programming language such as Groovy.
      */
     private static Object invokeOgnlMethod(BeanHolder beanHolder, String beanName, String ognl, Exchange exchange) {
 
@@ -308,8 +309,9 @@ public class BeanExpression implements Expression, Predicate {
             // if there was a key then we need to lookup using the key
             if (key != null) {
                 // if key is a nested simple expression then re-evaluate that again
-                if (SimpleLanguage.hasSimpleFunction(key)) {
-                    key = SimpleLanguage.expression(key).evaluate(exchange, String.class);
+                if (LanguageSupport.hasSimpleFunction(key)) {
+                    Language lan = exchange.getContext().resolveLanguage("simple");
+                    key = lan.createExpression(key).evaluate(exchange, String.class);
                 }
                 if (key != null) {
                     result = lookupResult(resultExchange, key, result, nullSafe, ognlPath, holder.getBean());

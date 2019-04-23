@@ -2565,7 +2565,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         // Initialize declarative validator registry
         validatorRegistry = doAddService(createValidatorRegistry(validators));
 
-        // optimised to not include runtimeEndpointRegistry unlesstartServices its enabled or JMX statistics is in extended mode
+        // optimised to not include runtimeEndpointRegistry unless startServices its enabled or JMX statistics is in extended mode
         if (runtimeEndpointRegistry == null && getManagementStrategy() != null && getManagementStrategy().getManagementAgent() != null) {
             Boolean isEnabled = getManagementStrategy().getManagementAgent().getEndpointRuntimeStatisticsEnabled();
             boolean isExtended = getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
@@ -2576,7 +2576,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
             }
         }
         if (runtimeEndpointRegistry != null) {
-            if (runtimeEndpointRegistry instanceof EventNotifier) {
+            if (runtimeEndpointRegistry instanceof EventNotifier && getManagementStrategy() != null) {
                 getManagementStrategy().addEventNotifier((EventNotifier) runtimeEndpointRegistry);
             }
             addService(runtimeEndpointRegistry, true, true);
@@ -2588,6 +2588,16 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         if (existing != null) {
             // store reference to the existing properties component
             propertiesComponent = existing;
+        }
+
+        // eager lookup data formats and bind to registry so the dataformats can be looked up and used
+        for (Map.Entry<String, DataFormatDefinition> e : dataFormats.entrySet()) {
+            String id = e.getKey();
+            DataFormatDefinition def = e.getValue();
+            log.debug("Creating Dataformat with id: {} and definition: {}", id, def);
+            DataFormat df = def.getDataFormat(this);
+            addService(df, true);
+            getRegistry().bind(id, df);
         }
 
         // start components

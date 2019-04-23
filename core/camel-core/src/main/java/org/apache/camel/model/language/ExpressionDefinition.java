@@ -35,15 +35,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionFactory;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.ScriptHelper;
 import org.apache.camel.model.OtherAttributesAware;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
@@ -54,7 +55,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement
 @XmlType(name = "expression") // must be named expression
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExpressionDefinition implements Expression, Predicate, OtherAttributesAware {
+public class ExpressionDefinition implements Expression, Predicate, OtherAttributesAware, ExpressionFactory {
     @XmlAttribute
     @XmlID
     private String id;
@@ -97,17 +98,18 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
 
     @Override
     public String toString() {
+        // favour using the output from expression value
+        if (getExpressionValue() != null) {
+            return getExpressionValue().toString();
+        }
+
         StringBuilder sb = new StringBuilder();
         if (getLanguage() != null) {
             sb.append(getLanguage()).append("{");
         }
         if (getPredicate() != null) {
             sb.append(getPredicate().toString());
-        }
-        if (getExpressionValue() != null) {
-            sb.append(getExpressionValue().toString());
-        }
-        if (getPredicate() == null && getExpressionValue() == null && getExpression() != null) {
+        } else if (getExpression() != null) {
             sb.append(getExpression());
         }
         if (getLanguage() != null) {

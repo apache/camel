@@ -20,14 +20,12 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.builder.xml.Namespaces;
+import org.apache.camel.ExpressionFactory;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
-import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.Hl7TerserExpression;
-import org.apache.camel.model.language.JavaScriptExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
@@ -40,6 +38,7 @@ import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
+import org.apache.camel.support.builder.xml.Namespaces;
 
 /**
  * A support class for building expression clauses.
@@ -51,7 +50,7 @@ public class ExpressionClauseSupport<T> {
 
     private T result;
     private Expression expressionValue;
-    private ExpressionDefinition expressionType;
+    private ExpressionFactory expressionType;
 
     public ExpressionClauseSupport(T result) {
         this.result = result;
@@ -65,10 +64,16 @@ public class ExpressionClauseSupport<T> {
      */
     public T expression(Expression expression) {
         setExpressionValue(expression);
+        if (expression instanceof ExpressionFactory) {
+            setExpressionType((ExpressionFactory) expression);
+        }
         return result;
     }
 
-    public T expression(ExpressionDefinition expression) {
+    /**
+     * Specify an {@link ExpressionFactory} instance
+     */
+    public T language(ExpressionFactory expression) {
         setExpressionType(expression);
         return result;
     }
@@ -286,20 +291,6 @@ public class ExpressionClauseSupport<T> {
      */
     public T groovy(String text) {
         return expression(new GroovyExpression(text));
-    }
-
-    /**
-     * Evaluates a <a
-     * href="http://camel.apache.org/java-script.html">JavaScript
-     * expression</a>
-     *
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
-     * @deprecated JavaScript is deprecated in Java 11 onwards
-     */
-    @Deprecated
-    public T javaScript(String text) {
-        return expression(new JavaScriptExpression(text));
     }
 
     /**
@@ -1081,11 +1072,11 @@ public class ExpressionClauseSupport<T> {
         this.expressionValue = expressionValue;
     }
 
-    public ExpressionDefinition getExpressionType() {
+    public ExpressionFactory getExpressionType() {
         return expressionType;
     }
 
-    public void setExpressionType(ExpressionDefinition expressionType) {
+    public void setExpressionType(ExpressionFactory expressionType) {
         this.expressionType = expressionType;
     }
 
@@ -1101,6 +1092,7 @@ public class ExpressionClauseSupport<T> {
     }
 
     protected void configureExpression(CamelContext camelContext, Expression expression) {
+        // noop
     }
 
 }

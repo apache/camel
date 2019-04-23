@@ -18,7 +18,6 @@ package org.apache.camel.impl;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.StringHelper;
@@ -72,7 +71,7 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
         if (endpoint instanceof DefaultInterceptSendToEndpoint) {
             // endpoint already decorated
             return endpoint;
-        } else if (endpoint instanceof MockEndpoint) {
+        } else if (endpoint.getEndpointUri().startsWith("mock:")) {
             // we should not intercept mock endpoints
             return endpoint;
         } else if (matchPattern(uri, endpoint, pattern)) {
@@ -91,7 +90,7 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
             }
             LOG.info("Adviced endpoint [{}] with mock endpoint [{}]", uri, key);
 
-            MockEndpoint mock = endpoint.getCamelContext().getEndpoint(key, MockEndpoint.class);
+            Endpoint mock = endpoint.getCamelContext().getEndpoint(key, Endpoint.class);
             Producer producer;
             try {
                 producer = mock.createProducer();
@@ -131,7 +130,7 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
      * @param mockProducer the mock producer
      * @return the mock producer
      */
-    protected Producer onInterceptEndpoint(String uri, Endpoint endpoint, MockEndpoint mockEndpoint, Producer mockProducer) {
+    protected Producer onInterceptEndpoint(String uri, Endpoint endpoint, Endpoint mockEndpoint, Producer mockProducer) {
         return mockProducer;
     }
 

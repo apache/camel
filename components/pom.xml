@@ -44,6 +44,7 @@
         <module>camel-directvm</module>
         <module>camel-language</module>
         <module>camel-log</module>
+        <module>camel-mock</module>
         <module>camel-ref</module>
         <module>camel-seda</module>
         <module>camel-stub</module>
@@ -264,7 +265,6 @@
         <module>camel-rest</module>
         <module>camel-rest-swagger</module>
         <module>camel-restlet</module>
-        <module>camel-rmi</module>
         <module>camel-rss</module>
         <module>camel-rxjava2</module>
         <module>camel-saga</module>
@@ -273,7 +273,6 @@
         <module>camel-scheduler</module>
         <module>camel-salesforce</module>
         <module>camel-schematron</module>
-        <module>camel-script</module>
         <module>camel-servicenow</module>
         <module>camel-servlet</module>
         <module>camel-shiro</module>

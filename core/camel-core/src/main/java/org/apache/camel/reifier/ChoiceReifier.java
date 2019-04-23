@@ -19,9 +19,11 @@ package org.apache.camel.reifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.ExpressionFactory;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.ChoiceDefinition;
-import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.WhenDefinition;
@@ -40,15 +42,33 @@ class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         List<FilterProcessor> filters = new ArrayList<>();
         for (WhenDefinition whenClause : definition.getWhenClauses()) {
+            ExpressionDefinition exp = whenClause.getExpression();
+            if (exp.getExpressionType() != null) {
+                exp = exp.getExpressionType();
+            }
+            Predicate pre = exp.getPredicate();
+            if (pre instanceof ExpressionClause) {
+                ExpressionClause<?> clause = (ExpressionClause<?>) pre;
+                if (clause.getExpressionType() != null) {
+                    // if using the Java DSL then the expression may have been set using the
+                    // ExpressionClause which is a fancy builder to define expressions and predicates
+                    // using fluent builders in the DSL. However we need afterwards a callback to
+                    // reset the expression to the expression type the ExpressionClause did build for us
+                    ExpressionFactory model = clause.getExpressionType();
+                    if (model instanceof ExpressionDefinition) {
+                        whenClause.setExpression((ExpressionDefinition) model);
+                    }
+                }
+                exp = whenClause.getExpression();
+            }
+
             // also resolve properties and constant fields on embedded expressions in the when clauses
-            ExpressionNode exp = whenClause;
-            ExpressionDefinition expressionDefinition = exp.getExpression();
-            if (expressionDefinition != null) {
+            if (exp != null) {
                 // resolve properties before we create the processor
-                ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), expressionDefinition);
+                ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), exp);
 
                 // resolve constant fields (eg Exchange.FILE_NAME)
-                ProcessorDefinitionHelper.resolveKnownConstantFields(expressionDefinition);
+                ProcessorDefinitionHelper.resolveKnownConstantFields(exp);
             }
 
             FilterProcessor filter = (FilterProcessor) createProcessor(routeContext, whenClause);

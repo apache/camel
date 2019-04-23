@@ -162,6 +162,15 @@
 
     <build>
         <defaultGoal>install</defaultGoal>
+
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.1.0</version>
+            </plugin>
+        </plugins>
+
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -326,6 +335,28 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
                     <version>1.1.0</version>
+                    <executions>
+                        <execution>
+                            <id>default-cli</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>flatten</goal>
+                            </goals>
+                            <configuration>
+                                <updatePomFile>true</updatePomFile>
+                                <pomElements>
+                                    <build>keep</build>
+                                    <dependencyManagement>keep</dependencyManagement>
+                                    <description>keep</description>
+                                    <name>keep</name>
+                                    <parent>expand</parent>
+                                    <pluginManagement>keep</pluginManagement>
+                                    <profiles>remove</profiles>
+                                    <properties>keep</properties>
+                                </pomElements>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
 
             </plugins>
@@ -620,32 +651,6 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>flatten-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>default-cli</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>flatten</goal>
-                                </goals>
-                                <configuration>
-                                    <updatePomFile>true</updatePomFile>
-                                    <pomElements>
-                                        <build>keep</build>
-                                        <dependencyManagement>keep</dependencyManagement>
-                                        <description>keep</description>
-                                        <name>keep</name>
-                                        <parent>expand</parent>
-                                        <pluginManagement>keep</pluginManagement>
-                                        <profiles>remove</profiles>
-                                        <properties>expand</properties>
-                                    </pomElements>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -727,32 +732,6 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>flatten-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>default-cli</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>flatten</goal>
-                                </goals>
-                                <configuration>
-                                    <updatePomFile>true</updatePomFile>
-                                    <pomElements>
-                                        <build>keep</build>
-                                        <dependencyManagement>keep</dependencyManagement>
-                                        <description>keep</description>
-                                        <name>keep</name>
-                                        <parent>expand</parent>
-                                        <pluginManagement>keep</pluginManagement>
-                                        <profiles>remove</profiles>
-                                        <properties>expand</properties>
-                                    </pomElements>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

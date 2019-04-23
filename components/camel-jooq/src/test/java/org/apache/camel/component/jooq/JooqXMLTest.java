@@ -52,4 +52,16 @@ public class JooqXMLTest extends BaseJooqTest {
         ProducerTemplate producerTemplate = context.createProducerTemplate();
         producerTemplate.sendBody(context.getEndpoint("direct:fetch"), ExchangePattern.InOut, "empty");
     }
+
+    @Test
+    public void testSQLSelect() {
+        ProducerTemplate producerTemplate = context.createProducerTemplate();
+        producerTemplate.sendBody(context.getEndpoint("direct:sql-select"), ExchangePattern.InOut, "empty");
+    }
+
+    @Test
+    public void testSQLDelete() {
+        ProducerTemplate producerTemplate = context.createProducerTemplate();
+        producerTemplate.sendBody(context.getEndpoint("direct:sql-delete"), ExchangePattern.InOut, "empty");
+    }
 }

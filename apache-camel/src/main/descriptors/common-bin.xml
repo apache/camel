@@ -213,6 +213,7 @@
         <include>org.apache.camel:camel-milo</include>
         <include>org.apache.camel:camel-mina2</include>
         <include>org.apache.camel:camel-mllp</include>
+        <include>org.apache.camel:camel-mock</include>
         <include>org.apache.camel:camel-mongodb-gridfs</include>
         <include>org.apache.camel:camel-mongodb3</include>
         <include>org.apache.camel:camel-mqtt</include>
@@ -252,7 +253,6 @@
         <include>org.apache.camel:camel-rest-swagger</include>
         <include>org.apache.camel:camel-restlet</include>
         <include>org.apache.camel:camel-ribbon</include>
-        <include>org.apache.camel:camel-rmi</include>
         <include>org.apache.camel:camel-rss</include>
         <include>org.apache.camel:camel-rxjava2</include>
         <include>org.apache.camel:camel-saga</include>
@@ -261,7 +261,6 @@
         <include>org.apache.camel:camel-saxon</include>
         <include>org.apache.camel:camel-scheduler</include>
         <include>org.apache.camel:camel-schematron</include>
-        <include>org.apache.camel:camel-script</include>
         <include>org.apache.camel:camel-seda</include>
         <include>org.apache.camel:camel-service</include>
         <include>org.apache.camel:camel-servicenow</include>
@@ -545,6 +544,7 @@
         <include>org.apache.camel:camel-milo-starter</include>
         <include>org.apache.camel:camel-mina2-starter</include>
         <include>org.apache.camel:camel-mllp-starter</include>
+        <include>org.apache.camel:camel-mock-starter</include>
         <include>org.apache.camel:camel-mongodb-gridfs-starter</include>
         <include>org.apache.camel:camel-mongodb3-starter</include>
         <include>org.apache.camel:camel-mqtt-starter</include>
@@ -581,7 +581,6 @@
         <include>org.apache.camel:camel-rest-swagger-starter</include>
         <include>org.apache.camel:camel-restlet-starter</include>
         <include>org.apache.camel:camel-ribbon-starter</include>
-        <include>org.apache.camel:camel-rmi-starter</include>
         <include>org.apache.camel:camel-rss-starter</include>
         <include>org.apache.camel:camel-rxjava2-starter</include>
         <include>org.apache.camel:camel-saga-starter</include>
@@ -590,7 +589,6 @@
         <include>org.apache.camel:camel-saxon-starter</include>
         <include>org.apache.camel:camel-scheduler-starter</include>
         <include>org.apache.camel:camel-schematron-starter</include>
-        <include>org.apache.camel:camel-script-starter</include>
         <include>org.apache.camel:camel-seda-starter</include>
         <include>org.apache.camel:camel-service-starter</include>
         <include>org.apache.camel:camel-servicenow-starter</include>

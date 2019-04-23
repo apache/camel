@@ -34,6 +34,8 @@ public class CamelServiceExporterDefinition extends IdentifiedType {
     @XmlAttribute
     private String serviceRef;
     @XmlAttribute
+    private String method;
+    @XmlAttribute
     private Class<?> serviceInterface;
     @XmlAttribute
     private String camelContextId;
@@ -58,6 +60,17 @@ public class CamelServiceExporterDefinition extends IdentifiedType {
      */
     public void setServiceRef(String serviceRef) {
         this.serviceRef = serviceRef;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    /**
+     * Name of method to invoke on service
+     */
+    public void setMethod(String method) {
+        this.method = method;
     }
 
     public Class<?> getServiceInterface() {

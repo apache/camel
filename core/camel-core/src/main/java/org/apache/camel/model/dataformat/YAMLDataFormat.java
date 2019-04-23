@@ -218,12 +218,12 @@ public class YAMLDataFormat extends DataFormatDefinition {
     }
 
     @Override
-    protected DataFormat createDataFormat(RouteContext routeContext) {
+    protected DataFormat createDataFormat(CamelContext camelContext) {
         if (library == YAMLLibrary.SnakeYAML) {
-            setProperty(routeContext.getCamelContext(), this, "dataFormatName", "yaml-snakeyaml");
+            setProperty(camelContext, this, "dataFormatName", "yaml-snakeyaml");
         }
 
-        return super.createDataFormat(routeContext);
+        return super.createDataFormat(camelContext);
     }
 
     @Override

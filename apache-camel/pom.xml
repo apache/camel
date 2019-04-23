@@ -958,6 +958,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-mock</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-mongodb-gridfs</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -1153,11 +1158,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-rmi</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-rss</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -1194,11 +1194,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-schematron</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-script</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -2427,6 +2422,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-mock-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-mongodb-gridfs-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -2607,11 +2607,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-rmi-starter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-rss-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -2648,11 +2643,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-schematron-starter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-script-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

@@ -30,7 +30,7 @@ public class TryCatchWithSplitIssueTest extends ContextTestSupport {
         MockEndpoint error = getMockEndpoint("mock:error");
         error.expectedBodiesReceived("James");
         error.message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isNotNull();
-        error.message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).method("getMessage").isEqualTo("This is a dummy error James!");
+        error.message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hi Claus", "Hi Willem");
@@ -45,7 +45,7 @@ public class TryCatchWithSplitIssueTest extends ContextTestSupport {
         MockEndpoint error = getMockEndpoint("mock:error");
         error.expectedBodiesReceived("James");
         error.message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isNotNull();
-        error.message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).method("getMessage").isEqualTo("This is a dummy error James!");
+        error.message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:start", "James");
 

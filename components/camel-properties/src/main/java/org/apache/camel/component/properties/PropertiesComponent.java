@@ -28,6 +28,9 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -39,6 +42,7 @@ import org.apache.camel.util.ObjectHelper;
  * The <a href="http://camel.apache.org/properties">Properties Component</a> allows you to use property placeholders when defining Endpoint URIs
  */
 @Component("properties")
+@ManagedResource(description = "Managed PropertiesComponent")
 public class PropertiesComponent extends DefaultComponent implements org.apache.camel.spi.PropertiesComponent {
 
     /**
@@ -321,6 +325,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         }
     }
 
+    @ManagedAttribute(description = "Encoding to use when loading properties file from the file system or classpath")
     public String getEncoding() {
         return encoding;
     }
@@ -357,6 +362,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         this.propertiesParser = propertiesParser;
     }
 
+    @ManagedAttribute(description = "Whether to cache loaded properties")
     public boolean isCache() {
         return cache;
     }
@@ -410,6 +416,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         this.fallbackToUnaugmentedProperty = fallbackToUnaugmentedProperty;
     }
 
+    @ManagedAttribute(description = "Whether to support using fallback values if a property cannot be found")
     public boolean isDefaultFallbackEnabled() {
         return defaultFallbackEnabled;
     }
@@ -421,6 +428,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         this.defaultFallbackEnabled = defaultFallbackEnabled;
     }
 
+    @ManagedAttribute(description = "Ignore missing location")
     public boolean isIgnoreMissingLocation() {
         return ignoreMissingLocation;
     }
@@ -432,6 +440,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         this.ignoreMissingLocation = ignoreMissingLocation;
     }
 
+    @ManagedAttribute(description = "Prefix token")
     public String getPrefixToken() {
         return prefixToken;
     }
@@ -448,6 +457,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         }
     }
 
+    @ManagedAttribute(description = "Suffix token")
     public String getSuffixToken() {
         return suffixToken;
     }
@@ -512,6 +522,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         return functions.containsKey(name);
     }
 
+    @ManagedAttribute(description = "System properties mode")
     public int getSystemPropertiesMode() {
         return systemPropertiesMode;
     }
@@ -531,6 +542,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         this.systemPropertiesMode = systemPropertiesMode;
     }
 
+    @ManagedAttribute(description = "Environment variable mode")
     public int getEnvironmentVariableMode() {
         return environmentVariableMode;
     }
@@ -554,6 +566,14 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     public boolean isResolvePropertyPlaceholders() {
         // its chicken and egg, we cannot resolve placeholders on ourselves
         return false;
+    }
+
+    /**
+     * Clears the cache
+     */
+    @ManagedOperation(description = "Clears the cache")
+    public void clearCache() {
+        this.cacheMap.clear();
     }
 
     @Override

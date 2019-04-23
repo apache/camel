@@ -18,7 +18,6 @@ package org.apache.camel.component.disruptor.vm;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.vm.AbstractVmTestSupport;
 import org.junit.Test;
 
 public class DisruptorVmInOutWithErrorTest extends AbstractVmTestSupport {

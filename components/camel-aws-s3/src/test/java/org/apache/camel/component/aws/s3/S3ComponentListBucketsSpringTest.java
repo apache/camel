@@ -31,10 +31,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class S3ComponentListBucketsSpringTest extends CamelSpringTestSupport {
     
-    @EndpointInject(uri = "direct:listBuckets")
+    @EndpointInject("direct:listBuckets")
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
     @Test

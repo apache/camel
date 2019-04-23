@@ -7,12 +7,12 @@ This component allows sending and receiving messages from
 https://redis.io/[Redis]. Redis is advanced key-value store where
 keys can contain strings, hashes, lists, sets and sorted sets. In
 addition it provides pub/sub functionality for inter-app
-communications. +
- Camel provides a producer for executing commands, consumer for
+communications.
+Camel provides a producer for executing commands, consumer for
 subscribing to pub/sub messages an idempotent repository for filtering
 out duplicate messages.
 
-INFO:*Prerequisites*
+NOTE: *Prerequisites:*
 In order to use this component, you must have a Redis server running.
 
 

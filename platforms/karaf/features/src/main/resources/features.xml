@@ -28,10 +28,12 @@
   <feature name='xml-specs-api' version='${servicemix-specs-version}' start-level='10'>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.activation-api-1.1/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxb-api-2.2/${servicemix-specs-version}</bundle>
+    <bundle dependency="true">mvn:jakarta.xml.bind/jakarta.xml.bind-api/${jakarta-jaxb-version}</bundle>
+    <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxws-api-2.2/${servicemix-specs-version}</bundle>
+    <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxrs-api-2.1/${servicemix-specs-version}</bundle>
     <bundle>mvn:org.codehaus.woodstox/stax2-api/${stax2-api-bundle-version}</bundle>
     <bundle>mvn:org.codehaus.woodstox/woodstox-core-asl/${woodstox-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-impl/${jaxb-bundle-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-runtime/${jaxb-bundle-version}</bundle>
   </feature>
 
   <feature name='camel' version='${project.version}' start-level='50'>
@@ -63,6 +65,7 @@
     <bundle>mvn:org.apache.camel/camel-file/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-language/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-log/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-mock/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-properties/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ref/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-rest/${project.version}</bundle>
@@ -1988,7 +1991,7 @@
   </feature>
   <feature name='camel-quartz2' version='${project.version}' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.c3p0/${c3p0-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.zaxxer/HikariCP-java6/${hikaricp-version}</bundle>
+    <bundle dependency='true'>mvn:com.zaxxer/HikariCP-java7/${hikaricp-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.quartz-scheduler/quartz/${quartz2-version}$overwrite=merge&amp;DynamicImport-Package=org.apache.camel.component.quartz2</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-quartz2/${project.version}</bundle>
@@ -2074,10 +2077,6 @@
     <bundle dependency='true'>wrap:mvn:io.swagger/swagger-parser/${swagger-java-parser-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-rest-swagger/${project.version}</bundle>
   </feature>
-  <feature name='camel-rmi' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-core</feature>
-    <bundle>mvn:org.apache.camel/camel-rmi/${project.version}</bundle>
-  </feature>
   <feature name='camel-rss' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-atom</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
@@ -2122,31 +2121,6 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.saxon/${saxon-bundle-version}</bundle>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-schematron/${project.version}</bundle>
-  </feature>
-   <feature name='camel-script-jruby' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-script</feature>
-    <bundle>mvn:org.jruby/jruby-complete/${jruby-version}</bundle>
-  </feature>
-  <feature name='camel-script-javascript' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-script</feature>
-    <bundle>mvn:com.google.code.scriptengines/scriptengines-javascript/${scriptengines-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rhino/${rhino-bundle-version}</bundle>
-  </feature>
-  <feature name='camel-script-groovy' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-script</feature>
-    <bundle>mvn:org.codehaus.groovy/groovy/${groovy-version}</bundle>
-    <bundle>mvn:org.codehaus.groovy/groovy-jsr223/${groovy-version}</bundle>
-    <bundle dependency='true'>mvn:org.ow2.asm/asm-commons/${asm-version}</bundle>
-    <bundle dependency='true'>mvn:org.ow2.asm/asm-tree/${asm-version}</bundle>
-    <bundle dependency='true'>mvn:org.ow2.asm/asm/${asm-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.aries/org.apache.aries.util/${aries-util-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.aries.spifly/org.apache.aries.spifly.dynamic.bundle/${aries-spifly-version}</bundle>
-  </feature>
-  <feature name='camel-script' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.antlr/${antlr-bundle-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rhino/${rhino-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-script/${project.version}</bundle>
   </feature>
   <feature name='camel-service' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>

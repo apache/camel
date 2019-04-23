@@ -94,6 +94,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         index = COUNTER.getAndIncrement();
     }
 
+    private static <T extends ExpressionNode> ExpressionClause<T> createAndSetExpression(T result) {
+        ExpressionClause<T> clause = new ExpressionClause<>(result);
+        result.setExpression(clause);
+        return clause;
+    }
+
     /**
      * Gets the unique index number for when this {@link ProcessorDefinition} was created by its constructor.
      * <p/>
@@ -1061,8 +1067,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public ExpressionClause<IdempotentConsumerDefinition> idempotentConsumer() {
         IdempotentConsumerDefinition answer = new IdempotentConsumerDefinition();
         addOutput(answer);
-
-        return ExpressionClause.createAndSetExpression(answer);
+        return createAndSetExpression(answer);
     }
 
     /**
@@ -1106,7 +1111,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public ExpressionClause<? extends FilterDefinition> filter() {
         FilterDefinition filter = new FilterDefinition();
         addOutput(filter);
-        return ExpressionClause.createAndSetExpression(filter);
+        return createAndSetExpression(filter);
     }
 
     /**
@@ -1189,7 +1194,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public ExpressionClause<ValidateDefinition> validate() {
         ValidateDefinition answer = new ValidateDefinition();
         addOutput(answer);
-        return ExpressionClause.createAndSetExpression(answer);
+        return createAndSetExpression(answer);
     }
 
     /**
@@ -1397,7 +1402,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         RecipientListDefinition<Type> answer = new RecipientListDefinition<>();
         answer.setDelimiter(delimiter);
         addOutput(answer);
-        return ExpressionClause.createAndSetExpression(answer);
+        return createAndSetExpression(answer);
     }
 
     /**
@@ -1410,7 +1415,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public ExpressionClause<RecipientListDefinition<Type>> recipientList() {
         RecipientListDefinition<Type> answer = new RecipientListDefinition<>();
         addOutput(answer);
-        return ExpressionClause.createAndSetExpression(answer);
+        return createAndSetExpression(answer);
     }
 
     /**
@@ -1463,7 +1468,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public ExpressionClause<RoutingSlipDefinition<Type>> routingSlip() {
         RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<>();
         addOutput(answer);
-        return ExpressionClause.createAndSetExpression(answer);
+        return createAndSetExpression(answer);
     }
 
     /**
@@ -1499,7 +1504,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public ExpressionClause<DynamicRouterDefinition<Type>> dynamicRouter() {
         DynamicRouterDefinition<Type> answer = new DynamicRouterDefinition<>();
         addOutput(answer);
-        return ExpressionClause.createAndSetExpression(answer);
+        return createAndSetExpression(answer);
     }
 
     /**
@@ -1564,7 +1569,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public ExpressionClause<SplitDefinition> split() {
         SplitDefinition answer = new SplitDefinition();
         addOutput(answer);
-        return ExpressionClause.createAndSetExpression(answer);
+        return createAndSetExpression(answer);
     }
 
     /**
@@ -1712,7 +1717,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public ExpressionClause<DelayDefinition> delay() {
         DelayDefinition answer = new DelayDefinition();
         addOutput(answer);
-        return ExpressionClause.createAndSetExpression(answer);
+        return createAndSetExpression(answer);
     }
 
     /**
@@ -1735,8 +1740,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public ExpressionClause<ThrottleDefinition> throttle() {
         ThrottleDefinition answer = new ThrottleDefinition();
         addOutput(answer);
-
-        return ExpressionClause.createAndSetExpression(answer);
+        return createAndSetExpression(answer);
     }
 
     /**
@@ -1823,7 +1827,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public ExpressionClause<LoopDefinition> loop() {
         LoopDefinition loop = new LoopDefinition();
         addOutput(loop);
-        return ExpressionClause.createAndSetExpression(loop);
+        return createAndSetExpression(loop);
     }
 
     /**
@@ -1864,10 +1868,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public ExpressionClause<LoopDefinition> loopDoWhile() {
         LoopDefinition loop = new LoopDefinition();
         loop.setDoWhile(true);
-
         addOutput(loop);
-
-        return ExpressionClause.createAndSetExpression(loop);
+        return createAndSetExpression(loop);
     }
 
     /**
@@ -2671,7 +2673,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public <T> ExpressionClause<SortDefinition<T>> sort() {
         SortDefinition<T> answer = new SortDefinition<>();
         addOutput(answer);
-        return ExpressionClause.createAndSetExpression(answer);
+        return createAndSetExpression(answer);
     }
 
     /**
@@ -2852,7 +2854,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public ExpressionClause<EnrichDefinition> enrich() {
         EnrichDefinition answer = new EnrichDefinition();
         addOutput(answer);
-        return ExpressionClause.createAndSetExpression(answer);
+        return createAndSetExpression(answer);
     }
 
     /**
@@ -3107,7 +3109,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public ExpressionClause<PollEnrichDefinition> pollEnrich() {
         PollEnrichDefinition answer = new PollEnrichDefinition();
         addOutput(answer);
-        return ExpressionClause.createAndSetExpression(answer);
+        return createAndSetExpression(answer);
     }
 
     /**

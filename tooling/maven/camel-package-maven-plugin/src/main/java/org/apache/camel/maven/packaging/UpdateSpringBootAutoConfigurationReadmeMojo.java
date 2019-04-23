@@ -274,8 +274,6 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
             return "lpr";
         } else if ("saxon".equals(componentName)) {
             return "xquery";
-        } else if ("script".equals(componentName)) {
-            return "javaScript";
         } else if ("stringtemplate".equals(componentName)) {
             return "string-template";
         } else if ("tagsoup".equals(componentName)) {

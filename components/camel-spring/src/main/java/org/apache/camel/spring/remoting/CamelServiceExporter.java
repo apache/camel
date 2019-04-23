@@ -45,6 +45,7 @@ public class CamelServiceExporter extends RemoteExporter implements Initializing
     private String camelContextId;
     private Consumer consumer;
     private String serviceRef;
+    private String method;
     private ApplicationContext applicationContext;
 
     public String getUri() {
@@ -75,6 +76,14 @@ public class CamelServiceExporter extends RemoteExporter implements Initializing
         this.serviceRef = serviceRef;
     }
 
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
     public ApplicationContext getApplicationContext() {
         return applicationContext;
     }
@@ -102,7 +111,9 @@ public class CamelServiceExporter extends RemoteExporter implements Initializing
         try {
             // need to start endpoint before we create consumer
             ServiceHelper.startService(endpoint);
-            consumer = endpoint.createConsumer(new BeanProcessor(proxy, camelContext));
+            BeanProcessor processor = new BeanProcessor(proxy, camelContext);
+            processor.setMethod(method);
+            consumer = endpoint.createConsumer(processor);
             // add and start consumer
             camelContext.addService(consumer, true, true);
         } catch (Exception e) {

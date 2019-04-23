@@ -32,7 +32,7 @@ class MarshalReifier extends ProcessorReifier<MarshalDefinition> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) {
-        DataFormat dataFormat = DataFormatDefinition.getDataFormat(routeContext, definition.getDataFormatType(), null);
+        DataFormat dataFormat = DataFormatDefinition.getDataFormat(routeContext.getCamelContext(), definition.getDataFormatType(), null);
         return new MarshalProcessor(dataFormat);
     }
 

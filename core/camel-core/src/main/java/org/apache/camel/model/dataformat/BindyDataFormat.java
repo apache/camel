@@ -56,7 +56,7 @@ public class BindyDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether to use csv, fixed or key value pairs mode.
+     * Whether to use Csv, Fixed, or KeyValue.
      */
     public void setType(BindyType type) {
         this.type = type;
@@ -104,7 +104,8 @@ public class BindyDataFormat extends DataFormatDefinition {
         this.unwrapSingleInstance = unwrapSingleInstance;
     }
 
-    protected DataFormat createDataFormat(RouteContext routeContext) {
+    @Override
+    protected DataFormat createDataFormat(CamelContext camelContext) {
         if (classType == null && clazz == null) {
             throw new IllegalArgumentException("Either packages or classType must be specified");
         }
@@ -119,12 +120,12 @@ public class BindyDataFormat extends DataFormatDefinition {
 
         if (clazz == null && classType != null) {
             try {
-                clazz = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(classType);
+                clazz = camelContext.getClassResolver().resolveMandatoryClass(classType);
             } catch (ClassNotFoundException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
-        return super.createDataFormat(routeContext);
+        return super.createDataFormat(camelContext);
     }
 
     @Override

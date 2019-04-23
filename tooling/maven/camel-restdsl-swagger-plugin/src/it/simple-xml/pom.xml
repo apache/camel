@@ -54,4 +54,35 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>jdk9+-build</id>
+      <activation>
+        <jdk>[9,)</jdk>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>@project.groupId@</groupId>
+              <artifactId>@project.artifactId@</artifactId>
+              <version>@project.version@</version>
+              <dependencies>
+                <dependency>
+                  <groupId>jakarta.xml.bind</groupId>
+                  <artifactId>jakarta.xml.bind-api</artifactId>
+                  <version>@jakarta-jaxb-version@</version>
+                </dependency>
+                <dependency>
+                  <groupId>org.glassfish.jaxb</groupId>
+                  <artifactId>jaxb-runtime</artifactId>
+                  <version>@glassfish-jaxb-runtime-version@</version>
+                </dependency>
+              </dependencies>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+  </profiles>
 </project>

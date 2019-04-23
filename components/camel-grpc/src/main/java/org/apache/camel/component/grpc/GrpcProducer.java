@@ -38,6 +38,7 @@ import org.apache.camel.component.grpc.client.GrpcResponseRouterStreamObserver;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -117,11 +118,18 @@ public class GrpcProducer extends DefaultAsyncProducer {
             if (configuration.getStreamRepliesTo() != null) {
                 this.globalResponseObserver = new GrpcResponseRouterStreamObserver(configuration, getEndpoint());
             }
+
+            if (this.globalResponseObserver != null) {
+                ServiceHelper.startService(this.globalResponseObserver);
+            }
         }
     }
 
     @Override
     protected void doStop() throws Exception {
+        if (this.globalResponseObserver != null) {
+            ServiceHelper.stopService(this.globalResponseObserver);
+        }
         if (channel != null) {
             forwarder.shutdown();
             forwarder = null;
@@ -136,7 +144,7 @@ public class GrpcProducer extends DefaultAsyncProducer {
     }
 
     protected void initializeChannel() throws Exception {
-        NettyChannelBuilder channelBuilder = null;
+        NettyChannelBuilder channelBuilder;
         
         if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
             log.info("Creating channel to the remote gRPC server {}:{}", configuration.getHost(), configuration.getPort());
