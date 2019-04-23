@@ -330,6 +330,7 @@
         <include>org.apache.camel:camel-xchange</include>
         <include>org.apache.camel:camel-xmlsecurity</include>
         <include>org.apache.camel:camel-xmpp</include>
+        <include>org.apache.camel:camel-xpath</include>
         <include>org.apache.camel:camel-xslt</include>
         <include>org.apache.camel:camel-xstream</include>
         <include>org.apache.camel:camel-yammer</include>
@@ -650,6 +651,7 @@
         <include>org.apache.camel:camel-xchange-starter</include>
         <include>org.apache.camel:camel-xmlsecurity-starter</include>
         <include>org.apache.camel:camel-xmpp-starter</include>
+        <include>org.apache.camel:camel-xpath-starter</include>
         <include>org.apache.camel:camel-xslt-starter</include>
         <include>org.apache.camel:camel-xstream-starter</include>
         <include>org.apache.camel:camel-yammer-starter</include>
