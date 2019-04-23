@@ -38,13 +38,13 @@ import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Predicate;
-import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.model.OtherAttributesAware;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
