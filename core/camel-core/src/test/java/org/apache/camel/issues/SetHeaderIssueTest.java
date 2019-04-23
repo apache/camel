@@ -65,8 +65,8 @@ public class SetHeaderIssueTest extends ContextTestSupport {
 
                 from("direct:start").
                     unmarshal().string().
-                    setHeader("foo", xpath("/foo:person[@name='James']").namespaces(ns)).
-                    filter(xpath("/foo:person[@name='James']").namespaces(ns)).
+                    setHeader("foo", xpath("/foo:person[@name='James']", ns)).
+                    filter(xpath("/foo:person[@name='James']", ns)).
                         to("mock:result");
                 // END SNIPPET: example
             }

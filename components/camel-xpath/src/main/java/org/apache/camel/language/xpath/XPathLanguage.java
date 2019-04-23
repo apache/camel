@@ -21,7 +21,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LanguageSupport;
 

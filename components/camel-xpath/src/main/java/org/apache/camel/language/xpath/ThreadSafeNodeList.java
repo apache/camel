@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter.jaxp;
+package org.apache.camel.language.xpath;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +24,16 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
+import org.apache.camel.support.builder.xml.XMLConverterHelper;
+
 /**
- * A simple thread-safe {@link NodeList} that is used by {@link org.apache.camel.builder.xml.XPathBuilder}
+ * A simple thread-safe {@link NodeList} that is used by XPathBuilder
  * to return thread-safe {@link NodeList} instances as its result.
  * <p/>
  * This is needed to ensure that end users do not hit any concurrency issues while working
  * with xpath expressions using built-in from the JDK or via camel-saxon.
  */
-public class ThreadSafeNodeList implements NodeList {
+class ThreadSafeNodeList implements NodeList {
 
     private final List<Node> list = new ArrayList<>();
 
@@ -56,7 +58,7 @@ public class ThreadSafeNodeList implements NodeList {
                 // import node must not occur concurrent on the same node (must be its owner)
                 // so we need to synchronize on it
                 synchronized (node.getOwnerDocument()) {
-                    Document doc = new XmlConverter().createDocument();
+                    Document doc = new XMLConverterHelper().createDocument();
                     // import node must not occur concurrent on the same node (must be its owner)
                     // so we need to synchronize on it
                     synchronized (node.getOwnerDocument()) {

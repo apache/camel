@@ -67,7 +67,7 @@ public class XPathWithNamespaceBuilderFilterTest extends ContextTestSupport {
 
                 // now lets create an xpath based Message Filter
                 from("direct:start").
-                        filter(xpath("/c:person[@name='James']").namespaces(ns)).
+                        filter(xpath("/c:person[@name='James']", ns)).
                         to("mock:result");
                 // END SNIPPET: example
             }

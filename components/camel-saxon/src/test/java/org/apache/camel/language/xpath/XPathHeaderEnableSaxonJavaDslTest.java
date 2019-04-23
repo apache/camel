@@ -62,9 +62,9 @@ public class XPathHeaderEnableSaxonJavaDslTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:in")
                     .choice()
-                        .when(xpath("$type = 'Camel'").saxon())
+                        .when(XPathBuilder.xpath("$type = 'Camel'").saxon())
                             .to("mock:camel")
-                        .when(xpath("//name = 'Kong'").saxon())
+                        .when(XPathBuilder.xpath("//name = 'Kong'").saxon())
                             .to("mock:donkey")
                         .otherwise()
                             .to("mock:other");

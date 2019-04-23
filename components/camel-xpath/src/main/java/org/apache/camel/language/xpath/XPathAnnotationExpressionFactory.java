@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean;
+package org.apache.camel.language.xpath;
 
 import java.lang.annotation.Annotation;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.support.language.DefaultAnnotationExpressionFactory;
 import org.apache.camel.support.language.LanguageAnnotation;
 import org.apache.camel.support.language.NamespacePrefix;

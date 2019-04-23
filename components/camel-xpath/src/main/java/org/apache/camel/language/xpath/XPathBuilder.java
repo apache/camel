@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.xml;
+package org.apache.camel.language.xpath;
 
 import java.io.File;
 import java.io.InputStream;
@@ -55,7 +55,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.WrappedFile;
-import org.apache.camel.converter.jaxp.ThreadSafeNodeList;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.DefaultExchange;
@@ -864,16 +863,16 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
         this.factoryClassName = factoryClassName;
     }
 
-    // Implementation methods
-    // -------------------------------------------------------------------------
-
-    protected Object evaluate(Exchange exchange) {
+    public Object evaluate(Exchange exchange) {
         Object answer = evaluateAs(exchange, resultQName);
         if (resultType != null) {
             return ExchangeHelper.convertToType(exchange, resultType, answer);
         }
         return answer;
     }
+
+    // Implementation methods
+    // -------------------------------------------------------------------------
 
     /**
      * Evaluates the expression as the given result type
@@ -887,7 +886,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
             try {
                 xpathExpression = createXPathExpression();
             } catch (XPathExpressionException e) {
-                throw new InvalidXPathExpression(getText(), e);
+                throw new InvalidXPathException(getText(), e);
             } catch (Exception e) {
                 throw new RuntimeExpressionException("Cannot create xpath expression", e);
             }
@@ -1045,7 +1044,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
             if (ObjectHelper.isNotEmpty(getHeaderName())) {
                 message = message + " with headerName " + getHeaderName();
             }
-            throw new InvalidXPathExpression(message, e);
+            throw new InvalidXPathException(message, e);
         } finally {
             // IOHelper can handle if is is null
             IOHelper.close(is);
