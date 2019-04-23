@@ -23,6 +23,7 @@ import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.XPathExpression;
+import org.apache.camel.spi.ExpressionResultTypeAware;
 
 /**
  * Helper for {@link ExpressionNode}
@@ -49,16 +50,13 @@ public final class ExpressionNodeHelper {
             answer.setExpression(builder.getText());
             answer.setResultType(builder.getResultType());
             return answer;
-
-            // TODO: Make some kind of resulttype expression so we can use an interface to set both kinds
-
-/*        } else if (expression instanceof XPathBuilder) {
-            XPathBuilder builder = (XPathBuilder) expression;
+        } else if (expression instanceof ExpressionResultTypeAware && expression.getClass().getName().equals("org.apache.camel.language.xpath.XPathBuilder")) {
+            ExpressionResultTypeAware aware = (ExpressionResultTypeAware) expression;
             // we keep the original expression by using the constructor that accepts an expression
-            XPathExpression answer = new XPathExpression(builder);
-            answer.setExpression(builder.getText());
-            answer.setResultType(builder.getResultType());
-            return answer;*/
+            XPathExpression answer = new XPathExpression(expression);
+            answer.setExpression(aware.getExpressionText());
+            answer.setResultType(answer.getResultType());
+            return answer;
         } else if (expression instanceof ValueBuilder) {
             // ValueBuilder wraps the actual expression so unwrap
             ValueBuilder builder = (ValueBuilder) expression;
@@ -87,15 +85,14 @@ public final class ExpressionNodeHelper {
             SimpleExpression answer = new SimpleExpression(builder);
             answer.setExpression(builder.getText());
             return answer;
-
-            // TODO: Make some kind of resulttype expression so we can use an interface to set both kinds
-
-/*        } else if (predicate instanceof XPathBuilder) {
-            XPathBuilder builder = (XPathBuilder) predicate;
+        } else if (predicate instanceof ExpressionResultTypeAware && predicate.getClass().getName().equals("org.apache.camel.language.xpath.XPathBuilder")) {
+            ExpressionResultTypeAware aware = (ExpressionResultTypeAware) predicate;
+            Expression expression = (Expression) predicate;
             // we keep the original expression by using the constructor that accepts an expression
-            XPathExpression answer = new XPathExpression(builder);
-            answer.setExpression(builder.getText());
-            return answer;*/
+            XPathExpression answer = new XPathExpression(expression);
+            answer.setExpression(aware.getExpressionText());
+            answer.setResultType(answer.getResultType());
+            return answer;
         } else if (predicate instanceof ValueBuilder) {
             // ValueBuilder wraps the actual predicate so unwrap
             ValueBuilder builder = (ValueBuilder) predicate;
