@@ -32,8 +32,10 @@
     <name>Camel :: Pulsar</name>
     <description>Camel Apache Pulsar Component</description>
 
-    <properties>
-    </properties>
+   <properties>
+      <camel.osgi.export.pkg>org.apache.camel.component.pulsar.*</camel.osgi.export.pkg>
+      <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=pulsar</camel.osgi.export.service>
+   </properties>
 
     <dependencies>
 
