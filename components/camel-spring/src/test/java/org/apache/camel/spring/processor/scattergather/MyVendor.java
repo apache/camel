@@ -19,7 +19,7 @@ package org.apache.camel.spring.processor.scattergather;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.language.XPath;
+import org.apache.camel.language.xpath.XPath;
 
 //START SNIPPET: e1
 public class MyVendor {
