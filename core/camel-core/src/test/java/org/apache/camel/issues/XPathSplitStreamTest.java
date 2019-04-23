@@ -15,12 +15,15 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
+
 import org.xml.sax.InputSource;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.language.xpath.XPath;
+import org.apache.camel.language.xpath.XPathBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -59,10 +62,12 @@ public class XPathSplitStreamTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                XPathBuilder personXPath = XPathBuilder.xpath("/persons/person").documentType(InputSource.class);
+
                 // START SNIPPET: e1
                 from("file://target/data/file/xpathsplit?initialDelay=0&delay=10")
                     // set documentType to org.xml.sax.InputSource then Camel will use SAX to split the file
-                    .split(xpath("/persons/person").documentType(InputSource.class)).streaming()
+                    .split(personXPath).streaming()
                     .to("mock:splitted");
                 // END SNIPPET: e1
             }

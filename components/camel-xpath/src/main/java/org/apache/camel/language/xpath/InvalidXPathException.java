@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.xml;
+package org.apache.camel.language.xpath;
 
 import javax.xml.xpath.XPathException;
 
@@ -23,12 +23,12 @@ import org.apache.camel.RuntimeExpressionException;
 /**
  * An exception thrown if am XPath expression could not be parsed or evaluated
  */
-public class InvalidXPathExpression extends RuntimeExpressionException {
+public class InvalidXPathException extends RuntimeExpressionException {
     private static final long serialVersionUID = 9171451033826915273L;
 
     private final String xpath;
 
-    public InvalidXPathExpression(String xpath, XPathException e) {
+    public InvalidXPathException(String xpath, XPathException e) {
         super("Invalid xpath: " + xpath + ". Reason: " + e, e);
         this.xpath = xpath;
     }

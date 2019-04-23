@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 import static org.apache.camel.builder.PredicateBuilder.not;
-import static org.apache.camel.builder.xml.XPathBuilder.xpath;
+import static org.apache.camel.language.xpath.XPathBuilder.xpath;
 
 public class XPathMockTest extends ContextTestSupport {
 

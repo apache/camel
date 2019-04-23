@@ -22,7 +22,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
@@ -51,7 +50,7 @@ public class SplitterStreamCacheTest extends ContextTestSupport {
                 context.getStreamCachingStrategy().setSpoolThreshold(-1);
 
                 from("seda:parallel?concurrentConsumers=5").streamCaching()
-                    .split(XPathBuilder.xpath("//person/city"))
+                    .split(xpath("//person/city"))
                         .to("mock:result");
             }
         };

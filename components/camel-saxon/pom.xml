@@ -40,6 +40,7 @@
 
     <dependencies>
 
+        <!-- TODO: camel-xpath and avoid the IOConverter dependency -->
         <!-- requires camel-core -->
         <dependency>
             <groupId>org.apache.camel</groupId>

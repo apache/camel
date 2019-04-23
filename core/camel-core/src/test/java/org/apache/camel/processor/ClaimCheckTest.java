@@ -26,7 +26,7 @@ import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.language.XPath;
+import org.apache.camel.language.xpath.XPath;
 import org.junit.Test;
 
 public class ClaimCheckTest extends ContextTestSupport {

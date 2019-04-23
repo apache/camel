@@ -17,7 +17,7 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.language.XPath;
+import org.apache.camel.language.xpath.XPath;
 
 // START SNIPPET: example   
 public class MyNormalizer {

@@ -53,6 +53,7 @@ We have also modularized many of the core components and moved them out of `came
 - camel-timer
 - camel-validator
 - camel-vm
+- camel-xpath
 - camel-xslt
 
 
@@ -212,6 +213,12 @@ The class `org.apache.camel.processor.aggregate.AggregationStrategy` has been mo
 The class `org.apache.camel.processor.loadbalancer.SimpleLoadBalancerSupport` has been removed, instead use `org.apache.camel.processor.loadbalancer.LoadBalancerSupport`.
 
 The class `org.apache.camel.management.JmxSystemPropertyKeys` has been moved to `org.apache.camel.api.management.JmxSystemPropertyKeys`.
+
+The class `org.apache.camel.builder.xml.XPathBuilder` has been moved to `org.apache.camel.language.xpath.XPathBuilder` and in the `camel-xpath` JAR.
+
+The annotation `org.apache.camel.language.XPath` has been moved to `org.apache.camel.language.xpath.XPath` and in the `camel-xpath` JAR.
+
+The exception `org.apache.camel.builder.xml.InvalidXPathExpression` has been renamed to `org.apache.camel.language.xpath.InvalidXPathException` and in the `camel-xpath` JAR.
 
 #### camel-test
 

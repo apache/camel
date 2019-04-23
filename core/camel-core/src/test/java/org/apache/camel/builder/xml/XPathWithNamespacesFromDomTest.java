@@ -20,6 +20,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.language.xpath.DefaultNamespaceContext;
+import org.apache.camel.language.xpath.XPathBuilder;
 import org.apache.camel.support.builder.xml.Namespaces;
 import org.junit.Test;
 

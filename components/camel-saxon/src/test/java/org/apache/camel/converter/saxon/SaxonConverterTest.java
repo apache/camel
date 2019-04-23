@@ -34,7 +34,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.xpath.XPathEvaluator;
 import org.apache.camel.Exchange;
 import org.apache.camel.StringSource;
-import org.apache.camel.builder.xml.DefaultNamespaceContext;
+import org.apache.camel.language.xpath.DefaultNamespaceContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
@@ -43,7 +43,7 @@ import org.junit.Test;
 public class SaxonConverterTest extends CamelTestSupport {
     private static final String CONTENT = "<a xmlns=\"http://www.apache.org/test\"><b foo=\"bar\">test</b><c><d>foobar</d></c></a>";
     private static final String CONTENT_B = "<b xmlns=\"http://www.apache.org/test\" foo=\"bar\">test</b>";
-    private static final NamespaceContext NS_CONTEXT = (new DefaultNamespaceContext()).add("ns1", "http://www.apache.org/test");
+    private static final NamespaceContext NS_CONTEXT = new DefaultNamespaceContext().add("ns1", "http://www.apache.org/test");
 
     private Exchange exchange;
     private XPathEvaluator evaluator;

@@ -31,7 +31,7 @@ public class XPathWithNamespaceBuilderFilterAndResultTypeTest extends XPathWithN
 
                 // now lets create an xpath based Message Filter
                 from("direct:start").
-                        filter(xpath("/c:person[@name='James']", String.class).namespaces(ns)).
+                        filter(xpath("/c:person[@name='James']", String.class, ns)).
                         to("mock:result");
                 // END SNIPPET: example
             }
