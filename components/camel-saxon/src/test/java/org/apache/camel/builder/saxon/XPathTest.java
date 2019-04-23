@@ -19,7 +19,7 @@ package org.apache.camel.builder.saxon;
 import javax.xml.xpath.XPathFactory;
 
 import net.sf.saxon.xpath.XPathFactoryImpl;
-import org.apache.camel.builder.xml.XPathBuilder;
+import org.apache.camel.language.xpath.XPathBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;

@@ -51,6 +51,7 @@
         <module>camel-timer</module>
         <module>camel-validator</module>
         <module>camel-vm</module>
+        <module>camel-xpath</module>
 
         <!-- we want to test these modules first to catch any errors early as possible -->
         <module>camel-test</module>

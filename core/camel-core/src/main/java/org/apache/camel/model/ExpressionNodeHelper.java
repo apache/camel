@@ -20,7 +20,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.SimpleBuilder;
 import org.apache.camel.builder.ValueBuilder;
-import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.XPathExpression;
@@ -50,13 +49,16 @@ public final class ExpressionNodeHelper {
             answer.setExpression(builder.getText());
             answer.setResultType(builder.getResultType());
             return answer;
-        } else if (expression instanceof XPathBuilder) {
+
+            // TODO: Make some kind of resulttype expression so we can use an interface to set both kinds
+
+/*        } else if (expression instanceof XPathBuilder) {
             XPathBuilder builder = (XPathBuilder) expression;
             // we keep the original expression by using the constructor that accepts an expression
             XPathExpression answer = new XPathExpression(builder);
             answer.setExpression(builder.getText());
             answer.setResultType(builder.getResultType());
-            return answer;
+            return answer;*/
         } else if (expression instanceof ValueBuilder) {
             // ValueBuilder wraps the actual expression so unwrap
             ValueBuilder builder = (ValueBuilder) expression;
@@ -85,12 +87,15 @@ public final class ExpressionNodeHelper {
             SimpleExpression answer = new SimpleExpression(builder);
             answer.setExpression(builder.getText());
             return answer;
-        } else if (predicate instanceof XPathBuilder) {
+
+            // TODO: Make some kind of resulttype expression so we can use an interface to set both kinds
+
+/*        } else if (predicate instanceof XPathBuilder) {
             XPathBuilder builder = (XPathBuilder) predicate;
             // we keep the original expression by using the constructor that accepts an expression
             XPathExpression answer = new XPathExpression(builder);
             answer.setExpression(builder.getText());
-            return answer;
+            return answer;*/
         } else if (predicate instanceof ValueBuilder) {
             // ValueBuilder wraps the actual predicate so unwrap
             ValueBuilder builder = (ValueBuilder) predicate;
