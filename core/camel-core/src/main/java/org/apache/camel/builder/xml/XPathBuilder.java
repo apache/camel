@@ -118,6 +118,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     // let's assume XPath expressions result in nodesets.
     private volatile Class<?> resultType;
     private volatile QName resultQName = XPathConstants.NODESET;
+    private volatile boolean useSaxon;
     private volatile String objectModelUri;
     private volatile String factoryClassName;
     private volatile DefaultNamespaceContext namespaceContext;
@@ -373,6 +374,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
      * @return the current builder
      */
     public XPathBuilder saxon() {
+        this.useSaxon = true;
         this.objectModelUri = SAXON_OBJECT_MODEL_URI;
         this.factoryClassName = SAXON_FACTORY_CLASS_NAME;
         return this;
@@ -830,6 +832,20 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     public void enableSaxon() {
         this.setObjectModelUri(SAXON_OBJECT_MODEL_URI);
         this.setFactoryClassName(SAXON_FACTORY_CLASS_NAME);
+    }
+
+    /**
+     * Whether to enable Saxon on this particular XPath expression.
+     */
+    public void setUseSaxon(boolean useSaxon) {
+        this.useSaxon = useSaxon;
+        if (useSaxon) {
+            enableSaxon();
+        }
+    }
+
+    public boolean isUseSaxon() {
+        return useSaxon;
     }
 
     public String getObjectModelUri() {
