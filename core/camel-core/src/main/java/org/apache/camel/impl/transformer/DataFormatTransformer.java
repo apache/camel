@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.reifier.dataformat.DataFormatReifier;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
@@ -131,19 +132,19 @@ public class DataFormatTransformer extends Transformer {
 
     @Override
     public void doStart() throws Exception {
-        if (this.dataFormat == null) {
-            if (this.dataFormatRef != null) {
-                this.dataFormat = getCamelContext().resolveDataFormat(this.dataFormatRef);
-            } else if (this.dataFormatType != null) {
-                this.dataFormat = dataFormatType.getDataFormat(getCamelContext());
-                getCamelContext().addService(this.dataFormat, false);
+        if (dataFormat == null) {
+            if (dataFormatRef != null) {
+                dataFormat = getCamelContext().resolveDataFormat(dataFormatRef);
+            } else if (dataFormatType != null) {
+                dataFormat = DataFormatReifier.reifier(dataFormatType).createDataFormat(getCamelContext());
+                getCamelContext().addService(dataFormat, false);
             }
         }
     }
 
     @Override
     public void doStop() throws Exception {
-        ServiceHelper.stopService(this.dataFormat);
-        getCamelContext().removeService(this.dataFormat);
+        ServiceHelper.stopService(dataFormat);
+        getCamelContext().removeService(dataFormat);
     }
 }

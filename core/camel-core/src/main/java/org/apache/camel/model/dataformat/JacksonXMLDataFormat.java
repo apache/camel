@@ -22,12 +22,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * JacksonXML data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
@@ -171,6 +167,14 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
         this.collectionTypeName = collectionTypeName;
     }
 
+    public Class<?> getCollectionType() {
+        return collectionType;
+    }
+
+    public void setCollectionType(Class<?> collectionType) {
+        this.collectionType = collectionType;
+    }
+
     public Boolean getUseList() {
         return useList;
     }
@@ -273,75 +277,6 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     @Override
     public String getDataFormatName() {
         return "jacksonxml";
-    }
-
-    @Override
-    protected DataFormat createDataFormat(CamelContext camelContext) {
-
-        if (unmarshalType == null && unmarshalTypeName != null) {
-            try {
-                unmarshalType = camelContext.getClassResolver().resolveMandatoryClass(unmarshalTypeName);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-        if (collectionType == null && collectionTypeName != null) {
-            try {
-                collectionType = camelContext.getClassResolver().resolveMandatoryClass(collectionTypeName);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-
-        return super.createDataFormat(camelContext);
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (xmlMapper != null) {
-            // must be a reference value
-            String ref = xmlMapper.startsWith("#") ? xmlMapper : "#" + xmlMapper;
-            setProperty(camelContext, dataFormat, "xmlMapper", ref);
-        }
-        if (unmarshalType != null) {
-            setProperty(camelContext, dataFormat, "unmarshalType", unmarshalType);
-        }
-        if (prettyPrint != null) {
-            setProperty(camelContext, dataFormat, "prettyPrint", prettyPrint);
-        }
-        if (jsonView != null) {
-            setProperty(camelContext, dataFormat, "jsonView", jsonView);
-        }
-        if (include != null) {
-            setProperty(camelContext, dataFormat, "include", include);
-        }
-        if (allowJmsType != null) {
-            setProperty(camelContext, dataFormat, "allowJmsType", allowJmsType);
-        }
-        if (collectionType != null) {
-            setProperty(camelContext, dataFormat, "collectionType", collectionType);
-        }
-        if (useList != null) {
-            setProperty(camelContext, dataFormat, "useList", useList);
-        }
-        if (enableJaxbAnnotationModule != null) {
-            setProperty(camelContext, dataFormat, "enableJaxbAnnotationModule", enableJaxbAnnotationModule);
-        }
-        if (moduleClassNames != null) {
-            setProperty(camelContext, dataFormat, "modulesClassNames", moduleClassNames);
-        }
-        if (moduleRefs != null) {
-            setProperty(camelContext, dataFormat, "moduleRefs", moduleRefs);
-        }
-        if (enableFeatures != null) {
-            setProperty(camelContext, dataFormat, "enableFeatures", enableFeatures);
-        }
-        if (disableFeatures != null) {
-            setProperty(camelContext, dataFormat, "disableFeatures", disableFeatures);
-        }
-        if (allowUnmarshallType != null) {
-            setProperty(camelContext, dataFormat, "allowUnmarshallType", allowUnmarshallType);
-        }
     }
 
 }

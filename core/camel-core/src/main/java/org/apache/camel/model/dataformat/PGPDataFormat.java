@@ -21,9 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -64,52 +62,6 @@ public class PGPDataFormat extends DataFormatDefinition {
 
     public PGPDataFormat() {
         super("pgp");
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (keyUserid != null) {
-            setProperty(camelContext, dataFormat, "keyUserid", keyUserid);
-        }
-        if (signatureKeyUserid != null) {
-            setProperty(camelContext, dataFormat, "signatureKeyUserid", signatureKeyUserid);
-        }
-        if (password != null) {
-            setProperty(camelContext, dataFormat, "password", password);
-        }
-        if (signaturePassword != null) {
-            setProperty(camelContext, dataFormat, "signaturePassword", signaturePassword);
-        }
-        if (keyFileName != null) {
-            setProperty(camelContext, dataFormat, "keyFileName", keyFileName);
-        }
-        if (signatureKeyFileName != null) {
-            setProperty(camelContext, dataFormat, "signatureKeyFileName", signatureKeyFileName);
-        }
-        if (signatureKeyRing != null) {
-            setProperty(camelContext, dataFormat, "signatureKeyRing", signatureKeyRing);
-        }
-        if (armored != null) {
-            setProperty(camelContext, dataFormat, "armored", armored);
-        }
-        if (integrity != null) {
-            setProperty(camelContext, dataFormat, "integrity", integrity);
-        }
-        if (provider != null) {
-            setProperty(camelContext, dataFormat, "provider", provider);
-        }
-        if (algorithm != null) {
-            setProperty(camelContext, dataFormat, "algorithm", algorithm);
-        }
-        if (compressionAlgorithm != null) {
-            setProperty(camelContext, dataFormat, "compressionAlgorithm", compressionAlgorithm);
-        }
-        if (hashAlgorithm != null) {
-            setProperty(camelContext, dataFormat, "hashAlgorithm", hashAlgorithm);
-        }
-        if (signatureVerificationOption != null) {
-            setProperty(camelContext, dataFormat, "signatureVerificationOption", signatureVerificationOption);
-        }
     }
 
     public String getSignatureKeyUserid() {

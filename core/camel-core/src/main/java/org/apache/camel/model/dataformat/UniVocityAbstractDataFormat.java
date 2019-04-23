@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model.dataformat;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -24,9 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -250,77 +247,4 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         this.asMap = asMap;
     }
 
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        super.configureDataFormat(dataFormat, camelContext);
-
-        if (nullValue != null) {
-            setProperty(camelContext, dataFormat, "nullValue", nullValue);
-        }
-        if (skipEmptyLines != null) {
-            setProperty(camelContext, dataFormat, "skipEmptyLines", skipEmptyLines);
-        }
-        if (ignoreTrailingWhitespaces != null) {
-            setProperty(camelContext, dataFormat, "ignoreTrailingWhitespaces", ignoreTrailingWhitespaces);
-        }
-        if (ignoreLeadingWhitespaces != null) {
-            setProperty(camelContext, dataFormat, "ignoreLeadingWhitespaces", ignoreLeadingWhitespaces);
-        }
-        if (headersDisabled != null) {
-            setProperty(camelContext, dataFormat, "headersDisabled", headersDisabled);
-        }
-        String[] validHeaderNames = getValidHeaderNames();
-        if (validHeaderNames != null) {
-            setProperty(camelContext, dataFormat, "headers", validHeaderNames);
-        }
-        if (headerExtractionEnabled != null) {
-            setProperty(camelContext, dataFormat, "headerExtractionEnabled", headerExtractionEnabled);
-        }
-        if (numberOfRecordsToRead != null) {
-            setProperty(camelContext, dataFormat, "numberOfRecordsToRead", numberOfRecordsToRead);
-        }
-        if (emptyValue != null) {
-            setProperty(camelContext, dataFormat, "emptyValue", emptyValue);
-        }
-        if (lineSeparator != null) {
-            setProperty(camelContext, dataFormat, "lineSeparator", lineSeparator);
-        }
-        if (normalizedLineSeparator != null) {
-            setProperty(camelContext, dataFormat, "normalizedLineSeparator", singleCharOf("normalizedLineSeparator", normalizedLineSeparator));
-        }
-        if (comment != null) {
-            setProperty(camelContext, dataFormat, "comment", singleCharOf("comment", comment));
-        }
-        if (lazyLoad != null) {
-            setProperty(camelContext, dataFormat, "lazyLoad", lazyLoad);
-        }
-        if (asMap != null) {
-            setProperty(camelContext, dataFormat, "asMap", asMap);
-        }
-    }
-
-    protected static Character singleCharOf(String attributeName, String string) {
-        if (string.length() != 1) {
-            throw new IllegalArgumentException("Only one character must be defined for " + attributeName);
-        }
-        return string.charAt(0);
-    }
-
-    /**
-     * Gets only the headers with non-null and non-empty names. It returns {@code null} if there's no such headers.
-     *
-     * @return The headers with non-null and non-empty names
-     */
-    private String[] getValidHeaderNames() {
-        if (headers == null) {
-            return null;
-        }
-        List<String> names = new ArrayList<>(headers.size());
-        for (UniVocityHeader header : headers) {
-            if (header.getName() != null && !header.getName().isEmpty()) {
-                names.add(header.getName());
-            }
-        }
-        return names.isEmpty() ? null : names.toArray(new String[names.size()]);
-    }
 }

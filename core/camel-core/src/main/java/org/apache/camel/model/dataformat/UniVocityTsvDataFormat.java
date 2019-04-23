@@ -21,8 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -50,12 +48,4 @@ public class UniVocityTsvDataFormat extends UniVocityAbstractDataFormat {
         this.escapeChar = escapeChar;
     }
 
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        super.configureDataFormat(dataFormat, camelContext);
-
-        if (escapeChar != null) {
-            setProperty(camelContext, dataFormat, "escapeChar", singleCharOf("escapeChar", escapeChar));
-        }
-    }
 }

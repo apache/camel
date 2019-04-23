@@ -21,9 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -53,30 +51,6 @@ public class BeanioDataFormat extends DataFormatDefinition {
 
     public BeanioDataFormat() {
         super("beanio");
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        setProperty(camelContext, dataFormat, "mapping", mapping);
-        setProperty(camelContext, dataFormat, "streamName", streamName);
-        if (ignoreUnidentifiedRecords != null) {
-            setProperty(camelContext, dataFormat, "ignoreUnidentifiedRecords", ignoreUnidentifiedRecords);
-        }
-        if (ignoreUnexpectedRecords != null) {
-            setProperty(camelContext, dataFormat, "ignoreUnexpectedRecords", ignoreUnexpectedRecords);
-        }
-        if (ignoreInvalidRecords != null) {
-            setProperty(camelContext, dataFormat, "ignoreInvalidRecords", ignoreInvalidRecords);
-        }
-        if (encoding != null) {
-            setProperty(camelContext, dataFormat, "encoding", encoding);
-        }
-        if (beanReaderErrorHandlerType != null) {
-            setProperty(camelContext, dataFormat, "beanReaderErrorHandlerType", beanReaderErrorHandlerType);
-        }
-        if (unmarshalSingleObject != null) {
-            setProperty(camelContext, dataFormat, "unmarshalSingleObject", unmarshalSingleObject);
-        }
     }
 
     public String getMapping() {

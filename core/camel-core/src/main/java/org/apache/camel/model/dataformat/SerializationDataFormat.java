@@ -18,11 +18,8 @@ package org.apache.camel.model.dataformat;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Serialization is a data format which uses the standard Java Serialization mechanism
@@ -36,8 +33,4 @@ public class SerializationDataFormat extends DataFormatDefinition {
         super("serialization");
     }
 
-    @Override
-    protected DataFormat createDataFormat(CamelContext camelContext) {
-        return new org.apache.camel.impl.SerializationDataFormat();
-    }
 }

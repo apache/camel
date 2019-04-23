@@ -250,13 +250,8 @@ public class TransformerRouteTest extends ContextTestSupport {
 
     public static class MyJsonDataFormatDefinition extends DataFormatDefinition {
 
-        @Override
-        public DataFormat getDataFormat(CamelContext camelContext) {
-            return createDataFormat();
-        }
-
-        private DataFormat createDataFormat() {
-            return new DataFormat() {
+        public MyJsonDataFormatDefinition() {
+            super(new DataFormat() {
                 @Override
                 public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
                     assertEquals(graph.toString(), XOrderResponse.class, graph.getClass());
@@ -277,7 +272,7 @@ public class TransformerRouteTest extends ContextTestSupport {
                     LOG.info("DataFormat: JSON -> XOrder");
                     return new XOrder();
                 }
-            };
+            });
         }
     }
     

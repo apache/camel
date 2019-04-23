@@ -26,12 +26,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.support.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
-import static org.apache.camel.support.EndpointHelper.isReferenceParameter;
 
 /**
  * Represents a Camel data format
@@ -59,103 +55,6 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
 
     protected DataFormatDefinition(String dataFormatName) {
         this.dataFormatName = dataFormatName;
-    }
-
-    /**
-     * Factory method to create the data format
-     *
-     * @param camelContext the camel context
-     * @param type         the data format type
-     * @param ref          reference to lookup for a data format
-     * @return the data format or null if not possible to create
-     */
-    public static DataFormat getDataFormat(CamelContext camelContext, DataFormatDefinition type, String ref) {
-        if (type == null) {
-            ObjectHelper.notNull(ref, "ref or type");
-
-            // try to let resolver see if it can resolve it, its not always possible
-            type = camelContext.adapt(ModelCamelContext.class).resolveDataFormatDefinition(ref);
-
-            if (type != null) {
-                return type.getDataFormat(camelContext);
-            }
-
-            DataFormat dataFormat = camelContext.resolveDataFormat(ref);
-            if (dataFormat == null) {
-                throw new IllegalArgumentException("Cannot find data format in registry with ref: " + ref);
-            }
-
-            return dataFormat;
-        } else {
-            return type.getDataFormat(camelContext);
-        }
-    }
-
-    public DataFormat getDataFormat(CamelContext camelContext) {
-        if (dataFormat == null) {
-            Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
-
-            // resolve properties before we create the data format
-            try {
-                ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, this);
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Error resolving property placeholders on data format: " + this, e);
-            }
-            try {
-                dataFormat = createDataFormat(camelContext);
-                if (dataFormat != null) {
-                    // is enabled by default so assume true if null
-                    final boolean contentTypeHeader = this.contentTypeHeader == null || this.contentTypeHeader;
-                    try {
-                        setProperty(camelContext, dataFormat, "contentTypeHeader", contentTypeHeader);
-                    } catch (Exception e) {
-                        // ignore as this option is optional and not all data formats support this
-                    }
-                    // configure the rest of the options
-                    configureDataFormat(dataFormat, camelContext);
-                } else {
-                    throw new IllegalArgumentException(
-                            "Data format '" + (dataFormatName != null ? dataFormatName : "<null>") + "' could not be created. "
-                                    + "Ensure that the data format is valid and the associated Camel component is present on the classpath");
-                }
-            } finally {
-                propertyPlaceholdersChangeReverter.run();
-            }
-        }
-        return dataFormat;
-    }
-
-    /**
-     * Factory method to create the data format instance
-     */
-    protected DataFormat createDataFormat(CamelContext camelContext) {
-        // must use getDataFormatName() as we need special logic in json dataformat
-        if (getDataFormatName() != null) {
-            return camelContext.createDataFormat(getDataFormatName());
-        }
-        return null;
-    }
-
-    /**
-     * Allows derived classes to customize the data format
-     */
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-    }
-
-    /**
-     * Sets a named property on the data format instance using introspection
-     */
-    protected void setProperty(CamelContext camelContext, Object bean, String name, Object value) {
-        try {
-            String ref = value instanceof String ? value.toString() : null;
-            if (isReferenceParameter(ref) && camelContext != null) {
-                IntrospectionSupport.setProperty(camelContext, camelContext.getTypeConverter(), bean, name, null, ref, true);
-            } else {
-                IntrospectionSupport.setProperty(bean, name, value);
-            }
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to set property: " + name + " on: " + bean + ". Reason: " + e, e);
-        }
     }
 
     public String getDataFormatName() {
