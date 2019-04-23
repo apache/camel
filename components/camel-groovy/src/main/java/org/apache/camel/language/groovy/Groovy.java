@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.mvel;
+package org.apache.camel.language.groovy;
+
+import org.apache.camel.support.language.LanguageAnnotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -22,16 +24,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.apache.camel.support.language.LanguageAnnotation;
-
 /**
- * An annotation for injection of MVEL
- * expressions into method parameters, fields or properties
+ * Used to inject a groovy expression into a field, property, method or parameter when using
+ * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
-@LanguageAnnotation(language = "mvel")
-public @interface MVEL {
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
+@LanguageAnnotation(language = "groovy")
+public @interface Groovy {
     String value();
 }
