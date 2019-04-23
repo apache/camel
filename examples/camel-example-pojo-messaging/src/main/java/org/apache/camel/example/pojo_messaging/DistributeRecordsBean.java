@@ -18,7 +18,7 @@ package org.apache.camel.example.pojo_messaging;
 
 import org.apache.camel.Consume;
 import org.apache.camel.RecipientList;
-import org.apache.camel.language.XPath;
+import org.apache.camel.language.xpath.XPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
