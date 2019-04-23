@@ -42,16 +42,20 @@
         <module>camel-dataset</module>
         <module>camel-direct</module>
         <module>camel-directvm</module>
+        <module>camel-file</module>
         <module>camel-language</module>
         <module>camel-log</module>
         <module>camel-mock</module>
+        <module>camel-properties</module>
         <module>camel-ref</module>
+        <module>camel-rest</module>
         <module>camel-seda</module>
         <module>camel-stub</module>
         <module>camel-timer</module>
         <module>camel-validator</module>
         <module>camel-vm</module>
         <module>camel-xpath</module>
+        <module>camel-xslt</module>
 
         <!-- we want to test these modules first to catch any errors early as possible -->
         <module>camel-test</module>
@@ -157,7 +161,6 @@
         <module>camel-facebook</module>
         <module>camel-fastjson</module>
         <module>camel-fhir</module>
-        <module>camel-file</module>
         <module>camel-flatpack</module>
         <module>camel-flink</module>
         <module>camel-fop</module>
@@ -254,7 +257,6 @@
         <module>camel-pdf</module>
         <module>camel-pgevent</module>
         <module>camel-printer</module>
-        <module>camel-properties</module>
         <module>camel-protobuf</module>
         <module>camel-pubnub</module>
         <module>camel-pulsar</module>
@@ -263,7 +265,6 @@
         <module>camel-rabbitmq</module>
         <module>camel-reactive-streams</module>
         <module>camel-reactor</module>
-        <module>camel-rest</module>
         <module>camel-rest-swagger</module>
         <module>camel-restlet</module>
         <module>camel-rss</module>
@@ -328,7 +329,6 @@
         <module>camel-xchange</module>
         <module>camel-xmlsecurity</module>
         <module>camel-xmpp</module>
-        <module>camel-xslt</module>
         <module>camel-xstream</module>
         <module>camel-yammer</module>
         <module>camel-zendesk</module>
