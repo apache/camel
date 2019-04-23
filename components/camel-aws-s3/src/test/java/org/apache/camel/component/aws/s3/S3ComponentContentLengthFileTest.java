@@ -44,13 +44,13 @@ public class S3ComponentContentLengthFileTest extends CamelTestSupport {
     @BindToRegistry("amazonS3Client")
     AmazonS3ClientMock client = new AmazonS3ClientMock();
     
-    @EndpointInject(uri = "direct:startKeep")
+    @EndpointInject("direct:startKeep")
     ProducerTemplate templateKeep;
 
-    @EndpointInject(uri = "direct:startDelete")
+    @EndpointInject("direct:startDelete")
     ProducerTemplate templateDelete;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     MockEndpoint result;
 
     File testFile;
