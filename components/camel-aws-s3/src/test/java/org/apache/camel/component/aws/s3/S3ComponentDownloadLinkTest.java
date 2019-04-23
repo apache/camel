@@ -33,10 +33,10 @@ public class S3ComponentDownloadLinkTest extends CamelTestSupport {
     @BindToRegistry("amazonS3Client")
     AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
     
-    @EndpointInject(uri = "direct:downloadLink")
+    @EndpointInject("direct:downloadLink")
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
     @Test
