@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 310 in 210 JAR artifacts (23 deprecated)
+Number of Components: 311 in 211 JAR artifacts (24 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -19,6 +19,9 @@ Number of Components: 310 in 210 JAR artifacts (23 deprecated)
 
 | link:camel-flink/src/main/docs/flink-component.adoc[Apache Flink] (camel-flink) +
 `flink:endpointType` | 2.18 | The flink component can be used to send DataSet jobs to Apache Flink cluster.
+
+| link:camel-pulsar/src/main/docs/pulsar-component.adoc[Apache Pulsar] (camel-pulsar) +
+`pulsar:persistence://tenant/namespace/topic` |  | Camel Apache Pulsar Component
 
 | link:camel-spark/src/main/docs/spark-component.adoc[Apache Spark] (camel-spark) +
 `spark:endpointType` | 2.17 | The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
@@ -639,7 +642,7 @@ Number of Components: 310 in 210 JAR artifacts (23 deprecated)
 `netty4-http:protocol:host:port/path` | 2.14 | Netty HTTP server and client using the Netty 4.x library.
 
 | link:camel-nsq/src/main/docs/nsq-component.adoc[NSQ] (camel-nsq) +
-`nsq:lookupServer` | 2.23 | Represents a nsq endpoint.
+`nsq:servers` | 2.23 | Represents a nsq endpoint.
 
 | link:camel-olingo2/camel-olingo2-component/src/main/docs/olingo2-component.adoc[Olingo2] (camel-olingo2) +
 `olingo2:apiName/methodName` | 2.14 | Communicates with OData 2.0 services using Apache Olingo.
@@ -738,7 +741,7 @@ Number of Components: 310 in 210 JAR artifacts (23 deprecated)
 `restlet:protocol:host:port/uriPattern` | 2.0 | Component for consuming and producing Restful resources using Restlet.
 
 | link:camel-rmi/src/main/docs/rmi-component.adoc[RMI] (camel-rmi) +
-`rmi:hostname:port/name` | 1.0 | The rmi component is for invoking Java RMI beans from Camel.
+`rmi:hostname:port/name` | 1.0 | *deprecated* The rmi component is for invoking Java RMI beans from Camel.
 
 | link:camel-routebox/src/main/docs/routebox-component.adoc[RouteBox] (camel-routebox) +
 `routebox:routeboxName` | 2.6 | *deprecated* The routebox component allows to send/receive messages between Camel routes in a black box way.
@@ -768,7 +771,7 @@ Number of Components: 310 in 210 JAR artifacts (23 deprecated)
 `seda:name` | 1.1 | The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.
 
 | link:camel-service/src/main/docs/service-component.adoc[Service] (camel-service) +
-`service:serviceName:delegateUri` | 2.22 | Represents an endpoint which is registered to a Service Registry such as Consul, Etcd.
+`service:delegateUri` | 2.22 | Represents an endpoint which is registered to a Service Registry such as Consul, Etcd.
 
 | link:camel-servicenow/camel-servicenow-component/src/main/docs/servicenow-component.adoc[ServiceNow] (camel-servicenow) +
 `servicenow:instanceName` | 2.18 | The servicenow component is used to integrate Camel with ServiceNow cloud services.
