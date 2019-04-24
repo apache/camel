@@ -68,7 +68,7 @@ public class DumpModelAsXmlRoutePredicateTest extends ContextTestSupport {
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue(xml.contains("<method>myCoolBean</method>"));
+        assertTrue(xml.contains("<method ref=\"myCoolBean\"/>"));
     }
 
     @Override

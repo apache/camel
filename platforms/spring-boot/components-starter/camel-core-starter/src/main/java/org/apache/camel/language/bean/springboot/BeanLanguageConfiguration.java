@@ -36,10 +36,6 @@ public class BeanLanguageConfiguration
      * enabled by default.
      */
     private Boolean enabled;
-    /**
-     * Whether to trim the value to remove leading and trailing whitespaces and
-     * line breaks
-     */
     private Boolean trim = true;
 
     public Boolean getTrim() {
