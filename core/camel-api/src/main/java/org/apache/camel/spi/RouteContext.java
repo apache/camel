@@ -148,7 +148,7 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
     ManagementInterceptStrategy getManagementInterceptStrategy();
 
     /**
-     * If this flag is true, {@link org.apache.camel.model.ProcessorDefinition#addRoutes(RouteContext, java.util.Collection)}
+     * If this flag is true, {@link org.apache.camel.reifier.ProcessorReifier#addRoutes(RouteContext, java.util.Collection)}
      * will not add processor to addEventDrivenProcessor to the RouteContext and it
      * will prevent from adding an EventDrivenRoute.
      *
