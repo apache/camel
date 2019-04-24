@@ -56,7 +56,7 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
 
     public MethodCallExpression(String beanName, String method) {
-        super((String)null);
+        super((String)null); // use ref attribute to refer to the bean, and not @XmlValue
         if (beanName != null && beanName.startsWith("ref:")) {
             beanName = beanName.substring(4);
         } else if (beanName != null && beanName.startsWith("bean:")) {
@@ -71,7 +71,7 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
 
     public MethodCallExpression(Object instance, String method) {
-        super(ObjectHelper.className(instance));
+        super(ObjectHelper.className(instance)); // need to set some value in @XmlValue when we already have an instance bean
         // must use setter as they have special logic
         setInstance(instance);
         setMethod(method);
@@ -82,8 +82,9 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
 
     public MethodCallExpression(Class<?> type, String method) {
-        super(type.getName());
+        super((String)null); // use beanType attribute to refer to the bean, and not @XmlValue
         this.beanType = type;
+        this.beanTypeName = type.getName();
         this.method = method;
     }
 
@@ -91,7 +92,6 @@ public class MethodCallExpression extends ExpressionDefinition {
         return "bean";
     }
 
-    @Deprecated
     public String getRef() {
         return ref;
     }
@@ -99,7 +99,6 @@ public class MethodCallExpression extends ExpressionDefinition {
     /**
      * Reference to bean to lookup in the registry
      */
-    @Deprecated
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -183,8 +182,7 @@ public class MethodCallExpression extends ExpressionDefinition {
         return (Predicate) createExpression(camelContext);
     }
 
-    @Deprecated
-    protected String beanName() {
+    private String beanName() {
         if (ref != null) {
             return ref;
         } else if (instance != null) {
