@@ -112,7 +112,12 @@ public class BeanLanguage implements Language, IsSingleton {
 
     public Expression createExpression(Object bean, String method) {
         org.apache.camel.util.ObjectHelper.notNull(bean, "bean");
-        return new BeanExpression(bean, method);
+        if (bean instanceof String) {
+            String beanName = (String) bean;
+            return new BeanExpression(beanName, method);
+        } else {
+            return new BeanExpression(bean, method);
+        }
     }
 
     public boolean isSingleton() {
