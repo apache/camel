@@ -152,6 +152,8 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     @Override
     public Expression createExpression(CamelContext camelContext) {
+        // TODO: need to use setProperty ... to copy over the options
+        // and move this logic to BeanLanguage
         Expression answer;
 
         if (beanType == null && beanTypeName != null) {
