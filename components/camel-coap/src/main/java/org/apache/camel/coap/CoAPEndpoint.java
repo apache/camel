@@ -23,6 +23,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
+import org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore;
 
 /**
  * The coap component is used for sending and receiving messages from COAP capable devices.
@@ -63,7 +65,16 @@ public class CoAPEndpoint extends DefaultEndpoint {
     
     @UriParam
     private KeyStore truststore;
-    
+
+    @UriParam
+    private PrivateKey privateKey;
+
+    @UriParam
+    private PublicKey publicKey;
+
+    @UriParam
+    private TrustedRpkStore trustedRpkStore;
+
     @UriParam
     private String alias;
     
@@ -202,7 +213,49 @@ public class CoAPEndpoint extends DefaultEndpoint {
     public void setAlias(String alias) {
         this.alias = alias;
     }
+
+    /**
+     * Get the TrustedRpkStore to use to determine trust in raw public keys.
+     */
+    public TrustedRpkStore getTrustedRpkStore() {
+        return trustedRpkStore;
+    }
+
+    /**
+     * Set the TrustedRpkStore to use to determine trust in raw public keys.
+     */
+    public void setTrustedRpkStore(TrustedRpkStore trustedRpkStore) {
+        this.trustedRpkStore = trustedRpkStore;
+    }
     
+    /**
+     * Get the configured private key for use with Raw Public Key.
+     */
+    public PrivateKey getPrivateKey() {
+        return privateKey;
+    }
+
+    /**
+     * Set the configured private key for use with Raw Public Key.
+     */
+    public void setPrivateKey(PrivateKey privateKey) {
+        this.privateKey = privateKey;
+    }
+
+    /**
+     * Get the configured public key for use with Raw Public Key.
+     */
+    public PublicKey getPublicKey() {
+        return publicKey;
+    }
+
+    /**
+     * Set the configured public key for use with Raw Public Key.
+     */
+    public void setPublicKey(PublicKey publicKey) {
+        this.publicKey = publicKey;
+    }
+
     /**
      * Gets the password used to access an aliased {@link PrivateKey} in the KeyStore.
      */
@@ -293,19 +346,22 @@ public class CoAPEndpoint extends DefaultEndpoint {
 
         DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder();
         if (client) {
-            if (getTruststore() == null) {
+            if (trustedRpkStore == null && getTruststore() == null) {
                 throw new IllegalStateException("A truststore must be configured to use TLS");
             }
             
             builder.setClientOnly();
         } else {
-            if (getKeystore() == null) {
-                throw new IllegalStateException("A keystore must be configured to use TLS");
+            if (privateKey == null && getKeystore() == null) {
+                throw new IllegalStateException("A keystore or private key must be configured to use TLS");
             }
-            if (getAlias() == null) {
+            if (privateKey != null && publicKey == null) {
+                throw new IllegalStateException("A public key must be configured to use a Raw Public Key with TLS");
+            }
+            if (privateKey == null && getAlias() == null) {
                 throw new IllegalStateException("An alias must be configured to use TLS");
             }
-            if (getPassword() == null) {
+            if (privateKey == null && getPassword() == null) {
                 throw new IllegalStateException("A password must be configured to use TLS");
             }
             if ((isClientAuthenticationRequired() || isClientAuthenticationWanted())
@@ -319,15 +375,23 @@ public class CoAPEndpoint extends DefaultEndpoint {
         }
 
         try {
-            // Configure the identity if the keystore parameter is specified
+            // Configure the identity if the keystore or privateKey parameter is specified
             if (getKeystore() != null) {
                 PrivateKey privateKey = 
                     (PrivateKey)getKeystore().getKey(getAlias(), getPassword());
                 builder.setIdentity(privateKey, getKeystore().getCertificateChain(getAlias()));
+            } else if (privateKey != null) {
+                builder.setIdentity(privateKey, publicKey);
             }
-    
+
             // Add all certificates from the truststore
-            builder.setTrustStore(getTrustedCerts());
+            Certificate[] certs = getTrustedCerts();
+            if (certs.length > 0) {
+                builder.setTrustStore(certs);
+            }
+            if (trustedRpkStore != null) {
+                builder.setRpkTrustStore(trustedRpkStore);
+            }
         } catch (GeneralSecurityException e) {
             throw new IllegalStateException("Error in configuring TLS", e);
         }
