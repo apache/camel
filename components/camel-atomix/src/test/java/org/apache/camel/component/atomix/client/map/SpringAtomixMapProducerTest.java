@@ -18,9 +18,9 @@ package org.apache.camel.component.atomix.client.map;
 
 import io.atomix.collections.DistributedMap;
 import org.apache.camel.Message;
-import org.apache.camel.builder.DefaultFluentProducerTemplate;
 import org.apache.camel.component.atomix.client.AtomixClientConstants;
 import org.apache.camel.component.atomix.client.AtomixClientSpringTestSupport;
+import org.apache.camel.impl.DefaultFluentProducerTemplate;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
