@@ -34,7 +34,7 @@ The Bean method language supports 4 options, which are listed below.
 | ref |  | String | Reference to bean to lookup in the registry
 | method |  | String | Name of method to call
 | beanType |  | String | Class name of the bean to use
-| trim | true | Boolean | 
+| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |===
 // language options: END
 
