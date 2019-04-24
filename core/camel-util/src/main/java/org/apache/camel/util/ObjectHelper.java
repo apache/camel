@@ -499,7 +499,7 @@ public final class ObjectHelper {
      */
     public static InputStream loadResourceAsStream(String name, ClassLoader loader) {
         try {
-            URL res = loadResourceAsURL(name);
+            URL res = loadResourceAsURL(name, loader);
             return res != null ? res.openStream() : null;
         } catch (IOException e) {
             return null;
