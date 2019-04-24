@@ -16,6 +16,10 @@
  */
 package org.apache.camel.coap;
 
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -26,6 +30,7 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
+import org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore;
 import org.junit.Test;
 
 public class CoAPComponentTLSTest extends CamelTestSupport {
@@ -34,6 +39,7 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
     protected static final int PORT2 = AvailablePortFinder.getNextAvailable();
     protected static final int PORT3 = AvailablePortFinder.getNextAvailable();
     protected static final int PORT4 = AvailablePortFinder.getNextAvailable();
+    protected static final int PORT5 = AvailablePortFinder.getNextAvailable();
 
     @Test
     public void testSuccessfulCall() throws Exception {
@@ -103,11 +109,28 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testRawPublicKey() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived("Hello Camel CoAP");
+        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE, MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
+        mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
+        sendBodyAndHeader("direct:rpk", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         KeyStoreParameters keystoreParameters = new KeyStoreParameters();
         keystoreParameters.setResource("service.jks");
         keystoreParameters.setPassword("security");
+
+        KeyStore keyStore = keystoreParameters.createKeyStore();
+        PrivateKey privateKey =
+            (PrivateKey)keyStore.getKey("service", "security".toCharArray());
+        PublicKey publicKey =
+            keyStore.getCertificate("service").getPublicKey();
 
         KeyStoreParameters keystoreParameters2 = new KeyStoreParameters();
         keystoreParameters2.setResource("selfsigned.jks");
@@ -125,11 +148,16 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
         truststoreParameters2.setResource("truststore2.jks");
         truststoreParameters2.setPassword("storepass");
 
+        TrustedRpkStore trustedRpkStore = id -> { return true;};
+
         context.getRegistry().bind("keyParams", keystoreParameters);
         context.getRegistry().bind("keyParams2", keystoreParameters2);
         context.getRegistry().bind("keyParams3", keystoreParameters3);
         context.getRegistry().bind("trustParams", truststoreParameters);
         context.getRegistry().bind("trustParams2", truststoreParameters2);
+        context.getRegistry().bind("privateKey", privateKey);
+        context.getRegistry().bind("publicKey", publicKey);
+        context.getRegistry().bind("trustedRpkStore", trustedRpkStore);
 
         return new RouteBuilder() {
             @Override
@@ -149,6 +177,10 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
 
                 fromF("coaps://localhost:%d/TestResource?alias=service&password=security&"
                     + "keyStoreParameters=#keyParams&cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8", PORT4)
+                  .transform(body().prepend("Hello "));
+
+                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&"
+                    + "privateKey=#privateKey&publicKey=#publicKey", PORT5)
                   .transform(body().prepend("Hello "));
 
                 from("direct:start")
@@ -180,6 +212,10 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
                 from("direct:ciphersuites")
                     .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams&"
                          + "cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8", PORT4)
+                    .to("mock:result");
+
+                from("direct:rpk")
+                    .toF("coaps://localhost:%d/TestResource?trustedRpkStore=#trustedRpkStore", PORT5)
                     .to("mock:result");
             }
         };
