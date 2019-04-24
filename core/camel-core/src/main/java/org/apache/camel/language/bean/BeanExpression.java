@@ -19,29 +19,35 @@ package org.apache.camel.language.bean;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.AfterPropertiesConfigured;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.bean.BeanExpressionProcessor;
 import org.apache.camel.component.bean.BeanHolder;
+import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.ConstantBeanHolder;
 import org.apache.camel.component.bean.ConstantTypeBeanHolder;
+import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.spi.Language;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.StringHelper;
+import static org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor;
 
 /**
  * Evaluates an expression using a bean method invocation
  */
-public class BeanExpression implements Expression, Predicate {
+public class BeanExpression implements Expression, Predicate, AfterPropertiesConfigured {
     private final Object bean;
     private final String beanName;
     private final Class<?> type;
@@ -67,14 +73,6 @@ public class BeanExpression implements Expression, Predicate {
         this.method = method;
         this.bean = null;
         this.beanName = null;
-    }
-
-    public BeanExpression(BeanHolder beanHolder, String method) {
-        this.beanHolder = beanHolder;
-        this.method = method;
-        this.bean = null;
-        this.beanName = null;
-        this.type = null;
     }
 
     @Override
@@ -145,6 +143,64 @@ public class BeanExpression implements Expression, Predicate {
     public boolean matches(Exchange exchange) {
         Object value = evaluate(exchange);
         return ObjectHelper.evaluateValuePredicate(value);
+    }
+
+    @Override
+    public void afterPropertiesConfigured(CamelContext camelContext) {
+        Object target = bean;
+        if (bean == null && type == null && beanName != null) {
+            target = CamelContextHelper.mandatoryLookup(camelContext, beanName);
+        }
+        validateHasMethod(camelContext, target, type, method);
+    }
+
+    /**
+     * Validates the given bean has the method.
+     * <p/>
+     * This implementation will skip trying to validate OGNL method name expressions.
+     *
+     * @param context  camel context
+     * @param bean     the bean instance
+     * @param type     the bean type
+     * @param method   the method, can be <tt>null</tt> if no method name provided
+     * @throws org.apache.camel.RuntimeCamelException is thrown if bean does not have the method
+     */
+    protected void validateHasMethod(CamelContext context, Object bean, Class<?> type, String method) {
+        if (method == null) {
+            return;
+        }
+
+        if (bean == null && type == null) {
+            throw new IllegalArgumentException("Either bean or type should be provided on " + this);
+        }
+
+        if (bean == null && hasDefaultPublicNoArgConstructor(type)) {
+            bean = context.getInjector().newInstance(type);
+        }
+
+        // do not try to validate ognl methods
+        if (OgnlHelper.isValidOgnlExpression(method)) {
+            return;
+        }
+
+        // if invalid OGNL then fail
+        if (OgnlHelper.isInvalidValidOgnlExpression(method)) {
+            ExpressionIllegalSyntaxException cause = new ExpressionIllegalSyntaxException(method);
+            throw RuntimeCamelException.wrapRuntimeCamelException(new MethodNotFoundException(bean != null ? bean : type, method, cause));
+        }
+
+        if (bean != null) {
+            BeanInfo info = new BeanInfo(context, bean.getClass());
+            if (!info.hasMethod(method)) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method));
+            }
+        } else {
+            BeanInfo info = new BeanInfo(context, type);
+            // must be a static method as we do not have a bean instance to invoke
+            if (!info.hasStaticMethod(method)) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(new MethodNotFoundException(null, type, method, true));
+            }
+        }
     }
 
     /**

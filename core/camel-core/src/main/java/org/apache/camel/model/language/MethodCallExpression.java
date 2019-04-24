@@ -24,19 +24,11 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.bean.BeanHolder;
-import org.apache.camel.component.bean.BeanInfo;
-import org.apache.camel.component.bean.ConstantBeanHolder;
-import org.apache.camel.component.bean.ConstantStaticTypeBeanHolder;
-import org.apache.camel.component.bean.MethodNotFoundException;
-import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.language.bean.BeanExpression;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.OgnlHelper;
 
 /**
  * To use a Java bean (aka method call) in Camel expressions or predicates.
@@ -64,7 +56,13 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
 
     public MethodCallExpression(String beanName, String method) {
-        super(beanName);
+        super((String)null);
+        if (beanName != null && beanName.startsWith("ref:")) {
+            beanName = beanName.substring(4);
+        } else if (beanName != null && beanName.startsWith("bean:")) {
+            beanName = beanName.substring(5);
+        }
+        this.ref = beanName;
         this.method = method;
     }
 
@@ -93,6 +91,7 @@ public class MethodCallExpression extends ExpressionDefinition {
         return "bean";
     }
 
+    @Deprecated
     public String getRef() {
         return ref;
     }
@@ -100,6 +99,7 @@ public class MethodCallExpression extends ExpressionDefinition {
     /**
      * Reference to bean to lookup in the registry
      */
+    @Deprecated
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -152,8 +152,6 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     @Override
     public Expression createExpression(CamelContext camelContext) {
-        // TODO: need to use setProperty ... to copy over the options
-        // and move this logic to BeanLanguage
         Expression answer;
 
         if (beanType == null && beanTypeName != null) {
@@ -164,31 +162,19 @@ public class MethodCallExpression extends ExpressionDefinition {
             }
         }
 
-        BeanHolder holder;
-        if (beanType != null) {
-            // create a bean if there is a default public no-arg constructor
-            if (ObjectHelper.hasDefaultPublicNoArgConstructor(beanType)) {
-                instance = camelContext.getInjector().newInstance(beanType);
-                holder = new ConstantBeanHolder(instance, camelContext);
-            } else {
-                holder = new ConstantStaticTypeBeanHolder(beanType, camelContext);
-            }
-        } else if (instance != null) {
-            holder = new ConstantBeanHolder(instance, camelContext);
+        // TODO: Must use setProperty, so we need to have properties for these on BeanExpression
+
+        if (instance != null) {
+            answer = new BeanExpression(instance, method);
+        } else if (beanType != null) {
+            answer = new BeanExpression(beanType, method);
+        } else if (ref != null) {
+            answer = new BeanExpression(ref, method);
         } else {
-            String ref = beanName();
-            // if its a ref then check that the ref exists
-            BeanHolder regHolder = new RegistryBean(camelContext, ref);
-            // get the bean which will check that it exists
-            instance = regHolder.getBean();
-            holder = new ConstantBeanHolder(instance, camelContext);
+            answer = new BeanExpression(getExpression(), method);
         }
 
-        // create answer using the holder
-        answer = new BeanExpression(holder, getMethod());
-
-        // and do sanity check that if a method name was given, that it exists
-        validateHasMethod(camelContext, instance, beanType, getMethod());
+        configureExpression(camelContext, answer);
         return answer;
     }
 
@@ -197,51 +183,7 @@ public class MethodCallExpression extends ExpressionDefinition {
         return (Predicate) createExpression(camelContext);
     }
 
-    /**
-     * Validates the given bean has the method.
-     * <p/>
-     * This implementation will skip trying to validate OGNL method name expressions.
-     *
-     * @param context  camel context
-     * @param bean     the bean instance
-     * @param type     the bean type
-     * @param method   the method, can be <tt>null</tt> if no method name provided
-     * @throws org.apache.camel.RuntimeCamelException is thrown if bean does not have the method
-     */
-    protected void validateHasMethod(CamelContext context, Object bean, Class<?> type, String method) {
-        if (method == null) {
-            return;
-        }
-
-        if (bean == null && type == null) {
-            throw new IllegalArgumentException("Either bean or type should be provided on " + this);
-        }
-
-        // do not try to validate ognl methods
-        if (OgnlHelper.isValidOgnlExpression(method)) {
-            return;
-        }
-
-        // if invalid OGNL then fail
-        if (OgnlHelper.isInvalidValidOgnlExpression(method)) {
-            ExpressionIllegalSyntaxException cause = new ExpressionIllegalSyntaxException(method);
-            throw RuntimeCamelException.wrapRuntimeCamelException(new MethodNotFoundException(bean != null ? bean : type, method, cause));
-        }
-
-        if (bean != null) {
-            BeanInfo info = new BeanInfo(context, bean.getClass());
-            if (!info.hasMethod(method)) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method));
-            }
-        } else {
-            BeanInfo info = new BeanInfo(context, type);
-            // must be a static method as we do not have a bean instance to invoke
-            if (!info.hasStaticMethod(method)) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(new MethodNotFoundException(null, type, method, true));
-            }
-        }
-    }
-
+    @Deprecated
     protected String beanName() {
         if (ref != null) {
             return ref;
@@ -256,4 +198,5 @@ public class MethodCallExpression extends ExpressionDefinition {
         boolean isRef = ref != null;
         return "bean[" + (isRef ? "ref:" : "") + beanName() + (method != null ? " method:" + method : "") + "]";
     }
+
 }
