@@ -16,13 +16,13 @@
  */
 package org.apache.camel.language.groovy;
 
-import org.apache.camel.support.language.LanguageAnnotation;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.apache.camel.support.language.LanguageAnnotation;
 
 /**
  * Used to inject a groovy expression into a field, property, method or parameter when using
