@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -60,19 +61,19 @@ public class RouteService extends ChildServiceSupport {
 
     private final AbstractCamelContext camelContext;
     private final RouteDefinition routeDefinition;
-    private final List<RouteContext> routeContexts;
-    private final List<Route> routes;
+    private final RouteContext routeContext;
+    private final Route route;
     private final String id;
     private boolean removingRoutes;
     private final Map<Route, Consumer> inputs = new HashMap<>();
     private final AtomicBoolean warmUpDone = new AtomicBoolean(false);
     private final AtomicBoolean endpointDone = new AtomicBoolean(false);
 
-    public RouteService(AbstractCamelContext camelContext, RouteDefinition routeDefinition, List<RouteContext> routeContexts, List<Route> routes) {
+    public RouteService(AbstractCamelContext camelContext, RouteDefinition routeDefinition, RouteContext routeContext, Route route) {
         this.camelContext = camelContext;
         this.routeDefinition = routeDefinition;
-        this.routeContexts = routeContexts;
-        this.routes = routes;
+        this.routeContext = routeContext;
+        this.route = route;
         this.id = routeDefinition.idOrCreate(camelContext.getNodeIdFactory());
     }
 
@@ -84,16 +85,16 @@ public class RouteService extends ChildServiceSupport {
         return camelContext;
     }
 
-    public List<RouteContext> getRouteContexts() {
-        return routeContexts;
+    public RouteContext getRouteContext() {
+        return routeContext;
     }
 
     public RouteDefinition getRouteDefinition() {
         return routeDefinition;
     }
 
-    public Collection<Route> getRoutes() {
-        return routes;
+    public Route getRoute() {
+        return route;
     }
 
     /**
@@ -104,14 +105,12 @@ public class RouteService extends ChildServiceSupport {
      */
     public Set<Endpoint> gatherEndpoints() {
         Set<Endpoint> answer = new LinkedHashSet<>();
-        for (Route route : routes) {
-            Set<Service> services = gatherChildServices(route, true);
-            for (Service service : services) {
-                if (service instanceof EndpointAware) {
-                    Endpoint endpoint = ((EndpointAware) service).getEndpoint();
-                    if (endpoint != null) {
-                        answer.add(endpoint);
-                    }
+        Set<Service> services = gatherChildServices(route, true);
+        for (Service service : services) {
+            if (service instanceof EndpointAware) {
+                Endpoint endpoint = ((EndpointAware) service).getEndpoint();
+                if (endpoint != null) {
+                    answer.add(endpoint);
                 }
             }
         }
@@ -147,87 +146,79 @@ public class RouteService extends ChildServiceSupport {
         if (endpointDone.compareAndSet(false, true)) {
             // endpoints should only be started once as they can be reused on other routes
             // and whatnot, thus their lifecycle is to start once, and only to stop when Camel shutdown
-            for (Route route : routes) {
-                // ensure endpoint is started first (before the route services, such as the consumer)
-                ServiceHelper.startService(route.getEndpoint());
-            }
+            // ensure endpoint is started first (before the route services, such as the consumer)
+            ServiceHelper.startService(route.getEndpoint());
         }
 
         if (warmUpDone.compareAndSet(false, true)) {
 
-            for (Route route : routes) {
-                try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
-                    // warm up the route first
-                    route.warmUp();
+            try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
+                // warm up the route first
+                route.warmUp();
 
-                    log.debug("Starting services on route: {}", route.getId());
-                    List<Service> services = route.getServices();
+                log.debug("Starting services on route: {}", route.getId());
+                List<Service> services = route.getServices();
 
-                    // callback that we are staring these services
-                    route.onStartingServices(services);
+                // callback that we are staring these services
+                route.onStartingServices(services);
 
-                    // gather list of services to start as we need to start child services as well
-                    Set<Service> list = new LinkedHashSet<>();
-                    for (Service service : services) {
-                        list.addAll(ServiceHelper.getChildServices(service));
-                    }
-
-                    // split into consumers and child services as we need to start the consumers
-                    // afterwards to avoid them being active while the others start
-                    List<Service> childServices = new ArrayList<>();
-                    for (Service service : list) {
-
-                        // inject the route
-                        if (service instanceof RouteAware) {
-                            ((RouteAware) service).setRoute(route);
-                        }
-
-                        if (service instanceof Consumer) {
-                            inputs.put(route, (Consumer) service);
-                        } else {
-                            childServices.add(service);
-                        }
-                    }
-                    startChildService(route, childServices);
-
-                    // fire event
-                    EventHelper.notifyRouteAdded(camelContext, route);
+                // gather list of services to start as we need to start child services as well
+                Set<Service> list = new LinkedHashSet<>();
+                for (Service service : services) {
+                    list.addAll(ServiceHelper.getChildServices(service));
                 }
+
+                // split into consumers and child services as we need to start the consumers
+                // afterwards to avoid them being active while the others start
+                List<Service> childServices = new ArrayList<>();
+                for (Service service : list) {
+
+                    // inject the route
+                    if (service instanceof RouteAware) {
+                        ((RouteAware) service).setRoute(route);
+                    }
+
+                    if (service instanceof Consumer) {
+                        inputs.put(route, (Consumer) service);
+                    } else {
+                        childServices.add(service);
+                    }
+                }
+                startChildService(route, childServices);
+
+                // fire event
+                EventHelper.notifyRouteAdded(camelContext, route);
             }
 
             // ensure lifecycle strategy is invoked which among others enlist the route in JMX
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-                strategy.onRoutesAdd(routes);
+                strategy.onRoutesAdd(Collections.singletonList(route));
             }
 
             // add routes to camel context
-            camelContext.addRouteCollection(routes);
+            camelContext.addRoute(route);
 
             // add the routes to the inflight registry so they are pre-installed
-            for (Route route : routes) {
-                camelContext.getInflightRepository().addRoute(route.getId());
-            }
+            camelContext.getInflightRepository().addRoute(route.getId());
         }
     }
 
     protected void doStart() throws Exception {
         warmUp();
 
-        for (Route route : routes) {
-            try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
-                // start the route itself
-                ServiceHelper.startService(route);
+        try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
+            // start the route itself
+            ServiceHelper.startService(route);
 
-                // invoke callbacks on route policy
-                if (route.getRouteContext().getRoutePolicyList() != null) {
-                    for (RoutePolicy routePolicy : route.getRouteContext().getRoutePolicyList()) {
-                        routePolicy.onStart(route);
-                    }
+            // invoke callbacks on route policy
+            if (route.getRouteContext().getRoutePolicyList() != null) {
+                for (RoutePolicy routePolicy : route.getRouteContext().getRoutePolicyList()) {
+                    routePolicy.onStart(route);
                 }
-
-                // fire event
-                EventHelper.notifyRouteStarted(camelContext, route);
             }
+
+            // fire event
+            EventHelper.notifyRouteStarted(camelContext, route);
         }
     }
 
@@ -239,39 +230,37 @@ public class RouteService extends ChildServiceSupport {
         if (isShutdownCamelContext || isRemovingRoutes()) {
             // need to call onRoutesRemove when the CamelContext is shutting down or Route is shutdown
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-                strategy.onRoutesRemove(routes);
+                strategy.onRoutesRemove(Collections.singletonList(route));
             }
         }
         
-        for (Route route : routes) {
-            try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
-                log.debug("Stopping services on route: {}", route.getId());
+        try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
+            log.debug("Stopping services on route: {}", route.getId());
 
-                // gather list of services to stop as we need to start child services as well
-                Set<Service> services = gatherChildServices(route, true);
+            // gather list of services to stop as we need to start child services as well
+            Set<Service> services = gatherChildServices(route, true);
 
-                // stop services
-                stopChildService(route, services, isShutdownCamelContext);
+            // stop services
+            stopChildService(route, services, isShutdownCamelContext);
 
-                // stop the route itself
-                if (isShutdownCamelContext) {
-                    ServiceHelper.stopAndShutdownServices(route);
-                } else {
-                    ServiceHelper.stopService(route);
-                }
-
-                // invoke callbacks on route policy
-                if (route.getRouteContext().getRoutePolicyList() != null) {
-                    for (RoutePolicy routePolicy : route.getRouteContext().getRoutePolicyList()) {
-                        routePolicy.onStop(route);
-                    }
-                }
-                // fire event
-                EventHelper.notifyRouteStopped(camelContext, route);
+            // stop the route itself
+            if (isShutdownCamelContext) {
+                ServiceHelper.stopAndShutdownServices(route);
+            } else {
+                ServiceHelper.stopService(route);
             }
+
+            // invoke callbacks on route policy
+            if (route.getRouteContext().getRoutePolicyList() != null) {
+                for (RoutePolicy routePolicy : route.getRouteContext().getRoutePolicyList()) {
+                    routePolicy.onStop(route);
+                }
+            }
+            // fire event
+            EventHelper.notifyRouteStopped(camelContext, route);
         }
         if (isRemovingRoutes()) {
-            camelContext.removeRouteCollection(routes);
+            camelContext.removeRoute(route);
         }
         // need to warm up again
         warmUpDone.set(false);
@@ -279,47 +268,43 @@ public class RouteService extends ChildServiceSupport {
 
     @Override
     protected void doShutdown() throws Exception {
-        for (Route route : routes) {
-            try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
-                log.debug("Shutting down services on route: {}", route.getId());
+        try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
+            log.debug("Shutting down services on route: {}", route.getId());
 
-                // gather list of services to stop as we need to start child services as well
-                Set<Service> services = gatherChildServices(route, true);
+            // gather list of services to stop as we need to start child services as well
+            Set<Service> services = gatherChildServices(route, true);
 
-                // shutdown services
-                stopChildService(route, services, true);
+            // shutdown services
+            stopChildService(route, services, true);
 
-                // shutdown the route itself
-                ServiceHelper.stopAndShutdownServices(route);
+            // shutdown the route itself
+            ServiceHelper.stopAndShutdownServices(route);
 
-                // endpoints should only be stopped when Camel is shutting down
-                // see more details in the warmUp method
-                ServiceHelper.stopAndShutdownServices(route.getEndpoint());
-                // invoke callbacks on route policy
-                if (route.getRouteContext().getRoutePolicyList() != null) {
-                    for (RoutePolicy routePolicy : route.getRouteContext().getRoutePolicyList()) {
-                        routePolicy.onRemove(route);
-                    }
+            // endpoints should only be stopped when Camel is shutting down
+            // see more details in the warmUp method
+            ServiceHelper.stopAndShutdownServices(route.getEndpoint());
+            // invoke callbacks on route policy
+            if (route.getRouteContext().getRoutePolicyList() != null) {
+                for (RoutePolicy routePolicy : route.getRouteContext().getRoutePolicyList()) {
+                    routePolicy.onRemove(route);
                 }
-
-                // fire event
-                EventHelper.notifyRouteRemoved(camelContext, route);
             }
+
+            // fire event
+            EventHelper.notifyRouteRemoved(camelContext, route);
         }
 
         // need to call onRoutesRemove when the CamelContext is shutting down or Route is shutdown
         for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-            strategy.onRoutesRemove(routes);
+            strategy.onRoutesRemove(Collections.singletonList(route));
         }
         
         // remove the routes from the inflight registry
-        for (Route route : routes) {
-            camelContext.getInflightRepository().removeRoute(route.getId());
-        }
+        camelContext.getInflightRepository().removeRoute(route.getId());
 
         // remove the routes from the collections
-        camelContext.removeRouteCollection(routes);
-        
+        camelContext.removeRoute(route);
+
         // clear inputs on shutdown
         inputs.clear();
         warmUpDone.set(false);
@@ -330,12 +315,10 @@ public class RouteService extends ChildServiceSupport {
     protected void doSuspend() throws Exception {
         // suspend and resume logic is provided by DefaultCamelContext which leverages ShutdownStrategy
         // to safely suspend and resume
-        for (Route route : routes) {
-            try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
-                if (route.getRouteContext().getRoutePolicyList() != null) {
-                    for (RoutePolicy routePolicy : route.getRouteContext().getRoutePolicyList()) {
-                        routePolicy.onSuspend(route);
-                    }
+        try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
+            if (route.getRouteContext().getRoutePolicyList() != null) {
+                for (RoutePolicy routePolicy : route.getRouteContext().getRoutePolicyList()) {
+                    routePolicy.onSuspend(route);
                 }
             }
         }
@@ -345,12 +328,10 @@ public class RouteService extends ChildServiceSupport {
     protected void doResume() throws Exception {
         // suspend and resume logic is provided by DefaultCamelContext which leverages ShutdownStrategy
         // to safely suspend and resume
-        for (Route route : routes) {
-            try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
-                if (route.getRouteContext().getRoutePolicyList() != null) {
-                    for (RoutePolicy routePolicy : route.getRouteContext().getRoutePolicyList()) {
-                        routePolicy.onResume(route);
-                    }
+        try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
+            if (route.getRouteContext().getRoutePolicyList() != null) {
+                for (RoutePolicy routePolicy : route.getRouteContext().getRoutePolicyList()) {
+                    routePolicy.onResume(route);
                 }
             }
         }

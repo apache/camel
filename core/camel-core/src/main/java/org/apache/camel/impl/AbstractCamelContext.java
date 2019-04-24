@@ -142,7 +142,6 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteError.Phase;
 import org.apache.camel.spi.RoutePolicyFactory;
@@ -972,15 +971,15 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         return null;
     }
 
-    void removeRouteCollection(Collection<Route> routes) {
+    void removeRoute(Route route) {
         synchronized (this.routes) {
-            this.routes.removeAll(routes);
+            this.routes.remove(route);
         }
     }
 
-    void addRouteCollection(Collection<Route> routes) throws Exception {
+    void addRoute(Route route) {
         synchronized (this.routes) {
-            this.routes.addAll(routes);
+            this.routes.add(route);
         }
     }
 
@@ -1073,9 +1072,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
             // must ensure route is prepared, before we can start it
             route.prepare(this);
 
-            List<Route> routes = new ArrayList<>();
-            List<RouteContext> routeContexts = new RouteReifier(route).addRoutes(this, routes);
-            RouteService routeService = new RouteService(this, route, routeContexts, routes);
+            Route runtimeRoute = new RouteReifier(route).addRoutes(this);
+            RouteService routeService = new RouteService(this, route, runtimeRoute.getRouteContext(), runtimeRoute);
             startRouteService(routeService, true);
         } finally {
             // we are done staring routes
@@ -1140,7 +1138,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             try {
-                RouteStartupOrder route = new DefaultRouteStartupOrder(1, routeService.getRoutes().iterator().next(), routeService);
+                RouteStartupOrder route = new DefaultRouteStartupOrder(1, routeService.getRoute(), routeService);
 
                 boolean completed = getShutdownStrategy().shutdown(this, route, timeout, timeUnit, abortAfterTimeout);
                 if (completed) {
@@ -1175,7 +1173,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         if (routeService != null) {
             try {
                 List<RouteStartupOrder> routes = new ArrayList<>(1);
-                RouteStartupOrder order = new DefaultRouteStartupOrder(1, routeService.getRoutes().iterator().next(), routeService);
+                RouteStartupOrder order = new DefaultRouteStartupOrder(1, routeService.getRoute(), routeService);
                 routes.add(order);
 
                 getShutdownStrategy().shutdown(this, routes, timeout, timeUnit);
@@ -1264,7 +1262,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
             RouteService routeService = routeServices.get(routeId);
             if (routeService != null) {
                 List<RouteStartupOrder> routes = new ArrayList<>(1);
-                Route route = routeService.getRoutes().iterator().next();
+                Route route = routeService.getRoute();
                 RouteStartupOrder order = new DefaultRouteStartupOrder(1, route, routeService);
                 routes.add(order);
 
@@ -2259,7 +2257,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         // assemble list of startup ordering so routes can be shutdown accordingly
         List<RouteStartupOrder> orders = new ArrayList<>();
         for (Map.Entry<String, RouteService> entry : suspendedRouteServices.entrySet()) {
-            Route route = entry.getValue().getRoutes().iterator().next();
+            Route route = entry.getValue().getRoute();
             Integer order = entry.getValue().getRouteDefinition().getStartupOrder();
             if (order == null) {
                 order = defaultRouteStartupOrder++;
@@ -2774,7 +2772,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
             for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
                 boolean startable = false;
 
-                Consumer consumer = entry.getValue().getRoutes().iterator().next().getConsumer();
+                Consumer consumer = entry.getValue().getRoute().getConsumer();
                 if (consumer instanceof SuspendableService) {
                     // consumer could be suspended, which is not reflected in the RouteService status
                     startable = ((SuspendableService) consumer).isSuspended();
@@ -2804,7 +2802,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     protected boolean routeSupportsSuspension(String routeId) {
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
-            return routeService.getRoutes().iterator().next().supportsSuspension();
+            return routeService.getRoute().supportsSuspension();
         }
         return false;
     }
@@ -2958,24 +2956,18 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     protected synchronized void stopRouteService(RouteService routeService) throws Exception {
         routeService.stop();
-        for (Route route : routeService.getRoutes()) {
-            logRouteState(route, "stopped");
-        }
+        logRouteState(routeService.getRoute(), "stopped");
     }
 
     protected synchronized void shutdownRouteService(RouteService routeService) throws Exception {
         routeService.shutdown();
-        for (Route route : routeService.getRoutes()) {
-            logRouteState(route, "shutdown and removed");
-        }
+        logRouteState(routeService.getRoute(), "shutdown and removed");
     }
 
     protected synchronized void suspendRouteService(RouteService routeService) throws Exception {
         routeService.setRemovingRoutes(false);
         routeService.suspend();
-        for (Route route : routeService.getRoutes()) {
-            logRouteState(route, "suspended");
-        }
+        logRouteState(routeService.getRoute(), "suspended");
     }
 
     /**
@@ -3066,7 +3058,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         }
 
         // create holder object that contains information about this route to be started
-        Route route = routeService.getRoutes().iterator().next();
+        Route route = routeService.getRoute();
         return new DefaultRouteStartupOrder(startupOrder, route, routeService);
     }
 
