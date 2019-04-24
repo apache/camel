@@ -38,8 +38,6 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XPathExpression extends NamespaceAwareExpression {
 
-    // IMPORTANT: If updating this file, then also update the file components/camel-xpath/src/main/schema/xpath.json
-
     @XmlAttribute(name = "documentType")
     private String documentTypeName;
     @XmlAttribute(name = "resultType") @Metadata(defaultValue = "NODESET", enums = "NUMBER,STRING,BOOLEAN,NODESET,NODE")
