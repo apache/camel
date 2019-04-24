@@ -46,6 +46,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.StreamCache;
+// TODO: Factory SPI to create these processors which are loaded via FactoryFinder
 import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.RoutingSlip;
@@ -221,9 +222,7 @@ public class MethodInfo {
             for (Annotation a : ma) {
                 annotations.put(a.annotationType(), a);
             }
-        } catch (SecurityException e) {
-            // do nothing here
-        } catch (NoSuchMethodException e) {
+        } catch (SecurityException | NoSuchMethodException e) {
             // do nothing here
         }
     }

@@ -26,6 +26,8 @@ import org.apache.camel.util.ObjectHelper;
  */
 public final class ProxyBuilder {
 
+    // TODO: Move this to camel-bean
+
     private final CamelContext camelContext;
     private Endpoint endpoint;
     private boolean binding = true;

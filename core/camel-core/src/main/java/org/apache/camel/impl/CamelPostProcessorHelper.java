@@ -39,7 +39,6 @@ import org.apache.camel.ProxyInstantiationException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.component.bean.ProxyHelper;
-import org.apache.camel.processor.DeferServiceFactory;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.service.ServiceHelper;
@@ -249,6 +248,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                 } else if (type.isInterface()) {
                     // lets create a proxy
                     try {
+                        // TODO: Requires camel-bean so we need some kind of spi, and to lookup via camel-context/service etc
                         return ProxyHelper.createProxy(endpoint, binding, type);
                     } catch (Exception e) {
                         throw createProxyInstantiationRuntimeException(type, endpoint, e);
@@ -394,7 +394,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
      */
     protected Producer createInjectionProducer(Endpoint endpoint, Object bean, String beanName) {
         try {
-            return DeferServiceFactory.createProducer(endpoint);
+            return endpoint.getCamelContext().getDeferServiceFactory().createProducer(endpoint);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
