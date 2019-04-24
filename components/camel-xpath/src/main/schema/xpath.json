@@ -1,5 +1,5 @@
 {
-  "model": {
+ "model": {
     "kind": "model",
     "name": "xpath",
     "title": "XPath",
@@ -25,3 +25,4 @@
     "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" }
   }
 }
+
