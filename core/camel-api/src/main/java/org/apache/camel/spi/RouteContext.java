@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointAware;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeConfiguration;
 import org.apache.camel.meta.Experimental;
 
@@ -100,7 +101,7 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
      * For completing the route creation, creating a single event driven route
      * for the current from endpoint with any processors required
      */
-    void commit();
+    Route commit();
 
     /**
      * Adds an event driven processor

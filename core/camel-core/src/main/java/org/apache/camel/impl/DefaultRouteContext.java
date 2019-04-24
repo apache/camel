@@ -56,7 +56,7 @@ public class DefaultRouteContext implements RouteContext {
     private final Map<NamedNode, AtomicInteger> nodeIndex = new HashMap<>();
     private final RouteDefinition route;
     private FromDefinition from;
-    private final Collection<Route> routes;
+    private Route runtimeRoute;
     private Endpoint endpoint;
     private final List<Processor> eventDrivenProcessors = new ArrayList<>();
     private CamelContext camelContext;
@@ -77,11 +77,10 @@ public class DefaultRouteContext implements RouteContext {
     private RouteError routeError;
     private RouteController routeController;
 
-    public DefaultRouteContext(CamelContext camelContext, RouteDefinition route, FromDefinition from, Collection<Route> routes) {
+    public DefaultRouteContext(CamelContext camelContext, RouteDefinition route, FromDefinition from) {
         this.camelContext = camelContext;
         this.route = route;
         this.from = from;
-        this.routes = routes;
     }
 
     /**
@@ -89,7 +88,6 @@ public class DefaultRouteContext implements RouteContext {
      */
     public DefaultRouteContext(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.routes = new ArrayList<>();
         this.route = new RouteDefinition("temporary");
     }
 
@@ -106,6 +104,10 @@ public class DefaultRouteContext implements RouteContext {
 
     public RouteDefinition getRoute() {
         return route;
+    }
+
+    public Route getRuntimeRoute() {
+        return runtimeRoute;
     }
 
     public CamelContext getCamelContext() {
@@ -160,7 +162,7 @@ public class DefaultRouteContext implements RouteContext {
         return CamelContextHelper.mandatoryLookup(getCamelContext(), name, type);
     }
 
-    public void commit() {
+    public Route commit() {
         // now lets turn all of the event driven consumer processors into a single route
         if (!eventDrivenProcessors.isEmpty()) {
             Processor target = Pipeline.newInstance(getCamelContext(), eventDrivenProcessors);
@@ -286,8 +288,9 @@ public class DefaultRouteContext implements RouteContext {
                 }
             }
 
-            routes.add(edcr);
+            runtimeRoute = edcr;
         }
+        return runtimeRoute;
     }
 
     public void addEventDrivenProcessor(Processor processor) {

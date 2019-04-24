@@ -237,7 +237,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
         return children;
     }
 
-    public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
+    public void addRoutes(RouteContext routeContext) throws Exception {
         Channel processor = makeProcessor(routeContext);
         if (processor == null) {
             // no processor to add

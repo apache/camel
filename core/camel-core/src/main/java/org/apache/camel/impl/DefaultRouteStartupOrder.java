@@ -55,12 +55,8 @@ public class DefaultRouteStartupOrder implements RouteStartupOrder {
     }
 
     public List<Service> getServices() {
-        List<Service> answer = new ArrayList<>();
-        Collection<Route> routes = routeService.getRoutes();
-        for (Route route : routes) {
-            answer.addAll(route.getServices());
-        }
-        return answer;
+        List<Service> services = routeService.getRoute().getServices();
+        return new ArrayList<>(services);
     }
 
     public RouteService getRouteService() {

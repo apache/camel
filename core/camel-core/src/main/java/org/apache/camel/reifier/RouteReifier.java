@@ -17,7 +17,6 @@
 package org.apache.camel.reifier;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -92,26 +91,21 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         throw new UnsupportedOperationException("Not implemented for RouteDefinition");
     }
 
-    public List<RouteContext> addRoutes(ModelCamelContext camelContext, Collection<Route> routes) throws Exception {
-        List<RouteContext> answer = new ArrayList<>();
-
+    public Route addRoutes(ModelCamelContext camelContext) throws Exception {
         @SuppressWarnings("deprecation")
         ErrorHandlerFactory handler = camelContext.getErrorHandlerFactory();
         if (handler != null) {
             definition.setErrorHandlerBuilderIfNull(handler);
         }
 
-        RouteContext routeContext;
         try {
-            routeContext = addRoutes(camelContext, routes, definition.getInput());
+            return addRoutes(camelContext, definition.getInput());
         } catch (FailedToCreateRouteException e) {
             throw e;
         } catch (Exception e) {
             // wrap in exception which provide more details about which route was failing
             throw new FailedToCreateRouteException(definition.getId(), definition.toString(), e);
         }
-        answer.add(routeContext);
-        return answer;
     }
 
 
@@ -216,8 +210,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
     // Implementation methods
     // -------------------------------------------------------------------------
-    protected RouteContext addRoutes(CamelContext camelContext, Collection<Route> routes, FromDefinition fromType) throws Exception {
-        RouteContext routeContext = new DefaultRouteContext(camelContext, definition, fromType, routes);
+    protected Route addRoutes(CamelContext camelContext, FromDefinition fromType) throws Exception {
+        RouteContext routeContext = new DefaultRouteContext(camelContext, definition, fromType);
 
         // configure tracing
         if (definition.getTrace() != null) {
@@ -355,15 +349,14 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         List<ProcessorDefinition<?>> list = new ArrayList<>(definition.getOutputs());
         for (ProcessorDefinition<?> output : list) {
             try {
-                ProcessorReifier.reifier(output).addRoutes(routeContext, routes);
+                ProcessorReifier.reifier(output).addRoutes(routeContext);
             } catch (Exception e) {
                 RouteDefinition route = (RouteDefinition) routeContext.getRoute();
                 throw new FailedToCreateRouteException(route.getId(), route.toString(), output.toString(), e);
             }
         }
 
-        routeContext.commit();
-        return routeContext;
+        return routeContext.commit();
     }
 
 

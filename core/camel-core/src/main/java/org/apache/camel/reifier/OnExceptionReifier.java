@@ -41,7 +41,7 @@ class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> {
     }
 
     @Override
-    public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
+    public void addRoutes(RouteContext routeContext) throws Exception {
         // assign whether this was a route scoped onException or not
         // we need to know this later when setting the parent, as only route scoped should have parent
         // Note: this logic can possible be removed when the Camel routing engine decides at runtime
