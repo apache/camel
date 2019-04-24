@@ -514,7 +514,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
         ProcessorDefinitionHelper.resolveKnownConstantFields(definition);
 
         // also resolve properties and constant fields on embedded expressions
-        ProcessorDefinition<?> me = (ProcessorDefinition<?>) definition;
+        ProcessorDefinition<?> me = definition;
         if (me instanceof ExpressionNode) {
             ExpressionNode exp = (ExpressionNode) me;
             ExpressionDefinition expressionDefinition = exp.getExpression();
