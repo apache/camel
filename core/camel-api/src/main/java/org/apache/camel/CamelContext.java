@@ -31,6 +31,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.ExecutorServiceManager;
@@ -1472,5 +1473,10 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Sets a custom {@link HeadersMapFactory} to be used.
      */
     void setHeadersMapFactory(HeadersMapFactory factory);
+
+    /**
+     * Gets the {@link DeferServiceFactory} to use.
+     */
+    DeferServiceFactory getDeferServiceFactory();
 
 }

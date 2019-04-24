@@ -14,21 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.spi;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DeferProducer;
 
 /**
  * Factory to create services such as {@link Producer}s
  * and defer starting the created service, until {@link org.apache.camel.CamelContext} has been started.
  */
-public final class DeferServiceFactory {
-    
-    private DeferServiceFactory() {
-        // It's a helper class
-    }
+public interface DeferServiceFactory {
 
     /**
      * Creates the {@link Producer} which is deferred started until {@link org.apache.camel.CamelContext} is being started.
@@ -36,17 +31,10 @@ public final class DeferServiceFactory {
      * When the producer is started, it re-lookup the endpoint to capture any changes such as the endpoint has been intercepted.
      * This allows the producer to react and send messages to the updated endpoint.
      *
-     * @param endpoint  the endpoint
+     * @param endpoint the endpoint
      * @return the producer which will be deferred started until {@link org.apache.camel.CamelContext} has been started
      * @throws Exception can be thrown if there is an error starting the producer
-     * @see org.apache.camel.impl.DeferProducer
      */
-    public static Producer createProducer(Endpoint endpoint) throws Exception {
-        Producer producer = new DeferProducer(endpoint);
-        producer = new UnitOfWorkProducer(producer);
-        producer = new EventNotifierProducer(producer);
-        endpoint.getCamelContext().deferStartService(producer, true);
-        return producer;
-    }
+    Producer createProducer(Endpoint endpoint) throws Exception;
 
 }

@@ -79,6 +79,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
+import org.apache.camel.processor.DefaultDeferServiceFactory;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.interceptor.Debug;
 import org.apache.camel.processor.interceptor.HandleFault;
@@ -92,6 +93,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventNotifier;
@@ -245,6 +247,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     private volatile ReloadStrategy reloadStrategy;
     private volatile RouteController routeController;
     private volatile ScheduledExecutorService errorHandlerExecutorService;
+    private final DeferServiceFactory deferServiceFactory = new DefaultDeferServiceFactory();
 
     private TransformerRegistry<TransformerKey> transformerRegistry;
     private ValidatorRegistry<ValidatorKey> validatorRegistry;
@@ -3733,6 +3736,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     @Override
     public void setHeadersMapFactory(HeadersMapFactory headersMapFactory) {
         this.headersMapFactory = doAddService(headersMapFactory);
+    }
+
+    @Override
+    public DeferServiceFactory getDeferServiceFactory() {
+        return deferServiceFactory;
     }
 
     protected Map<String, RouteService> getRouteServices() {
