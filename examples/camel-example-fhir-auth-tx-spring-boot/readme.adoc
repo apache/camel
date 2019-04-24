@@ -1,3 +1,5 @@
+:experimental:
+
 == FHIR Authorization and Transaction Example - Spring Boot
 
 === Introduction
@@ -42,7 +44,7 @@ located in the `src/main/data` folder into it. You should see the following outp
 2018-07-24 11:52:56.995  INFO 30666 --- [ #2 - CamelFhir] fhir-example: Patient created successfully: ca.uhn.fhir.rest.api.MethodOutcome@270f03f1
 ```
 
-The Camel application can be stopped pressing <kbd>ctrl</kbd>+<kbd>c</kbd> in the shell.
+The Camel application can be stopped pressing kbd:[Ctrl+c] in the shell.
 
 === To get health check
 
