@@ -38,7 +38,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ProxyInstantiationException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
-import org.apache.camel.builder.DefaultFluentProducerTemplate;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.processor.DeferServiceFactory;
 import org.apache.camel.support.CamelContextHelper;
