@@ -32,7 +32,7 @@ public class XStreamDataFormatReifier extends DataFormatReifier<XStreamDataForma
     @Override
     protected DataFormat doCreateDataFormat(CamelContext camelContext) {
         if ("json".equals(definition.getDriver())) {
-            setProperty(camelContext, this, "dataFormatName", "json-xstream");
+            definition.setDataFormatName("json-xstream");
         }
         DataFormat answer = super.doCreateDataFormat(camelContext);
         // need to lookup the reference for the xstreamDriver
