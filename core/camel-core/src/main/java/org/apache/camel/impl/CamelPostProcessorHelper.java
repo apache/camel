@@ -250,9 +250,9 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                     // lets create a proxy
                     try {
                         // use proxy service
-                        BeanProxyFactory factory = camelContext.hasService(BeanProxyFactory.class);
+                        BeanProxyFactory factory = camelContext.getBeanProxyFactory();
                         if (factory == null) {
-                            throw new IllegalArgumentException("Cannot find BeanProxyFactory service. Make sure camel-bean is on the classpath.");
+                            throw new IllegalArgumentException("Cannot find BeanProxyFactory. Make sure camel-bean is on the classpath.");
                         }
                         return factory.createProxy(endpoint, binding, type);
                     } catch (Exception e) {
