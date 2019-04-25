@@ -26,6 +26,7 @@ import org.apache.camel.support.service.ServiceHelper;
  * Create a dynamic proxy for a given interface and endpoint that sends the parameter object to the endpoint and optionally
  * receives a reply. Unlike the ProxyHelper this works only with methods that have only one parameter.
  */
+@Deprecated
 public final class PojoProxyHelper {
 
     private PojoProxyHelper() {

@@ -29,6 +29,7 @@ import org.apache.camel.RuntimeCamelException;
  * that as a very open message format especially when combined with e.g. JAXB
  * serialization.
  */
+@Deprecated
 public class PojoMessageInvocationHandler extends AbstractCamelInvocationHandler {
 
     public PojoMessageInvocationHandler(Endpoint endpoint, Producer producer) {

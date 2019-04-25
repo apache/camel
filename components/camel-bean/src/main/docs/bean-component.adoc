@@ -73,12 +73,9 @@ You can append query options to the URI in the following format,
 
 The object instance that is used to consume messages must be explicitly
 registered with the Registry. For example, if you
-are using Spring you must define the bean in the Spring configuration,
-`spring.xml`; or if you don't use Spring, by registering the bean in
-JNDI.
+are using Spring you must define the bean in the Spring configuration XML file.
 
-Error formatting macro: snippet: java.lang.IndexOutOfBoundsException:
-Index: 20, Size: 20
+You can also register beans manually via Camel's `Registry` with the `bind` method.
 
 Once an endpoint has been registered, you can build Camel routes that
 use it to process exchanges.
@@ -90,7 +87,7 @@ using a *direct:* or *queue:* endpoint as the input.
 
 You can use the `createProxy()` methods on
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/bean/ProxyHelper.html[ProxyHelper]
-to create a proxy that will generate BeanExchanges and send them to any
+to create a proxy that will generate exchanges and send them to any
 endpoint:
 
 And the same route using Spring DSL:
@@ -126,11 +123,11 @@ component. Instead of specifying the bean explicitly as the endpoint
 -------------------------------------------------------
 // Send message to the bean endpoint
 // and invoke method resolved using Bean Binding.
-from("direct:start").beanRef("beanName");
+from("direct:start").bean("beanName");
 
 // Send message to the bean endpoint
 // and invoke given method.
-from("direct:start").beanRef("beanName", "methodName");
+from("direct:start").bean("beanName", "methodName");
 -------------------------------------------------------
 
 Instead of passing name of the reference to the bean (so that Camel will
@@ -157,13 +154,3 @@ Bean Binding mechanism which is used throughout
 all of the various Bean Integration
 mechanisms in Camel.
 
-=== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* <<class-component,Class>> component
-* Bean Binding
-* Bean Integration
