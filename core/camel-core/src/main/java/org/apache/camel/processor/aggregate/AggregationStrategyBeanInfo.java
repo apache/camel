@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.component.bean.ParameterInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
