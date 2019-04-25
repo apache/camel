@@ -19,7 +19,7 @@ package org.apache.camel.component.bean;
 import org.apache.camel.Consume;
 import org.apache.camel.Header;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.language.Bean;
+import org.apache.camel.language.bean.Bean;
 import org.apache.camel.language.Constant;
 
 /**
