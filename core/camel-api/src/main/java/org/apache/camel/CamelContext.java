@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
@@ -1478,5 +1479,10 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Gets the {@link DeferServiceFactory} to use.
      */
     DeferServiceFactory getDeferServiceFactory();
+
+    /**
+     * Gets the {@link AnnotationBasedProcessorFactory} to use.
+     */
+    AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory();
 
 }
