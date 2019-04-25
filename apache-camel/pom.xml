@@ -268,6 +268,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-bean</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-bean-validator</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -1758,6 +1763,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-base64-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-bean-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
