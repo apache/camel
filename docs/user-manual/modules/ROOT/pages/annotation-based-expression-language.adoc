@@ -9,50 +9,25 @@ any of these annotations:
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
 |Annotation |Description
-|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/language/Bean.html[@Bean]
-|Inject a <<bean-language,Bean>> expression
+|@Bean |Inject a <<bean-language,Bean>> expression
 
-|http://camel.apache.org/maven/current/camel-script/apidocs/org/apache/camel/builder/script/BeanShell.html[@BeanShell]
-|Inject a <<beanshell-language,BeanShell>> expression
+|@Constant |Inject a <<constant-language,Constant>> expression
 
-|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/language/Constant.html[@Constant]
-|Inject a <<constant-language,Constant>> expression
+|@EL |Inject an <<el-language,EL>> expression
 
-|http://camel.apache.org/maven/current/camel-juel/apidocs/org/apache/camel/language/juel/EL.html[@EL]
-|Inject an <<el-language,EL>> expression
+|@Groovy |Inject a <<groovy-language,Groovy>> expression
 
-|http://camel.apache.org/maven/current/camel-script/apidocs/org/apache/camel/builder/script/Groovy.html[@Groovy]
-|Inject a <<groovy-language,Groovy>> expression
+|@Header |Inject a <<header-language,Header>> expression
 
-|http://camel.apache.org/maven/current/maven/camel-core/apidocs/org/apache/camel/Header.html[@Header]
-|Inject a <<header-language,Header>> expression
+|@MVEL |Inject a <<mvel-language,MVEL>> expression
 
-|http://camel.apache.org/maven/current/camel-script/apidocs/org/apache/camel/builder/script/JavaScript.html[@JavaScript]
-|Inject a <<javascript-language,JavaScript>> expression
+|@OGNL |Inject an <<ognl-language,OGNL>> expression
 
-|http://camel.apache.org/maven/current/camel-mvel/apidocs/org/apache/camel/language/mvel/MVEL.html[@MVEL]
-|Inject a <<mvel-language,MVEL>> expression
+|@Simple |Inject an <<simple-language,Simple>> expression
 
-|http://camel.apache.org/maven/current/camel-ognl/apidocs/org/apache/camel/language/ognl/OGNL.html[@OGNL]
-|Inject an <<ognl-language,OGNL>> expression
+|@XPath |Inject an <<xpath-language,XPath>> expression
 
-|http://camel.apache.org/maven/current/camel-script/apidocs/org/apache/camel/builder/script/PHP.html[@PHP]
-|Inject a <<php-language,PHP>> expression
-
-|http://camel.apache.org/maven/current/camel-script/apidocs/org/apache/camel/builder/script/Python.html[@Python]
-|Inject a <<python-language,Python>> expression
-
-|http://camel.apache.org/maven/current/camel-script/apidocs/org/apache/camel/builder/script/Ruby.html[@Ruby]
-|Inject a <<ruby-language,Ruby>> expression
-
-|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/language/Simple.html[@Simple]
-|Inject an <<simple-language,Simple>> expression
-
-|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/language/XPath.html[@XPath]
-|Inject an <<xpath-language,XPath>> expression
-
-|http://camel.apache.org/maven/current/camel-saxon/apidocs/org/apache/camel/component/xquery/XQuery.html[@XQuery]
-|Inject an <<xquery-language,XQuery>> expression
+|@XQuery |Inject an <<xquery-language,XQuery>> expression
 |=======================================================================
 
 [[AnnotationBasedExpressionLanguage-Example]]
@@ -73,8 +48,7 @@ public class Foo {
 ===== Advanced example using @Bean
 
 And an example of using the the
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/language/Bean.html[@Bean]
-binding annotation, where you can use a <<bean-component,POJO>> where you
+@Bean binding annotation, where you can use a <<bean-component,POJO>> where you
 can do whatever java code you like:
 
 [source,java]
