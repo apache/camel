@@ -3146,6 +3146,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         getUuidGenerator();
         getUnitOfWorkFactory();
         getRouteController();
+        getBeanProxyFactory();
+        getBeanProcessorFactory();
+        getBeanPostProcessor();
     }
 
     /**
