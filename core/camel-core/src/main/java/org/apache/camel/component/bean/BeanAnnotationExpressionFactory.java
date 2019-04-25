@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.bean.BeanLanguage;
+import org.apache.camel.spi.Language;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.language.DefaultAnnotationExpressionFactory;
 import org.apache.camel.support.language.LanguageAnnotation;
@@ -42,7 +42,12 @@ public class BeanAnnotationExpressionFactory extends DefaultAnnotationExpression
             method = null;
         }
 
-        return BeanLanguage.bean(beanName, method);
+        Language lan = camelContext.resolveLanguage("bean");
+        if (method != null) {
+            return lan.createExpression(beanName + "?method=" + method);
+        } else {
+            return lan.createExpression(beanName);
+        }
     }
 
     protected String getFromAnnotation(Annotation annotation, String attribute) {
