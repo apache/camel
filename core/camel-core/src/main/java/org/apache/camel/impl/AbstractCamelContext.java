@@ -3286,12 +3286,15 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
                 getComponentResolver();
                 getDataFormatResolver();
                 getManagementStrategy();
+                getFactoryFinderResolver();
                 getHeadersMapFactory();
+                getBeanPostProcessor();
+                getBeanProcessorFactory();
+                getBeanProxyFactory();
                 getClassResolver();
                 getNodeIdFactory();
                 getProcessorFactory();
                 getMessageHistoryFactory();
-                getFactoryFinderResolver();
                 getDefaultFactoryFinder();
                 getStreamCachingStrategy();
                 getModelJAXBContextFactory();

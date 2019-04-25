@@ -38,6 +38,9 @@ class BeanReifier extends ProcessorReifier<BeanDefinition> {
         super(BeanDefinition.class.cast(definition));
     }
 
+    // TODO: Let this use bean expression, which also has all this logic to lookup beans and call them etc.
+    // and then facade the bean expression with a expression processor
+
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Object bean = definition.getBean();
