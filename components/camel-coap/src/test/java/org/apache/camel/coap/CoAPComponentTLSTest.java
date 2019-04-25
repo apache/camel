@@ -40,6 +40,7 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
     protected static final int PORT3 = AvailablePortFinder.getNextAvailable();
     protected static final int PORT4 = AvailablePortFinder.getNextAvailable();
     protected static final int PORT5 = AvailablePortFinder.getNextAvailable();
+    protected static final int PORT6 = AvailablePortFinder.getNextAvailable();
 
     @Test
     public void testSuccessfulCall() throws Exception {
@@ -120,6 +121,33 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testRawPublicKeyNoTruststore() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+        sendBodyAndHeader("direct:rpknotruststore", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testRawPublicKeyFailedTrust() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+        sendBodyAndHeader("direct:rpkfailedtrust", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testRawPublicKeyClientAuth() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived("Hello Camel CoAP");
+        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE, MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
+        mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
+        sendBodyAndHeader("direct:rpkclientauth", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         KeyStoreParameters keystoreParameters = new KeyStoreParameters();
@@ -149,6 +177,7 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
         truststoreParameters2.setPassword("storepass");
 
         TrustedRpkStore trustedRpkStore = id -> { return true;};
+        TrustedRpkStore failedTrustedRpkStore = id -> { return false;};
 
         context.getRegistry().bind("keyParams", keystoreParameters);
         context.getRegistry().bind("keyParams2", keystoreParameters2);
@@ -158,10 +187,12 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
         context.getRegistry().bind("privateKey", privateKey);
         context.getRegistry().bind("publicKey", publicKey);
         context.getRegistry().bind("trustedRpkStore", trustedRpkStore);
+        context.getRegistry().bind("failedTrustedRpkStore", failedTrustedRpkStore);
 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+
                 fromF("coaps://localhost:%d/TestResource?alias=service&password=security&"
                       + "keyStoreParameters=#keyParams", PORT)
                     .transform(body().prepend("Hello "));
@@ -181,6 +212,11 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
 
                 fromF("coaps://localhost:%d/TestResource?alias=service&password=security&"
                     + "privateKey=#privateKey&publicKey=#publicKey", PORT5)
+                  .transform(body().prepend("Hello "));
+
+                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&"
+                    + "privateKey=#privateKey&publicKey=#publicKey&clientAuthentication=REQUIRE&"
+                    + "trustedRpkStore=#trustedRpkStore", PORT6)
                   .transform(body().prepend("Hello "));
 
                 from("direct:start")
@@ -216,6 +252,19 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
 
                 from("direct:rpk")
                     .toF("coaps://localhost:%d/TestResource?trustedRpkStore=#trustedRpkStore", PORT5)
+                    .to("mock:result");
+
+                from("direct:rpknotruststore")
+                    .toF("coaps://localhost:%d/TestResource", PORT5)
+                    .to("mock:result");
+
+                from("direct:rpkfailedtrust")
+                    .toF("coaps://localhost:%d/TestResource?trustedRpkStore=#failedTrustedRpkStore", PORT5)
+                    .to("mock:result");
+
+                from("direct:rpkclientauth")
+                    .toF("coaps://localhost:%d/TestResource?trustedRpkStore=#trustedRpkStore&"
+                         + "privateKey=#privateKey&publicKey=#publicKey", PORT6)
                     .to("mock:result");
             }
         };
