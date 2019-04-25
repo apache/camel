@@ -21,6 +21,9 @@ import org.apache.camel.spi.BeanProxyFactory;
 
 public final class DefaultBeanProxyFactory implements BeanProxyFactory {
 
+    public DefaultBeanProxyFactory() {
+    }
+
     @SafeVarargs
     @Override
     public final <T> T createProxy(Endpoint endpoint, boolean binding, Class<T>... interfaceClasses) throws Exception {

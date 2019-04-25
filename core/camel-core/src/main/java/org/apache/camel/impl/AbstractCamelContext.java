@@ -56,6 +56,7 @@ import org.apache.camel.processor.interceptor.Debug;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.CamelContextTracker;
@@ -228,6 +229,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     private volatile ManagementMBeanAssembler managementMBeanAssembler;
     private volatile RestRegistry restRegistry;
     private volatile HeadersMapFactory headersMapFactory;
+    private volatile BeanProxyFactory beanProxyFactory;
     private volatile ClassResolver classResolver;
     private volatile PackageScanClassResolver packageScanClassResolver;
     private volatile ServicePool<Producer> producerServicePool;
@@ -2378,10 +2380,14 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
             addService(reloadStrategy, true, true);
         }
 
-        // re-create endpoint registry as the cache size limit may be set after
-        // the constructor of this instance was called.
-        // and we needed to create endpoints up-front as it may be accessed
-        // before this context is started
+        // if camel-bean is on classpath then we can load its bean proxy facory
+        BeanProxyFactory beanProxyFactory = new BeanProxyFactoryResolver().resolve(this);
+        if (beanProxyFactory != null) {
+            addService(beanProxyFactory);
+        }
+
+        // re-create endpoint registry as the cache size limit may be set after the constructor of this instance was called.
+        // and we needed to create endpoints up-front as it may be accessed before this context is started
         endpoints = doAddService(createEndpointRegistry(endpoints));
         // Initialize declarative transformer registry
         transformerRegistry = doAddService(createTransformerRegistry());
@@ -3750,6 +3756,18 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         return annotationBasedProcessorFactory;
     }
 
+    @Override
+    public BeanProxyFactory getBeanProxyFactory() {
+        if (beanProxyFactory == null) {
+            synchronized (lock) {
+                if (beanProxyFactory == null) {
+                    beanProxyFactory = createBeanProxyFactory();
+                }
+            }
+        }
+        return beanProxyFactory;
+    }
+
     protected Map<String, RouteService> getRouteServices() {
         return routeServices;
     }
@@ -3847,6 +3865,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     protected abstract ManagementNameStrategy createManagementNameStrategy();
 
     protected abstract HeadersMapFactory createHeadersMapFactory();
+
+    protected abstract BeanProxyFactory createBeanProxyFactory();
 
     protected abstract LanguageResolver createLanguageResolver();
 

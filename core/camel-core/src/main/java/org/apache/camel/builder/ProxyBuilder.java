@@ -81,9 +81,9 @@ public final class ProxyBuilder {
     public <T> T build(Class<T>... interfaceClasses) throws Exception {
         ObjectHelper.notNull(endpoint, "endpoint");
         // use proxy service
-        BeanProxyFactory factory = camelContext.hasService(BeanProxyFactory.class);
+        BeanProxyFactory factory = camelContext.getBeanProxyFactory();
         if (factory == null) {
-            throw new IllegalArgumentException("Cannot find BeanProxyFactory service. Make sure camel-bean is on the classpath.");
+            throw new IllegalArgumentException("Cannot find BeanProxyFactory. Make sure camel-bean is on the classpath.");
         }
         return factory.createProxy(endpoint, binding, interfaceClasses);
     }
