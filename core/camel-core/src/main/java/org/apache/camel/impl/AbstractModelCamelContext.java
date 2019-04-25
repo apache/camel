@@ -16,12 +16,30 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.*;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.camel.CatalogCamelContext;
+import org.apache.camel.FailedToStartRouteException;
+import org.apache.camel.Route;
 import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.health.HealthCheckRegistry;
-import org.apache.camel.impl.AbstractCamelContext;
-import org.apache.camel.impl.RouteService;
-import org.apache.camel.model.*;
+import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.HystrixConfigurationDefinition;
+import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.ModelHelper;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteDefinitionHelper;
+import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
@@ -30,12 +48,9 @@ import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
-import org.apache.camel.spi.*;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.CamelContextHelper;
-
-import java.io.InputStream;
-import java.util.*;
-import java.util.concurrent.*;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -51,7 +66,8 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
     private Map<String, HystrixConfigurationDefinition> hystrixConfigurations = new ConcurrentHashMap<>();
 
     /**
-     * Creates the {@link CamelContext} using {@link org.apache.camel.support.DefaultRegistry} as registry.
+     * Creates the {@link CamelContext} using
+     * {@link org.apache.camel.support.DefaultRegistry} as registry.
      * <p/>
      * Use one of the other constructors to force use an explicit registry.
      */
@@ -120,7 +136,7 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
         this.routeDefinitions.remove(toBeRemoved);
     }
 
-     public synchronized List<RouteDefinition> getRouteDefinitions() {
+    public synchronized List<RouteDefinition> getRouteDefinitions() {
         return routeDefinitions;
     }
 
@@ -301,7 +317,8 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
     }
 
     protected void bindDataFormats() throws Exception {
-        // eager lookup data formats and bind to registry so the dataformats can be looked up and used
+        // eager lookup data formats and bind to registry so the dataformats can
+        // be looked up and used
         for (Map.Entry<String, DataFormatDefinition> e : dataFormats.entrySet()) {
             String id = e.getKey();
             DataFormatDefinition def = e.getValue();
@@ -339,7 +356,7 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
     protected synchronized void shutdownRouteService(RouteService routeService) throws Exception {
         // remove the route from ErrorHandlerBuilder if possible
         if (getErrorHandlerFactory() instanceof ErrorHandlerBuilderSupport) {
-            ErrorHandlerBuilderSupport builder = (ErrorHandlerBuilderSupport) getErrorHandlerFactory();
+            ErrorHandlerBuilderSupport builder = (ErrorHandlerBuilderSupport)getErrorHandlerFactory();
             builder.removeOnExceptionList(routeService.getId());
         }
         routeDefinitions.removeIf(route -> route == routeService.getRouteDefinition());
