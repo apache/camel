@@ -270,7 +270,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     private Map<Class<?>, Object> extensions = new ConcurrentHashMap<>();
 
     /**
-     * Creates the {@link CamelContext} using {@link org.apache.camel.support.DefaultRegistry} as registry.
+     * Creates the {@link CamelContext} using
+     * {@link org.apache.camel.support.DefaultRegistry} as registry.
      * <p/>
      * Use one of the other constructors to force use an explicit registry.
      */
@@ -289,8 +290,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     public AbstractCamelContext(boolean init) {
-        // create a provisional (temporary) endpoint registry at first since end users may access endpoints before CamelContext is started
-        // we will later transfer the endpoints to the actual DefaultEndpointRegistry later, but we do this to starup Camel faster.
+        // create a provisional (temporary) endpoint registry at first since end
+        // users may access endpoints before CamelContext is started
+        // we will later transfer the endpoints to the actual
+        // DefaultEndpointRegistry later, but we do this to starup Camel faster.
         this.endpoints = new ProvisionalEndpointRegistry();
 
         // add the defer service startup listener
@@ -302,8 +305,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     public void doInit() {
-        // setup management first since end users may use it to add event notifiers
-        // using the management strategy before the CamelContext has been started
+        // setup management first since end users may use it to add event
+        // notifiers
+        // using the management strategy before the CamelContext has been
+        // started
         setupManagement(null);
 
         // Call all registered trackers with this context
@@ -319,10 +324,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     public <T> T getExtension(Class<T> type) {
         Object extension = extensions.get(type);
         if (extension instanceof Supplier) {
-            extension = ((Supplier) extension).get();
-            setExtension(type, (T) extension);
+            extension = ((Supplier)extension).get();
+            setExtension(type, (T)extension);
         }
-        return (T) extension;
+        return (T)extension;
     }
 
     @Override
@@ -360,7 +365,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
      * @param name the name
      */
     public void setName(String name) {
-        // use an explicit name strategy since an explicit name was provided to be used
+        // use an explicit name strategy since an explicit name was provided to
+        // be used
         setNameStrategy(new ExplicitCamelContextNameStrategy(name));
     }
 
@@ -423,7 +429,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
 
         // keep reference to properties component up to date
         if (component instanceof PropertiesComponent && "properties".equals(componentName)) {
-            propertiesComponent = (PropertiesComponent) component;
+            propertiesComponent = (PropertiesComponent)component;
         }
     }
 
@@ -438,7 +444,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     public Component getComponent(String name, boolean autoCreateComponents, boolean autoStart) {
         init();
 
-        // Check if the named component is already being created, that would mean
+        // Check if the named component is already being created, that would
+        // mean
         // that the initComponent has triggered a new getComponent
         if (componentsInCreation.get().contains(name)) {
             throw new IllegalStateException("Circular dependency detected, the component " + name + " is already being created");
@@ -457,8 +464,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
                 }
             });
 
-            // Start the component after its creation as if it is a component proxy
-            // that creates/start a delegated component, we may end up in a deadlock
+            // Start the component after its creation as if it is a component
+            // proxy
+            // that creates/start a delegated component, we may end up in a
+            // deadlock
             if (component != null && created.get() && autoStart && (isStarted() || isStarting())) {
                 // If the component is looked up after the context is started,
                 // lets start it up.
@@ -477,7 +486,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     /**
-     * Function to initialize a component and auto start. Returns null if the autoCreateComponents is disabled
+     * Function to initialize a component and auto start. Returns null if the
+     * autoCreateComponents is disabled
      */
     private Component initComponent(String name, boolean autoCreateComponents) {
         Component component = null;
@@ -490,28 +500,34 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
                 // Mark the component as being created so we can detect circular
                 // requests.
                 //
-                // In spring apps, the component resolver may trigger a new getComponent
-                // because of the underlying bean factory and as the endpoints are
+                // In spring apps, the component resolver may trigger a new
+                // getComponent
+                // because of the underlying bean factory and as the endpoints
+                // are
                 // registered as singleton, the spring factory creates the bean
-                // and then check the type so the getComponent is always triggered.
+                // and then check the type so the getComponent is always
+                // triggered.
                 //
                 // Simple circular dependency:
                 //
-                //   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-                //     <route>
-                //       <from id="twitter" uri="twitter://timeline/home?type=polling"/>
-                //       <log message="Got ${body}"/>
-                //     </route>
-                //   </camelContext>
+                // <camelContext id="camel"
+                // xmlns="http://camel.apache.org/schema/spring">
+                // <route>
+                // <from id="twitter"
+                // uri="twitter://timeline/home?type=polling"/>
+                // <log message="Got ${body}"/>
+                // </route>
+                // </camelContext>
                 //
                 // Complex circular dependency:
                 //
-                //   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-                //     <route>
-                //       <from id="log" uri="seda:test"/>
-                //       <to id="seda" uri="log:test"/>
-                //     </route>
-                //   </camelContext>
+                // <camelContext id="camel"
+                // xmlns="http://camel.apache.org/schema/spring">
+                // <route>
+                // <from id="log" uri="seda:test"/>
+                // <to id="seda" uri="log:test"/>
+                // </route>
+                // </camelContext>
                 //
                 // This would freeze the app (lock or infinite loop).
                 //
@@ -657,7 +673,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
 
         log.trace("Getting endpoint with uri: {}", uri);
 
-        // in case path has property placeholders then try to let property component resolve those
+        // in case path has property placeholders then try to let property
+        // component resolve those
         try {
             uri = resolvePropertyPlaceholders(uri);
         } catch (Exception e) {
@@ -666,7 +683,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
 
         final String rawUri = uri;
 
-        // normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order
+        // normalize uri so we can do endpoint hits with minor mistakes and
+        // parameters is not in the same order
         uri = normalizeEndpointUri(uri);
 
         log.trace("Getting endpoint with raw uri: {}, normalized uri: {}", rawUri, uri);
@@ -709,7 +727,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
                 }
 
                 if (answer == null && splitURI[1] == null) {
-                    // the uri has no context-path which is rare and it was not referring to an endpoint in the registry
+                    // the uri has no context-path which is rare and it was not
+                    // referring to an endpoint in the registry
                     // so try to see if it can be created by a component
 
                     int pos = uri.indexOf('?');
@@ -758,19 +777,19 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
             throw new NoSuchEndpointException(name);
         }
         if (endpoint instanceof InterceptSendToEndpoint) {
-            endpoint = ((InterceptSendToEndpoint) endpoint).getOriginalEndpoint();
+            endpoint = ((InterceptSendToEndpoint)endpoint).getOriginalEndpoint();
         }
         if (endpointType.isInstance(endpoint)) {
             return endpointType.cast(endpoint);
         } else {
-            throw new IllegalArgumentException("The endpoint is not of type: " + endpointType
-                + " but is: " + endpoint.getClass().getCanonicalName());
+            throw new IllegalArgumentException("The endpoint is not of type: " + endpointType + " but is: " + endpoint.getClass().getCanonicalName());
         }
     }
 
     public void addRegisterEndpointCallback(EndpointStrategy strategy) {
         if (!endpointStrategies.contains(strategy)) {
-            // let it be invoked for already registered endpoints so it can catch-up.
+            // let it be invoked for already registered endpoints so it can
+            // catch-up.
             endpointStrategies.add(strategy);
             for (Endpoint endpoint : getEndpoints()) {
                 Endpoint newEndpoint = strategy.registerEndpoint(endpoint.getEndpointUri(), endpoint);
@@ -785,7 +804,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     /**
      * Strategy to add the given endpoint to the internal endpoint registry
      *
-     * @param uri      uri of the endpoint
+     * @param uri uri of the endpoint
      * @param endpoint the endpoint to add
      * @return the added endpoint
      */
@@ -803,7 +822,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     /**
-     * Normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order.
+     * Normalize uri so we can do endpoint hits with minor mistakes and
+     * parameters is not in the same order.
      *
      * @param uri the uri
      * @return normalized uri
@@ -819,7 +839,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     /**
-     * Gets the endpoint key to use for lookup or whe adding endpoints to the {@link DefaultEndpointRegistry}
+     * Gets the endpoint key to use for lookup or whe adding endpoints to the
+     * {@link DefaultEndpointRegistry}
      *
      * @param uri the endpoint uri
      * @return the key
@@ -829,7 +850,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     /**
-     * Gets the endpoint key to use for lookup or whe adding endpoints to the {@link DefaultEndpointRegistry}
+     * Gets the endpoint key to use for lookup or whe adding endpoints to the
+     * {@link DefaultEndpointRegistry}
      *
      * @param uri the endpoint uri which is pre normalized
      * @return the key
@@ -839,9 +861,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     /**
-     * Gets the endpoint key to use for lookup or whe adding endpoints to the {@link DefaultEndpointRegistry}
+     * Gets the endpoint key to use for lookup or whe adding endpoints to the
+     * {@link DefaultEndpointRegistry}
      *
-     * @param uri      the endpoint uri
+     * @param uri the endpoint uri
      * @param endpoint the endpoint
      * @return the key
      */
@@ -880,7 +903,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     public List<Route> getRoutes() {
-        // lets return a copy of the collection as objects are removed later when services are stopped
+        // lets return a copy of the collection as objects are removed later
+        // when services are stopped
         if (routes.isEmpty()) {
             return Collections.emptyList();
         } else {
@@ -1017,7 +1041,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
                     // must stop route service as well
                     stopRouteService(routeService, false);
                 } else {
-                    // shutdown was aborted, make sure route is re-started properly
+                    // shutdown was aborted, make sure route is re-started
+                    // properly
                     startRouteService(routeService, false);
                 }
                 return completed;
@@ -1049,7 +1074,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
                 routes.add(order);
 
                 getShutdownStrategy().shutdown(this, routes, timeout, timeUnit);
-                // must stop route service as well (and remove the routes from management)
+                // must stop route service as well (and remove the routes from
+                // management)
                 stopRouteService(routeService, removingRoutes);
             } catch (Exception e) {
                 DefaultRouteError.set(this, routeId, removingRoutes ? Phase.SHUTDOWN : Phase.STOP, e);
@@ -1061,7 +1087,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     public synchronized boolean removeRoute(String routeId) throws Exception {
         DefaultRouteError.reset(this, routeId);
 
-        // gather a map of all the endpoints in use by the routes, so we can known if a given endpoints is in use
+        // gather a map of all the endpoints in use by the routes, so we can
+        // known if a given endpoints is in use
         // by one or more routes, when we remove the route
         Map<String, Set<Endpoint>> endpointsInUse = new HashMap<>();
         for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
@@ -1075,10 +1102,12 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
                     routeService.setRemovingRoutes(true);
                     shutdownRouteService(routeService);
                     routeServices.remove(routeId);
-                    // remove route from startup order as well, as it was removed
+                    // remove route from startup order as well, as it was
+                    // removed
                     routeStartupOrder.removeIf(order -> order.getRoute().getId().equals(routeId));
 
-                    // from the route which we have removed, then remove all its private endpoints
+                    // from the route which we have removed, then remove all its
+                    // private endpoints
                     // (eg the endpoints which are not in use by other routes)
                     Set<Endpoint> toRemove = new LinkedHashSet<>();
                     for (Endpoint endpoint : endpointsInUse.get(routeId)) {
@@ -1089,7 +1118,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
                                 count++;
                             }
                         }
-                        // notice we will count ourselves so if there is only 1 then its safe to remove
+                        // notice we will count ourselves so if there is only 1
+                        // then its safe to remove
                         if (count <= 1) {
                             toRemove.add(endpoint);
                         }
@@ -1098,7 +1128,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
                         log.debug("Removing: {} which was only in use by route: {}", endpoint, routeId);
                         removeEndpoint(endpoint);
                     }
-                } catch  (Exception e) {
+                } catch (Exception e) {
                     DefaultRouteError.set(this, routeId, Phase.REMOVE, e);
                     throw e;
                 }
@@ -1136,7 +1166,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
                 suspendRouteService(routeService);
                 // must suspend the route as well
                 if (route instanceof SuspendableService) {
-                    ((SuspendableService) route).suspend();
+                    ((SuspendableService)route).suspend();
                 }
             }
         } catch (Exception e) {
@@ -1179,35 +1209,38 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
 
         // inject CamelContext
         if (object instanceof CamelContextAware) {
-            CamelContextAware aware = (CamelContextAware) object;
+            CamelContextAware aware = (CamelContextAware)object;
             aware.setCamelContext(this);
         }
 
         if (object instanceof Service) {
-            Service service = (Service) object;
+            Service service = (Service)object;
 
             for (LifecycleStrategy strategy : lifecycleStrategies) {
                 if (service instanceof Endpoint) {
                     // use specialized endpoint add
-                    strategy.onEndpointAdd((Endpoint) service);
+                    strategy.onEndpointAdd((Endpoint)service);
                 } else {
                     strategy.onServiceAdd(this, service, null);
                 }
             }
 
             if (!forceStart) {
-                // now start the service (and defer starting if CamelContext is starting up itself)
+                // now start the service (and defer starting if CamelContext is
+                // starting up itself)
                 deferStartService(object, stopOnShutdown);
             } else {
                 // only add to services to close if its a singleton
-                // otherwise we could for example end up with a lot of prototype scope endpoints
+                // otherwise we could for example end up with a lot of prototype
+                // scope endpoints
                 boolean singleton = true; // assume singleton by default
                 if (object instanceof IsSingleton) {
-                    singleton = ((IsSingleton) service).isSingleton();
+                    singleton = ((IsSingleton)service).isSingleton();
                 }
                 // do not add endpoints as they have their own list
                 if (singleton && !(service instanceof Endpoint)) {
-                    // only add to list of services to stop if its not already there
+                    // only add to list of services to stop if its not already
+                    // there
                     if (stopOnShutdown && !hasService(service)) {
                         servicesToStop.add(service);
                     }
@@ -1219,11 +1252,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
 
     public boolean removeService(Object object) throws Exception {
         if (object instanceof Endpoint) {
-            removeEndpoint((Endpoint) object);
+            removeEndpoint((Endpoint)object);
             return true;
         }
         if (object instanceof Service) {
-            Service service = (Service) object;
+            Service service = (Service)object;
             for (LifecycleStrategy strategy : lifecycleStrategies) {
                 strategy.onServiceRemove(this, service, null);
             }
@@ -1234,7 +1267,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
 
     public boolean hasService(Object object) {
         if (object instanceof Service) {
-            Service service = (Service) object;
+            Service service = (Service)object;
             return servicesToStop.contains(service);
         }
         return false;
@@ -1255,7 +1288,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         Set<T> set = new HashSet<>();
         for (Service service : servicesToStop) {
             if (type.isInstance(service)) {
-                set.add((T) service);
+                set.add((T)service);
             }
         }
         return set;
@@ -1263,13 +1296,14 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
 
     public void deferStartService(Object object, boolean stopOnShutdown) throws Exception {
         if (object instanceof Service) {
-            Service service = (Service) object;
+            Service service = (Service)object;
 
             // only add to services to close if its a singleton
-            // otherwise we could for example end up with a lot of prototype scope endpoints
+            // otherwise we could for example end up with a lot of prototype
+            // scope endpoints
             boolean singleton = true; // assume singleton by default
             if (object instanceof IsSingleton) {
-                singleton = ((IsSingleton) service).isSingleton();
+                singleton = ((IsSingleton)service).isSingleton();
             }
             // do not add endpoints as they have their own list
             if (singleton && !(service instanceof Endpoint)) {
@@ -1288,7 +1322,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     public void addStartupListener(StartupListener listener) throws Exception {
-        // either add to listener so we can invoke then later when CamelContext has been started
+        // either add to listener so we can invoke then later when CamelContext
+        // has been started
         // or invoke the callback right now
         if (isStarted()) {
             listener.onCamelContextStarted(this, true);
@@ -1298,7 +1333,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     public String getComponentParameterJsonSchema(String componentName) throws IOException {
-        // use the component factory finder to find the package name of the component class, which is the location
+        // use the component factory finder to find the package name of the
+        // component class, which is the location
         // where the documentation exists as well
         FactoryFinder finder = getFactoryFinder(DefaultComponentResolver.RESOURCE_PATH);
         try {
@@ -1346,7 +1382,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     public String getDataFormatParameterJsonSchema(String dataFormatName) throws IOException {
-        // use the dataformat factory finder to find the package name of the dataformat class, which is the location
+        // use the dataformat factory finder to find the package name of the
+        // dataformat class, which is the location
         // where the documentation exists as well
         FactoryFinder finder = getFactoryFinder(DefaultDataFormatResolver.DATAFORMAT_RESOURCE_PATH);
         try {
@@ -1384,7 +1421,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     public String getLanguageParameterJsonSchema(String languageName) throws IOException {
-        // use the language factory finder to find the package name of the language class, which is the location
+        // use the language factory finder to find the package name of the
+        // language class, which is the location
         // where the documentation exists as well
         FactoryFinder finder = getFactoryFinder(DefaultLanguageResolver.LANGUAGE_RESOURCE_PATH);
         try {
@@ -1422,8 +1460,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     public String getEipParameterJsonSchema(String eipName) throws IOException {
-        // the eip json schema may be in some of the sub-packages so look until we find it
-        String[] subPackages = new String[]{"", "/config", "/dataformat", "/language", "/loadbalancer", "/rest"};
+        // the eip json schema may be in some of the sub-packages so look until
+        // we find it
+        String[] subPackages = new String[] {"", "/config", "/dataformat", "/language", "/loadbalancer", "/rest"};
         for (String sub : subPackages) {
             String path = CamelContextHelper.MODEL_DOCUMENTATION_PREFIX + sub + "/" + eipName + ".json";
             ClassResolver resolver = getClassResolver();
@@ -1448,9 +1487,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         synchronized (languages) {
             answer = languages.get(language);
 
-            // check if the language is singleton, if so return the shared instance
+            // check if the language is singleton, if so return the shared
+            // instance
             if (answer instanceof IsSingleton) {
-                boolean singleton = ((IsSingleton) answer).isSingleton();
+                boolean singleton = ((IsSingleton)answer).isSingleton();
                 if (singleton) {
                     return answer;
                 }
@@ -1462,11 +1502,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
             // inject CamelContext if aware
             if (answer != null) {
                 if (answer instanceof CamelContextAware) {
-                    ((CamelContextAware) answer).setCamelContext(this);
+                    ((CamelContextAware)answer).setCamelContext(this);
                 }
                 if (answer instanceof Service) {
                     try {
-                        startService((Service) answer);
+                        startService((Service)answer);
                     } catch (Exception e) {
                         throw RuntimeCamelException.wrapRuntimeCamelException(e);
                     }
@@ -1500,16 +1540,21 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     public String resolvePropertyPlaceholders(String text) throws Exception {
-        // While it is more efficient to only do the lookup if we are sure we need the component,
-        // with custom tokens, we cannot know if the URI contains a property or not without having
-        // the component.  We also lose fail-fast behavior for the missing component with this change.
+        // While it is more efficient to only do the lookup if we are sure we
+        // need the component,
+        // with custom tokens, we cannot know if the URI contains a property or
+        // not without having
+        // the component. We also lose fail-fast behavior for the missing
+        // component with this change.
         PropertiesComponent pc = getPropertiesComponent(false);
 
-        // Do not parse uris that are designated for the properties component as it will handle that itself
+        // Do not parse uris that are designated for the properties component as
+        // it will handle that itself
         if (text != null && !text.startsWith("properties:")) {
             // No component, assume default tokens.
             if (pc == null && text.contains(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
-                // lookup existing properties component, or force create a new default component
+                // lookup existing properties component, or force create a new
+                // default component
                 pc = getPropertiesComponent(true);
             }
 
@@ -1558,7 +1603,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         this.typeConverterRegistry = doAddService(typeConverterRegistry);
         // some registries are also a type converter implementation
         if (typeConverterRegistry instanceof TypeConverter) {
-            this.typeConverter = (TypeConverter) typeConverterRegistry;
+            this.typeConverter = (TypeConverter)typeConverterRegistry;
         }
     }
 
@@ -1660,7 +1705,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
 
     public void setRegistry(Registry registry) {
         if (registry instanceof CamelContextAware) {
-            ((CamelContextAware) registry).setCamelContext(this);
+            ((CamelContextAware)registry).setCamelContext(this);
         }
         this.registry = registry;
     }
@@ -1724,7 +1769,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     public void addInterceptStrategy(InterceptStrategy interceptStrategy) {
         getInterceptStrategies().add(interceptStrategy);
 
-        // for backwards compatible or if user add them here instead of the setXXX methods
+        // for backwards compatible or if user add them here instead of the
+        // setXXX methods
 
         if (interceptStrategy instanceof HandleFault) {
             setHandleFault(true);
@@ -1857,9 +1903,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
 
     @Override
     public AsyncProcessor createMulticast(Collection<Processor> processors, ExecutorService executor, boolean shutdownExecutorService) {
-        return new MulticastProcessor(this, processors, null, true, executor,
-                shutdownExecutorService, false, false, 0,
-                null, false, false);
+        return new MulticastProcessor(this, processors, null, true, executor, shutdownExecutorService, false, false, 0, null, false, false);
     }
 
     public ErrorHandlerFactory getErrorHandlerFactory() {
@@ -2017,14 +2061,16 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
 
         // update list of started routes to be suspended
         // because we only want to suspend started routes
-        // (so when we resume we only resume the routes which actually was suspended)
+        // (so when we resume we only resume the routes which actually was
+        // suspended)
         for (Map.Entry<String, RouteService> entry : getRouteServices().entrySet()) {
             if (entry.getValue().getStatus().isStarted()) {
                 suspendedRouteServices.put(entry.getKey(), entry.getValue());
             }
         }
 
-        // assemble list of startup ordering so routes can be shutdown accordingly
+        // assemble list of startup ordering so routes can be shutdown
+        // accordingly
         List<RouteStartupOrder> orders = new ArrayList<>();
         for (Map.Entry<String, RouteService> entry : suspendedRouteServices.entrySet()) {
             Route route = entry.getValue().getRoute();
@@ -2035,7 +2081,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
             orders.add(new DefaultRouteStartupOrder(order, route, entry.getValue()));
         }
 
-        // suspend routes using the shutdown strategy so it can shutdown in correct order
+        // suspend routes using the shutdown strategy so it can shutdown in
+        // correct order
         // routes which doesn't support suspension will be stopped instead
         getShutdownStrategy().suspend(this, orders);
 
@@ -2064,10 +2111,12 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
             log.info("Apache Camel {} (CamelContext: {}) is resuming", getVersion(), getName());
             StopWatch watch = new StopWatch();
 
-            // start the suspended routes (do not check for route clashes, and indicate)
+            // start the suspended routes (do not check for route clashes, and
+            // indicate)
             doStartOrResumeRoutes(suspendedRouteServices, false, true, true, false);
 
-            // mark the route services as resumed (will be marked as started) as well
+            // mark the route services as resumed (will be marked as started) as
+            // well
             for (RouteService service : suspendedRouteServices.values()) {
                 if (routeSupportsSuspension(service.getId())) {
                     service.resume();
@@ -2105,14 +2154,17 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
 
             doNotStartRoutesOnFirstStart = !firstStartDone && !isAutoStartup();
 
-            // if the context was configured with auto startup = false, and we are already started,
+            // if the context was configured with auto startup = false, and we
+            // are already started,
             // then we may need to start the routes on the 2nd start call
             if (firstStartDone && !isAutoStartup() && isStarted()) {
-                // invoke this logic to warm up the routes and if possible also start the routes
+                // invoke this logic to warm up the routes and if possible also
+                // start the routes
                 doStartOrResumeRoutes(routeServices, true, true, false, true);
             }
 
-            // super will invoke doStart which will prepare internal services and start routes etc.
+            // super will invoke doStart which will prepare internal services
+            // and start routes etc.
             try {
                 firstStartDone = true;
                 super.start();
@@ -2123,7 +2175,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
                     throw e;
                 } else {
                     log.info("CamelContext ({}) vetoed to not start due {}", getName(), e.getMessage());
-                    // swallow exception and change state of this camel context to stopped
+                    // swallow exception and change state of this camel context
+                    // to stopped
                     stop();
                     return;
                 }
@@ -2141,27 +2194,22 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
 
                 final Collection<Route> controlledRoutes = getRouteController().getControlledRoutes();
                 if (controlledRoutes.isEmpty()) {
-                    log.info("Total {} routes, of which {} are started",
-                        getRoutes().size(),
-                        started);
+                    log.info("Total {} routes, of which {} are started", getRoutes().size(), started);
                 } else {
-                    log.info("Total {} routes, of which {} are started, and {} are managed by RouteController: {}",
-                        getRoutes().size(),
-                        started,
-                        controlledRoutes.size(),
-                        getRouteController().getClass().getName()
-                    );
+                    log.info("Total {} routes, of which {} are started, and {} are managed by RouteController: {}", getRoutes().size(), started, controlledRoutes.size(),
+                             getRouteController().getClass().getName());
                 }
                 log.info("Apache Camel {} (CamelContext: {}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
             }
 
-            // okay the routes has been started so emit event that CamelContext has started (here at the end)
+            // okay the routes has been started so emit event that CamelContext
+            // has started (here at the end)
             EventHelper.notifyCamelContextStarted(this);
 
             // now call the startup listeners where the routes has been started
             for (StartupListener startup : startupListeners) {
                 if (startup instanceof ExtendedStartupListener) {
-                    ((ExtendedStartupListener) startup).onCamelContextFullyStarted(this, isStarted());
+                    ((ExtendedStartupListener)startup).onCamelContextFullyStarted(this, isStarted());
                 }
             }
         }
@@ -2226,7 +2274,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
 
     protected void doStartCamel() throws Exception {
 
-        // custom properties may use property placeholders so resolve those early on
+        // custom properties may use property placeholders so resolve those
+        // early on
         if (globalOptions != null && !globalOptions.isEmpty()) {
             for (Map.Entry<String, String> entry : globalOptions.entrySet()) {
                 String key = entry.getKey();
@@ -2244,8 +2293,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Using ClassResolver={}, PackageScanClassResolver={}, ApplicationContextClassLoader={}, RouteController={}",
-                getClassResolver(), getPackageScanClassResolver(), getApplicationContextClassLoader(), getRouteController());
+            log.debug("Using ClassResolver={}, PackageScanClassResolver={}, ApplicationContextClassLoader={}, RouteController={}", getClassResolver(),
+                      getPackageScanClassResolver(), getApplicationContextClassLoader(), getRouteController());
         }
 
         if (isStreamCaching()) {
@@ -2253,7 +2302,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         }
 
         if (isTracing()) {
-            // tracing is added in the DefaultChannel so we can enable it on the fly
+            // tracing is added in the DefaultChannel so we can enable it on the
+            // fly
             log.info("Tracing is enabled on CamelContext: {}", getName());
         }
 
@@ -2304,15 +2354,16 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         // start notifiers as services
         for (EventNotifier notifier : getManagementStrategy().getEventNotifiers()) {
             if (notifier instanceof Service) {
-                Service service = (Service) notifier;
+                Service service = (Service)notifier;
                 for (LifecycleStrategy strategy : lifecycleStrategies) {
                     strategy.onServiceAdd(this, service, null);
                 }
-                startService((Service) notifier);
+                startService((Service)notifier);
             }
         }
 
-        // must let some bootstrap service be started before we can notify the starting event
+        // must let some bootstrap service be started before we can notify the
+        // starting event
         EventHelper.notifyCamelContextStarting(this);
 
         forceLazyInitialization();
@@ -2322,19 +2373,23 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
             addService(reloadStrategy, true, true);
         }
 
-        // re-create endpoint registry as the cache size limit may be set after the constructor of this instance was called.
-        // and we needed to create endpoints up-front as it may be accessed before this context is started
+        // re-create endpoint registry as the cache size limit may be set after
+        // the constructor of this instance was called.
+        // and we needed to create endpoints up-front as it may be accessed
+        // before this context is started
         endpoints = doAddService(createEndpointRegistry(endpoints));
         // Initialize declarative transformer registry
         transformerRegistry = doAddService(createTransformerRegistry());
         // Initialize declarative validator registry
         validatorRegistry = doAddService(createValidatorRegistry());
 
-        // optimised to not include runtimeEndpointRegistry unless startServices its enabled or JMX statistics is in extended mode
+        // optimised to not include runtimeEndpointRegistry unless startServices
+        // its enabled or JMX statistics is in extended mode
         if (runtimeEndpointRegistry == null && getManagementStrategy() != null && getManagementStrategy().getManagementAgent() != null) {
             Boolean isEnabled = getManagementStrategy().getManagementAgent().getEndpointRuntimeStatisticsEnabled();
             boolean isExtended = getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
-            // extended mode is either if we use Extended statistics level or the option is explicit enabled
+            // extended mode is either if we use Extended statistics level or
+            // the option is explicit enabled
             boolean extended = isExtended || isEnabled != null && isEnabled;
             if (extended) {
                 runtimeEndpointRegistry = new DefaultRuntimeEndpointRegistry();
@@ -2342,13 +2397,15 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         }
         if (runtimeEndpointRegistry != null) {
             if (runtimeEndpointRegistry instanceof EventNotifier && getManagementStrategy() != null) {
-                getManagementStrategy().addEventNotifier((EventNotifier) runtimeEndpointRegistry);
+                getManagementStrategy().addEventNotifier((EventNotifier)runtimeEndpointRegistry);
             }
             addService(runtimeEndpointRegistry, true, true);
         }
 
-        // eager lookup any configured properties component to avoid subsequent lookup attempts which may impact performance
-        // due we use properties component for property placeholder resolution at runtime
+        // eager lookup any configured properties component to avoid subsequent
+        // lookup attempts which may impact performance
+        // due we use properties component for property placeholder resolution
+        // at runtime
         PropertiesComponent existing = getPropertiesComponent(false);
         if (existing != null) {
             // store reference to the existing properties component
@@ -2368,14 +2425,16 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
             log.info("Message DataType is enabled on CamelContext: {}", getName());
         }
 
-        // is there any stream caching enabled then log an info about this and its limit of spooling to disk, so people is aware of this
+        // is there any stream caching enabled then log an info about this and
+        // its limit of spooling to disk, so people is aware of this
         if (isStreamCachingInUse()) {
             // stream caching is in use so enable the strategy
             getStreamCachingStrategy().setEnabled(true);
         } else {
-            // log if stream caching is not in use as this can help people to enable it if they use streams
+            // log if stream caching is not in use as this can help people to
+            // enable it if they use streams
             log.info("StreamCaching is not in use. If using streams then its recommended to enable stream caching."
-                    + " See more details at http://camel.apache.org/stream-caching.html");
+                     + " See more details at http://camel.apache.org/stream-caching.html");
         }
 
         if (isAllowUseOriginalMessage()) {
@@ -2384,7 +2443,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
 
         log.debug("Using HeadersMapFactory: {}", getHeadersMapFactory());
         if (!getHeadersMapFactory().isCaseInsensitive()) {
-            log.info("HeadersMapFactory: {} is case-sensitive which can cause problems for protocols such as HTTP based, which rely on case-insensitive headers.", getHeadersMapFactory());
+            log.info("HeadersMapFactory: {} is case-sensitive which can cause problems for protocols such as HTTP based, which rely on case-insensitive headers.",
+                     getHeadersMapFactory());
         }
 
         // start routes
@@ -2392,7 +2452,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
             log.debug("Skip starting routes as CamelContext has been configured with autoStartup=false");
         }
 
-        // invoke this logic to warmup the routes and if possible also start the routes
+        // invoke this logic to warmup the routes and if possible also start the
+        // routes
         doStartOrResumeRoutes(routeServices, true, !doNotStartRoutesOnFirstStart, false, true);
 
         // starting will continue in the start method
@@ -2416,33 +2477,39 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         // Stop the route controller
         ServiceHelper.stopAndShutdownService(this.routeController);
 
-        // stop route inputs in the same order as they was started so we stop the very first inputs first
+        // stop route inputs in the same order as they was started so we stop
+        // the very first inputs first
         try {
-            // force shutting down routes as they may otherwise cause shutdown to hang
+            // force shutting down routes as they may otherwise cause shutdown
+            // to hang
             shutdownStrategy.shutdownForced(this, getRouteStartupOrder());
         } catch (Throwable e) {
             log.warn("Error occurred while shutting down routes. This exception will be ignored.", e);
         }
 
-        // shutdown await manager to trigger interrupt of blocked threads to attempt to free these threads graceful
+        // shutdown await manager to trigger interrupt of blocked threads to
+        // attempt to free these threads graceful
         shutdownServices(asyncProcessorAwaitManager);
 
         routeStartupOrder.sort(Comparator.comparingInt(RouteStartupOrder::getStartupOrder).reversed());
         List<RouteService> list = new ArrayList<>();
         for (RouteStartupOrder startupOrder : routeStartupOrder) {
-            DefaultRouteStartupOrder order = (DefaultRouteStartupOrder) startupOrder;
+            DefaultRouteStartupOrder order = (DefaultRouteStartupOrder)startupOrder;
             RouteService routeService = order.getRouteService();
             list.add(routeService);
         }
         shutdownServices(list, false);
-        // do not clear route services or startup listeners as we can start Camel again and get the route back as before
+        // do not clear route services or startup listeners as we can start
+        // Camel again and get the route back as before
         routeStartupOrder.clear();
 
         // but clear any suspend routes
         suspendedRouteServices.clear();
 
-        // stop consumers from the services to close first, such as POJO consumer (eg @Consumer)
-        // which we need to stop after the routes, as a POJO consumer is essentially a route also
+        // stop consumers from the services to close first, such as POJO
+        // consumer (eg @Consumer)
+        // which we need to stop after the routes, as a POJO consumer is
+        // essentially a route also
         for (Service service : servicesToStop) {
             if (service instanceof Consumer) {
                 shutdownServices(service);
@@ -2482,7 +2549,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         shutdownServices(servicesToStop);
         servicesToStop.clear();
 
-        // must notify that we are stopped before stopping the management strategy
+        // must notify that we are stopped before stopping the management
+        // strategy
         EventHelper.notifyCamelContextStopped(this);
 
         // stop the notifier service
@@ -2495,7 +2563,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         shutdownServices(managementStrategy);
         shutdownServices(managementMBeanAssembler);
         shutdownServices(lifecycleStrategies);
-        // do not clear lifecycleStrategies as we can start Camel again and get the route back as before
+        // do not clear lifecycleStrategies as we can start Camel again and get
+        // the route back as before
 
         // stop the lazy created so they can be re-created on restart
         forceStopLazyInitialization();
@@ -2515,15 +2584,17 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     /**
      * Starts or resumes the routes
      *
-     * @param routeServices  the routes to start (will only start a route if its not already started)
-     * @param checkClash     whether to check for startup ordering clash
-     * @param startConsumer  whether the route consumer should be started. Can be used to warmup the route without starting the consumer.
+     * @param routeServices the routes to start (will only start a route if its
+     *            not already started)
+     * @param checkClash whether to check for startup ordering clash
+     * @param startConsumer whether the route consumer should be started. Can be
+     *            used to warmup the route without starting the consumer.
      * @param resumeConsumer whether the route consumer should be resumed.
-     * @param addingRoutes   whether we are adding new routes
+     * @param addingRoutes whether we are adding new routes
      * @throws Exception is thrown if error starting routes
      */
-    protected void doStartOrResumeRoutes(Map<String, RouteService> routeServices, boolean checkClash,
-                                         boolean startConsumer, boolean resumeConsumer, boolean addingRoutes) throws Exception {
+    protected void doStartOrResumeRoutes(Map<String, RouteService> routeServices, boolean checkClash, boolean startConsumer, boolean resumeConsumer, boolean addingRoutes)
+        throws Exception {
         setStartingRoutes(true);
         try {
             // filter out already started routes
@@ -2533,13 +2604,15 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
 
                 Consumer consumer = entry.getValue().getRoute().getConsumer();
                 if (consumer instanceof SuspendableService) {
-                    // consumer could be suspended, which is not reflected in the RouteService status
-                    startable = ((SuspendableService) consumer).isSuspended();
+                    // consumer could be suspended, which is not reflected in
+                    // the RouteService status
+                    startable = ((SuspendableService)consumer).isSuspended();
                 }
 
                 if (!startable && consumer instanceof StatefulService) {
-                    // consumer could be stopped, which is not reflected in the RouteService status
-                    startable = ((StatefulService) consumer).getStatus().isStartable();
+                    // consumer could be stopped, which is not reflected in the
+                    // RouteService status
+                    startable = ((StatefulService)consumer).getStatus().isStartable();
                 } else if (!startable) {
                     // no consumer so use state from route service
                     startable = entry.getValue().getStatus().isStartable();
@@ -2567,7 +2640,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     private void shutdownServices(Object service) {
-        // do not rethrow exception as we want to keep shutting down in case of problems
+        // do not rethrow exception as we want to keep shutting down in case of
+        // problems
 
         // allow us to do custom work before delegating to service helper
         try {
@@ -2605,12 +2679,12 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         // and register startup aware so they can be notified when
         // camel context has been started
         if (service instanceof StartupListener) {
-            StartupListener listener = (StartupListener) service;
+            StartupListener listener = (StartupListener)service;
             addStartupListener(listener);
         }
 
         if (service instanceof CamelContextAware) {
-            CamelContextAware aware = (CamelContextAware) service;
+            CamelContextAware aware = (CamelContextAware)service;
             aware.setCamelContext(this);
         }
 
@@ -2641,14 +2715,16 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
      * Starts the given route service
      */
     protected synchronized void startRouteService(RouteService routeService, boolean addingRoutes) throws Exception {
-        // we may already be starting routes so remember this, so we can unset accordingly in finally block
+        // we may already be starting routes so remember this, so we can unset
+        // accordingly in finally block
         boolean alreadyStartingRoutes = isStartingRoutes();
         if (!alreadyStartingRoutes) {
             setStartingRoutes(true);
         }
 
         try {
-            // the route service could have been suspended, and if so then resume it instead
+            // the route service could have been suspended, and if so then
+            // resume it instead
             if (routeService.getStatus().isSuspended()) {
                 resumeRouteService(routeService);
             } else {
@@ -2657,10 +2733,12 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
                 if (shouldStartRoutes()) {
                     // this method will log the routes being started
                     safelyStartRouteServices(true, true, true, false, addingRoutes, routeService);
-                    // start route services if it was configured to auto startup and we are not adding routes
+                    // start route services if it was configured to auto startup
+                    // and we are not adding routes
                     boolean autoStartup = routeService.isAutoStartup();
                     if (!addingRoutes || autoStartup) {
-                        // start the route since auto start is enabled or we are starting a route (not adding new routes)
+                        // start the route since auto start is enabled or we are
+                        // starting a route (not adding new routes)
                         routeService.start();
                     }
                 }
@@ -2676,7 +2754,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
      * Resumes the given route service
      */
     protected synchronized void resumeRouteService(RouteService routeService) throws Exception {
-        // the route service could have been stopped, and if so then start it instead
+        // the route service could have been stopped, and if so then start it
+        // instead
         if (!routeService.getStatus().isSuspended()) {
             startRouteService(routeService, false);
         } else {
@@ -2722,22 +2801,27 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     /**
-     * Starts the routes services in a proper manner which ensures the routes will be started in correct order,
-     * check for clash and that the routes will also be shutdown in correct order as well.
+     * Starts the routes services in a proper manner which ensures the routes
+     * will be started in correct order, check for clash and that the routes
+     * will also be shutdown in correct order as well.
      * <p/>
      * This method <b>must</b> be used to start routes in a safe manner.
      *
-     * @param checkClash     whether to check for startup order clash
-     * @param startConsumer  whether the route consumer should be started. Can be used to warmup the route without starting the consumer.
+     * @param checkClash whether to check for startup order clash
+     * @param startConsumer whether the route consumer should be started. Can be
+     *            used to warmup the route without starting the consumer.
      * @param resumeConsumer whether the route consumer should be resumed.
-     * @param addingRoutes   whether we are adding new routes
-     * @param routeServices  the routes
+     * @param addingRoutes whether we are adding new routes
+     * @param routeServices the routes
      * @throws Exception is thrown if error starting the routes
      */
-    protected synchronized void safelyStartRouteServices(boolean checkClash, boolean startConsumer, boolean resumeConsumer,
-                                                         boolean addingRoutes, Collection<RouteService> routeServices) throws Exception {
-        // list of inputs to start when all the routes have been prepared for starting
-        // we use a tree map so the routes will be ordered according to startup order defined on the route
+    protected synchronized void safelyStartRouteServices(boolean checkClash, boolean startConsumer, boolean resumeConsumer, boolean addingRoutes,
+                                                         Collection<RouteService> routeServices)
+        throws Exception {
+        // list of inputs to start when all the routes have been prepared for
+        // starting
+        // we use a tree map so the routes will be ordered according to startup
+        // order defined on the route
         Map<Integer, DefaultRouteStartupOrder> inputs = new TreeMap<>();
 
         // figure out the order in which the routes should be started
@@ -2760,7 +2844,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         for (StartupListener startup : startupListeners) {
             startup.onCamelContextStarted(this, isStarted());
         }
-        // because the consumers may also register startup listeners we need to reset
+        // because the consumers may also register startup listeners we need to
+        // reset
         // the already started listeners
         List<StartupListener> backup = new ArrayList<>(startupListeners);
         startupListeners.clear();
@@ -2772,19 +2857,22 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
                 doResumeRouteConsumers(inputs, addingRoutes);
             } else {
                 // and now start the routes
-                // and check for clash with multiple consumers of the same endpoints which is not allowed
+                // and check for clash with multiple consumers of the same
+                // endpoints which is not allowed
                 doStartRouteConsumers(inputs, addingRoutes);
             }
         }
 
         // sort the startup listeners so they are started in the right order
         startupListeners.sort(OrderedComparator.get());
-        // now the consumers that was just started may also add new StartupListeners (such as timer)
+        // now the consumers that was just started may also add new
+        // StartupListeners (such as timer)
         // so we need to ensure they get started as well
         for (StartupListener startup : startupListeners) {
             startup.onCamelContextStarted(this, isStarted());
         }
-        // and add the previous started startup listeners to the list so we have them all
+        // and add the previous started startup listeners to the list so we have
+        // them all
         startupListeners.addAll(0, backup);
 
         // inputs no longer needed
@@ -2794,13 +2882,15 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     /**
      * @see #safelyStartRouteServices(boolean,boolean,boolean,boolean,Collection)
      */
-    protected synchronized void safelyStartRouteServices(boolean forceAutoStart, boolean checkClash, boolean startConsumer,
-                                                         boolean resumeConsumer, boolean addingRoutes, RouteService... routeServices) throws Exception {
+    protected synchronized void safelyStartRouteServices(boolean forceAutoStart, boolean checkClash, boolean startConsumer, boolean resumeConsumer, boolean addingRoutes,
+                                                         RouteService... routeServices)
+        throws Exception {
         safelyStartRouteServices(checkClash, startConsumer, resumeConsumer, addingRoutes, Arrays.asList(routeServices));
     }
 
     private DefaultRouteStartupOrder doPrepareRouteToBeStarted(RouteService routeService) {
-        // add the inputs from this route service to the list to start afterwards
+        // add the inputs from this route service to the list to start
+        // afterwards
         // should be ordered according to the startup number
         Integer startupOrder = routeService.getStartupOrder();
         if (startupOrder == null) {
@@ -2808,7 +2898,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
             startupOrder = defaultRouteStartupOrder++;
         }
 
-        // create holder object that contains information about this route to be started
+        // create holder object that contains information about this route to be
+        // started
         Route route = routeService.getRoute();
         return new DefaultRouteStartupOrder(startupOrder, route, routeService);
     }
@@ -2818,30 +2909,35 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         DefaultRouteStartupOrder other = inputs.get(answer.getStartupOrder());
         if (other != null && answer != other) {
             String otherId = other.getRoute().getId();
-            throw new FailedToStartRouteException(answer.getRoute().getId(), "startupOrder clash. Route " + otherId + " already has startupOrder "
-                + answer.getStartupOrder() + " configured which this route have as well. Please correct startupOrder to be unique among all your routes.");
+            throw new FailedToStartRouteException(answer.getRoute().getId(), "startupOrder clash. Route " + otherId + " already has startupOrder " + answer
+                .getStartupOrder() + " configured which this route have as well. Please correct startupOrder to be unique among all your routes.");
         }
         // check in existing already started as well
         for (RouteStartupOrder order : routeStartupOrder) {
             String otherId = order.getRoute().getId();
             if (answer.getRoute().getId().equals(otherId)) {
-                // its the same route id so skip clash check as its the same route (can happen when using suspend/resume)
+                // its the same route id so skip clash check as its the same
+                // route (can happen when using suspend/resume)
             } else if (answer.getStartupOrder() == order.getStartupOrder()) {
-                throw new FailedToStartRouteException(answer.getRoute().getId(), "startupOrder clash. Route " + otherId + " already has startupOrder "
-                    + answer.getStartupOrder() + " configured which this route have as well. Please correct startupOrder to be unique among all your routes.");
+                throw new FailedToStartRouteException(answer.getRoute().getId(), "startupOrder clash. Route " + otherId + " already has startupOrder " + answer
+                    .getStartupOrder() + " configured which this route have as well. Please correct startupOrder to be unique among all your routes.");
             }
         }
         return true;
     }
 
     private void doWarmUpRoutes(Map<Integer, DefaultRouteStartupOrder> inputs, boolean autoStartup) throws Exception {
-        // now prepare the routes by starting its services before we start the input
+        // now prepare the routes by starting its services before we start the
+        // input
         for (Map.Entry<Integer, DefaultRouteStartupOrder> entry : inputs.entrySet()) {
-            // defer starting inputs till later as we want to prepare the routes by starting
+            // defer starting inputs till later as we want to prepare the routes
+            // by starting
             // all their processors and child services etc.
             // then later we open the floods to Camel by starting the inputs
-            // what this does is to ensure Camel is more robust on starting routes as all routes
-            // will then be prepared in time before we start inputs which will consume messages to be routed
+            // what this does is to ensure Camel is more robust on starting
+            // routes as all routes
+            // will then be prepared in time before we start inputs which will
+            // consume messages to be routed
             RouteService routeService = entry.getValue().getRouteService();
             log.debug("Warming up route id: {} having autoStartup={}", routeService.getId(), autoStartup);
             routeService.warmUp();
@@ -2864,7 +2960,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
             Route route = entry.getValue().getRoute();
             RouteService routeService = entry.getValue().getRouteService();
 
-            // if we are starting camel, then skip routes which are configured to not be auto started
+            // if we are starting camel, then skip routes which are configured
+            // to not be auto started
             boolean autoStartup = routeService.isAutoStartup();
             if (addingRoute && !autoStartup) {
                 log.info("Skipping starting of route {} as its configured with autoStartup=false", routeService.getId());
@@ -2875,13 +2972,14 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
             for (Consumer consumer : routeService.getInputs().values()) {
                 Endpoint endpoint = consumer.getEndpoint();
 
-                // check multiple consumer violation, with the other routes to be started
+                // check multiple consumer violation, with the other routes to
+                // be started
                 if (!doCheckMultipleConsumerSupportClash(endpoint, routeInputs)) {
-                    throw new FailedToStartRouteException(routeService.getId(),
-                        "Multiple consumers for the same endpoint is not allowed: " + endpoint);
+                    throw new FailedToStartRouteException(routeService.getId(), "Multiple consumers for the same endpoint is not allowed: " + endpoint);
                 }
 
-                // check for multiple consumer violations with existing routes which
+                // check for multiple consumer violations with existing routes
+                // which
                 // have already been started, or is currently starting
                 List<Endpoint> existingEndpoints = new ArrayList<>();
                 for (Route existingRoute : getRoutes()) {
@@ -2896,8 +2994,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
                     }
                 }
                 if (!doCheckMultipleConsumerSupportClash(endpoint, existingEndpoints)) {
-                    throw new FailedToStartRouteException(routeService.getId(),
-                            "Multiple consumers for the same endpoint is not allowed: " + endpoint);
+                    throw new FailedToStartRouteException(routeService.getId(), "Multiple consumers for the same endpoint is not allowed: " + endpoint);
                 }
 
                 // start the consumer on the route
@@ -2930,8 +3027,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
 
                 routeInputs.add(endpoint);
 
-                // add to the order which they was started, so we know how to stop them in reverse order
-                // but only add if we haven't already registered it before (we dont want to double add when restarting)
+                // add to the order which they was started, so we know how to
+                // stop them in reverse order
+                // but only add if we haven't already registered it before (we
+                // dont want to double add when restarting)
                 boolean found = false;
                 for (RouteStartupOrder other : routeStartupOrder) {
                     if (other.getRoute().getId().equals(route.getId())) {
@@ -2947,7 +3046,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
             if (resumeOnly) {
                 routeService.resume();
             } else {
-                // and start the route service (no need to start children as they are already warmed up)
+                // and start the route service (no need to start children as
+                // they are already warmed up)
                 try {
                     routeService.start();
                     route.getProperties().remove("route.start.exception");
@@ -2963,7 +3063,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         // is multiple consumers supported
         boolean multipleConsumersSupported = false;
         if (endpoint instanceof MultipleConsumersSupport) {
-            multipleConsumersSupported = ((MultipleConsumersSupport) endpoint).isMultipleConsumersSupported();
+            multipleConsumersSupported = ((MultipleConsumersSupport)endpoint).isMultipleConsumersSupported();
         }
 
         if (multipleConsumersSupported) {
@@ -2993,7 +3093,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         }
     }
 
-   protected void doStartStandardServices() {
+    protected void doStartStandardServices() {
         getVersion();
         getTypeConverter();
         getTypeConverterRegistry();
@@ -3056,9 +3156,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     protected Endpoint createEndpoint(String uri) {
         Object value = getRegistry().lookupByName(uri);
         if (value instanceof Endpoint) {
-            return (Endpoint) value;
+            return (Endpoint)value;
         } else if (value instanceof Processor) {
-            return new ProcessorEndpoint(uri, this, (Processor) value);
+            return new ProcessorEndpoint(uri, this, (Processor)value);
         } else if (value != null) {
             return convertBeanToEndpoint(uri, value);
         }
@@ -3066,16 +3166,17 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     /**
-     * Strategy method for attempting to convert the bean from a {@link Registry} to an endpoint using
-     * some kind of transformation or wrapper
+     * Strategy method for attempting to convert the bean from a
+     * {@link Registry} to an endpoint using some kind of transformation or
+     * wrapper
      *
-     * @param uri  the uri for the endpoint (and name in the registry)
-     * @param bean the bean to be converted to an endpoint, which will be not null
+     * @param uri the uri for the endpoint (and name in the registry)
+     * @param bean the bean to be converted to an endpoint, which will be not
+     *            null
      * @return a new endpoint
      */
     protected Endpoint convertBeanToEndpoint(String uri, Object bean) {
-        throw new IllegalArgumentException("uri: " + uri + " bean: " + bean
-                + " could not be converted to an Endpoint");
+        throw new IllegalArgumentException("uri: " + uri + " bean: " + bean + " could not be converted to an Endpoint");
     }
 
     /**
@@ -3108,7 +3209,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
                 }
             }
             if (comp instanceof PropertiesComponent) {
-                addComponent("properties", (PropertiesComponent) comp);
+                addComponent("properties", (PropertiesComponent)comp);
             }
             if (propertiesComponent == null) {
                 throw new IllegalStateException();
@@ -3241,7 +3342,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
             disableJMX = true;
         } else if (isInit()) {
             disableJMX = true;
-            // we are still in initializing mode, so we can disable JMX, by setting up management again
+            // we are still in initializing mode, so we can disable JMX, by
+            // setting up management again
             setupManagement(null);
         } else {
             throw new IllegalStateException("Disabling JMX can only be done when CamelContext has not been started");
@@ -3261,7 +3363,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
                     if (finder != null) {
                         Object object = finder.newInstance("ManagementStrategyFactory");
                         if (object instanceof ManagementStrategyFactory) {
-                            factory = (ManagementStrategyFactory) object;
+                            factory = (ManagementStrategyFactory)object;
                         }
                     }
                 } catch (NoFactoryAvailableException e) {
@@ -3390,7 +3492,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
 
         // inject CamelContext if aware
         if (answer instanceof CamelContextAware) {
-            ((CamelContextAware) answer).setCamelContext(this);
+            ((CamelContextAware)answer).setCamelContext(this);
         }
 
         return answer;
@@ -3401,7 +3503,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
 
         // inject CamelContext if aware
         if (answer instanceof CamelContextAware) {
-            ((CamelContextAware) answer).setCamelContext(this);
+            ((CamelContextAware)answer).setCamelContext(this);
         }
 
         return answer;
@@ -3467,7 +3569,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     public void setExecutorServiceManager(ExecutorServiceManager executorServiceManager) {
-        // special for executorServiceManager as want to stop it manually so false in stopOnShutdown
+        // special for executorServiceManager as want to stop it manually so
+        // false in stopOnShutdown
         this.executorServiceManager = doAddService(executorServiceManager, false);
     }
 
@@ -3543,7 +3646,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     public RestRegistry getRestRegistry() {
-        if (restRegistry ==  null) {
+        if (restRegistry == null) {
             synchronized (lock) {
                 if (restRegistry == null) {
                     setRestRegistry(createRestRegistry());
@@ -3637,7 +3740,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     /**
-     * Reset context counter to a preset value. Mostly used for tests to ensure a predictable getName()
+     * Reset context counter to a preset value. Mostly used for tests to ensure
+     * a predictable getName()
      *
      * @param value new value for the context counter
      */
