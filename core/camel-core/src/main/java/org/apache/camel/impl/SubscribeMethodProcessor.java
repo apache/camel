@@ -43,6 +43,8 @@ import org.apache.camel.util.ObjectHelper;
  */
 public final class SubscribeMethodProcessor extends AsyncProcessorSupport implements Navigate<Processor> {
 
+    // TODO: requires camel-bean
+
     private final Endpoint endpoint;
     private final Map<AsyncProcessor, Predicate> methods = new LinkedHashMap<>();
 
