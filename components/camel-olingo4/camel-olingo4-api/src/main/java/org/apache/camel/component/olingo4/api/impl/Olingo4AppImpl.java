@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.olingo4.api.impl;
 
+import static org.apache.camel.component.olingo4.api.impl.Olingo4Helper.getContentTypeHeader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -29,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import org.apache.camel.component.olingo4.api.Olingo4App;
 import org.apache.camel.component.olingo4.api.Olingo4ResponseHandler;
 import org.apache.camel.component.olingo4.api.batch.Olingo4BatchChangeRequest;
@@ -107,8 +107,6 @@ import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.core.uri.parser.Parser;
-
-import static org.apache.camel.component.olingo4.api.impl.Olingo4Helper.getContentTypeHeader;
 
 /**
  * Application API used by Olingo4 Component.
@@ -406,6 +404,8 @@ public final class Olingo4AppImpl implements Olingo4App {
                     response = (T)property.getPrimitiveValue();
                 } else if (property.hasComplexValue()) {
                     response = (T)property.getComplexValue();
+                } else if (property.hasCollectionValue()) {
+                    response = (T)property.getCollectionValue();
                 } else {
                     throw new ODataException("Unsupported property: " + property.getName());
                 }
@@ -429,6 +429,8 @@ public final class Olingo4AppImpl implements Olingo4App {
                         response = (T)functionProperty.getPrimitiveValue();
                     } else if (functionProperty.hasComplexValue()) {
                         response = (T)functionProperty.getComplexValue();
+                    } else if (functionProperty.hasCollectionValue()) {
+                        response = (T)functionProperty.getCollectionValue();
                     } else {
                         throw new ODataException("Unsupported property: " + functionProperty.getName());
                     }
