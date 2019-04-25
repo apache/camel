@@ -43,8 +43,8 @@ public class FlatpackDataFormatReifier extends DataFormatReifier<FlatpackDataFor
 
     @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (ObjectHelper.isNotEmpty(definition)) {
-            setProperty(camelContext, dataFormat, "definition", definition);
+        if (ObjectHelper.isNotEmpty(definition.getDefinition())) {
+            setProperty(camelContext, dataFormat, "definition", definition.getDefinition());
         }
         if (definition.getFixed() != null) {
             setProperty(camelContext, dataFormat, "fixed", definition.getFixed());
