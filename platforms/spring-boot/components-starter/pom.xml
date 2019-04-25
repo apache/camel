@@ -135,6 +135,7 @@
     <module>camel-azure-starter</module>
     <module>camel-barcode-starter</module>
     <module>camel-base64-starter</module>
+    <module>camel-bean-starter</module>
     <module>camel-bean-validator-starter</module>
     <module>camel-beanio-starter</module>
     <module>camel-beanstalk-starter</module>
