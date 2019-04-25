@@ -25,6 +25,9 @@ import org.apache.camel.Expression;
  * Parameter information to be used for method invocation.
  */
 public class ParameterInfo {
+
+    // TODO: Move to camel-support
+
     private final int index;
     private final Class<?> type;
     private final Annotation[] annotations;

@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AggregationStrategy;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.DynamicRouter;
 import org.apache.camel.Processor;
@@ -31,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 public final class DefaultAnnotationBasedProcessorFactory implements AnnotationBasedProcessorFactory {
 
     @Override
-    public Processor createDynamicRouter(CamelContext camelContext, DynamicRouter annotation) {
+    public AsyncProcessor createDynamicRouter(CamelContext camelContext, DynamicRouter annotation) {
         org.apache.camel.processor.DynamicRouter dynamicRouter = new org.apache.camel.processor.DynamicRouter(camelContext);
         dynamicRouter.setDelimiter(annotation.delimiter());
         dynamicRouter.setIgnoreInvalidEndpoints(annotation.ignoreInvalidEndpoints());
@@ -40,7 +41,7 @@ public final class DefaultAnnotationBasedProcessorFactory implements AnnotationB
     }
 
     @Override
-    public Processor createRecipientList(CamelContext camelContext, RecipientList annotation) {
+    public AsyncProcessor createRecipientList(CamelContext camelContext, RecipientList annotation) {
         org.apache.camel.processor.RecipientList recipientList = new org.apache.camel.processor.RecipientList(camelContext, annotation.delimiter());
         recipientList.setStopOnException(annotation.stopOnException());
         recipientList.setStopOnAggregateException(annotation.stopOnAggregateException());
@@ -76,7 +77,7 @@ public final class DefaultAnnotationBasedProcessorFactory implements AnnotationB
     }
 
     @Override
-    public Processor createRoutingSlip(CamelContext camelContext, RoutingSlip annotation) {
+    public AsyncProcessor createRoutingSlip(CamelContext camelContext, RoutingSlip annotation) {
         org.apache.camel.processor.RoutingSlip routingSlip = new org.apache.camel.processor.RoutingSlip(camelContext);
         routingSlip.setDelimiter(annotation.delimiter());
         routingSlip.setIgnoreInvalidEndpoints(annotation.ignoreInvalidEndpoints());

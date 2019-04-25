@@ -23,7 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.bean.BeanExpression;
-import org.apache.camel.language.bean.BeanLanguage;
 import org.junit.Before;
 import org.junit.Test;
 
