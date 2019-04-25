@@ -16,8 +16,8 @@
  */
 package org.apache.camel.reifier.dataformat;
 
-import javax.xml.namespace.QName;
 import java.util.Map;
+import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
