@@ -34,6 +34,11 @@ import org.apache.camel.meta.Experimental;
 public interface RouteContext extends RuntimeConfiguration, EndpointAware {
 
     /**
+     * Gets the route id
+     */
+    String getRouteId();
+
+    /**
      * Gets the from type
      *
      * @return the from type

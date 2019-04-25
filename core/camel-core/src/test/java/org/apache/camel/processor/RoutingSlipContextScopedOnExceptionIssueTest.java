@@ -39,7 +39,7 @@ public class RoutingSlipContextScopedOnExceptionIssueTest extends ContextTestSup
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                String routeId = exchange.getUnitOfWork().getRouteContext().getRoute().getId();
+                                String routeId = exchange.getUnitOfWork().getRouteContext().getRouteId();
                                 assertEquals("fail", routeId);
                             }
                         }).to("mock:error");
@@ -87,7 +87,7 @@ public class RoutingSlipContextScopedOnExceptionIssueTest extends ContextTestSup
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                String routeId = exchange.getUnitOfWork().getRouteContext().getRoute().getId();
+                                String routeId = exchange.getUnitOfWork().getRouteContext().getRouteId();
                                 assertEquals("fail", routeId);
                             }
                         }).to("mock:error");

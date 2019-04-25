@@ -509,8 +509,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         public UnitOfWorkProcessorAdvice(RouteContext routeContext) {
             this.routeContext = routeContext;
             if (routeContext != null) {
-                RouteDefinition definition = (RouteDefinition) routeContext.getRoute();
-                this.routeId = definition.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+                this.routeId = routeContext.getRouteId();
             }
         }
 
@@ -520,8 +519,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             // from this unit of work
             if (routeContext != null && exchange.getFromRouteId() == null) {
                 if (routeId == null) {
-                    RouteDefinition definition = (RouteDefinition) routeContext.getRoute();
-                    routeId = definition.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+                    this.routeId = routeContext.getRouteId();
                 }
                 exchange.setFromRouteId(routeId);
             }
@@ -638,7 +636,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             if (targetRouteId == null) {
                 UnitOfWork uow = exchange.getUnitOfWork();
                 if (uow != null && uow.getRouteContext() != null) {
-                    targetRouteId = uow.getRouteContext().getRoute().getId();
+                    targetRouteId = uow.getRouteContext().getRouteId();
                 }
             }
 

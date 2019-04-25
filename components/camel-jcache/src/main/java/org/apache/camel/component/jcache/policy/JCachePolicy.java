@@ -92,7 +92,7 @@ public class JCachePolicy implements Policy {
             }
 
             //Use routeId as cacheName if it's not set
-            String cacheName = ObjectHelper.isNotEmpty(this.cacheName) ? this.cacheName : routeContext.getRoute().getId();
+            String cacheName = ObjectHelper.isNotEmpty(this.cacheName) ? this.cacheName : routeContext.getRouteId();
             LOG.debug("Getting cache:{}", cacheName);
 
             //Get cache or create a new one using the cacheConfiguration

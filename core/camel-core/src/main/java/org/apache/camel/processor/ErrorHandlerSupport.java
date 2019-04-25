@@ -42,7 +42,7 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
     public void addExceptionPolicy(RouteContext routeContext, OnExceptionDefinition exceptionType) {
         if (routeContext != null) {
             // add error handler as child service so they get lifecycle handled
-            Processor errorHandler = exceptionType.getErrorHandler(routeContext.getRoute().getId());
+            Processor errorHandler = exceptionType.getErrorHandler(routeContext.getRouteId());
             if (errorHandler != null) {
                 addChildService(errorHandler);
             }

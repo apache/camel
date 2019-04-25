@@ -17,7 +17,6 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +54,7 @@ import org.apache.camel.support.CamelContextHelper;
 public class DefaultRouteContext implements RouteContext {
     private final Map<NamedNode, AtomicInteger> nodeIndex = new HashMap<>();
     private final RouteDefinition route;
+    private final String routeId;
     private FromDefinition from;
     private Route runtimeRoute;
     private Endpoint endpoint;
@@ -81,14 +81,7 @@ public class DefaultRouteContext implements RouteContext {
         this.camelContext = camelContext;
         this.route = route;
         this.from = from;
-    }
-
-    /**
-     * Only used for lazy construction from inside ExpressionType
-     */
-    public DefaultRouteContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-        this.route = new RouteDefinition("temporary");
+        this.routeId = route.idOrCreate(camelContext.getNodeIdFactory());
     }
 
     public Endpoint getEndpoint() {
@@ -104,6 +97,10 @@ public class DefaultRouteContext implements RouteContext {
 
     public RouteDefinition getRoute() {
         return route;
+    }
+
+    public String getRouteId() {
+        return routeId;
     }
 
     public Route getRuntimeRoute() {

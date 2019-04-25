@@ -53,7 +53,7 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
     @Override
     public boolean removeOnExceptionList(String id) {
         for (RouteContext routeContext : handlers.keySet()) {
-            if (getRouteId(routeContext).equals(id)) {
+            if (routeContext.getRouteId().equals(id)) {
                 handlers.remove(routeContext);
                 break;
             }

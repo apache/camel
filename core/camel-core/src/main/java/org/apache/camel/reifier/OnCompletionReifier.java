@@ -60,7 +60,7 @@ class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition> {
             routeContext.setAllowUseOriginalMessage(true);
         }
 
-        String routeId = ((RouteDefinition) routeContext.getRoute()).idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+        String routeId = routeContext.getRouteId();
 
         Processor childProcessor = this.createChildProcessor(routeContext, true);
 
