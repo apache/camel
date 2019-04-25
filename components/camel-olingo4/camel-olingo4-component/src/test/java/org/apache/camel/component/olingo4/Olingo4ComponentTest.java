@@ -614,7 +614,7 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
                     .to("mock:consumer-splitresult-collection-value");
 
                 from("olingo4://read/" + TEST_PEOPLE + "/AddressInfo?consumer.splitResult=false")
-                .to("mock:consumer-nosplitresult-colleciton-value");
+                    .to("mock:consumer-nosplitresult-colleciton-value");
             }
         };
     }

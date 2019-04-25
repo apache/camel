@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.olingo4.api.impl;
 
-import static org.apache.camel.component.olingo4.api.impl.Olingo4Helper.getContentTypeHeader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -108,6 +107,7 @@ import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.core.uri.parser.Parser;
 
+import static org.apache.camel.component.olingo4.api.impl.Olingo4Helper.getContentTypeHeader;
 /**
  * Application API used by Olingo4 Component.
  */
