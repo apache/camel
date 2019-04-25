@@ -42,6 +42,7 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
+import org.eclipse.californium.scandium.dtls.CertificateType;
 import org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore;
 
 /**
@@ -361,7 +362,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
                 throw new IllegalStateException("A password must be configured to use TLS");
             }
             if ((isClientAuthenticationRequired() || isClientAuthenticationWanted())
-                && getTruststore() == null) {
+                && (getTruststore() == null && publicKey == null)) {
                 throw new IllegalStateException("A truststore must be configured to support TLS client authentication");
             }
             
@@ -386,6 +387,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
                 builder.setTrustStore(certs);
             }
             if (trustedRpkStore != null) {
+                builder.setTrustCertificateTypes(CertificateType.RAW_PUBLIC_KEY);
                 builder.setRpkTrustStore(trustedRpkStore);
             }
         } catch (GeneralSecurityException e) {
