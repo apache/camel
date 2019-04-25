@@ -22,11 +22,12 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.AfterPropertiesConfigured;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.language.bean.BeanExpression;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
@@ -56,14 +57,14 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
 
     public MethodCallExpression(String beanName, String method) {
-        super((String)null); // use ref attribute to refer to the bean, and not @XmlValue
+        super((String)null); // we dont use @XmlValue but the attributes instead
         if (beanName != null && beanName.startsWith("ref:")) {
             beanName = beanName.substring(4);
         } else if (beanName != null && beanName.startsWith("bean:")) {
             beanName = beanName.substring(5);
         }
-        this.ref = beanName;
-        this.method = method;
+        setRef(beanName);
+        setMethod(method);
     }
 
     public MethodCallExpression(Object instance) {
@@ -71,7 +72,7 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
 
     public MethodCallExpression(Object instance, String method) {
-        super(ObjectHelper.className(instance)); // need to set some value in @XmlValue when we already have an instance bean
+        super((String)null); // we dont use @XmlValue but the attributes instead
         // must use setter as they have special logic
         setInstance(instance);
         setMethod(method);
@@ -82,10 +83,10 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
 
     public MethodCallExpression(Class<?> type, String method) {
-        super((String)null); // use beanType attribute to refer to the bean, and not @XmlValue
-        this.beanType = type;
-        this.beanTypeName = type.getName();
-        this.method = method;
+        super((String)null); // we dont use @XmlValue but the attributes instead
+        setBeanType(type);
+        setBeanTypeName(type.getName());
+        setMethod(method);
     }
 
     public String getLanguage() {
@@ -151,8 +152,6 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     @Override
     public Expression createExpression(CamelContext camelContext) {
-        Expression answer;
-
         if (beanType == null && beanTypeName != null) {
             try {
                 beanType = camelContext.getClassResolver().resolveMandatoryClass(beanTypeName);
@@ -161,20 +160,30 @@ public class MethodCallExpression extends ExpressionDefinition {
             }
         }
 
-        // TODO: Must use setProperty, so we need to have properties for these on BeanExpression
-
-        if (instance != null) {
-            answer = new BeanExpression(instance, method);
-        } else if (beanType != null) {
-            answer = new BeanExpression(beanType, method);
-        } else if (ref != null) {
-            answer = new BeanExpression(ref, method);
-        } else {
-            answer = new BeanExpression(getExpression(), method);
+        // special for bean language where we need to configure it first
+        Language lan = camelContext.resolveLanguage("bean");
+        configureLanguage(camelContext, lan);
+        // .. and create expression with null value as we use the configured properties instead
+        Expression exp = lan.createExpression(null);
+        if (exp instanceof AfterPropertiesConfigured) {
+            ((AfterPropertiesConfigured) exp).afterPropertiesConfigured(camelContext);
         }
+        return exp;
+    }
 
-        configureExpression(camelContext, answer);
-        return answer;
+    protected void configureLanguage(CamelContext camelContext, Language language) {
+        if (instance != null) {
+            setProperty(language, "bean", instance);
+        }
+        if (beanType != null) {
+            setProperty(language, "beanType", beanType);
+        }
+        if (ref != null) {
+            setProperty(language, "ref", ref);
+        }
+        if (method != null) {
+            setProperty(language, "method", method);
+        }
     }
 
     @Override
