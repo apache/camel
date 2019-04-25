@@ -18,15 +18,13 @@ package org.apache.camel.builder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.bean.ProxyHelper;
+import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A build to create Camel proxies.
  */
 public final class ProxyBuilder {
-
-    // TODO: Move this to camel-bean
 
     private final CamelContext camelContext;
     private Endpoint endpoint;
@@ -82,7 +80,12 @@ public final class ProxyBuilder {
      */
     public <T> T build(Class<T>... interfaceClasses) throws Exception {
         ObjectHelper.notNull(endpoint, "endpoint");
-        return ProxyHelper.createProxy(endpoint, binding, interfaceClasses);
+        // use proxy service
+        BeanProxyFactory factory = camelContext.hasService(BeanProxyFactory.class);
+        if (factory == null) {
+            throw new IllegalArgumentException("Cannot find BeanProxyFactory service. Make sure camel-bean is on the classpath.");
+        }
+        return factory.createProxy(endpoint, binding, interfaceClasses);
     }
 
 }
