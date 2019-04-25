@@ -38,7 +38,7 @@ public class TidyMarkupDataFormatReifier extends DataFormatReifier<TidyMarkupDat
             }
         }
 
-        return super.createDataFormat(camelContext);
+        return super.doCreateDataFormat(camelContext);
     }
 
     @Override
