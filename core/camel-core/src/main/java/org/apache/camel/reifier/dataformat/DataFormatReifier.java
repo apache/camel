@@ -138,11 +138,16 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
         if (type == null) {
             ObjectHelper.notNull(ref, "ref or type");
 
+            DataFormat dataFormat = camelContext.getRegistry().lookupByNameAndType(ref, DataFormat.class);
+            if (dataFormat != null) {
+                return dataFormat;
+            }
+
             // try to let resolver see if it can resolve it, its not always possible
             type = camelContext.adapt(ModelCamelContext.class).resolveDataFormatDefinition(ref);
 
             if (type == null) {
-                DataFormat dataFormat = camelContext.resolveDataFormat(ref);
+                dataFormat = camelContext.resolveDataFormat(ref);
                 if (dataFormat == null) {
                     throw new IllegalArgumentException("Cannot find data format in registry with ref: " + ref);
                 }
