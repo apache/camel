@@ -30,9 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ExecutorService;
 
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -42,15 +40,13 @@ import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Pattern;
-import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.StreamCache;
-// TODO: Factory SPI to create these processors which are loaded via FactoryFinder
+// TODO: avoid these imports
 import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.RoutingSlip;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
@@ -62,6 +58,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.asString;
+
 
 /**
  * Information about a method to be used for invocation.
@@ -130,11 +127,7 @@ public class MethodInfo {
         org.apache.camel.RoutingSlip routingSlipAnnotation =
             (org.apache.camel.RoutingSlip)collectedMethodAnnotation.get(org.apache.camel.RoutingSlip.class);
         if (routingSlipAnnotation != null && matchContext(routingSlipAnnotation.context())) {
-            routingSlip = new RoutingSlip(camelContext);
-            routingSlip.setDelimiter(routingSlipAnnotation.delimiter());
-            routingSlip.setIgnoreInvalidEndpoints(routingSlipAnnotation.ignoreInvalidEndpoints());
-            routingSlip.setCacheSize(routingSlipAnnotation.cacheSize());
-
+            routingSlip = (RoutingSlip) camelContext.getAnnotationBasedProcessorFactory().createRoutingSlip(camelContext, routingSlipAnnotation);
             // add created routingSlip as a service so we have its lifecycle managed
             try {
                 camelContext.addService(routingSlip);
@@ -147,10 +140,7 @@ public class MethodInfo {
             (org.apache.camel.DynamicRouter)collectedMethodAnnotation.get(org.apache.camel.DynamicRouter.class);
         if (dynamicRouterAnnotation != null
                 && matchContext(dynamicRouterAnnotation.context())) {
-            dynamicRouter = new DynamicRouter(camelContext);
-            dynamicRouter.setDelimiter(dynamicRouterAnnotation.delimiter());
-            dynamicRouter.setIgnoreInvalidEndpoints(dynamicRouterAnnotation.ignoreInvalidEndpoints());
-            dynamicRouter.setCacheSize(dynamicRouterAnnotation.cacheSize());
+            dynamicRouter = (DynamicRouter) camelContext.getAnnotationBasedProcessorFactory().createDynamicRouter(camelContext, dynamicRouterAnnotation);
             // add created dynamicRouter as a service so we have its lifecycle managed
             try {
                 camelContext.addService(dynamicRouter);
@@ -163,37 +153,7 @@ public class MethodInfo {
             (org.apache.camel.RecipientList)collectedMethodAnnotation.get(org.apache.camel.RecipientList.class);
         if (recipientListAnnotation != null
                 && matchContext(recipientListAnnotation.context())) {
-            recipientList = new RecipientList(camelContext, recipientListAnnotation.delimiter());
-            recipientList.setStopOnException(recipientListAnnotation.stopOnException());
-            recipientList.setStopOnAggregateException(recipientListAnnotation.stopOnAggregateException());
-            recipientList.setIgnoreInvalidEndpoints(recipientListAnnotation.ignoreInvalidEndpoints());
-            recipientList.setParallelProcessing(recipientListAnnotation.parallelProcessing());
-            recipientList.setParallelAggregate(recipientListAnnotation.parallelAggregate());
-            recipientList.setStreaming(recipientListAnnotation.streaming());
-            recipientList.setTimeout(recipientListAnnotation.timeout());
-            recipientList.setShareUnitOfWork(recipientListAnnotation.shareUnitOfWork());
-
-            if (org.apache.camel.util.ObjectHelper.isNotEmpty(recipientListAnnotation.executorServiceRef())) {
-                ExecutorService executor = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, recipientListAnnotation.executorServiceRef());
-                recipientList.setExecutorService(executor);
-            }
-
-            if (recipientListAnnotation.parallelProcessing() && recipientList.getExecutorService() == null) {
-                // we are running in parallel so we need a thread pool
-                ExecutorService executor = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, "@RecipientList");
-                recipientList.setExecutorService(executor);
-            }
-
-            if (org.apache.camel.util.ObjectHelper.isNotEmpty(recipientListAnnotation.strategyRef())) {
-                AggregationStrategy strategy = CamelContextHelper.mandatoryLookup(camelContext, recipientListAnnotation.strategyRef(), AggregationStrategy.class);
-                recipientList.setAggregationStrategy(strategy);
-            }
-
-            if (org.apache.camel.util.ObjectHelper.isNotEmpty(recipientListAnnotation.onPrepareRef())) {
-                Processor onPrepare = CamelContextHelper.mandatoryLookup(camelContext, recipientListAnnotation.onPrepareRef(), Processor.class);
-                recipientList.setOnPrepare(onPrepare);
-            }
-
+            recipientList = (RecipientList) camelContext.getAnnotationBasedProcessorFactory().createRecipientList(camelContext, recipientListAnnotation);
             // add created recipientList as a service so we have its lifecycle managed
             try {
                 camelContext.addService(recipientList);

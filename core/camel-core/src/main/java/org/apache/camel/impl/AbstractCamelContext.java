@@ -98,12 +98,12 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
-import org.apache.camel.processor.DefaultDeferServiceFactory;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.interceptor.Debug;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
+import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
@@ -275,6 +275,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     private volatile RouteController routeController;
     private volatile ScheduledExecutorService errorHandlerExecutorService;
     private final DeferServiceFactory deferServiceFactory = new DefaultDeferServiceFactory();
+    private final AnnotationBasedProcessorFactory annotationBasedProcessorFactory = new DefaultAnnotationBasedProcessorFactory();
 
     private TransformerRegistry<TransformerKey> transformerRegistry;
     private ValidatorRegistry<ValidatorKey> validatorRegistry;
@@ -3928,6 +3929,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     @Override
     public DeferServiceFactory getDeferServiceFactory() {
         return deferServiceFactory;
+    }
+
+    @Override
+    public AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory() {
+        return annotationBasedProcessorFactory;
     }
 
     protected Map<String, RouteService> getRouteServices() {
