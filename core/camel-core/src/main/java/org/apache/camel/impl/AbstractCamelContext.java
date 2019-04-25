@@ -16,34 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -79,10 +51,10 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
-import org.apache.camel.processor.DefaultDeferServiceFactory;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.interceptor.Debug;
 import org.apache.camel.processor.interceptor.HandleFault;
+import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
@@ -155,6 +127,35 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.function.ThrowingRunnable;
 import org.slf4j.MDC;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
 
 /**
@@ -248,6 +249,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     private volatile RouteController routeController;
     private volatile ScheduledExecutorService errorHandlerExecutorService;
     private final DeferServiceFactory deferServiceFactory = new DefaultDeferServiceFactory();
+    private final AnnotationBasedProcessorFactory annotationBasedProcessorFactory = new DefaultAnnotationBasedProcessorFactory();
 
     private TransformerRegistry<TransformerKey> transformerRegistry;
     private ValidatorRegistry<ValidatorKey> validatorRegistry;
@@ -3741,6 +3743,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     @Override
     public DeferServiceFactory getDeferServiceFactory() {
         return deferServiceFactory;
+    }
+
+    @Override
+    public AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory() {
+        return annotationBasedProcessorFactory;
     }
 
     protected Map<String, RouteService> getRouteServices() {
