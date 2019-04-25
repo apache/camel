@@ -45,7 +45,7 @@ public class JacksonXMLDataFormatReifier extends DataFormatReifier<JacksonXMLDat
             }
         }
 
-        return super.createDataFormat(camelContext);
+        return super.doCreateDataFormat(camelContext);
     }
 
     @Override
