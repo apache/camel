@@ -36,6 +36,7 @@ import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.runtimecatalog.impl.DefaultRuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.CamelBeanPostProcessor;
@@ -279,6 +280,10 @@ public class DefaultCamelContext extends AbstractCamelContext {
 
     protected BeanProxyFactory createBeanProxyFactory() {
         return new BeanProxyFactoryResolver().resolve(this);
+    }
+
+    protected BeanProcessorFactory createBeanProcessorFactory() {
+        return new BeanProcessorFactoryResolver().resolve(this);
     }
 
     protected LanguageResolver createLanguageResolver() {
