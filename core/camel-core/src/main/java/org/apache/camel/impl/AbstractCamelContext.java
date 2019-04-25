@@ -56,6 +56,7 @@ import org.apache.camel.processor.interceptor.Debug;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
@@ -230,6 +231,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     private volatile RestRegistry restRegistry;
     private volatile HeadersMapFactory headersMapFactory;
     private volatile BeanProxyFactory beanProxyFactory;
+    private volatile BeanProcessorFactory beanProcessorFactory;
     private volatile ClassResolver classResolver;
     private volatile PackageScanClassResolver packageScanClassResolver;
     private volatile ServicePool<Producer> producerServicePool;
@@ -3768,6 +3770,18 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         return beanProxyFactory;
     }
 
+    @Override
+    public BeanProcessorFactory getBeanProcessorFactory() {
+        if (beanProcessorFactory == null) {
+            synchronized (lock) {
+                if (beanProcessorFactory == null) {
+                    beanProcessorFactory = createBeanProcessorFactory();
+                }
+            }
+        }
+        return beanProcessorFactory;
+    }
+
     protected Map<String, RouteService> getRouteServices() {
         return routeServices;
     }
@@ -3867,6 +3881,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     protected abstract HeadersMapFactory createHeadersMapFactory();
 
     protected abstract BeanProxyFactory createBeanProxyFactory();
+
+    protected abstract BeanProcessorFactory createBeanProcessorFactory();
 
     protected abstract LanguageResolver createLanguageResolver();
 
