@@ -17,24 +17,27 @@
 
 package org.apache.camel.component.soroushbot.component;
 
-import java.util.concurrent.ExecutorService;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.sse.EventSource;
+import okhttp3.sse.EventSourceListener;
+import okhttp3.sse.EventSources;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.soroushbot.models.Endpoint;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.service.SoroushService;
 import org.apache.camel.support.DefaultConsumer;
-import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.media.sse.EventInput;
-import org.glassfish.jersey.media.sse.InboundEvent;
-import org.glassfish.jersey.media.sse.SseFeature;
 
 import static org.apache.camel.component.soroushbot.utils.StringUtils.ordinal;
 
@@ -43,14 +46,14 @@ import static org.apache.camel.component.soroushbot.utils.StringUtils.ordinal;
  * it calls abstract function {@link SoroushBotAbstractConsumer#sendExchange(Exchange)}
  * each subclass should handle how it will start the processing of the exchange
  */
-public abstract class SoroushBotAbstractConsumer extends DefaultConsumer implements org.apache.camel.spi.ShutdownPrepared{
+public abstract class SoroushBotAbstractConsumer extends DefaultConsumer implements org.apache.camel.spi.ShutdownPrepared {
     SoroushBotEndpoint endpoint;
     /**
      * {@link ObjectMapper} for parse message JSON
      */
     ObjectMapper objectMapper = new ObjectMapper();
-    private ExecutorService executorService;
-    boolean shutdown=false;
+    boolean shutdown = false;
+    private ReconnectableEventSourceListener connection;
 
     public SoroushBotAbstractConsumer(SoroushBotEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -71,15 +74,7 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
 
     @Override
     public void doStart() {
-//     create new Thread for listening to Soroush SSE Server so that it release the main camel thread.
-        executorService = endpoint.getCamelContext().getExecutorServiceManager()
-                .newSingleThreadExecutor(this, "Soroush Receiver");
-        executorService.execute(() -> {
-                    try {
-                        SoroushBotAbstractConsumer.this.run();
-                    } catch (InterruptedException ignored) {
-                    }
-                });
+        run();
     }
 
     protected final void handleExceptionThrownWhileCreatingOrProcessingExchange(Exchange exchange, SoroushMessage soroushMessage, Exception ex) {
@@ -97,47 +92,66 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
      */
     protected abstract void sendExchange(Exchange exchange) throws Exception;
 
-    private void run() throws InterruptedException {
-        Client client = ClientBuilder.newBuilder().register(SseFeature.class).build();
-        client.property(ClientProperties.CONNECT_TIMEOUT, endpoint.connectionTimeout);
-        WebTarget target = client.target(SoroushService.get().generateUrl(endpoint.authorizationToken, Endpoint.getMessage, null));
-        EventInput event = null;
-        int retry = 0;
-        //this while handle connectionRetry if connection failed or get closed.
-        while (retry <= endpoint.maxConnectionRetry && !shutdown) {
-            endpoint.waitBeforeRetry(retry);
-            try {
-                if (event == null || event.isClosed()) {
-                    if (retry == 0) {
+    private void run() {
+        Request request = new Request.Builder()
+                .url(SoroushService.get().generateUrl(endpoint.authorizationToken, Endpoint.getMessage, null))
+                .build();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(endpoint.connectionTimeout, TimeUnit.MILLISECONDS)
+                .writeTimeout(Duration.ZERO)
+                .readTimeout(Duration.ZERO)
+                .callTimeout(Duration.ZERO).build();
+
+        connection = new ReconnectableEventSourceListener(client, request, endpoint.maxConnectionRetry) {
+            @Override
+            protected boolean onBeforeConnect() {
+                int connectionRetry = getConnectionRetry();
+                try {
+                    endpoint.waitBeforeRetry(connectionRetry);
+                } catch (InterruptedException e) {
+                    return false;
+                }
+                if (!shutdown) {
+                    if (connectionRetry == 0) {
                         if (log.isInfoEnabled()) {
                             log.info("connecting to getMessage from soroush");
                         }
                     } else {
                         if (log.isInfoEnabled()) {
-                            log.info("connection is closed. retrying for the " + ordinal(retry) + " time(s)... ");
+                            log.info("connection is closed. retrying for the " + ordinal(connectionRetry) + " time(s)... ");
                         }
                     }
-                    event = createEvent(target);
                 }
-                InboundEvent inboundEvent = event.read();
-                if (inboundEvent == null) {
-                    if (log.isErrorEnabled()) {
-                        log.error("can not read event");
-                    }
-                    event = null;
-                    retry++;
-                } else {
-                    if(retry!=0){
-                        log.info("successfully connect to server");
-                    }
-                    //if read the message successfully then we reset the retry count to 0.
-                    retry = 0;
-                    Exchange exchange = endpoint.createExchange();
-                    SoroushMessage soroushMessage = objectMapper.readValue(inboundEvent.getRawData(), SoroushMessage.class);
+                return !shutdown;
+            }
+
+            @Override
+            public void onOpen(EventSource eventSource, Response response) {
+                super.onOpen(eventSource, response);
+                log.info("connection established");
+            }
+
+            @Override
+            public void onClosed(EventSource eventSource) {
+                super.onClosed(eventSource);
+                log.warn("connection got closed");
+            }
+
+            @Override
+            public void onFailure(EventSource eventSource, Throwable t, Response response) {
+                super.onFailure(eventSource, t, response);
+                log.error("connection failed due to following error", t);
+            }
+
+            @Override
+            public void onEvent(EventSource eventSource, String id, String type, String data) {
+                Exchange exchange = endpoint.createExchange();
+                try {
+                    SoroushMessage soroushMessage = objectMapper.readValue(data, SoroushMessage.class);
                     try {
                         exchange.getIn().setBody(soroushMessage);
                         if (log.isDebugEnabled()) {
-                            log.debug("event data is: " + new String(inboundEvent.getRawData()));
+                            log.debug("event data is: " + data);
                         }
                         // if autoDownload is true, download the resource if provided in the message
                         if (endpoint.autoDownload) {
@@ -148,23 +162,82 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
                     } catch (Exception ex) {
                         handleExceptionThrownWhileCreatingOrProcessingExchange(exchange, soroushMessage, ex);
                     }
+                } catch (IOException ex) {
+                    log.error("can not parse data due to following error", ex);
                 }
-            } catch (Exception ex) {
-                log.error("can not read data from soroush due to following error:", ex);
-                event = null;
-                retry++;
             }
 
-        }
-        log.info("max connection retry reached! we are closing the endpoint!");
+            @Override
+            public void onFinishProcess() {
+                log.info("max connection retry reached! we are closing the endpoint!");
+            }
+        };
+        connection.connect();
     }
 
     @Override
     public void prepareShutdown(boolean suspendOnly, boolean forced) {
-        if(!suspendOnly){
-            shutdown=true;
-            executorService.shutdown();
+        if (!suspendOnly) {
+            shutdown = true;
+            connection.close();
         }
+    }
+}
+
+class ReconnectableEventSourceListener extends EventSourceListener {
+    private OkHttpClient client;
+    private final int maxConnectionRetry;
+    private int connectionRetry = 0;
+    private Request request;
+    private final EventSource.Factory factory;
+    private EventSource eventSource;
+
+    public ReconnectableEventSourceListener(OkHttpClient client, Request request, int maxConnectionRetry) {
+        this.client = client;
+        this.maxConnectionRetry = maxConnectionRetry;
+        this.request = request;
+        factory = EventSources.createFactory(client);
+    }
+
+    public void connect() {
+        if (!onBeforeConnect()) {
+            return;
+        }
+        if (maxConnectionRetry >= connectionRetry || maxConnectionRetry < 0) {
+            eventSource = factory.newEventSource(request, this);
+        } else {
+            onFinishProcess();
+        }
+    }
+    public void close(){
+        eventSource.cancel();
+    }
+    public void onFinishProcess() {}
+
+    protected boolean onBeforeConnect() {
+        return true;
+    }
+
+    @Override
+    public void onOpen(EventSource eventSource, Response response) {
+        connectionRetry = 0;
+    }
+
+    @Override
+    public void onClosed(EventSource eventSource) {
+        connectionRetry++;
+        connect();
+    }
+
+    @Override
+    public void onFailure(EventSource eventSource, Throwable t, Response response) {
+        eventSource.cancel();
+        connectionRetry++;
+        connect();
+    }
+
+    public int getConnectionRetry() {
+        return connectionRetry;
     }
 }
 
