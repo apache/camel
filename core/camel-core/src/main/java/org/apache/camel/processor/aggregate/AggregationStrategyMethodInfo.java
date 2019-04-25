@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.bean.ParameterInfo;
 
 /**
  * Method information about the POJO method to call when using the {@link AggregationStrategyBeanAdapter}.
