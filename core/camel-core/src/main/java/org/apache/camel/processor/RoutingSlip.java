@@ -63,7 +63,6 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
     protected String uriDelimiter;
     protected final CamelContext camelContext;
     protected AsyncProcessor errorHandler;
-    protected SendDynamicProcessor sendDynamicProcessor;
 
     /**
      * The iterator to be used for retrieving the next routing slip(s) to be used.
@@ -163,15 +162,17 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
             return true;
         }
 
-        return doRoutingSlipWithExpression(exchange, this.expression, callback);
-    }
-
-    public boolean doRoutingSlip(Exchange exchange, Object routingSlip, AsyncCallback callback) {
-        if (routingSlip instanceof Expression) {
-            return doRoutingSlipWithExpression(exchange, (Expression) routingSlip, callback);
-        } else {
-            return doRoutingSlipWithExpression(exchange, ExpressionBuilder.constantExpression(routingSlip), callback);
+        Expression exp = expression;
+        Object slip = exchange.removeProperty(Exchange.EVALUATE_EXPRESSION_RESULT);
+        if (slip != null) {
+            if (slip instanceof Expression) {
+                exp = (Expression) slip;
+            } else {
+                exp = ExpressionBuilder.constantExpression(slip);
+            }
         }
+
+        return doRoutingSlipWithExpression(exchange, exp, callback);
     }
 
     /**

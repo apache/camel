@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.DynamicRouter;
 import org.apache.camel.Processor;
@@ -30,16 +31,16 @@ public interface AnnotationBasedProcessorFactory {
     /**
      * Creates dynamic router processor from the configured annotation.
      */
-    Processor createDynamicRouter(CamelContext camelContext, DynamicRouter annotation);
+    AsyncProcessor createDynamicRouter(CamelContext camelContext, DynamicRouter annotation);
 
     /**
      * Creates recipient list processor from the configured annotation.
      */
-    Processor createRecipientList(CamelContext camelContext, RecipientList annotation);
+    AsyncProcessor createRecipientList(CamelContext camelContext, RecipientList annotation);
 
     /**
      * Creates routing slip processor from the configured annotation.
      */
-    Processor createRoutingSlip(CamelContext camelContext, RoutingSlip annotation);
+    AsyncProcessor createRoutingSlip(CamelContext camelContext, RoutingSlip annotation);
 
 }

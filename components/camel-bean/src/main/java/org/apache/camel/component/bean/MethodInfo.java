@@ -32,6 +32,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionStage;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -43,10 +44,6 @@ import org.apache.camel.Pattern;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.StreamCache;
-// TODO: avoid these imports
-import org.apache.camel.processor.DynamicRouter;
-import org.apache.camel.processor.RecipientList;
-import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
@@ -75,9 +72,9 @@ public class MethodInfo {
     private final boolean hasHandlerAnnotation;
     private Expression parametersExpression;
     private ExchangePattern pattern = ExchangePattern.InOut;
-    private RecipientList recipientList;
-    private RoutingSlip routingSlip;
-    private DynamicRouter dynamicRouter;
+    private AsyncProcessor recipientList;
+    private AsyncProcessor routingSlip;
+    private AsyncProcessor dynamicRouter;
 
     /**
      * Adapter to invoke the method which has been annotated with the @DynamicRouter
@@ -127,7 +124,7 @@ public class MethodInfo {
         org.apache.camel.RoutingSlip routingSlipAnnotation =
             (org.apache.camel.RoutingSlip)collectedMethodAnnotation.get(org.apache.camel.RoutingSlip.class);
         if (routingSlipAnnotation != null && matchContext(routingSlipAnnotation.context())) {
-            routingSlip = (RoutingSlip) camelContext.getAnnotationBasedProcessorFactory().createRoutingSlip(camelContext, routingSlipAnnotation);
+            routingSlip = camelContext.getAnnotationBasedProcessorFactory().createRoutingSlip(camelContext, routingSlipAnnotation);
             // add created routingSlip as a service so we have its lifecycle managed
             try {
                 camelContext.addService(routingSlip);
@@ -140,7 +137,7 @@ public class MethodInfo {
             (org.apache.camel.DynamicRouter)collectedMethodAnnotation.get(org.apache.camel.DynamicRouter.class);
         if (dynamicRouterAnnotation != null
                 && matchContext(dynamicRouterAnnotation.context())) {
-            dynamicRouter = (DynamicRouter) camelContext.getAnnotationBasedProcessorFactory().createDynamicRouter(camelContext, dynamicRouterAnnotation);
+            dynamicRouter = camelContext.getAnnotationBasedProcessorFactory().createDynamicRouter(camelContext, dynamicRouterAnnotation);
             // add created dynamicRouter as a service so we have its lifecycle managed
             try {
                 camelContext.addService(dynamicRouter);
@@ -153,7 +150,7 @@ public class MethodInfo {
             (org.apache.camel.RecipientList)collectedMethodAnnotation.get(org.apache.camel.RecipientList.class);
         if (recipientListAnnotation != null
                 && matchContext(recipientListAnnotation.context())) {
-            recipientList = (RecipientList) camelContext.getAnnotationBasedProcessorFactory().createRecipientList(camelContext, recipientListAnnotation);
+            recipientList = camelContext.getAnnotationBasedProcessorFactory().createRecipientList(camelContext, recipientListAnnotation);
             // add created recipientList as a service so we have its lifecycle managed
             try {
                 camelContext.addService(recipientList);
@@ -242,12 +239,14 @@ public class MethodInfo {
             private boolean doProceed(AsyncCallback callback) throws Exception {
                 // dynamic router should be invoked beforehand
                 if (dynamicRouter != null) {
-                    if (!dynamicRouter.isStarted()) {
+                    if (!ServiceHelper.isStarted(dynamicRouter)) {
                         ServiceHelper.startService(dynamicRouter);
                     }
+                    // TODO: Maybe use a new constant than EVALUATE_EXPRESSION_RESULT
                     // use a expression which invokes the method to be used by dynamic router
                     Expression expression = new DynamicRouterExpression(pojo);
-                    return dynamicRouter.doRoutingSlip(exchange, expression, callback);
+                    exchange.setProperty(Exchange.EVALUATE_EXPRESSION_RESULT, expression);
+                    return dynamicRouter.process(exchange, callback);
                 }
 
                 // invoke pojo
@@ -270,16 +269,18 @@ public class MethodInfo {
 
                 if (recipientList != null) {
                     // ensure its started
-                    if (!recipientList.isStarted()) {
+                    if (!ServiceHelper.isStarted(recipientList)) {
                         ServiceHelper.startService(recipientList);
                     }
-                    return recipientList.sendToRecipientList(exchange, result, callback);
+                    exchange.setProperty(Exchange.EVALUATE_EXPRESSION_RESULT, result);
+                    return recipientList.process(exchange, callback);
                 }
                 if (routingSlip != null) {
-                    if (!routingSlip.isStarted()) {
+                    if (!ServiceHelper.isStarted(routingSlip)) {
                         ServiceHelper.startService(routingSlip);
                     }
-                    return routingSlip.doRoutingSlip(exchange, result, callback);
+                    exchange.setProperty(Exchange.EVALUATE_EXPRESSION_RESULT, result);
+                    return routingSlip.process(exchange, callback);
                 }
 
                 //If it's Java 8 async result

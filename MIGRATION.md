@@ -33,6 +33,7 @@ You may find how to do that in the examples.
 
 We have also modularized many of the core components and moved them out of `camel-core` to individual components:
 
+- camel-bean
 - camel-browse
 - camel-controlbus
 - camel-dataformat
@@ -219,6 +220,8 @@ The class `org.apache.camel.builder.xml.XPathBuilder` has been moved to `org.apa
 The annotation `org.apache.camel.language.XPath` has been moved to `org.apache.camel.language.xpath.XPath` and in the `camel-xpath` JAR.
 
 The exception `org.apache.camel.builder.xml.InvalidXPathExpression` has been renamed to `org.apache.camel.language.xpath.InvalidXPathException` and in the `camel-xpath` JAR.
+
+The annotation `org.apache.camel.language.Bean` has been moved to `org.apache.camel.language.bean.Bean` and in the `camel-bean` JAR.
 
 #### camel-test
 
