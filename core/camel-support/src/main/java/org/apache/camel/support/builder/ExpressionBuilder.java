@@ -1464,7 +1464,7 @@ public class ExpressionBuilder {
                 UnitOfWork uow = exchange.getUnitOfWork();
                 RouteContext rc = uow != null ? uow.getRouteContext() : null;
                 if (rc != null) {
-                    answer = rc.getRoute().getId();
+                    answer = rc.getRouteId();
                 }
                 if (answer == null) {
                     // fallback and get from route id on the exchange

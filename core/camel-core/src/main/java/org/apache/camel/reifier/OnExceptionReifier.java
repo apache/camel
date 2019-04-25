@@ -75,7 +75,7 @@ class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> {
         if (child != null) {
             // wrap in our special safe fallback error handler if OnException have child output
             Processor errorHandler = new FatalFallbackErrorHandler(child);
-            String id = routeContext.getRoute().getId();
+            String id = routeContext.getRouteId();
             definition.setErrorHandler(id, errorHandler);
         }
         // lookup the error handler builder

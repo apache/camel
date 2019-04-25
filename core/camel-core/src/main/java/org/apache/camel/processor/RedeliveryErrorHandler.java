@@ -675,7 +675,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 Processor processor = null;
                 UnitOfWork uow = exchange.getUnitOfWork();
                 if (uow != null && uow.getRouteContext() != null) {
-                    String routeId = uow.getRouteContext().getRoute().getId();
+                    String routeId = uow.getRouteContext().getRouteId();
                     processor = exceptionPolicy.getErrorHandler(routeId);
                 } else if (!exceptionPolicy.getErrorHandlers().isEmpty()) {
                     // note this should really not happen, but we have this code as a fail safe
@@ -830,7 +830,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 // and store the route id so we know in which route we failed
                 UnitOfWork uow = exchange.getUnitOfWork();
                 if (uow != null && uow.getRouteContext() != null) {
-                    exchange.setProperty(Exchange.FAILURE_ROUTE_ID, uow.getRouteContext().getRoute().getId());
+                    exchange.setProperty(Exchange.FAILURE_ROUTE_ID, uow.getRouteContext().getRouteId());
                 }
 
                 // fire event as we had a failure processor to handle it, which there is a event for
@@ -961,7 +961,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // and store the route id so we know in which route we failed
             UnitOfWork uow = exchange.getUnitOfWork();
             if (uow != null && uow.getRouteContext() != null) {
-                exchange.setProperty(Exchange.FAILURE_ROUTE_ID, uow.getRouteContext().getRoute().getId());
+                exchange.setProperty(Exchange.FAILURE_ROUTE_ID, uow.getRouteContext().getRouteId());
             }
         }
 
