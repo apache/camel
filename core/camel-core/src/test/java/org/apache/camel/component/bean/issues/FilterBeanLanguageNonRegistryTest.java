@@ -18,7 +18,6 @@ package org.apache.camel.component.bean.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.language.bean.BeanLanguage;
 import org.junit.Test;
 
 public class FilterBeanLanguageNonRegistryTest extends ContextTestSupport {
@@ -42,7 +41,7 @@ public class FilterBeanLanguageNonRegistryTest extends ContextTestSupport {
                 MyBean myBean = new MyBean();
 
                 from("direct:start")
-                    .filter().expression(BeanLanguage.bean(myBean, "isGoldCustomer"))
+                    .filter(method(myBean, "isGoldCustomer"))
                     .to("mock:result");
             }
         };

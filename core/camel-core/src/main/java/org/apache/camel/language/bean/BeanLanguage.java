@@ -17,11 +17,9 @@
 package org.apache.camel.language.bean;
 
 import org.apache.camel.Expression;
-import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -38,41 +36,46 @@ import org.apache.camel.util.StringHelper;
  * its classname or the bean itself.
  */
 @org.apache.camel.spi.annotations.Language("bean")
-public class BeanLanguage implements Language, IsSingleton {
+public class BeanLanguage extends LanguageSupport {
 
-    /**
-     * Creates the expression based on the string syntax.
-     *
-     * @param expression the string syntax <tt>beanRef.methodName</tt> where methodName can be omitted
-     * @return the expression
-     */
-    public static Expression bean(String expression) {
-        BeanLanguage language = new BeanLanguage();
-        return language.createExpression(expression);
+    private Object bean;
+    private Class<?> beanType;
+    private String ref;
+    private String method;
+
+    public BeanLanguage() {
     }
 
-    /**
-     * Creates the expression for invoking the bean type.
-     *
-     * @param beanType  the bean type to invoke
-     * @param method optional name of method to invoke for instance to avoid ambiguity
-     * @return the expression
-     */
-    public static Expression bean(Class<?> beanType, String method) {
-        Object bean = ObjectHelper.newInstance(beanType);
-        return bean(bean, method);
+    public Object getBean() {
+        return bean;
     }
 
-    /**
-     * Creates the expression for invoking the bean type.
-     *
-     * @param bean  the bean to invoke
-     * @param method optional name of method to invoke for instance to avoid ambiguity
-     * @return the expression
-     */
-    public static Expression bean(Object bean, String method) {
-        BeanLanguage language = new BeanLanguage();
-        return language.createExpression(bean, method);
+    public void setBean(Object bean) {
+        this.bean = bean;
+    }
+
+    public Class<?> getBeanType() {
+        return beanType;
+    }
+
+    public void setBeanType(Class<?> beanType) {
+        this.beanType = beanType;
+    }
+
+    public String getRef() {
+        return ref;
+    }
+
+    public void setRef(String ref) {
+        this.ref = ref;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
     }
 
     public Predicate createPredicate(String expression) {
@@ -80,7 +83,14 @@ public class BeanLanguage implements Language, IsSingleton {
     }
 
     public Expression createExpression(String expression) {
-        org.apache.camel.util.ObjectHelper.notNull(expression, "expression");
+        // favour using the configured options
+        if (bean != null) {
+            return new BeanExpression(bean, method);
+        } else if (beanType != null) {
+            return new BeanExpression(beanType, method);
+        } else if (ref != null) {
+            return new BeanExpression(ref, method);
+        }
 
         String beanName = expression;
         String method = null;
@@ -95,7 +105,7 @@ public class BeanLanguage implements Language, IsSingleton {
             int doubleColonIndex = expression.indexOf("::");
             //need to check that not inside params
             int beginOfParameterDeclaration = expression.indexOf("(");
-            if (doubleColonIndex > 0 && (expression.indexOf("(") < 0 || doubleColonIndex < beginOfParameterDeclaration)) {
+            if (doubleColonIndex > 0 && (!expression.contains("(") || doubleColonIndex < beginOfParameterDeclaration)) {
                 beanName = expression.substring(0, doubleColonIndex);
                 method = expression.substring(doubleColonIndex + 2);
             } else {
@@ -121,6 +131,6 @@ public class BeanLanguage implements Language, IsSingleton {
     }
 
     public boolean isSingleton() {
-        return true;
+        return false;
     }
 }

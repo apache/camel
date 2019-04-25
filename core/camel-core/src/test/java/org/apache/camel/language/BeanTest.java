@@ -24,7 +24,7 @@ import org.apache.camel.Header;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Message;
 import org.apache.camel.component.bean.MethodNotFoundException;
-import org.apache.camel.language.bean.BeanLanguage;
+import org.apache.camel.language.bean.BeanExpression;
 import org.junit.Test;
 
 public class BeanTest extends LanguageTestSupport {
@@ -57,7 +57,7 @@ public class BeanTest extends LanguageTestSupport {
 
     @Test
     public void testBeanTypeExpression() throws Exception {
-        Expression exp = BeanLanguage.bean(MyUser.class, null);
+        Expression exp = new BeanExpression(MyUser.class, null);
         Exchange exchange = createExchangeWithBody("Claus");
 
         Object result = exp.evaluate(exchange, Object.class);
@@ -66,7 +66,7 @@ public class BeanTest extends LanguageTestSupport {
 
     @Test
     public void testBeanTypeAndMethodExpression() throws Exception {
-        Expression exp = BeanLanguage.bean(MyUser.class, "hello");
+        Expression exp = new BeanExpression(MyUser.class, "hello");
         Exchange exchange = createExchangeWithBody("Claus");
 
         Object result = exp.evaluate(exchange, Object.class);
@@ -76,7 +76,7 @@ public class BeanTest extends LanguageTestSupport {
     @Test
     public void testBeanInstanceAndMethodExpression() throws Exception {
         MyUser user = new MyUser();
-        Expression exp = BeanLanguage.bean(user, "hello");
+        Expression exp = new BeanExpression(user, "hello");
         Exchange exchange = createExchangeWithBody("Claus");
 
         Object result = exp.evaluate(exchange, Object.class);
@@ -86,20 +86,22 @@ public class BeanTest extends LanguageTestSupport {
     @Test
     public void testNoMethod() throws Exception {
         MyUser user = new MyUser();
-        Expression exp = BeanLanguage.bean(user, "unknown");
+        Expression exp = new BeanExpression(user, "unknown");
         Exchange exchange = createExchangeWithBody("Claus");
 
-        Object result = exp.evaluate(exchange, Object.class);
-        assertNull(result);
-        assertNotNull(exchange.getException());
-        MethodNotFoundException e = assertIsInstanceOf(MethodNotFoundException.class, exchange.getException());
-        assertSame(user, e.getBean());
-        assertEquals("unknown", e.getMethodName());
+        try {
+            exp.evaluate(exchange, Object.class);
+            fail("Should throw exception");
+        } catch (Exception e) {
+            MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
+            assertSame(user, mnfe.getBean());
+            assertEquals("unknown", mnfe.getMethodName());
+        }
     }
 
     @Test
     public void testNoMethodBeanLookup() throws Exception {
-        Expression exp = BeanLanguage.bean("foo.cake");
+        Expression exp = new BeanExpression("foo", "cake");
         Exchange exchange = createExchangeWithBody("Claus");
 
         Object result = exp.evaluate(exchange, Object.class);

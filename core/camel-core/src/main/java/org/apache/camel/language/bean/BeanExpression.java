@@ -42,16 +42,17 @@ import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.StringHelper;
+
 import static org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor;
 
 /**
  * Evaluates an expression using a bean method invocation
  */
 public class BeanExpression implements Expression, Predicate, AfterPropertiesConfigured {
-    private final Object bean;
-    private final String beanName;
-    private final Class<?> type;
-    private final String method;
+    private Object bean;
+    private String beanName;
+    private Class<?> type;
+    private String method;
     private volatile BeanHolder beanHolder;
 
     public BeanExpression(Object bean, String method) {
@@ -73,6 +74,38 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         this.method = method;
         this.bean = null;
         this.beanName = null;
+    }
+
+    public Object getBean() {
+        return bean;
+    }
+
+    public void setBean(Object bean) {
+        this.bean = bean;
+    }
+
+    public String getBeanName() {
+        return beanName;
+    }
+
+    public void setBeanName(String beanName) {
+        this.beanName = beanName;
+    }
+
+    public Class<?> getType() {
+        return type;
+    }
+
+    public void setType(Class<?> type) {
+        this.type = type;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
     }
 
     @Override
@@ -100,6 +133,9 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         }
 
         // invoking the bean can either be the easy way or using OGNL
+        if (bean != null || type != null) {
+            validateHasMethod(exchange.getContext(), bean, type, method);
+        }
 
         // validate OGNL
         if (OgnlHelper.isInvalidValidOgnlExpression(method)) {
@@ -147,11 +183,17 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
 
     @Override
     public void afterPropertiesConfigured(CamelContext camelContext) {
+        // lets see if we can do additional validation that the bean has valid method during creation of the expression
         Object target = bean;
         if (bean == null && type == null && beanName != null) {
             target = CamelContextHelper.mandatoryLookup(camelContext, beanName);
         }
         validateHasMethod(camelContext, target, type, method);
+
+        // if the bean holder doesn't exist then create it
+        if (beanHolder == null) {
+            beanHolder = createBeanHolder(camelContext);
+        }
     }
 
     /**
@@ -203,11 +245,7 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         }
     }
 
-    /**
-     * Optimize to create the bean holder once, so we can reuse it for further
-     * evaluation, which is faster.
-     */
-    private synchronized BeanHolder createBeanHolder(CamelContext context) {
+    private BeanHolder createBeanHolder(CamelContext context) {
         // either use registry lookup or a constant bean
         BeanHolder holder;
         if (bean != null) {
