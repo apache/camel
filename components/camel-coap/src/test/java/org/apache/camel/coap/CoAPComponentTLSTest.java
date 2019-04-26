@@ -20,6 +20,8 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
+import javax.crypto.KeyGenerator;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -33,6 +35,8 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
+import org.eclipse.californium.scandium.dtls.pskstore.PskStore;
+import org.eclipse.californium.scandium.dtls.pskstore.StaticPskStore;
 import org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore;
 import org.junit.Test;
 
@@ -44,6 +48,7 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
     protected static final int PORT4 = AvailablePortFinder.getNextAvailable();
     protected static final int PORT5 = AvailablePortFinder.getNextAvailable();
     protected static final int PORT6 = AvailablePortFinder.getNextAvailable();
+    protected static final int PORT7 = AvailablePortFinder.getNextAvailable();
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate sender;
@@ -154,6 +159,28 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testPreSharedKey() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived("Hello Camel CoAP");
+        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE, MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
+        mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
+        sendBodyAndHeader("direct:psk", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPreSharedKeyCipherSuite() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived("Hello Camel CoAP");
+        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE, MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
+        mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
+        sendBodyAndHeader("direct:pskciphersuite", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
@@ -186,6 +213,8 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
 
         TrustedRpkStore trustedRpkStore = id -> { return true;};
         TrustedRpkStore failedTrustedRpkStore = id -> { return false;};
+        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+        PskStore pskStore = new StaticPskStore("some-identity", keyGenerator.generateKey().getEncoded());
 
         registry.bind("keyParams", keystoreParameters);
         registry.bind("keyParams2", keystoreParameters2);
@@ -196,6 +225,7 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
         registry.bind("publicKey", publicKey);
         registry.bind("trustedRpkStore", trustedRpkStore);
         registry.bind("failedTrustedRpkStore", failedTrustedRpkStore);
+        registry.bind("pskStore", pskStore);
 
         return registry;
     }
@@ -231,6 +261,10 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
                 fromF("coaps://localhost:%d/TestResource?alias=service&password=security&"
                     + "privateKey=#privateKey&publicKey=#publicKey&clientAuthentication=REQUIRE&"
                     + "trustedRpkStore=#trustedRpkStore", PORT6)
+                  .transform(body().prepend("Hello "));
+
+                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&"
+                    + "pskStore=#pskStore", PORT7)
                   .transform(body().prepend("Hello "));
 
                 from("direct:start")
@@ -279,6 +313,15 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
                 from("direct:rpkclientauth")
                     .toF("coaps://localhost:%d/TestResource?trustedRpkStore=#trustedRpkStore&"
                          + "privateKey=#privateKey&publicKey=#publicKey", PORT6)
+                    .to("mock:result");
+
+                from("direct:psk")
+                    .toF("coaps://localhost:%d/TestResource?pskStore=#pskStore", PORT7)
+                    .to("mock:result");
+
+                from("direct:pskciphersuite")
+                    .toF("coaps://localhost:%d/TestResource?pskStore=#pskStore&"
+                         + "cipherSuites=TLS_PSK_WITH_AES_128_CBC_SHA256", PORT7)
                     .to("mock:result");
             }
         };
