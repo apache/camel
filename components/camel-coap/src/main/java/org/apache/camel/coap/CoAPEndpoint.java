@@ -43,6 +43,7 @@ import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import org.eclipse.californium.scandium.dtls.CertificateType;
+import org.eclipse.californium.scandium.dtls.pskstore.PskStore;
 import org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore;
 
 /**
@@ -75,6 +76,9 @@ public class CoAPEndpoint extends DefaultEndpoint {
 
     @UriParam
     private TrustedRpkStore trustedRpkStore;
+
+    @UriParam
+    private PskStore pskStore;
 
     @UriParam
     private String alias;
@@ -228,7 +232,21 @@ public class CoAPEndpoint extends DefaultEndpoint {
     public void setTrustedRpkStore(TrustedRpkStore trustedRpkStore) {
         this.trustedRpkStore = trustedRpkStore;
     }
-    
+
+    /**
+     * Get the PskStore to use for pre-shared key.
+     */
+    public PskStore getPskStore() {
+        return pskStore;
+    }
+
+    /**
+     * Set the PskStore to use for pre-shared key.
+     */
+    public void setPskStore(PskStore pskStore) {
+        this.pskStore = pskStore;
+    }
+
     /**
      * Get the configured private key for use with Raw Public Key.
      */
@@ -347,22 +365,22 @@ public class CoAPEndpoint extends DefaultEndpoint {
 
         DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder();
         if (client) {
-            if (trustedRpkStore == null && getTruststore() == null) {
+            if (trustedRpkStore == null && getTruststore() == null && pskStore == null) {
                 throw new IllegalStateException("A truststore must be configured to use TLS");
             }
             
             builder.setClientOnly();
         } else {
-            if (privateKey == null && getKeystore() == null) {
+            if (privateKey == null && getKeystore() == null && pskStore == null) {
                 throw new IllegalStateException("A keystore or private key must be configured to use TLS");
             }
             if (privateKey != null && publicKey == null) {
                 throw new IllegalStateException("A public key must be configured to use a Raw Public Key with TLS");
             }
-            if (privateKey == null && getAlias() == null) {
+            if (privateKey == null && pskStore == null && getAlias() == null) {
                 throw new IllegalStateException("An alias must be configured to use TLS");
             }
-            if (privateKey == null && getPassword() == null) {
+            if (privateKey == null && pskStore == null && getPassword() == null) {
                 throw new IllegalStateException("A password must be configured to use TLS");
             }
             if ((isClientAuthenticationRequired() || isClientAuthenticationWanted())
@@ -383,6 +401,8 @@ public class CoAPEndpoint extends DefaultEndpoint {
                 builder.setIdentity(privateKey, getKeystore().getCertificateChain(getAlias()));
             } else if (privateKey != null) {
                 builder.setIdentity(privateKey, publicKey);
+            } else if (pskStore != null) {
+                builder.setPskStore(pskStore);
             }
 
             // Add all certificates from the truststore
