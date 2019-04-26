@@ -32,10 +32,10 @@ import org.junit.Test;
 
 public class NatsConsumerWithConnectionLoadTest extends NatsTestSupport {
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
     
-    @EndpointInject(uri = "mock:result1")
+    @EndpointInject("mock:result1")
     protected MockEndpoint mockResultEndpoint1;
     
     private Connection connection;

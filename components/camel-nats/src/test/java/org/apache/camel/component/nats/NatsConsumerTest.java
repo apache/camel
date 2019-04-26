@@ -25,7 +25,7 @@ import org.junit.Test;
 
 public class NatsConsumerTest extends NatsTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
 
     @Test

@@ -30,7 +30,7 @@ import org.junit.Test;
 
 public class NatsConsumerLoadTest extends NatsTestSupport {
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
 
     @Test

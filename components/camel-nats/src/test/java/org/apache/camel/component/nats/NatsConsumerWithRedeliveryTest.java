@@ -33,10 +33,10 @@ public class NatsConsumerWithRedeliveryTest extends NatsTestSupport {
 
     private static final int REDELIVERY_COUNT = 2;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
 
-    @EndpointInject(uri = "mock:exception")
+    @EndpointInject("mock:exception")
     private MockEndpoint exception;
 
     @Test
