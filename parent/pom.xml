@@ -5086,6 +5086,9 @@
                     <groupId>org.apache.camel</groupId>
                     <artifactId>camel-javadoc-plugin</artifactId>
                     <version>${project.version}</version>
+                    <configuration>
+                        <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
