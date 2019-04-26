@@ -43,11 +43,11 @@ public class PulsarConcurrentConsumerInTest extends PulsarTestSupport {
     private static final String PRODUCER = "camel-producer";
     private static final int NUMBER_OF_CONSUMERS = 5;
 
-    @EndpointInject(uri = "pulsar:" + TOPIC_URI + "?numberOfConsumers=5&subscriptionType=Shared"
+    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=5&subscriptionType=Shared"
                           + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerNamePrefix=camel-consumer-")
     private Endpoint from;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint to;
 
     @Override

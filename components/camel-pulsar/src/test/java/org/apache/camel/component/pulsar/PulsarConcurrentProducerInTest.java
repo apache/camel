@@ -38,14 +38,14 @@ public class PulsarConcurrentProducerInTest extends PulsarTestSupport {
     private static final String TOPIC_URI = "persistent://public/default/camel-concurrent-producers-topic";
     private static final String PRODUCER = "camel-producer";
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private ProducerTemplate producerTemplate;
 
-    @EndpointInject(uri = "pulsar:" + TOPIC_URI + "?numberOfConsumers=3&subscriptionType=Shared" + "&subscriptionName=camel-subscription&consumerQueueSize=1"
+    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=3&subscriptionType=Shared" + "&subscriptionName=camel-subscription&consumerQueueSize=1"
                           + "&consumerNamePrefix=camel-consumer" + "&producerName=" + PRODUCER)
     private Endpoint from;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint to;
 
     @Override
