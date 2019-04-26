@@ -42,13 +42,13 @@ public class PulsarConsumerInTest extends PulsarTestSupport {
     private static final String TOPIC_URI = "persistent://public/default/camel-topic";
     private static final String PRODUCER = "camel-producer-1";
 
-    @EndpointInject(uri = "pulsar:" + TOPIC_URI
+    @EndpointInject("pulsar:" + TOPIC_URI
         + "?numberOfConsumers=1&subscriptionType=Exclusive"
         + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
     )
     private Endpoint from;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint to;
 
     @Override

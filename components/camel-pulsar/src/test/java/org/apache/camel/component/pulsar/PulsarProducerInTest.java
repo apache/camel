@@ -36,10 +36,10 @@ public class PulsarProducerInTest extends PulsarTestSupport {
     private static final String TOPIC_URI = "persistent://public/default/camel-producer-topic";
     private static final String PRODUCER = "camel-producer";
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private ProducerTemplate producerTemplate;
 
-    @EndpointInject(uri = "pulsar:" + TOPIC_URI
+    @EndpointInject("pulsar:" + TOPIC_URI
         + "?numberOfConsumers=1&subscriptionType=Exclusive"
         + "&subscriptionName=camel-subscription&consumerQueueSize=1"
         + "&consumerName=camel-consumer"
