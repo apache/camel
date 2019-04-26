@@ -133,13 +133,9 @@ public class DataFormatTransformer extends Transformer {
     @Override
     public void doStart() throws Exception {
         if (dataFormat == null) {
-            if (dataFormatRef != null) {
-                dataFormat = getCamelContext().resolveDataFormat(dataFormatRef);
-            } else if (dataFormatType != null) {
-                dataFormat = DataFormatReifier.reifier(dataFormatType).createDataFormat(getCamelContext());
-                getCamelContext().addService(dataFormat, false);
-            }
+            dataFormat = DataFormatReifier.getDataFormat(getCamelContext(), dataFormatType, dataFormatRef);
         }
+        getCamelContext().addService(dataFormat, false);
     }
 
     @Override

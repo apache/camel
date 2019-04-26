@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.reifier.dataformat.DataFormatReifier;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -53,7 +54,7 @@ public class SpringJacksonObjectMapperRegistryTest extends CamelSpringTestSuppor
         MyJsonObjectMapper mapper = (MyJsonObjectMapper) context.getRegistry().lookupByName("myJsonObjectMapper");
         assertNotNull(mapper);
 
-        JacksonDataFormat df = (JacksonDataFormat) context.getDataFormats().get("jack").getDataFormat();
+        JacksonDataFormat df = (JacksonDataFormat) DataFormatReifier.getDataFormat(context, null, "jack");
         assertNotNull(df);
         assertSame(mapper, df.getObjectMapper());
     }
