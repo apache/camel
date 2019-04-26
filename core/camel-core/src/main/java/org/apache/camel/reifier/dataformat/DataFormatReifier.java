@@ -157,6 +157,9 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
                 return dataFormat;
             }
         }
+        if (type.getDataFormat() != null) {
+            return type.getDataFormat();
+        }
         return reifier(type).createDataFormat(camelContext);
     }
 
