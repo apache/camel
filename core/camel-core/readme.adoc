@@ -20,7 +20,7 @@
 
 
 // dataformats: START
-Number of Data Formats: 4 in 36 JAR artifacts (0 deprecated)
+Number of Data Formats: 4 in 1 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
