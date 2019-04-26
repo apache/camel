@@ -32,15 +32,17 @@
     <name>Camel :: EJB</name>
     <description>Camel EJB support</description>
 
-    <properties>
-    </properties>
-
     <dependencies>
 
-        <!-- requires camel-core bean component -->
+        <!-- requires camel-core JndiRegistry -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
+        </dependency>
+        <!-- this is an extension to the bean component -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-bean</artifactId>
         </dependency>
 
         <!-- testing -->
