@@ -130,7 +130,7 @@ Number of Components: 294 in 231 JAR artifacts (0 deprecated)
 | link:camel-azure/src/main/docs/azure-queue-component.adoc[Azure Storage Queue Service] (camel-azure) +
 `azure-queue:containerAndQueueUri` | 2.19 | The azure-queue component is used for storing and retrieving messages from Azure Storage Queue Service.
 
-| link:../core/camel-core/src/main/docs/bean-component.adoc[Bean] (camel-core) +
+| link:camel-bean/src/main/docs/bean-component.adoc[Bean] (camel-bean) +
 `bean:beanName` | 1.0 | The bean component is for invoking Java beans from Camel.
 
 | link:camel-bean-validator/src/main/docs/bean-validator-component.adoc[Bean Validator] (camel-bean-validator) +
@@ -166,8 +166,8 @@ Number of Components: 294 in 231 JAR artifacts (0 deprecated)
 | link:camel-chunk/src/main/docs/chunk-component.adoc[Chunk] (camel-chunk) +
 `chunk:resourceUri` | 2.15 | Transforms the message using a Chunk template.
 
-| link:../core/camel-core/src/main/docs/class-component.adoc[Class] (camel-core) +
-`class:beanName` | 2.4 | The Class Component is for invoking Java Classes (Java beans) from Camel.
+| link:camel-bean/src/main/docs/class-component.adoc[Class] (camel-bean) +
+`class:beanName` | 2.4 | The class component is for invoking Java classes (Java beans) from Camel.
 
 | link:camel-cm-sms/src/main/docs/cm-sms-component.adoc[CM SMS Gateway] (camel-cm-sms) +
 `cm-sms:host` | 2.18 | The cm-sms component allows to integrate with CM SMS Gateway.
@@ -1000,13 +1000,13 @@ Number of Data Formats: 46 in 36 JAR artifacts (0 deprecated)
 ==== Expression Languages
 
 // languages: START
-Number of Languages: 17 in 9 JAR artifacts (0 deprecated)
+Number of Languages: 17 in 10 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
 | Language | Available From | Description
 
-| link:../core/camel-core/src/main/docs/bean-language.adoc[Bean method] (camel-core) | 1.3 | To use a Java bean (aka method call) in Camel expressions or predicates.
+| link:camel-bean/src/main/docs/bean-language.adoc[Bean method] (camel-bean) | 1.3 | To use a Java bean (aka method call) in Camel expressions or predicates.
 
 | link:../core/camel-core/src/main/docs/constant-language.adoc[Constant] (camel-core) | 1.5 | To use a constant value in Camel expressions or predicates.
 
