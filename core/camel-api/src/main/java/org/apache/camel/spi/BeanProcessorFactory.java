@@ -30,13 +30,30 @@ import org.apache.camel.Processor;
 public interface BeanProcessorFactory {
 
     /**
-     * Creates the bean processor
+     * Creates the bean processor from the existing bean instance
      *
      * @param camelContext  the camel context
-     * @param pojo          the bean
+     * @param bean          the bean
      * @param method        the method to invoke
      * @return the created processor
      * @throws Exception is thrown if error creating the processor
      */
-    Processor createBeanProcessor(CamelContext camelContext, Object pojo, Method method) throws Exception;
+    Processor createBeanProcessor(CamelContext camelContext, Object bean, Method method) throws Exception;
+
+    /**
+     * Creates the bean processor from a given set of parameters that can refer
+     * to the bean via an existing bean, a reference to a bean, or its class name etc.
+     *
+     * @param camelContext  the camel context
+     * @param bean          the bean instance
+     * @param beanType      or the bean class name
+     * @param beanClass     or the bean class
+     * @param ref           or bean reference to lookup the bean from the registry
+     * @param method        optional name of method to invoke
+     * @param cacheBean    whether to cache lookup up the bean
+     * @return the created processor
+     * @throws Exception is thrown if error creating the processor
+     */
+    public Processor createBeanProcessor(CamelContext camelContext, Object bean, String beanType, Class<?> beanClass, String ref,
+                                         String method, boolean cacheBean) throws Exception;
 }
