@@ -32,7 +32,6 @@ import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
 import org.junit.Rule;
 import org.junit.Test;
-import org.testcontainers.containers.PulsarContainer;
 
 public class PulsarProducerInTest extends PulsarTestSupport {
 
