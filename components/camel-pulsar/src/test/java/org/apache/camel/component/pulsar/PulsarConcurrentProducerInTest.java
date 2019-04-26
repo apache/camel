@@ -34,15 +34,11 @@ import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
 import org.junit.Rule;
 import org.junit.Test;
-import org.testcontainers.containers.PulsarContainer;
 
-public class PulsarConcurrentProducerInTest extends CamelTestSupport {
+public class PulsarConcurrentProducerInTest extends PulsarTestSupport {
 
     private static final String TOPIC_URI = "persistent://public/default/camel-concurrent-producers-topic";
     private static final String PRODUCER = "camel-producer";
-
-    @Rule
-    public PulsarContainer pulsarContainer = new PulsarContainer();
 
     @Produce(uri = "direct:start")
     private ProducerTemplate producerTemplate;
@@ -87,7 +83,7 @@ public class PulsarConcurrentProducerInTest extends CamelTestSupport {
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl().serviceUrl(pulsarContainer.getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
+        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
     }
 
     @Test

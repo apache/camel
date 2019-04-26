@@ -36,17 +36,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.PulsarContainer;
 
-public class PulsarConsumerInTest extends CamelTestSupport {
+public class PulsarConsumerInTest extends PulsarTestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerInTest.class);
 
     private static final String TOPIC_URI = "persistent://public/default/camel-topic";
     private static final String PRODUCER = "camel-producer-1";
-
-    @Rule
-    public PulsarContainer pulsarContainer = new PulsarContainer();
 
     @EndpointInject(uri = "pulsar:" + TOPIC_URI
         + "?numberOfConsumers=1&subscriptionType=Exclusive"
@@ -97,7 +93,7 @@ public class PulsarConsumerInTest extends CamelTestSupport {
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
         return new ClientBuilderImpl()
-            .serviceUrl(pulsarContainer.getPulsarBrokerUrl())
+            .serviceUrl(getPulsarBrokerUrl())
             .ioThreads(1)
             .listenerThreads(1)
             .build();
