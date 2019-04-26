@@ -42,9 +42,6 @@ public class PulsarProducer extends DefaultProducer {
     @Override
     public void process(final Exchange exchange) throws Exception {
         final Message message = exchange.getIn();
-        if(producer == null) {
-            createProducer();
-        }
         byte[] body;
         try {
             body = exchange.getContext().getTypeConverter()
@@ -69,6 +66,14 @@ public class PulsarProducer extends DefaultProducer {
                     .producerName(producerName)
                     .topic(topic);
             producer = producerBuilder.create();
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        log.debug("Starting producer: {}", this);
+        if (producer == null) {
+            createProducer();
         }
     }
 
