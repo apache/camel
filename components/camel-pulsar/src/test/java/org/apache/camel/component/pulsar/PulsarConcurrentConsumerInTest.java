@@ -38,18 +38,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.PulsarContainer;
 
-public class PulsarConcurrentConsumerInTest extends CamelTestSupport {
+public class PulsarConcurrentConsumerInTest extends PulsarTestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConcurrentConsumerInTest.class);
 
     private static final String TOPIC_URI = "non-persistent://public/default/concurrent-camel-topic";
     private static final String PRODUCER = "camel-producer";
     private static final int NUMBER_OF_CONSUMERS = 5;
-
-    @Rule
-    public PulsarContainer pulsarContainer = new PulsarContainer();
 
     @EndpointInject(uri = "pulsar:" + TOPIC_URI + "?numberOfConsumers=5&subscriptionType=Shared"
                           + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerNamePrefix=camel-consumer-")
@@ -98,7 +94,7 @@ public class PulsarConcurrentConsumerInTest extends CamelTestSupport {
     }
 
     private PulsarClient concurrentPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl().serviceUrl(pulsarContainer.getPulsarBrokerUrl()).ioThreads(2).listenerThreads(5).build();
+        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(2).listenerThreads(5).build();
     }
 
     @Test

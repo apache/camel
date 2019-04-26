@@ -34,13 +34,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.testcontainers.containers.PulsarContainer;
 
-public class PulsarProducerInTest extends CamelTestSupport {
+public class PulsarProducerInTest extends PulsarTestSupport {
 
     private static final String TOPIC_URI = "persistent://public/default/camel-producer-topic";
     private static final String PRODUCER = "camel-producer";
-
-    @Rule
-    public PulsarContainer pulsarContainer = new PulsarContainer();
 
     @Produce(uri = "direct:start")
     private ProducerTemplate producerTemplate;
@@ -90,7 +87,7 @@ public class PulsarProducerInTest extends CamelTestSupport {
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
         return new ClientBuilderImpl()
-            .serviceUrl(pulsarContainer.getPulsarBrokerUrl())
+            .serviceUrl(getPulsarBrokerUrl())
             .ioThreads(1)
             .listenerThreads(1)
             .build();
