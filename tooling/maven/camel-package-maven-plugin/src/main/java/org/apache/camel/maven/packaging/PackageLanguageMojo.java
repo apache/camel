@@ -143,6 +143,9 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         if ("xpath".equals(name)) {
                             // special for camel-xpath as we need to build this before camel-core so we load the schema from a static file
                             is = new FileInputStream(new File(buildDir, "../src/main/schema/xpath.json"));
+                        } else if ("bean".equals(name)) {
+                            // special for camel-bean as we need to build this before camel-core so we load the schema from a static file
+                            is = new FileInputStream(new File(buildDir, "../src/main/schema/method.json"));
                         } else {
                             is = new FileInputStream(new File(core, "target/classes/org/apache/camel/model/language/" + modelName + ".json"));
                         }
