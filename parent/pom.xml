@@ -6104,7 +6104,7 @@
         <profile>
             <id>faster-builds</id>
             <properties>
-                <maven-bundle-plugin-version>4.2.1-SNAPSHOT</maven-bundle-plugin-version>
+                <maven-bundle-plugin-version>4.1.1-SNAPSHOT</maven-bundle-plugin-version>
             </properties>
         </profile>
     </profiles>
