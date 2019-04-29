@@ -39,7 +39,7 @@
         <route id="insert-route">
             <from uri="direct:insert"/>
             <transform>
-                <method ref="org.apache.camel.component.jooq.beans.BookStoreRecordBean" method="generate"/>
+                <method ref="bookStoreBean" method="generate"/>
             </transform>
             <!-- Send entity to endpoint -->
             <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord"/>
@@ -49,7 +49,7 @@
         <route id="execute-route">
             <from uri="direct:fetch"/>
             <transform>
-                <method ref="org.apache.camel.component.jooq.beans.BookStoreRecordBean" method="select"/>
+                <method ref="bookStoreBean" method="select"/>
             </transform>
             <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/fetch"/>
             <log message="Fetched ${body}"/>
@@ -59,7 +59,7 @@
         <route id="query-route">
             <from uri="direct:execute"/>
             <transform>
-                <method ref="org.apache.camel.component.jooq.beans.BookStoreRecordBean" method="delete"/>
+                <method ref="bookStoreBean" method="delete"/>
             </transform>
             <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/execute"/>
             <log message="Executed ${body}"/>

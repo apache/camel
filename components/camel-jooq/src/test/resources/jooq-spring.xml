@@ -34,6 +34,9 @@
         <property name="maxActive" value="${db.pool.maxActive}" />
         <property name="maxIdle" value="${db.pool.maxIdle}" />
     </bean>
+    
+    <bean id="bookStoreBean" class="org.apache.camel.component.jooq.beans.BookStoreRecordBean">
+    </bean>
 
     <bean id="transactionAwareDataSource"
           class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy">
