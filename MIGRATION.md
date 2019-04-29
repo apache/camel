@@ -223,6 +223,12 @@ The exception `org.apache.camel.builder.xml.InvalidXPathExpression` has been ren
 
 The annotation `org.apache.camel.language.Bean` has been moved to `org.apache.camel.language.bean.Bean` and in the `camel-bean` JAR.
 
+The annotation `org.apache.camel.language.Simple` has been moved to `org.apache.camel.language.simple.Simple`.
+
+The annotation `org.apache.camel.Constant` has been removed.
+
+The annotation `org.apache.camel.language.SpEL` has been moved to `org.apache.camel.language.spel.SpEL` and in the `camel-spring` JAR.
+
 #### camel-test
 
 If you are using camel-test and override the `createRegistry` method, for example to register beans from the `JndiRegisty` class, then this is no longer necessary, and instead
