@@ -50,7 +50,7 @@ public class Application {
     @Named
     @Produces
     Processor tracer = exchange -> exchange.getIn()
-        .setHeader("location", simple("exchangeProperty.CamelFailureRouteId"));
+        .setHeader("location", simple("${exchangeProperty.CamelFailureRouteId}"));
 
     void login(@Observes @Initialized(ApplicationScoped.class) Object event) {
         System.out.println(

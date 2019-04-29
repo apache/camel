@@ -34,7 +34,7 @@
 
     <route id="terminal">
         <!-- Read input from the console using the stream component -->
-        <from uri="stream:in?delay=1000&amp;promptMessage=Which pill (red|blue)?: "/>
+        <from uri="stream:in?promptDelay=1000&amp;promptMessage=Which pill (red|blue)?: "/>
         <!-- To send messages to Neo -->
         <to uri="ref:neo"/>
     </route>
@@ -60,7 +60,7 @@
         <!-- And broadcast Neo's location thanks to the red pill tracing -->
         <log message="Neo has been located in ${exchangeProperty.CamelFailureRouteId}"/>
         <!-- For a rescue mission -->
-        <to uri="seda:rescue?multipleConsumers=true"/>
+        <to uri="stub:rescue"/>
     </route>
 
 </camelContext>
