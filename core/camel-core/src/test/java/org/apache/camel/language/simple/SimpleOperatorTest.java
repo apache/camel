@@ -195,6 +195,23 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testNotEqualIgnoreOperator() throws Exception {
+        // string to string comparison
+        assertPredicate("${in.header.foo} !=~ 'abc'", false);
+        assertPredicate("${in.header.foo} !=~ 'ABC'", false);
+        assertPredicate("${in.header.foo} !=~ 'Abc'", false);
+        assertPredicate("${in.header.foo} !=~ 'Def'", true);
+        assertPredicate("${in.header.foo} !=~ '1'", true);
+
+        // integer to string comparison
+        assertPredicate("${in.header.bar} !=~ '123'", false);
+        assertPredicate("${in.header.bar} !=~ 123", false);
+        assertPredicate("${in.header.bar} !=~ '444'", true);
+        assertPredicate("${in.header.bar} !=~ 444", true);
+        assertPredicate("${in.header.bar} !=~ '1'", true);
+    }
+
+    @Test
     public void testFloatingNumber() throws Exception {
         // set a String value
         exchange.getIn().setBody("0.02");
@@ -312,9 +329,9 @@ public class SimpleOperatorTest extends LanguageTestSupport {
 
         exchange.getIn().setHeader("strNum", "123");
         assertPredicate("${in.header.strNum} contains '123'", true);
-        assertPredicate("${in.header.strNum} not contains '123'", false);
+        assertPredicate("${in.header.strNum} !contains '123'", false);
         assertPredicate("${in.header.strNum} contains '-123'", false);
-        assertPredicate("${in.header.strNum} not contains '-123'", true);
+        assertPredicate("${in.header.strNum} !contains '-123'", true);
         assertPredicate("${in.header.strNum} ~~ '123'", true);
         assertPredicate("${in.header.strNum} ~~ '-123'", false);
     
@@ -334,9 +351,9 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     
         exchange.getIn().setHeader("strNumNegative", "-123");
         assertPredicate("${in.header.strNumNegative} contains '123'", true);
-        assertPredicate("${in.header.strNumNegative} not contains '123'", false);
+        assertPredicate("${in.header.strNumNegative} !contains '123'", false);
         assertPredicate("${in.header.strNumNegative} contains '-123'", true);
-        assertPredicate("${in.header.strNumNegative} not contains '-123'", false);
+        assertPredicate("${in.header.strNumNegative} !contains '-123'", false);
         assertPredicate("${in.header.strNumNegative} ~~ '123'", true);
         assertPredicate("${in.header.strNumNegative} ~~ '-123'", true);
 
@@ -399,6 +416,10 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} not contains 'ab'", false);
         assertPredicate("${in.header.foo} not contains 'abc'", false);
         assertPredicate("${in.header.foo} not contains 'def'", true);
+        assertPredicate("${in.header.foo} !contains 'a'", false);
+        assertPredicate("${in.header.foo} !contains 'ab'", false);
+        assertPredicate("${in.header.foo} !contains 'abc'", false);
+        assertPredicate("${in.header.foo} !contains 'def'", true);
     }
     
     @Test
@@ -407,6 +428,14 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} ~~ 'Ab'", true);
         assertPredicate("${in.header.foo} ~~ 'Abc'", true);
         assertPredicate("${in.header.foo} ~~ 'defG'", false);
+    }
+
+    @Test
+    public void testNotContainsIgnoreCase() throws Exception {
+        assertPredicate("${in.header.foo} !~~ 'A'", false);
+        assertPredicate("${in.header.foo} !~~ 'Ab'", false);
+        assertPredicate("${in.header.foo} !~~ 'Abc'", false);
+        assertPredicate("${in.header.foo} !~~ 'defG'", true);
     }
 
     @Test
@@ -452,11 +481,18 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} not in ${bean:generator.generateFilename}", false);
         assertPredicate("${in.header.foo} not in 'foo,abc,def'", false);
         assertPredicate("${in.header.foo} not in 'foo,def'", true);
+        assertPredicate("${in.header.foo} !in 'foo,abc,def'", false);
+        assertPredicate("${in.header.foo} !in ${bean:generator.generateFilename}", false);
+        assertPredicate("${in.header.foo} !in 'foo,abc,def'", false);
+        assertPredicate("${in.header.foo} !in 'foo,def'", true);
 
         // integer to string
         assertPredicate("${in.header.bar} not in '100,123,200'", false);
         assertPredicate("${in.header.bar} not in ${bean:generator.generateId}", false);
         assertPredicate("${in.header.bar} not in '100,200'", true);
+        assertPredicate("${in.header.bar} !in '100,123,200'", false);
+        assertPredicate("${in.header.bar} !in ${bean:generator.generateId}", false);
+        assertPredicate("${in.header.bar} !in '100,200'", true);
     }
 
     @Test
@@ -479,15 +515,25 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     public void testIsNot() throws Exception {
         assertPredicate("${in.header.foo} not is 'java.lang.String'", false);
         assertPredicate("${in.header.foo} not is 'java.lang.Integer'", true);
+        assertPredicate("${in.header.foo} !is 'java.lang.String'", false);
+        assertPredicate("${in.header.foo} !is 'java.lang.Integer'", true);
 
         assertPredicate("${in.header.foo} not is 'String'", false);
         assertPredicate("${in.header.foo} not is 'Integer'", true);
+        assertPredicate("${in.header.foo} !is 'String'", false);
+        assertPredicate("${in.header.foo} !is 'Integer'", true);
 
         try {
             assertPredicate("${in.header.foo} not is com.mycompany.DoesNotExist", false);
             fail("Should have thrown an exception");
         } catch (SimpleIllegalSyntaxException e) {
             assertEquals(24, e.getIndex());
+        }
+        try {
+            assertPredicate("${in.header.foo} !is com.mycompany.DoesNotExist", false);
+            fail("Should have thrown an exception");
+        } catch (SimpleIllegalSyntaxException e) {
+            assertEquals(21, e.getIndex());
         }
     }
 
@@ -533,18 +579,31 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     public void testNotRange() throws Exception {
         assertPredicate("${in.header.bar} not range '100..200'", false);
         assertPredicate("${in.header.bar} not range '200..300'", true);
+        assertPredicate("${in.header.bar} !range '100..200'", false);
+        assertPredicate("${in.header.bar} !range '200..300'", true);
 
         assertPredicate("${in.header.foo} not range '200..300'", true);
         assertPredicate("${bean:generator.generateId} not range '123..130'", false);
         assertPredicate("${bean:generator.generateId} not range '120..123'", false);
         assertPredicate("${bean:generator.generateId} not range '120..122'", true);
         assertPredicate("${bean:generator.generateId} not range '124..130'", true);
+        assertPredicate("${in.header.foo} !range '200..300'", true);
+        assertPredicate("${bean:generator.generateId} !range '123..130'", false);
+        assertPredicate("${bean:generator.generateId} !range '120..123'", false);
+        assertPredicate("${bean:generator.generateId} !range '120..122'", true);
+        assertPredicate("${bean:generator.generateId} !range '124..130'", true);
 
         try {
             assertPredicate("${in.header.foo} not range abc..200", false);
             fail("Should have thrown an exception");
         } catch (SimpleIllegalSyntaxException e) {
             assertEquals(27, e.getIndex());
+        }
+        try {
+            assertPredicate("${in.header.foo} !range abc..200", false);
+            fail("Should have thrown an exception");
+        } catch (SimpleIllegalSyntaxException e) {
+            assertEquals(24, e.getIndex());
         }
 
         try {
@@ -553,12 +612,24 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         } catch (SimpleIllegalSyntaxException e) {
             assertEquals(27, e.getIndex());
         }
+        try {
+            assertPredicate("${in.header.foo} !range abc..", false);
+            fail("Should have thrown an exception");
+        } catch (SimpleIllegalSyntaxException e) {
+            assertEquals(24, e.getIndex());
+        }
 
         try {
             assertPredicate("${in.header.foo} not range 100.200", false);
             fail("Should have thrown an exception");
         } catch (SimpleIllegalSyntaxException e) {
             assertEquals(34, e.getIndex());
+        }
+        try {
+            assertPredicate("${in.header.foo} !range 100.200", false);
+            fail("Should have thrown an exception");
+        } catch (SimpleIllegalSyntaxException e) {
+            assertEquals(31, e.getIndex());
         }
     }
 
@@ -599,6 +670,12 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.body} starts with 'Hello ther'", true);
         assertPredicate("${in.body} starts with 'ello there'", false);
         assertPredicate("${in.body} starts with 'Hi'", false);
+        assertPredicate("${in.body} startsWith 'Hello'", true);
+        assertPredicate("${in.body} startsWith 'H'", true);
+        assertPredicate("${in.body} startsWith 'Hello there'", true);
+        assertPredicate("${in.body} startsWith 'Hello ther'", true);
+        assertPredicate("${in.body} startsWith 'ello there'", false);
+        assertPredicate("${in.body} startsWith 'Hi'", false);
     }
     
     @Test
@@ -610,6 +687,12 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.body} ends with 'Hello there'", true);
         assertPredicate("${in.body} ends with 'Hello ther'", false);
         assertPredicate("${in.body} ends with 'Hi'", false);
+        assertPredicate("${in.body} endsWith 'there'", true);
+        assertPredicate("${in.body} endsWith 're'", true);
+        assertPredicate("${in.body} endsWith ' there'", true);
+        assertPredicate("${in.body} endsWith 'Hello there'", true);
+        assertPredicate("${in.body} endsWith 'Hello ther'", false);
+        assertPredicate("${in.body} endsWith 'Hi'", false);
     }
 
     protected String getLanguageName() {
