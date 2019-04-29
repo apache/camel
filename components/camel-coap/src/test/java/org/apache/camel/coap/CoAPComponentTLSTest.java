@@ -39,13 +39,14 @@ import org.junit.Test;
 
 public class CoAPComponentTLSTest extends CamelTestSupport {
 
-    protected static final int PORT = AvailablePortFinder.getNextAvailable();
-    protected static final int PORT2 = AvailablePortFinder.getNextAvailable();
-    protected static final int PORT3 = AvailablePortFinder.getNextAvailable();
-    protected static final int PORT4 = AvailablePortFinder.getNextAvailable();
-    protected static final int PORT5 = AvailablePortFinder.getNextAvailable();
-    protected static final int PORT6 = AvailablePortFinder.getNextAvailable();
-    protected static final int PORT7 = AvailablePortFinder.getNextAvailable();
+    private static final int PORT = AvailablePortFinder.getNextAvailable();
+    private static final int PORT2 = AvailablePortFinder.getNextAvailable();
+    private static final int PORT3 = AvailablePortFinder.getNextAvailable();
+    private static final int PORT4 = AvailablePortFinder.getNextAvailable();
+    private static final int PORT5 = AvailablePortFinder.getNextAvailable();
+    private static final int PORT6 = AvailablePortFinder.getNextAvailable();
+    private static final int PORT7 = AvailablePortFinder.getNextAvailable();
+    private static final int PORT8 = AvailablePortFinder.getNextAvailable();
 
     @Test
     public void testSuccessfulCall() throws Exception {
@@ -175,6 +176,17 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testPreSharedKeyX509() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived("Hello Camel CoAP");
+        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE, MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
+        mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
+        sendBodyAndHeader("direct:pskx509", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         KeyStoreParameters keystoreParameters = new KeyStoreParameters();
@@ -240,17 +252,18 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
                     + "keyStoreParameters=#keyParams&cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8", PORT4)
                   .transform(body().prepend("Hello "));
 
-                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&"
-                    + "privateKey=#privateKey&publicKey=#publicKey", PORT5)
+                fromF("coaps://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey", PORT5)
+                  .transform(body().prepend("Hello "));
+
+                fromF("coaps://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey&"
+                      + "clientAuthentication=REQUIRE&trustedRpkStore=#trustedRpkStore", PORT6)
+                  .transform(body().prepend("Hello "));
+
+                fromF("coaps://localhost:%d/TestResource?pskStore=#pskStore", PORT7)
                   .transform(body().prepend("Hello "));
 
                 fromF("coaps://localhost:%d/TestResource?alias=service&password=security&"
-                    + "privateKey=#privateKey&publicKey=#publicKey&clientAuthentication=REQUIRE&"
-                    + "trustedRpkStore=#trustedRpkStore", PORT6)
-                  .transform(body().prepend("Hello "));
-
-                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&"
-                    + "pskStore=#pskStore", PORT7)
+                    + "keyStoreParameters=#keyParams&pskStore=#pskStore", PORT8)
                   .transform(body().prepend("Hello "));
 
                 from("direct:start")
@@ -308,6 +321,10 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
                 from("direct:pskciphersuite")
                     .toF("coaps://localhost:%d/TestResource?pskStore=#pskStore&"
                          + "cipherSuites=TLS_PSK_WITH_AES_128_CBC_SHA256", PORT7)
+                    .to("mock:result");
+
+                from("direct:pskx509")
+                    .toF("coaps://localhost:%d/TestResource?pskStore=#pskStore&trustStoreParameters=#trustParams", PORT8)
                     .to("mock:result");
             }
         };
