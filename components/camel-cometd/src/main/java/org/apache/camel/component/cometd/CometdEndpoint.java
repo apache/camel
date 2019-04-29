@@ -111,7 +111,7 @@ public class CometdEndpoint extends DefaultEndpoint {
         return component;
     }
 
-public String getPath() {
+    public String getPath() {
         return uri.getPath();
     }
 
