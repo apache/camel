@@ -99,7 +99,7 @@ public class ProcessorsTest extends CamelTestSupport {
                 signerInfo.setKeyStoreParameters(keystore);
 
                 SignedDataCreatorConfiguration config = new SignedDataCreatorConfiguration(new DefaultCamelContext());
-                config.setSigner(signerInfo);
+                config.addSigner(signerInfo);
                 config.setIncludeContent(true); // optional default value is
                                                 // true
                 config.init();
