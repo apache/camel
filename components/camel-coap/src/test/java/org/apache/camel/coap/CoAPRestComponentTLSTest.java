@@ -34,7 +34,7 @@ public class CoAPRestComponentTLSTest extends CamelTestSupport {
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate sender;
-    
+
     @Test
     public void testPOST() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -44,7 +44,7 @@ public class CoAPRestComponentTLSTest extends CamelTestSupport {
         sender.sendBodyAndHeader("Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testGET() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -62,7 +62,7 @@ public class CoAPRestComponentTLSTest extends CamelTestSupport {
         KeyStoreParameters keystoreParameters = new KeyStoreParameters();
         keystoreParameters.setResource("service.jks");
         keystoreParameters.setPassword("security");
-        
+
         KeyStoreParameters truststoreParameters = new KeyStoreParameters();
         truststoreParameters.setResource("truststore.jks");
         truststoreParameters.setPassword("storepass");
@@ -75,7 +75,7 @@ public class CoAPRestComponentTLSTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        
+
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -83,7 +83,7 @@ public class CoAPRestComponentTLSTest extends CamelTestSupport {
                     .endpointProperty("keyStoreParameters", "#keystoreParameters")
                     .endpointProperty("alias", "service")
                     .endpointProperty("password", "security");
-                
+
                 rest("/TestResource")
                     .get().to("direct:get1")
                     .post().to("direct:post1");
@@ -99,7 +99,7 @@ public class CoAPRestComponentTLSTest extends CamelTestSupport {
                         exchange.getOut().setBody("Hello " + exchange.getIn().getBody(String.class));
                     }
                 });
-                
+
                 from("direct:start")
                     .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#truststoreParameters", PORT)
                     .to("mock:result");

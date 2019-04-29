@@ -93,7 +93,7 @@ public class CoAPProducer extends DefaultProducer {
                 uri = endpoint.getUri();
             }
             client = new CoapClient(uri);
-            
+
             // Configure TLS
             if (CoAPEndpoint.enableTLS((uri))) {
                 DTLSConnector connector = endpoint.createDTLSConnector(null, true);
