@@ -51,7 +51,7 @@
             <transform>
                 <method ref="bookStoreBean" method="select"/>
             </transform>
-            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/fetch"/>
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=fetch"/>
             <log message="Fetched ${body}"/>
         </route>
 
@@ -61,7 +61,7 @@
             <transform>
                 <method ref="bookStoreBean" method="delete"/>
             </transform>
-            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/execute"/>
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=execute"/>
             <log message="Executed ${body}"/>
         </route>
 
@@ -74,14 +74,14 @@
         <!-- SQL: select -->
         <route id="sql-select">
             <from uri="direct:sql-select"/>
-            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/fetch?query=select * from book_store x where x.name = 'test'"/>
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=fetch&amp;query=select * from book_store x where x.name = 'test'"/>
             <log message="Fetched ${body}"/>
         </route>
 
         <!-- SQL: delete -->
         <route id="sql-delete">
             <from uri="direct:sql-delete"/>
-            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/execute?query=delete from book_store x where x.name = 'test'"/>
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=execute&amp;query=delete from book_store x where x.name = 'test'"/>
             <log message="Fetched ${body}"/>
         </route>
 

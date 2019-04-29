@@ -57,7 +57,7 @@ public class JooqPlainSQLTest extends BaseJooqTest {
 
         // Delete
         actual = (Result) producerTemplate.sendBody(context.getEndpoint("direct:deleteSQL"), ExchangePattern.InOut, null);
-        Assert.assertEquals(null, actual);
+        Assert.assertNull(actual);
 
         // Select
         actual = (Result) producerTemplate.sendBody(context.getEndpoint("direct:selectSQL"), ExchangePattern.InOut, null);
@@ -80,11 +80,11 @@ public class JooqPlainSQLTest extends BaseJooqTest {
 
                 // Producer SQL query select
                 from("direct:selectSQL")
-                        .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/fetch?query=select * from book_store x where x.name = 'test'");
+                        .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=fetch&query=select * from book_store x where x.name = 'test'");
 
                 // Producer SQL query delete
                 from("direct:deleteSQL")
-                        .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/execute?query=delete from book_store x where x.name = 'test'");
+                        .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=execute&query=delete from book_store x where x.name = 'test'");
 
                 // Consumer SQL query
                 from("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?query=select * from book_store x where x.name = 'test'&initialDelay=0&delay=100")
