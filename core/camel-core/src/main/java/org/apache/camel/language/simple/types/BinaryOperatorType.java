@@ -25,6 +25,7 @@ public enum BinaryOperatorType {
     CONTAINS, NOT_CONTAINS, CONTAINS_IGNORECASE, NOT_CONTAINS_IGNORECASE,
     REGEX, NOT_REGEX, IN, NOT_IN, IS, NOT_IS, RANGE, NOT_RANGE, STARTS_WITH, ENDS_WITH;
 
+    //CHECKSTYLE:OFF
     public static BinaryOperatorType asOperator(String text) {
         if ("==".equals(text)) {
             return EQ;
@@ -220,6 +221,7 @@ public enum BinaryOperatorType {
         }
         return null;
     }
+    //CHECKSTYLE:ON
 
     @Override
     public String toString() {
