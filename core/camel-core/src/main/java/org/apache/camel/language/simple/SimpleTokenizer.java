@@ -58,19 +58,28 @@ public final class SimpleTokenizer {
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "<="));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, ">"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "<"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "!=~"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "!="));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "not is"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "!is"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "is"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "not contains"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "!contains"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "contains"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "!~~"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "~~"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "not regex"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "!regex"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "regex"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "not in"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "!in"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "in"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "range"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "not range"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "!range"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "range"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "startsWith"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "starts with"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "endsWith"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "ends with"));
 
         // unary operators
