@@ -59,7 +59,7 @@ public class QueueServiceEndpoint extends DefaultEndpoint {
         return new QueueServiceProducer(this);
     }
 
-public QueueServiceConfiguration getConfiguration() {
+    public QueueServiceConfiguration getConfiguration() {
         return configuration;
     }
 
