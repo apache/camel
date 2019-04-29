@@ -19,11 +19,11 @@ package org.apache.camel.component.bean;
 import org.apache.camel.Consume;
 import org.apache.camel.Header;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.language.Constant;
 import org.apache.camel.language.bean.Bean;
+import org.apache.camel.language.simple.Simple;
 
 /**
- * Consumer using bean binding with an injected expressions such as: @Bean, @Constant etc.
+ * Consumer using bean binding with an injected expressions such as: @Bean, @Simple etc.
  */
 public class MyBeanBindingConsumer {
 
@@ -35,7 +35,7 @@ public class MyBeanBindingConsumer {
     }
 
     @Consume(uri = "direct:startConstantExpression")
-    public void doSomethingConstantExpression(String payload, @Constant("5") int count) {
+    public void doSomethingConstantExpression(String payload, @Simple("5") int count) {
         template.sendBodyAndHeader("mock:result", "Bye " + payload, "count", count);
     }
 
@@ -45,7 +45,7 @@ public class MyBeanBindingConsumer {
     }
 
     @Consume(uri = "direct:startMany")
-    public void doSomethingManyExpression(String payload, @Constant("5") int count, @Header("number") int number) {
+    public void doSomethingManyExpression(String payload, @Simple("5") int count, @Header("number") int number) {
         template.sendBodyAndHeader("mock:result", "Bye " + payload, "count", count * number);
     }
 
