@@ -182,11 +182,6 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
         return new CouchbaseConsumer(this, createClient(), processor);
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public String getProtocol() {
         return protocol;
     }

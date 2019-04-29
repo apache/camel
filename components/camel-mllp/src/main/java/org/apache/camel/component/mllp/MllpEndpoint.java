@@ -131,11 +131,7 @@ public class MllpEndpoint extends DefaultEndpoint {
         return consumer;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @ManagedAttribute(description = "Last activity time")
+@ManagedAttribute(description = "Last activity time")
     public Date getLastConnectionActivityTime() {
         if (lastConnectionActivityTicks != null) {
             return new Date(lastConnectionActivityTicks);

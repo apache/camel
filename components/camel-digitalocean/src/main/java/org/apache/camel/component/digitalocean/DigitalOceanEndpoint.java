@@ -97,11 +97,6 @@ public class DigitalOceanEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("You cannot receive messages from this endpoint");
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-
     @Override
     public void doStart() throws Exception {
         super.doStart();

@@ -81,10 +81,6 @@ public class IronMQEndpoint extends ScheduledPollEndpoint {
         return exchange;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     protected void doStart() throws Exception {
         super.doStart();

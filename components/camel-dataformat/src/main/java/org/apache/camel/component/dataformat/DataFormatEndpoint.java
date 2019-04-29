@@ -104,11 +104,6 @@ public class DataFormatEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public boolean isLenientProperties() {
         return true;
     }

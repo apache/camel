@@ -57,10 +57,6 @@ public class LambdaEndpoint extends DefaultEndpoint {
         return new LambdaProducer(this);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     public void doStart() throws Exception {
         super.doStart();

@@ -45,11 +45,6 @@ public class TikaEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Consumer does not supported for Tika component:" + getEndpointUri());
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public TikaConfiguration getTikaConfiguration() {
         return tikaConfiguration;
     }

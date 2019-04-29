@@ -61,11 +61,6 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public Producer createProducer() throws Exception {
         return new ReactiveStreamsProducer(this, stream, getReactiveStreamsService());
     }

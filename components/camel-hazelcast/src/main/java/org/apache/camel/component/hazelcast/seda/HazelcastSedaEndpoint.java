@@ -65,8 +65,4 @@ public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
         return configuration;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
 }

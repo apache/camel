@@ -75,11 +75,6 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
         super.doStop();
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public InfluxDB getInfluxDB() {
         return influxDB;
     }

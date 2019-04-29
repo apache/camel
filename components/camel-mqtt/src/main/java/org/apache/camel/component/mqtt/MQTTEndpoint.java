@@ -418,7 +418,4 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         consumers.remove(consumer);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
 }

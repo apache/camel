@@ -313,11 +313,6 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     protected void doStart() throws Exception {
         if (isDeleteJob() && isPauseJob()) {
             throw new IllegalArgumentException("Cannot have both options deleteJob and pauseJob enabled");

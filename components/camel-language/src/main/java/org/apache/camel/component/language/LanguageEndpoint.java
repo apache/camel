@@ -123,10 +123,6 @@ public class LanguageEndpoint extends ResourceEndpoint {
         return answer;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     protected String createEndpointUri() {
         String s = script;

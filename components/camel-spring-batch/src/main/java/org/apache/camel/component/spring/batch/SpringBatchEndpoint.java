@@ -82,14 +82,7 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Not supported");
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
+    }@Override
     protected void doStart() throws Exception {
         if (jobLauncher == null) {
             jobLauncher = resolveJobLauncher();

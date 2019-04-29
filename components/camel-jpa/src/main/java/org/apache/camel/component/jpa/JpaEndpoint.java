@@ -175,10 +175,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         }
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     protected String createEndpointUri() {
         return "jpa" + (entityType != null ? "://" + entityType.getName() : "");

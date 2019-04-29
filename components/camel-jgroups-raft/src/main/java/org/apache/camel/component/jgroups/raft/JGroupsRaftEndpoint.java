@@ -78,11 +78,6 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public Exchange createExchange() {
         Exchange exchange = super.createExchange();
         populateJGroupsRaftHeaders(exchange);

@@ -71,11 +71,6 @@ public class BeanEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("You cannot consume from a bean endpoint");
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public BeanProcessor getProcessor() {
         return processor;
     }

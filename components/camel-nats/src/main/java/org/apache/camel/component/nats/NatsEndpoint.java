@@ -61,11 +61,6 @@ public class NatsEndpoint extends DefaultEndpoint {
     public ExecutorService createExecutor() {
         return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "NatsTopic[" + configuration.getTopic() + "]", configuration.getPoolSize());
     }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
     
     public NatsConfiguration getNatsConfiguration() {
         return configuration;

@@ -88,11 +88,6 @@ public class XChangeEndpoint extends DefaultEndpoint {
         return producer;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public XChangeConfiguration getConfiguration() {
         return configuration;
     }

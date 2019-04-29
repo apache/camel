@@ -58,10 +58,6 @@ public class MQEndpoint extends ScheduledPollEndpoint {
         return new MQProducer(this);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     public void doStart() throws Exception {
         super.doStart();

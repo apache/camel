@@ -94,10 +94,6 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
         return consumer;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     protected void doStart() throws Exception {
         super.doStart();

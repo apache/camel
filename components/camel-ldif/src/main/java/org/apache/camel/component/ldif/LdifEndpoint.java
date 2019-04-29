@@ -50,11 +50,6 @@ public class LdifEndpoint extends DefaultEndpoint {
         return new LdifProducer(this, ldapConnectionName);
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public String getLdapConnectionName() {
         return ldapConnectionName;
     }

@@ -73,11 +73,6 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
         return new DrillProducer(this);
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public String toJDBCUri() {
         String url = "jdbc:drill:" + mode.name().toLowerCase() + "=" + host + ":" + port;
         if (mode.equals(DrillConnectionMode.ZK)) {

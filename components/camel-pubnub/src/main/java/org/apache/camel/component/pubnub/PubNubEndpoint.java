@@ -55,11 +55,6 @@ public class PubNubEndpoint extends DefaultEndpoint {
         return new PubNubConsumer(this, processor, configuration);
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public PubNubConfiguration getConfiguration() {
         return configuration;
     }

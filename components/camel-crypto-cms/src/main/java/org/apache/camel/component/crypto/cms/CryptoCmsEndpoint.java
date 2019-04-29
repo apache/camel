@@ -104,11 +104,6 @@ public class CryptoCmsEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Crypto CMS endpoints are not meant to be consumed from. They are meant be used as intermediate endpoints");
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public Object getManagedObject(CryptoCmsEndpoint endpoint) {
         return this;
     }

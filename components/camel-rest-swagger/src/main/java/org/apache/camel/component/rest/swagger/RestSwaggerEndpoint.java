@@ -233,11 +233,6 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public void setBasePath(final String basePath) {
         this.basePath = notEmpty(basePath, "basePath");
     }

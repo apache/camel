@@ -415,11 +415,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         this.purgeWhenStopping = purgeWhenStopping;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    /**
+/**
      * Returns the current pending exchanges
      */
     public List<Exchange> getExchanges() {

@@ -105,11 +105,6 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return true;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public AsyncHttpClient getClient() {
         return client;
     }

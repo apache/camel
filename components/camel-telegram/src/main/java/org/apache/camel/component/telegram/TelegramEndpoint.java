@@ -103,11 +103,6 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
         return Collections.singletonList("POST");
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public TelegramConfiguration getConfiguration() {
         return configuration;
     }

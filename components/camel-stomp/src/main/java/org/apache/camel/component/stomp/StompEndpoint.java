@@ -82,10 +82,6 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
         return new StompConsumer(this, processor);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     protected void doStart() throws Exception {
         final Promise<CallbackConnection> promise = new Promise<>();

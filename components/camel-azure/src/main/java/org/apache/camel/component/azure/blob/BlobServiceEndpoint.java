@@ -68,11 +68,7 @@ public class BlobServiceEndpoint extends DefaultEndpoint {
         return new BlobServiceProducer(this);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    public BlobServiceConfiguration getConfiguration() {
+public BlobServiceConfiguration getConfiguration() {
         return configuration;
     }
 

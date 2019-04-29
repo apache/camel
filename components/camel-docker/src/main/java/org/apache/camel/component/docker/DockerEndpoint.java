@@ -74,11 +74,6 @@ public class DockerEndpoint extends DefaultEndpoint {
             throw new DockerException(operation + " is not a valid consumer operation");
         }
     }
-    
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
 
     public DockerConfiguration getConfiguration() {
         return configuration;

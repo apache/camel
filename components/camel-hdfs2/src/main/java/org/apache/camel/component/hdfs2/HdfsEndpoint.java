@@ -55,11 +55,6 @@ public class HdfsEndpoint extends ScheduledPollEndpoint {
         return new HdfsProducer(this, config);
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public HdfsConfiguration getConfig() {
         return config;
     }

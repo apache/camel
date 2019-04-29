@@ -106,11 +106,6 @@ public class PahoEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public PahoComponent getComponent() {
         return (PahoComponent)super.getComponent();
     }

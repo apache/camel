@@ -63,11 +63,7 @@ public class GoogleBigQueryEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Cannot consume from the BigQuery endpoint: " + getEndpointUri());
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    public GoogleBigQueryConfiguration getConfiguration() {
+public GoogleBigQueryConfiguration getConfiguration() {
         return configuration;
     }
 

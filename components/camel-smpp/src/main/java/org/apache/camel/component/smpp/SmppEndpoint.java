@@ -45,10 +45,6 @@ public class SmppEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-    
     @Override
     protected String createEndpointUri() {
         return getConnectionString();

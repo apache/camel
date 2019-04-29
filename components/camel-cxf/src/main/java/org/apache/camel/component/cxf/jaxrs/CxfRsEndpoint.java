@@ -200,11 +200,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         }
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    /**
+/**
      * To use a custom CxfBinding to control the binding between Camel Message and CXF Message.
      */
     public void setBinding(CxfRsBinding binding) {

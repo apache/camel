@@ -71,10 +71,6 @@ public class IOTAEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("IOTAConsumer is not supported!");
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     protected void doStart() throws Exception {
         final URL u = new URL(url);

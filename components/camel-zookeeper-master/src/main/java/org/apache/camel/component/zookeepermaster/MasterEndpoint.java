@@ -82,10 +82,6 @@ public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint 
         return new MasterConsumer(this, processor);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     public boolean isLenientProperties() {
         // to allow properties to be propagated to the child endpoint

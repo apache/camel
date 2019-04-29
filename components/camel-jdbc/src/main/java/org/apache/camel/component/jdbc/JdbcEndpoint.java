@@ -73,10 +73,6 @@ public class JdbcEndpoint extends DefaultEndpoint {
         this.dataSource = dataSource;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Not supported");
     }

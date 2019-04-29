@@ -66,11 +66,7 @@ public class YammerEndpoint extends ScheduledPollEndpoint {
 
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    public YammerConfiguration getConfig() {
+public YammerConfiguration getConfig() {
         return config;
     }
 

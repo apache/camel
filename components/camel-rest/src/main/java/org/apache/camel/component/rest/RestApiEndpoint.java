@@ -273,11 +273,6 @@ public class RestApiEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public boolean isLenientProperties() {
         return true;
     }

@@ -77,11 +77,6 @@ public class GoogleSheetsStreamEndpoint extends ScheduledPollEndpoint {
         return configuration;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public Exchange createExchange(ValueRange valueRange) {
         Exchange exchange = super.createExchange(getExchangePattern());
         Message message = exchange.getIn();

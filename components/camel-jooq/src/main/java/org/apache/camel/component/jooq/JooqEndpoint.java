@@ -131,9 +131,4 @@ public class JooqEndpoint extends ScheduledPollEndpoint {
         return consumer;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
 }

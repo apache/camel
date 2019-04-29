@@ -82,11 +82,6 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     protected void doStop() throws Exception {
         synchronized (SOLVERS) {
             for (Solver<Object> solver : SOLVERS.values()) {

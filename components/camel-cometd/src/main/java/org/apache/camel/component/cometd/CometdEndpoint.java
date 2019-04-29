@@ -111,11 +111,7 @@ public class CometdEndpoint extends DefaultEndpoint {
         return component;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    public String getPath() {
+public String getPath() {
         return uri.getPath();
     }
 

@@ -73,9 +73,4 @@ public class GoraEndpoint extends DefaultEndpoint {
         return configuration;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
 }

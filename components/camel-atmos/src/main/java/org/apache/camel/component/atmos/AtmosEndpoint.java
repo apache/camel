@@ -101,7 +101,4 @@ public class AtmosEndpoint extends DefaultEndpoint {
         }
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
 }

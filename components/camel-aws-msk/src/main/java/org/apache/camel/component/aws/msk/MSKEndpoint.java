@@ -57,10 +57,6 @@ public class MSKEndpoint extends ScheduledPollEndpoint {
         return new MSKProducer(this);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     public void doStart() throws Exception {
         super.doStart();

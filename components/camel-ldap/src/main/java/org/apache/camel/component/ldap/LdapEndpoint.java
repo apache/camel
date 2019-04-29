@@ -64,11 +64,7 @@ public class LdapEndpoint extends DefaultEndpoint {
         return new LdapProducer(this, dirContextName, base, toSearchControlScope(scope), pageSize, returnedAttributes);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    public String getDirContextName() {
+public String getDirContextName() {
         return dirContextName;
     }
 

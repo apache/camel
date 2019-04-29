@@ -60,10 +60,6 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
         this.feedUri = feedUri;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("FeedProducer is not implemented");
     }

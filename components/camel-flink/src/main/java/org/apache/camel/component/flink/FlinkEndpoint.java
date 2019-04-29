@@ -82,11 +82,6 @@ public class FlinkEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public FlinkComponent getComponent() {
         return (FlinkComponent) super.getComponent();
     }

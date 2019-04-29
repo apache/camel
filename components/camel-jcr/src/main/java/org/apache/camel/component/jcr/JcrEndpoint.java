@@ -95,10 +95,6 @@ public class JcrEndpoint extends DefaultEndpoint {
         return new JcrProducer(this);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     protected void doStart() throws Exception {
         super.doStart();

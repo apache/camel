@@ -37,11 +37,6 @@ public abstract class AbstractEtcdEndpoint extends DefaultEndpoint implements Et
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public EtcdConfiguration getConfiguration() {
         return this.configuration;
     }

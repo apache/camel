@@ -68,11 +68,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
         return new CoAPConsumer(this, processor);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-    
-    public void setUri(URI u) {
+public void setUri(URI u) {
         uri = u;
     }
     

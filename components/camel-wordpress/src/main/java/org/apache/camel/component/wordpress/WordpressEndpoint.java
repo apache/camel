@@ -84,11 +84,7 @@ public class WordpressEndpoint extends DefaultEndpoint {
         this.operationDetail = operationDetail;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    public Producer createProducer() throws Exception {
+public Producer createProducer() throws Exception {
         switch (WordpressOperationType.valueOf(operation)) {
         case post:
             return new WordpressPostProducer(this);

@@ -103,10 +103,6 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         return sqsConsumer;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     protected void doStart() throws Exception {
         client = getConfiguration().getAmazonSQSClient() != null

@@ -73,10 +73,6 @@ public class ApnsEndpoint extends ScheduledPollEndpoint {
         return getApnsComponent().getApnsService();
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     protected Set<DefaultConsumer> getConsumers() {
         return consumers;
     }

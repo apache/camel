@@ -69,11 +69,6 @@ public class Mina2Endpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public boolean isMultipleConsumersSupported() {
         // only datagram should allow multiple consumers
         return configuration.isDatagramProtocol();

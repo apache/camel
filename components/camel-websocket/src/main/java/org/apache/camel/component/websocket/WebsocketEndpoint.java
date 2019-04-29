@@ -127,11 +127,6 @@ public class WebsocketEndpoint extends DefaultEndpoint {
         component.disconnect(producer);
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public URI getUri() {
         return uri;
     }
