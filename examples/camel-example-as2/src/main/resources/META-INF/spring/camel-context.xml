@@ -34,7 +34,7 @@
 		xmlns="http://camel.apache.org/schema/spring">
         <route id="server-route">
           <from
-              uri="as2://server/listen?requestUriPattern=/&amp;serverPortNumber=8888"/>
+              uri="as2://server/listen?requestUri=/&amp;serverPortNumber=8888"/>
           <to uri="bean:examine-as2-server-endpoint-exchange"/>
         </route>
         <route id="triger-clients-route">
