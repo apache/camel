@@ -178,6 +178,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     @Override
     public OnExceptionDefinition onException(Class<? extends Throwable> exceptionType) {
         getExceptionClasses().add(exceptionType);
+        getExceptions().add(exceptionType.getName());
         return this;
     }
 
