@@ -606,7 +606,7 @@ public class ValidateMojo extends AbstractExecMojo {
                 result = catalog.validateLanguagePredicate(null, "simple", detail.getSimple());
             } else {
                 getLog().debug("Validating simple expression: " + detail.getSimple());
-                result = catalog.validateLanguagePredicate(null, "simple", detail.getSimple());
+                result = catalog.validateLanguageExpression(null, "simple", detail.getSimple());
             }
             if (!result.isSuccess()) {
                 simpleErrors++;
