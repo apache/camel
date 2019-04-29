@@ -225,7 +225,7 @@ The annotation `org.apache.camel.language.Bean` has been moved to `org.apache.ca
 
 The annotation `org.apache.camel.language.Simple` has been moved to `org.apache.camel.language.simple.Simple`.
 
-The annotation `org.apache.camel.Constant` has been removed.
+The annotation `org.apache.camel.Constant` has been removed, use `@Simple` instead.
 
 The annotation `org.apache.camel.language.SpEL` has been moved to `org.apache.camel.language.spel.SpEL` and in the `camel-spring` JAR.
 
