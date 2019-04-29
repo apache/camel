@@ -52,7 +52,7 @@
             <transform>
                 <method ref="book-store" method="select"/>
             </transform>
-            <to uri="jooq://org.apache.camel.examples.jooq.db.tables.records.BookStoreRecord/fetch"/>
+            <to uri="jooq://org.apache.camel.examples.jooq.db.tables.records.BookStoreRecord?operation=fetch"/>
             <log message="Selected: ${body}"/>
         </route>
 

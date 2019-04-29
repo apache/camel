@@ -28,11 +28,11 @@ public class JooqConfiguration implements Cloneable {
     @UriPath(label = "common", description = "JOOQ entity class")
     private Class<?> entityType;
 
+    @UriParam(label = "producer", description = "Type of operation to execute on query", defaultValue = "NONE")
+    private JooqOperation operation = JooqOperation.NONE;
+
     @UriParam(label = "consumer", defaultValue = "true", description = "Delete entity after it is consumed")
     private boolean consumeDelete = true;
-
-    @UriPath(label = "producer", description = "Type of operation to execute on query", defaultValue = "NONE")
-    private JooqOperation operation = JooqOperation.NONE;
 
     @UriParam(label = "producer", description = "To execute plain SQL query")
     private String query;

@@ -473,7 +473,7 @@ Number of Components: 294 in 231 JAR artifacts (0 deprecated)
 `jolt:resourceUri` | 2.16 | The jolt component allows you to process a JSON messages using an JOLT specification (such as JSON-JSON transformation).
 
 | link:camel-jooq/src/main/docs/jooq-component.adoc[JOOQ] (camel-jooq) +
-`jooq:entityType/operation` | 3.0 | The jooq component enables you to store and retrieve entities from databases using JOOQ
+`jooq:entityType` | 3.0 | The jooq component enables you to store and retrieve entities from databases using JOOQ
 
 | link:camel-jpa/src/main/docs/jpa-component.adoc[JPA] (camel-jpa) +
 `jpa:entityType` | 1.0 | The jpa component enables you to store and retrieve Java objects from databases using JPA.
