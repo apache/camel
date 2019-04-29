@@ -68,8 +68,8 @@ public class CoAPEndpoint extends DefaultEndpoint {
         return new CoAPConsumer(this, processor);
     }
 
-public void setUri(URI u) {
-        uri = u;
+    public void setUri(URI u) {
+       uri = u;
     }
     
     /**
