@@ -86,10 +86,6 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return new SnsProducer(this);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     public void doStart() throws Exception {
         super.doStart();

@@ -78,11 +78,7 @@ public class Web3jEndpoint extends DefaultEndpoint {
         return web3j;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    private Web3j buildService(String clientAddress, Web3jConfiguration configuration) {
+private Web3j buildService(String clientAddress, Web3jConfiguration configuration) {
         LOG.info("Building service for endpoint: {}", clientAddress + configuration);
 
         if (configuration.getWeb3j() != null) {

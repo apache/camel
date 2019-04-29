@@ -116,11 +116,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         }
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    /**
+/**
      * creates an exchange for the given message
      *
      * @param pdu the pdu

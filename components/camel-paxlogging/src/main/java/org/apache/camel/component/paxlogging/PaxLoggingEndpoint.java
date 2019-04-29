@@ -69,7 +69,4 @@ public class PaxLoggingEndpoint extends DefaultEndpoint {
         return answer;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
 }

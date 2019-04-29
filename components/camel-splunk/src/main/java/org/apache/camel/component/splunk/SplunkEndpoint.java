@@ -73,10 +73,6 @@ public class SplunkEndpoint extends ScheduledPollEndpoint {
         throw new IllegalArgumentException("Cannot create any consumer with uri " + getEndpointUri() + ". A consumer type was not provided (or an incorrect pairing was used).");
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     protected void doStop() throws Exception {
         service = null;

@@ -48,11 +48,6 @@ public class DummyEndpoint extends DefaultEndpoint {
         return consumer;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public boolean isFailOnRestart() {
         return failOnRestart;
     }

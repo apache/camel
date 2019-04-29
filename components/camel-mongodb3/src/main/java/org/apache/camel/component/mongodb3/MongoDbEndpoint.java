@@ -193,11 +193,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         }
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    /**
+/**
      * Initialises the MongoDB connection using the Mongo object provided to the
      * endpoint
      * 

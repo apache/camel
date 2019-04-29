@@ -79,11 +79,7 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Cannot consume from this component");
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    public String getLanguage() {
+public String getLanguage() {
         return language;
     }
 

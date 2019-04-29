@@ -41,11 +41,6 @@ public abstract class AbstractAtomixClientEndpoint<T extends AbstractAtomixClien
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("Producer not supported");
     }

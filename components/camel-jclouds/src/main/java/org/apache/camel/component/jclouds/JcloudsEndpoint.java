@@ -33,11 +33,7 @@ public abstract class JcloudsEndpoint extends DefaultEndpoint {
         super(uri, component);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    public JcloudsConfiguration getConfiguration() {
+public JcloudsConfiguration getConfiguration() {
         return configuration;
     }
 

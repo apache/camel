@@ -117,11 +117,6 @@ public class SparkEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     protected void doStart() throws Exception {
         super.doStart();
 

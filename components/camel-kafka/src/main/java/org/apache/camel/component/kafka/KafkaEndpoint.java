@@ -86,11 +86,6 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public boolean isMultipleConsumersSupported() {
         return true;
     }

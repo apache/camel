@@ -55,11 +55,7 @@ public abstract class AbstractTwitterEndpoint extends DefaultPollingEndpoint imp
     }
 
     @ManagedAttribute
-    public boolean isSingleton() {
-        return true;
-    }
-
-    public TwitterConfiguration getProperties() {
+public TwitterConfiguration getProperties() {
         return properties;
     }
 

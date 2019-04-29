@@ -60,11 +60,6 @@ public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpo
         exchange.getIn().setHeader(AvroConstants.AVRO_MESSAGE_NAME, message.getName());
         return exchange;
     }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
     
     /**
      * Creates a new <a

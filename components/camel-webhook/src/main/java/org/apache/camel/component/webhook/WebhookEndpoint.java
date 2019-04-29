@@ -97,9 +97,4 @@ public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint
     public WebhookCapableEndpoint getEndpoint() {
         return delegateEndpoint;
     }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
 }

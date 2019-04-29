@@ -57,11 +57,6 @@ public class JSR356Endpoint extends DefaultEndpoint {
         return new JSR356Producer(this, sessionCount);
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public int getSessionCount() {
         return sessionCount;
     }

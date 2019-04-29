@@ -197,11 +197,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         return true;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    // Service Registration
+// Service Registration
     //-------------------------------------------------------------------------
 
     @Override

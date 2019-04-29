@@ -188,11 +188,6 @@ public class GoogleBigQueryProducer extends DefaultProducer {
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public GoogleBigQueryEndpoint getEndpoint() {
         return (GoogleBigQueryEndpoint) super.getEndpoint();
     }

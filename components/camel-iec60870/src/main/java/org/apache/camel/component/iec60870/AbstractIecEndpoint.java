@@ -101,9 +101,4 @@ public abstract class AbstractIecEndpoint<T extends AbstractConnectionMultiplexo
         return this.connection;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
 }

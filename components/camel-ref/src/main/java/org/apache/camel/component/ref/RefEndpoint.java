@@ -65,11 +65,6 @@ public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public Endpoint getEndpoint() {
         if (endpoint == null) {
             endpoint = CamelContextHelper.mandatoryLookup(getCamelContext(), name, Endpoint.class);

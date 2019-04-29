@@ -231,11 +231,6 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public Producer createProducer() throws Exception {
         if (getProducers().size() == 1 && getDisruptor().getProducerType() == DisruptorProducerType.Single) {
             throw new IllegalStateException(

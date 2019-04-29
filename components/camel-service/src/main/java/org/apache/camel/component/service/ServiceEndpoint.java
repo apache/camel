@@ -96,11 +96,6 @@ public class ServiceEndpoint extends DefaultEndpoint implements DelegateEndpoint
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public boolean isLenientProperties() {
         return true;
     } 

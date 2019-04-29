@@ -69,8 +69,4 @@ public class LuceneEndpoint extends DefaultEndpoint {
         this.config = config;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
 }

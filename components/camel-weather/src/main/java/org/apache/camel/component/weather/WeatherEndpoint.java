@@ -53,11 +53,6 @@ public class WeatherEndpoint extends DefaultPollingEndpoint {
         return new WeatherProducer(this, configuration.getQuery());
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public WeatherConfiguration getConfiguration() {
         return configuration;
     }

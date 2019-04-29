@@ -19,8 +19,8 @@ package org.apache.camel.component.bean;
 import org.apache.camel.Consume;
 import org.apache.camel.Header;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.language.bean.Bean;
 import org.apache.camel.language.Constant;
+import org.apache.camel.language.bean.Bean;
 
 /**
  * Consumer using bean binding with an injected expressions such as: @Bean, @Constant etc.

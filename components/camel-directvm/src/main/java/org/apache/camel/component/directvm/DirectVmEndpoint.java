@@ -75,11 +75,6 @@ public class DirectVmEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         return answer;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public DirectVmConsumer getConsumer() {
         return getComponent().getConsumer(this);
     }

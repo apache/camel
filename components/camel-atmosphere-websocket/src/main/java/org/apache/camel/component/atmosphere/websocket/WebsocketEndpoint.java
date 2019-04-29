@@ -69,11 +69,6 @@ public class WebsocketEndpoint extends ServletEndpoint {
         return websocketConsumer;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public boolean isSendToAll() {
         return sendToAll;
     }

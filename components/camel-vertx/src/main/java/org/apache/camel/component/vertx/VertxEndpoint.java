@@ -60,10 +60,6 @@ public class VertxEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mul
         return consumer;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     public boolean isMultipleConsumersSupported() {
         return true;

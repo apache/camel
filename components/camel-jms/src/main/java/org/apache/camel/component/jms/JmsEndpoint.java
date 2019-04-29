@@ -414,10 +414,6 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         this.configuration = configuration;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @ManagedAttribute
     public boolean isPubSubDomain() {
         return pubSubDomain;

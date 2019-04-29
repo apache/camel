@@ -51,11 +51,7 @@ public class HipchatEndpoint extends ScheduledPollEndpoint {
         return consumer;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    public HipchatConfiguration getConfiguration() {
+public HipchatConfiguration getConfiguration() {
         return configuration;
     }
 }

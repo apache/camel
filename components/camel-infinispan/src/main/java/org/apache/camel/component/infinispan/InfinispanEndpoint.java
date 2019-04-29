@@ -54,11 +54,6 @@ public class InfinispanEndpoint extends DefaultEndpoint {
         return new InfinispanConsumer(this, processor, cacheName, configuration);
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public String getCacheName() {
         return cacheName;
     }

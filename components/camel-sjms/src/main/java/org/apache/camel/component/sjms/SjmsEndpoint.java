@@ -252,11 +252,6 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
         return true;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     protected ConnectionResource createConnectionResource(Object source) {
         if (getConnectionFactory() == null) {
             throw new IllegalArgumentException(String.format("ConnectionResource or ConnectionFactory must be configured for %s", this));

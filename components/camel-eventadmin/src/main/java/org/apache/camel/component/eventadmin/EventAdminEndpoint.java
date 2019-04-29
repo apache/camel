@@ -74,10 +74,6 @@ public class EventAdminEndpoint extends DefaultEndpoint implements MultipleConsu
         return answer;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     public boolean isMultipleConsumersSupported() {
         return true;

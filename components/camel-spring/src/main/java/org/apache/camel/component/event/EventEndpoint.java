@@ -66,10 +66,6 @@ public class EventEndpoint extends DefaultEndpoint implements ApplicationContext
         this.name = name;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public Producer createProducer() throws Exception {
         ObjectHelper.notNull(applicationContext, "applicationContext");
         return new DefaultProducer(this) {

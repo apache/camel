@@ -85,11 +85,6 @@ public abstract class XmlSignatureEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("XML Signature endpoints are not meant to be consumed from.");
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public Object getManagedObject(XmlSignatureEndpoint endpoint) {
         return this;
     }

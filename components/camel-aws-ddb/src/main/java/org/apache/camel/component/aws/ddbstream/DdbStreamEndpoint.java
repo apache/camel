@@ -90,11 +90,6 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
         super.doStop();
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public DdbStreamConfiguration getConfiguration() {
         return configuration;
     }

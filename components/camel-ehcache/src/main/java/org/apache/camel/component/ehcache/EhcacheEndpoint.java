@@ -56,11 +56,6 @@ public class EhcacheEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     protected void doStart() throws Exception {
         cacheManager.start();
         super.doStart();

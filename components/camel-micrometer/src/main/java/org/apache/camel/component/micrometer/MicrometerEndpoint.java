@@ -81,11 +81,6 @@ public class MicrometerEndpoint extends DefaultEndpoint {
         }
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public MeterRegistry getRegistry() {
         return registry;
     }

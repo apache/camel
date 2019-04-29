@@ -101,7 +101,4 @@ public class DropboxEndpoint extends DefaultEndpoint {
         }
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
 }
