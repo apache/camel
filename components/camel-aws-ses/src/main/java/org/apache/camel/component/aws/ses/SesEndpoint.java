@@ -76,7 +76,7 @@ public class SesEndpoint extends DefaultEndpoint {
         return new SesProducer(this);
     }
 
-public SesConfiguration getConfiguration() {
+    public SesConfiguration getConfiguration() {
         return configuration;
     }
 
