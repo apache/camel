@@ -154,7 +154,7 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
     public void testGetGroupMembershipInfo() throws Exception {
         BoxGroupMembership.Info info = testGroup.addMembership(testUser, BoxGroupMembership.Role.MEMBER);
 
-        // using String message body for single parameter "groupMemebershipId"
+        // using String message body for single parameter "groupMembershipId"
         final com.box.sdk.BoxGroupMembership.Info result = requestBody("direct://GETGROUPMEMBERSHIPINFO", info.getID());
 
         assertNotNull("getGroupMembershipInfo result", result);
@@ -213,7 +213,7 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
 
                 // test route for getGroupMembershipInfo
                 from("direct://GETGROUPMEMBERSHIPINFO")
-                    .to("box://" + PATH_PREFIX + "/getGroupMembershipInfo?inBody=groupMemebershipId");
+                    .to("box://" + PATH_PREFIX + "/getGroupMembershipInfo?inBody=groupMembershipId");
 
                 // test route for getGroupMemberships
                 from("direct://GETGROUPMEMBERSHIPS")
