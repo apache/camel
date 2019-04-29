@@ -56,7 +56,7 @@ public class BonitaEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Consumer not supported");
     }
 
-public BonitaConfiguration getConfiguration() {
+    public BonitaConfiguration getConfiguration() {
         return configuration;
     }
 
