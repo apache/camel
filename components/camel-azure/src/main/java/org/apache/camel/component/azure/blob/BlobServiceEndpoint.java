@@ -68,7 +68,7 @@ public class BlobServiceEndpoint extends DefaultEndpoint {
         return new BlobServiceProducer(this);
     }
 
-public BlobServiceConfiguration getConfiguration() {
+    public BlobServiceConfiguration getConfiguration() {
         return configuration;
     }
 
