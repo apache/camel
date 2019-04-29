@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language;
+package org.apache.camel.language.spel;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -25,14 +25,15 @@ import java.lang.annotation.Target;
 import org.apache.camel.support.language.LanguageAnnotation;
 
 /**
- * Used to inject a constant expression into a field, property, method or parameter when using
- * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>.
- *
+ * An annotation for injection of Spring Expression Language (SpEL) expressions
+ * into method parameters, fields or properties.
+ * 
+ * In the context of Camel this annotation serves a similar purpose as Spring's <tt>@Value</tt> annotation.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
-@LanguageAnnotation(language = "constant")
-public @interface Constant {
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
+@LanguageAnnotation(language = "spel")
+public @interface SpEL {
     String value();
 }
