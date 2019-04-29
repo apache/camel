@@ -560,9 +560,9 @@ box:groups/endpoint?[options]
 
 |getGroupMemberships |memberships |groupId |java.uti.Collection
 
-|getGroupMembershipInfo |membershipInfo |groupMemebershipId |com.box.sdk.BoxGroup.Info
+|getGroupMembershipInfo |membershipInfo |groupMembershipId |com.box.sdk.BoxGroup.Info
 
-|updateGroupMembershipInfo |updateMembershipInfo |groupMemebershipId, info |com.box.sdk.BoxGroupMembership
+|updateGroupMembershipInfo |updateMembershipInfo |groupMembershipId, info |com.box.sdk.BoxGroupMembership
 |===
 
 URI Options for _groups_
