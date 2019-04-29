@@ -65,11 +65,11 @@ OGNL expression.
 
 |body |Object |the input body
 
-|in.body |Object |the input body
+|in.body |Object |*deprecated* the input body
 
 |body.*OGNL* |Object |the input body invoked using a Camel OGNL expression.
 
-|in.body.*OGNL* |Object |the input body invoked using a Camel OGNL expression.
+|in.body.*OGNL* |Object |*deprecated* the input body invoked using a Camel OGNL expression.
 
 |bodyAs(_type_) |Type |Converts the body to the given type determined by its
 classname. The converted body can be null.
@@ -84,7 +84,7 @@ classname, and expects the body to be not null.
 |mandatoryBodyAs(_type_).*OGNL* |Object |Converts the body to the given type determined by its
 classname and then invoke methods using a Camel OGNL expression.
 
-|out.body |Object |the output body
+|out.body |Object |*deprecated* the output body
 
 |header.foo |Object |refer to the input foo header
 
@@ -94,46 +94,46 @@ classname and then invoke methods using a Camel OGNL expression.
 
 |headers[foo] |Object |refer to the input foo header
 
-|in.header.foo |Object |refer to the input foo header
+|in.header.foo |Object |*deprecated* refer to the input foo header
 
-|in.header[foo] |Object |refer to the input foo header
+|in.header[foo] |Object |*deprecated* refer to the input foo header
 
-|in.headers.foo |Object |refer to the input foo header
+|in.headers.foo |Object |*deprecated* refer to the input foo header
 
-|in.headers[foo] |Object |refer to the input foo header
+|in.headers[foo] |Object |*deprecated* refer to the input foo header
 
 |header.foo[bar] |Object |regard input foo header as a map and perform lookup on the
 map with bar as key
 
-|in.header.foo[bar] |Object |regard input foo header as a map and perform lookup on the
+|in.header.foo[bar] |Object |*deprecated* regard input foo header as a map and perform lookup on the
 map with bar as key
 
-|in.headers.foo[bar] |Object |regard input foo header as a map and perform lookup on the
+|in.headers.foo[bar] |Object |*deprecated* regard input foo header as a map and perform lookup on the
 map with bar as key
 
 |header.foo.*OGNL* |Object |refer to the input foo header and invoke its value using a
 Camel OGNL expression.
 
-|in.header.foo.*OGNL* |Object |refer to the input foo header and invoke its value using a
+|in.header.foo.*OGNL* |Object |*deprecated* refer to the input foo header and invoke its value using a
 Camel OGNL expression.
 
-|in.headers.foo.*OGNL* |Object |refer to the input foo header and invoke its value using a
+|in.headers.foo.*OGNL* |Object |*deprecated* refer to the input foo header and invoke its value using a
 Camel OGNL expression.
 
-|out.header.foo |Object |refer to the out header foo
+|out.header.foo |Object |*deprecated* refer to the out header foo
 
-|out.header[foo] |Object |refer to the out header foo
+|out.header[foo] |Object |*deprecated* refer to the out header foo
 
-|out.headers.foo |Object |refer to the out header foo
+|out.headers.foo |Object |*deprecated* refer to the out header foo
 
-|out.headers[foo] |Object |refer to the out header foo
+|out.headers[foo] |Object |*deprecated* refer to the out header foo
 
 |headerAs(_key_,_type_) |Type |converts the header to the given type determined by its
 classname
 
 |headers |Map |refer to the input headers
 
-|in.headers |Map |refer to the input headers
+|in.headers |Map |*deprecated* refer to the input headers
 
 |exchangeProperty.foo |Object |refer to the foo property on the exchange
 
@@ -163,8 +163,7 @@ exceptions (`Exchange.EXCEPTION_CAUGHT`) if the Exchange has any.
 
 |date:_command_ |Date |evaluates to a Date object.
 Supported commands are: *now* for current timestamp, *in.header.xxx* or
-*header.xxx* to use the Date object in the IN header with the key xxx.
-*out.header.xxx* to use the Date object in the OUT header with the key xxx.
+*header.xxx* to use the Date object header with the key xxx.
 *exchangeProperty.xxx* to use the Date object in the exchange property with the key xxx.
 *file* for the last modified timestamp of the file (available with a File consumer).
 Command accepts offsets such as: *now-24h* or *in.header.xxx+1h* or even *now+1h30m-100*.
