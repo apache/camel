@@ -50,7 +50,7 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Cannot consume from an ElasticsearchEndpoint: " + getEndpointUri());
     }
     
-public RestClient getClient() {
+    public RestClient getClient() {
         return client;
     }
 }
