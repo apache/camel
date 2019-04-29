@@ -401,7 +401,9 @@ public class CoAPEndpoint extends DefaultEndpoint {
                 builder.setIdentity(privateKey, getKeystore().getCertificateChain(getAlias()));
             } else if (privateKey != null) {
                 builder.setIdentity(privateKey, publicKey);
-            } else if (pskStore != null) {
+            }
+
+            if (pskStore != null) {
                 builder.setPskStore(pskStore);
             }
 
