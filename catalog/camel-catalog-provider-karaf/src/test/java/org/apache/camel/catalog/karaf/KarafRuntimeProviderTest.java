@@ -85,6 +85,7 @@ public class KarafRuntimeProviderTest {
         assertNotNull(names);
         assertFalse(names.isEmpty());
 
+        assertTrue(names.contains("bean"));
         assertTrue(names.contains("simple"));
         assertTrue(names.contains("spel"));
         assertTrue(names.contains("xpath"));
