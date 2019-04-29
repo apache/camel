@@ -38,10 +38,10 @@ import org.apache.http.entity.ContentType;
 public class AS2Configuration {
 
     @UriPath
-    @Metadata(required = true)
+    @Metadata(required = true, enums = "client,server")
     private AS2ApiName apiName;
 
-    @UriParam
+    @UriPath
     @Metadata(required = true)
     private String methodName;
 

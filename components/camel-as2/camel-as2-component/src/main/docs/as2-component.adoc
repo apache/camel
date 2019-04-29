@@ -55,22 +55,23 @@ The AS2 component supports 2 options, which are listed below.
 The AS2 endpoint is configured using URI syntax:
 
 ----
-as2:apiName
+as2:apiName/methodName
 ----
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+==== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *apiName* | *Required* What kind of operation to perform |  | AS2ApiName
+| *methodName* | *Required* What sub operation to use for the selected operation |  | String
 |===
 
 
-==== Query Parameters (32 parameters):
+==== Query Parameters (31 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,7 +92,6 @@ with the following path and query parameters:
 | *from* (common) | The value of the From header of AS2 message. |  | String
 | *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
 | *mdnMessageTemplate* (common) | The template used to format MDN message |  | String
-| *methodName* (common) | *Required* What sub operation to use for the selected operation |  | String
 | *requestUri* (common) | The request URI of EDI message. | / | String
 | *server* (common) | The value included in the Server message header identifying the AS2 Server. | Camel AS2 Server Endpoint | String
 | *serverFqdn* (common) | The Server Fully Qualified Domain Name (FQDN). Used in message ids sent by endpoint. | camel.apache.org | String
