@@ -104,7 +104,7 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
         sendBodyAndHeader("direct:failedclientauth", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testCipherSuites() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

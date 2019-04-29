@@ -55,16 +55,16 @@ public class CoAPEndpoint extends DefaultEndpoint {
     private URI uri;
     @UriParam(label = "consumer")
     private String coapMethodRestrict;
-    
+
     @UriParam
     private KeyStoreParameters keyStoreParameters;
-    
+
     @UriParam
     private KeyStore keystore;
-    
+
     @UriParam
     private KeyStoreParameters trustStoreParameters;
-    
+
     @UriParam
     private KeyStore truststore;
 
@@ -82,17 +82,17 @@ public class CoAPEndpoint extends DefaultEndpoint {
 
     @UriParam
     private String alias;
-    
+
     @UriParam(label = "security", javaType = "java.lang.String", secret = true)
     private char[] password;
-    
+
     @UriParam
     private String cipherSuites;
-    
+
     private String[] configuredCipherSuites;
-    
+
     private String clientAuthentication;
-        
+
     private CoAPComponent component;
     
     public CoAPEndpoint(String uri, CoAPComponent component) {
@@ -138,9 +138,9 @@ public class CoAPEndpoint extends DefaultEndpoint {
     public CoapServer getCoapServer() {
         return component.getServer(getUri().getPort(), this);
     }
-    
+
     /**
-     * The KeyStoreParameters object to use with TLS to configure the keystore. Alternatively, a "keystore" 
+     * The KeyStoreParameters object to use with TLS to configure the keystore. Alternatively, a "keystore"
      * parameter can be directly configured instead. An alias and password should also be configured on the route definition.
      */
     public KeyStoreParameters getKeyStoreParameters() {
@@ -153,9 +153,9 @@ public class CoAPEndpoint extends DefaultEndpoint {
             this.keystore = keyStoreParameters.createKeyStore();
         }
     }
-    
+
     /**
-     * The KeyStoreParameters object to use with TLS to configure the truststore. Alternatively, a "truststore" 
+     * The KeyStoreParameters object to use with TLS to configure the truststore. Alternatively, a "truststore"
      * object can be directly configured instead. All certificates in the truststore are used to establish trust.
      */
     public KeyStoreParameters getTrustStoreParameters() {
@@ -168,7 +168,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
             this.truststore = trustStoreParameters.createKeyStore();
         }
     }
-    
+
     /**
      * Gets the TLS key store. Alternatively, a KeyStoreParameters object can be configured instead.
      * An alias and password should also be configured on the route definition.
@@ -184,7 +184,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
     public void setKeystore(KeyStore keystore) {
         this.keystore = keystore;
     }
-    
+
     /**
      * Gets the TLS trust store. Alternatively, a "trustStoreParameters" object can be configured instead.
      * All certificates in the truststore are used to establish trust.
@@ -200,7 +200,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
     public void setTruststore(KeyStore truststore) {
         this.truststore = truststore;
     }
-    
+
     /**
      * Gets the alias used to query the KeyStore for the private key and certificate.
      */
@@ -284,7 +284,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
     public void setPassword(char[] password) {
         this.password = password;
     }
-    
+
     /**
      * Gets the cipherSuites String. This is a comma separated String of ciphersuites to configure.
      */
@@ -301,12 +301,11 @@ public class CoAPEndpoint extends DefaultEndpoint {
             configuredCipherSuites = cipherSuites.split(",");
         }
     }
-    
+
     private String[] getConfiguredCipherSuites() {
         return configuredCipherSuites;
     }
-    
-    
+
     /**
      * Gets the configuration options for server-side client-authentication requirements. The value is
      * either null or one of NONE, WANT, REQUIRE.
@@ -318,23 +317,23 @@ public class CoAPEndpoint extends DefaultEndpoint {
     /**
      * Sets the configuration options for server-side client-authentication requirements.
      * The value must be one of NONE, WANT, REQUIRE.
-     * 
+     *
      * @param value the desired configuration options or {@code null} to use the defaults
      */
     public void setClientAuthentication(String clientAuthentication) {
         this.clientAuthentication = clientAuthentication;
     }
-    
+
     private boolean isClientAuthenticationRequired() {
-        return clientAuthentication != null 
+        return clientAuthentication != null
             && ClientAuthentication.valueOf(clientAuthentication) == ClientAuthentication.REQUIRE;
     }
-    
+
     private boolean isClientAuthenticationWanted() {
-        return clientAuthentication != null 
+        return clientAuthentication != null
             && ClientAuthentication.valueOf(clientAuthentication) == ClientAuthentication.WANT;
     }
-    
+
     private Certificate[] getTrustedCerts() throws KeyStoreException {
         if (truststore != null) {
             Enumeration<String> aliases = truststore.aliases();
@@ -352,7 +351,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
         
         return new Certificate[0];
     }
-    
+
     public static boolean enableTLS(URI uri) {
         return "coaps".equals(uri.getScheme());
     }
@@ -364,7 +363,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
             if (trustedRpkStore == null && getTruststore() == null && pskStore == null) {
                 throw new IllegalStateException("A truststore must be configured to use TLS");
             }
-            
+
             builder.setClientOnly();
         } else {
             if (privateKey == null && getKeystore() == null && pskStore == null) {
@@ -383,7 +382,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
                 && (getTruststore() == null && publicKey == null)) {
                 throw new IllegalStateException("A truststore must be configured to support TLS client authentication");
             }
-            
+
             builder.setAddress(address);
             builder.setClientAuthenticationRequired(isClientAuthenticationRequired());
             builder.setClientAuthenticationWanted(isClientAuthenticationWanted());
@@ -392,7 +391,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
         try {
             // Configure the identity if the keystore or privateKey parameter is specified
             if (getKeystore() != null) {
-                PrivateKey privateKey = 
+                PrivateKey privateKey =
                     (PrivateKey)getKeystore().getKey(getAlias(), getPassword());
                 builder.setIdentity(privateKey, getKeystore().getCertificateChain(getAlias()));
             } else if (privateKey != null) {

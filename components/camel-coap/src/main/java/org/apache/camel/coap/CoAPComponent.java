@@ -64,7 +64,7 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
             NetworkConfig config = NetworkConfig.createStandardWithoutFile();
             InetSocketAddress address = new InetSocketAddress(port);
             coapBuilder.setNetworkConfig(config);
-            
+
             // Configure TLS
             if (CoAPEndpoint.enableTLS(endpoint.getUri())) {
                 DTLSConnector connector = endpoint.createDTLSConnector(address, false);
@@ -75,7 +75,7 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
 
             server = new CoapServer();
             server.addEndpoint(coapBuilder.build());
-            
+
             servers.put(port, server);
             if (this.isStarted()) {
                 server.start();
