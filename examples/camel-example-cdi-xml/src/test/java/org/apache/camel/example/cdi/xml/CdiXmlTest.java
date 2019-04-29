@@ -66,7 +66,7 @@ public class CdiXmlTest {
 
         @Override
         public void configure() {
-            from("seda:rescue?multipleConsumers=true").routeId("rescue mission").to("mock:zion");
+            from("stub:rescue").routeId("rescue mission").to("mock:zion");
         }
     }
 
