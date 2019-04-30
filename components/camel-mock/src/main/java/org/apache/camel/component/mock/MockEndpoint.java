@@ -1509,7 +1509,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         return true;
     }
 
-public boolean isLenientProperties() {
+    public boolean isLenientProperties() {
         return true;
     }
 
