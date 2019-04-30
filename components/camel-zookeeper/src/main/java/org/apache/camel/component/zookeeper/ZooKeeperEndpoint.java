@@ -54,7 +54,7 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         return answer;
     }
 
-public void setConfiguration(ZooKeeperConfiguration configuration) {
+    public void setConfiguration(ZooKeeperConfiguration configuration) {
         this.configuration = configuration;
     }
 
