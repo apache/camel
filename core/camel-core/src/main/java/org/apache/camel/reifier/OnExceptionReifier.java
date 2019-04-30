@@ -17,12 +17,10 @@
 package org.apache.camel.reifier;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.Route;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -57,11 +55,6 @@ class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> {
         setOnRedeliveryFromRedeliveryRef(routeContext);
         setOnExceptionOccurredFromOnExceptionOccurredRef(routeContext);
 
-        // load exception classes
-        if (definition.getExceptions() != null && !definition.getExceptions().isEmpty()) {
-            definition.setExceptionClasses(createExceptionClasses(routeContext.getCamelContext().getClassResolver()));
-        }
-
         // must validate configuration before creating processor
         definition.validateConfiguration();
 
@@ -87,8 +80,9 @@ class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> {
     @Override
     public CatchProcessor createProcessor(RouteContext routeContext) throws Exception {
         // load exception classes
+        List<Class<? extends Throwable>> classes = null;
         if (definition.getExceptions() != null && !definition.getExceptions().isEmpty()) {
-            definition.setExceptionClasses(createExceptionClasses(routeContext.getCamelContext().getClassResolver()));
+            classes = createExceptionClasses(routeContext.getCamelContext().getClassResolver());
         }
 
         if (definition.getUseOriginalMessagePolicy() != null && definition.getUseOriginalMessagePolicy()) {
@@ -111,7 +105,7 @@ class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> {
             handle = definition.getHandled().createPredicate(routeContext);
         }
 
-        return new CatchProcessor(definition.getExceptionClasses(), childProcessor, when, handle);
+        return new CatchProcessor(classes, childProcessor, when, handle);
     }
 
     protected List<Class<? extends Throwable>> createExceptionClasses(ClassResolver resolver) throws ClassNotFoundException {
