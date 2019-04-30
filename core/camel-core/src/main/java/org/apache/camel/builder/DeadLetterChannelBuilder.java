@@ -21,7 +21,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.DeadLetterChannel;
+import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.FatalFallbackErrorHandler;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.CamelLogger;

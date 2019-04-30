@@ -24,7 +24,7 @@ import org.apache.camel.Message;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
+import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.Validator;

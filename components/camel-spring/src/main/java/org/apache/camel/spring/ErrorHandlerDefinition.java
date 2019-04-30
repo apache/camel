@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.model.IdentifiedType;
-import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.Metadata;
 
 /**

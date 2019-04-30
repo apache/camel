@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
 import org.junit.Test;
 
 public class InterceptSendToMockEndpointStrategyCustomTest extends ContextTestSupport {

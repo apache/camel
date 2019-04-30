@@ -36,7 +36,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.jetty.util.ssl.SslContextFactory;

@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
@@ -31,6 +32,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.impl.engine.EventDrivenConsumerRoute;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -85,10 +87,11 @@ public class DefaultRouteContext implements RouteContext {
     }
 
     public Endpoint getEndpoint() {
-        if (endpoint == null) {
-            endpoint = from.resolveEndpoint(this);
-        }
         return endpoint;
+    }
+
+    public void setEndpoint(Endpoint endpoint) {
+        this.endpoint = endpoint;
     }
 
     public FromDefinition getFrom() {
@@ -423,6 +426,16 @@ public class DefaultRouteContext implements RouteContext {
         }
         // default to true
         return true;
+    }
+
+    @Override
+    public Integer getStartupOrder() {
+        return route.getStartupOrder();
+    }
+
+    @Override
+    public ErrorHandlerFactory getErrorHandlerFactory() {
+        return route.getErrorHandlerBuilder();
     }
 
     public void setShutdownRoute(ShutdownRoute shutdownRoute) {

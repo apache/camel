@@ -48,10 +48,10 @@ public class TransformerBuilderTest extends TestSupport {
         assertNotNull(transformer);
         assertEquals(DataFormatTransformer.class, transformer.getClass());
         DataFormatTransformer dft = (DataFormatTransformer)transformer;
-        Field f = DataFormatTransformer.class.getDeclaredField("dataFormatType");
+        Field f = DataFormatTransformer.class.getDeclaredField("dataFormat");
         f.setAccessible(true);
-        Object dataFormatType = f.get(dft);
-        assertEquals(StringDataFormat.class, dataFormatType.getClass());
+        Object dataFormat = f.get(dft);
+        assertEquals(org.apache.camel.impl.engine.StringDataFormat.class, dataFormat.getClass());
     }
 
     @Test

@@ -33,8 +33,8 @@ import javax.inject.Named;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultCamelContextNameStrategy;
-import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
+import org.apache.camel.impl.engine.DefaultCamelContextNameStrategy;
+import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.support.DefaultRegistry;
 import org.slf4j.Logger;

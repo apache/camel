@@ -32,7 +32,7 @@ import org.apache.camel.cloud.ServiceExpressionFactory;
 import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.cloud.ServiceFilterAware;
 import org.apache.camel.cloud.ServiceLoadBalancer;
-import org.apache.camel.impl.TypedProcessorFactory;
+import org.apache.camel.impl.engine.TypedProcessorFactory;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.dozer;
 
-import org.apache.camel.impl.DefaultClassResolver;
+import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

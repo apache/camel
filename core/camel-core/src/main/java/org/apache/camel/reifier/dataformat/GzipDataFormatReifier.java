@@ -29,6 +29,6 @@ public class GzipDataFormatReifier extends DataFormatReifier<GzipDataFormat> {
 
     @Override
     protected DataFormat doCreateDataFormat(CamelContext camelContext) {
-        return new org.apache.camel.impl.GzipDataFormat();
+        return new org.apache.camel.impl.engine.GzipDataFormat();
     }
 }

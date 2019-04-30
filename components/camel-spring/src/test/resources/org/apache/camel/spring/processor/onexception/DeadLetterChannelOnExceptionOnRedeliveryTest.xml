@@ -34,7 +34,7 @@
         <property name="endpointUriIfNotSpecified" value="mock:error"/>
     </bean>
 
-    <bean id="redeliveryPolicy" class="org.apache.camel.processor.RedeliveryPolicy">
+    <bean id="redeliveryPolicy" class="org.apache.camel.processor.errorhandler.RedeliveryPolicy">
         <property name="maximumRedeliveries" value="5"/>
         <!-- go fast since its a unit test -->
         <property name="redeliveryDelay" value="0"/>

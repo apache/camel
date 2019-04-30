@@ -22,6 +22,8 @@ import java.util.concurrent.CountDownLatch;
 import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
+import org.apache.camel.impl.engine.DefaultAsyncProcessorAwaitManager;
+import org.apache.camel.impl.engine.DefaultMessageHistoryFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.support.DefaultExchange;
@@ -145,6 +147,11 @@ public class DefaultAsyncProcessorAwaitManagerTest {
         @Override
         public String getDescriptionText() {
             return this.getClass().getCanonicalName();
+        }
+
+        @Override
+        public NamedNode getParent() {
+            return null;
         }
 
         public MockNamedNode withId(String id) {

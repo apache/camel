@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultRoute;
+import org.apache.camel.impl.engine.DefaultRoute;
 import org.assertj.core.api.Condition;
 import org.junit.Test;
 import org.junit.runner.RunWith;

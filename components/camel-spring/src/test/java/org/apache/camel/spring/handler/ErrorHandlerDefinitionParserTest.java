@@ -19,7 +19,7 @@ package org.apache.camel.spring.handler;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
-import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 import org.apache.camel.util.IOHelper;
 import org.junit.After;

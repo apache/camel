@@ -21,8 +21,8 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedErrorHandlerMBean;
-import org.apache.camel.processor.ErrorHandlerSupport;
-import org.apache.camel.processor.RedeliveryErrorHandler;
+import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
+import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteContext;
 

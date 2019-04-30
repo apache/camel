@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.impl.engine.AbstractDynamicRegistry;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.reifier.transformer.TransformerReifier;

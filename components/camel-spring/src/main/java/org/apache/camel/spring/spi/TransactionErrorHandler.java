@@ -16,7 +16,6 @@
  */
 package org.apache.camel.spring.spi;
 
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.AsyncCallback;
@@ -26,8 +25,8 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.processor.RedeliveryErrorHandler;
-import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.AsyncProcessorSupport;

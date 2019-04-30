@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultComponentResolver;
+import org.apache.camel.impl.engine.DefaultComponentResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;

@@ -27,7 +27,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultConsumerCache;
+import org.apache.camel.impl.engine.DefaultConsumerCache;
 import org.junit.Test;
 
 public class ManagedConsumerCacheTest extends ManagementTestSupport {

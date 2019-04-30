@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Act as a message source as input to a route
@@ -62,14 +61,6 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
     @Override
     public String getLabel() {
         return description(getUri(), getEndpoint());
-    }
-
-    public Endpoint resolveEndpoint(RouteContext context) {
-        if (endpoint == null) {
-            return context.resolveEndpoint(getUri());
-        } else {
-            return endpoint;
-        }
     }
 
     @Override

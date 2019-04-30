@@ -58,7 +58,7 @@
         <property name="redeliveryPolicy" ref="myPolicy"/>
     </bean>
     <!-- and let it try to redeliver up till 4 times -->
-    <bean id="myPolicy" class="org.apache.camel.processor.RedeliveryPolicy">
+    <bean id="myPolicy" class="org.apache.camel.processor.errorhandler.RedeliveryPolicy">
         <property name="maximumRedeliveries" value="4"/>
     </bean>
     <!-- END SNIPPET: e3 -->

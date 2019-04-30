@@ -20,9 +20,9 @@ import java.util.List;
 
 import org.apache.camel.Channel;
 import org.apache.camel.Route;
-import org.apache.camel.impl.EventDrivenConsumerRoute;
-import org.apache.camel.processor.DeadLetterChannel;
-import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.impl.engine.EventDrivenConsumerRoute;
+import org.apache.camel.processor.errorhandler.DeadLetterChannel;
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.Test;

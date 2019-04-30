@@ -19,7 +19,7 @@ package org.apache.camel.spring.boot;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.SupervisingRouteController;
+import org.apache.camel.impl.engine.SupervisingRouteController;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.util.backoff.BackOff;
 import org.junit.Assert;

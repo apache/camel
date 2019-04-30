@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.impl.engine.DefaultInflightRepository;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Test;

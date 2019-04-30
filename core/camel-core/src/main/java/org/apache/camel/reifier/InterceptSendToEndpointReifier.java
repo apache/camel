@@ -21,7 +21,7 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultInterceptSendToEndpoint;
+import org.apache.camel.impl.engine.DefaultInterceptSendToEndpoint;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;

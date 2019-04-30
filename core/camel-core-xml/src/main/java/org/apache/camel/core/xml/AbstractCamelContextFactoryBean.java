@@ -49,7 +49,7 @@ import org.apache.camel.component.properties.PropertiesResolver;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.health.HealthCheckService;
-import org.apache.camel.impl.DefaultManagementStrategy;
+import org.apache.camel.impl.engine.DefaultManagementStrategy;
 import org.apache.camel.model.ContextScanDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.GlobalOptionsDefinition;

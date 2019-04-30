@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
+import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.support.EndpointHelper;

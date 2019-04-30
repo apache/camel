@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.impl.engine.LimitedPollingConsumerPollStrategy;
 import org.apache.camel.support.service.ServiceHelper;
 import org.junit.Test;
 

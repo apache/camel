@@ -27,7 +27,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultProducerTemplate;
+import org.apache.camel.impl.engine.DefaultProducerTemplate;
 import org.junit.Test;
 
 public class SedaConcurrentTest extends ContextTestSupport {

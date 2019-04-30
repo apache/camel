@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.ConsumerTemplate;
-import org.apache.camel.impl.DefaultConsumerTemplate;
+import org.apache.camel.impl.engine.DefaultConsumerTemplate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceHelper;
 

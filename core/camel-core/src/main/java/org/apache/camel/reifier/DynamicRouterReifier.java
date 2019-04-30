@@ -46,7 +46,7 @@ class DynamicRouterReifier extends ExpressionReifier<DynamicRouterDefinition<?>>
         }
 
         // and wrap this in an error handler
-        ErrorHandlerFactory builder = ((RouteDefinition) routeContext.getRoute()).getErrorHandlerBuilder();
+        ErrorHandlerFactory builder = routeContext.getErrorHandlerFactory();
         // create error handler (create error handler directly to keep it light weight,
         // instead of using ProcessorDefinition.wrapInErrorHandler)
         AsyncProcessor errorHandler = (AsyncProcessor) builder.createErrorHandler(routeContext, dynamicRouter.newRoutingSlipProcessorForErrorHandler());

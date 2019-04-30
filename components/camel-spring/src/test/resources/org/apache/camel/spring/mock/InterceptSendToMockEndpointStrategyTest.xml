@@ -28,7 +28,7 @@
     <import resource="camel-route.xml"/>
 
     <!-- bean which enables mocking all endpoints -->
-    <bean id="mockAllEndpoints" class="org.apache.camel.impl.InterceptSendToMockEndpointStrategy"/>
+    <bean id="mockAllEndpoints" class="org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy"/>
     <!-- end::e1[] -->
     <!-- END SNIPPET: e1 -->
 

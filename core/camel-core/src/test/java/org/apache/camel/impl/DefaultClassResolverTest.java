@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.io.InputStream;
 import java.net.URL;
 
+import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.junit.Assert;
 import org.junit.Test;
 

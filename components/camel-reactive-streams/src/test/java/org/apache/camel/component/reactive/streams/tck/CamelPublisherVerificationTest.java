@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultShutdownStrategy;
+import org.apache.camel.impl.engine.DefaultShutdownStrategy;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;

@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -43,26 +42,6 @@ public class OptimisticLockRetryPolicyDefinition {
     private Boolean randomBackOff;
 
     public OptimisticLockRetryPolicyDefinition() {
-    }
-
-    public OptimisticLockRetryPolicy createOptimisticLockRetryPolicy() {
-        OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
-        if (maximumRetries != null) {
-            policy.setMaximumRetries(maximumRetries);
-        }
-        if (retryDelay != null) {
-            policy.setRetryDelay(retryDelay);
-        }
-        if (maximumRetryDelay != null) {
-            policy.setMaximumRetryDelay(maximumRetryDelay);
-        }
-        if (exponentialBackOff != null) {
-            policy.setExponentialBackOff(exponentialBackOff);
-        }
-        if (randomBackOff != null) {
-            policy.setRandomBackOff(randomBackOff);
-        }
-        return policy;
     }
 
     /**

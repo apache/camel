@@ -20,6 +20,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.transformer.DataFormatTransformer;
 import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
+import org.apache.camel.reifier.dataformat.DataFormatReifier;
+import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Transformer;
 
 class DataFormatTransformeReifier extends TransformerReifier<DataFormatTransformerDefinition> {
@@ -30,9 +32,9 @@ class DataFormatTransformeReifier extends TransformerReifier<DataFormatTransform
 
     @Override
     protected Transformer doCreateTransformer(CamelContext context) {
+        DataFormat dataFormat = DataFormatReifier.getDataFormat(context, definition.getDataFormatType(), definition.getRef());
         return new DataFormatTransformer(context)
-                .setDataFormatType(definition.getDataFormatType())
-                .setDataFormatRef(definition.getRef())
+                .setDataFormat(dataFormat)
                 .setModel(definition.getScheme())
                 .setFrom(definition.getFromType())
                 .setTo(definition.getToType());

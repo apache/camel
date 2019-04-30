@@ -104,6 +104,10 @@
                         <id>generate</id>
                         <goals>
                             <goal>generate-jaxb-list</goal>
+                            <goal>generate-eips-list</goal>
+                            <goal>generate-components-list</goal>
+                            <goal>generate-dataformats-list</goal>
+                            <goal>generate-languages-list</goal>
                         </goals>
                         <phase>process-classes</phase>
                     </execution>

@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.jbpm.JBPMConstants;
-import org.apache.camel.impl.DefaultHeadersMapFactory;
+import org.apache.camel.impl.engine.DefaultHeadersMapFactory;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.drools.core.process.instance.impl.WorkItemImpl;
 import org.jbpm.process.workitem.core.TestWorkItemManager;

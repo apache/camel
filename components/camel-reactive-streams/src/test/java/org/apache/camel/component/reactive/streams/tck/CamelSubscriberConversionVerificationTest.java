@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultShutdownStrategy;
+import org.apache.camel.impl.engine.DefaultShutdownStrategy;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.tck.SubscriberBlackboxVerification;
 import org.reactivestreams.tck.TestEnvironment;

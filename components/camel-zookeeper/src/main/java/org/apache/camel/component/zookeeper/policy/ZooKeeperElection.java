@@ -34,7 +34,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.zookeeper.SequenceComparator;
 import org.apache.camel.component.zookeeper.ZooKeeperEndpoint;
 import org.apache.camel.component.zookeeper.ZooKeeperMessage;
-import org.apache.camel.impl.JavaUuidGenerator;
+import org.apache.camel.impl.engine.JavaUuidGenerator;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.zookeeper.CreateMode;
 import org.slf4j.Logger;

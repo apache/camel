@@ -16,7 +16,7 @@
  */
 package org.apache.camel.test;
 
-import org.apache.camel.impl.DefaultNodeIdFactory;
+import org.apache.camel.impl.engine.DefaultNodeIdFactory;
 
 public class TestSupportNodeIdFactory extends DefaultNodeIdFactory {
 

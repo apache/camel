@@ -41,7 +41,7 @@
     <bean id="myRouteBuilder" class="org.apache.camel.itest.jms.JmsConsumerShutdownTest$MyRouteBuilder"/>
 
     <!-- Set short timeout  -->
-    <bean id="shutdownStrategy" class="org.apache.camel.impl.DefaultShutdownStrategy">
+    <bean id="shutdownStrategy" class="org.apache.camel.impl.engine.DefaultShutdownStrategy">
         <!-- Wait up to 1 sec for each message in queue to finish -->
         <property name="timeout" value="1"/>
         <property name="timeUnit">

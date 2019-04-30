@@ -17,7 +17,7 @@
 package org.apache.camel.component.hystrix.processor;
 
 import org.apache.camel.Processor;
-import org.apache.camel.impl.TypedProcessorFactory;
+import org.apache.camel.impl.engine.TypedProcessorFactory;
 import org.apache.camel.model.HystrixDefinition;
 import org.apache.camel.spi.RouteContext;
 

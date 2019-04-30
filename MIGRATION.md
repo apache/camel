@@ -70,7 +70,7 @@ The classes from `org.apache.camel.impl` that was intended to support Camel deve
 Migrating custom languages
 --------------------------
 
-The `LanguageAnnotation` annotation class has been moved from packge `org.apache.camel.language` to `org.apache.camel.support.language`.
+The `LanguageAnnotation` annotation class has been moved from package `org.apache.camel.language` to `org.apache.camel.support.language`.
 
 Deprecated APIs and Components
 ------------------------------
@@ -161,7 +161,7 @@ The uri attribute has been deprecated, instead use value, which allows a shortha
 ### Routes with multiple inputs
 
 In Camel 2.x you could have 2 or more inputs to Camel routes, however this was not supported in all use-cases in Camel, and this functionality is seldom in use. This has
-also been deprecated in Camel 2.x. In Camel 3 we have removed the remaining code for specifying multipe inputs to routes, and its now only possible to specify exactly only 1 input to a route.
+also been deprecated in Camel 2.x. In Camel 3 we have removed the remaining code for specifying multiple inputs to routes, and its now only possible to specify exactly only 1 input to a route.
 
 ### JSon DataFormat
 
@@ -193,7 +193,7 @@ The class `SimpleRegistry` is moved from `org.apache.camel.impl` to `org.apache.
 
 The class `CompositeRegistry` and `PropertyPlaceholderDelegateRegistry` has been deleted. Instead use `DefaultRegistry`.
 
-The classes from `org.apache.camel.impl` that was intended to support Camel developers building custom components has been moved out of `camel-core` into `camel-support` into the `org.apache.camel.support` package. If you have built custom Camel components that may have used some of these APIs you would then need to migrate.
+The classes from `org.apache.camel.impl` that was intended to support Camel developers building custom components has been moved out of `camel-core` into `camel-support` into the `org.apache.camel.support` package. If you have built custom Camel components that may have used some of these APIs you would then need to migrate.  A large part of classes from the `org.apache.camel.impl` package have been moved to the `org.apache.camel.impl.engine` package in `camel-base`.
 
 All the classes in `org.apache.camel.util.component` has been moved from the camel-core JAR to the package `org.apache.camel.support.component` in the `camel-support` JAR.
 

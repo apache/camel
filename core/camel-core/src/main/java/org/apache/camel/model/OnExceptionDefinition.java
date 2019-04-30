@@ -36,6 +36,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
@@ -362,7 +363,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     /**
      * Allow synchronous delayed redelivery.
      *
-     * @see org.apache.camel.processor.RedeliveryPolicy#setAsyncDelayedRedelivery(boolean)
+     * @see RedeliveryPolicy#setAsyncDelayedRedelivery(boolean)
      * @return the builder
      */
     public OnExceptionDefinition asyncDelayedRedelivery() {
@@ -619,7 +620,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     /**
-     * Sets a reference to a {@link org.apache.camel.processor.RedeliveryPolicy} to lookup in the {@link org.apache.camel.spi.Registry} to be used.
+     * Sets a reference to a {@link RedeliveryPolicy} to lookup in the {@link org.apache.camel.spi.Registry} to be used.
      *
      * @param redeliveryPolicyRef reference to use for lookup
      * @return the builder
