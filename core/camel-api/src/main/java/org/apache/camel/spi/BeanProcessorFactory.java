@@ -54,6 +54,6 @@ public interface BeanProcessorFactory {
      * @return the created processor
      * @throws Exception is thrown if error creating the processor
      */
-    public Processor createBeanProcessor(CamelContext camelContext, Object bean, String beanType, Class<?> beanClass, String ref,
+    Processor createBeanProcessor(CamelContext camelContext, Object bean, String beanType, Class<?> beanClass, String ref,
                                          String method, boolean cacheBean) throws Exception;
 }
