@@ -69,7 +69,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
 
     public void setUri(URI u) {
-       uri = u;
+        uri = u;
     }
     
     /**
