@@ -209,7 +209,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         super(endpointUri, component);
     }
 
-public abstract GenericFileConsumer<T> createConsumer(Processor processor) throws Exception;
+    public abstract GenericFileConsumer<T> createConsumer(Processor processor) throws Exception;
 
     public abstract GenericFileProducer<T> createProducer() throws Exception;
 
