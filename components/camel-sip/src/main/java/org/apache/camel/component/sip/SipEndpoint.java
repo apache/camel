@@ -53,7 +53,7 @@ public class SipEndpoint extends DefaultEndpoint {
         return new SipPublisher(this, configuration);
     }
     
-public SipConfiguration getConfiguration() {
+    public SipConfiguration getConfiguration() {
         return configuration;
     }
 
