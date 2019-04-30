@@ -26,7 +26,7 @@ public class TestPojo {
     @MagicAnnotation("Changed Value")
     private String testValue = "Initial Value";
 
-    @Produce(uri = "mock:foo")
+    @Produce("mock:foo")
     private ProducerTemplate producer;
 
     public String getTestValue() {

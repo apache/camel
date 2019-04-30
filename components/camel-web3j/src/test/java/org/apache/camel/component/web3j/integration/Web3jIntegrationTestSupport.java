@@ -25,10 +25,10 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 public class Web3jIntegrationTestSupport extends CamelTestSupport {
 
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint mockResult;
 
-    @EndpointInject(uri = "mock:error")
+    @EndpointInject("mock:error")
     protected MockEndpoint mockError;
 
     public Web3jIntegrationTestSupport() {

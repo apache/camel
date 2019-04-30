@@ -32,7 +32,7 @@ public class SqsExtendMessageVisibilityTest extends CamelTestSupport {
     private static final int TIMEOUT = 4; // 4 seconds.
     private static final String RECEIPT_HANDLE = "0NNAq8PwvXsyZkR6yu4nQ07FGxNmOBWi5";
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
     
     private AmazonSQSClientMock clientMock;

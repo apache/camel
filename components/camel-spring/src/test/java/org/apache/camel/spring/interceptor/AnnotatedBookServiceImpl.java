@@ -35,7 +35,7 @@ public class AnnotatedBookServiceImpl implements AnnotatedBookStore {
     @Autowired
     private DataSource dataSource;
 
-    @EndpointInject(uri = "seda:book")
+    @EndpointInject("seda:book")
     private ProducerTemplate template;
 
     public void orderBook(String title) throws Exception {

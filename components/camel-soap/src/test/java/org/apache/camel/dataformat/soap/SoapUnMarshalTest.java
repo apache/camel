@@ -39,10 +39,10 @@ public class SoapUnMarshalTest extends CamelTestSupport {
     private static final String SERVICE_PACKAGE = GetCustomersByName.class
             .getPackage().getName();
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate producer;
 
     @Test

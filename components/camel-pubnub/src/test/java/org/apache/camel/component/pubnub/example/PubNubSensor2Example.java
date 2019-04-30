@@ -81,7 +81,7 @@ public final class PubNubSensor2Example {
         }
 
         public static class DataProcessorBean {
-            @EndpointInject(uri = "pubnub:iot?uuid=master&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY)
+            @EndpointInject("pubnub:iot?uuid=master&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY)
             private static ProducerTemplate template;
 
             public static String getUnicastChannelOfDevice() {

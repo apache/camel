@@ -33,7 +33,7 @@ public class JcrGetNodeByIdTest extends JcrRouteTestSupport {
     public static final Boolean APPROVED = true;
     private String identifier;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
     @Override

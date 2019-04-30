@@ -23,7 +23,7 @@ import org.apache.camel.Consume;
 public class MyMultiArgumentService implements MyMultiArgumentServiceInterface {
 
     @Override
-    @Consume(uri = "direct:myargs")
+    @Consume("direct:myargs")
     public void doSomething(String arg1, String arg2, Long arg3) {
         assertEquals("Hello World 1", arg1);
         assertEquals("Hello World 2", arg2);

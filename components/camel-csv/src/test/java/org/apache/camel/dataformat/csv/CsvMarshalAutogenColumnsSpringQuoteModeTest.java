@@ -34,10 +34,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CsvMarshalAutogenColumnsSpringQuoteModeTest extends CamelSpringTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    @EndpointInject(uri = "mock:result2")
+    @EndpointInject("mock:result2")
     private MockEndpoint result2;
 
     @Test

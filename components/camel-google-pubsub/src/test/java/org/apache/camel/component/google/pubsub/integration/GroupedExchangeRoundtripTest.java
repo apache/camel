@@ -50,7 +50,7 @@ public class GroupedExchangeRoundtripTest extends PubsubTestSupport {
     @EndpointInject("mock:receiveResult")
     private MockEndpoint receiveResult;
 
-    @Produce(uri = "direct:aggregator")
+    @Produce("direct:aggregator")
     private ProducerTemplate producer;
 
     @BeforeClass

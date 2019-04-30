@@ -20,7 +20,7 @@ import org.apache.camel.Produce;
 
 public class MyMultiArgument {
 
-    @Produce(uri = "direct:myargs", binding = false)
+    @Produce(value = "direct:myargs", binding = false)
     MyMultiArgumentServiceInterface myMultiArgumentServiceInterface;
 
     public void doSomethingMultiple() {

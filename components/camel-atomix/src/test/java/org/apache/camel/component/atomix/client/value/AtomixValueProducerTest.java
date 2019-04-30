@@ -35,7 +35,7 @@ public class AtomixValueProducerTest extends AtomixClientTestSupport {
     private static final String VALUE_NAME = UUID.randomUUID().toString();
     private DistributedValue<Object> value;
 
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     private FluentProducerTemplate fluent;
 
     // ************************************

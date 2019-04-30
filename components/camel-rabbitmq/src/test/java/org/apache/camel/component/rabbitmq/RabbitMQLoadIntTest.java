@@ -41,18 +41,18 @@ public class RabbitMQLoadIntTest extends AbstractRabbitMQIntTest {
     private static final int CONSUMER_COUNT = 10;
     private static final int MESSAGE_COUNT = 100;
     
-    @Produce(uri = "direct:rabbitMQ")
+    @Produce("direct:rabbitMQ")
     protected ProducerTemplate directProducer;
 
-    @EndpointInject(uri = "rabbitmq:localhost:5672/ex4?username=cameltest&password=cameltest"
+    @EndpointInject("rabbitmq:localhost:5672/ex4?username=cameltest&password=cameltest"
                           + "&queue=q4&routingKey=" + ROUTING_KEY + "&threadPoolSize=" + (CONSUMER_COUNT + 5)
                           + "&concurrentConsumers=" + CONSUMER_COUNT)
     private Endpoint rabbitMQEndpoint;
 
-    @EndpointInject(uri = "mock:producing")
+    @EndpointInject("mock:producing")
     private MockEndpoint producingMockEndpoint;
 
-    @EndpointInject(uri = "mock:consuming")
+    @EndpointInject("mock:consuming")
     private MockEndpoint consumingMockEndpoint;
 
     @Override

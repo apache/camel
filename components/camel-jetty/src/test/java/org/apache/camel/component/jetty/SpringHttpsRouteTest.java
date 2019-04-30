@@ -56,7 +56,7 @@ public class SpringHttpsRouteTest {
     protected transient Logger log = LoggerFactory.getLogger(TestSupport.class);
 
 
-    @EndpointInject(uri = "mock:a")
+    @EndpointInject("mock:a")
     MockEndpoint mockEndpoint;
     
     @Produce

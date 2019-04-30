@@ -37,7 +37,7 @@ public class DirectMessageProducerTest extends CamelTwitterTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DirectMessageProducerTest.class);
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     @Test

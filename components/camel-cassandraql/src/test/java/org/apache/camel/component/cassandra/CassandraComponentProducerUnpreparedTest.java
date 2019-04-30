@@ -43,10 +43,10 @@ public class CassandraComponentProducerUnpreparedTest extends BaseCassandraTest 
     @Rule
     public CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit();
 
-    @Produce(uri = "direct:input")
+    @Produce("direct:input")
     ProducerTemplate producerTemplate;
 
-    @Produce(uri = "direct:inputNoParameter")
+    @Produce("direct:inputNoParameter")
     ProducerTemplate noParameterProducerTemplate;
 
     @Override

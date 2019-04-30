@@ -57,13 +57,13 @@ public class BindySimpleFixedLengthObjectMarshallTest extends AbstractJUnit4Spri
 
     private String expected;
 
-    @Produce(uri = URI_DIRECT_START)
+    @Produce(URI_DIRECT_START)
     private ProducerTemplate template;
 
-    @EndpointInject(uri = URI_MOCK_RESULT)
+    @EndpointInject(URI_MOCK_RESULT)
     private MockEndpoint result;
 
-    @EndpointInject(uri = URI_MOCK_ERROR)
+    @EndpointInject(URI_MOCK_ERROR)
     private MockEndpoint error;
 
     public static class Configuration extends SingleRouteCamelConfiguration {

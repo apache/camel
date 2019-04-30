@@ -32,7 +32,7 @@ public class MyListenerService implements MyListener {
         LOG.debug("Instantiated service: " + this);
     }
     
-    @Consume(uri = "direct:end")
+    @Consume("direct:end")
     public String greet(Map<String, Object> headers, String name) {
         return headers.get("greeter") + name;
     }

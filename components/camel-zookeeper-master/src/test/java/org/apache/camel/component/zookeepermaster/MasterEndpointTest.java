@@ -47,10 +47,10 @@ public class MasterEndpointTest extends AbstractJUnit4SpringContextTests {
     @Autowired
     protected CamelContext camelContext;
 
-    @EndpointInject(uri = "mock:results")
+    @EndpointInject("mock:results")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "seda:bar")
+    @Produce("seda:bar")
     protected ProducerTemplate template;
 
     // Yeah this sucks.. why does the spring context not get shutdown

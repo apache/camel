@@ -44,16 +44,16 @@ public class MllpTcpClientProducerIdleConnectionTimeoutTest extends CamelTestSup
     @Rule
     public MllpServerResource mllpServer = new MllpServerResource("localhost", AvailablePortFinder.getNextAvailable());
 
-    @EndpointInject(uri = "direct://source")
+    @EndpointInject("direct://source")
     ProducerTemplate source;
 
-    @EndpointInject(uri = "mock://complete")
+    @EndpointInject("mock://complete")
     MockEndpoint complete;
 
-    @EndpointInject(uri = "mock://write-ex")
+    @EndpointInject("mock://write-ex")
     MockEndpoint writeEx;
 
-    @EndpointInject(uri = "mock://receive-ex")
+    @EndpointInject("mock://receive-ex")
     MockEndpoint receiveEx;
 
     @Override

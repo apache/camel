@@ -27,13 +27,13 @@ import org.junit.Test;
 
 public class IntercepFromAndStrategyTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
     
-    @EndpointInject(uri = "mock:intercepted")
+    @EndpointInject("mock:intercepted")
     protected MockEndpoint interceptedEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     @Test

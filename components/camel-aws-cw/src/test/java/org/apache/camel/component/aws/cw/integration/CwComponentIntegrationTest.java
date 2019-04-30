@@ -32,7 +32,7 @@ import org.junit.Test;
 @Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
 public class CwComponentIntegrationTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
 
     @Test

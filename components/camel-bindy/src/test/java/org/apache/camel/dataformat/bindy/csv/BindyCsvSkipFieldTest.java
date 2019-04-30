@@ -39,10 +39,10 @@ public class BindyCsvSkipFieldTest  extends AbstractJUnit4SpringContextTests {
     
     private static String input = "VOA,12 abc street,Skip Street,Melbourne,VIC,3000,Australia,Skip dummy1,end of record";
 
-    @Produce(uri = URI_DIRECT_START)
+    @Produce(URI_DIRECT_START)
     private ProducerTemplate template;
 
-    @EndpointInject(uri = URI_MOCK_RESULT)
+    @EndpointInject(URI_MOCK_RESULT)
     private MockEndpoint result;
 
     @Test

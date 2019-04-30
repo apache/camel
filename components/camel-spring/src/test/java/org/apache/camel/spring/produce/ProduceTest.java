@@ -27,7 +27,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration
 public class ProduceTest extends SpringRunWithTestSupport {
     
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected MyListener producer;
 
     @Test

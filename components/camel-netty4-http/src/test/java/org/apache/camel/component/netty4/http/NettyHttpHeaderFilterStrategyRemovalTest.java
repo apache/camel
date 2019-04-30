@@ -30,7 +30,7 @@ public class NettyHttpHeaderFilterStrategyRemovalTest extends BaseNettyTest {
 
     NettyHttpHeaderFilterStrategy headerFilterStrategy = new NettyHttpHeaderFilterStrategy();
 
-    @EndpointInject(uri = "mock:test")
+    @EndpointInject("mock:test")
     MockEndpoint mockEndpoint;
 
     @Test

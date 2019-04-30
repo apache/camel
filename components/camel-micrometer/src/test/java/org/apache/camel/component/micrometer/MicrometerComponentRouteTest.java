@@ -28,7 +28,7 @@ import org.junit.Test;
 
 public class MicrometerComponentRouteTest extends CamelTestSupport {
 
-    @Produce(uri = "direct:start-1")
+    @Produce("direct:start-1")
     protected ProducerTemplate template1;
 
     @Test

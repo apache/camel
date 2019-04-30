@@ -30,7 +30,7 @@ import org.junit.Test;
 public class KafkaConsumerOffsetRepositoryEmptyTest extends BaseEmbeddedKafkaTest {
     private static final String TOPIC = "offset-initialize";
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;

@@ -24,7 +24,7 @@ import org.apache.camel.ProducerTemplate;
  */
 public class MyBean {
 
-    @EndpointInject(uri = "seda:foo")
+    @EndpointInject("seda:foo")
     private ProducerTemplate template;
 
     public void doSomething(String body) {

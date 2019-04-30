@@ -48,7 +48,7 @@ public class RabbitMQSpringIntTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQSpringIntTest.class);
 
-    @Produce(uri = "direct:rabbitMQ")
+    @Produce("direct:rabbitMQ")
     protected ProducerTemplate template;
     @Autowired
     private ConnectionFactory connectionFactory;

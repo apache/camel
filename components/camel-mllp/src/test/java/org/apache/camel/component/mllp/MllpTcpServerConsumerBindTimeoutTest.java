@@ -36,7 +36,7 @@ public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
     @Rule
     public MllpClientResource mllpClient = new MllpClientResource();
 
-    @EndpointInject(uri = "mock://result")
+    @EndpointInject("mock://result")
     MockEndpoint result;
 
     @Override

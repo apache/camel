@@ -35,13 +35,13 @@ public class PublishSubscribeTest extends CamelTestSupport {
     private int port2;
     private int port3;
 
-    @EndpointInject(uri = "mock:neverland")
+    @EndpointInject("mock:neverland")
     private MockEndpoint unreachableEndpoint;
 
-    @EndpointInject(uri = "mock:notification")
+    @EndpointInject("mock:notification")
     private MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private ProducerTemplate producerTemplate;
 
     @Override

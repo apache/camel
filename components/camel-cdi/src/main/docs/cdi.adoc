@@ -440,7 +440,7 @@ FluentProducerTemplate producer;
 |Endpoint injection (default Camel context) a|
 [source,java]
 ----
-@EndpointInject(uri = "direct:inbound")
+@EndpointInject("direct:inbound")
 Endpoint endpoint;
 ----
 
@@ -455,7 +455,7 @@ Endpoint endpoint;
 |Endpoint injection (Camel context by name) a|
 [source,java]
 ----
-@EndpointInject(uri = "direct:inbound",
+@EndpointInject(value = "direct:inbound",
                 context = "foo")
 Endpoint contextEndpoint;
 ----

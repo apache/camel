@@ -43,19 +43,19 @@ public class ConnectionTest extends CamelTestSupport {
 
     private static final String MOCK_SERVER_1 = "mock:testServer1";
 
-    @Produce(uri = DIRECT_SEND_S_1)
+    @Produce(DIRECT_SEND_S_1)
     protected ProducerTemplate producerServer1;
 
-    @Produce(uri = DIRECT_SEND_C_1)
+    @Produce(DIRECT_SEND_C_1)
     protected ProducerTemplate producerClient1;
 
-    @EndpointInject(uri = MOCK_CLIENT_1)
+    @EndpointInject(MOCK_CLIENT_1)
     protected MockEndpoint testClient1Endpoint;
 
-    @EndpointInject(uri = MOCK_CLIENT_2)
+    @EndpointInject(MOCK_CLIENT_2)
     protected MockEndpoint testClient2Endpoint;
 
-    @EndpointInject(uri = MOCK_SERVER_1)
+    @EndpointInject(MOCK_SERVER_1)
     protected MockEndpoint testServer1Endpoint;
 
     @Override

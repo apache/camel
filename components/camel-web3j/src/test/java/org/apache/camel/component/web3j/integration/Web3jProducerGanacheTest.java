@@ -122,7 +122,7 @@ import static org.apache.camel.component.web3j.Web3jConstants.WEB3_SHA3;
 @Ignore("Requires a locally running Ganache instance")
 public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     @Test

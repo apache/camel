@@ -27,7 +27,7 @@ public class HibernateValidationProviderResolverTest extends CamelTestSupport {
 
     // Routing fixtures
 
-    @EndpointInject(uri = "mock:test")
+    @EndpointInject("mock:test")
     MockEndpoint mockEndpoint;
 
     @Override

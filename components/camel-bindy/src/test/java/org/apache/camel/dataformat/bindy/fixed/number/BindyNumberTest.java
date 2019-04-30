@@ -46,16 +46,16 @@ public class BindyNumberTest extends AbstractJUnit4SpringContextTests {
     //
     // *************************************************************************
 
-    @Produce(uri = URI_DIRECT_MARSHALL)
+    @Produce(URI_DIRECT_MARSHALL)
     private ProducerTemplate mtemplate;
 
-    @EndpointInject(uri = URI_MOCK_MARSHALL_RESULT)
+    @EndpointInject(URI_MOCK_MARSHALL_RESULT)
     private MockEndpoint mresult;
 
-    @Produce(uri = URI_DIRECT_UNMARSHALL)
+    @Produce(URI_DIRECT_UNMARSHALL)
     private ProducerTemplate utemplate;
 
-    @EndpointInject(uri = URI_MOCK_UNMARSHALL_RESULT)
+    @EndpointInject(URI_MOCK_UNMARSHALL_RESULT)
     private MockEndpoint uresult;
 
     // *************************************************************************

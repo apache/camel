@@ -26,7 +26,7 @@ public class MyRouteBuilderWithAutowiredPojo extends SpringRouteBuilder {
     @Autowired
     private TestPojo pojo;
 
-    @EndpointInject(uri = "mock:injected")
+    @EndpointInject("mock:injected")
     private Endpoint injected;
 
     public void configure() throws Exception {

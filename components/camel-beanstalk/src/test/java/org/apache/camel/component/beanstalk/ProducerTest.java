@@ -49,7 +49,7 @@ public class ProducerTest extends BeanstalkMockTestSupport {
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate direct;
 
     private String testMessage = "hello, world";

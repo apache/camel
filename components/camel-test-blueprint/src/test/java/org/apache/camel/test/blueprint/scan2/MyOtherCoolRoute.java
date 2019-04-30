@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class MyOtherCoolRoute extends RouteBuilder {
 
-    @EndpointInject(uri = "ref:foo")
+    @EndpointInject("ref:foo")
     private Endpoint foo;
 
     @Override

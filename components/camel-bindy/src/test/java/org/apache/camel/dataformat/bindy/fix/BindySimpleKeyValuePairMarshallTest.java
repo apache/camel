@@ -40,10 +40,10 @@ public class BindySimpleKeyValuePairMarshallTest extends AbstractJUnit4SpringCon
     private List<Map<String, Object>> models = new ArrayList<>();
     private String result = "1=BE.CHM.0018=FIX 4.19=2010=22011=CHM0001-0122=434=135=048=BE000124567849=INVMGR54=156=BRKR58=this is a camel - bindy test\r\n";
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
 
     @Test

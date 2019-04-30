@@ -30,7 +30,7 @@ public class CsvUnmarshalStreamSpringTest extends CamelSpringTestSupport {
 
     private static final String CSV_SAMPLE = "A,B,C\r1,2,3\rone,two,three";
 
-    @EndpointInject(uri = "mock:line")
+    @EndpointInject("mock:line")
     private MockEndpoint line;
 
     @Test

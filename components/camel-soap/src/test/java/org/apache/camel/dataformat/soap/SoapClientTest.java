@@ -35,7 +35,7 @@ import org.junit.Test;
  */
 public class SoapClientTest extends CamelTestSupport {
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     CustomerService customerService;
 
     @Test

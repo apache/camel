@@ -34,7 +34,7 @@ import static org.mockito.ArgumentMatchers.eq;
  */
 public class TelegramProducerChatIdResolutionTest extends TelegramTestSupport {
 
-    @EndpointInject(uri = "direct:telegram")
+    @EndpointInject("direct:telegram")
     private Endpoint endpoint;
 
     @Test

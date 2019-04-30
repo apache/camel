@@ -31,7 +31,7 @@ public class SpringMulticastAggregatorTest {
     @Autowired
     protected ProducerTemplate producer;
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint result;
     
     @Test

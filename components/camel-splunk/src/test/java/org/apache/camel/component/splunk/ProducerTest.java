@@ -46,13 +46,13 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ProducerTest extends SplunkMockTestSupport {
 
-    @EndpointInject(uri = "splunk://stream")
+    @EndpointInject("splunk://stream")
     protected SplunkEndpoint streamEndpoint;
 
-    @EndpointInject(uri = "splunk://submit")
+    @EndpointInject("splunk://submit")
     protected SplunkEndpoint submitEndpoint;
 
-    @EndpointInject(uri = "splunk://tcp")
+    @EndpointInject("splunk://tcp")
     protected SplunkEndpoint tcpEndpoint;
 
     @Mock

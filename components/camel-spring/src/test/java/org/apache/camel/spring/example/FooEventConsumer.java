@@ -23,10 +23,10 @@ import org.apache.camel.ProducerTemplate;
 // START SNIPPET: e1
 public class FooEventConsumer {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private ProducerTemplate destination;
 
-    @Consume(uri = "ref:foo")
+    @Consume("ref:foo")
     public void doSomething(String body) {
         destination.sendBody("foo" + body);
     }

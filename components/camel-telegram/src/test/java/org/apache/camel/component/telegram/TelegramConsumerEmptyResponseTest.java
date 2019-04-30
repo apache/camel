@@ -33,7 +33,7 @@ import static org.mockito.Mockito.when;
  */
 public class TelegramConsumerEmptyResponseTest extends TelegramTestSupport {
 
-    @EndpointInject(uri = "mock:telegram")
+    @EndpointInject("mock:telegram")
     private MockEndpoint endpoint;
 
     @Before

@@ -36,7 +36,7 @@ import static org.mockito.Mockito.verify;
  */
 public class TelegramConsumerFallbackConversionTest extends TelegramTestSupport {
 
-    @EndpointInject(uri = "direct:message")
+    @EndpointInject("direct:message")
     protected ProducerTemplate template;
 
     @Before

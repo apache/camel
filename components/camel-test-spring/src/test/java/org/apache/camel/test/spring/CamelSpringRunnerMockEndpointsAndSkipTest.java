@@ -30,10 +30,10 @@ import static org.junit.Assert.assertTrue;
 public class CamelSpringRunnerMockEndpointsAndSkipTest
         extends CamelSpringRunnerPlainTest {
 
-    @EndpointInject(uri = "mock:seda:context2.seda", context = "camelContext2")
+    @EndpointInject(value = "mock:seda:context2.seda", context = "camelContext2")
     protected MockEndpoint mock;
 
-    @EndpointInject(uri = "seda:context2.seda", context = "camelContext2")
+    @EndpointInject(value = "seda:context2.seda", context = "camelContext2")
     private InterceptSendToEndpoint original;
 
     @Test

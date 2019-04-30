@@ -38,7 +38,7 @@ public class JGroupsConsumerTest extends CamelTestSupport {
 
     // Routes fixture
 
-    @EndpointInject(uri = "mock:test")
+    @EndpointInject("mock:test")
     MockEndpoint mockEndpoint;
 
     @Override

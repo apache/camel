@@ -45,13 +45,13 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
     @Rule
     public MllpClientResource mllpClient = new MllpClientResource();
 
-    @EndpointInject(uri = "mock://complete")
+    @EndpointInject("mock://complete")
     MockEndpoint complete;
 
-    @EndpointInject(uri = "mock://failed")
+    @EndpointInject("mock://failed")
     MockEndpoint failed;
 
-    @EndpointInject(uri = "mock://invalid-ex")
+    @EndpointInject("mock://invalid-ex")
     MockEndpoint invalid;
 
     int expectedCompleteCount;

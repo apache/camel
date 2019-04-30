@@ -26,7 +26,7 @@ import org.junit.Test;
 
 public class JdbcDefaultDataSourceTest extends AbstractJdbcTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
 
     @SuppressWarnings("rawtypes")

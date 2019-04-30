@@ -31,7 +31,7 @@ import org.junit.Test;
 
 public class JdbcProducerConcurrenctTest extends AbstractJdbcTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
     
     @Test

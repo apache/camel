@@ -33,7 +33,7 @@ public class NsqConsumerTest extends NsqTestSupport {
     private static final int NUMBER_OF_MESSAGES = 10000;
     private static final String TOPIC = "test";
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
 
     @Test

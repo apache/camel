@@ -45,10 +45,10 @@ public class JettyFileMulticastTest extends AbstractJUnit4SpringContextTests {
     @Autowired
     protected CamelContext camelContext;
 
-    @EndpointInject(uri = "mock:resultEndpoint")
+    @EndpointInject("mock:resultEndpoint")
     protected MockEndpoint resultEndpoint;
    
-    @EndpointInject(uri = "mock:fileEndpoint")
+    @EndpointInject("mock:fileEndpoint")
     protected MockEndpoint fileEndpoint;
     
     @Test

@@ -43,10 +43,10 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
     protected JdbcTemplate jdbcTemplate;
     protected DataSource dataSource;
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @EndpointInject(uri = "mock:error")
+    @EndpointInject("mock:error")
     protected MockEndpoint errorEndpoint;
     
     @Override

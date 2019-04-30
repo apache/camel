@@ -25,10 +25,10 @@ import org.apache.camel.ProducerTemplate;
  */
 public class MyProduceBean {
 
-    @Produce(uri = "mock:result")
+    @Produce("mock:result")
     MySender sender;
     
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     ProducerTemplate template;
 
     public void doSomething(String body) {

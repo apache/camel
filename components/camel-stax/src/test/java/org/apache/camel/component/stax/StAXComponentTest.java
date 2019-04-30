@@ -27,7 +27,7 @@ import org.junit.Test;
 
 public class StAXComponentTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:records")
+    @EndpointInject("mock:records")
     private MockEndpoint recordsEndpoint;
 
     @BeforeClass

@@ -29,10 +29,10 @@ import org.slf4j.LoggerFactory;
  */
 public class MyVmConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(MyVmConsumer.class);
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private ProducerTemplate destination;
 
-    @Consume(uri = "vm:start")
+    @Consume("vm:start")
     public void doSomething(String body, Exchange exchange) {
         ObjectHelper.notNull(destination, "destination");
 

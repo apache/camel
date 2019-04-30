@@ -38,7 +38,7 @@ public class RoutesContextD extends RouteBuilder {
     @Uri("seda:D.a")
     Endpoint a;
 
-    @EndpointInject(uri = "mock:D.b", context = "contextD")
+    @EndpointInject(value = "mock:D.b", context = "contextD")
     MockEndpoint b;
 
     @Inject

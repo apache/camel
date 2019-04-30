@@ -22,10 +22,10 @@ import org.apache.camel.ProducerTemplate;
 
 public class AnotherFooEventConsumer {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private ProducerTemplate destination;
 
-    @Consume(uri = "ref:foo")
+    @Consume("ref:foo")
     public void doSomething(String body) {
         destination.sendBody("another" + body);
     }

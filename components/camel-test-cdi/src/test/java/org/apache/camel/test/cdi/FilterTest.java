@@ -30,10 +30,10 @@ import org.junit.runner.RunWith;
 @RunWith(CamelCdiRunner.class)
 public class FilterTest {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     @Before

@@ -80,7 +80,7 @@ public class CamelAutoConfigurationTest extends Assert {
 
     // Spring context fixtures
 
-    @EndpointInject(uri = "mock:xmlAutoLoading")
+    @EndpointInject("mock:xmlAutoLoading")
     MockEndpoint xmlAutoLoadingMock;
 
     // Tests

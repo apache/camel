@@ -30,7 +30,7 @@ import org.junit.Test;
  */
 public class HazelcastSedaFIFOTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
 
     @Test

@@ -36,7 +36,7 @@ import org.junit.Test;
 @Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
 public class DdbComponentIntegrationTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     private ProducerTemplate template;
 
     @Test

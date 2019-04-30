@@ -43,14 +43,14 @@ public class JCacheConfigurationTest extends JCacheComponentTestSupport {
     private static final Factory<CacheLoader<Object, Object>> CACHE_LOADER_FACTORY = MyCacheLoader.factory();
 
     @EndpointInject(
-        uri = "jcache://test-cache"
+        value = "jcache://test-cache"
             + "?expiryPolicyFactory=#myExpiryPolicyFactory"
             + "&cacheWriterFactory=#myCacheWriterFactory"
             + "&cacheLoaderFactory=#myCacheLoaderFactory"
     )
     JCacheEndpoint from;
 
-    @EndpointInject(uri = "mock:to")
+    @EndpointInject("mock:to")
     MockEndpoint to;
 
     @Override

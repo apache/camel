@@ -38,7 +38,7 @@ public class SpringNettyHttpSSLTest extends Assert {
     @Produce
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:input")
+    @EndpointInject("mock:input")
     private MockEndpoint mockEndpoint;
 
     private Integer port;

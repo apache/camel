@@ -36,10 +36,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 @EnableAutoConfiguration
 @SpringBootTest
 public class SimpleOgnlTest {
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     @Test

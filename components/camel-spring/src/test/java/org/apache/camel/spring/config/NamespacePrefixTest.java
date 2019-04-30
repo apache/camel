@@ -31,7 +31,7 @@ public class NamespacePrefixTest extends SpringRunWithTestSupport {
     @Autowired
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:results")
+    @EndpointInject("mock:results")
     private MockEndpoint endpoint;
 
     @Test

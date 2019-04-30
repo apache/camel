@@ -30,16 +30,16 @@ import org.junit.Test;
 
 public class PgEventWithDefinedDatasourceIntegrationTest extends AbstractPgEventIntegrationTest {
 
-    @EndpointInject(uri = "pgevent:///{{database}}/testchannel?datasource=#pgDataSource")
+    @EndpointInject("pgevent:///{{database}}/testchannel?datasource=#pgDataSource")
     private Endpoint subscribeEndpoint;
 
-    @EndpointInject(uri = "pgevent:///{{database}}/testchannel?datasource=#pgDataSource")
+    @EndpointInject("pgevent:///{{database}}/testchannel?datasource=#pgDataSource")
     private Endpoint notifyEndpoint;
 
-    @EndpointInject(uri = "timer://test?repeatCount=1&period=1")
+    @EndpointInject("timer://test?repeatCount=1&period=1")
     private Endpoint timerEndpoint;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mockEndpoint;
 
     @Override

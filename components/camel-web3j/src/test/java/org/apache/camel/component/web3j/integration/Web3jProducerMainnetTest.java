@@ -33,7 +33,7 @@ import static org.apache.camel.component.web3j.Web3jConstants.WEB3_SHA3;
 @Ignore("Requires a local node or registration at Infura")
 public class Web3jProducerMainnetTest extends Web3jIntegrationTestSupport {
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     protected String getUrl() {

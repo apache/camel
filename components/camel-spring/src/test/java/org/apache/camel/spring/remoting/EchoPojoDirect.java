@@ -21,10 +21,10 @@ import org.apache.camel.Produce;
 
 public class EchoPojoDirect {
 
-    @Produce(uri = "direct:echo")
+    @Produce("direct:echo")
     private Echo service;
 
-    @Consume(uri = "direct:start")
+    @Consume("direct:start")
     public String onEcho(String name) {
         return service.echo(name);
     }

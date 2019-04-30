@@ -26,10 +26,10 @@ import org.junit.Test;
 
 public class CsvUnmarshalTwoCsvDataFormatConcurrentTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    @EndpointInject(uri = "mock:result2")
+    @EndpointInject("mock:result2")
     private MockEndpoint result2;
 
     @Test

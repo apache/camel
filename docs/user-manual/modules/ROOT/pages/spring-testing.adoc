@@ -156,7 +156,7 @@ public class MyCamelTest {
     @Autowired
     protected CamelContext camelContext;
 
-    @EndpointInject(uri = "mock:foo")
+    @EndpointInject("mock:foo")
     protected MockEndpoint foo;
 
 
@@ -193,7 +193,7 @@ public class MyCamelTest {
     @Autowired
     protected CamelContext camelContext;
 
-    @EndpointInject(uri = "mock:foo")
+    @EndpointInject("mock:foo")
     protected MockEndpoint foo;
 
 
@@ -297,13 +297,13 @@ public class CamelSpringJUnit4ClassRunnerPlainTest {
 
     protected MockEndpoint mockB;
 
-    @EndpointInject(uri = "mock:c", context = "camelContext2")
+    @EndpointInject(value = "mock:c", context = "camelContext2")
     protected MockEndpoint mockC;
 
     @Produce(uri = "direct:start2", context = "camelContext2")
     protected ProducerTemplate start2;
 
-    @EndpointInject(uri = "mock:log:org.apache.camel.test.junit4.spring", context = "camelContext2")
+    @EndpointInject(value = "mock:log:org.apache.camel.test.junit4.spring", context = "camelContext2")
     protected MockEndpoint mockLog;
 
     @Test
@@ -334,7 +334,7 @@ public class MyCamelTest extends AbstractJUnit38SpringContextTests {
     @Autowired
     protected CamelContext camelContext;
 
-    @EndpointInject(uri = "mock:foo")
+    @EndpointInject("mock:foo")
     protected MockEndpoint foo;
 
     public void testMocksAreValid() throws Exception {
@@ -363,7 +363,7 @@ public class MyCamelTest extends AbstractJUnit38SpringContextTests {
     @Autowired
     protected CamelContext camelContext;
 
-    @EndpointInject(uri = "mock:foo")
+    @EndpointInject("mock:foo")
     protected MockEndpoint foo;
 
     public void testMocksAreValid() throws Exception {

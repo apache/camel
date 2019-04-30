@@ -25,7 +25,7 @@ import org.apache.camel.language.xpath.XPath;
 public class MyVendor {
     private int beerPrice;
     
-    @Produce(uri = "seda:quoteAggregator")
+    @Produce("seda:quoteAggregator")
     private ProducerTemplate quoteAggregator;
             
     public MyVendor(int beerPrice) {

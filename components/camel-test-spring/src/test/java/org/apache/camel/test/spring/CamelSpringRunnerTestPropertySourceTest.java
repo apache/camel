@@ -32,10 +32,10 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = "fixedBody=Camel")
 public class CamelSpringRunnerTestPropertySourceTest {
 
-    @Produce(uri = "direct:in")
+    @Produce("direct:in")
     private ProducerTemplate start;
 
-    @EndpointInject(uri = "mock:out")
+    @EndpointInject("mock:out")
     private MockEndpoint end;
 
     @Test

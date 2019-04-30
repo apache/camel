@@ -32,7 +32,7 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration
 public class BindyCsvBigFileUnmarshallTest extends AbstractJUnit4SpringContextTests {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
 
     @Test

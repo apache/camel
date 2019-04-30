@@ -30,7 +30,7 @@ import org.junit.Test;
  * This class tests standard marshalling
  */
 public class CsvMarshalTest extends CamelTestSupport {
-    @EndpointInject(uri = "mock:output")
+    @EndpointInject("mock:output")
     MockEndpoint output;
 
     @Test

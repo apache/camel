@@ -46,13 +46,13 @@ public class BindySimpleKeyValuePairWithoutSectionMarshallDslTest extends Abstra
 
     private List<Map<String, Object>> models = new ArrayList<>();
 
-    @Produce(uri = URI_DIRECT_START)
+    @Produce(URI_DIRECT_START)
     private ProducerTemplate template;
 
-    @EndpointInject(uri = URI_MOCK_RESULT)
+    @EndpointInject(URI_MOCK_RESULT)
     private MockEndpoint result;
 
-    @EndpointInject(uri = URI_MOCK_ERROR)
+    @EndpointInject(URI_MOCK_ERROR)
     private MockEndpoint error;
 
     @Test

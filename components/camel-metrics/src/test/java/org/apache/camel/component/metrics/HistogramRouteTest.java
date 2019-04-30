@@ -51,10 +51,10 @@ import static org.mockito.Mockito.when;
 @MockEndpoints
 public class HistogramRouteTest {
 
-    @EndpointInject(uri = "mock:out")
+    @EndpointInject("mock:out")
     private MockEndpoint endpoint;
 
-    @Produce(uri = "direct:in")
+    @Produce("direct:in")
     private ProducerTemplate producer;
 
     private MetricRegistry mockRegistry;

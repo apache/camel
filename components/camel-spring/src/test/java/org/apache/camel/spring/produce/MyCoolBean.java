@@ -21,7 +21,7 @@ import org.apache.camel.ProducerTemplate;
 
 public class MyCoolBean {
 
-    @Produce(uri = "log:foo")
+    @Produce("log:foo")
     protected ProducerTemplate producer;
 
     public void sendMsg() {

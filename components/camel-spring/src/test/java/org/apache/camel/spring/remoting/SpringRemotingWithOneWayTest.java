@@ -33,7 +33,7 @@ public class SpringRemotingWithOneWayTest extends SpringRunWithTestSupport {
     @Autowired
     protected IAsyncService myService;
 
-    @EndpointInject(uri = "mock:results")
+    @EndpointInject("mock:results")
     protected MockEndpoint endpoint;
 
     @Test

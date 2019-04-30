@@ -26,7 +26,7 @@ import org.junit.Before;
 
 public class IrcIntegrationTestSupport extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     protected Properties properties;

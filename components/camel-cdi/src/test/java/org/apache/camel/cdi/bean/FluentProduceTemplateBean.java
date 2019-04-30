@@ -21,7 +21,7 @@ import org.apache.camel.Produce;
 
 public class FluentProduceTemplateBean {
 
-    @Produce(uri = "mock:outbound")
+    @Produce("mock:outbound")
     private FluentProducerTemplate producer;
 
     public void sendToProducer(String body) {

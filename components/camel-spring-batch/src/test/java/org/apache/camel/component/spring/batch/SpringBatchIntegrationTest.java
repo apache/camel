@@ -25,13 +25,13 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringBatchIntegrationTest extends CamelSpringTestSupport {
-    @EndpointInject(uri = "mock:header")
+    @EndpointInject("mock:header")
     MockEndpoint headerEndpoint;
 
-    @EndpointInject(uri = "mock:output")
+    @EndpointInject("mock:output")
     MockEndpoint outputEndpoint;
 
-    @EndpointInject(uri = "mock:jobExecutionEventsQueue")
+    @EndpointInject("mock:jobExecutionEventsQueue")
     MockEndpoint jobExecutionEventsQueueEndpoint;
 
     String[] inputMessages = new String[]{"foo", "bar", "baz", null};

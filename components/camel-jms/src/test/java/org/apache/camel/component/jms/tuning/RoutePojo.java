@@ -24,10 +24,10 @@ import org.apache.camel.RecipientList;
 
 public class RoutePojo {
 
-    @Produce(uri = "activemq:topic:audit")
+    @Produce("activemq:topic:audit")
     private ProducerTemplate topic;
 
-    @Consume(uri = "activemq:queue:inbox?concurrentConsumers=10")
+    @Consume("activemq:queue:inbox?concurrentConsumers=10")
     @RecipientList
     public String listen(Exchange exchange) {
         topic.send(exchange);

@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 public class ServiceNowServiceCatalogTest extends ServiceNowTestSupport {
-    @Produce(uri = "direct:servicenow")
+    @Produce("direct:servicenow")
     ProducerTemplate template;
 
     @Test

@@ -29,10 +29,10 @@ import org.junit.Test;
 
 public class VelocitySupplementalContextTest extends CamelTestSupport {
 
-    @Produce(uri = "direct:input")
+    @Produce("direct:input")
     protected ProducerTemplate inputEndpoint;
 
-    @EndpointInject(uri = "mock:results")
+    @EndpointInject("mock:results")
     protected MockEndpoint outputEndpoint;
 
     @Test

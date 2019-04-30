@@ -54,25 +54,25 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
     private static final String GUARANTEED_DELIVERY_BAD_ROUTE_NOT_MANDATORY_URI = String.format(BASIC_URI_FORMAT, EXCHANGE, "route2") + "&guaranteedDeliveries=true";
     private static final String GUARANTEED_DELIVERY_BAD_ROUTE_URI = String.format(BASIC_URI_FORMAT, EXCHANGE, "route2") + "&mandatory=true&guaranteedDeliveries=true";
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
     
-    @Produce(uri = "direct:start-allow-null-headers")
+    @Produce("direct:start-allow-null-headers")
     protected ProducerTemplate templateAllowNullHeaders;
 
-    @Produce(uri = "direct:start-with-confirms")
+    @Produce("direct:start-with-confirms")
     protected ProducerTemplate templateWithConfirms;
 
-    @Produce(uri = "direct:start-with-confirms-bad-route")
+    @Produce("direct:start-with-confirms-bad-route")
     protected ProducerTemplate templateWithConfirmsAndBadRoute;
 
-    @Produce(uri = "direct:start-with-guaranteed-delivery")
+    @Produce("direct:start-with-guaranteed-delivery")
     protected ProducerTemplate templateWithGuranteedDelivery;
 
-    @Produce(uri = "direct:start-with-guaranteed-delivery-bad-route")
+    @Produce("direct:start-with-guaranteed-delivery-bad-route")
     protected ProducerTemplate templateWithGuranteedDeliveryAndBadRoute;
 
-    @Produce(uri = "direct:start-with-guaranteed-delivery-bad-route-but-not-mandatory")
+    @Produce("direct:start-with-guaranteed-delivery-bad-route-but-not-mandatory")
     protected ProducerTemplate templateWithGuranteedDeliveryBadRouteButNotMandatory;
 
     private Connection connection;

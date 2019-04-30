@@ -24,19 +24,19 @@ import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 
 public class InjectedBean {
-    @EndpointInject(uri = "direct:fieldInjectedEndpoint")
+    @EndpointInject("direct:fieldInjectedEndpoint")
     private Endpoint fieldInjectedEndpoint;
     private Endpoint propertyInjectedEndpoint;
-    @EndpointInject(uri = "direct:fieldInjectedProducer")
+    @EndpointInject("direct:fieldInjectedProducer")
     private Producer fieldInjectedProducer;
     private Producer propertyInjectedProducer;
-    @EndpointInject(uri = "direct:fieldInjectedCamelTemplate")
+    @EndpointInject("direct:fieldInjectedCamelTemplate")
     private ProducerTemplate fieldInjectedCamelTemplate;
     private ProducerTemplate propertyInjectedCamelTemplate;
     @EndpointInject
     private ProducerTemplate injectByFieldName;
     private ProducerTemplate injectByPropertyName;
-    @EndpointInject(uri = "direct:fieldInjectedEndpoint")
+    @EndpointInject("direct:fieldInjectedEndpoint")
     private PollingConsumer fieldInjectedPollingConsumer;
     private PollingConsumer propertyInjectedPollingConsumer;
 
@@ -50,7 +50,7 @@ public class InjectedBean {
         return propertyInjectedEndpoint;
     }
 
-    @EndpointInject(uri = "ref:namedEndpoint1")
+    @EndpointInject("ref:namedEndpoint1")
     public void setPropertyInjectedEndpoint(Endpoint propertyInjectedEndpoint) {
         this.propertyInjectedEndpoint = propertyInjectedEndpoint;
     }
@@ -66,7 +66,7 @@ public class InjectedBean {
         return propertyInjectedProducer;
     }
 
-    @EndpointInject(uri = "direct:propertyInjectedProducer")
+    @EndpointInject("direct:propertyInjectedProducer")
     public void setPropertyInjectedProducer(Producer propertyInjectedProducer) {
         this.propertyInjectedProducer = propertyInjectedProducer;
     }
@@ -81,7 +81,7 @@ public class InjectedBean {
         return propertyInjectedCamelTemplate;
     }
 
-    @EndpointInject(uri = "direct:propertyInjectedCamelTemplate")
+    @EndpointInject("direct:propertyInjectedCamelTemplate")
     public void setPropertyInjectedCamelTemplate(ProducerTemplate propertyInjectedCamelTemplate) {
         this.propertyInjectedCamelTemplate = propertyInjectedCamelTemplate;
     }
@@ -121,7 +121,7 @@ public class InjectedBean {
         return propertyInjectedPollingConsumer;
     }
 
-    @EndpointInject(uri = "direct:propertyInjectedPollingConsumer")
+    @EndpointInject("direct:propertyInjectedPollingConsumer")
     public void setPropertyInjectedPollingConsumer(PollingConsumer propertyInjectedPollingConsumer) {
         this.propertyInjectedPollingConsumer = propertyInjectedPollingConsumer;
     }
