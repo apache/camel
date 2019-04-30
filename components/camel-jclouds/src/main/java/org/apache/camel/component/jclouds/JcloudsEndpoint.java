@@ -33,7 +33,7 @@ public abstract class JcloudsEndpoint extends DefaultEndpoint {
         super(uri, component);
     }
 
-public JcloudsConfiguration getConfiguration() {
+    public JcloudsConfiguration getConfiguration() {
         return configuration;
     }
 
