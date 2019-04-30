@@ -58,7 +58,7 @@ public class ThriftEndpoint extends DefaultEndpoint {
         return new ThriftConsumer(this, processor, configuration);
     }
 
-public String getServiceName() {
+    public String getServiceName() {
         return serviceName;
     }
 
