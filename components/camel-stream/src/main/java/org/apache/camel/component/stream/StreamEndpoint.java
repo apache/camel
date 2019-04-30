@@ -94,7 +94,7 @@ public class StreamEndpoint extends DefaultEndpoint {
         return new StreamProducer(this, getEndpointUri());
     }
 
-protected Exchange createExchange(Object body, long index, boolean last) {
+    protected Exchange createExchange(Object body, long index, boolean last) {
         Exchange exchange = createExchange();
         exchange.getIn().setBody(body);
         exchange.getIn().setHeader(StreamConstants.STREAM_INDEX, index);
