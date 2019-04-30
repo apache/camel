@@ -81,7 +81,7 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
         this.resourceUri = resourceUri;
     }
 
-public Producer createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         return new FlatpackProducer(this);
     }
 
