@@ -249,36 +249,31 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
 
-                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&"
-                      + "keyStoreParameters=#keyParams", PORT)
+
+                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&keyStoreParameters=#keyParams", PORT)
                     .transform(body().prepend("Hello "));
 
-                fromF("coaps://localhost:%d/TestResource?alias=selfsigned&password=security&"
-                    + "keyStoreParameters=#keyParams2", PORT2)
-                  .transform(body().prepend("Hello "));
+                fromF("coaps://localhost:%d/TestResource?alias=selfsigned&password=security&keyStoreParameters=#keyParams2", PORT2)
+                    .transform(body().prepend("Hello "));
 
-                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&"
-                    + "trustStoreParameters=#trustParams&"
-                    + "keyStoreParameters=#keyParams&clientAuthentication=REQUIRE", PORT3)
-                  .transform(body().prepend("Hello "));
+                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&trustStoreParameters=#trustParams&"
+                      + "keyStoreParameters=#keyParams&clientAuthentication=REQUIRE", PORT3)
+                    .transform(body().prepend("Hello "));
 
-                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&"
-                    + "keyStoreParameters=#keyParams&cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8", PORT4)
-                  .transform(body().prepend("Hello "));
+                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&keyStoreParameters=#keyParams&cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8", PORT4)
+                    .transform(body().prepend("Hello "));
 
                 fromF("coaps://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey", PORT5)
-                  .transform(body().prepend("Hello "));
+                    .transform(body().prepend("Hello "));
 
-                fromF("coaps://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey&"
-                      + "clientAuthentication=REQUIRE&trustedRpkStore=#trustedRpkStore", PORT6)
-                  .transform(body().prepend("Hello "));
+                fromF("coaps://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey&clientAuthentication=REQUIRE&trustedRpkStore=#trustedRpkStore", PORT6)
+                    .transform(body().prepend("Hello "));
 
                 fromF("coaps://localhost:%d/TestResource?pskStore=#pskStore", PORT7)
-                  .transform(body().prepend("Hello "));
+                    .transform(body().prepend("Hello "));
 
-                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&"
-                    + "keyStoreParameters=#keyParams&pskStore=#pskStore", PORT8)
-                  .transform(body().prepend("Hello "));
+                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&keyStoreParameters=#keyParams&pskStore=#pskStore", PORT8)
+                    .transform(body().prepend("Hello "));
 
                 from("direct:start")
                     .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams", PORT)
@@ -297,18 +292,15 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
                     .to("mock:result");
 
                 from("direct:clientauth")
-                    .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams&"
-                         + "keyStoreParameters=#keyParams3&alias=client&password=security", PORT3)
+                    .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams&keyStoreParameters=#keyParams3&alias=client&password=security", PORT3)
                     .to("mock:result");
 
                 from("direct:failedclientauth")
-                    .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams&"
-                         + "keyStoreParameters=#keyParams2&alias=selfsigned&password=security", PORT3)
+                    .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams&keyStoreParameters=#keyParams2&alias=selfsigned&password=security", PORT3)
                     .to("mock:result");
 
                 from("direct:ciphersuites")
-                    .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams&"
-                         + "cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8", PORT4)
+                    .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams&cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8", PORT4)
                     .to("mock:result");
 
                 from("direct:rpk")
@@ -324,8 +316,7 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
                     .to("mock:result");
 
                 from("direct:rpkclientauth")
-                    .toF("coaps://localhost:%d/TestResource?trustedRpkStore=#trustedRpkStore&"
-                         + "privateKey=#privateKey&publicKey=#publicKey", PORT6)
+                    .toF("coaps://localhost:%d/TestResource?trustedRpkStore=#trustedRpkStore&privateKey=#privateKey&publicKey=#publicKey", PORT6)
                     .to("mock:result");
 
                 from("direct:psk")
@@ -333,8 +324,7 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
                     .to("mock:result");
 
                 from("direct:pskciphersuite")
-                    .toF("coaps://localhost:%d/TestResource?pskStore=#pskStore&"
-                         + "cipherSuites=TLS_PSK_WITH_AES_128_CBC_SHA256", PORT7)
+                    .toF("coaps://localhost:%d/TestResource?pskStore=#pskStore&cipherSuites=TLS_PSK_WITH_AES_128_CBC_SHA256", PORT7)
                     .to("mock:result");
 
                 from("direct:pskx509")
