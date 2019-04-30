@@ -127,7 +127,7 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-public JdbcTemplate getJdbcTemplate() {
+    public JdbcTemplate getJdbcTemplate() {
         return jdbcTemplate;
     }
 
