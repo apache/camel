@@ -75,7 +75,7 @@ public class CoAPComponentAutoConfiguration {
     }
 
     @Lazy
-    @Bean(name = "coap-component")
+    @Bean({"coap-component", "coap+tcp-component", "coaps-component", "coaps+tcp-component"})
     @ConditionalOnMissingBean(CoAPComponent.class)
     public CoAPComponent configureCoAPComponent() throws Exception {
         CoAPComponent component = new CoAPComponent();
