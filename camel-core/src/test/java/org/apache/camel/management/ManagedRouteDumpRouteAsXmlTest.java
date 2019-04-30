@@ -58,6 +58,7 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
         assertTrue(xml.contains("route"));
         assertTrue(xml.contains("myRoute"));
         assertTrue(xml.contains("mock:result"));
+        assertTrue(xml.contains("java.lang.Exception"));
     }
 
     @Test
@@ -91,6 +92,8 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                onException(Exception.class).log("${exception.stacktrace}").logStackTrace(true).handled(true);
+
                 from("direct:start").routeId("myRoute")
                     .log("Got ${body}")
                     .to("mock:result");
