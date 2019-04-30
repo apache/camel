@@ -57,7 +57,7 @@ public class RedisEndpoint extends DefaultEndpoint {
         return answer;
     }
 
-protected void doShutdown() throws Exception {
+    protected void doShutdown() throws Exception {
         super.doShutdown();
         configuration.stop();
     }
