@@ -64,7 +64,7 @@ public class GrpcEndpoint extends DefaultEndpoint {
         return new GrpcConsumer(this, processor, configuration);
     }
 
-public String getServiceName() {
+    public String getServiceName() {
         return serviceName;
     }
 
