@@ -22,7 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
  * This class defines the routes on the Server. The class extends a base class in Camel {@link RouteBuilder}
  * that can be used to easily setup the routes in the configure() method.
  */
-// START SNIPPET: e1
 public class ServerRoutes extends RouteBuilder {
 
     @Override
@@ -37,4 +36,3 @@ public class ServerRoutes extends RouteBuilder {
     }
 
 }
-// END SNIPPET: e1
