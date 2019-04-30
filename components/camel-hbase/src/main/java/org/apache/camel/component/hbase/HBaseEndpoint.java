@@ -104,7 +104,7 @@ public class HBaseEndpoint extends DefaultEndpoint {
         return consumer;
     }
 
-public Configuration getConfiguration() {
+    public Configuration getConfiguration() {
         return configuration;
     }
 
