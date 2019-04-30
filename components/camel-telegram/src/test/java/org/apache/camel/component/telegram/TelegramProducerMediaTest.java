@@ -39,7 +39,7 @@ import static org.mockito.ArgumentMatchers.eq;
  */
 public class TelegramProducerMediaTest extends TelegramTestSupport {
 
-    @EndpointInject(uri = "direct:telegram")
+    @EndpointInject("direct:telegram")
     private Endpoint endpoint;
 
     @Test

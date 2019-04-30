@@ -47,7 +47,7 @@ public class PulsarProducerInTest extends PulsarTestSupport {
     )
     private Endpoint from;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint to;
 
     @Override

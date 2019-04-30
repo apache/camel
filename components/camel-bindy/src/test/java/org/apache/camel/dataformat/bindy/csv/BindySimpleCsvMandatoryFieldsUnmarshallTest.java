@@ -33,22 +33,22 @@ import static org.junit.Assert.fail;
 @ContextConfiguration
 public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4SpringContextTests {
     
-    @EndpointInject(uri = "mock:result1")
+    @EndpointInject("mock:result1")
     protected MockEndpoint resultEndpoint1;
 
-    @EndpointInject(uri = "mock:result2")
+    @EndpointInject("mock:result2")
     protected MockEndpoint resultEndpoint2;
     
-    @EndpointInject(uri = "mock:result3")
+    @EndpointInject("mock:result3")
     protected MockEndpoint resultEndpoint3;
 
-    @Produce(uri = "direct:start1")
+    @Produce("direct:start1")
     protected ProducerTemplate template1;
 
-    @Produce(uri = "direct:start2")
+    @Produce("direct:start2")
     protected ProducerTemplate template2;
     
-    @Produce(uri = "direct:start3")
+    @Produce("direct:start3")
     protected ProducerTemplate template3;
 
     String header = "order nr,client ref,first name, last name,instrument code,instrument name,order type, instrument type, quantity,currency,date\r\n";

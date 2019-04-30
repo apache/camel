@@ -35,7 +35,7 @@ public class IronMQComponentTest extends CamelTestSupport {
 
     private IronMQEndpoint endpoint;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
     @Test

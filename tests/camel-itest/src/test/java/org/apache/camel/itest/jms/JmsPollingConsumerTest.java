@@ -33,16 +33,16 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 @ContextConfiguration
 public class JmsPollingConsumerTest extends AbstractJUnit4SpringContextTests {
 
-    @Produce(uri = "activemq:startConsumer")
+    @Produce("activemq:startConsumer")
     protected ProducerTemplate startConsumer;
 
-    @Produce(uri = "direct:startConsumer")
+    @Produce("direct:startConsumer")
     protected ProducerTemplate startDirectConsumer;
 
-    @Produce(uri = "activemq:queue")
+    @Produce("activemq:queue")
     protected ProducerTemplate queue;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint result;
 
     /**

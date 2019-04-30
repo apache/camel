@@ -39,7 +39,7 @@ import static org.hamcrest.Matchers.*;
 
 public class TikaParseTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     @Test

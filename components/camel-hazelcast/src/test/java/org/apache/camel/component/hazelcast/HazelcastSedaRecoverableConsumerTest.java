@@ -38,7 +38,7 @@ public abstract class HazelcastSedaRecoverableConsumerTest extends HazelcastCame
     @Mock
     protected TransactionalQueue<Object> tqueue;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint mock;
 
     @Test

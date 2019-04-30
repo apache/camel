@@ -27,7 +27,7 @@ import org.junit.Test;
 
 public class JaxbDataFormatPartClassHeaderTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:marshall")
+    @EndpointInject("mock:marshall")
     private MockEndpoint mockMarshall;
 
     @Test

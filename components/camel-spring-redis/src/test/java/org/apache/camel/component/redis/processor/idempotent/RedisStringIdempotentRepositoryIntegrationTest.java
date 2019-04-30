@@ -38,10 +38,10 @@ public class RedisStringIdempotentRepositoryIntegrationTest extends CamelTestSup
 
     protected RedisStringIdempotentRepository idempotentRepository;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private ProducerTemplate producer;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mockResult;
 
     @Resource

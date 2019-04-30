@@ -37,7 +37,7 @@ public class SpringFileRouteTest extends SpringRunWithTestSupport {
     protected ProducerTemplate template;
     @Autowired
     protected Endpoint inputFile;
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint result;
 
     @Test

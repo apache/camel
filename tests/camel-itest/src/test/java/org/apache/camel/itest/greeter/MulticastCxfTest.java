@@ -33,13 +33,13 @@ public class MulticastCxfTest extends CamelSpringTestSupport {
         System.setProperty("MulticastCxfTest.port", Integer.toString(port));
     }
 
-    @EndpointInject(uri = "mock:reply")
+    @EndpointInject("mock:reply")
     protected MockEndpoint replyEndpoint;
 
-    @EndpointInject(uri = "mock:reply2")
+    @EndpointInject("mock:reply2")
     protected MockEndpoint reply2Endpoint;
 
-    @EndpointInject(uri = "mock:output")
+    @EndpointInject("mock:output")
     protected MockEndpoint outputEndpoint;
     
     

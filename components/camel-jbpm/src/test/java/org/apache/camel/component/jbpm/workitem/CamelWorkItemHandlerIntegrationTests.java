@@ -39,10 +39,10 @@ import static org.hamcrest.CoreMatchers.*;
 //http://camel.apache.org/async.html
 public class CamelWorkItemHandlerIntegrationTests extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     @Test

@@ -33,7 +33,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 
 public class PubNubPresenceTest extends PubNubTestBase {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mockResult;
 
     @Test

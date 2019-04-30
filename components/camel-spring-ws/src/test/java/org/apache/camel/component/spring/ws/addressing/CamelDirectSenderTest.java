@@ -40,7 +40,7 @@ public class CamelDirectSenderTest extends AbstractWSATests {
 
     private OutputChannelReceiver customChannel;
 
-    @EndpointInject(uri = "mock:camelDirect")
+    @EndpointInject("mock:camelDirect")
     private MockEndpoint endpointCamelDirect;
 
     @Before

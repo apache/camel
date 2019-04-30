@@ -92,7 +92,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 
 public class Web3jProducerTest extends Web3jMockTestSupport {
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     @Mock

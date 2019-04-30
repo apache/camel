@@ -23,7 +23,7 @@ import org.junit.Test;
 
 public class JdbcProducerOutputTypeSelectOneOutputClassTest extends AbstractJdbcTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
 
     @Test

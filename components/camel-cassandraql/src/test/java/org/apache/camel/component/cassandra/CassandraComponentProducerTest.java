@@ -47,19 +47,19 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
     @Rule
     public CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit();
 
-    @Produce(uri = "direct:input")
+    @Produce("direct:input")
     ProducerTemplate producerTemplate;
 
-    @Produce(uri = "direct:inputNoParameter")
+    @Produce("direct:inputNoParameter")
     ProducerTemplate noParameterProducerTemplate;
 
-    @Produce(uri = "direct:inputNotConsistent")
+    @Produce("direct:inputNotConsistent")
     ProducerTemplate notConsistentProducerTemplate;
 
-    @Produce(uri = "direct:loadBalancingPolicy")
+    @Produce("direct:loadBalancingPolicy")
     ProducerTemplate loadBalancingPolicyTemplate;
 
-    @Produce(uri = "direct:inputNoEndpointCql")
+    @Produce("direct:inputNoEndpointCql")
     ProducerTemplate producerTemplateNoEndpointCql;
 
     @Override

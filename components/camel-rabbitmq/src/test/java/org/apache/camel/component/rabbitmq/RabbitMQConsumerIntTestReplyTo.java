@@ -45,7 +45,7 @@ public class RabbitMQConsumerIntTestReplyTo extends AbstractRabbitMQIntTest {
 
     protected Channel channel;
     
-    @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE + "?username=cameltest&password=cameltest&routingKey=" + ROUTING_KEY)
+    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE + "?username=cameltest&password=cameltest&routingKey=" + ROUTING_KEY)
     private Endpoint from;
 
     private Connection connection;

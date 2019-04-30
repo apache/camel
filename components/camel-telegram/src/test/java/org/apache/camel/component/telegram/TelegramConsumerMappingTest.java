@@ -42,7 +42,7 @@ import static org.mockito.Mockito.when;
  */
 public class TelegramConsumerMappingTest extends TelegramTestSupport {
 
-    @EndpointInject(uri = "mock:telegram")
+    @EndpointInject("mock:telegram")
     private MockEndpoint endpoint;
 
     @Before

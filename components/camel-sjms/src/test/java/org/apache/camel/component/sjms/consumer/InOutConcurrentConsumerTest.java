@@ -37,7 +37,7 @@ import org.junit.Test;
  */
 public class InOutConcurrentConsumerTest extends JmsTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     MockEndpoint result;
 
     @Test

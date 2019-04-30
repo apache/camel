@@ -51,16 +51,16 @@ public class TimerRouteTest {
 
     private static final long DELAY = 20L;
 
-    @EndpointInject(uri = "mock:out")
+    @EndpointInject("mock:out")
     private MockEndpoint endpoint;
 
-    @Produce(uri = "direct:in-1")
+    @Produce("direct:in-1")
     private ProducerTemplate producer1;
 
-    @Produce(uri = "direct:in-2")
+    @Produce("direct:in-2")
     private ProducerTemplate producer2;
 
-    @Produce(uri = "direct:in-3")
+    @Produce("direct:in-3")
     private ProducerTemplate producer3;
 
     private MeterRegistry registry;

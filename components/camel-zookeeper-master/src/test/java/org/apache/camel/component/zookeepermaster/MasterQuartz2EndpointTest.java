@@ -38,7 +38,7 @@ public class MasterQuartz2EndpointTest extends AbstractJUnit4SpringContextTests 
     @Autowired
     protected CamelContext camelContext;
 
-    @EndpointInject(uri = "mock:results")
+    @EndpointInject("mock:results")
     protected MockEndpoint resultEndpoint;
 
     // Yeah this sucks.. why does the spring context not get shutdown

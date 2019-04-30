@@ -34,7 +34,7 @@ import org.junit.Test;
  */
 public class SoapServerTest extends CamelTestSupport {
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate producer;
 
     @Test

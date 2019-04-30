@@ -28,7 +28,7 @@ import static org.apache.camel.Exchange.HTTP_RAW_QUERY;
 
 public class NettyHttpRawQueryTest extends BaseNettyTest {
 
-    @EndpointInject(uri = "mock:test")
+    @EndpointInject("mock:test")
     MockEndpoint mockEndpoint;
 
     @Test

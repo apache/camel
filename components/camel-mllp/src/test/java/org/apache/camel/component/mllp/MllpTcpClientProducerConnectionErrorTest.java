@@ -38,22 +38,22 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
     @Rule
     public MllpServerResource mllpServer = new MllpServerResource("localhost", AvailablePortFinder.getNextAvailable());
 
-    @EndpointInject(uri = "direct://source")
+    @EndpointInject("direct://source")
     ProducerTemplate source;
 
-    @EndpointInject(uri = "mock://target")
+    @EndpointInject("mock://target")
     MockEndpoint target;
 
-    @EndpointInject(uri = "mock://complete")
+    @EndpointInject("mock://complete")
     MockEndpoint complete;
 
-    @EndpointInject(uri = "mock://write-ex")
+    @EndpointInject("mock://write-ex")
     MockEndpoint writeEx;
 
-    @EndpointInject(uri = "mock://connect-ex")
+    @EndpointInject("mock://connect-ex")
     MockEndpoint connectEx;
 
-    @EndpointInject(uri = "mock://acknowledgement-ex")
+    @EndpointInject("mock://acknowledgement-ex")
     MockEndpoint acknowledgementEx;
 
     @Override

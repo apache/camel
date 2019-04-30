@@ -32,7 +32,7 @@ import org.junit.Test;
  */
 public class HttpProducerExplicitConnectionCloseTest extends BaseHttpTest {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
     
     private HttpServer localServer;

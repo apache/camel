@@ -32,7 +32,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class CsvMarshalPipeDelimiterSpringTest extends CamelSpringTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
     @Test

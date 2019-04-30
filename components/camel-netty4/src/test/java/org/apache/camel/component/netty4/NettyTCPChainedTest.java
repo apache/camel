@@ -36,7 +36,7 @@ import org.junit.Test;
  * {@link io.netty.util.concurrent.BlockingOperationException} is thrown by netty.
  */
 public class NettyTCPChainedTest extends BaseNettyTest {
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     private void sendFile(String uri) throws Exception {

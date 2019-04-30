@@ -44,7 +44,7 @@ public class Web3jQuorumProducerTest extends Web3jMockTestSupport {
     @Mock
     protected Quorum mockQuorum;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     @Mock

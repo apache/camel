@@ -30,7 +30,7 @@ public class IrcMultiChannelRouteTest extends IrcIntegrationTestSupport {
     protected String body2 = "Message Two";
     protected String body3 = "Message Three";
 
-    @EndpointInject(uri = "mock:joined")
+    @EndpointInject("mock:joined")
     private MockEndpoint joined;
 
 

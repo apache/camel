@@ -37,7 +37,7 @@ import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.join;
  * This class tests the unmarshalling of {@link org.apache.camel.dataformat.univocity.UniVocityTsvDataFormat}.
  */
 public final class UniVocityTsvDataFormatUnmarshalTest extends CamelTestSupport {
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     MockEndpoint result;
 
     /**

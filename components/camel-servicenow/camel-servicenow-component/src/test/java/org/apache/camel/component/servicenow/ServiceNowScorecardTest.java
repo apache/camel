@@ -25,7 +25,7 @@ import org.apache.camel.component.servicenow.model.Scorecard;
 import org.junit.Test;
 
 public class ServiceNowScorecardTest extends ServiceNowTestSupport {
-    @Produce(uri = "direct:servicenow")
+    @Produce("direct:servicenow")
     ProducerTemplate template;
 
     @Test

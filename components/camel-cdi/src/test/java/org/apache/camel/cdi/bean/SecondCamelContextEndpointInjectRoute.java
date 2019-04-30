@@ -24,7 +24,7 @@ import org.apache.camel.cdi.ContextName;
 @ContextName("second")
 public class SecondCamelContextEndpointInjectRoute extends RouteBuilder {
 
-    @EndpointInject(uri = "direct:inbound", context = "second")
+    @EndpointInject(value = "direct:inbound", context = "second")
     private Endpoint inbound;
     
     @Override

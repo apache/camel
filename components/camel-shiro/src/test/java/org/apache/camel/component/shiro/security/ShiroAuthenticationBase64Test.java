@@ -29,10 +29,10 @@ import org.junit.Test;
 
 public class ShiroAuthenticationBase64Test extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:success")
+    @EndpointInject("mock:success")
     protected MockEndpoint successEndpoint;
 
-    @EndpointInject(uri = "mock:authenticationException")
+    @EndpointInject("mock:authenticationException")
     protected MockEndpoint failureEndpoint;
 
     private byte[] passPhrase = {

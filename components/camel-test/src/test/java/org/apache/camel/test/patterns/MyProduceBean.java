@@ -23,7 +23,7 @@ import org.apache.camel.Produce;
  */
 public class MyProduceBean {
 
-    @Produce(uri = "mock:result")
+    @Produce("mock:result")
     MySender sender;
 
     public void doSomething(String body) {

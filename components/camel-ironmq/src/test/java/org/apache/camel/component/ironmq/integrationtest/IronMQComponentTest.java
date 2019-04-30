@@ -30,10 +30,10 @@ public class IronMQComponentTest extends CamelTestSupport {
     private String projectId = "myIronMQproject";
     private String token = "myIronMQToken";
 
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
     @Test

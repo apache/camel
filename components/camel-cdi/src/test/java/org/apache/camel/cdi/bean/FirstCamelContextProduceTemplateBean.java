@@ -21,7 +21,7 @@ import org.apache.camel.ProducerTemplate;
 
 public class FirstCamelContextProduceTemplateBean {
 
-    @Produce(uri = "mock:outbound", context = "first")
+    @Produce(value = "mock:outbound", context = "first")
     private ProducerTemplate producer;
 
     public void sendToProducer(String body) {

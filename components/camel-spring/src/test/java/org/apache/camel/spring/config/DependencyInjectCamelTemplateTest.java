@@ -31,7 +31,7 @@ public class DependencyInjectCamelTemplateTest extends SpringRunWithTestSupport 
     @Autowired
     private TemplateUsingBean bean;
 
-    @EndpointInject(uri = "mock:results")
+    @EndpointInject("mock:results")
     private MockEndpoint endpoint;
 
     @Test

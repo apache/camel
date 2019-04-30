@@ -27,13 +27,13 @@ import org.junit.Test;
 
 public class ValidatorRouteTest extends CamelTestSupport {
     
-    @EndpointInject(uri = "mock:valid")
+    @EndpointInject("mock:valid")
     protected MockEndpoint validEndpoint;
     
-    @EndpointInject(uri = "mock:finally")
+    @EndpointInject("mock:finally")
     protected MockEndpoint finallyEndpoint;
     
-    @EndpointInject(uri = "mock:invalid")
+    @EndpointInject("mock:invalid")
     protected MockEndpoint invalidEndpoint;
 
     @Test

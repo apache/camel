@@ -32,7 +32,7 @@ import org.junit.Test;
 public class KafkaConsumerRebalancePartitionRevokeTest extends BaseEmbeddedKafkaTest {
     private static final String TOPIC = "offset-rebalance";
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
     private OffsetStateRepository stateRepository;

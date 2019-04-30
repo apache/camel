@@ -32,13 +32,13 @@ import org.junit.Test;
 @Deprecated
 public class SearchByExchangeDirectTest extends CamelTwitterTestSupport {
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
-    @Produce(uri = "direct:header")
+    @Produce("direct:header")
     protected ProducerTemplate templateHeader;
 
-    @Produce(uri = "direct:double")
+    @Produce("direct:double")
     protected ProducerTemplate templateDouble;
 
     @Test

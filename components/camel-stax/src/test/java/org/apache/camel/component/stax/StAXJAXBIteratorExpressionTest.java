@@ -27,7 +27,7 @@ import org.junit.Test;
 import static org.apache.camel.component.stax.StAXBuilder.stax;
 
 public class StAXJAXBIteratorExpressionTest extends CamelTestSupport {
-    @EndpointInject(uri = "mock:records")
+    @EndpointInject("mock:records")
     private MockEndpoint recordsEndpoint;
 
     @BeforeClass

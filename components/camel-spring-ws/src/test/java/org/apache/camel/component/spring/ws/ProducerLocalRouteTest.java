@@ -42,10 +42,10 @@ public class ProducerLocalRouteTest extends AbstractJUnit4SpringContextTests {
     @Produce
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
 
-    @EndpointInject(uri = "mock:inOnly")
+    @EndpointInject("mock:inOnly")
     private MockEndpoint inOnlyEndpoint;
 
     @Test

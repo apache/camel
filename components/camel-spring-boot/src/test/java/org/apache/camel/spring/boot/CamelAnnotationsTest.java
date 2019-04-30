@@ -45,7 +45,7 @@ public class CamelAnnotationsTest extends Assert {
     @Autowired
     ProducerTemplate producerTemplate;
 
-    @EndpointInject(uri = "mock:test")
+    @EndpointInject("mock:test")
     MockEndpoint mockEndpoint;
 
     @Test

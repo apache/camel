@@ -342,7 +342,7 @@ but notice how we can use @Consume to consume from the Disruptor.
 -------------------------------------------
 public class FooEventConsumer {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private ProducerTemplate destination;
 
     @Consume(ref = "foo")

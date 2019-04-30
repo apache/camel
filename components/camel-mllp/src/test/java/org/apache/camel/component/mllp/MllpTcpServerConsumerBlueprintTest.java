@@ -39,7 +39,7 @@ public class MllpTcpServerConsumerBlueprintTest extends CamelBlueprintTestSuppor
 
     @Rule
     public MllpClientResource mllpClient = new MllpClientResource();
-    @EndpointInject(uri = RECEIVED_URI)
+    @EndpointInject(RECEIVED_URI)
     MockEndpoint received;
 
     @Override

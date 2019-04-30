@@ -31,7 +31,7 @@ import org.junit.Test;
 public class KafkaConsumerLastRecordHeaderTest extends BaseEmbeddedKafkaTest {
     private static final String TOPIC = "last-record";
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;

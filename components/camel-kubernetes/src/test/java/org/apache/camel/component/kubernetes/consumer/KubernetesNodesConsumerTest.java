@@ -41,7 +41,7 @@ import org.junit.Test;
 @Ignore("Requires a running Kubernetes Cluster")
 public class KubernetesNodesConsumerTest extends KubernetesTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
 
     @Test

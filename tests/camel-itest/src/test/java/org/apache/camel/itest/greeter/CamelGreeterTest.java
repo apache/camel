@@ -56,7 +56,7 @@ public class CamelGreeterTest extends AbstractJUnit4SpringContextTests {
     @Autowired
     protected CamelContext camelContext;
 
-    @EndpointInject(uri = "mock:resultEndpoint")
+    @EndpointInject("mock:resultEndpoint")
     protected MockEndpoint resultEndpoint;
 
     @BeforeClass

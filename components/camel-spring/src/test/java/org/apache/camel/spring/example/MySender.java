@@ -25,9 +25,9 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * An example POJO which is injected with a CamelTemplate
  */
 public class MySender {
-    @EndpointInject(uri = "mock:a")
+    @EndpointInject("mock:a")
     private ProducerTemplate successDesetination;
-    @EndpointInject(uri = "mock:b")
+    @EndpointInject("mock:b")
     private ProducerTemplate failureDesetination;
 
     public void doSomething(String name) {

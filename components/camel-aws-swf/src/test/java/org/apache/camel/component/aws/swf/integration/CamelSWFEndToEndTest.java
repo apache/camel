@@ -37,13 +37,13 @@ public class CamelSWFEndToEndTest extends CamelTestSupport {
                     + "&clientConfiguration.endpoint=swf.eu-west-1.amazonaws.com"
                     + "&version=1.0";
 
-    @EndpointInject(uri = "mock:starter")
+    @EndpointInject("mock:starter")
     private MockEndpoint starter;
 
-    @EndpointInject(uri = "mock:decider")
+    @EndpointInject("mock:decider")
     private MockEndpoint decider;
 
-    @EndpointInject(uri = "mock:worker")
+    @EndpointInject("mock:worker")
     private MockEndpoint worker;
 
     @Test

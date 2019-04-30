@@ -29,7 +29,7 @@ import org.apache.camel.util.KeyValueHolder;
 import org.junit.Test;
 
 public class MllpConfigurationBeanBlueprintTest extends CamelBlueprintTestSupport {
-    @EndpointInject(uri = "mock://target")
+    @EndpointInject("mock://target")
     MockEndpoint received;
 
     @Override

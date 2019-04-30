@@ -35,7 +35,7 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
     private static final String QUEUE_NAME = UUID.randomUUID().toString();
     private DistributedQueue<Object> queue;
 
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     private FluentProducerTemplate fluent;
 
     // ************************************

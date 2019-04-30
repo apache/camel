@@ -26,7 +26,7 @@ import org.junit.Test;
 
 public class BlueprintResolveComponentFromCamelContextTest extends CamelBlueprintTestSupport {
 
-    @EndpointInject(uri = "mock://result")
+    @EndpointInject("mock://result")
     MockEndpoint result;
 
     @Override

@@ -45,7 +45,7 @@ public class CsvMarshalHeaderTest extends CamelTestSupport {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private ProducerTemplate producerTemplate;
 
     private File outputFile;

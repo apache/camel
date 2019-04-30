@@ -27,10 +27,10 @@ import org.junit.Test;
  */
 public class SimpleTransformAnnotationsBlueprintTest extends CamelBlueprintTestSupport {
 
-    @Produce(uri = "direct:in")
+    @Produce("direct:in")
     private ProducerTemplate producerTemplate;
 
-    @EndpointInject(uri = "mock:out")
+    @EndpointInject("mock:out")
     private MockEndpoint mockOut;
 
     @Override

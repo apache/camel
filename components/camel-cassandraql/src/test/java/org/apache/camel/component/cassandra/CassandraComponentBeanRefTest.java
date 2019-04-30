@@ -30,7 +30,7 @@ public class CassandraComponentBeanRefTest extends BaseCassandraTest {
     public static final String SESSION_URI = "cql:bean:cassandraSession?cql=#insertCql";
     public static final String CLUSTER_URI = "cql:bean:cassandraCluster/camel_ks?cql=#insertCql";
 
-    @Produce(uri = "direct:input")
+    @Produce("direct:input")
     public ProducerTemplate producerTemplate;
 
     @Rule

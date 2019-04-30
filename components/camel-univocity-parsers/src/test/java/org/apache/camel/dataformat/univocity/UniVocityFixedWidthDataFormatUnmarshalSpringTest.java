@@ -36,7 +36,7 @@ import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.join;
  * using the Spring DSL.
  */
 public final class UniVocityFixedWidthDataFormatUnmarshalSpringTest extends CamelSpringTestSupport {
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     MockEndpoint result;
 
     /**

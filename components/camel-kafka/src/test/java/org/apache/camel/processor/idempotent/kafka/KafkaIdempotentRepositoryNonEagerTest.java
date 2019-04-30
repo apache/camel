@@ -41,10 +41,10 @@ public class KafkaIdempotentRepositoryNonEagerTest extends CamelTestSupport {
 
     private KafkaIdempotentRepository kafkaIdempotentRepository;
 
-    @EndpointInject(uri = "mock:out")
+    @EndpointInject("mock:out")
     private MockEndpoint mockOut;
 
-    @EndpointInject(uri = "mock:before")
+    @EndpointInject("mock:before")
     private MockEndpoint mockBefore;
 
     @Override

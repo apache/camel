@@ -40,7 +40,7 @@ import static org.hamcrest.Matchers.instanceOf;
 
 public class PdfTextExtractionTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     @Test

@@ -30,10 +30,10 @@ import org.junit.Test;
  */
 public class JdbcFix9491Test extends AbstractJdbcTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
 
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     private ProducerTemplate direct;
 
     @Test

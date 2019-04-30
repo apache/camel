@@ -22,11 +22,11 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class EndpointInjectWrongContextRoute extends RouteBuilder {
 
-    @EndpointInject(uri = "direct:inbound")
+    @EndpointInject("direct:inbound")
     private Endpoint inbound;
 
     // Wrong context name should lead to resolution exception
-    @EndpointInject(uri = "mock:outbound", context = "foo")
+    @EndpointInject(value = "mock:outbound", context = "foo")
     private Endpoint outbound;
     
     @Override

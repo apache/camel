@@ -27,10 +27,10 @@ import org.springframework.beans.factory.InitializingBean;
  */
 // START SNIPPET: example
 public class MyAssertions implements InitializingBean {
-    @EndpointInject(uri = "mock:matched")
+    @EndpointInject("mock:matched")
     private MockEndpoint matched;
 
-    @EndpointInject(uri = "mock:notMatched")
+    @EndpointInject("mock:notMatched")
     private MockEndpoint notMatched;
 
     public void afterPropertiesSet() throws Exception {

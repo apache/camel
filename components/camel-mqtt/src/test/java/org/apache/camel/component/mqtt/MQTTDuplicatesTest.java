@@ -39,13 +39,13 @@ public class MQTTDuplicatesTest extends MQTTBaseTest {
     private static final int MESSAGE_COUNT = 50;
     private static final int WAIT_MILLIS = 100;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:withClientID")
+    @Produce("direct:withClientID")
     protected ProducerTemplate templateWithClientID;
 
-    @Produce(uri = "direct:withoutClientID")
+    @Produce("direct:withoutClientID")
     protected ProducerTemplate templateWithoutClientID;
 
     @Test

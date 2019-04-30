@@ -44,9 +44,9 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
 
     private static final String TEST_RECORD = "AAABBBCCC\r\n";
 
-    @EndpointInject(uri = URI_MOCK_UNMARSHALL_RESULT)
+    @EndpointInject(URI_MOCK_UNMARSHALL_RESULT)
     private MockEndpoint unmarshallResult;
-    @EndpointInject(uri = URI_MOCK_MARSHALL_RESULT)
+    @EndpointInject(URI_MOCK_MARSHALL_RESULT)
     private MockEndpoint marshallResult;
 
     // *************************************************************************

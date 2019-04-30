@@ -24,7 +24,7 @@ import org.apache.camel.ProducerTemplate;
  */
 public class MyProduceBean {
 
-    @Produce(uri = "seda:bar")
+    @Produce("seda:bar")
     private ProducerTemplate bar;
 
     public void doSomething(String s) {

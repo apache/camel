@@ -39,7 +39,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class DisruptorWaitClaimStrategyComponentTest extends CamelTestSupport {
     private static final Integer VALUE = Integer.valueOf(42);
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     @Produce

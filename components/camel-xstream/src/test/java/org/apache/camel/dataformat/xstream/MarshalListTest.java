@@ -33,7 +33,7 @@ import org.junit.Test;
  */
 public class MarshalListTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     MockEndpoint mock;
 
     @Test

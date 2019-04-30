@@ -629,7 +629,7 @@ public class MyApplicationTest {
     @Autowired
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:direct:end")
+    @EndpointInject("mock:direct:end")
     MockEndpoint mock;
 
     @Test

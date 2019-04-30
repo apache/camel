@@ -32,7 +32,7 @@ public class XQueryPredicateFilterTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint; 
 
-    @Produce(uri = "direct:xpath") 
+    @Produce("direct:xpath")
     protected ProducerTemplate template; 
 
     @Test

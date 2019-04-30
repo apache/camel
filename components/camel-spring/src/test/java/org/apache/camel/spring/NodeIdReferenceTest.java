@@ -31,10 +31,10 @@ public class NodeIdReferenceTest extends SpringRunWithTestSupport {
     @Autowired
     protected ProducerTemplate producer;
 
-    @EndpointInject(uri = "ref:foo")
+    @EndpointInject("ref:foo")
     protected Endpoint start;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint result;
 
     @Test

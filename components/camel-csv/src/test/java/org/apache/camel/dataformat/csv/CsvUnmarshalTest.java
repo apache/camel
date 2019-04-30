@@ -37,10 +37,10 @@ import static org.apache.camel.dataformat.csv.TestUtils.asMap;
 public class CsvUnmarshalTest extends CamelTestSupport {
     private static final String CSV_SAMPLE = "A,B,C\r1,2,3\rone,two,three";
 
-    @EndpointInject(uri = "mock:output")
+    @EndpointInject("mock:output")
     MockEndpoint output;
 
-    @EndpointInject(uri = "mock:line")
+    @EndpointInject("mock:line")
     MockEndpoint line;
 
     @Test

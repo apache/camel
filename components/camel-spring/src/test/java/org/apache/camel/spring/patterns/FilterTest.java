@@ -33,10 +33,10 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration
 public class FilterTest extends SpringRunWithTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     @DirtiesContext

@@ -31,7 +31,7 @@ import twitter4j.TwitterStream;
 
 public class SearchEventTest extends CamelTwitterTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     private TwitterStream twitterStream;

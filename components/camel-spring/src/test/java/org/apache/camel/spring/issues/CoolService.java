@@ -20,7 +20,7 @@ import org.apache.camel.Produce;
 
 public class CoolService {
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private MyCoolStuff stuff;
 
     public String stuff(String s) {

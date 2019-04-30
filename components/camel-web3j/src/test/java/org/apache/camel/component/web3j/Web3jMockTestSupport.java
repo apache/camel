@@ -32,10 +32,10 @@ import rx.Subscription;
 
 public class Web3jMockTestSupport extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint mockResult;
 
-    @EndpointInject(uri = "mock:error")
+    @EndpointInject("mock:error")
     protected MockEndpoint mockError;
 
     @Mock

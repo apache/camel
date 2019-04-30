@@ -37,7 +37,7 @@ public class StreamCachingTest extends CamelTestSupport {
 
     public static final String URI_END_OF_ROUTE = "mock:end_of_route";
 
-    @EndpointInject(uri = URI_END_OF_ROUTE)
+    @EndpointInject(URI_END_OF_ROUTE)
     private MockEndpoint endOfRoute;
 
     @Override

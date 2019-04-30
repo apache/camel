@@ -55,10 +55,10 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 @ContextConfiguration(classes = SpringBatchJobRegistryTest.ContextConfig.class, loader = CamelSpringDelegatingTestContextLoader.class)
 public class SpringBatchJobRegistryTest extends AbstractJUnit4SpringContextTests {
 
-    @EndpointInject(uri = "mock:output")
+    @EndpointInject("mock:output")
     MockEndpoint outputEndpoint;
 
-    @EndpointInject(uri = "mock:jobExecutionEventsQueue")
+    @EndpointInject("mock:jobExecutionEventsQueue")
     MockEndpoint jobExecutionEventsQueueEndpoint;
 
     @Autowired

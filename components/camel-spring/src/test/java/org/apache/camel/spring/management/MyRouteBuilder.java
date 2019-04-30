@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class MyRouteBuilder extends RouteBuilder {
 
-    @EndpointInject(uri = "ref:foo")
+    @EndpointInject("ref:foo")
     private Endpoint foo;
 
     @Override

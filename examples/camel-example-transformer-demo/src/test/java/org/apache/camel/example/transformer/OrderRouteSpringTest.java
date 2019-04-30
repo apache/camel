@@ -42,16 +42,16 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(value = "/META-INF/spring/camel-context.xml", loader = CamelSpringDelegatingTestContextLoader.class)
 @MockEndpointsAndSkip("direct:csv")
 public class OrderRouteSpringTest {
-    @Produce(uri = "direct:java")
+    @Produce("direct:java")
     protected ProducerTemplate javaProducer;
 
-    @Produce(uri = "direct:xml")
+    @Produce("direct:xml")
     protected ProducerTemplate xmlProducer;
 
-    @Produce(uri = "direct:json")
+    @Produce("direct:json")
     protected ProducerTemplate jsonProducer;
 
-    @EndpointInject(uri = "mock:direct:csv")
+    @EndpointInject("mock:direct:csv")
     private MockEndpoint mockCsv;
 
     @Before

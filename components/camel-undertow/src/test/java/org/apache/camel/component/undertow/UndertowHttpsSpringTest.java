@@ -41,7 +41,7 @@ public class UndertowHttpsSpringTest {
     @Produce
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:input")
+    @EndpointInject("mock:input")
     private MockEndpoint mockEndpoint;
 
     @BeforeClass

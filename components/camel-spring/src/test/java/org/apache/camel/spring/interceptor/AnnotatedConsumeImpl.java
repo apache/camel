@@ -24,10 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(propagation = org.springframework.transaction.annotation.Propagation.NEVER, readOnly = true)
 public class AnnotatedConsumeImpl implements AnnotatedConsume {
 
-    @Produce(uri = "mock:book")
+    @Produce("mock:book")
     ProducerTemplate producer;
 
-    @Consume(uri = "seda:book")
+    @Consume("seda:book")
     public void handleTitle(String title) {
         Transactional tx = this.getClass().getAnnotation(Transactional.class);
         if (tx == null) {

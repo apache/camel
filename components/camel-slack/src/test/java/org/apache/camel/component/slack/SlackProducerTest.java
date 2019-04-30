@@ -26,13 +26,13 @@ import org.junit.Test;
 
 public class SlackProducerTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:errors")
+    @EndpointInject("mock:errors")
     MockEndpoint errors;
 
-    @EndpointInject(uri = "direct:test")
+    @EndpointInject("direct:test")
     DirectEndpoint test;
 
-    @EndpointInject(uri = "direct:error")
+    @EndpointInject("direct:error")
     DirectEndpoint error;
 
     @Test

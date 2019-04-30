@@ -26,13 +26,13 @@ public class RabbitMQBasicIntTest extends AbstractRabbitMQIntTest {
 
     // Startup RabbitMQ via Docker (see readme.txt in camel-rabbitmq folder)
 
-    @EndpointInject(uri = "rabbitmq:localhost:5672/foo?username=cameltest&password=cameltest")
+    @EndpointInject("rabbitmq:localhost:5672/foo?username=cameltest&password=cameltest")
     private Endpoint foo;
 
-    @EndpointInject(uri = "rabbitmq:localhost:5672/bar?username=cameltest&password=cameltest")
+    @EndpointInject("rabbitmq:localhost:5672/bar?username=cameltest&password=cameltest")
     private Endpoint bar;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
 
     @Override

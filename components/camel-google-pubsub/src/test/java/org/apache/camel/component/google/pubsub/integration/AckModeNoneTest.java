@@ -46,10 +46,10 @@ public class AckModeNoneTest extends PubsubTestSupport {
             + "?ackMode=NONE")
     private Endpoint pubsubSub;
 
-    @EndpointInject(uri = "mock:receiveResult")
+    @EndpointInject("mock:receiveResult")
     private MockEndpoint receiveResult;
 
-    @Produce(uri = "direct:in")
+    @Produce("direct:in")
     private ProducerTemplate producer;
 
     @BeforeClass
