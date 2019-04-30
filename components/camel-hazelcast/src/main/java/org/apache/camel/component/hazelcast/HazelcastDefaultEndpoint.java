@@ -64,7 +64,7 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
 
     public abstract Producer createProducer() throws Exception;
 
-public HazelcastCommand getCommand() {
+    public HazelcastCommand getCommand() {
         return command;
     }
 
