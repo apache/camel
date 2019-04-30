@@ -57,23 +57,22 @@ The JOOQ component supports 2 options, which are listed below.
 The JOOQ endpoint is configured using URI syntax:
 
 ----
-jooq:entityType/operation
+jooq:entityType
 ----
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+==== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *entityType* | JOOQ entity class |  | Class
-| *operation* | Type of operation to execute on query | NONE | JooqOperation
 |===
 
 
-==== Query Parameters (21 parameters):
+==== Query Parameters (22 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -85,6 +84,7 @@ with the following path and query parameters:
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *operation* (producer) | Type of operation to execute on query | NONE | JooqOperation
 | *query* (producer) | To execute plain SQL query |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
@@ -135,6 +135,18 @@ The component supports 7 options, which are listed below.
 | *camel.component.jooq.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
+
+==== Operations
+
+When using jooq as a producer you can use any of the following `JooqOperation` operations:
+
+[width="100%",cols="1,2",options="header"]
+|===
+| Operation | Description
+| none | Execute a query (default)
+| execute | Execute a query with no expected results
+| fetch | Execute a query and the result of the query is stored as the new message body
+|===
 
 ==== Example:
 JOOQ configuration:
