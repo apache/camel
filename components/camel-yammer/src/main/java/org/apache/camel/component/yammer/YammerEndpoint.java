@@ -66,7 +66,7 @@ public class YammerEndpoint extends ScheduledPollEndpoint {
 
     }
 
-public YammerConfiguration getConfig() {
+    public YammerConfiguration getConfig() {
         return config;
     }
 
