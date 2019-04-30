@@ -50,17 +50,28 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (5 parameters):
+==== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *alias* (common) | Sets the alias used to query the KeyStore for the private key and certificate. |  | String
+| *cipherSuites* (common) | Sets the cipherSuites String. This is a comma separated String of ciphersuites to configure. |  | String
+| *keystore* (common) | Sets the TLS key store. Alternatively, a KeyStoreParameters object can be configured instead. An alias and password should also be configured on the route definition. |  | KeyStore
+| *keyStoreParameters* (common) | The KeyStoreParameters object to use with TLS to configure the keystore. Alternatively, a keystore parameter can be directly configured instead. An alias and password should also be configured on the route definition. |  | KeyStoreParameters
+| *privateKey* (common) | Set the configured private key for use with Raw Public Key. |  | PrivateKey
+| *pskStore* (common) | Set the PskStore to use for pre-shared key. |  | PskStore
+| *publicKey* (common) | Set the configured public key for use with Raw Public Key. |  | PublicKey
+| *trustedRpkStore* (common) | Set the TrustedRpkStore to use to determine trust in raw public keys. |  | TrustedRpkStore
+| *truststore* (common) | Sets the TLS trust store. Alternatively, a trustStoreParameters object can be configured instead. All certificates in the truststore are used to establish trust. |  | KeyStore
+| *trustStoreParameters* (common) | The KeyStoreParameters object to use with TLS to configure the truststore. Alternatively, a truststore object can be directly configured instead. All certificates in the truststore are used to establish trust. |  | KeyStoreParameters
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *coapMethodRestrict* (consumer) | Comma separated list of methods that the CoAP consumer will bind to. The default is to bind to all methods (DELETE, GET, POST, PUT). |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *password* (security) | Sets the password used to access an aliased PrivateKey in the KeyStore. |  | String
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
