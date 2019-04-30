@@ -658,7 +658,9 @@
   </feature>
   <feature name='camel-coap' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle>mvn:org.eclipse.californium/californium-osgi/${californium-version}</bundle>
+    <bundle>wrap:mvn:org.eclipse.californium/californium-core/${californium-version}</bundle>
+    <bundle>wrap:mvn:org.eclipse.californium/element-connector/${californium-version}</bundle>
+    <bundle>wrap:mvn:org.eclipse.californium/scandium/${californium-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-coap/${project.version}</bundle>
   </feature>
   <feature name='camel-cometd' version='${project.version}' start-level='50'>
