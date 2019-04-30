@@ -72,7 +72,7 @@ public class JBPMEndpoint extends DefaultEndpoint {
         return new JBPMConsumer(this, processor);
     }
 
-public void setConfiguration(JBPMConfiguration configuration) {
+    public void setConfiguration(JBPMConfiguration configuration) {
         this.configuration = configuration;
     }
 
