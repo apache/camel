@@ -56,7 +56,7 @@ public class NagiosEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Nagios consumer not supported");
     }
 
-public NagiosConfiguration getConfiguration() {
+    public NagiosConfiguration getConfiguration() {
         return configuration;
     }
 
