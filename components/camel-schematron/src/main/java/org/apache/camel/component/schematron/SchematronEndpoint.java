@@ -75,7 +75,7 @@ public class SchematronEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Consumer is not implemented for this component");
     }
 
-public String getPath() {
+    public String getPath() {
         return path;
     }
 
