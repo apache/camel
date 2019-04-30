@@ -51,6 +51,11 @@
             <artifactId>scandium</artifactId>
             <version>${californium-version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.californium</groupId>
+            <artifactId>element-connector-tcp</artifactId>
+            <version>${californium-version}</version>
+        </dependency>
 
         <!-- logging -->
         <dependency>

@@ -37,6 +37,7 @@ import org.apache.camel.util.URISupport;
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.elements.tcp.TcpServerConnector;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the component that manages {@link CoAPEndpoint}.
  */
-@Component("coap")
+@Component("coap,coaps,coap+tcp,coaps+tcp")
 public class CoAPComponent extends DefaultComponent implements RestConsumerFactory {
     static final int DEFAULT_PORT = 5684;
     private static final Logger LOG = LoggerFactory.getLogger(CoAPComponent.class);
@@ -65,10 +66,15 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
             InetSocketAddress address = new InetSocketAddress(port);
             coapBuilder.setNetworkConfig(config);
 
-            // Configure TLS
+            // Configure TLS and / or TCP
             if (CoAPEndpoint.enableTLS(endpoint.getUri())) {
                 DTLSConnector connector = endpoint.createDTLSConnector(address, false);
                 coapBuilder.setConnector(connector);
+            } else if (CoAPEndpoint.enableTCP(endpoint.getUri())) {
+                int tcpThreads = config.getInt(NetworkConfig.Keys.TCP_WORKER_THREADS);
+                int tcpIdleTimeout = config.getInt(NetworkConfig.Keys.TCP_CONNECTION_IDLE_TIMEOUT);
+                TcpServerConnector tcpConnector = new TcpServerConnector(address, tcpThreads, tcpIdleTimeout);
+                coapBuilder.setConnector(tcpConnector);
             } else {
                 coapBuilder.setInetSocketAddress(address);
             }
