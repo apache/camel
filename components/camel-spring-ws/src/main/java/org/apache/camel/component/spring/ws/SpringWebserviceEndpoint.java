@@ -53,7 +53,7 @@ public class SpringWebserviceEndpoint extends DefaultEndpoint {
         return new SpringWebserviceProducer(this);
     }
 
-public SpringWebserviceConfiguration getConfiguration() {
+    public SpringWebserviceConfiguration getConfiguration() {
         return configuration;
     }
 }
