@@ -16,18 +16,21 @@
  */
 package org.apache.camel.processor;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.exceptionpolicy.DefaultExceptionPolicyStrategy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyKey;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ChildServiceSupport;
 import org.slf4j.Logger;
@@ -52,21 +55,38 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
             if (errorHandler != null) {
                 addChildService(errorHandler);
             }
-        }
 
-        List<Class<? extends Throwable>> list = exceptionType.getExceptionClasses();
-        for (Class<? extends Throwable> clazz : list) {
-            String routeId = null;
-            // only get the route id, if the exception type is route scoped
-            if (exceptionType.isRouteScoped()) {
-                RouteDefinition route = ProcessorDefinitionHelper.getRoute(exceptionType);
-                if (route != null) {
-                    routeId = route.getId();
+            List<Class<? extends Throwable>> list = null;
+            if (exceptionType.getExceptions() != null && !exceptionType.getExceptions().isEmpty()) {
+                list = createExceptionClasses(exceptionType, routeContext.getCamelContext().getClassResolver());
+                for (Class<? extends Throwable> clazz : list) {
+                    String routeId = null;
+                    // only get the route id, if the exception type is route scoped
+                    if (exceptionType.isRouteScoped()) {
+                        RouteDefinition route = ProcessorDefinitionHelper.getRoute(exceptionType);
+                        if (route != null) {
+                            routeId = route.getId();
+                        }
+                    }
+                    ExceptionPolicyKey key = new ExceptionPolicyKey(routeId, clazz, exceptionType.getOnWhen());
+                    exceptionPolicies.put(key, exceptionType);
                 }
             }
-            ExceptionPolicyKey key = new ExceptionPolicyKey(routeId, clazz, exceptionType.getOnWhen());
-            exceptionPolicies.put(key, exceptionType);
         }
+    }
+
+    protected List<Class<? extends Throwable>> createExceptionClasses(OnExceptionDefinition exceptionType, ClassResolver resolver) {
+        List<String> list = exceptionType.getExceptions();
+        List<Class<? extends Throwable>> answer = new ArrayList<>(list.size());
+        for (String name : list) {
+            try {
+                Class<? extends Throwable> type = resolver.resolveMandatoryClass(name, Throwable.class);
+                answer.add(type);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeCamelException(e);
+            }
+        }
+        return answer;
     }
 
     /**
