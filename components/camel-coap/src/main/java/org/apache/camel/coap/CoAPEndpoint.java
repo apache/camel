@@ -49,7 +49,7 @@ import org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore;
 /**
  * The coap component is used for sending and receiving messages from COAP capable devices.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "coap", title = "CoAP", syntax = "coap:uri", consumerClass = CoAPConsumer.class, label = "iot")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "coap,coaps,coap+tcp,coaps+tcp", title = "CoAP", syntax = "coap:uri", consumerClass = CoAPConsumer.class, label = "iot")
 public class CoAPEndpoint extends DefaultEndpoint {
     @UriPath
     private URI uri;
@@ -358,6 +358,10 @@ public class CoAPEndpoint extends DefaultEndpoint {
 
     public static boolean enableTLS(URI uri) {
         return "coaps".equals(uri.getScheme());
+    }
+
+    public static boolean enableTCP(URI uri) {
+        return uri.getScheme().endsWith("+tcp");
     }
 
     public DTLSConnector createDTLSConnector(InetSocketAddress address, boolean client) {
