@@ -29,6 +29,6 @@ public class SerializationDataFormatReifier extends DataFormatReifier<Serializat
 
     @Override
     protected DataFormat doCreateDataFormat(CamelContext camelContext) {
-        return new org.apache.camel.impl.SerializationDataFormat();
+        return new org.apache.camel.impl.engine.SerializationDataFormat();
     }
 }

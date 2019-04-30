@@ -23,7 +23,7 @@ import java.io.PrintStream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
+import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.model.transformer.CustomTransformerDefinition;

@@ -72,7 +72,7 @@ class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> {
             definition.setErrorHandler(id, errorHandler);
         }
         // lookup the error handler builder
-        ErrorHandlerBuilder builder = (ErrorHandlerBuilder) ((RouteDefinition) routeContext.getRoute()).getErrorHandlerBuilder();
+        ErrorHandlerBuilder builder = (ErrorHandlerBuilder) routeContext.getErrorHandlerFactory();
         // and add this as error handlers
         builder.addErrorHandlers(routeContext, definition);
     }

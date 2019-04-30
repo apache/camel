@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.jbpm.JBPMConstants;
-import org.apache.camel.impl.DefaultHeadersMapFactory;
+import org.apache.camel.impl.engine.DefaultHeadersMapFactory;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.drools.core.process.instance.impl.WorkItemImpl;
 import org.jbpm.bpmn2.handler.WorkItemHandlerRuntimeException;
@@ -37,7 +37,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.CoreMatchers.isA;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;

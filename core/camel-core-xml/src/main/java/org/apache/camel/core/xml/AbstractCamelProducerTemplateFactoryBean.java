@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.impl.DefaultProducerTemplate;
+import org.apache.camel.impl.engine.DefaultProducerTemplate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceHelper;
 

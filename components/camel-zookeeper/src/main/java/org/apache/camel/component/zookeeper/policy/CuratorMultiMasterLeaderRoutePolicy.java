@@ -80,8 +80,7 @@ public class CuratorMultiMasterLeaderRoutePolicy extends RoutePolicySupport impl
     public void onInit(Route route) {
         ensureElectionIsCreated();
         LOG.info("Route managed by {}. Setting route [{}] AutoStartup flag to false.", this.getClass(), route.getId());
-        RouteDefinition definition = (RouteDefinition) route.getRouteContext().getRoute();
-        definition.setAutoStartup("false");
+        route.getRouteContext().setAutoStartup(false);
 
 
         if (election.isMaster()) {

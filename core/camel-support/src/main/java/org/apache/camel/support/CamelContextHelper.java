@@ -34,6 +34,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoadPropertiesException;
+import org.apache.camel.NamedNode;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.spi.ClassResolver;
@@ -618,4 +619,19 @@ public final class CamelContextHelper {
         }
         return answer;
     }
+
+    /**
+     * Gets the route id the given node belongs to.
+     *
+     * @param node the node
+     * @return the route id, or <tt>null</tt> if not possible to find
+     */
+    public static String getRouteId(NamedNode node) {
+        NamedNode parent = node;
+        while (parent != null && parent.getParent() != null) {
+            parent = parent.getParent();
+        }
+        return parent != null ? parent.getId() : null;
+    }
+
 }

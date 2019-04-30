@@ -16,7 +16,7 @@
  */
 package org.apache.camel.test.blueprint;
 
-import org.apache.camel.impl.DefaultInflightRepository;
+import org.apache.camel.impl.engine.DefaultInflightRepository;
 
 public class MyInflightRepository extends DefaultInflightRepository {
 

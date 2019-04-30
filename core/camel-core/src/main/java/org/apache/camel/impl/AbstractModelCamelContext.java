@@ -25,12 +25,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.FailedToStartRouteException;
+import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.impl.engine.AbstractCamelContext;
+import org.apache.camel.impl.engine.BaseRouteService;
+import org.apache.camel.impl.transformer.TransformerKey;
+import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.ModelCamelContext;
@@ -45,11 +52,14 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.TransformerRegistry;
+import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.support.CamelContextHelper;
 
 /**
@@ -294,6 +304,14 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
         return validators;
     }
 
+    protected ValidatorRegistry<ValidatorKey> createValidatorRegistry() throws Exception {
+        return new DefaultValidatorRegistry(this, getValidators());
+    }
+
+    protected TransformerRegistry<TransformerKey> createTransformerRegistry() throws Exception {
+        return new DefaultTransformerRegistry(this, getTransformers());
+    }
+
     protected abstract HealthCheckRegistry createHealthCheckRegistry();
 
     protected abstract RuntimeCamelCatalog createRuntimeCamelCatalog();
@@ -342,7 +360,10 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
         setStartingRoutes(true);
         try {
             // must ensure route is prepared, before we can start it
-            routeDefinition.prepare(this);
+            if (!routeDefinition.isPrepared()) {
+                RouteDefinitionHelper.prepareRoute(this, routeDefinition);
+                routeDefinition.markPrepared();
+            }
 
             Route route = new RouteReifier(routeDefinition).addRoutes(this);
             RouteService routeService = new RouteService(this, routeDefinition, route.getRouteContext(), route);
@@ -353,13 +374,15 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
         }
     }
 
-    protected synchronized void shutdownRouteService(RouteService routeService) throws Exception {
+    protected synchronized void shutdownRouteService(BaseRouteService routeService) throws Exception {
         // remove the route from ErrorHandlerBuilder if possible
         if (getErrorHandlerFactory() instanceof ErrorHandlerBuilderSupport) {
             ErrorHandlerBuilderSupport builder = (ErrorHandlerBuilderSupport)getErrorHandlerFactory();
             builder.removeOnExceptionList(routeService.getId());
         }
-        routeDefinitions.removeIf(route -> route == routeService.getRouteDefinition());
+        if (routeService instanceof RouteService) {
+            routeDefinitions.removeIf(route -> route == ((RouteService) routeService).getRouteDefinition());
+        }
         super.shutdownRouteService(routeService);
     }
 
@@ -381,4 +404,10 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
     protected void startRouteDefinitions() throws Exception {
         startRouteDefinitions(routeDefinitions);
     }
+
+    @Override
+    public AsyncProcessor createMulticast(Collection<Processor> processors, ExecutorService executor, boolean shutdownExecutorService) {
+        return new MulticastProcessor(this, processors, null, true, executor, shutdownExecutorService, false, false, 0, null, false, false);
+    }
+
 }

@@ -28,7 +28,7 @@ import com.amazonaws.services.simpledb.model.UpdateCondition;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultProducerTemplate;
+import org.apache.camel.impl.engine.DefaultProducerTemplate;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Before;
 import org.junit.Test;

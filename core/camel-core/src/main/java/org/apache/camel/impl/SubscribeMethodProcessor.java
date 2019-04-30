@@ -29,9 +29,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.builder.PredicateBuilder;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 

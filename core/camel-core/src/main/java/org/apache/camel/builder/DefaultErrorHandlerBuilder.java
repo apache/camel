@@ -24,8 +24,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.DefaultErrorHandler;
-import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.Language;
@@ -228,7 +228,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
      * Will allow asynchronous delayed redeliveries. The route, in particular the consumer's component,
      * must support the Asynchronous Routing Engine (e.g. seda)
      *
-     * @see org.apache.camel.processor.RedeliveryPolicy#setAsyncDelayedRedelivery(boolean)
+     * @see RedeliveryPolicy#setAsyncDelayedRedelivery(boolean)
      * @return the builder
      */
     public DefaultErrorHandlerBuilder asyncDelayedRedelivery() {

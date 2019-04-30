@@ -28,6 +28,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.engine.DefaultProducerTemplate;
 import org.junit.Test;
 
 /**

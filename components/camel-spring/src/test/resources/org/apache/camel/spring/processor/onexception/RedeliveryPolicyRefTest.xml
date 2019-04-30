@@ -32,7 +32,7 @@
     </bean>
 
     <!-- here we define our redelivery policy using standard spring style -->
-    <bean id="myRedeliveryPolicy" class="org.apache.camel.processor.RedeliveryPolicy">
+    <bean id="myRedeliveryPolicy" class="org.apache.camel.processor.errorhandler.RedeliveryPolicy">
       <property name="maximumRedeliveries" value="1" />
     </bean>
 

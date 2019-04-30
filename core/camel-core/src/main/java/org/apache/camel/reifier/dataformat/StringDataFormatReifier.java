@@ -29,7 +29,7 @@ public class StringDataFormatReifier extends DataFormatReifier<StringDataFormat>
 
     @Override
     protected DataFormat doCreateDataFormat(CamelContext camelContext) {
-        return new org.apache.camel.impl.StringDataFormat(definition.getCharset());
+        return new org.apache.camel.impl.engine.StringDataFormat(definition.getCharset());
     }
 
 }

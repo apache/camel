@@ -19,6 +19,7 @@ package org.apache.camel.cdi.transaction;
 import javax.annotation.Resource;
 import javax.transaction.TransactionManager;
 
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;

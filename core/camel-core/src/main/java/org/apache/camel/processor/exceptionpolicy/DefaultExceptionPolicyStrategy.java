@@ -182,7 +182,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
                 // for example we check route scope before context scope (preferring route scopes)
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Existing candidate {} takes precedence over{} at level {}",
-                            new Object[]{candidates.get(candidateDiff), candidate, candidateDiff});
+                            candidates.get(candidateDiff), candidate, candidateDiff);
                 }
             }
         }

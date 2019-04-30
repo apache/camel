@@ -25,12 +25,14 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.model.AggregateDefinition;
+import org.apache.camel.model.OptimisticLockRetryPolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.aggregate.AggregateController;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
@@ -154,7 +156,7 @@ class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         }
         if (definition.getOptimisticLockRetryPolicy() == null) {
             if (definition.getOptimisticLockRetryPolicyDefinition() != null) {
-                answer.setOptimisticLockRetryPolicy(definition.getOptimisticLockRetryPolicyDefinition().createOptimisticLockRetryPolicy());
+                answer.setOptimisticLockRetryPolicy(createOptimisticLockRetryPolicy(definition.getOptimisticLockRetryPolicyDefinition()));
             }
         } else {
             answer.setOptimisticLockRetryPolicy(definition.getOptimisticLockRetryPolicy());
@@ -166,6 +168,26 @@ class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             answer.setCompletionTimeoutCheckerInterval(definition.getCompletionTimeoutCheckerInterval());
         }
         return answer;
+    }
+
+    public static OptimisticLockRetryPolicy createOptimisticLockRetryPolicy(OptimisticLockRetryPolicyDefinition definition) {
+        OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
+        if (definition.getMaximumRetries() != null) {
+            policy.setMaximumRetries(definition.getMaximumRetries());
+        }
+        if (definition.getRetryDelay() != null) {
+            policy.setRetryDelay(definition.getRetryDelay());
+        }
+        if (definition.getMaximumRetryDelay() != null) {
+            policy.setMaximumRetryDelay(definition.getMaximumRetryDelay());
+        }
+        if (definition.getExponentialBackOff() != null) {
+            policy.setExponentialBackOff(definition.getExponentialBackOff());
+        }
+        if (definition.getRandomBackOff() != null) {
+            policy.setRandomBackOff(definition.getRandomBackOff());
+        }
+        return policy;
     }
 
     private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {

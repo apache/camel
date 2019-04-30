@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.impl.engine.DefaultProducerCache;
 import org.junit.Test;
 
 public class EmptyProducerCacheTest extends ContextTestSupport {

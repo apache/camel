@@ -45,7 +45,7 @@
     </bean>
 
     <!-- here we set the redelivery settings -->
-	<bean id="myRedeliveryPolicyConfig" class="org.apache.camel.processor.RedeliveryPolicy">
+	<bean id="myRedeliveryPolicyConfig" class="org.apache.camel.processor.errorhandler.RedeliveryPolicy">
 	    <!-- try redelivery at most 3 times, after that the exchange is dead and its routed to the mock:dead endpoint -->
         <property name="maximumRedeliveries" value="3"/>
 		<!-- delay 250ms before redelivery -->

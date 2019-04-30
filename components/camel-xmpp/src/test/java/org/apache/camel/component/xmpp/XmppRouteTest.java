@@ -29,7 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultProducerTemplate;
+import org.apache.camel.impl.engine.DefaultProducerTemplate;
 import org.jivesoftware.smack.packet.Message;
 import org.junit.Ignore;
 import org.junit.Test;

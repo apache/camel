@@ -19,10 +19,11 @@ package org.apache.camel.impl;
 import java.io.File;
 import java.nio.file.Files;
 
+import org.apache.camel.impl.engine.FileStateRepository;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.apache.camel.impl.FileStateRepository.fileStateRepository;
+import static org.apache.camel.impl.engine.FileStateRepository.fileStateRepository;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

@@ -25,7 +25,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultConsumerCache;
+import org.apache.camel.impl.engine.DefaultConsumerCache;
 import org.junit.Test;
 
 public class ManagedConsumerCacheHitsTest extends ManagementTestSupport {

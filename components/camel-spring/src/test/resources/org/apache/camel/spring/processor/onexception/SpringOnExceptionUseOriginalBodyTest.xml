@@ -29,7 +29,7 @@
         <property name="redeliveryPolicy" ref="myRedeliveryPolicy"/>
     </bean>
 
-    <bean id="myRedeliveryPolicy" class="org.apache.camel.processor.RedeliveryPolicy">
+    <bean id="myRedeliveryPolicy" class="org.apache.camel.processor.errorhandler.RedeliveryPolicy">
         <property name="redeliveryDelay" value="0"/>
         <property name="logStackTrace" value="false"/>
         <property name="maximumRedeliveries" value="0"/>

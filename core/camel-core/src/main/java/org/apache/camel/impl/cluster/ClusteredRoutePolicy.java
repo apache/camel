@@ -156,12 +156,24 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     private RouteDefinition definition(Route route) {
         return (RouteDefinition) route.getRouteContext().getRoute();
     }
+
+    private ServiceStatus getStatus(Route route) {
+        if (camelContext != null) {
+            ServiceStatus answer = camelContext.getRouteController().getRouteStatus(route.getId());
+            if (answer == null) {
+                answer = ServiceStatus.Stopped;
+            }
+            return answer;
+        }
+        return null;
+    }
+
     @Override
     public void onInit(Route route) {
         super.onInit(route);
 
         log.info("Route managed by {}. Setting route {} AutoStartup flag to false.", getClass(), route.getId());
-        definition(route).setAutoStartup("false");
+        route.getRouteContext().setAutoStartup(false);
 
         this.refCount.retain();
         this.stoppedRoutes.add(route);
@@ -232,8 +244,8 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
 
         try {
             for (Route route : stoppedRoutes) {
-                ServiceStatus status = definition(route).getStatus(getCamelContext());
-                if (status.isStartable()) {
+                ServiceStatus status = getStatus(route);
+                if (status != null && status.isStartable()) {
                     log.debug("Starting route '{}'", route.getId());
                     camelContext.getRouteController().startRoute(route.getId());
 
@@ -264,8 +276,8 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
 
         try {
             for (Route route : startedRoutes) {
-                ServiceStatus status = definition(route).getStatus(getCamelContext());
-                if (status.isStoppable()) {
+                ServiceStatus status = getStatus(route);
+                if (status != null && status.isStoppable()) {
                     log.debug("Stopping route '{}'", route.getId());
                     stopRoute(route);
 

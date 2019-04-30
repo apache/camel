@@ -18,7 +18,7 @@ package org.apache.camel.spring.config;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
-import org.apache.camel.impl.DefaultConsumerTemplate;
+import org.apache.camel.impl.engine.DefaultConsumerTemplate;
 import org.apache.camel.spring.SpringRunWithTestSupport;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

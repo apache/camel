@@ -26,7 +26,6 @@ import java.util.function.Function;
 import org.apache.camel.Channel;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
-import org.apache.camel.Route;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.CatchDefinition;
@@ -100,7 +99,7 @@ import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
-import org.apache.camel.processor.interceptor.DefaultChannel;
+import org.apache.camel.processor.channel.DefaultChannel;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
@@ -362,7 +361,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
      * @throws Exception can be thrown if failed to create error handler builder
      */
     protected Processor wrapInErrorHandler(RouteContext routeContext, Processor output) throws Exception {
-        ErrorHandlerFactory builder = ((RouteDefinition) routeContext.getRoute()).getErrorHandlerBuilder();
+        ErrorHandlerFactory builder = routeContext.getErrorHandlerFactory();
         // create error handler
         Processor errorHandler = builder.createErrorHandler(routeContext, output);
 

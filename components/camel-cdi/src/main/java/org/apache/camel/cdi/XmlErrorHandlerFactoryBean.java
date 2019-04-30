@@ -32,7 +32,7 @@ import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.cdi.xml.ErrorHandlerDefinition;
 import org.apache.camel.cdi.xml.RedeliveryPolicyFactoryBean;
-import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 
 import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByName;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;

@@ -14,4 +14,4 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
-class=org.apache.camel.impl.DefaultFactoryFinderTest$TestImplA
+class=org.apache.camel.impl.engine.DefaultFactoryFinderTest$TestImplA

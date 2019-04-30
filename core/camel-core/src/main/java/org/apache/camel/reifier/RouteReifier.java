@@ -211,7 +211,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
     // Implementation methods
     // -------------------------------------------------------------------------
     protected Route addRoutes(CamelContext camelContext, FromDefinition fromType) throws Exception {
-        RouteContext routeContext = new DefaultRouteContext(camelContext, definition, fromType);
+        DefaultRouteContext routeContext = new DefaultRouteContext(camelContext, definition, fromType);
 
         // configure tracing
         if (definition.getTrace() != null) {
@@ -331,8 +331,13 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // should inherit the intercept strategies we have defined
         routeContext.setInterceptStrategies(definition.getInterceptStrategies());
-        // force endpoint resolution
-        routeContext.getEndpoint();
+        // resolve endpoint
+        Endpoint endpoint = routeContext.getFrom().getEndpoint();
+        if (endpoint == null) {
+            endpoint = routeContext.resolveEndpoint(routeContext.getFrom().getUri());
+        }
+        routeContext.setEndpoint(endpoint);
+        // notify route context created
         for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
             strategy.onRouteContextCreate(routeContext);
         }

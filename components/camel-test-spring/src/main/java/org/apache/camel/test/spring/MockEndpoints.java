@@ -23,7 +23,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
+import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
 
 /**
  * Triggers the auto-mocking of endpoints whose URIs match the provided filter.  The default

@@ -23,7 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
-import org.apache.camel.impl.EventDrivenConsumerRoute;
+import org.apache.camel.impl.engine.EventDrivenConsumerRoute;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
 import org.junit.After;

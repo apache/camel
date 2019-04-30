@@ -21,7 +21,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
+import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
 import org.apache.camel.main.Main;
 import org.apache.camel.main.MainListenerSupport;
 

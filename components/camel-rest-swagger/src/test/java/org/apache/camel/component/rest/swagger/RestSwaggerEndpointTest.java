@@ -33,7 +33,7 @@ import io.swagger.models.parameters.QueryParameter;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultClassResolver;
+import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.spi.RestConfiguration;
 import org.junit.Test;
 

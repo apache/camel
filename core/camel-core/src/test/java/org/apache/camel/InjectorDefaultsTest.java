@@ -16,7 +16,7 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.impl.DefaultInjector;
+import org.apache.camel.impl.engine.DefaultInjector;
 import org.apache.camel.spi.Injector;
 import org.junit.Test;
 

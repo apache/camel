@@ -32,9 +32,9 @@ public class ZipDataFormatReifier extends DataFormatReifier<ZipDataFormat> {
     @Override
     protected DataFormat doCreateDataFormat(CamelContext camelContext) {
         if (definition.getCompressionLevel() == null) {
-            return new org.apache.camel.impl.ZipDataFormat(Deflater.DEFAULT_COMPRESSION);
+            return new org.apache.camel.impl.engine.ZipDataFormat(Deflater.DEFAULT_COMPRESSION);
         } else {
-            return new org.apache.camel.impl.ZipDataFormat(definition.getCompressionLevel());
+            return new org.apache.camel.impl.engine.ZipDataFormat(definition.getCompressionLevel());
         }
     }
 
