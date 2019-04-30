@@ -215,12 +215,12 @@ public class BoxFilesManager {
 
             if (modified != null) {
                 if (fileSize != null) {
-                    file.uploadVersion(fileContent, modified, fileSize, listener);
+                    file.uploadNewVersion(fileContent, modified, fileSize, listener);
                 } else {
-                    file.uploadVersion(fileContent, modified, 0, listener);
+                    file.uploadNewVersion(fileContent, modified, 0, listener);
                 }
             } else {
-                file.uploadVersion(fileContent);
+                file.uploadNewVersion(fileContent);
             }
 
             return file;

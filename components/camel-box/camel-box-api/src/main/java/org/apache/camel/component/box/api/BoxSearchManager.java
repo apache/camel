@@ -18,12 +18,18 @@ package org.apache.camel.component.box.api;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxAPIException;
 import com.box.sdk.BoxFolder;
 import com.box.sdk.BoxItem;
 
+import com.box.sdk.BoxSearch;
+import com.box.sdk.BoxSearchParameters;
+import com.box.sdk.PartialCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +45,8 @@ import org.slf4j.LoggerFactory;
 public class BoxSearchManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(BoxSearchManager.class);
+    //200 is maximal value used for search (see javadoc for BoxSearch.searchRange)
+    private static final int SEARCH_MAX_LIMIT = 200;
 
     /**
      * Box connection to authenticated user account.
@@ -77,14 +85,23 @@ public class BoxSearchManager {
                 throw new IllegalArgumentException("Parameter 'query' can not be null");
             }
 
-            BoxFolder folder = new BoxFolder(boxConnection, folderId);
+            // New box API for search requires offset and limit as parameters.
+            // To preserve api from previous functionality fro previous version, we will execute more searches if needed and merge results
+            BoxSearchParameters bsp = new BoxSearchParameters();
+            bsp.setAncestorFolderIds(Collections.singletonList(folderId));
+            bsp.setQuery(query);
 
-            Collection<BoxItem> results = new ArrayList<>();
-            for (BoxItem.Info info : folder.search(query)) {
-                results.add((BoxItem) info.getResource());
-            }
+            LinkedList<BoxItem> result = new LinkedList();
+            BoxSearch bs = new BoxSearch(boxConnection);
+            PartialCollection<BoxItem.Info> partialResult;
+            int offset = 0;
+            do {
+                partialResult = bs.searchRange(offset, SEARCH_MAX_LIMIT, bsp);
+                offset += partialResult.size();
+                partialResult.stream().map(i -> (BoxItem)i.getResource()).forEachOrdered(result::add);
+            } while(partialResult.size() == partialResult.limit());
 
-            return results;
+            return result;
         } catch (BoxAPIException e) {
             throw new RuntimeException(
                     String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
