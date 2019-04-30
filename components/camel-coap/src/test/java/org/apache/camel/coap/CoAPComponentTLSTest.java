@@ -202,10 +202,8 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
         keystoreParameters.setPassword("security");
 
         KeyStore keyStore = keystoreParameters.createKeyStore();
-        PrivateKey privateKey =
-            (PrivateKey)keyStore.getKey("service", "security".toCharArray());
-        PublicKey publicKey =
-            keyStore.getCertificate("service").getPublicKey();
+        PrivateKey privateKey = (PrivateKey)keyStore.getKey("service", "security".toCharArray());
+        PublicKey publicKey = keyStore.getCertificate("service").getPublicKey();
 
         KeyStoreParameters keystoreParameters2 = new KeyStoreParameters();
         keystoreParameters2.setResource("selfsigned.jks");
@@ -223,8 +221,12 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
         truststoreParameters2.setResource("truststore2.jks");
         truststoreParameters2.setPassword("storepass");
 
-        TrustedRpkStore trustedRpkStore = id -> { return true;};
-        TrustedRpkStore failedTrustedRpkStore = id -> { return false;};
+        TrustedRpkStore trustedRpkStore = id -> {
+            return true;
+        };
+        TrustedRpkStore failedTrustedRpkStore = id -> {
+            return false;
+        };
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
         PskStore pskStore = new StaticPskStore("some-identity", keyGenerator.generateKey().getEncoded());
 
@@ -249,87 +251,60 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
 
+                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&" + "keyStoreParameters=#keyParams", PORT).transform(body().prepend("Hello "));
 
-                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&keyStoreParameters=#keyParams", PORT)
+                fromF("coaps://localhost:%d/TestResource?alias=selfsigned&password=security&" + "keyStoreParameters=#keyParams2", PORT2).transform(body().prepend("Hello "));
+
+                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&" + "trustStoreParameters=#trustParams&"
+                      + "keyStoreParameters=#keyParams&clientAuthentication=REQUIRE", PORT3).transform(body().prepend("Hello "));
+
+                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&" + "keyStoreParameters=#keyParams&cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8", PORT4)
                     .transform(body().prepend("Hello "));
 
-                fromF("coaps://localhost:%d/TestResource?alias=selfsigned&password=security&keyStoreParameters=#keyParams2", PORT2)
+                fromF("coaps://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey", PORT5).transform(body().prepend("Hello "));
+
+                fromF("coaps://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey&" + "clientAuthentication=REQUIRE&trustedRpkStore=#trustedRpkStore", PORT6)
                     .transform(body().prepend("Hello "));
 
-                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&trustStoreParameters=#trustParams&"
-                      + "keyStoreParameters=#keyParams&clientAuthentication=REQUIRE", PORT3)
+                fromF("coaps://localhost:%d/TestResource?pskStore=#pskStore", PORT7).transform(body().prepend("Hello "));
+
+                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&" + "keyStoreParameters=#keyParams&pskStore=#pskStore", PORT8)
                     .transform(body().prepend("Hello "));
 
-                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&keyStoreParameters=#keyParams&cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8", PORT4)
-                    .transform(body().prepend("Hello "));
+                from("direct:start").toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams", PORT).to("mock:result");
 
-                fromF("coaps://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey", PORT5)
-                    .transform(body().prepend("Hello "));
+                from("direct:notruststore").toF("coaps://localhost:%d/TestResource", PORT).to("mock:result");
 
-                fromF("coaps://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey&clientAuthentication=REQUIRE&trustedRpkStore=#trustedRpkStore", PORT6)
-                    .transform(body().prepend("Hello "));
+                from("direct:failedtrust").toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams2", PORT).to("mock:result");
 
-                fromF("coaps://localhost:%d/TestResource?pskStore=#pskStore", PORT7)
-                    .transform(body().prepend("Hello "));
-
-                fromF("coaps://localhost:%d/TestResource?alias=service&password=security&keyStoreParameters=#keyParams&pskStore=#pskStore", PORT8)
-                    .transform(body().prepend("Hello "));
-
-                from("direct:start")
-                    .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams", PORT)
-                    .to("mock:result");
-
-                from("direct:notruststore")
-                    .toF("coaps://localhost:%d/TestResource", PORT)
-                    .to("mock:result");
-
-                from("direct:failedtrust")
-                    .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams2", PORT)
-                    .to("mock:result");
-
-                from("direct:selfsigned")
-                    .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#keyParams2", PORT2)
-                    .to("mock:result");
+                from("direct:selfsigned").toF("coaps://localhost:%d/TestResource?trustStoreParameters=#keyParams2", PORT2).to("mock:result");
 
                 from("direct:clientauth")
-                    .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams&keyStoreParameters=#keyParams3&alias=client&password=security", PORT3)
+                    .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams&" + "keyStoreParameters=#keyParams3&alias=client&password=security", PORT3)
                     .to("mock:result");
 
                 from("direct:failedclientauth")
-                    .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams&keyStoreParameters=#keyParams2&alias=selfsigned&password=security", PORT3)
+                    .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams&" + "keyStoreParameters=#keyParams2&alias=selfsigned&password=security", PORT3)
                     .to("mock:result");
 
-                from("direct:ciphersuites")
-                    .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams&cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8", PORT4)
+                from("direct:ciphersuites").toF("coaps://localhost:%d/TestResource?trustStoreParameters=#trustParams&" + "cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8", PORT4)
                     .to("mock:result");
 
-                from("direct:rpk")
-                    .toF("coaps://localhost:%d/TestResource?trustedRpkStore=#trustedRpkStore", PORT5)
+                from("direct:rpk").toF("coaps://localhost:%d/TestResource?trustedRpkStore=#trustedRpkStore", PORT5).to("mock:result");
+
+                from("direct:rpknotruststore").toF("coaps://localhost:%d/TestResource", PORT5).to("mock:result");
+
+                from("direct:rpkfailedtrust").toF("coaps://localhost:%d/TestResource?trustedRpkStore=#failedTrustedRpkStore", PORT5).to("mock:result");
+
+                from("direct:rpkclientauth").toF("coaps://localhost:%d/TestResource?trustedRpkStore=#trustedRpkStore&" + "privateKey=#privateKey&publicKey=#publicKey", PORT6)
                     .to("mock:result");
 
-                from("direct:rpknotruststore")
-                    .toF("coaps://localhost:%d/TestResource", PORT5)
+                from("direct:psk").toF("coaps://localhost:%d/TestResource?pskStore=#pskStore", PORT7).to("mock:result");
+
+                from("direct:pskciphersuite").toF("coaps://localhost:%d/TestResource?pskStore=#pskStore&" + "cipherSuites=TLS_PSK_WITH_AES_128_CBC_SHA256", PORT7)
                     .to("mock:result");
 
-                from("direct:rpkfailedtrust")
-                    .toF("coaps://localhost:%d/TestResource?trustedRpkStore=#failedTrustedRpkStore", PORT5)
-                    .to("mock:result");
-
-                from("direct:rpkclientauth")
-                    .toF("coaps://localhost:%d/TestResource?trustedRpkStore=#trustedRpkStore&privateKey=#privateKey&publicKey=#publicKey", PORT6)
-                    .to("mock:result");
-
-                from("direct:psk")
-                    .toF("coaps://localhost:%d/TestResource?pskStore=#pskStore", PORT7)
-                    .to("mock:result");
-
-                from("direct:pskciphersuite")
-                    .toF("coaps://localhost:%d/TestResource?pskStore=#pskStore&cipherSuites=TLS_PSK_WITH_AES_128_CBC_SHA256", PORT7)
-                    .to("mock:result");
-
-                from("direct:pskx509")
-                    .toF("coaps://localhost:%d/TestResource?pskStore=#pskStore&trustStoreParameters=#trustParams", PORT8)
-                    .to("mock:result");
+                from("direct:pskx509").toF("coaps://localhost:%d/TestResource?pskStore=#pskStore&trustStoreParameters=#trustParams", PORT8).to("mock:result");
             }
         };
     }
