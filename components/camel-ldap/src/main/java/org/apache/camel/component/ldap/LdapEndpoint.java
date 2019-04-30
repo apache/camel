@@ -64,7 +64,7 @@ public class LdapEndpoint extends DefaultEndpoint {
         return new LdapProducer(this, dirContextName, base, toSearchControlScope(scope), pageSize, returnedAttributes);
     }
 
-public String getDirContextName() {
+    public String getDirContextName() {
         return dirContextName;
     }
 
