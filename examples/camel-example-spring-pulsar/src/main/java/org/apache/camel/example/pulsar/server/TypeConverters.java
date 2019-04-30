@@ -20,7 +20,6 @@ import org.apache.camel.Converter;
 
 public class TypeConverters implements org.apache.camel.TypeConverters {
 
-
     @Converter
     public int intFromByteArray(byte[] bytes) {
         return 22;

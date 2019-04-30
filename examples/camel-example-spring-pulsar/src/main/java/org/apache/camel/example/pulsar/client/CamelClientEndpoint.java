@@ -26,20 +26,20 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Client that uses the <a href="http://camel.apache.org/message-endpoint.html">Mesage Endpoint</a>
+ * Client that uses the <a href="http://camel.apache.org/message-endpoint.html">Message Endpoint</a>
  * pattern to easily exchange messages with the Server.
  * <p/>
  * Notice this very same API can use for all components in Camel, so if we were using TCP communication instead
- * of JMS messaging we could just use <code>camel.getEndpoint("mina:tcp://someserver:port")</code>.
+ * of Pulsar messaging we could just use <code>camel.getEndpoint("mina:tcp://someserver:port")</code>.
  * <p/>
- * Requires that the JMS broker is running, as well as CamelServer
+ * Requires that the Pulsar broker is running, as well as CamelServer
  */
 public final class CamelClientEndpoint {
+
     private CamelClientEndpoint() {
         //Helper class
     }
 
-    // START SNIPPET: e1
     public static void main(final String[] args) throws Exception {
         System.out.println("Notice this client requires that the CamelServer is already running!");
 
@@ -76,6 +76,5 @@ public final class CamelClientEndpoint {
         // we're done so let's properly close the application context
         IOHelper.close(context);
     }
-    // END SNIPPET: e1
 
 }
