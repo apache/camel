@@ -70,7 +70,7 @@ public class ExecEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Consumer not supported for ExecEndpoint!");
     }
 
-public String getExecutable() {
+    public String getExecutable() {
         return executable;
     }
 
