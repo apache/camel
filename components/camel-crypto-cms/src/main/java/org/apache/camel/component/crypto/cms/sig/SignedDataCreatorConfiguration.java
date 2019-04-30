@@ -35,7 +35,8 @@ public class SignedDataCreatorConfiguration extends CryptoCmsMarshallerConfigura
     @UriParam(label = "sign", defaultValue = "true")
     private Boolean includeContent = Boolean.TRUE;
 
-    @UriParam(label = "sign", javaType = "java.lang.String", description = "Signer information: reference to bean(s) which implements org.apache.camel.component.crypto.cms.api.SignerInfo. Multiple values can be separated by comma")
+    @UriParam(label = "sign", javaType = "java.lang.String", 
+              description = "Signer information: reference to bean(s) which implements org.apache.camel.component.crypto.cms.api.SignerInfo. Multiple values can be separated by comma")
     private List<SignerInfo> signer = new ArrayList<>();
 
     public SignedDataCreatorConfiguration(CamelContext context) {
