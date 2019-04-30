@@ -98,7 +98,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
         return new GridFsConsumer(this, processor);
     }
 
-public void initializeConnection() throws Exception {
+    public void initializeConnection() throws Exception {
         log.info("Initialize GridFS endpoint: {}", this);
         if (database == null) {
             throw new IllegalStateException("Missing required endpoint configuration: database");
