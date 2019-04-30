@@ -55,7 +55,7 @@ public class GangliaEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Ganglia consumer not supported");
     }
 
-public GangliaConfiguration getConfiguration() {
+    public GangliaConfiguration getConfiguration() {
         return configuration;
     }
 
