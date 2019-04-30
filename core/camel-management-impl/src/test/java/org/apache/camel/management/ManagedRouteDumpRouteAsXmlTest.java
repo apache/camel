@@ -144,7 +144,8 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
                 Endpoint bar = context.getEndpoint("mock:bar");
                 bindToRegistry("bar", bar);
 
-                onException(Exception.class).log("${exception.stacktrace}").logStackTrace(true).handled(true);
+                onException(Exception.class)
+                        .log("${exception.stacktrace}").logStackTrace(true).handled(true);
 
                 from("direct:start").routeId("myRoute")
                     .log("Got ${body}")
