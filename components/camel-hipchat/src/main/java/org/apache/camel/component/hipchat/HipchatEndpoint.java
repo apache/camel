@@ -51,7 +51,7 @@ public class HipchatEndpoint extends ScheduledPollEndpoint {
         return consumer;
     }
 
-public HipchatConfiguration getConfiguration() {
+    public HipchatConfiguration getConfiguration() {
         return configuration;
     }
 }
