@@ -34,6 +34,7 @@ import org.apache.camel.spi.RouteContext;
 @Metadata(firstVersion = "2.12.0", label = "dataformat,transformation,core", title = "String Encoding")
 @XmlRootElement(name = "string")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class StringDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String charset;

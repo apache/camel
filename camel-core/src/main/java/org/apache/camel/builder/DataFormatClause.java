@@ -759,6 +759,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the Java Serialization data format
      */
+    @Deprecated
     public T serialization() {
         return dataFormat(new SerializationDataFormat());
     }
@@ -830,6 +831,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the String data format
      */
+    @Deprecated
     public T string() {
         return string(null);
     }
@@ -837,6 +839,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the String data format supporting encoding using given charset
      */
+    @Deprecated
     public T string(String charset) {
         StringDataFormat sdf = new StringDataFormat();
         sdf.setCharset(charset);
