@@ -1,9 +1,8 @@
-[[gzip-dataformat]]
-== GZip DataFormat
+== GZip Deflater DataFormat
 
 *Available as of Camel version 2.0*
 
-The GZip Data Format is a message compression and
+The GZip Deflater Data Format is a message compression and
 de-compression format. It uses the same deflate algorithm that is used
 in <<zip-dataformat,Zip DataFormat>>, although some additional
 headers are provided. This format is produced by popular `gzip`/`gunzip`
@@ -16,7 +15,7 @@ using `gzip` tool.
 === Options
 
 // dataformat options: START
-The GZip dataformat supports 1 options, which are listed below.
+The GZip Deflater dataformat supports 1 options, which are listed below.
 
 
 

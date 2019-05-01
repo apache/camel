@@ -79,6 +79,7 @@
     <bundle>mvn:org.apache.camel/camel-vm/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-xpath/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-xslt/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-zip-deflater/${project.version}</bundle>
     <conditional>
       <condition>shell</condition>
       <bundle>mvn:org.apache.camel/camel-commands-core/${project.version}</bundle>
