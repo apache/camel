@@ -2,60 +2,6 @@
   "properties": [
     {
       "defaultValue": true,
-      "name": "camel.component.mock.enabled",
-      "description": "Enable mock component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.test.enabled",
-      "description": "Enable test component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.class.enabled",
-      "description": "Enable class component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.dataset.enabled",
-      "description": "Enable dataset component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.bean.enabled",
-      "description": "Enable bean component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.dataformat.string.enabled",
-      "description": "Enable string dataformat",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.dataformat.zip.enabled",
-      "description": "Enable zip dataformat",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.dataformat.serialization.enabled",
-      "description": "Enable serialization dataformat",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.dataformat.gzip.enabled",
-      "description": "Enable gzip dataformat",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
       "name": "camel.language.constant.enabled",
       "description": "Enable constant language",
       "type": "java.lang.Boolean"
@@ -68,12 +14,6 @@
     },
     {
       "defaultValue": true,
-      "name": "camel.language.bean.enabled",
-      "description": "Enable bean language",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
       "name": "camel.language.ref.enabled",
       "description": "Enable ref language",
       "type": "java.lang.Boolean"
@@ -82,12 +22,6 @@
       "defaultValue": true,
       "name": "camel.language.header.enabled",
       "description": "Enable header language",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.language.xpath.enabled",
-      "description": "Enable xpath language",
       "type": "java.lang.Boolean"
     },
     {

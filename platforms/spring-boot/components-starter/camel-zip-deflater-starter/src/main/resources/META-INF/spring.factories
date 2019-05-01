@@ -16,8 +16,6 @@
 ## ---------------------------------------------------------------------------
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-dataformat.springboot.GzipDataFormatAutoConfiguration,\
-dataformat.springboot.ZipDataFormatAutoConfiguration,\
 org.apache.camel.dataformat.deflater.springboot.ZipDeflaterDataFormatAutoConfiguration,\
 org.apache.camel.dataformat.deflater.springboot.GzipDeflaterDataFormatAutoConfiguration
 
