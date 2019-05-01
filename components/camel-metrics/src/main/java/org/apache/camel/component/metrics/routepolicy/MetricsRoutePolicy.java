@@ -36,6 +36,10 @@ import org.apache.camel.support.service.ServiceHelper;
  */
 public class MetricsRoutePolicy extends RoutePolicySupport implements NonManagedService {
 
+    public static final String NAME_TOKEN = "##name##";
+    public static final String ROUTE_ID_TOKEN = "##routeId##";
+    public static final String TYPE_TOKEN = "##type##";
+
     private MetricRegistry metricsRegistry;
     private MetricsRegistryService registryService;
     private boolean useJmx = true;
@@ -45,7 +49,7 @@ public class MetricsRoutePolicy extends RoutePolicySupport implements NonManaged
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
     private MetricsStatistics statistics;
     private Route route;
-    private String namePattern = "##name##.##routeId##.##type##";
+    private String namePattern = String.format("%s.%s.%s", NAME_TOKEN, ROUTE_ID_TOKEN, TYPE_TOKEN);
 
     private static final class MetricsStatistics {
         private final String routeId;
@@ -171,9 +175,9 @@ public class MetricsRoutePolicy extends RoutePolicySupport implements NonManaged
         String name = context.getManagementName() != null ? context.getManagementName() : context.getName();
 
         String answer = namePattern;
-        answer = answer.replaceFirst("##name##", name);
-        answer = answer.replaceFirst("##routeId##", Matcher.quoteReplacement(route.getId()));
-        answer = answer.replaceFirst("##type##", type);
+        answer = answer.replaceFirst(NAME_TOKEN, name);
+        answer = answer.replaceFirst(ROUTE_ID_TOKEN, Matcher.quoteReplacement(route.getId()));
+        answer = answer.replaceFirst(TYPE_TOKEN, type);
         return answer;
     }
 
