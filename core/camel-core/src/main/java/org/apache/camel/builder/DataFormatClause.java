@@ -58,7 +58,7 @@ import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.YAMLLibrary;
-import org.apache.camel.model.dataformat.ZipDataFormat;
+import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.util.CollectionStringBuffer;
@@ -1194,7 +1194,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the ZIP deflater data format
      */
     public T zip() {
-        ZipDataFormat zdf = new ZipDataFormat(Deflater.DEFAULT_COMPRESSION);
+        ZipDeflaterDataFormat zdf = new ZipDeflaterDataFormat(Deflater.DEFAULT_COMPRESSION);
         return dataFormat(zdf);
     }
 
@@ -1202,7 +1202,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the ZIP deflater data format
      */
     public T zip(int compressionLevel) {
-        ZipDataFormat zdf = new ZipDataFormat(compressionLevel);
+        ZipDeflaterDataFormat zdf = new ZipDeflaterDataFormat(compressionLevel);
         return dataFormat(zdf);
     }
 

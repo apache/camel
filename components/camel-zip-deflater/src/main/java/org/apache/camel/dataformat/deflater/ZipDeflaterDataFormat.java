@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat;
+package org.apache.camel.dataformat.deflater;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,22 +33,22 @@ import org.apache.camel.util.IOHelper;
 /**
  * Deflate (zip) compression data format (does not support zip files, instead use zipfile dataformat).
  */
-@Dataformat("zip")
-public class ZipDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+@Dataformat("zipdeflater")
+public class ZipDeflaterDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private int compressionLevel;
 
-    public ZipDataFormat() {
-        this.compressionLevel = Deflater.BEST_SPEED;
+    public ZipDeflaterDataFormat() {
+        this.compressionLevel = Deflater.DEFAULT_COMPRESSION;
     }
 
-    public ZipDataFormat(int compressionLevel) {
+    public ZipDeflaterDataFormat(int compressionLevel) {
         this.compressionLevel = compressionLevel;
     }
 
     @Override
     public String getDataFormatName() {
-        return "zip";
+        return "zipdeflater";
     }
 
     public int getCompressionLevel() {

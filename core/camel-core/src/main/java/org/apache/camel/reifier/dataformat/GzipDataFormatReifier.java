@@ -16,10 +16,8 @@
  */
 package org.apache.camel.reifier.dataformat;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.GzipDataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class GzipDataFormatReifier extends DataFormatReifier<GzipDataFormat> {
 
@@ -27,8 +25,4 @@ public class GzipDataFormatReifier extends DataFormatReifier<GzipDataFormat> {
         super((GzipDataFormat) definition);
     }
 
-    @Override
-    protected DataFormat doCreateDataFormat(CamelContext camelContext) {
-        return new org.apache.camel.dataformat.GzipDataFormat();
-    }
 }

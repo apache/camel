@@ -380,6 +380,7 @@
     <module>camel-xstream-starter</module>
     <module>camel-yammer-starter</module>
     <module>camel-zendesk-starter</module>
+    <module>camel-zip-deflater-starter</module>
     <module>camel-zipfile-starter</module>
     <module>camel-zipkin-starter</module>
     <module>camel-zookeeper-master-starter</module>

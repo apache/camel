@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat;
+package org.apache.camel.dataformat.deflater;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -32,12 +32,12 @@ import org.apache.camel.util.IOHelper;
 /**
  * GZip {@link org.apache.camel.spi.DataFormat} for reading/writing data using gzip.
  */
-@Dataformat("gzip")
-public class GzipDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+@Dataformat("gzipdeflater")
+public class GzipDeflaterDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     @Override
     public String getDataFormatName() {
-        return "gzip";
+        return "gzipdeflater";
     }
 
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
