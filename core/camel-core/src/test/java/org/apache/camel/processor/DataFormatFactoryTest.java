@@ -18,8 +18,8 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.engine.SerializationDataFormat;
-import org.apache.camel.impl.engine.StringDataFormat;
+import org.apache.camel.dataformat.SerializationDataFormat;
+import org.apache.camel.dataformat.StringDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatFactory;
 import org.junit.Test;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.engine.springboot;
+package org.apache.camel.dataformat.springboot;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +23,7 @@ import javax.annotation.Generated;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.engine.SerializationDataFormat;
+import org.apache.camel.dataformat.GzipDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatCustomizer;
 import org.apache.camel.spi.DataFormatFactory;
@@ -54,39 +54,38 @@ import org.springframework.context.annotation.Configuration;
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @Configuration
 @Conditional({ConditionalOnCamelContextAndAutoConfigurationBeans.class,
-        SerializationDataFormatAutoConfiguration.GroupConditions.class})
+        GzipDataFormatAutoConfiguration.GroupConditions.class})
 @AutoConfigureAfter(name = "org.apache.camel.spring.boot.CamelAutoConfiguration")
 @EnableConfigurationProperties({DataFormatConfigurationProperties.class,
-        SerializationDataFormatConfiguration.class})
-public class SerializationDataFormatAutoConfiguration {
+        GzipDataFormatConfiguration.class})
+public class GzipDataFormatAutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(SerializationDataFormatAutoConfiguration.class);
+            .getLogger(GzipDataFormatAutoConfiguration.class);
     @Autowired
     private ApplicationContext applicationContext;
     @Autowired
     private CamelContext camelContext;
     @Autowired
-    private SerializationDataFormatConfiguration configuration;
+    private GzipDataFormatConfiguration configuration;
     @Autowired(required = false)
-    private List<DataFormatCustomizer<SerializationDataFormat>> customizers;
+    private List<DataFormatCustomizer<GzipDataFormat>> customizers;
 
     static class GroupConditions extends GroupCondition {
         public GroupConditions() {
-            super("camel.dataformat", "camel.dataformat.serialization");
+            super("camel.dataformat", "camel.dataformat.gzip");
         }
     }
 
-    @Bean(name = "serialization-dataformat-factory")
-    @ConditionalOnMissingBean(SerializationDataFormat.class)
-    public DataFormatFactory configureSerializationDataFormatFactory()
-            throws Exception {
+    @Bean(name = "gzip-dataformat-factory")
+    @ConditionalOnMissingBean(GzipDataFormat.class)
+    public DataFormatFactory configureGzipDataFormatFactory() throws Exception {
         return new DataFormatFactory() {
             @Override
             public DataFormat newInstance() {
-                SerializationDataFormat dataformat = new SerializationDataFormat();
+                GzipDataFormat dataformat = new GzipDataFormat();
                 if (CamelContextAware.class
-                        .isAssignableFrom(SerializationDataFormat.class)) {
+                        .isAssignableFrom(GzipDataFormat.class)) {
                     CamelContextAware contextAware = CamelContextAware.class
                             .cast(dataformat);
                     if (contextAware != null) {
@@ -103,17 +102,17 @@ public class SerializationDataFormatAutoConfiguration {
                     throw new RuntimeCamelException(e);
                 }
                 if (ObjectHelper.isNotEmpty(customizers)) {
-                    for (DataFormatCustomizer<SerializationDataFormat> customizer : customizers) {
+                    for (DataFormatCustomizer<GzipDataFormat> customizer : customizers) {
                         boolean useCustomizer = (customizer instanceof HasId)
                                 ? HierarchicalPropertiesEvaluator.evaluate(
                                         applicationContext.getEnvironment(),
                                         "camel.dataformat.customizer",
-                                        "camel.dataformat.serialization.customizer",
+                                        "camel.dataformat.gzip.customizer",
                                         ((HasId) customizer).getId())
                                 : HierarchicalPropertiesEvaluator.evaluate(
                                         applicationContext.getEnvironment(),
                                         "camel.dataformat.customizer",
-                                        "camel.dataformat.serialization.customizer");
+                                        "camel.dataformat.gzip.customizer");
                         if (useCustomizer) {
                             LOGGER.debug(
                                     "Configure dataformat {}, with customizer {}",

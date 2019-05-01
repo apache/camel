@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.springboot;
+package org.apache.camel.dataformat.springboot;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,11 +23,12 @@ import javax.annotation.Generated;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.engine.ZipDataFormat;
+import org.apache.camel.dataformat.ZipDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatCustomizer;
 import org.apache.camel.spi.DataFormatFactory;
 import org.apache.camel.spi.HasId;
+import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.DataFormatConfigurationProperties;
 import org.apache.camel.spring.boot.util.CamelPropertiesHelper;
 import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
@@ -39,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;

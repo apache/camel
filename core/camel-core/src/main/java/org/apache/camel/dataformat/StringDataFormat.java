@@ -14,12 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.engine;
+package org.apache.camel.dataformat;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.io.OutputStream;
 
 import org.apache.camel.Exchange;
@@ -30,42 +28,57 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
- * The <a href="http://camel.apache.org/data-format.html">data format</a>
- * using Java Serialization.
+ * The text based <a href="http://camel.apache.org/data-format.html">data format</a> supporting
+ * charset encoding.
  */
-@Dataformat("serialization")
-public class SerializationDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+@Dataformat("string")
+public class StringDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+
+    private String charset;
+
+    public StringDataFormat() {
+    }
+
+    public StringDataFormat(String charset) {
+        this.charset = charset;
+    }
 
     @Override
     public String getDataFormatName() {
-        return "serialization";
+        return "string";
     }
 
-    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        ObjectOutput out = ExchangeHelper.convertToMandatoryType(exchange, ObjectOutput.class, stream);
-        try {
-            out.writeObject(graph);
-        } finally {
-            out.flush();
-            try {
-                out.close();
-            } catch (IOException e) {
-                // ignore
-            }
-        }
+    public String getCharset() {
+        return charset;
     }
 
-    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        ObjectInput in = ExchangeHelper.convertToMandatoryType(exchange, ObjectInput.class, stream);
-        try {
-            return in.readObject();
-        } finally {
-            try {
-                in.close();
-            } catch (IOException e) {
-                // ignore
-            }
+    public void setCharset(String charset) {
+        this.charset = charset;
+    }
+
+    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException {
+        String text = ExchangeHelper.convertToType(exchange, String.class, graph);
+
+        byte[] bytes;
+        if (charset != null) {
+            bytes = text.getBytes(charset);
+        } else {
+            bytes = text.getBytes();
         }
+        stream.write(bytes);
+    }
+
+    public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
+        byte[] bytes = ExchangeHelper.convertToType(exchange, byte[].class, stream);
+
+        String answer;
+        if (charset != null) {
+            answer = new String(bytes, charset);
+        } else {
+            answer = new String(bytes);
+        }
+
+        return answer;
     }
 
     @Override
