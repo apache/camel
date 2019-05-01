@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,7 +19,6 @@ package org.apache.camel.component.soroushbot.component;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,7 +52,6 @@ import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 
 /**
@@ -126,6 +124,10 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
     @UriParam(label = "global", description = "Maximum amount of time (in millisecond) a thread wait before retrying failed request.",
             defaultValue = "3600000")
     Long maxRetryWaitingTime = 3600000L;
+    @UriParam(label = "getMessage", description = "The timeout in millisecond to reconnect the existing getMessage connection"
+            + " to ensure that the connection is always live and does not dead without notifying the bot. this value should not be changed.",
+            defaultValue = "300000")
+    private long reconnectIdleConnectionTimeout = 5 * 60 * 1000;
     /**
      * lazy instance of {@link WebTarget} to used for uploading file to soroush Server, since the url is always the same, we reuse this WebTarget for all requests
      */
@@ -206,6 +208,9 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
         }
         if (maxConnectionRetry == null) {
             maxConnectionRetry = 0;
+        }
+        if (reconnectIdleConnectionTimeout <= 0) {
+            reconnectIdleConnectionTimeout = 5 * 60 * 1000;
         }
         connectionTimeout = Math.max(0, connectionTimeout);
         maxConnectionRetry = Math.max(0, maxConnectionRetry);
@@ -411,6 +416,14 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
 
     public Long getRetryExponentialCoefficient() {
         return retryExponentialCoefficient;
+    }
+
+    public Long getReconnectIdleConnectionTimeout() {
+        return reconnectIdleConnectionTimeout;
+    }
+
+    public void setReconnectIdleConnectionTimeout(Long reconnectIdleConnectionTimeout) {
+        this.reconnectIdleConnectionTimeout = reconnectIdleConnectionTimeout;
     }
 
     public void setRetryExponentialCoefficient(Long retryExponentialCoefficient) {

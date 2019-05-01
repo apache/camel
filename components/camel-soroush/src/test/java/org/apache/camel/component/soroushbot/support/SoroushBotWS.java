@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -85,6 +85,7 @@ public class SoroushBotWS {
     @Produces(MediaType.SERVER_SENT_EVENTS)
     public void getMessage(@PathParam("token") String token, @Context SseEventSink sink) {
         int messageCount = getNumberOfMessage(token);
+        int delay = getMessageDelay(token);
         LogManager.getLogger().info("new connection for getting " + messageCount + " message");
         final boolean withFile = token.toLowerCase().contains("file");
 //        final EventOutput eventOutput = new EventOutput();
@@ -99,7 +100,7 @@ public class SoroushBotWS {
                     final OutboundEvent event = eventBuilder.build();
                     sink.send(event);
 //                    eventOutput.write(event);
-                    Thread.sleep(10);
+                    Thread.sleep(delay);
                 }
                 if (token.toLowerCase().contains("close")) {
                     sink.close();
@@ -108,6 +109,18 @@ public class SoroushBotWS {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    private int getMessageDelay(String token) {
+        Scanner s = new Scanner(token);
+        while (s.hasNext()) {
+            if ("delay".equalsIgnoreCase(s.next())) {
+                if (s.hasNextInt()) {
+                    return s.nextInt();
+                }
+            }
+        }
+        return 10;
     }
 
     @POST

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,9 +21,6 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -37,7 +34,6 @@ import org.apache.camel.component.soroushbot.models.Endpoint;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.service.SoroushService;
 import org.apache.camel.support.DefaultConsumer;
-import org.glassfish.jersey.media.sse.EventInput;
 
 import static org.apache.camel.component.soroushbot.utils.StringUtils.ordinal;
 
@@ -52,24 +48,13 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
      * {@link ObjectMapper} for parse message JSON
      */
     ObjectMapper objectMapper = new ObjectMapper();
-    boolean shutdown = false;
+    boolean shutdown;
+    long lastMessageReceived;
     private ReconnectableEventSourceListener connection;
 
     public SoroushBotAbstractConsumer(SoroushBotEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
-    }
-
-    /**
-     * create an {@link EventInput} that connect to soroush SSE server and read events
-     *
-     * @param target
-     * @return
-     */
-    private EventInput createEvent(WebTarget target) {
-        EventInput eventInput = target.request().get(EventInput.class);
-        eventInput.setChunkType(MediaType.SERVER_SENT_EVENTS);
-        return eventInput;
     }
 
     @Override
@@ -93,6 +78,7 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
     protected abstract void sendExchange(Exchange exchange) throws Exception;
 
     private void run() {
+        lastMessageReceived = System.currentTimeMillis();
         Request request = new Request.Builder()
                 .url(SoroushService.get().generateUrl(endpoint.authorizationToken, Endpoint.getMessage, null))
                 .build();
@@ -101,7 +87,6 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
                 .writeTimeout(Duration.ZERO)
                 .readTimeout(Duration.ZERO)
                 .callTimeout(Duration.ZERO).build();
-
         connection = new ReconnectableEventSourceListener(client, request, endpoint.maxConnectionRetry) {
             @Override
             protected boolean onBeforeConnect() {
@@ -132,16 +117,25 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
             }
 
             @Override
-            public void onClosed(EventSource eventSource) {
-                super.onClosed(eventSource);
-                log.warn("connection got closed");
+            protected boolean handleClose(EventSource eventSource, boolean manuallyClosed) {
+                if (!manuallyClosed) {
+                    log.warn("connection got closed");
+                } else {
+                    log.debug("manually reconnecting to ensure we have live connection");
+                }
+                return true;
             }
 
             @Override
-            public void onFailure(EventSource eventSource, Throwable t, Response response) {
-                super.onFailure(eventSource, t, response);
-                log.error("connection failed due to following error", t);
+            protected boolean handleFailure(EventSource eventSource, boolean manuallyClosed, Throwable t, Response response) {
+                if (!manuallyClosed) {
+                    log.error("connection failed due to following error", t);
+                } else {
+                    log.debug("manually reconnecting to ensure we have live connection");
+                }
+                return true;
             }
+
 
             @Override
             public void onEvent(EventSource eventSource, String id, String type, String data) {
@@ -173,6 +167,12 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
             }
         };
         connection.connect();
+        endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "health check")
+                .scheduleAtFixedRate(() -> {
+                    if (lastMessageReceived < System.currentTimeMillis() - endpoint.getReconnectIdleConnectionTimeout()) {
+                        connection.close();
+                    }
+                }, 2000, endpoint.getReconnectIdleConnectionTimeout(), TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -185,13 +185,13 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
 }
 
 class ReconnectableEventSourceListener extends EventSourceListener {
+    private boolean manuallyClosed;
     private OkHttpClient client;
     private final int maxConnectionRetry;
-    private int connectionRetry = 0;
+    private int connectionRetry;
     private Request request;
     private final EventSource.Factory factory;
     private EventSource eventSource;
-
     public ReconnectableEventSourceListener(OkHttpClient client, Request request, int maxConnectionRetry) {
         this.client = client;
         this.maxConnectionRetry = maxConnectionRetry;
@@ -199,7 +199,20 @@ class ReconnectableEventSourceListener extends EventSourceListener {
         factory = EventSources.createFactory(client);
     }
 
+    public void reconnect() {
+        if (!manuallyClosed) {
+            connectionRetry++;
+        } else {
+            manuallyClosed = false;
+        }
+        if (eventSource != null) {
+            eventSource.cancel();
+        }
+        connect();
+    }
+
     public void connect() {
+
         if (!onBeforeConnect()) {
             return;
         }
@@ -209,10 +222,14 @@ class ReconnectableEventSourceListener extends EventSourceListener {
             onFinishProcess();
         }
     }
-    public void close(){
+
+    public void close() {
+        manuallyClosed = true;
         eventSource.cancel();
     }
-    public void onFinishProcess() {}
+
+    public void onFinishProcess() {
+    }
 
     protected boolean onBeforeConnect() {
         return true;
@@ -224,16 +241,25 @@ class ReconnectableEventSourceListener extends EventSourceListener {
     }
 
     @Override
-    public void onClosed(EventSource eventSource) {
-        connectionRetry++;
-        connect();
+    public final void onClosed(EventSource eventSource) {
+        if (handleClose(eventSource, manuallyClosed)) {
+            reconnect();
+        }
+    }
+
+    protected boolean handleClose(EventSource eventSource, boolean manuallyClosed) {
+        return true;
     }
 
     @Override
-    public void onFailure(EventSource eventSource, Throwable t, Response response) {
-        eventSource.cancel();
-        connectionRetry++;
-        connect();
+    public final void onFailure(EventSource eventSource, Throwable t, Response response) {
+        if (handleFailure(eventSource, manuallyClosed, t, response)) {
+            reconnect();
+        }
+    }
+
+    protected boolean handleFailure(EventSource eventSource, boolean manuallyClosed, Throwable t, Response response) {
+        return true;
     }
 
     public int getConnectionRetry() {

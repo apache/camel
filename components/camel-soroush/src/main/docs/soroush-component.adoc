@@ -71,18 +71,17 @@ soroush:<endpoint>[/authorizationToken][?options]
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+==== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *endpoint* | *Required* The endpoint type. it support getMessage as consumer and sendMessage,uploadFile,downloadFile as producer |  | Endpoint
-| *authorizationToken* |  The authorization token for using the bot. (Ask the @mrbot) |  | String
 |===
 
 
-==== Query Parameters (19 parameters):
+==== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -96,6 +95,7 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *autoDownload* (getMessage) | Automatically download SoroushMessage.fileUrl and SoroushMessage.thumbnailUrl if exists for the message and store them in SoroushMessage.file and SoroushMessage.thumbnail field | false | Boolean
+| *reconnectIdleConnection Timeout* (getMessage) | The timeout in millisecond to reconnect the existing getMessage connection to ensure that the connection is always live and does not dead without notifying the bot. this value should not be changed. | 300000 | long
 | *downloadThumbnail* (downloadFile) | If true, when downloading an attached file, thumbnail will be downloaded if provided in the message. Otherwise, only the file will be downloaded | true | Boolean
 | *forceDownload* (downloadFile) | Force to download SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) if exists, even if the SoroushMessage.file(SoroushMessage.thumbnail) was not null in that message | false | Boolean
 | *backOffStrategy* (global) | The strategy to backoff in case of connection failure. Currently 3 strategies are supported: 1. Exponential (default): It multiply retryWaitingTime by retryExponentialCoefficient after each connection failure. 2. Linear: It increase retryWaitingTime by retryLinearIncrement after each connection failure. 3. Fixed: Always use retryWaitingTime as the time between retries. | Exponential | String
