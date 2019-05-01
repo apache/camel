@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.springboot;
+package org.apache.camel.dataformat.springboot;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,11 +23,12 @@ import javax.annotation.Generated;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.engine.SerializationDataFormat;
+import org.apache.camel.dataformat.StringDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatCustomizer;
 import org.apache.camel.spi.DataFormatFactory;
 import org.apache.camel.spi.HasId;
+import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.DataFormatConfigurationProperties;
 import org.apache.camel.spring.boot.util.CamelPropertiesHelper;
 import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
@@ -39,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -52,39 +54,38 @@ import org.springframework.context.annotation.Configuration;
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @Configuration
 @Conditional({ConditionalOnCamelContextAndAutoConfigurationBeans.class,
-        SerializationDataFormatAutoConfiguration.GroupConditions.class})
+        StringDataFormatAutoConfiguration.GroupConditions.class})
 @AutoConfigureAfter(name = "org.apache.camel.spring.boot.CamelAutoConfiguration")
 @EnableConfigurationProperties({DataFormatConfigurationProperties.class,
-        SerializationDataFormatConfiguration.class})
-public class SerializationDataFormatAutoConfiguration {
+        StringDataFormatConfiguration.class})
+public class StringDataFormatAutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(SerializationDataFormatAutoConfiguration.class);
+            .getLogger(StringDataFormatAutoConfiguration.class);
     @Autowired
     private ApplicationContext applicationContext;
     @Autowired
     private CamelContext camelContext;
     @Autowired
-    private SerializationDataFormatConfiguration configuration;
+    private StringDataFormatConfiguration configuration;
     @Autowired(required = false)
-    private List<DataFormatCustomizer<SerializationDataFormat>> customizers;
+    private List<DataFormatCustomizer<StringDataFormat>> customizers;
 
     static class GroupConditions extends GroupCondition {
         public GroupConditions() {
-            super("camel.dataformat", "camel.dataformat.serialization");
+            super("camel.dataformat", "camel.dataformat.string");
         }
     }
 
-    @Bean(name = "serialization-dataformat-factory")
-    @ConditionalOnMissingBean(SerializationDataFormat.class)
-    public DataFormatFactory configureSerializationDataFormatFactory()
-            throws Exception {
+    @Bean(name = "string-dataformat-factory")
+    @ConditionalOnMissingBean(StringDataFormat.class)
+    public DataFormatFactory configureStringDataFormatFactory() throws Exception {
         return new DataFormatFactory() {
             @Override
             public DataFormat newInstance() {
-                SerializationDataFormat dataformat = new SerializationDataFormat();
+                StringDataFormat dataformat = new StringDataFormat();
                 if (CamelContextAware.class
-                        .isAssignableFrom(SerializationDataFormat.class)) {
+                        .isAssignableFrom(StringDataFormat.class)) {
                     CamelContextAware contextAware = CamelContextAware.class
                             .cast(dataformat);
                     if (contextAware != null) {
@@ -101,17 +102,17 @@ public class SerializationDataFormatAutoConfiguration {
                     throw new RuntimeCamelException(e);
                 }
                 if (ObjectHelper.isNotEmpty(customizers)) {
-                    for (DataFormatCustomizer<SerializationDataFormat> customizer : customizers) {
+                    for (DataFormatCustomizer<StringDataFormat> customizer : customizers) {
                         boolean useCustomizer = (customizer instanceof HasId)
                                 ? HierarchicalPropertiesEvaluator.evaluate(
                                         applicationContext.getEnvironment(),
                                         "camel.dataformat.customizer",
-                                        "camel.dataformat.serialization.customizer",
+                                        "camel.dataformat.string.customizer",
                                         ((HasId) customizer).getId())
                                 : HierarchicalPropertiesEvaluator.evaluate(
                                         applicationContext.getEnvironment(),
                                         "camel.dataformat.customizer",
-                                        "camel.dataformat.serialization.customizer");
+                                        "camel.dataformat.string.customizer");
                         if (useCustomizer) {
                             LOGGER.debug(
                                     "Configure dataformat {}, with customizer {}",

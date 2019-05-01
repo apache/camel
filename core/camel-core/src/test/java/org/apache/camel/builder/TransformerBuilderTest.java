@@ -51,7 +51,7 @@ public class TransformerBuilderTest extends TestSupport {
         Field f = DataFormatTransformer.class.getDeclaredField("dataFormat");
         f.setAccessible(true);
         Object dataFormat = f.get(dft);
-        assertEquals(org.apache.camel.impl.engine.StringDataFormat.class, dataFormat.getClass());
+        assertEquals(org.apache.camel.dataformat.StringDataFormat.class, dataFormat.getClass());
     }
 
     @Test
