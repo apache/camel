@@ -1,9 +1,8 @@
-[[zip-dataformat]]
-== Zip Deflate Compression DataFormat
+== Zip Deflater DataFormat
 
 *Available as of Camel version 2.12*
 
-The Zip Data Format is a message compression and
+The Zip deflater Data Format is a message compression and
 de-compression format. Messages marshalled using Zip compression can be
 unmarshalled using Zip decompression just prior to being consumed at the
 endpoint. The compression capability is quite useful when you deal with
