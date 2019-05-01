@@ -64,7 +64,7 @@ public class PulsarConsumerInTest extends PulsarTestSupport {
 
             @Override
             public void configure() {
-                from(from).to(to).unmarshal().string().process(processor);
+                from(from).to(to).process(processor);
             }
         };
     }
