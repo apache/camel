@@ -27,7 +27,6 @@ import javax.management.openmbean.TabularData;
 
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.junit.Test;
@@ -68,13 +67,13 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
         assertEquals(1000, max.intValue());
 
         Integer current = (Integer) mbeanServer.getAttribute(on, "Size");
-        assertEquals(3, current.intValue());
+        assertEquals(2, current.intValue());
 
         current = (Integer) mbeanServer.getAttribute(on, "StaticSize");
         assertEquals(0, current.intValue());
 
         current = (Integer) mbeanServer.getAttribute(on, "DynamicSize");
-        assertEquals(3, current.intValue());
+        assertEquals(2, current.intValue());
 
         String source = (String) mbeanServer.getAttribute(on, "Source");
         assertTrue(source.startsWith("TransformerRegistry"));
@@ -107,7 +106,7 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
                 fail("Unexpected transformer:" + description);
             }
         }
-        assertEquals(3, data.size());
+        assertEquals(2, data.size());
     }
 
     @Override
@@ -119,10 +118,6 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
                     .fromType("xml:foo")
                     .toType("json:bar")
                     .withUri("direct:transformer");
-                transformer()
-                    .fromType(ManagedTransformerRegistryTest.class)
-                    .toType("xml:test")
-                    .withDataFormat(new StringDataFormat());
                 transformer()
                     .scheme("custom")
                     .withJava(MyTransformer.class);

@@ -22,6 +22,7 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.DataFormatServiceTest;
 import org.junit.Test;
 
 public class ManagedMarshalTest extends ManagementTestSupport {
@@ -55,14 +56,6 @@ public class ManagedMarshalTest extends ManagementTestSupport {
 
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
-
-        String name = (String) mbeanServer.getAttribute(on, "DataFormatName");
-        assertEquals("string", name);
-
-        String xml = (String) mbeanServer.invoke(on, "dumpProcessorAsXml", null, null);
-        assertTrue(xml.contains("<marshal"));
-        assertTrue(xml.contains("</marshal>"));
-        assertTrue(xml.contains("<string charset=\"iso-8859-1\"/>"));
     }
 
     @Override
@@ -71,7 +64,7 @@ public class ManagedMarshalTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .marshal().string("iso-8859-1").id("mysend")
+                    .marshal(new DataFormatServiceTest.MyDataFormat()).id("mysend")
                         .to("mock:foo");
             }
         };

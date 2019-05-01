@@ -235,19 +235,6 @@ public class RuntimeCamelCatalogTest {
         result = catalog.validateEndpointProperties("stub:foo?me=123&you=456");
         assertTrue(result.isSuccess());
 
-        // lenient on
-        result = catalog.validateEndpointProperties("dataformat:string:marshal?foo=bar");
-        assertTrue(result.isSuccess());
-
-        // lenient off
-        result = catalog.validateEndpointProperties("dataformat:string:marshal?foo=bar", true);
-        assertFalse(result.isSuccess());
-        assertTrue(result.getUnknown().contains("foo"));
-
-        // data format
-        result = catalog.validateEndpointProperties("dataformat:string:marshal?charset=utf-8", true);
-        assertTrue(result.isSuccess());
-
         // incapable to parse
         result = catalog.validateEndpointProperties("{{getFtpUrl}}?recursive=true");
         assertFalse(result.isSuccess());
