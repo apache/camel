@@ -231,7 +231,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the GZIP deflater data format
      */
-    public T gzip() {
+    public T gzipDeflater() {
         GzipDataFormat gzdf = new GzipDataFormat();
         return dataFormat(gzdf);
     }
@@ -1193,15 +1193,15 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the ZIP deflater data format
      */
-    public T zip() {
-        ZipDeflaterDataFormat zdf = new ZipDeflaterDataFormat(Deflater.DEFAULT_COMPRESSION);
+    public T zipDefalter() {
+        ZipDeflaterDataFormat zdf = new ZipDeflaterDataFormat();
         return dataFormat(zdf);
     }
 
     /**
      * Uses the ZIP deflater data format
      */
-    public T zip(int compressionLevel) {
+    public T zipDefalter(int compressionLevel) {
         ZipDeflaterDataFormat zdf = new ZipDeflaterDataFormat(compressionLevel);
         return dataFormat(zdf);
     }

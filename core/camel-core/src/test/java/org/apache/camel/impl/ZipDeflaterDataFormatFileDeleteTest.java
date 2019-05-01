@@ -54,7 +54,7 @@ public class ZipDeflaterDataFormatFileDeleteTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/data/zip?initialDelay=0&delay=10&delete=true")
-                    .marshal().zip()
+                    .marshal().zipDefalter()
                     .to("file:target/data/zip/out?fileName=${file:name}.zip")
                     .to("mock:result");
             }
