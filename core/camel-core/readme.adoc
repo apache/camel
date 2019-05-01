@@ -1,39 +1,13 @@
-==== Components
-
-
-
-
 
 // components: START
-
 // components: END
 
-
-
-
-
-
-==== Data Formats
-
-
-
-
-
 // dataformats: START
-
 // dataformats: END
 
 
 
-
-
-
-
 ==== Expression Languages
-
-
-
-
 
 // languages: START
 Number of Languages: 8 in 1 JAR artifacts (0 deprecated)
