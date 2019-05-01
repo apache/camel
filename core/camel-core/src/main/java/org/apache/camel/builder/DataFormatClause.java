@@ -49,9 +49,7 @@ import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
-import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
-import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
@@ -721,13 +719,6 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
-     * Uses the Java Serialization data format
-     */
-    public T serialization() {
-        return dataFormat(new SerializationDataFormat());
-    }
-
-    /**
      * Uses the Soap 1.1 JAXB data format
      */
     public T soapjaxb() {
@@ -789,22 +780,6 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         SoapJaxbDataFormat soap = new SoapJaxbDataFormat(contextPath, elementNameStrategy);
         soap.setVersion("1.2");
         return dataFormat(soap);
-    }
-
-    /**
-     * Uses the String data format
-     */
-    public T string() {
-        return string(null);
-    }
-
-    /**
-     * Uses the String data format supporting encoding using given charset
-     */
-    public T string(String charset) {
-        StringDataFormat sdf = new StringDataFormat();
-        sdf.setCharset(charset);
-        return dataFormat(sdf);
     }
 
     /**
