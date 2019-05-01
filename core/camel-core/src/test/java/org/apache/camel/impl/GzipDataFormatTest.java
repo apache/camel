@@ -49,7 +49,7 @@ public class GzipDataFormatTest extends ContextTestSupport {
     public void testMarshalTextToGZip() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").marshal().gzip();
+                from("direct:start").marshal().gzipDeflater();
             }
         });
         context.start();
@@ -65,7 +65,7 @@ public class GzipDataFormatTest extends ContextTestSupport {
     public void testUnMarshalTextToGzip() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").marshal().gzip().unmarshal().gzip().to("mock:result");
+                from("direct:start").marshal().gzipDeflater().unmarshal().gzipDeflater().to("mock:result");
             }
         });
         context.start();

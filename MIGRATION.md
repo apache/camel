@@ -56,6 +56,7 @@ We have also modularized many of the core components and moved them out of `came
 - camel-vm
 - camel-xpath
 - camel-xslt
+- camel-zip-defalter
 
 
 Migrating custom components
@@ -166,6 +167,10 @@ also been deprecated in Camel 2.x. In Camel 3 we have removed the remaining code
 ### JSon DataFormat
 
 The default JSon library with the JSon dataformat has changed from `XStream` to `Jackson`.
+
+### Zip and GZip DataFormat
+
+The zip and gzip dataformat has been renamed to zipdeflater and gzipdeflater as they are for deflating using the zip/gzip compression; and not for working with zip/gzip files. Instead use camel-zipfile dataformat. Also these dataformats has been moved out of `camel-core` into `camel-zip-deflater` JAR. The XML and Java DSL has also been modified so you should migrate there too to use their new names.
 
 ### Simple language
 

@@ -57,11 +57,11 @@ public class GzipDataFormatFileUnmarshalDeleteTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/data/gzip?initialDelay=0&delay=10&delete=true")
-                    .marshal().gzip()
+                    .marshal().gzipDeflater()
                     .to("file:target/data/gzip/out?fileName=${file:name}.gz");
 
                 from("file:target/data/gzip/out?initialDelay=0&delay=10&delete=true")
-                    .unmarshal().gzip()
+                    .unmarshal().gzipDeflater()
                     .to("mock:result");
             }
         };
