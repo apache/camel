@@ -24,12 +24,12 @@ import org.apache.camel.spi.Metadata;
 /**
  * The GZip data format is a message compression and de-compression format (which works with the popular gzip/gunzip tools).
  */
-@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation", title = "GZip")
-@XmlRootElement(name = "gzip")
+@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation", title = "GZip Deflater")
+@XmlRootElement(name = "gzipdeflater")
 public class GzipDataFormat extends DataFormatDefinition {
 
     public GzipDataFormat() {
-        super("gzip");
+        super("gzip-deflater");
     }
 
 }

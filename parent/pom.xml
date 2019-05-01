@@ -2375,6 +2375,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-zip-deflater</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-zipfile</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3790,6 +3795,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-zendesk-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-zip-deflater-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

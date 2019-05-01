@@ -28,17 +28,17 @@ import org.apache.camel.spi.Metadata;
  * Zip Deflate Compression data format is a message compression and de-compression format (not zip files).
  */
 @Metadata(firstVersion = "2.12.0", label = "dataformat,transformation", title = "Zip Deflate Compression")
-@XmlRootElement(name = "zip")
+@XmlRootElement(name = "zipdeflater")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ZipDataFormat extends DataFormatDefinition {
+public class ZipDeflaterDataFormat extends DataFormatDefinition {
     @XmlAttribute @Metadata(defaultValue = "-1")
     private Integer compressionLevel;
     
-    public ZipDataFormat() {
-        super("zip");
+    public ZipDeflaterDataFormat() {
+        super("zip-deflater");
     }
 
-    public ZipDataFormat(int compressionLevel) {
+    public ZipDeflaterDataFormat(int compressionLevel) {
         this.compressionLevel = compressionLevel;
     }
 

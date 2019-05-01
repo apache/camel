@@ -62,7 +62,7 @@ import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.XmlRpcDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
-import org.apache.camel.model.dataformat.ZipDataFormat;
+import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.IntrospectionSupport;
@@ -113,7 +113,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
         map.put(XMLSecurityDataFormat.class, XMLSecurityDataFormatReifier::new);
         map.put(XStreamDataFormat.class, XStreamDataFormatReifier::new);
         map.put(YAMLDataFormat.class, YAMLDataFormatReifier::new);
-        map.put(ZipDataFormat.class, ZipDataFormatReifier::new);
+        map.put(ZipDeflaterDataFormat.class, ZipDataFormatReifier::new);
         map.put(ZipFileDataFormat.class, ZipFileDataFormatReifier::new);
         DATAFORMATS = map;
     }

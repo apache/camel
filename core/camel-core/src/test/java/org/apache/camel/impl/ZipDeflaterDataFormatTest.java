@@ -28,7 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.InputStreamCache;
-import org.apache.camel.dataformat.ZipDataFormat;
+import org.apache.camel.dataformat.deflater.ZipDeflaterDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Test;
@@ -36,7 +36,7 @@ import org.junit.Test;
 /**
  * Unit test of the zip data format.
  */
-public class ZipDataFormatTest extends ContextTestSupport {
+public class ZipDeflaterDataFormatTest extends ContextTestSupport {
     private static final String TEXT = "The Cow in Apple Time \n" 
         + "by: Robert Frost \n\n" 
         + "Something inspires the only cow of late\n" 
@@ -58,7 +58,7 @@ public class ZipDataFormatTest extends ContextTestSupport {
 
     @Test
     public void testMarshalMandatoryConversionFailed() throws Exception {
-        DataFormat dataFormat = new ZipDataFormat();
+        DataFormat dataFormat = new ZipDeflaterDataFormat();
 
         try {
             dataFormat.marshal(new DefaultExchange(new DefaultCamelContext()), new Object(), new ByteArrayOutputStream());
