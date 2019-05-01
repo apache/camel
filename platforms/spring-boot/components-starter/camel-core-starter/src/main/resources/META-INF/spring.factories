@@ -15,8 +15,6 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.dataformat.springboot.GzipDataFormatAutoConfiguration,\
-org.apache.camel.dataformat.springboot.ZipDataFormatAutoConfiguration,\
 org.apache.camel.language.constant.springboot.ConstantLanguageAutoConfiguration,\
 org.apache.camel.language.header.springboot.HeaderLanguageAutoConfiguration,\
 org.apache.camel.language.property.springboot.ExchangePropertyLanguageAutoConfiguration,\
