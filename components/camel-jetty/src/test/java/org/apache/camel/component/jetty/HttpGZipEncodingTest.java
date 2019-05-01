@@ -83,9 +83,9 @@ public class HttpGZipEncodingTest extends BaseJettyTest {
                 });
                 
                 from("direct:gzip")
-                    .marshal().gzip()
+                    .marshal().gzipDeflater()
                         .setProperty(Exchange.SKIP_GZIP_ENCODING, ExpressionBuilder.constantExpression(Boolean.TRUE))
-                        .to("http://localhost:" + port1 + "/gzip?httpClientConfigurer=#configurer").unmarshal().gzip();
+                        .to("http://localhost:" + port1 + "/gzip?httpClientConfigurer=#configurer").unmarshal().gzipDeflater();
                 
                 from("jetty:http://localhost:" + port1 + "/gzip").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

@@ -363,6 +363,8 @@
 * xref:xstream-dataformat.adoc[XStream DataFormat]
 * xref:yammer-component.adoc[Yammer Component]
 * xref:zendesk-component.adoc[Zendesk Component]
+* xref:gzipdeflater-dataformat.adoc[GZip Deflater DataFormat]
+* xref:zipdeflater-dataformat.adoc[Zip Deflate Compression DataFormat]
 * xref:zipfile-dataformat.adoc[Zip File DataFormat]
 * xref:zipkin.adoc[Zipkin Component]
 * xref:zookeeper-master-component.adoc[ZooKeeper Master Component]
