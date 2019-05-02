@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 294 in 231 JAR artifacts (0 deprecated)
+Number of Components: 288 in 226 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -21,9 +21,6 @@ Number of Components: 294 in 231 JAR artifacts (0 deprecated)
 
 | link:camel-flink/src/main/docs/flink-component.adoc[Apache Flink] (camel-flink) +
 `flink:endpointType` | 2.18 | The flink component can be used to send DataSet jobs to Apache Flink cluster.
-
-| link:camel-pulsar/src/main/docs/pulsar-component.adoc[Apache Pulsar] (camel-pulsar) +
-`pulsar:persistence://tenant/namespace/topic` |  | Camel Apache Pulsar Component
 
 | link:camel-spark/src/main/docs/spark-component.adoc[Apache Spark] (camel-spark) +
 `spark:endpointType` | 2.17 | The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
@@ -123,12 +120,6 @@ Number of Components: 294 in 231 JAR artifacts (0 deprecated)
 
 | link:camel-aws-sdb/src/main/docs/aws-sdb-component.adoc[AWS SimpleDB] (camel-aws-sdb) +
 `aws-sdb:domainName` | 2.9 | The aws-sdb component is for storing and retrieving data from/to Amazon's SDB service.
-
-| link:camel-azure/src/main/docs/azure-blob-component.adoc[Azure Storage Blob Service] (camel-azure) +
-`azure-blob:containerOrBlobUri` | 2.19 | The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.
-
-| link:camel-azure/src/main/docs/azure-queue-component.adoc[Azure Storage Queue Service] (camel-azure) +
-`azure-queue:containerAndQueueUri` | 2.19 | The azure-queue component is used for storing and retrieving messages from Azure Storage Queue Service.
 
 | link:camel-bean/src/main/docs/bean-component.adoc[Bean] (camel-bean) +
 `bean:beanName` | 1.0 | The bean component is for invoking Java beans from Camel.
@@ -265,14 +256,8 @@ Number of Components: 294 in 231 JAR artifacts (0 deprecated)
 | link:camel-facebook/src/main/docs/facebook-component.adoc[Facebook] (camel-facebook) +
 `facebook:methodName` | 2.14 | The Facebook component provides access to all of the Facebook APIs accessible using Facebook4J.
 
-| link:camel-fhir/camel-fhir-component/src/main/docs/fhir-component.adoc[FHIR] (camel-fhir) +
-`fhir:apiName/methodName` | 2.23 | The fhir component is used for working with the FHIR protocol (health care).
-
 | link:camel-file/src/main/docs/file-component.adoc[File] (camel-file) +
 `file:directoryName` | 1.0 | The file component is used for reading or writing files.
-
-| link:camel-flatpack/src/main/docs/flatpack-component.adoc[Flatpack] (camel-flatpack) +
-`flatpack:type:resourceUri` | 1.4 | The flatpack component supports fixed width and delimited file parsing via the FlatPack library.
 
 | link:camel-fop/src/main/docs/fop-component.adoc[FOP] (camel-fop) +
 `fop:outputType` | 2.10 | The fop component allows you to render a message into different output formats using Apache FOP.
@@ -598,9 +583,6 @@ Number of Components: 294 in 231 JAR artifacts (0 deprecated)
 | link:camel-nagios/src/main/docs/nagios-component.adoc[Nagios] (camel-nagios) +
 `nagios:host:port` | 2.3 | To send passive checks to Nagios using JSendNSCA.
 
-| link:camel-nats/src/main/docs/nats-component.adoc[Nats] (camel-nats) +
-`nats:servers` | 2.17 | The nats component allows you produce and consume messages from NATS.
-
 | link:camel-netty4/src/main/docs/netty4-component.adoc[Netty4] (camel-netty4) +
 `netty4:protocol:host:port` | 2.14 | Socket level networking using TCP or UDP with the Netty 4.x library.
 
@@ -896,7 +878,7 @@ Number of Components: 294 in 231 JAR artifacts (0 deprecated)
 ==== Data Formats
 
 // dataformats: START
-Number of Data Formats: 44 in 36 JAR artifacts (0 deprecated)
+Number of Data Formats: 40 in 33 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -924,19 +906,11 @@ Number of Data Formats: 44 in 36 JAR artifacts (0 deprecated)
 
 | link:camel-csv/src/main/docs/csv-dataformat.adoc[CSV] (camel-csv) | 1.3 | The CSV data format is used for handling CSV payloads.
 
-| link:camel-fhir/camel-fhir-component/src/main/docs/fhirJson-dataformat.adoc[FHIR JSon] (camel-fhir) | 2.21 | The FHIR JSon data format is used to marshall/unmarshall to/from FHIR objects to/from JSON.
-
-| link:camel-fhir/camel-fhir-component/src/main/docs/fhirXml-dataformat.adoc[FHIR XML] (camel-fhir) | 2.21 | The FHIR XML data format is used to marshall/unmarshall from/to FHIR objects to/from XML.
-
-| link:camel-flatpack/src/main/docs/flatpack-dataformat.adoc[Flatpack] (camel-flatpack) | 2.1 | The Flatpack data format is used for working with flat payloads (such as CSV, delimited, or fixed length formats).
-
 | link:camel-zip-deflater/src/main/docs/gzipdeflater-dataformat.adoc[GZip Deflater] (camel-zip-deflater) | 2.0 | The GZip data format is a message compression and de-compression format (which works with the popular gzip/gunzip tools).
 
 | link:camel-hl7/src/main/docs/hl7-dataformat.adoc[HL7] (camel-hl7) | 2.0 | The HL7 data format can be used to marshal or unmarshal HL7 (Health Care) model objects.
 
 | link:camel-ical/src/main/docs/ical-dataformat.adoc[iCal] (camel-ical) | 2.12 | The iCal dataformat is used for working with iCalendar messages.
-
-| link:camel-jacksonxml/src/main/docs/jacksonxml-dataformat.adoc[JacksonXML] (camel-jacksonxml) | 2.16 | JacksonXML data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
 
 | link:camel-jaxb/src/main/docs/jaxb-dataformat.adoc[JAXB] (camel-jaxb) | 1.0 | JAXB data format uses the JAXB2 XML marshalling standard to unmarshal an XML payload into Java objects or to marshal Java objects into an XML payload.
 
