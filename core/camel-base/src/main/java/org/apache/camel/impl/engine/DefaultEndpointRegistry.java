@@ -20,8 +20,6 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.engine.AbstractDynamicRegistry;
-import org.apache.camel.impl.engine.EndpointKey;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.support.CamelContextHelper;
 

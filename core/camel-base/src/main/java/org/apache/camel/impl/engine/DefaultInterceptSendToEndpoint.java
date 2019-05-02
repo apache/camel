@@ -28,7 +28,6 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ShutdownableService;
-import org.apache.camel.impl.engine.InterceptSendToEndpointProcessor;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.support.service.ServiceHelper;
 
