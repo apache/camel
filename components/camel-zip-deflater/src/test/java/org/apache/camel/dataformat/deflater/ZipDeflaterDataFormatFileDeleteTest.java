@@ -14,16 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
-import java.io.File;
+package org.apache.camel.dataformat.deflater;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ZipDeflaterDataFormatFileDeleteTest extends ContextTestSupport {
+import java.io.File;
+
+public class ZipDeflaterDataFormatFileDeleteTest extends CamelTestSupport {
 
     @Override
     @Before
@@ -34,18 +37,20 @@ public class ZipDeflaterDataFormatFileDeleteTest extends ContextTestSupport {
 
     @Test
     public void testZipFileDelete() throws Exception {
+        NotifyBuilder oneExchangeDone = new NotifyBuilder(context).whenDone(1).create();
+
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBodyAndHeader("file:target/data/zip", "Hello World", Exchange.FILE_NAME, "hello.txt");
         assertMockEndpointsSatisfied();
 
         // wait till the exchange is done which means the file should then have been deleted
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         File in = new File("target/data/zip/hello.txt");
-        assertFalse("Should have been deleted " + in, in.exists());
+        Assert.assertFalse("Should have been deleted " + in, in.exists());
 
         File out = new File("target/data/zip/out/hello.txt.zip");
-        assertTrue("Should have been created " + out, out.exists());
+        Assert.assertTrue("Should have been created " + out, out.exists());
     }
 
     @Override

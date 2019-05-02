@@ -1202,7 +1202,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the ZIP deflater data format
      */
     public T zipDefalter(int compressionLevel) {
-        ZipDeflaterDataFormat zdf = new ZipDeflaterDataFormat(compressionLevel);
+        ZipDeflaterDataFormat zdf = new ZipDeflaterDataFormat();
+        zdf.setCompressionLevel(compressionLevel);
         return dataFormat(zdf);
     }
 

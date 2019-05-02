@@ -57,7 +57,6 @@
         <module>camel-vm</module>
         <module>camel-xpath</module>
         <module>camel-xslt</module>
-        <module>camel-zip-deflater</module>
 
         <!-- we want to test these modules first to catch any errors early as possible -->
         <module>camel-test</module>
@@ -334,6 +333,7 @@
         <module>camel-xstream</module>
         <module>camel-yammer</module>
         <module>camel-zendesk</module>
+        <module>camel-zip-deflater</module>
         <module>camel-zipfile</module>
         <module>camel-zipkin</module>
         <module>camel-zookeeper</module>

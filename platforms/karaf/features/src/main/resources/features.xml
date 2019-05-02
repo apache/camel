@@ -79,7 +79,6 @@
     <bundle>mvn:org.apache.camel/camel-vm/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-xpath/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-xslt/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-zip-deflater/${project.version}</bundle>
     <conditional>
       <condition>shell</condition>
       <bundle>mvn:org.apache.camel/camel-commands-core/${project.version}</bundle>
@@ -2645,6 +2644,10 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-zendesk/${project.version}</bundle>
+  </feature>
+  <feature name='camel-zip-deflater' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-zip-deflater/${project.version}</bundle>
   </feature>
   <feature name='camel-zipfile' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>

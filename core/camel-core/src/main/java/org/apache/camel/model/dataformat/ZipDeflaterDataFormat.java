@@ -35,11 +35,7 @@ public class ZipDeflaterDataFormat extends DataFormatDefinition {
     private Integer compressionLevel;
     
     public ZipDeflaterDataFormat() {
-        super("zip-deflater");
-    }
-
-    public ZipDeflaterDataFormat(int compressionLevel) {
-        this.compressionLevel = compressionLevel;
+        super("zipdeflater");
     }
 
     public Integer getCompressionLevel() {
