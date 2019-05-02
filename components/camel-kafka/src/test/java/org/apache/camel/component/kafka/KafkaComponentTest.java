@@ -25,10 +25,14 @@ import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.config.SslConfigs;
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class KafkaComponentTest {
 
@@ -215,5 +219,45 @@ public class KafkaComponentTest {
         params.put("sslKeymanagerAlgorithm", "SunX509");
         params.put("sslTrustmanagerAlgorithm", "PKIX");
     }
+
+    @Test
+    public void testCreateProducerConfigTruststorePassword() throws Exception {
+        KeyStoreParameters keyStoreParameters = new KeyStoreParameters();
+        keyStoreParameters.setPassword("my-password");
     
+        TrustManagersParameters trustManagersParameters = new TrustManagersParameters();
+        trustManagersParameters.setKeyStore(keyStoreParameters);
+    
+        SSLContextParameters sslContextParameters = new SSLContextParameters();
+        sslContextParameters.setTrustManagers(trustManagersParameters);
+
+        KafkaConfiguration kcfg = new KafkaConfiguration();
+        kcfg.setSslContextParameters(sslContextParameters);
+
+        Properties props = kcfg.createProducerProperties();
+    
+        assertEquals("my-password", props.getProperty("ssl.truststore.password"));
+        assertNull(props.getProperty("ssl.keystore.password"));
+    }
+
+    @Test
+    public void testCreateConsumerConfigTruststorePassword() throws Exception {
+        KeyStoreParameters keyStoreParameters = new KeyStoreParameters();
+        keyStoreParameters.setPassword("my-password");
+    
+        TrustManagersParameters trustManagersParameters = new TrustManagersParameters();
+        trustManagersParameters.setKeyStore(keyStoreParameters);
+    
+        SSLContextParameters sslContextParameters = new SSLContextParameters();
+        sslContextParameters.setTrustManagers(trustManagersParameters);
+
+        KafkaConfiguration kcfg = new KafkaConfiguration();
+        kcfg.setSslContextParameters(sslContextParameters);
+
+        Properties props = kcfg.createConsumerProperties();
+    
+        assertEquals("my-password", props.getProperty("ssl.truststore.password"));
+        assertNull(props.getProperty("ssl.keystore.password"));
+    }
+
 }
