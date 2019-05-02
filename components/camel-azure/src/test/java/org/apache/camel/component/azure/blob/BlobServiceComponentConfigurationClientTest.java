@@ -165,7 +165,7 @@ public class BlobServiceComponentConfigurationClientTest extends CamelTestSuppor
         
         BlobServiceComponent component = new BlobServiceComponent(context);
         BlobServiceEndpoint endpoint = 
-            (BlobServiceEndpoint) component.createEndpoint("azure-blob://camelazure/container/blob?azureBlobClient=#azureBlobClient&publicForRead=true");
+            (BlobServiceEndpoint) component.createEndpoint("azure-blob://camelazure/container/blob?publicForRead=true");
         assertTrue(endpoint.getConfiguration().isPublicForRead());
     }
     private void doTestClientWithoutCredentials(CloudBlob client) throws Exception {
@@ -173,7 +173,7 @@ public class BlobServiceComponentConfigurationClientTest extends CamelTestSuppor
         
         BlobServiceComponent component = new BlobServiceComponent(context);
         try {
-            component.createEndpoint("azure-blob://camelazure/container/blob?azureBlobClient=#azureBlobClient");
+            component.createEndpoint("azure-blob://camelazure/container/blob");
             fail();
         } catch (IllegalArgumentException ex) {
             assertEquals("Credentials must be specified.", ex.getMessage());
