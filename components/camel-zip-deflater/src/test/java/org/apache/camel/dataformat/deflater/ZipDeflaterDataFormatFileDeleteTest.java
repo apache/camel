@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dataformat.deflater;
 
+import java.io.File;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,8 +25,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
 
 public class ZipDeflaterDataFormatFileDeleteTest extends CamelTestSupport {
 
