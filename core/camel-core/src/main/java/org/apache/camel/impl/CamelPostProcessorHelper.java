@@ -41,6 +41,7 @@ import org.apache.camel.Service;
 import org.apache.camel.impl.engine.DefaultConsumerTemplate;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
 import org.apache.camel.impl.engine.DefaultProducerTemplate;
+import org.apache.camel.impl.engine.SubscribeMethodProcessor;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.IntrospectionSupport;
