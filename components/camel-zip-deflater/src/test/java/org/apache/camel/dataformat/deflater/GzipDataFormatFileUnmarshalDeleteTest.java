@@ -14,16 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.dataformat.deflater;
+
 import java.io.File;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class GzipDataFormatFileDeleteTest extends ContextTestSupport {
+public class GzipDataFormatFileUnmarshalDeleteTest extends CamelTestSupport {
 
     @Override
     @Before
@@ -33,20 +36,21 @@ public class GzipDataFormatFileDeleteTest extends ContextTestSupport {
     }
 
     @Test
-    public void testGzipFileDelete() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
+    public void testGzipFileUnmarshalDelete() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         template.sendBodyAndHeader("file:target/data/gzip", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
+        notify.matchesMockWaitTime();
 
-        oneExchangeDone.matchesMockWaitTime();
+        File in = new File("target/gzip/hello.txt");
+        Assert.assertFalse("Should have been deleted " + in, in.exists());
 
-        File in = new File("target/data/gzip/hello.txt");
-        assertFalse("Should have been deleted " + in, in.exists());
-
-        File out = new File("target/data/gzip/out/hello.txt.gz");
-        assertTrue("Should have been created " + out, out.exists());
+        File out = new File("target/gzip/out/hello.txt.gz");
+        Assert.assertFalse("Should have been deleted " + out, out.exists());
     }
 
     @Override
@@ -56,7 +60,10 @@ public class GzipDataFormatFileDeleteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("file:target/data/gzip?initialDelay=0&delay=10&delete=true")
                     .marshal().gzipDeflater()
-                    .to("file:target/data/gzip/out?fileName=${file:name}.gz")
+                    .to("file:target/data/gzip/out?fileName=${file:name}.gz");
+
+                from("file:target/data/gzip/out?initialDelay=0&delay=10&delete=true")
+                    .unmarshal().gzipDeflater()
                     .to("mock:result");
             }
         };

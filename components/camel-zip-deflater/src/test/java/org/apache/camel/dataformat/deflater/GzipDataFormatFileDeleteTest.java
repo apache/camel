@@ -14,17 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.dataformat.deflater;
+
 import java.io.File;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class GzipDataFormatFileUnmarshalDeleteTest extends ContextTestSupport {
+public class GzipDataFormatFileDeleteTest extends CamelTestSupport {
 
     @Override
     @Before
@@ -34,21 +36,23 @@ public class GzipDataFormatFileUnmarshalDeleteTest extends ContextTestSupport {
     }
 
     @Test
-    public void testGzipFileUnmarshalDelete() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
+    public void testGzipFileDelete() throws Exception {
+        NotifyBuilder oneExchangeDone = new NotifyBuilder(context).whenDone(1).create();
 
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBodyAndHeader("file:target/data/gzip", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        notify.matchesMockWaitTime();
 
-        File in = new File("target/gzip/hello.txt");
-        assertFalse("Should have been deleted " + in, in.exists());
+        // wait till the exchange is done which means the file should then have been deleted
+        oneExchangeDone.matchesWaitTime();
 
-        File out = new File("target/gzip/out/hello.txt.gz");
-        assertFalse("Should have been deleted " + out, out.exists());
+        File in = new File("target/data/gzip/hello.txt");
+        Assert.assertFalse("Should have been deleted " + in, in.exists());
+
+        File out = new File("target/data/gzip/out/hello.txt.gz");
+        Assert.assertTrue("Should have been created " + out, out.exists());
     }
 
     @Override
@@ -58,10 +62,7 @@ public class GzipDataFormatFileUnmarshalDeleteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("file:target/data/gzip?initialDelay=0&delay=10&delete=true")
                     .marshal().gzipDeflater()
-                    .to("file:target/data/gzip/out?fileName=${file:name}.gz");
-
-                from("file:target/data/gzip/out?initialDelay=0&delay=10&delete=true")
-                    .unmarshal().gzipDeflater()
+                    .to("file:target/data/gzip/out?fileName=${file:name}.gz")
                     .to("mock:result");
             }
         };
