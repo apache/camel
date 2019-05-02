@@ -74,7 +74,7 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
             tag = exchange.getContext().resolveLanguage("simple").createExpression(tag).evaluate(exchange, String.class);
         }
         String inherit = inheritNamespaceToken;
-        if (inherit != null && LanguageSupport.hasSimpleFunction(tag)) {
+        if (LanguageSupport.hasSimpleFunction(inherit)) {
             inherit = exchange.getContext().resolveLanguage("simple").createExpression(inherit).evaluate(exchange, String.class);
         }
 
