@@ -35,7 +35,16 @@ to("file://blobdirectory");
 
 
 // component options: START
-The Azure Storage Blob Service component has no options.
+The Azure Storage Blob Service component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | The Blob Service configuration |  | BlobService Configuration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 
