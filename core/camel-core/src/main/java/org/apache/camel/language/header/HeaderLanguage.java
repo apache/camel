@@ -19,9 +19,9 @@ package org.apache.camel.language.header;
 import org.apache.camel.Expression;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
+import org.apache.camel.support.builder.ExpressionBuilder;
 
 /**
  * A language for header expressions.

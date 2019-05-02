@@ -20,11 +20,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.PredicateToExpressionAdapter;
+import org.apache.camel.support.builder.ExpressionBuilder;
 
 /**
  * A language for referred expressions or predicates.
