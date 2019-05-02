@@ -16,6 +16,11 @@
  */
 package org.apache.camel.dataformat.deflater;
 
+import java.io.ByteArrayOutputStream;
+import java.util.List;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
@@ -26,11 +31,6 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.util.List;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 
 /**
  * Unit test of the zip data format.
