@@ -16,6 +16,7 @@
  */
 package org.apache.camel.coap;
 
+import java.io.IOException;
 import java.net.URI;
 
 import org.apache.camel.Exchange;
@@ -88,7 +89,7 @@ public class CoAPProducer extends DefaultProducer {
         }
     }
 
-    private synchronized CoapClient getClient(Exchange exchange) {
+    private synchronized CoapClient getClient(Exchange exchange) throws IOException {
         if (client == null) {
             URI uri = exchange.getIn().getHeader(CoAPConstants.COAP_URI, URI.class);
             if (uri == null) {

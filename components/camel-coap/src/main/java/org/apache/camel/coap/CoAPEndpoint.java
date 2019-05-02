@@ -21,7 +21,6 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
@@ -38,7 +37,9 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.jsse.ClientAuthentication;
+import org.apache.camel.util.jsse.KeyManagersParameters;
 import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
@@ -57,18 +58,6 @@ public class CoAPEndpoint extends DefaultEndpoint {
     private String coapMethodRestrict;
 
     @UriParam
-    private KeyStoreParameters keyStoreParameters;
-
-    @UriParam
-    private KeyStore keystore;
-
-    @UriParam
-    private KeyStoreParameters trustStoreParameters;
-
-    @UriParam
-    private KeyStore truststore;
-
-    @UriParam
     private PrivateKey privateKey;
 
     @UriParam
@@ -81,20 +70,21 @@ public class CoAPEndpoint extends DefaultEndpoint {
     private PskStore pskStore;
 
     @UriParam
-    private String alias;
-
-    @UriParam(label = "security", javaType = "java.lang.String", secret = true)
-    private char[] password;
-
-    @UriParam
     private String cipherSuites;
 
     private String[] configuredCipherSuites;
 
+    @UriParam
     private String clientAuthentication;
 
+    @UriParam
+    private String alias;
+
+    @UriParam
+    private SSLContextParameters sslContextParameters;
+
     private CoAPComponent component;
-    
+
     public CoAPEndpoint(String uri, CoAPComponent component) {
         super(uri, component);
         try {
@@ -116,10 +106,12 @@ public class CoAPEndpoint extends DefaultEndpoint {
         return this.coapMethodRestrict;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new CoAPProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         return new CoAPConsumer(this, processor);
     }
@@ -131,7 +123,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
     public void setUri(URI u) {
         uri = u;
     }
-    
+
     /**
      * The URI for the CoAP endpoint
      */
@@ -139,84 +131,46 @@ public class CoAPEndpoint extends DefaultEndpoint {
         return uri;
     }
 
-    public CoapServer getCoapServer() {
+    public CoapServer getCoapServer() throws IOException {
         return component.getServer(getUri().getPort(), this);
     }
 
     /**
-     * The KeyStoreParameters object to use with TLS to configure the keystore. Alternatively, a "keystore"
-     * parameter can be directly configured instead. An alias and password should also be configured on the route definition.
-     */
-    public KeyStoreParameters getKeyStoreParameters() {
-        return keyStoreParameters;
-    }
-
-    public void setKeyStoreParameters(KeyStoreParameters keyStoreParameters) throws GeneralSecurityException, IOException {
-        this.keyStoreParameters = keyStoreParameters;
-        if (keyStoreParameters != null) {
-            this.keystore = keyStoreParameters.createKeyStore();
-        }
-    }
-
-    /**
-     * The KeyStoreParameters object to use with TLS to configure the truststore. Alternatively, a "truststore"
-     * object can be directly configured instead. All certificates in the truststore are used to establish trust.
-     */
-    public KeyStoreParameters getTrustStoreParameters() {
-        return trustStoreParameters;
-    }
-
-    public void setTrustStoreParameters(KeyStoreParameters trustStoreParameters) throws GeneralSecurityException, IOException {
-        this.trustStoreParameters = trustStoreParameters;
-        if (trustStoreParameters != null) {
-            this.truststore = trustStoreParameters.createKeyStore();
-        }
-    }
-
-    /**
-     * Gets the TLS key store. Alternatively, a KeyStoreParameters object can be configured instead.
-     * An alias and password should also be configured on the route definition.
-     */
-    public KeyStore getKeystore() {
-        return keystore;
-    }
-
-    /**
-     * Sets the TLS key store. Alternatively, a KeyStoreParameters object can be configured instead.
-     * An alias and password should also be configured on the route definition.
-     */
-    public void setKeystore(KeyStore keystore) {
-        this.keystore = keystore;
-    }
-
-    /**
-     * Gets the TLS trust store. Alternatively, a "trustStoreParameters" object can be configured instead.
-     * All certificates in the truststore are used to establish trust.
-     */
-    public KeyStore getTruststore() {
-        return truststore;
-    }
-
-    /**
-     * Sets the TLS trust store. Alternatively, a "trustStoreParameters" object can be configured instead.
-     * All certificates in the truststore are used to establish trust.
-     */
-    public void setTruststore(KeyStore truststore) {
-        this.truststore = truststore;
-    }
-
-    /**
-     * Gets the alias used to query the KeyStore for the private key and certificate.
+     * Gets the alias used to query the KeyStore for the private key and certificate. This parameter is used
+     * when we are enabling TLS with certificates on the service side, and similarly on the client side when
+     * TLS is used with certificates and client authentication. If the parameter is not specified then the
+     * default behavior is to use the first alias in the keystore that contains a key entry. This configuration
+     * parameter does not apply to configuring TLS via a Raw Public Key or a Pre-Shared Key.
      */
     public String getAlias() {
         return alias;
     }
 
     /**
-     * Sets the alias used to query the KeyStore for the private key and certificate.
+     * Sets the alias used to query the KeyStore for the private key and certificate. This parameter is used
+     * when we are enabling TLS with certificates on the service side, and similarly on the client side when
+     * TLS is used with certificates and client authentication. If the parameter is not specified then the
+     * default behavior is to use the first alias in the keystore that contains a key entry. This configuration
+     * parameter does not apply to configuring TLS via a Raw Public Key or a Pre-Shared Key.
      */
     public void setAlias(String alias) {
         this.alias = alias;
+    }
+
+    /**
+     * Get the SSLContextParameters object for setting up TLS. This is required for coaps+tcp, and for coaps when we are
+     * using certificates for TLS (as opposed to RPK or PKS).
+     */
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * Set the SSLContextParameters object for setting up TLS. This is required for coaps+tcp, and for coaps when we are
+     * using certificates for TLS (as opposed to RPK or PKS).
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     /**
@@ -276,28 +230,16 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Gets the password used to access an aliased {@link PrivateKey} in the KeyStore.
-     */
-    public char[] getPassword() {
-        return password;
-    }
-
-    /**
-     * Sets the password used to access an aliased {@link PrivateKey} in the KeyStore.
-     */
-    public void setPassword(char[] password) {
-        this.password = password;
-    }
-
-    /**
-     * Gets the cipherSuites String. This is a comma separated String of ciphersuites to configure.
+     * Gets the cipherSuites String. This is a comma separated String of ciphersuites to configure. If it is not
+     * specified, then it falls back to getting the ciphersuites from the sslContextParameters object.
      */
     public String getCipherSuites() {
         return cipherSuites;
     }
 
     /**
-     * Sets the cipherSuites String. This is a comma separated String of ciphersuites to configure.
+     * Sets the cipherSuites String. This is a comma separated String of ciphersuites to configure. If it is not
+     * specified, then it falls back to getting the ciphersuites from the sslContextParameters object.
      */
     public void setCipherSuites(String cipherSuites) {
         this.cipherSuites = cipherSuites;
@@ -307,12 +249,18 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
 
     private String[] getConfiguredCipherSuites() {
-        return configuredCipherSuites;
+        if (configuredCipherSuites != null) {
+            return configuredCipherSuites;
+        } else if (sslContextParameters != null && sslContextParameters.getCipherSuites() != null) {
+            return sslContextParameters.getCipherSuites().getCipherSuite().toArray(new String[0]);
+        }
+        return null;
     }
 
     /**
      * Gets the configuration options for server-side client-authentication requirements. The value is
-     * either null or one of NONE, WANT, REQUIRE.
+     * either null or one of NONE, WANT, REQUIRE. If this value is not specified, then it falls back
+     * to checking the sslContextParameters.getServerParameters().getClientAuthentication() value.
      */
     public String getClientAuthentication() {
         return clientAuthentication;
@@ -320,41 +268,53 @@ public class CoAPEndpoint extends DefaultEndpoint {
 
     /**
      * Sets the configuration options for server-side client-authentication requirements.
-     * The value must be one of NONE, WANT, REQUIRE.
-     *
-     * @param value the desired configuration options or {@code null} to use the defaults
+     * The value must be one of NONE, WANT, REQUIRE. If this value is not specified, then it falls back
+     * to checking the sslContextParameters.getServerParameters().getClientAuthentication() value.
      */
     public void setClientAuthentication(String clientAuthentication) {
         this.clientAuthentication = clientAuthentication;
     }
 
     private boolean isClientAuthenticationRequired() {
-        return clientAuthentication != null
-            && ClientAuthentication.valueOf(clientAuthentication) == ClientAuthentication.REQUIRE;
+        String clientAuth = clientAuthentication;
+        if (clientAuth == null && sslContextParameters != null && sslContextParameters.getServerParameters() != null) {
+            clientAuth = sslContextParameters.getServerParameters().getClientAuthentication();
+        }
+
+        return clientAuth != null && ClientAuthentication.valueOf(clientAuth) == ClientAuthentication.REQUIRE;
     }
 
     private boolean isClientAuthenticationWanted() {
-        return clientAuthentication != null
-            && ClientAuthentication.valueOf(clientAuthentication) == ClientAuthentication.WANT;
+        String clientAuth = clientAuthentication;
+        if (clientAuth == null && sslContextParameters != null && sslContextParameters.getServerParameters() != null) {
+            clientAuth = sslContextParameters.getServerParameters().getClientAuthentication();
+        }
+
+        return clientAuth != null && ClientAuthentication.valueOf(clientAuth) == ClientAuthentication.WANT;
     }
 
-    private Certificate[] getTrustedCerts() throws KeyStoreException {
-        if (truststore != null) {
-            Enumeration<String> aliases = truststore.aliases();
+    /**
+     * Get all the certificates contained in the sslContextParameters truststore
+     */
+    private Certificate[] getTrustedCerts() throws GeneralSecurityException, IOException {
+        if (sslContextParameters != null && sslContextParameters.getTrustManagers() != null) {
+            KeyStore trustStore = sslContextParameters.getTrustManagers().getKeyStore().createKeyStore();
+            Enumeration<String> aliases = trustStore.aliases();
             List<Certificate> trustCerts = new ArrayList<>();
             while (aliases.hasMoreElements()) {
                 String alias = aliases.nextElement();
-                X509Certificate cert = (X509Certificate) truststore.getCertificate(alias);
+                X509Certificate cert = (X509Certificate) trustStore.getCertificate(alias);
                 if (cert != null) {
                     trustCerts.add(cert);
                 }
             }
-            
+
             return trustCerts.toArray(new Certificate[0]);
         }
-        
+
         return new Certificate[0];
     }
+
 
     public static boolean enableTLS(URI uri) {
         return "coaps".equals(uri.getScheme());
@@ -364,30 +324,26 @@ public class CoAPEndpoint extends DefaultEndpoint {
         return uri.getScheme().endsWith("+tcp");
     }
 
-    public DTLSConnector createDTLSConnector(InetSocketAddress address, boolean client) {
+    public DTLSConnector createDTLSConnector(InetSocketAddress address, boolean client) throws IOException {
 
         DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder();
         if (client) {
-            if (trustedRpkStore == null && getTruststore() == null && pskStore == null) {
-                throw new IllegalStateException("A truststore must be configured to use TLS");
+            if (trustedRpkStore == null && sslContextParameters == null && pskStore == null) {
+                throw new IllegalStateException("Either a trustedRpkStore, sslContextParameters or pskStore object "
+                                                + "must be configured for a TLS client");
             }
 
             builder.setClientOnly();
         } else {
-            if (privateKey == null && getKeystore() == null && pskStore == null) {
-                throw new IllegalStateException("A keystore or private key must be configured to use TLS");
+            if (privateKey == null && sslContextParameters == null && pskStore == null) {
+                throw new IllegalStateException("Either a privateKey, sslContextParameters or pskStore object "
+                                                + "must be configured for a TLS service");
             }
             if (privateKey != null && publicKey == null) {
                 throw new IllegalStateException("A public key must be configured to use a Raw Public Key with TLS");
             }
-            if (privateKey == null && pskStore == null && getAlias() == null) {
-                throw new IllegalStateException("An alias must be configured to use TLS");
-            }
-            if (privateKey == null && pskStore == null && getPassword() == null) {
-                throw new IllegalStateException("A password must be configured to use TLS");
-            }
             if ((isClientAuthenticationRequired() || isClientAuthenticationWanted())
-                && (getTruststore() == null && publicKey == null)) {
+                && (sslContextParameters == null || sslContextParameters.getTrustManagers() == null) && publicKey == null) {
                 throw new IllegalStateException("A truststore must be configured to support TLS client authentication");
             }
 
@@ -397,11 +353,30 @@ public class CoAPEndpoint extends DefaultEndpoint {
         }
 
         try {
-            // Configure the identity if the keystore or privateKey parameter is specified
-            if (getKeystore() != null) {
+            // Configure the identity if the sslContextParameters or privateKey parameter is specified
+            if (sslContextParameters != null && sslContextParameters.getKeyManagers() != null) {
+                KeyManagersParameters keyManagers = sslContextParameters.getKeyManagers();
+                KeyStore keyStore = keyManagers.getKeyStore().createKeyStore();
+
+                // Use the configured alias or fall back to the first alias in the keystore that contains a key
+                String alias = getAlias();
+                if (alias == null) {
+                    Enumeration<String> aliases = keyStore.aliases();
+                    while (aliases.hasMoreElements()) {
+                        String ksAlias = aliases.nextElement();
+                        if (keyStore.isKeyEntry(ksAlias)) {
+                            alias = ksAlias;
+                            break;
+                        }
+                    }
+                }
+                if (alias == null) {
+                    throw new IllegalStateException("The sslContextParameters keystore must contain a key entry");
+                }
+
                 PrivateKey privateKey =
-                    (PrivateKey)getKeystore().getKey(getAlias(), getPassword());
-                builder.setIdentity(privateKey, getKeystore().getCertificateChain(getAlias()));
+                    (PrivateKey)keyStore.getKey(alias, keyManagers.getKeyPassword().toCharArray());
+                builder.setIdentity(privateKey, keyStore.getCertificateChain(alias));
             } else if (privateKey != null) {
                 builder.setIdentity(privateKey, publicKey);
             }

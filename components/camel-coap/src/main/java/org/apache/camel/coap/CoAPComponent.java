@@ -16,6 +16,7 @@
  */
 package org.apache.camel.coap;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Locale;
@@ -58,7 +59,7 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
         super(context, CoAPEndpoint.class);
     }
 
-    public synchronized CoapServer getServer(int port, CoAPEndpoint endpoint) {
+    public synchronized CoapServer getServer(int port, CoAPEndpoint endpoint) throws IOException {
         CoapServer server = servers.get(port);
         if (server == null && port == -1) {
             server = getServer(DEFAULT_PORT, endpoint);

@@ -25,7 +25,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.jsse.KeyManagersParameters;
 import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.eclipse.californium.core.coap.CoAP;
 import org.junit.Test;
 
@@ -56,6 +59,7 @@ public class CoAPRestComponentTLSTest extends CamelTestSupport {
     }
 
     @Override
+
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
 
@@ -63,12 +67,23 @@ public class CoAPRestComponentTLSTest extends CamelTestSupport {
         keystoreParameters.setResource("service.jks");
         keystoreParameters.setPassword("security");
 
+        SSLContextParameters serviceSSLContextParameters = new SSLContextParameters();
+        KeyManagersParameters serviceSSLKeyManagers = new KeyManagersParameters();
+        serviceSSLKeyManagers.setKeyPassword("security");
+        serviceSSLKeyManagers.setKeyStore(keystoreParameters);
+        serviceSSLContextParameters.setKeyManagers(serviceSSLKeyManagers);
+
         KeyStoreParameters truststoreParameters = new KeyStoreParameters();
         truststoreParameters.setResource("truststore.jks");
         truststoreParameters.setPassword("storepass");
         
-        registry.bind("keystoreParameters", keystoreParameters);
-        registry.bind("truststoreParameters", truststoreParameters);
+        SSLContextParameters clientSSLContextParameters = new SSLContextParameters();
+        TrustManagersParameters clientSSLTrustManagers = new TrustManagersParameters();
+        clientSSLTrustManagers.setKeyStore(truststoreParameters);
+        clientSSLContextParameters.setTrustManagers(clientSSLTrustManagers);
+
+        registry.bind("serviceSSLContextParameters", serviceSSLContextParameters);
+        registry.bind("clientSSLContextParameters", clientSSLContextParameters);
 
         return registry;
     }
@@ -80,9 +95,7 @@ public class CoAPRestComponentTLSTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 restConfiguration().component("coap").scheme("coaps").host("localhost").port(PORT)
-                    .endpointProperty("keyStoreParameters", "#keystoreParameters")
-                    .endpointProperty("alias", "service")
-                    .endpointProperty("password", "security");
+                    .endpointProperty("sslContextParameters", "#serviceSSLContextParameters");
 
                 rest("/TestResource")
                     .get().to("direct:get1")
@@ -101,7 +114,7 @@ public class CoAPRestComponentTLSTest extends CamelTestSupport {
                 });
 
                 from("direct:start")
-                    .toF("coaps://localhost:%d/TestResource?trustStoreParameters=#truststoreParameters", PORT)
+                    .toF("coaps://localhost:%d/TestResource?sslContextParameters=#clientSSLContextParameters", PORT)
                     .to("mock:result");
             }
         };
