@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 public class GzipDataFormat extends DataFormatDefinition {
 
     public GzipDataFormat() {
-        super("gzip-deflater");
+        super("gzipdeflater");
     }
 
 }

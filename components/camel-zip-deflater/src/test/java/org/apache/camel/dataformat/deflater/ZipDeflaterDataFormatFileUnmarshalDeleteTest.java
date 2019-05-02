@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
-import java.io.File;
+package org.apache.camel.dataformat.deflater;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ZipDeflaterDataFormatFileUnmarshalDeleteTest extends ContextTestSupport {
+import java.io.File;
+
+public class ZipDeflaterDataFormatFileUnmarshalDeleteTest extends CamelTestSupport {
 
     @Override
     @Before
@@ -36,7 +37,7 @@ public class ZipDeflaterDataFormatFileUnmarshalDeleteTest extends ContextTestSup
     @Test
     public void testZipFileUnmarshalDelete() throws Exception {
         // there are 2 exchanges
-        NotifyBuilder event = event().whenDone(2).create();
+        NotifyBuilder event = new NotifyBuilder(context).whenDone(2).create();
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         template.sendBodyAndHeader("file:target/data/zip", "Hello World", Exchange.FILE_NAME, "hello.txt");

@@ -170,7 +170,7 @@ The default JSon library with the JSon dataformat has changed from `XStream` to 
 
 ### Zip and GZip DataFormat
 
-The zip and gzip dataformat has been renamed to zipdeflater and gzipdeflater as they are for deflating using the zip/gzip compression; and not for working with zip/gzip files. Instead use camel-zipfile dataformat. Also these dataformats has been moved out of `camel-core` into `camel-zip-deflater` JAR. The XML and Java DSL has also been modified so you should migrate there too to use their new names.
+The zip and gzip dataformat has been renamed to zipdeflater and gzipdeflater as they are for deflating using the zip/gzip compression; and not for working with zip/gzip files. Instead use camel-zipfile dataformat. Also these dataformats has been moved out of `camel-core` into `camel-zip-deflater` JAR. The XML and Java DSL has also been modified so you should migrate there too to use their new names. And if you use these data formats you need to add the `camel-zip-deflater` as dependency as they are no longer included as transitive dependency with `camel-core`.
 
 ### Simple language
 
