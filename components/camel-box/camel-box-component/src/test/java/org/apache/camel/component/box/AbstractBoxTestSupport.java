@@ -37,6 +37,8 @@ public class AbstractBoxTestSupport extends CamelTestSupport {
 
     protected BoxFolder testFolder;
     protected BoxFile testFile;
+    protected boolean jwtAuthentoication;
+    protected Map<String, Object> options;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -52,7 +54,7 @@ public class AbstractBoxTestSupport extends CamelTestSupport {
                 e);
         }
 
-        Map<String, Object> options = new HashMap<>();
+        options = new HashMap<>();
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             options.put(entry.getKey().toString(), entry.getValue());
         }
@@ -64,6 +66,10 @@ public class AbstractBoxTestSupport extends CamelTestSupport {
         final BoxComponent component = new BoxComponent(context);
         component.setConfiguration(configuration);
         context.addComponent("box", component);
+
+        //initialize flag, whether is box configuration JWT
+        String authenticationType = properties.getProperty("authenticationType");
+        jwtAuthentoication = !BoxConfiguration.STANDARD_AUTHENTICATION.equals(authenticationType);
 
         return context;
     }
