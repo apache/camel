@@ -14,21 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.dataformat.deflater;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Unit test of the gzip data format.
  */
-public class GzipDataFormatTest extends ContextTestSupport {
+public class GzipDataFormatTest extends CamelTestSupport {
     private static final String TEXT = "Hamlet by William Shakespeare\n"
             + "To be, or not to be: that is the question:\n"
             + "Whether 'tis nobler in the mind to suffer\n"
@@ -42,7 +43,7 @@ public class GzipDataFormatTest extends ContextTestSupport {
     }
 
     private byte[] sendText() throws Exception {
-        return (byte[]) template.requestBody("direct:start", TEXT.getBytes("UTF-8"));
+        return (byte[]) template.requestBody("direct:start", TEXT.getBytes(StandardCharsets.UTF_8));
     }
 
     @Test
@@ -71,8 +72,10 @@ public class GzipDataFormatTest extends ContextTestSupport {
         context.start();
 
         MockEndpoint result = context.getEndpoint("mock:result", MockEndpoint.class);
-        result.expectedBodiesReceived(TEXT.getBytes("UTF-8"));
+        result.expectedBodiesReceived(TEXT.getBytes(StandardCharsets.UTF_8));
+
         sendText();
+
         result.assertIsSatisfied();
     }
 }
