@@ -20,8 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.component.rest.DummyRestProcessorFactory;
-import org.apache.camel.impl.RouteIdFactory;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.impl.RouteIdFactory;
 import org.junit.Test;
 
 public class RouteIdFactoryTest extends ContextTestSupport {
