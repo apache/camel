@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.impl.engine;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public final class SubscribeMethodProcessor extends AsyncProcessorSupport implem
         return endpoint;
     }
 
-    protected void addMethod(final Object pojo, final Method method, final Endpoint endpoint, String predicate) throws Exception {
+    public void addMethod(final Object pojo, final Method method, final Endpoint endpoint, String predicate) throws Exception {
         Processor answer = endpoint.getCamelContext().getBeanProcessorFactory().createBeanProcessor(endpoint.getCamelContext(), pojo, method);
         // must ensure the consumer is being executed in an unit of work so synchronization callbacks etc is invoked
         CamelInternalProcessor internal = new CamelInternalProcessor(answer);
