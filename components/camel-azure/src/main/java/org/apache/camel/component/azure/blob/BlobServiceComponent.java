@@ -17,27 +17,33 @@
 package org.apache.camel.component.azure.blob;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.microsoft.azure.storage.StorageCredentials;
 import com.microsoft.azure.storage.StorageCredentialsAnonymous;
 import com.microsoft.azure.storage.blob.CloudBlob;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 @Component("azure-blob")
 public class BlobServiceComponent extends DefaultComponent {
+	
+    @Metadata(label = "advanced")    
+    private BlobServiceConfiguration configuration;
     
     public BlobServiceComponent() {
     }
 
     public BlobServiceComponent(CamelContext context) {
         super(context);
+        this.configuration = new BlobServiceConfiguration();
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        BlobServiceConfiguration configuration = new BlobServiceConfiguration();
+        final BlobServiceConfiguration configuration = this.configuration.copy();
         setProperties(configuration, parameters);
 
         String[] parts = null;
@@ -62,7 +68,7 @@ public class BlobServiceComponent extends DefaultComponent {
             }
             configuration.setBlobName(sb.toString());
         }
-        
+        checkAndSetRegistryClient(configuration);
         checkCredentials(configuration);
         
         BlobServiceEndpoint endpoint = new BlobServiceEndpoint(uri, this, configuration);
@@ -77,6 +83,13 @@ public class BlobServiceComponent extends DefaultComponent {
         if ((creds == null || creds instanceof StorageCredentialsAnonymous)
             && !cfg.isPublicForRead()) {
             throw new IllegalArgumentException("Credentials must be specified.");
+        }
+    }
+    
+    private void checkAndSetRegistryClient(BlobServiceConfiguration configuration) {
+        Set<CloudBlob> clients = getCamelContext().getRegistry().findByType(CloudBlob.class);
+        if (clients.size() == 1) {
+            configuration.setAzureBlobClient(clients.stream().findFirst().get());
         }
     }
 }
