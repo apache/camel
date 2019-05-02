@@ -28,8 +28,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.processor.interceptor.DefaultDebugger;
 import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
+import org.apache.camel.processor.interceptor.DefaultDebugger;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EventNotifier;
