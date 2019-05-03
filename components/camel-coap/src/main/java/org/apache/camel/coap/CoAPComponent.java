@@ -18,10 +18,13 @@ package org.apache.camel.coap;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.net.ssl.SSLContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -38,6 +41,7 @@ import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.californium.elements.tcp.TcpServerConnector;
+import org.eclipse.californium.elements.tcp.TlsServerConnector;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +63,7 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
         super(context, CoAPEndpoint.class);
     }
 
-    public synchronized CoapServer getServer(int port, CoAPEndpoint endpoint) throws IOException {
+    public synchronized CoapServer getServer(int port, CoAPEndpoint endpoint) throws IOException, GeneralSecurityException {
         CoapServer server = servers.get(port);
         if (server == null && port == -1) {
             server = getServer(DEFAULT_PORT, endpoint);
@@ -77,7 +81,24 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
             } else if (CoAPEndpoint.enableTCP(endpoint.getUri())) {
                 int tcpThreads = config.getInt(NetworkConfig.Keys.TCP_WORKER_THREADS);
                 int tcpIdleTimeout = config.getInt(NetworkConfig.Keys.TCP_CONNECTION_IDLE_TIMEOUT);
-                TcpServerConnector tcpConnector = new TcpServerConnector(address, tcpThreads, tcpIdleTimeout);
+
+                TcpServerConnector tcpConnector = null;
+                // TLS + TCP
+                if (endpoint.getUri().getScheme().startsWith("coaps")) {
+                    int tlsHandshakeTimeout = config.getInt(NetworkConfig.Keys.TLS_HANDSHAKE_TIMEOUT);
+
+                    SSLContext sslContext = endpoint.getSslContextParameters().createSSLContext(getCamelContext());
+                    TlsServerConnector.ClientAuthMode clientAuthMode = TlsServerConnector.ClientAuthMode.NONE;
+                    if (endpoint.isClientAuthenticationRequired()) {
+                        clientAuthMode = TlsServerConnector.ClientAuthMode.NEEDED;
+                    } else if (endpoint.isClientAuthenticationWanted()) {
+                        clientAuthMode = TlsServerConnector.ClientAuthMode.WANTED;
+                    }
+                    tcpConnector =
+                        new TlsServerConnector(sslContext, clientAuthMode, address, tcpThreads, tlsHandshakeTimeout, tcpIdleTimeout);
+                } else {
+                    tcpConnector = new TcpServerConnector(address, tcpThreads, tcpIdleTimeout);
+                }
                 coapBuilder.setConnector(tcpConnector);
             } else {
                 coapBuilder.setInetSocketAddress(address);

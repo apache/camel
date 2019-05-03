@@ -18,6 +18,9 @@ package org.apache.camel.coap;
 
 import java.io.IOException;
 import java.net.URI;
+import java.security.GeneralSecurityException;
+
+import javax.net.ssl.SSLContext;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -28,6 +31,7 @@ import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.californium.elements.tcp.TcpClientConnector;
+import org.eclipse.californium.elements.tcp.TlsClientConnector;
 import org.eclipse.californium.scandium.DTLSConnector;
 
 /**
@@ -89,7 +93,7 @@ public class CoAPProducer extends DefaultProducer {
         }
     }
 
-    private synchronized CoapClient getClient(Exchange exchange) throws IOException {
+    private synchronized CoapClient getClient(Exchange exchange) throws IOException, GeneralSecurityException {
         if (client == null) {
             URI uri = exchange.getIn().getHeader(CoAPConstants.COAP_URI, URI.class);
             if (uri == null) {
@@ -109,7 +113,16 @@ public class CoAPProducer extends DefaultProducer {
                 int tcpThreads = config.getInt(NetworkConfig.Keys.TCP_WORKER_THREADS);
                 int tcpConnectTimeout = config.getInt(NetworkConfig.Keys.TCP_CONNECT_TIMEOUT);
                 int tcpIdleTimeout = config.getInt(NetworkConfig.Keys.TCP_CONNECTION_IDLE_TIMEOUT);
-                TcpClientConnector tcpConnector = new TcpClientConnector(tcpThreads, tcpConnectTimeout, tcpIdleTimeout);
+                TcpClientConnector tcpConnector = null;
+
+                // TLS + TCP
+                if (endpoint.getUri().getScheme().startsWith("coaps")) {
+                    SSLContext sslContext = endpoint.getSslContextParameters().createSSLContext(endpoint.getCamelContext());
+                    tcpConnector = new TlsClientConnector(sslContext, tcpThreads, tcpConnectTimeout, tcpIdleTimeout);
+                } else {
+                    tcpConnector = new TcpClientConnector(tcpThreads, tcpConnectTimeout, tcpIdleTimeout);
+                }
+
                 CoapEndpoint.Builder tcpBuilder = new CoapEndpoint.Builder();
                 tcpBuilder.setConnector(tcpConnector);
 
