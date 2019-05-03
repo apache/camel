@@ -18,8 +18,8 @@ package org.apache.camel.coap;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.security.cert.Certificate;
+
+import javax.net.ssl.SSLContext;
 
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.support.jsse.KeyManagersParameters;
@@ -28,37 +28,44 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.network.CoapEndpoint;
-import org.eclipse.californium.scandium.DTLSConnector;
-import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
+import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.elements.tcp.TcpClientConnector;
+import org.eclipse.californium.elements.tcp.TlsClientConnector;
 
 /**
- * Test the CoAP Rest Component with UDP + TLS
+ * Test the CoAP Rest Component with TCP + TLS
  */
-public class CoAPRestComponentTLSTest extends CoAPRestComponentTestBase {
+public class CoAPRestComponentTCPTLSTest extends CoAPRestComponentTestBase {
 
     @Override
     protected String getProtocol() {
-        return "coaps";
+        return "coaps+tcp";
     }
 
     @Override
     protected void decorateClient(CoapClient client) throws GeneralSecurityException, IOException {
 
-        DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder();
-        builder.setClientOnly();
+        NetworkConfig config = NetworkConfig.createStandardWithoutFile();
+        int tcpThreads = config.getInt(NetworkConfig.Keys.TCP_WORKER_THREADS);
+        int tcpConnectTimeout = config.getInt(NetworkConfig.Keys.TCP_CONNECT_TIMEOUT);
+        int tcpIdleTimeout = config.getInt(NetworkConfig.Keys.TCP_CONNECTION_IDLE_TIMEOUT);
 
         KeyStoreParameters truststoreParameters = new KeyStoreParameters();
         truststoreParameters.setResource("truststore.jks");
         truststoreParameters.setPassword("storepass");
 
-        KeyStore trustStore = truststoreParameters.createKeyStore();
-        Certificate[] certs = new Certificate[] {trustStore.getCertificate(trustStore.aliases().nextElement())};
-        builder.setTrustStore(certs);
+        SSLContextParameters clientSSLContextParameters = new SSLContextParameters();
+        TrustManagersParameters clientSSLTrustManagers = new TrustManagersParameters();
+        clientSSLTrustManagers.setKeyStore(truststoreParameters);
+        clientSSLContextParameters.setTrustManagers(clientSSLTrustManagers);
 
-        CoapEndpoint.Builder coapBuilder = new CoapEndpoint.Builder();
-        coapBuilder.setConnector(new DTLSConnector(builder.build()));
+        SSLContext sslContext = clientSSLContextParameters.createSSLContext(context);
+        TcpClientConnector tcpConnector = new TlsClientConnector(sslContext, tcpThreads, tcpConnectTimeout, tcpIdleTimeout);
 
-        client.setEndpoint(coapBuilder.build());
+        CoapEndpoint.Builder tcpBuilder = new CoapEndpoint.Builder();
+        tcpBuilder.setConnector(tcpConnector);
+
+        client.setEndpoint(tcpBuilder.build());
     }
 
     @Override
