@@ -24,8 +24,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Route;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is
- * used to build {@link DefaultRoute} instances in a {@link CamelContext} for smart routing.
+ * used to build {@link Route} instances in a {@link CamelContext} for smart routing.
  */
 public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder {
     protected Logger log = LoggerFactory.getLogger(getClass());

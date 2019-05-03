@@ -19,8 +19,6 @@ package org.apache.camel.impl;
 import java.lang.reflect.Method;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consume;
@@ -60,7 +58,6 @@ public class CamelPostProcessorHelper implements CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelPostProcessorHelper.class);
 
-    @XmlTransient
     private CamelContext camelContext;
 
     public CamelPostProcessorHelper() {

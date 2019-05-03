@@ -33,8 +33,6 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * <b>Important:</b> It is recommended to only advice a given route once (you can of course advice multiple routes).
  * If you do it multiple times, then it may not work as expected, especially when any kind of error handling is involved.
- *
- * @see org.apache.camel.model.RouteDefinition#adviceWith(org.apache.camel.CamelContext, RouteBuilder)
  */
 public abstract class AdviceWithRouteBuilder extends RouteBuilder {
 
