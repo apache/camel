@@ -126,7 +126,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
         return uri;
     }
 
-    public CoapServer getCoapServer() throws IOException {
+    public CoapServer getCoapServer() throws IOException, GeneralSecurityException {
         return component.getServer(getUri().getPort(), this);
     }
 
@@ -270,7 +270,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
         this.clientAuthentication = clientAuthentication;
     }
 
-    private boolean isClientAuthenticationRequired() {
+    public boolean isClientAuthenticationRequired() {
         String clientAuth = clientAuthentication;
         if (clientAuth == null && sslContextParameters != null && sslContextParameters.getServerParameters() != null) {
             clientAuth = sslContextParameters.getServerParameters().getClientAuthentication();
@@ -279,7 +279,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
         return clientAuth != null && ClientAuthentication.valueOf(clientAuth) == ClientAuthentication.REQUIRE;
     }
 
-    private boolean isClientAuthenticationWanted() {
+    public boolean isClientAuthenticationWanted() {
         String clientAuth = clientAuthentication;
         if (clientAuth == null && sslContextParameters != null && sslContextParameters.getServerParameters() != null) {
             clientAuth = sslContextParameters.getServerParameters().getClientAuthentication();

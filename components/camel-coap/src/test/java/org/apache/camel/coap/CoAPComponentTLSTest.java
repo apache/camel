@@ -53,6 +53,7 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
     private static final int PORT6 = AvailablePortFinder.getNextAvailable();
     private static final int PORT7 = AvailablePortFinder.getNextAvailable();
     private static final int PORT8 = AvailablePortFinder.getNextAvailable();
+    private static final int PORT9 = AvailablePortFinder.getNextAvailable();
 
     @Test
     public void testSuccessfulCall() throws Exception {
@@ -193,6 +194,18 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testTCP() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived("Hello Camel CoAP");
+        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE, MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
+        mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
+        sendBodyAndHeader("direct:tcp", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
+        assertMockEndpointsSatisfied();
+    }
+
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
 
@@ -225,6 +238,9 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
 
                 fromF("coaps://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters&pskStore=#pskStore", PORT8)
                     .transform(body().prepend("Hello "));
+
+                fromF("coaps+tcp://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters", PORT9)
+                     .transform(body().prepend("Hello "));
 
                 from("direct:start")
                     .toF("coaps://localhost:%d/TestResource?sslContextParameters=#clientSSLContextParameters", PORT)
@@ -281,6 +297,11 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
                 from("direct:pskx509")
                     .toF("coaps://localhost:%d/TestResource?pskStore=#pskStore&sslContextParameters=#clientSSLContextParameters", PORT8)
                     .to("mock:result");
+
+                from("direct:tcp")
+                    .toF("coaps+tcp://localhost:%d/TestResource?sslContextParameters=#clientSSLContextParameters", PORT9)
+                    .to("mock:result");
+
             }
         };
     }
