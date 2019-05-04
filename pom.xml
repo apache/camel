@@ -231,10 +231,12 @@
                 <exclude>.gitignore</exclude>
                 <exclude>.git/**/*</exclude>
                 <exclude>**/*.adoc</exclude>
+                <exclude>**/*.adoc.template</exclude>
                 <exclude>**/*.md</exclude>
                 <exclude>**/*.sh</exclude>
                 <exclude>**/*.bat</exclude>
                 <exclude>**/java9-maven-settings</exclude>
+                <exclude>**/*.pfx</exclude>
                 <!-- tooling json-simple parser -->
                 <exclude>**/src/main/java/org/json/simple/**</exclude>
                 <!-- tooling/camel-manual/src/styles/print.css use a different license -->
@@ -273,6 +275,7 @@
                 <exclude>**/npm-shrinkwrap.json</exclude>
                 <exclude>**/package.json</exclude>
                 <exclude>**/user-manual/**</exclude>
+                <exclude>**/yarn.lock</exclude>
                 <!-- camel connector -->
                 <exclude>**/camel-connector.json</exclude>
                 <exclude>**/camel-connector-schema.json</exclude>
