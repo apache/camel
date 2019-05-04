@@ -263,6 +263,8 @@
                 <!-- camel-salesforce BSD license from salesforce developers -->
                 <exclude>**/CometDReplayExtension.java</exclude>
                 <exclude>**/LICENSE-SALESFORCE.txt</exclude>
+                <!-- camel-as2 -->
+                <exclude>**/mdnDescription.vm</exclude>
                 <!-- camel-jbpm -->
                 <exclude>**/src/main/resources/*.wid</exclude>
                 <!-- camel website and user-manual -->
