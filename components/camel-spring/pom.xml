@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.24.0-SNAPSHOT</version>
+    <version>2.24.0</version>
   </parent>
 
   <artifactId>camel-spring</artifactId>
@@ -66,7 +66,7 @@
       org.apache.camel.spi.LanguageResolver;language=spel
     </camel.osgi.export.service>
     <!-- do not skip any tests by default -->
-    <platform.skip.tests/>
+    <platform.skip.tests />
   </properties>
 
   <dependencies>
@@ -379,7 +379,7 @@
                 <jar destfile="${project.build.directory}/test-classes/package+scan+test.jar" update="true">
                   <fileset dir="${project.build.directory}/test-classes/" includes="**/Test.class" />
                 </jar>
-                <copy file="${project.build.directory}/test-classes/package+scan+test.jar" tofile="${project.build.directory}/test-classes/package_scan_test.jar"/>
+                <copy file="${project.build.directory}/test-classes/package+scan+test.jar" tofile="${project.build.directory}/test-classes/package_scan_test.jar" />
               </target>
             </configuration>
             <goals>
