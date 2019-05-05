@@ -45,7 +45,7 @@ public class RemoveNetworkCmdHeaderTest extends BaseDockerHeaderTest<RemoveNetwo
         String networkId = "ID1234";
 
         Map<String, Object> headers = getDefaultParameters();
-        headers.put(DockerConstants.DOCKER_NETWORK_ID, networkId);
+        headers.put(DockerConstants.DOCKER_NETWORK, networkId);
 
         template.sendBodyAndHeaders("direct:in", "", headers);
 
