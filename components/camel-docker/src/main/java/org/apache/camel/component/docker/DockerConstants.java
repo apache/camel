@@ -224,14 +224,10 @@ public final class DockerConstants {
 
     /**
      * Create Network *
-     */
-    public static final String DOCKER_NETWORK_NAME = "CamelDockerNetwork";
-
-    /**
      * Attach to Network *
      * Remove Network *
      */
-    public static final String DOCKER_NETWORK_ID = "CamelDockerNetworkId";
+    public static final String DOCKER_NETWORK = "CamelDockerNetwork";
 
     /**
      * Exec *

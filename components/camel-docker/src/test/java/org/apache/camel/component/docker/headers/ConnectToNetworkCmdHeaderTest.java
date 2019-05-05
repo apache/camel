@@ -46,7 +46,7 @@ public class ConnectToNetworkCmdHeaderTest extends BaseDockerHeaderTest<ConnectT
         String containerId = "CID1234";
 
         Map<String, Object> headers = getDefaultParameters();
-        headers.put(DockerConstants.DOCKER_NETWORK_ID, networkId);
+        headers.put(DockerConstants.DOCKER_NETWORK, networkId);
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
 
         template.sendBodyAndHeaders("direct:in", "", headers);
