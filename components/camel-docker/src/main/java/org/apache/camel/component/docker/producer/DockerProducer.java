@@ -21,10 +21,12 @@ import java.io.InputStream;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.AuthCmd;
 import com.github.dockerjava.api.command.CommitCmd;
+import com.github.dockerjava.api.command.ConnectToNetworkCmd;
 import com.github.dockerjava.api.command.ContainerDiffCmd;
 import com.github.dockerjava.api.command.CopyArchiveFromContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateImageCmd;
+import com.github.dockerjava.api.command.CreateNetworkCmd;
 import com.github.dockerjava.api.command.ExecCreateCmd;
 import com.github.dockerjava.api.command.InfoCmd;
 import com.github.dockerjava.api.command.InspectContainerCmd;
@@ -36,6 +38,7 @@ import com.github.dockerjava.api.command.PauseContainerCmd;
 import com.github.dockerjava.api.command.PingCmd;
 import com.github.dockerjava.api.command.RemoveContainerCmd;
 import com.github.dockerjava.api.command.RemoveImageCmd;
+import com.github.dockerjava.api.command.RemoveNetworkCmd;
 import com.github.dockerjava.api.command.RestartContainerCmd;
 import com.github.dockerjava.api.command.SearchImagesCmd;
 import com.github.dockerjava.api.command.StartContainerCmd;
@@ -49,6 +52,7 @@ import com.github.dockerjava.api.model.Capability;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.ExposedPorts;
 import com.github.dockerjava.api.model.HostConfig;
+import com.github.dockerjava.api.model.Mount;
 import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.api.model.Volumes;
 import com.github.dockerjava.api.model.VolumesFrom;
@@ -166,6 +170,15 @@ public class DockerProducer extends DefaultProducer {
             break;
         case UNPAUSE_CONTAINER:
             result = executeUnpauseContainerRequest(client, message).exec();
+            break;
+        case CREATE_NETWORK:
+            result = executeCreateNetworkRequest(client, message).exec();
+            break;
+        case REMOVE_NETWORK:
+            result = executeRemoveNetworkRequest(client, message).exec();
+            break;
+        case CONNECT_NETWORK:
+            result = executeConnectToNetworkRequest(client, message).exec();
             break;
         case EXEC_CREATE:
             result = executeExecCreateRequest(client, message).exec();
@@ -1083,6 +1096,71 @@ public class DockerProducer extends DefaultProducer {
         UnpauseContainerCmd unpauseContainerCmd = client.unpauseContainerCmd(containerId);
 
         return unpauseContainerCmd;
+
+    }
+
+    /**
+     * Produces a network create request
+     *
+     * @param client
+     * @param message
+     * @return
+     */
+    private CreateNetworkCmd executeCreateNetworkRequest(DockerClient client, Message message) {
+
+        LOGGER.debug("Executing Docker Network Create Request");
+
+        String networkName = DockerHelper.getProperty(DockerConstants.DOCKER_NETWORK_NAME, configuration, message, String.class);
+
+        ObjectHelper.notNull(networkName, "Network Name must be specified");
+
+        CreateNetworkCmd createNetworkCmd = client.createNetworkCmd().withName(networkName);
+
+        return createNetworkCmd;
+
+    }
+
+    /**
+    * Produces a network remove request
+    *
+    * @param client
+    * @param message
+    * @return
+    */
+    private RemoveNetworkCmd executeRemoveNetworkRequest(DockerClient client, Message message) {
+
+        LOGGER.debug("Executing Docker Network Remove Request");
+
+        String networkId = DockerHelper.getProperty(DockerConstants.DOCKER_NETWORK_ID, configuration, message, String.class);
+
+        ObjectHelper.notNull(networkId, "Network ID must be specified");
+
+        RemoveNetworkCmd removeNetworkCmd = client.removeNetworkCmd(networkId);
+
+        return removeNetworkCmd;
+
+    }
+
+    /**
+     * Produces a network connect request
+     *
+     * @param client
+     * @param message
+     * @return
+     */
+    private ConnectToNetworkCmd executeConnectToNetworkRequest(DockerClient client, Message message) {
+
+        LOGGER.debug("Executing Docker Network Connect Request");
+
+        String networkId = DockerHelper.getProperty(DockerConstants.DOCKER_NETWORK_NAME, configuration, message, String.class);
+        String containerId = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+
+        ObjectHelper.notNull(networkId, "Network ID must be specified");
+        ObjectHelper.notNull(containerId, "Container ID must be specified");
+
+        ConnectToNetworkCmd connectToNetworkCmd = client.connectToNetworkCmd().withNetworkId(networkId).withContainerId(containerId);
+
+        return connectToNetworkCmd;
 
     }
 
