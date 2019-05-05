@@ -5,13 +5,16 @@
 
 The GZip Deflater Data Format is a message compression and
 de-compression format. It uses the same deflate algorithm that is used
-in <<zip-dataformat,Zip DataFormat>>, although some additional
+in the Zip data format, although some additional
 headers are provided. This format is produced by popular `gzip`/`gunzip`
 tool. Messages marshalled using GZip compression can be unmarshalled
 using GZip decompression just prior to being consumed at the endpoint.
 The compression capability is quite useful when you deal with large XML
 and Text based payloads or when you read messages previously comressed
 using `gzip` tool.
+
+NOTE: This dataformat is not for working with gzip files such as uncompressing and building gzip files.
+Instead use the zipfile dataformat.
 
 === Options
 
@@ -35,7 +38,7 @@ called MY_QUEUE.
 
 [source,java]
 ----
-from("direct:start").marshal().gzip().to("activemq:queue:MY_QUEUE");
+from("direct:start").marshal().gzipDeflater().to("activemq:queue:MY_QUEUE");
 ----
 
 === Unmarshal
@@ -46,7 +49,7 @@ the `UnGZippedMessageProcessor`.
 
 [source,java]
 ----
-from("activemq:queue:MY_QUEUE").unmarshal().gzip().process(new UnGZippedMessageProcessor()); 
+from("activemq:queue:MY_QUEUE").unmarshal().gzipDeflater().process(new UnGZippedMessageProcessor());
 ----
 
 === Dependencies

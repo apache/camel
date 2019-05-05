@@ -3,10 +3,8 @@
 
 *Available as of Camel version 2.12*
 
-*Available as of Camel version 2.12*
 
-
-The Zip deflater Data Format is a message compression and
+The Zip Deflater Data Format is a message compression and
 de-compression format. Messages marshalled using Zip compression can be
 unmarshalled using Zip decompression just prior to being consumed at the
 endpoint. The compression capability is quite useful when you deal with
@@ -14,11 +12,8 @@ large XML and Text based payloads. It facilitates more optimal use of
 network bandwidth while incurring a small cost in order to compress and
 decompress payloads at the endpoint.
 
-INFO:*About using with Files*
-The Zip data format, does not (yet) have special support for files.
-Which means that when using big files, the entire file content is loaded
-into memory. This is subject to change in the future, to allow a streaming based
-solution to have a low memory footprint.
+NOTE: This dataformat is not for working with zip files such as uncompressing and building zip files.
+Instead use the zipfile dataformat.
 
 === Options
 
@@ -43,7 +38,7 @@ it an ActiveMQ queue called MY_QUEUE.
 
 [source,java]
 ----
-from("direct:start").marshal().zip(Deflater.BEST_COMPRESSION).to("activemq:queue:MY_QUEUE");
+from("direct:start").marshal().zipDeflater(Deflater.BEST_COMPRESSION).to("activemq:queue:MY_QUEUE");
 ----
 
 Alternatively if you would like to use the default setting you could
@@ -51,7 +46,7 @@ send it as
 
 [source,java]
 ----
-from("direct:start").marshal().zip().to("activemq:queue:MY_QUEUE");
+from("direct:start").marshal().zipDeflater().to("activemq:queue:MY_QUEUE");
 ----
 
 === Unmarshal
@@ -64,10 +59,5 @@ unmarshalling to avoid errors.
 
 [source,java]
 ----
-from("activemq:queue:MY_QUEUE").unmarshal().zip().process(new UnZippedMessageProcessor()); 
+from("activemq:queue:MY_QUEUE").unmarshal().zipDeflater().process(new UnZippedMessageProcessor()); 
 ----
-
-=== Dependencies
-
-This data format is provided in *camel-core* so no additional
-dependencies are needed.
