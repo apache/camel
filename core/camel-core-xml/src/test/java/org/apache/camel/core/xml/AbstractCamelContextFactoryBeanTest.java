@@ -29,10 +29,10 @@ import static java.util.Arrays.stream;
 
 import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.impl.engine.DefaultFactoryFinder;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
-import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.Injector;
