@@ -187,6 +187,13 @@ public enum DockerOperation {
             DockerConstants.DOCKER_PS_ARGS, String.class),
     UNPAUSE_CONTAINER("containerunpause", false, true, false,
             DockerConstants.DOCKER_CONTAINER_ID, String.class),
+    CREATE_NETWORK("networkcreate", false, true, false,
+        DockerConstants.DOCKER_NETWORK_NAME, String.class),
+    REMOVE_NETWORK("networkremove", false, true, false,
+        DockerConstants.DOCKER_NETWORK_ID, String.class),
+    CONNECT_NETWORK("networkconnect", false, true, false,
+        DockerConstants.DOCKER_NETWORK_ID, String.class,
+        DockerConstants.DOCKER_CONTAINER_ID, String.class),
     WAIT_CONTAINER("containerwait", false, true, true, 
             DockerConstants.DOCKER_CONTAINER_ID, String.class),
 
