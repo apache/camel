@@ -45,7 +45,7 @@ public class CreateNetworkCmdHeaderTest extends BaseDockerHeaderTest<CreateNetwo
         String networkName = "TestNetwork";
 
         Map<String, Object> headers = getDefaultParameters();
-        headers.put(DockerConstants.DOCKER_NETWORK_NAME, networkName);
+        headers.put(DockerConstants.DOCKER_NETWORK, networkName);
 
         template.sendBodyAndHeaders("direct:in", "", headers);
 

@@ -1110,7 +1110,7 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Network Create Request");
 
-        String networkName = DockerHelper.getProperty(DockerConstants.DOCKER_NETWORK_NAME, configuration, message, String.class);
+        String networkName = DockerHelper.getProperty(DockerConstants.DOCKER_NETWORK, configuration, message, String.class);
 
         ObjectHelper.notNull(networkName, "Network Name must be specified");
 
@@ -1131,7 +1131,7 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Network Remove Request");
 
-        String networkId = DockerHelper.getProperty(DockerConstants.DOCKER_NETWORK_ID, configuration, message, String.class);
+        String networkId = DockerHelper.getProperty(DockerConstants.DOCKER_NETWORK, configuration, message, String.class);
 
         ObjectHelper.notNull(networkId, "Network ID must be specified");
 
@@ -1152,7 +1152,7 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Network Connect Request");
 
-        String networkId = DockerHelper.getProperty(DockerConstants.DOCKER_NETWORK_ID, configuration, message, String.class);
+        String networkId = DockerHelper.getProperty(DockerConstants.DOCKER_NETWORK, configuration, message, String.class);
         String containerId = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(networkId, "Network ID must be specified");
