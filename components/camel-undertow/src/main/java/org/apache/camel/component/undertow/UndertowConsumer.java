@@ -156,7 +156,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
             httpExchange.getResponseSender().send("No response available");
         } else {
-            ByteBuffer bodyAsByteBuffer = tc.convertTo(ByteBuffer.class, body);
+            ByteBuffer bodyAsByteBuffer = tc.mandatoryConvertTo(ByteBuffer.class, body);
             httpExchange.getResponseSender().send(bodyAsByteBuffer);
         }
     }
