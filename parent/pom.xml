@@ -469,7 +469,7 @@
         <maven-archetype-packaging-version>2.3</maven-archetype-packaging-version>
         <maven-assembly-plugin-version>3.0.0</maven-assembly-plugin-version>
         <maven-bundle-version>${maven-bundle-plugin-version}</maven-bundle-version>
-        <maven-bundle-plugin-version>4.1.0</maven-bundle-plugin-version>
+        <maven-bundle-plugin-version>4.2.0</maven-bundle-plugin-version>
         <maven-checkstyle-plugin-version>3.0.0</maven-checkstyle-plugin-version>
         <maven-checkstyle-version>7.6.1</maven-checkstyle-version>
         <maven-owasp-plugin-version>4.0.2</maven-owasp-plugin-version>
@@ -6114,7 +6114,7 @@
         <profile>
             <id>faster-builds</id>
             <properties>
-                <maven-bundle-plugin-version>4.1.1-SNAPSHOT</maven-bundle-plugin-version>
+                <maven-bundle-plugin-version>4.2.0</maven-bundle-plugin-version>
             </properties>
         </profile>
     </profiles>
