@@ -6111,11 +6111,5 @@
                 </dependency>
             </dependencies>
         </profile>
-        <profile>
-            <id>faster-builds</id>
-            <properties>
-                <maven-bundle-plugin-version>4.2.0</maven-bundle-plugin-version>
-            </properties>
-        </profile>
     </profiles>
 </project>
