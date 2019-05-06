@@ -5636,6 +5636,7 @@
                         <Karaf-Info>Camel;${project.artifactId}=${project.version}</Karaf-Info>
                         <_versionpolicy>${camel.osgi.import.default.version}</_versionpolicy>
                         <_failok>${camel.osgi.failok}</_failok>
+                        <_removeheaders>Bnd-LastModified</_removeheaders>
                     </instructions>
                 </configuration>
                 <executions>
