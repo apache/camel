@@ -17,24 +17,23 @@
 package org.apache.camel.coap;
 
 /**
- * UDP + DTLS tests
+ * TCP + TLS tests
  */
-public class CoAPComponentTLSTest extends CoAPComponentTLSTestBase {
+public class CoAPComponentTCPTLSTest extends CoAPComponentTLSTestBase {
 
     @Override
     protected String getProtocol() {
-        return "coaps";
+        return "coaps+tcp";
     }
 
     @Override
-
     protected boolean isPSKSupported() {
-        return true;
+        return false;
     }
 
     @Override
     protected boolean isRPKSupported() {
-        return true;
+        return false;
     }
 
 }

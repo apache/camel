@@ -316,7 +316,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
 
 
-    public static boolean enableTLS(URI uri) {
+    public static boolean enableDTLS(URI uri) {
         return "coaps".equals(uri.getScheme());
     }
 
