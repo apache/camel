@@ -72,7 +72,7 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
             coapBuilder.setNetworkConfig(config);
 
             // Configure TLS and / or TCP
-            if (CoAPEndpoint.enableTLS(endpoint.getUri())) {
+            if (CoAPEndpoint.enableDTLS(endpoint.getUri())) {
                 DTLSConnector connector = endpoint.createDTLSConnector(address, false);
                 coapBuilder.setConnector(connector);
             } else if (CoAPEndpoint.enableTCP(endpoint.getUri())) {
