@@ -23,6 +23,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -113,6 +115,39 @@ public class RestSwaggerComponentTest extends CamelTestSupport {
     }
 
     @Test
+    public void shouldBeGettingPetsByIdWithApiKeysInHeader() {
+        final Map<String, Object> headers = new HashMap<>();
+        headers.put("petId", 14);
+        headers.put("api_key", "dolphins");
+        final Pet pet = template.requestBodyAndHeaders("direct:getPetById", NO_BODY, headers, Pet.class);
+
+        assertNotNull(pet);
+
+        assertEquals(Integer.valueOf(14), pet.id);
+        assertEquals("Olafur Eliason Arnalds", pet.name);
+
+        petstore.verify(
+            getRequestedFor(urlEqualTo("/v2/pet/14")).withHeader("Accept", equalTo("application/xml, application/json"))
+                .withHeader("api_key", equalTo("dolphins")));
+    }
+
+    @Test
+    public void shouldBeGettingPetsByIdWithApiKeysInQueryParameter() {
+        final Map<String, Object> headers = new HashMap<>();
+        headers.put("petId", 14);
+        headers.put("api_key", "dolphins");
+        final Pet pet = template.requestBodyAndHeaders("altPetStore:getPetById", NO_BODY, headers, Pet.class);
+
+        assertNotNull(pet);
+
+        assertEquals(Integer.valueOf(14), pet.id);
+        assertEquals("Olafur Eliason Arnalds", pet.name);
+
+        petstore.verify(getRequestedFor(urlEqualTo("/v2/pet/14?api_key=dolphins")).withHeader("Accept",
+            equalTo("application/xml, application/json")));
+    }
+
+    @Test
     public void shouldBeGettingPetsByStatus() {
         final Pets pets = template.requestBodyAndHeader("direct:findPetsByStatus", NO_BODY, "status", "available",
             Pets.class);
@@ -135,6 +170,13 @@ public class RestSwaggerComponentTest extends CamelTestSupport {
         component.setHost("http://localhost:" + petstore.port());
 
         camelContext.addComponent("petStore", component);
+
+        final RestSwaggerComponent altPetStore = new RestSwaggerComponent();
+        altPetStore.setComponentName(componentName);
+        altPetStore.setHost("http://localhost:" + petstore.port());
+        altPetStore.setSpecificationUri(RestSwaggerComponentTest.class.getResource("/alt-petstore.json").toURI());
+
+        camelContext.addComponent("altPetStore", altPetStore);
 
         return camelContext;
     }
@@ -184,6 +226,10 @@ public class RestSwaggerComponentTest extends CamelTestSupport {
         petstore.stubFor(get(urlPathEqualTo("/v2/pet/findByStatus")).withQueryParam("status", equalTo("available"))
             .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><pets><Pet><id>1</id><name>Olafur Eliason Arnalds</name></Pet><Pet><name>Jean-Luc Picard</name></Pet></pets>")));
+
+        petstore.stubFor(get(urlEqualTo("/v2/pet/14?api_key=dolphins"))
+            .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id><name>Olafur Eliason Arnalds</name></Pet>")));
     }
 
 }
