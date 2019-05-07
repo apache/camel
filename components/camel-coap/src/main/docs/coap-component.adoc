@@ -12,11 +12,11 @@ From Camel 3.0.0, Camel supports the DTLS, TCP and TLS protocols via the followi
 
 [width="100%",cols="2,5",options="header"]
 |===
-| Scheme | Protocol |
-| coap   | UDP |
-| coaps  | UDP + DTLS |
-| coap+tcp | TCP |
-| coaps+tcp | TCP + TLS |
+| Scheme | Protocol
+| coap   | UDP
+| coaps  | UDP + DTLS
+| coap+tcp | TCP
+| coaps+tcp | TCP + TLS
 |===
 
 There are a number of different configuration options to configure TLS. For both DTLS (the "coaps" uri scheme)
