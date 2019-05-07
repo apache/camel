@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Optional.ofNullable;
 
@@ -39,7 +41,11 @@ import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
+import io.swagger.models.auth.ApiKeyAuthDefinition;
+import io.swagger.models.auth.In;
+import io.swagger.models.auth.SecuritySchemeDefinition;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.models.parameters.QueryParameter;
 import io.swagger.parser.SwaggerParser;
 import io.swagger.util.Json;
 
@@ -126,16 +132,15 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         + " any value present in the Swagger specification. Overrides all other configuration.", label = "producer")
     private String produces;
 
-    @UriPath(
-        description = "Path to the Swagger specification file. The scheme, host base path are taken from this"
-            + " specification, but these can be overridden with properties on the component or endpoint level. If not"
-            + " given the component tries to load `swagger.json` resource from the classpath. Note that the `host` defined on the"
-            + " component and endpoint of this Component should contain the scheme, hostname and optionally the"
-            + " port in the URI syntax (i.e. `http://api.example.com:8080`). Overrides component configuration."
-            + " The Swagger specification can be loaded from different sources by prefixing with file: classpath: http: https:."
-            + " Support for https is limited to using the JDK installed UrlHandler, and as such it can be cumbersome to setup"
-            + " TLS/SSL certificates for https (such as setting a number of javax.net.ssl JVM system properties)."
-            + " How to do that consult the JDK documentation for UrlHandler.",
+    @UriPath(description = "Path to the Swagger specification file. The scheme, host base path are taken from this"
+        + " specification, but these can be overridden with properties on the component or endpoint level. If not"
+        + " given the component tries to load `swagger.json` resource from the classpath. Note that the `host` defined on the"
+        + " component and endpoint of this Component should contain the scheme, hostname and optionally the"
+        + " port in the URI syntax (i.e. `http://api.example.com:8080`). Overrides component configuration."
+        + " The Swagger specification can be loaded from different sources by prefixing with file: classpath: http: https:."
+        + " Support for https is limited to using the JDK installed UrlHandler, and as such it can be cumbersome to setup"
+        + " TLS/SSL certificates for https (such as setting a number of javax.net.ssl JVM system properties)."
+        + " How to do that consult the JDK documentation for UrlHandler.",
         defaultValue = RestSwaggerComponent.DEFAULT_SPECIFICATION_URI_STR,
         defaultValueNote = "By default loads `swagger.json` file", label = "producer")
     private URI specificationUri = RestSwaggerComponent.DEFAULT_SPECIFICATION_URI;
@@ -357,13 +362,14 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
             parameters.put("produces", determinedProducers);
         }
 
-        final String queryParameters = operation.getParameters().stream().filter(p -> "query".equals(p.getIn()))
-            .map(this::queryParameter).collect(Collectors.joining("&"));
+        final String queryParameters = determineQueryParameters(swagger, operation).map(this::queryParameter)
+            .collect(Collectors.joining("&"));
         if (isNotEmpty(queryParameters)) {
             parameters.put("queryParameters", queryParameters);
         }
 
-        // pass properties that might be applied if the delegate component is created, i.e. if it's not
+        // pass properties that might be applied if the delegate component is
+        // created, i.e. if it's not
         // present in the Camel Context already
         final Map<String, Object> componentParameters = new HashMap<>();
 
@@ -532,6 +538,32 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         }
 
         return null;
+    }
+
+    static Stream<Parameter> determineQueryParameters(final Swagger swagger, final Operation operation) {
+        final List<Map<String, List<String>>> securityRequirements = operation.getSecurity();
+        final List<QueryParameter> apiKeyQueryParameters = new ArrayList<>();
+        if (securityRequirements != null) {
+            final Map<String, SecuritySchemeDefinition> securityDefinitions = swagger.getSecurityDefinitions();
+
+            for (final Map<String, List<String>> securityRequirement : securityRequirements) {
+                for (final String securityRequirementName : securityRequirement.keySet()) {
+                    final SecuritySchemeDefinition securitySchemeDefinition = securityDefinitions
+                        .get(securityRequirementName);
+                    if (securitySchemeDefinition instanceof ApiKeyAuthDefinition) {
+                        final ApiKeyAuthDefinition apiKeyDefinition = (ApiKeyAuthDefinition) securitySchemeDefinition;
+
+                        if (apiKeyDefinition.getIn() == In.QUERY) {
+                            apiKeyQueryParameters.add(new QueryParameter().name(apiKeyDefinition.getName())
+                                .required(true).type("string").description(apiKeyDefinition.getDescription()));
+                        }
+                    }
+                }
+            }
+        }
+
+        return Stream.concat(apiKeyQueryParameters.stream(),
+            operation.getParameters().stream().filter(p -> "query".equals(p.getIn())));
     }
 
     static String hostFrom(final RestConfiguration restConfiguration) {
