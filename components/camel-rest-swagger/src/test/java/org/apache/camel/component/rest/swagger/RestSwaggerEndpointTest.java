@@ -26,6 +26,8 @@ import java.util.Map;
 import io.swagger.models.Operation;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
+import io.swagger.models.auth.ApiKeyAuthDefinition;
+import io.swagger.models.auth.In;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.PathParameter;
 import io.swagger.models.parameters.QueryParameter;
@@ -119,18 +121,18 @@ public class RestSwaggerEndpointTest {
             .isEqualTo("/");
 
         restConfiguration.setContextPath("/rest");
-        assertThat(endpoint.determineBasePath(swagger))
-            .as("When base path is specified in REST configuration and not specified in component the base path should be from the REST configuration")
+        assertThat(endpoint.determineBasePath(swagger)).as(
+            "When base path is specified in REST configuration and not specified in component the base path should be from the REST configuration")
             .isEqualTo("/rest");
 
         swagger.basePath("/specification");
-        assertThat(endpoint.determineBasePath(swagger))
-            .as("When base path is specified in the specification it should take precedence the one specified in the REST configuration")
+        assertThat(endpoint.determineBasePath(swagger)).as(
+            "When base path is specified in the specification it should take precedence the one specified in the REST configuration")
             .isEqualTo("/specification");
 
         component.setBasePath("/component");
-        assertThat(endpoint.determineBasePath(swagger))
-            .as("When base path is specified on the component it should take precedence over Swagger specification and REST configuration")
+        assertThat(endpoint.determineBasePath(swagger)).as(
+            "When base path is specified on the component it should take precedence over Swagger specification and REST configuration")
             .isEqualTo("/component");
 
         endpoint.setBasePath("/endpoint");
@@ -325,6 +327,32 @@ public class RestSwaggerEndpointTest {
 
         endpoint.setHost("http://endpoint");
         assertThat(endpoint.determineHost(swagger)).isEqualTo("http://endpoint");
+    }
+
+    @Test
+    public void shouldIncludeApiKeysQueryParameters() {
+        final CamelContext camelContext = mock(CamelContext.class);
+
+        final RestSwaggerComponent component = new RestSwaggerComponent();
+        component.setCamelContext(camelContext);
+
+        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("uri", "remaining", component,
+            Collections.emptyMap());
+        endpoint.setHost("http://petstore.swagger.io");
+
+        final Swagger swagger = new Swagger();
+        final ApiKeyAuthDefinition apiKeys = new ApiKeyAuthDefinition("key", In.HEADER);
+        swagger.securityDefinition("apiKeys", apiKeys);
+
+        final Operation operation = new Operation().parameter(new QueryParameter().name("q").required(true));
+        operation.addSecurity("apiKeys", Collections.emptyList());
+
+        assertThat(endpoint.determineEndpointParameters(swagger, operation))
+            .containsOnly(entry("host", "http://petstore.swagger.io"), entry("queryParameters", "q={q}"));
+
+        apiKeys.setIn(In.QUERY);
+        assertThat(endpoint.determineEndpointParameters(swagger, operation))
+            .containsOnly(entry("host", "http://petstore.swagger.io"), entry("queryParameters", "key={key}&q={q}"));
     }
 
     @Test
