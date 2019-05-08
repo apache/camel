@@ -81,6 +81,18 @@ Please remember to run this check on your code changes before submitting a patch
     cd camel-ftp
     mvn clean install -Psourcecheck
 
+## Checking Karaf and Spring Boot Integration Tests
+
+Apache Camel source code has a set of Integration Test for Karaf and Spring Boot platform.
+If your contribution modifies dependencies of a specific component, you can check the behavior on these two platforms in this way:
+
+    cd tests/camel-itest-karaf
+    mvn clean test -Dtest=Camel<component_name>Test
+
+And for Spring Boot:
+
+    cd tests/camel-itest-spring-boot
+    mvn clean test -Dtest=Camel<component_name>Test
 
 ## Apache Camel committers should work on the ASF git repo
 
