@@ -276,6 +276,7 @@
         <include>org.apache.camel:camel-snmp</include>
         <include>org.apache.camel:camel-soap</include>
         <include>org.apache.camel:camel-solr</include>
+        <include>org.apache.camel:camel-soroush</include>
         <include>org.apache.camel:camel-spark</include>
         <include>org.apache.camel:camel-spark-rest</include>
         <include>org.apache.camel:camel-splunk</include>
@@ -607,6 +608,7 @@
         <include>org.apache.camel:camel-snmp-starter</include>
         <include>org.apache.camel:camel-soap-starter</include>
         <include>org.apache.camel:camel-solr-starter</include>
+        <include>org.apache.camel:camel-soroush-starter</include>
         <include>org.apache.camel:camel-spark-starter</include>
         <include>org.apache.camel:camel-splunk-starter</include>
         <include>org.apache.camel:camel-spring-batch-starter</include>

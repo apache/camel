@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 294 in 231 JAR artifacts (0 deprecated)
+Number of Components: 295 in 232 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -759,6 +759,9 @@ Number of Components: 294 in 231 JAR artifacts (0 deprecated)
 
 | link:camel-solr/src/main/docs/solr-component.adoc[Solr] (camel-solr) +
 `solr:url` | 2.9 | The solr component allows you to interface with an Apache Lucene Solr server.
+
+| link:camel-soroush/src/main/docs/soroush-component.adoc[Soroush] (camel-soroush) +
+`soroush:<endpoint>[/authorizationToken][?options]` | 3.0 | The Soroush component provides access to the Soroush Bot API.
 
 | link:camel-spark-rest/src/main/docs/spark-rest-component.adoc[Spark Rest] (camel-spark-rest) +
 `spark-rest:verb:path` | 2.14 | The spark-rest component is used for hosting REST services which has been defined using Camel rest-dsl.
