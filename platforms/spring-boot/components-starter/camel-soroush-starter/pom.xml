@@ -26,8 +26,8 @@
   </parent>
   <artifactId>camel-soroush-starter</artifactId>
   <packaging>jar</packaging>
-  <name>Spring-Boot Starter :: Camel :: SoroushBot</name>
-  <description>Spring-Boot Starter for Camel Components</description>
+  <name>Spring-Boot Starter :: Camel :: Soroush</name>
+  <description>Spring-Boot Starter for Camel Soroush Support</description>
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
