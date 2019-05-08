@@ -42,11 +42,13 @@ import org.glassfish.jersey.media.sse.InboundEvent;
 import org.glassfish.jersey.media.sse.SseFeature;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * check if soroush BOT Api work as expected
  */
+@Ignore("Need the token to work")
 public class SoroushServiceTest {
     static String authorizationToken;
     static String receiverId;
