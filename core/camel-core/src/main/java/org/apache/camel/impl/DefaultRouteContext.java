@@ -17,7 +17,6 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
@@ -32,6 +32,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.impl.engine.EventDrivenConsumerRoute;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -55,8 +56,9 @@ import org.apache.camel.support.CamelContextHelper;
 public class DefaultRouteContext implements RouteContext {
     private final Map<NamedNode, AtomicInteger> nodeIndex = new HashMap<>();
     private final RouteDefinition route;
+    private final String routeId;
     private FromDefinition from;
-    private final Collection<Route> routes;
+    private Route runtimeRoute;
     private Endpoint endpoint;
     private final List<Processor> eventDrivenProcessors = new ArrayList<>();
     private CamelContext camelContext;
@@ -77,27 +79,19 @@ public class DefaultRouteContext implements RouteContext {
     private RouteError routeError;
     private RouteController routeController;
 
-    public DefaultRouteContext(CamelContext camelContext, RouteDefinition route, FromDefinition from, Collection<Route> routes) {
+    public DefaultRouteContext(CamelContext camelContext, RouteDefinition route, FromDefinition from) {
         this.camelContext = camelContext;
         this.route = route;
         this.from = from;
-        this.routes = routes;
-    }
-
-    /**
-     * Only used for lazy construction from inside ExpressionType
-     */
-    public DefaultRouteContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-        this.routes = new ArrayList<>();
-        this.route = new RouteDefinition("temporary");
+        this.routeId = route.idOrCreate(camelContext.getNodeIdFactory());
     }
 
     public Endpoint getEndpoint() {
-        if (endpoint == null) {
-            endpoint = from.resolveEndpoint(this);
-        }
         return endpoint;
+    }
+
+    public void setEndpoint(Endpoint endpoint) {
+        this.endpoint = endpoint;
     }
 
     public FromDefinition getFrom() {
@@ -106,6 +100,14 @@ public class DefaultRouteContext implements RouteContext {
 
     public RouteDefinition getRoute() {
         return route;
+    }
+
+    public String getRouteId() {
+        return routeId;
+    }
+
+    public Route getRuntimeRoute() {
+        return runtimeRoute;
     }
 
     public CamelContext getCamelContext() {
@@ -160,7 +162,7 @@ public class DefaultRouteContext implements RouteContext {
         return CamelContextHelper.mandatoryLookup(getCamelContext(), name, type);
     }
 
-    public void commit() {
+    public Route commit() {
         // now lets turn all of the event driven consumer processors into a single route
         if (!eventDrivenProcessors.isEmpty()) {
             Processor target = Pipeline.newInstance(getCamelContext(), eventDrivenProcessors);
@@ -286,8 +288,9 @@ public class DefaultRouteContext implements RouteContext {
                 }
             }
 
-            routes.add(edcr);
+            runtimeRoute = edcr;
         }
+        return runtimeRoute;
     }
 
     public void addEventDrivenProcessor(Processor processor) {
@@ -423,6 +426,16 @@ public class DefaultRouteContext implements RouteContext {
         }
         // default to true
         return true;
+    }
+
+    @Override
+    public Integer getStartupOrder() {
+        return route.getStartupOrder();
+    }
+
+    @Override
+    public ErrorHandlerFactory getErrorHandlerFactory() {
+        return route.getErrorHandlerBuilder();
     }
 
     public void setShutdownRoute(ShutdownRoute shutdownRoute) {

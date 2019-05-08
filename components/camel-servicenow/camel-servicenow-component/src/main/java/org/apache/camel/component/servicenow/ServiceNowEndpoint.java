@@ -65,11 +65,6 @@ public class ServiceNowEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Consumer is not supported");
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public ServiceNowConfiguration getConfiguration() {
         return configuration;
     }

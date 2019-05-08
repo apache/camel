@@ -61,7 +61,7 @@ import org.apache.camel.component.salesforce.api.dto.PickListValue;
 import org.apache.camel.component.salesforce.api.dto.SObject;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
-import org.apache.camel.impl.DefaultPackageScanClassResolver;
+import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 
 /**
  * Factory class for creating {@linkplain com.fasterxml.jackson.databind.ObjectMapper}

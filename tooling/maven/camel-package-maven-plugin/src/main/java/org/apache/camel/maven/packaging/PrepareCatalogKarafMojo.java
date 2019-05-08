@@ -157,6 +157,13 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                             target = new File(dir, "camel-linkedin-component/target/classes");
                         } else if ("camel-servicenow".equals(dir.getName())) {
                             target = new File(dir, "camel-servicenow-component/target/classes");
+                        } else {
+                            // this module must be active with a source folder
+                            File src = new File(dir, "src");
+                            boolean active = src.isDirectory() && src.exists();
+                            if (!active) {
+                                continue;
+                            }
                         }
 
                         findComponentFilesRecursive(target, jsonFiles, componentFiles, new CamelComponentsFileFilter());
@@ -229,6 +236,14 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                         if (!features.contains(dir.getName())) {
                             continue;
                         }
+
+                        // this module must be active with a source folder
+                        File src = new File(dir, "src");
+                        boolean active = src.isDirectory() && src.exists();
+                        if (!active) {
+                            continue;
+                        }
+
                         File target = new File(dir, "target/classes");
                         findDataFormatFilesRecursive(target, jsonFiles, dataFormatFiles, new CamelDataFormatsFileFilter());
                     }
@@ -295,10 +310,20 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
             File[] languages = componentsDir.listFiles();
             if (languages != null) {
                 for (File dir : languages) {
-                    // the directory must be in the list of known features
-                    if (!features.contains(dir.getName())) {
+                    // the directory must be in the list of known features (or known languages)
+                    if (!features.contains(dir.getName())
+                            && !dir.getName().equals("camel-bean")
+                            && !dir.getName().equals("camel-xpath")) {
                         continue;
                     }
+
+                    // this module must be active with a source folder
+                    File src = new File(dir, "src");
+                    boolean active = src.isDirectory() && src.exists();
+                    if (!active) {
+                        continue;
+                    }
+
                     if (dir.isDirectory() && !"target".equals(dir.getName())) {
                         File target = new File(dir, "target/classes");
                         findLanguageFilesRecursive(target, jsonFiles, languageFiles, new CamelLanguagesFileFilter());
@@ -384,6 +409,13 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                         || "camel-servicenow".equals(dir.getName())
                         || "camel-salesforce".equals(dir.getName());
                     if (special || special2) {
+                        continue;
+                    }
+
+                    // this module must be active with a source folder
+                    File src = new File(dir, "src");
+                    boolean active = src.isDirectory() && src.exists();
+                    if (!active) {
                         continue;
                     }
 

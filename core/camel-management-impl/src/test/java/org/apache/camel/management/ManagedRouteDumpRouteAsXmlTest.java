@@ -58,6 +58,7 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
         assertTrue(xml.contains("myRoute"));
         assertTrue(xml.contains("ref:bar"));
         assertTrue(xml.contains("{{result}}"));
+        assertTrue(xml.contains("java.lang.Exception"));
     }
 
     @Test
@@ -89,6 +90,7 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
         assertTrue(xml.contains("myRoute"));
         assertTrue(xml.contains("ref:bar"));
         assertTrue(xml.contains("mock:result"));
+        assertTrue(xml.contains("java.lang.Exception"));
     }
 
     @Test
@@ -120,6 +122,7 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
         assertTrue(xml.contains("myRoute"));
         assertTrue(xml.contains("mock://bar"));
         assertTrue(xml.contains("mock:result"));
+        assertTrue(xml.contains("java.lang.Exception"));
     }
 
     static ObjectName getRouteObjectName(MBeanServer mbeanServer) throws Exception {
@@ -141,6 +144,8 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
                 Endpoint bar = context.getEndpoint("mock:bar");
                 bindToRegistry("bar", bar);
 
+                onException(Exception.class)
+                        .log("${exception.stacktrace}").logStackTrace(true).handled(true);
 
                 from("direct:start").routeId("myRoute")
                     .log("Got ${body}")

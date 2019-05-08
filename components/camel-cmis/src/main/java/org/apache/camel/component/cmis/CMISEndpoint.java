@@ -73,10 +73,6 @@ public class CMISEndpoint extends DefaultEndpoint {
         return consumer;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public boolean isQueryMode() {
         return queryMode;
     }

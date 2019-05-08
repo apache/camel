@@ -37,7 +37,7 @@ public class UndertowWsProducerRouteRestartTest extends BaseUndertowTest {
 
     private static final String ROUTE_ID = UndertowWsProducerRouteRestartTest.class.getSimpleName();
 
-    @Produce(uri = "direct:shop")
+    @Produce("direct:shop")
     private ProducerTemplate producer;
 
     @Test

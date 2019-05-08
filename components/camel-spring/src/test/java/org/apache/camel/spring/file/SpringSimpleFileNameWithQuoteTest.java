@@ -31,7 +31,7 @@ public class SpringSimpleFileNameWithQuoteTest extends SpringRunWithTestSupport 
     protected String expectedBody = "Hello World!";
     @Autowired
     protected ProducerTemplate template;
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint result;
 
     @Test

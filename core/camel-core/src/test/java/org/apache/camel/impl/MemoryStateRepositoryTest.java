@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.impl.engine.MemoryStateRepository;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

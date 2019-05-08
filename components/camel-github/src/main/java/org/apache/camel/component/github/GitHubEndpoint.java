@@ -118,10 +118,6 @@ public class GitHubEndpoint extends DefaultEndpoint {
         throw new IllegalArgumentException("Cannot create consumer with type " + type);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public GitHubType getType() {
         return type;
     }

@@ -59,11 +59,6 @@ public class ConsulEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public Producer createProducer() throws Exception {
         ConsulFactories.ProducerFactory factory = producerFactory.orElseThrow(() -> new IllegalArgumentException("No producer for " + apiEndpoint));
 

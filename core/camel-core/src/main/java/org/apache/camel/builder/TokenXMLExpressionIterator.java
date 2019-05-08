@@ -32,9 +32,9 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -70,12 +70,12 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
 
     protected Iterator<?> createIterator(Exchange exchange, InputStream in, String charset) {
         String tag = tagToken;
-        if (SimpleLanguage.hasSimpleFunction(tag)) {
-            tag = SimpleLanguage.expression(tag).evaluate(exchange, String.class);
+        if (LanguageSupport.hasSimpleFunction(tag)) {
+            tag = exchange.getContext().resolveLanguage("simple").createExpression(tag).evaluate(exchange, String.class);
         }
         String inherit = inheritNamespaceToken;
-        if (inherit != null && SimpleLanguage.hasSimpleFunction(inherit)) {
-            inherit = SimpleLanguage.expression(inherit).evaluate(exchange, String.class);
+        if (LanguageSupport.hasSimpleFunction(inherit)) {
+            inherit = exchange.getContext().resolveLanguage("simple").createExpression(inherit).evaluate(exchange, String.class);
         }
 
         // must be XML tokens

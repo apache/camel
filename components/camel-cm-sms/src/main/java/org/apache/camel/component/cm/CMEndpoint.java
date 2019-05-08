@@ -84,11 +84,6 @@ public class CMEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public String getCMUrl() {
         return CMConstants.DEFAULT_SCHEME + host;
     }

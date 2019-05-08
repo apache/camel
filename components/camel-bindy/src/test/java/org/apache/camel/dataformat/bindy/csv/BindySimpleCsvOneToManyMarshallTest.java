@@ -39,10 +39,10 @@ public class BindySimpleCsvOneToManyMarshallTest extends AbstractJUnit4SpringCon
     private String result = "Charles,Moulliard,Camel in Action 1,2010,43\r\n" + "Charles,Moulliard,Camel in Action 2,2012,43\r\n"
                             + "Charles,Moulliard,Camel in Action 3,2013,43\r\n" + "Charles,Moulliard,Camel in Action 4,,43\r\n";
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
 
     @Test

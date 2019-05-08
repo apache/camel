@@ -35,10 +35,10 @@ public class PahoComponentTest extends CamelTestSupport {
 
     MqttConnectOptions connectOptions = new MqttConnectOptions();
 
-    @EndpointInject(uri = "mock:test")
+    @EndpointInject("mock:test")
     MockEndpoint mock;
 
-    @EndpointInject(uri = "mock:testCustomizedPaho")
+    @EndpointInject("mock:testCustomizedPaho")
     MockEndpoint testCustomizedPahoMock;
 
     BrokerService broker;

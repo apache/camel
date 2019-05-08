@@ -33,7 +33,7 @@ import static org.apache.camel.component.pubnub.PubNubConstants.TIMETOKEN;
 public class PubNubPublishTest extends PubNubTestBase {
     private String endpoint = "pubnub:someChannel?pubnub=#pubnub";
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mockResult;
 
     @Test

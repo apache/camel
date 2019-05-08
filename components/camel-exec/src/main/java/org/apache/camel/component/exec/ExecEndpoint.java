@@ -70,10 +70,6 @@ public class ExecEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Consumer not supported for ExecEndpoint!");
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public String getExecutable() {
         return executable;
     }

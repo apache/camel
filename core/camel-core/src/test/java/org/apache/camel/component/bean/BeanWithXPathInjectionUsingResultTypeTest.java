@@ -19,7 +19,7 @@ package org.apache.camel.component.bean;
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.language.XPath;
+import org.apache.camel.language.xpath.XPath;
 import org.apache.camel.support.jndi.JndiContext;
 import org.junit.Test;
 

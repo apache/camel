@@ -29,10 +29,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.ServiceStatus;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
@@ -41,7 +39,6 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RoutePolicy;
-import org.apache.camel.support.CamelContextHelper;
 
 /**
  * A Camel route
@@ -100,14 +97,13 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     }
 
     /**
-     * Prepares the route definition to be ready to be added to {@link CamelContext}
+     * Check if the route has been prepared
      *
-     * @param context the camel context
+     * @return wether the route has been prepared or not
+     * @see RouteDefinitionHelper#prepareRoute(ModelCamelContext, RouteDefinition)
      */
-    public void prepare(ModelCamelContext context) {
-        if (prepared.compareAndSet(false, true)) {
-            RouteDefinitionHelper.prepareRoute(context, this);
-        }
+    public boolean isPrepared() {
+        return prepared.get();
     }
 
     /**
@@ -144,41 +140,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     @Override
     public String getShortName() {
         return "route";
-    }
-
-    /**
-     * Returns the status of the route if it has been registered with a {@link CamelContext}
-     */
-    @Deprecated
-    public ServiceStatus getStatus(CamelContext camelContext) {
-        if (camelContext != null) {
-            ServiceStatus answer = camelContext.getRouteController().getRouteStatus(this.getId());
-            if (answer == null) {
-                answer = ServiceStatus.Stopped;
-            }
-            return answer;
-        }
-        return null;
-    }
-
-    @Deprecated
-    public boolean isStartable(CamelContext camelContext) {
-        ServiceStatus status = getStatus(camelContext);
-        if (status == null) {
-            return true;
-        } else {
-            return status.isStartable();
-        }
-    }
-
-    @Deprecated
-    public boolean isStoppable(CamelContext camelContext) {
-        ServiceStatus status = getStatus(camelContext);
-        if (status == null) {
-            return false;
-        } else {
-            return status.isStoppable();
-        }
     }
 
     // Fluent API
@@ -840,19 +801,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     }
 
     /**
-     * TODO: move this somewhere else
-     */
-    @Deprecated
-    public boolean isAutoStartup(CamelContext camelContext) throws Exception {
-        if (getAutoStartup() == null) {
-            // should auto startup by default
-            return true;
-        }
-        Boolean isAutoStartup = CamelContextHelper.parseBoolean(camelContext, getAutoStartup());
-        return isAutoStartup != null && isAutoStartup;
-    }
-
-    /**
      * Whether to auto start this route
      */
     @XmlAttribute @Metadata(defaultValue = "true")
@@ -1002,19 +950,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         this.restBindingDefinition = restBindingDefinition;
     }
 
-    public boolean isContextScopedErrorHandler(CamelContext context) {
-        if (!contextScopedErrorHandler) {
-            return false;
-        }
-        // if error handler ref is configured it may refer to a context scoped, so we need to check this first
-        // the XML DSL will configure error handlers using refs, so we need this additional test
-        if (errorHandlerRef != null) {
-            ErrorHandlerFactory routeScoped = getErrorHandlerBuilder();
-            ErrorHandlerFactory contextScoped = context.getErrorHandlerFactory();
-            return routeScoped != null && contextScoped != null && routeScoped == contextScoped;
-        }
-
-        return true;
+    public boolean isContextScopedErrorHandler() {
+        return contextScopedErrorHandler;
     }
 
     @XmlElementRef(required = false)

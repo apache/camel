@@ -24,7 +24,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultManagementStrategy;
+import org.apache.camel.impl.engine.DefaultManagementStrategy;
 import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,19 +57,19 @@ public class CamelSpringRunnerPlainTest {
     @Autowired
     protected CamelContext camelContext2;
     
-    @EndpointInject(uri = "mock:a", context = "camelContext")
+    @EndpointInject(value = "mock:a", context = "camelContext")
     protected MockEndpoint mockA;
     
-    @EndpointInject(uri = "mock:b", context = "camelContext")
+    @EndpointInject(value = "mock:b", context = "camelContext")
     protected MockEndpoint mockB;
     
-    @EndpointInject(uri = "mock:c", context = "camelContext2")
+    @EndpointInject(value = "mock:c", context = "camelContext2")
     protected MockEndpoint mockC;
     
-    @Produce(uri = "direct:start", context = "camelContext")
+    @Produce(value = "direct:start", context = "camelContext")
     protected ProducerTemplate start;
     
-    @Produce(uri = "direct:start2", context = "camelContext2")
+    @Produce(value = "direct:start2", context = "camelContext2")
     protected ProducerTemplate start2;
     
     @Test

@@ -47,19 +47,19 @@ public class ConsumerEndpointMappingRouteTest extends CamelSpringTestSupport {
     private final String xmlRequestForGoogleStockQuoteNoNamespace = "<GetQuote><symbol>GOOG</symbol></GetQuote>";
     private final String xmlRequestForGoogleStockQuoteNoNamespaceDifferentBody = "<GetQuote><symbol>GRABME</symbol></GetQuote>";
 
-    @EndpointInject(uri = "mock:testRootQName")
+    @EndpointInject("mock:testRootQName")
     private MockEndpoint resultEndpointRootQName;
 
-    @EndpointInject(uri = "mock:testSoapAction")
+    @EndpointInject("mock:testSoapAction")
     private MockEndpoint resultEndpointSoapAction;
 
-    @EndpointInject(uri = "mock:testUri")
+    @EndpointInject("mock:testUri")
     private MockEndpoint resultEndpointUri;
 
-    @EndpointInject(uri = "mock:testUriPath")
+    @EndpointInject("mock:testUriPath")
     private MockEndpoint resultEndpointUriPath;
 
-    @EndpointInject(uri = "mock:testXPath")
+    @EndpointInject("mock:testXPath")
     private MockEndpoint resultEndpointXPath;
 
     private WebServiceTemplate webServiceTemplate;

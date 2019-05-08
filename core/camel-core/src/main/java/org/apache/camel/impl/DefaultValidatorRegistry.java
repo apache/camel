@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.impl.engine.AbstractDynamicRegistry;
 import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.reifier.validator.ValidatorReifier;

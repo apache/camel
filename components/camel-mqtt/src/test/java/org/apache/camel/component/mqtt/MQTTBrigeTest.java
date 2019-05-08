@@ -29,13 +29,13 @@ import org.junit.Test;
  */
 public class MQTTBrigeTest extends MQTTBaseTest {
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
-    @Produce(uri = "direct:startWorkaround")
+    @Produce("direct:startWorkaround")
     protected ProducerTemplate workaroundTemplate;
 
     @Test

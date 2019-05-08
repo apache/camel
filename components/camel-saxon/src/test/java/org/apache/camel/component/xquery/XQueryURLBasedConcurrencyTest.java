@@ -52,13 +52,16 @@ public class XQueryURLBasedConcurrencyTest extends CamelTestSupport {
                         } catch (InterruptedException e) {
                             // ignore
                         }
-                        template.sendBody("direct:start",
-                            "<mail><subject>" + (start + i) + "</subject><body>Hello world!</body></mail>");
+                        if (context.getStatus().isStarted()) {
+                            template.sendBody("direct:start",
+                                    "<mail><subject>" + (start + i) + "</subject><body>Hello world!</body></mail>");
+                        }
                     }
                 }
             });
         }
 
+        mock.setResultWaitTime(30000);
         mock.assertIsSatisfied();
         // must use bodyAs(String.class) to force DOM to be converted to String XML
         // for duplication detection
@@ -76,6 +79,7 @@ public class XQueryURLBasedConcurrencyTest extends CamelTestSupport {
 
                 from("seda:foo?concurrentConsumers=5")
                     .to("xquery:org/apache/camel/component/xquery/transform.xquery")
+                    .to("log:result?groupSize=100")
                     .to("mock:result");
             }
         };

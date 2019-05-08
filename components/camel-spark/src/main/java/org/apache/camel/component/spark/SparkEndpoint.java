@@ -103,11 +103,6 @@ public class SparkEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Spark component supports producer endpoints only.");
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     // Setters & getters
 
     @Override

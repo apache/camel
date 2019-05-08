@@ -90,10 +90,6 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
         return consumer;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     public void configureProperties(Map<String, Object> options) {
         super.configureProperties(options);

@@ -21,20 +21,21 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.jooq.Configuration;
-import org.jooq.Table;
-import org.jooq.UpdatableRecord;
 
 @UriParams
 public class JooqConfiguration implements Cloneable {
 
-    @UriPath(description = "Type of operation to execute on query: execute, fetch, etc.", label = "Operation", name = "operation", displayName = "Operation")
-    private JooqOperation operation = JooqOperation.NONE;
-
-    @UriPath(name = "entityType", description = "JOOQ entity class.", label = "Entity type", displayName = "Entity type")
+    @UriPath(label = "common", description = "JOOQ entity class")
     private Class<?> entityType;
 
-    @UriParam(label = "consumer", defaultValue = "true", description = "Delete entity after it is consumed.")
+    @UriParam(label = "producer", description = "Type of operation to execute on query", defaultValue = "NONE")
+    private JooqOperation operation = JooqOperation.NONE;
+
+    @UriParam(label = "consumer", defaultValue = "true", description = "Delete entity after it is consumed")
     private boolean consumeDelete = true;
+
+    @UriParam(label = "producer", description = "To execute plain SQL query")
+    private String query;
 
     private Configuration databaseConfiguration;
 
@@ -71,6 +72,14 @@ public class JooqConfiguration implements Cloneable {
 
     public void setConsumeDelete(boolean consumeDelete) {
         this.consumeDelete = consumeDelete;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
     }
 
     public JooqConfiguration copy() {

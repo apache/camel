@@ -45,7 +45,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.jar.JarInputStream;
 
-import org.apache.camel.impl.DefaultClassResolver;
+import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.ResourceHelper;

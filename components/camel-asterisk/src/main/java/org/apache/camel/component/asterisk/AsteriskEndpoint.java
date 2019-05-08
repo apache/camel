@@ -72,11 +72,6 @@ public class AsteriskEndpoint extends DefaultEndpoint {
         return new AsteriskConsumer(this, processor);
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public String getUsername() {
         return username;
     }

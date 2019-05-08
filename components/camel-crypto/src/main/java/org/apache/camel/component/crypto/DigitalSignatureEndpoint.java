@@ -56,11 +56,7 @@ public class DigitalSignatureEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Digital Signatures endpoints are not meant to be consumed from. They are meant be used as an intermediate endpoints");
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    /**
+/**
      * Sets the configuration to use
      */
     public void setConfiguration(DigitalSignatureConfiguration configuration) {

@@ -31,14 +31,14 @@ public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
 
     public static final String TOPIC = "test";
 
-    @EndpointInject(uri = "kafka:" + TOPIC
+    @EndpointInject("kafka:" + TOPIC
             + "?autoOffsetReset=earliest"
             + "&autoCommitEnable=false"
             + "&consumerStreams=10"
     )
     private Endpoint from;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint to;
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;

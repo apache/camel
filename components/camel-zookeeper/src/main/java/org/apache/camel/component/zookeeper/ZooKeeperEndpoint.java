@@ -54,10 +54,6 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         return answer;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public void setConfiguration(ZooKeeperConfiguration configuration) {
         this.configuration = configuration;
     }

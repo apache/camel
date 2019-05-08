@@ -27,7 +27,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
@@ -38,6 +37,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "xpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XPathExpression extends NamespaceAwareExpression {
+
     @XmlAttribute(name = "documentType")
     private String documentTypeName;
     @XmlAttribute(name = "resultType") @Metadata(defaultValue = "NODESET", enums = "NUMBER,STRING,BOOLEAN,NODESET,NODE")
@@ -246,7 +246,7 @@ public class XPathExpression extends NamespaceAwareExpression {
             setProperty(expression, "resultType", resultType);
         }
         if (isSaxon) {
-            ObjectHelper.cast(XPathBuilder.class, expression).enableSaxon();
+            setProperty(expression, "useSaxon", true);
         }
         if (xpathFactory != null) {
             setProperty(expression, "xPathFactory", xpathFactory);
@@ -258,10 +258,10 @@ public class XPathExpression extends NamespaceAwareExpression {
             setProperty(expression, "threadSafety", threadSafety);
         }
         if (isLogNamespaces) {
-            ObjectHelper.cast(XPathBuilder.class, expression).setLogNamespaces(true);
+            setProperty(expression, "logNamespaces", true);
         }
         if (ObjectHelper.isNotEmpty(getHeaderName())) {
-            ObjectHelper.cast(XPathBuilder.class, expression).setHeaderName(getHeaderName());
+            setProperty(expression, "headerName", getHeaderName());
         }
         // moved the super configuration to the bottom so that the namespace init picks up the newly set XPath Factory
         super.configureExpression(camelContext, expression);
@@ -279,7 +279,7 @@ public class XPathExpression extends NamespaceAwareExpression {
             setProperty(predicate, "resultType", resultType);
         }
         if (isSaxon) {
-            ObjectHelper.cast(XPathBuilder.class, predicate).enableSaxon();
+            setProperty(predicate, "useSaxon", true);
         }
         if (xpathFactory != null) {
             setProperty(predicate, "xPathFactory", xpathFactory);
@@ -291,10 +291,10 @@ public class XPathExpression extends NamespaceAwareExpression {
             setProperty(predicate, "threadSafety", threadSafety);
         }
         if (isLogNamespaces) {
-            ObjectHelper.cast(XPathBuilder.class, predicate).setLogNamespaces(true);
+            setProperty(predicate, "logNamespaces", true);
         }
         if (ObjectHelper.isNotEmpty(getHeaderName())) {
-            ObjectHelper.cast(XPathBuilder.class, predicate).setHeaderName(getHeaderName());
+            setProperty(predicate, "headerName", getHeaderName());
         }
         // moved the super configuration to the bottom so that the namespace init picks up the newly set XPath Factory
         super.configurePredicate(camelContext, predicate);

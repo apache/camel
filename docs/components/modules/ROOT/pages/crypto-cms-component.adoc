@@ -85,7 +85,7 @@ with the following path and query parameters:
 | *unprotectedAttributes GeneratorProvider* (encrypt) | Provider of the generator for the unprotected attributes. The default value is null which means no unprotected attribute is added to the Enveloped Data object. See https://tools.ietf.org/html/rfc5652#section-6.1. |  | AttributesGenerator Provider
 | *toBase64* (encrypt_sign) | Indicates whether the Signed Data or Enveloped Data instance shall be base 64 encoded. Default value is false. | false | Boolean
 | *includeContent* (sign) | Indicates whether the signed content should be included into the Signed Data instance. If false then a detached Signed Data instance is created in the header CamelCryptoCmsSignedData. | true | Boolean
-| *signer* (sign) | Signer information: reference to a bean which implements org.apache.camel.component.crypto.cms.api.SignerInfo |  | List
+| *signer* (sign) | Signer information: reference to bean(s) which implements org.apache.camel.component.crypto.cms.api.SignerInfo. Multiple values can be separated by comma |  | String
 | *signedDataHeaderBase64* (verify) | Indicates whether the value in the header CamelCryptoCmsSignedData is base64 encoded. Default value is false. Only relevant for detached signatures. In the detached signature case, the header contains the Signed Data object. | false | Boolean
 | *verifySignaturesOfAll Signers* (verify) | If true then the signatures of all signers contained in the Signed Data object are verified. If false then only one signature whose signer info matches with one of the specified certificates is verified. Default value is true. | true | Boolean
 |===
@@ -326,7 +326,7 @@ simpleReg.put("signer1", signerInfo1); //register signer info in the registry
 simpleReg.put("signer2", signerInfo2); //register signer info in the registry
 
 from("direct:start")
-    .to("crypto-cms:sign://testsign?signer=#signer1&signer=#signer2&includeContent=true")
+    .to("crypto-cms:sign://testsign?signer=#signer1,#signer2&includeContent=true")
     .to("crypto-cms:verify://testverify?keyStoreParameters=#keyStoreParameters")
     .to("mock:result");
 ----
@@ -358,7 +358,7 @@ from("direct:start")
 ...
     <route>
         <from uri="direct:start" />
-        <to uri="crypto-cms:sign://testsign?signer=#signer1&amp;signer=#signer2&amp;includeContent=true" />
+        <to uri="crypto-cms:sign://testsign?signer=#signer1,#signer2&amp;includeContent=true" />
         <to uri="crypto-cms:verify://testverify?keyStoreParameters=#keyStoreParameters1" />
         <to uri="mock:result" />
     </route>    

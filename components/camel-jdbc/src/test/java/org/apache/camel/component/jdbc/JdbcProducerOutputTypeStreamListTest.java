@@ -27,7 +27,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 public class JdbcProducerOutputTypeStreamListTest extends AbstractJdbcTestSupport {
     private static final String QUERY = "select * from customer";
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
     @Test

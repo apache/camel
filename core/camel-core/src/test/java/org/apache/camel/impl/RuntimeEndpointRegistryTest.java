@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.engine.DefaultRuntimeEndpointRegistry;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.junit.Test;
 

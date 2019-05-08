@@ -31,7 +31,7 @@ import org.junit.Test;
 import static org.apache.camel.support.ResourceHelper.resolveResourceAsInputStream;
 
 public class ServiceNowAttachmentTest extends ServiceNowTestSupport {
-    @Produce(uri = "direct:servicenow")
+    @Produce("direct:servicenow")
     ProducerTemplate template;
 
     @Test

@@ -35,7 +35,7 @@
     <route>
       <from uri="seda:testDefaultXPathSettings"/>
       <onException useOriginalMessage="true">
-        <exception>org.apache.camel.builder.xml.InvalidXPathExpression</exception>
+        <exception>org.apache.camel.language.xpath.InvalidXPathException</exception>
         <handled>
           <constant>true</constant>
         </handled>

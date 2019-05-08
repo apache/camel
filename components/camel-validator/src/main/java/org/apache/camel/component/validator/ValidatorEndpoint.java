@@ -132,11 +132,6 @@ public class ValidatorEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Cannot consume from validator");
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     protected void configureValidator(ValidatingProcessor validator) throws Exception {
         validator.setErrorHandler(getErrorHandler());
         validator.setUseSharedSchema(isUseSharedSchema());

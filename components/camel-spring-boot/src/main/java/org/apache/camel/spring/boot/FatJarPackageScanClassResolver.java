@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
-import org.apache.camel.impl.DefaultPackageScanClassResolver;
+import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.util.IOHelper;
 
 /**

@@ -39,10 +39,6 @@ public abstract class BaseMyBatisEndpoint extends DefaultPollingEndpoint {
         super(endpointUri, component);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     public MyBatisComponent getComponent() {
         return (MyBatisComponent) super.getComponent();

@@ -64,11 +64,6 @@ public class SchedulerEndpoint extends ScheduledPollEndpoint {
         return consumer;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public String getName() {
         return name;
     }

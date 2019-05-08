@@ -410,20 +410,6 @@ public class ExpressionClause<T> implements Expression, Predicate {
 
     /**
      * Evaluates a <a
-     * href="http://camel.apache.org/java-script.html">JavaScript
-     * expression</a>
-     * 
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
-     * @deprecated JavaScript is deprecated in Java 11 onwards
-     */
-    @Deprecated
-    public T javaScript(String text) {
-        return delegate.javaScript(text);
-    }
-
-    /**
-     * Evaluates a <a
      * href="http://camel.apache.org/jsonpath.html">Json Path
      * expression</a>
      *

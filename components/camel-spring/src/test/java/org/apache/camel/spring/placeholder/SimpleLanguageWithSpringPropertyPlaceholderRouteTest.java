@@ -34,7 +34,7 @@ import static org.awaitility.Awaitility.await;
 @ContextConfiguration
 public class SimpleLanguageWithSpringPropertyPlaceholderRouteTest extends SpringRunWithTestSupport {
     
-    @Produce(uri = "direct:startSimple")
+    @Produce("direct:startSimple")
     protected ProducerTemplate template;
 
     @Before

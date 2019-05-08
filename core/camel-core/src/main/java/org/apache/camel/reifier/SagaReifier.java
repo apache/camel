@@ -86,9 +86,17 @@ class SagaReifier extends ProcessorReifier<SagaDefinition> {
                 .childProcessor(childProcessor)
                 .sagaService(camelSagaService)
                 .step(step)
-                .propagation(propagation)
-                .completionMode(completionMode)
+                .propagation(propagation(propagation))
+                .completionMode(completionMode(completionMode))
                 .build();
+    }
+
+    private org.apache.camel.processor.saga.SagaCompletionMode completionMode(SagaCompletionMode completionMode) {
+        return org.apache.camel.processor.saga.SagaCompletionMode.valueOf(completionMode.name());
+    }
+
+    private org.apache.camel.processor.saga.SagaPropagation propagation(SagaPropagation propagation) {
+        return org.apache.camel.processor.saga.SagaPropagation.valueOf(propagation.name());
     }
 
     protected CamelSagaService findSagaService(CamelContext context) {

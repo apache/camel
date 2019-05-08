@@ -80,11 +80,6 @@ public class GrapeEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Grape component supports only the producer side of the route.");
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public String getDefaultCoordinates() {
         return defaultCoordinates;
     }

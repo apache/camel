@@ -95,8 +95,4 @@ public class CordaEndpoint extends DefaultEndpoint {
         super.doStop();
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
 }

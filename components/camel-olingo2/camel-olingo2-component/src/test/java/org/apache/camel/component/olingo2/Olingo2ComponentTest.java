@@ -419,7 +419,7 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
 
         int expectedMsgCount = 2;
         MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-splitresult");
-        mockEndpoint.expectedMessageCount(expectedMsgCount);
+        mockEndpoint.expectedMinimumMessageCount(expectedMsgCount);
 
         final ODataFeed odataFeed = (ODataFeed)requestBodyAndHeaders(endpoint, null, headers);
         assertNotNull(odataFeed);
@@ -439,15 +439,7 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
 
             Object name = properties.get("Name");
             assertNotNull(name);
-            switch(i) {
-            case 0:
-                assertEquals("Star Powered Racing", name);
-                break;
-            case 1:
-                assertEquals("Horse Powered Racing", name);
-                break;
-            default:
-            }
+            assertTrue(name.toString().contains("Powered Racing"));
         }
     }
 

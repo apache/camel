@@ -22,10 +22,10 @@ import org.apache.camel.ProducerTemplate;
 
 public class EchoPojo {
 
-    @Produce(uri = "direct:echo")
+    @Produce("direct:echo")
     private ProducerTemplate service;
 
-    @Consume(uri = "direct:start")
+    @Consume("direct:start")
     public String onEcho(String name) {
         return (String) service.requestBody(name);
     }

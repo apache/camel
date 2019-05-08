@@ -27,7 +27,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration
 public class XsltTest extends SpringRunWithTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     @Autowired

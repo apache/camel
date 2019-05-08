@@ -34,7 +34,7 @@ import org.junit.Test;
 public class AtomixMessagingTest extends AtomixClientTestSupport {
     private static final String NODE_NAME = UUID.randomUUID().toString();
 
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     private FluentProducerTemplate template;
 
     // ************************************

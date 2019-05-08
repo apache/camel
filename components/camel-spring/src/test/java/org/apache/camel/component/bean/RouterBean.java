@@ -25,7 +25,7 @@ import org.apache.camel.RecipientList;
  */
 public class RouterBean {
 
-    @Consume(uri = "direct:start")
+    @Consume("direct:start")
     @RecipientList
     public String[] route(String body) {
         return new String[]{"mock:a", "mock:b"};

@@ -76,11 +76,6 @@ public class KinesisFirehoseEndpoint extends DefaultEndpoint {
         }
         super.doStop();
     }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
     
     AmazonKinesisFirehose createKinesisFirehoseClient() {
         AmazonKinesisFirehose client = null;

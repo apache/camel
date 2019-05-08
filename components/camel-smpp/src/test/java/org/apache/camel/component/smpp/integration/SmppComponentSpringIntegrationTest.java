@@ -41,10 +41,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 @Ignore("Must be manually tested")
 public class SmppComponentSpringIntegrationTest extends CamelSpringTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
     
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     private Endpoint start;
     
     @Test

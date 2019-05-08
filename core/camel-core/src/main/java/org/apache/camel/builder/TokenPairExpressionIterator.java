@@ -23,9 +23,9 @@ import java.util.Iterator;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.Scanner;
@@ -104,12 +104,12 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
      */
     protected Iterator<?> createIterator(Exchange exchange, InputStream in, String charset) {
         String start = startToken;
-        if (start != null && SimpleLanguage.hasSimpleFunction(start)) {
-            start = SimpleLanguage.expression(start).evaluate(exchange, String.class);
+        if (LanguageSupport.hasSimpleFunction(start)) {
+            start = exchange.getContext().resolveLanguage("simple").createExpression(start).evaluate(exchange, String.class);
         }
         String end = endToken;
-        if (end != null && SimpleLanguage.hasSimpleFunction(end)) {
-            end = SimpleLanguage.expression(end).evaluate(exchange, String.class);
+        if (LanguageSupport.hasSimpleFunction(end)) {
+            end = exchange.getContext().resolveLanguage("simple").createExpression(end).evaluate(exchange, String.class);
         }
         TokenPairIterator iterator = new TokenPairIterator(start, end, includeTokens, in, charset);
         iterator.init();

@@ -154,11 +154,6 @@ public class PgEventEndpoint extends DefaultEndpoint {
         return consumer;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public String getHost() {
         return host;
     }

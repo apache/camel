@@ -70,10 +70,6 @@ public class SWFEndpoint extends DefaultEndpoint {
         return consumer;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     protected void doStart() throws Exception {
         if (configuration.getAmazonSWClient() == null) {

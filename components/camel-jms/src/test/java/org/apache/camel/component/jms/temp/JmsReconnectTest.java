@@ -46,7 +46,7 @@ public class JmsReconnectTest {
 
     }
 
-    @Produce(uri = "direct:test")
+    @Produce("direct:test")
     MyService proxy;
 
     /**

@@ -28,7 +28,7 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.junit.Test;
 
-import static org.apache.camel.builder.xml.XPathBuilder.xpath;
+import static org.apache.camel.language.xpath.XPathBuilder.xpath;
 
 public class XPathFeatureTest extends ContextTestSupport {
     public static final String DOM_BUILDER_FACTORY_FEATURE = XmlConverter.DOCUMENT_BUILDER_FACTORY_FEATURE;

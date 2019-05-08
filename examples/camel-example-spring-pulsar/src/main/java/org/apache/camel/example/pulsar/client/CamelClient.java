@@ -19,8 +19,6 @@ package org.apache.camel.example.pulsar.client;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.util.IOHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -30,12 +28,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * Requires that the Pulsar broker is running, as well as CamelServer
  */
 public final class CamelClient {
-    static Logger log = LoggerFactory.getLogger(CamelClient.class);
+
     private CamelClient() {
         // Helper class
     }
 
-    // START SNIPPET: e1
     public static void main(final String[] args) throws Exception {
         System.out.println("Notice this client requires that the CamelServer is already running!");
 
@@ -50,6 +47,5 @@ public final class CamelClient {
         // we're done so let's properly close the application context
         IOHelper.close(context);
     }
-    // END SNIPPET: e1
 
 }

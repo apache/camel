@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
-import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.support.CamelContextHelper;
 
 public final class ErrorHandlerReifier {

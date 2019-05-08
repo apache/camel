@@ -30,7 +30,7 @@ import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
 public class NettyTCPAsyncTest extends BaseNettyTest {
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     private void sendFile(String uri) throws Exception {

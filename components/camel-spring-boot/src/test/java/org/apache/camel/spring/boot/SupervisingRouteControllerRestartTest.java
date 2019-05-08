@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.SupervisingRouteController;
+import org.apache.camel.impl.engine.SupervisingRouteController;
 import org.apache.camel.spring.boot.dummy.DummyComponent;
 import org.apache.camel.util.backoff.BackOffTimer;
 import org.junit.Assert;

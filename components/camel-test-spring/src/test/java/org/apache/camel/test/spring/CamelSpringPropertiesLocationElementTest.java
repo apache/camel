@@ -44,7 +44,7 @@ public class CamelSpringPropertiesLocationElementTest {
     protected CamelContext context;
     @Produce
     private ProducerTemplate producer;
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
 
     @Test

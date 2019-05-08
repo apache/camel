@@ -18,13 +18,13 @@ package org.apache.camel.cdi;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.camel.impl.DefaultCamelContextNameStrategy;
+import org.apache.camel.impl.engine.DefaultCamelContextNameStrategy;
 import org.apache.camel.spi.CamelContextNameStrategy;
 
 /**
  * A {@link CamelContextNameStrategy} for Camel contexts that are managed by Camel CDI.
  *
- * As opposed to {@link org.apache.camel.impl.DefaultCamelContextNameStrategy},
+ * As opposed to {@link DefaultCamelContextNameStrategy},
  * this implementation does not increment the suffix for proxies that are created
  * each time a contextual reference to a normal-scoped bean is retrieved.
  *

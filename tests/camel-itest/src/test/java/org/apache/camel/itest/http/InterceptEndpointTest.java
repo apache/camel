@@ -31,10 +31,10 @@ public class InterceptEndpointTest extends AbstractJUnit4SpringContextTests {
     @Autowired
     protected CamelContext camelContext;
 
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     protected ProducerTemplate producer;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint mock;
 
     @Test

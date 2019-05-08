@@ -16,20 +16,13 @@
  */
 package org.apache.camel.model.dataformat;
 
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.namespace.QName;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * JAXB data format uses the JAXB2 XML marshalling standard to unmarshal an XML payload into Java objects or to marshal Java objects into an XML payload.
@@ -290,76 +283,4 @@ public class JaxbDataFormat extends DataFormatDefinition {
         this.jaxbProviderProperties = jaxbProviderProperties;
     }
 
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        Boolean answer = ObjectHelper.toBoolean(getPrettyPrint());
-        if (answer != null && !answer) {
-            setProperty(camelContext, dataFormat, "prettyPrint", Boolean.FALSE);
-        } else { // the default value is true
-            setProperty(camelContext, dataFormat, "prettyPrint", Boolean.TRUE);
-        }
-        answer = ObjectHelper.toBoolean(getObjectFactory());
-        if (answer != null && !answer) {
-            setProperty(camelContext, dataFormat, "objectFactory", Boolean.FALSE);
-        } else { // the default value is true
-            setProperty(camelContext, dataFormat, "objectFactory", Boolean.TRUE);
-        }
-        answer = ObjectHelper.toBoolean(getIgnoreJAXBElement());
-        if (answer != null && !answer) {
-            setProperty(camelContext, dataFormat, "ignoreJAXBElement", Boolean.FALSE);
-        } else { // the default value is true
-            setProperty(camelContext, dataFormat, "ignoreJAXBElement", Boolean.TRUE);
-        }
-        answer = ObjectHelper.toBoolean(getMustBeJAXBElement());
-        if (answer != null && answer) {
-            setProperty(camelContext, dataFormat, "mustBeJAXBElement", Boolean.TRUE);
-        } else { // the default value is false
-            setProperty(camelContext, dataFormat, "mustBeJAXBElement", Boolean.FALSE);
-        }
-        answer = ObjectHelper.toBoolean(getFilterNonXmlChars());
-        if (answer != null && answer) {
-            setProperty(camelContext, dataFormat, "filterNonXmlChars", Boolean.TRUE);
-        } else { // the default value is false
-            setProperty(camelContext, dataFormat, "filterNonXmlChars", Boolean.FALSE);
-        }
-        answer = ObjectHelper.toBoolean(getFragment());
-        if (answer != null && answer) {
-            setProperty(camelContext, dataFormat, "fragment", Boolean.TRUE);
-        } else { // the default value is false
-            setProperty(camelContext, dataFormat, "fragment", Boolean.FALSE);
-        }
-
-        setProperty(camelContext, dataFormat, "contextPath", contextPath);
-        if (partClass != null) {
-            setProperty(camelContext, dataFormat, "partClass", partClass);
-        }
-        if (partNamespace != null) {
-            setProperty(camelContext, dataFormat, "partNamespace", QName.valueOf(partNamespace));
-        }
-        if (encoding != null) {
-            setProperty(camelContext, dataFormat, "encoding", encoding);
-        }
-        if (namespacePrefixRef != null) {
-            setProperty(camelContext, dataFormat, "namespacePrefixRef", namespacePrefixRef);
-        }
-        if (schema != null) {
-            setProperty(camelContext, dataFormat, "schema", schema);
-        }
-        if (schemaSeverityLevel != null) {
-            setProperty(camelContext, dataFormat, "schemaSeverityLevel", schemaSeverityLevel);
-        }
-        if (xmlStreamWriterWrapper != null) {
-            setProperty(camelContext, dataFormat, "xmlStreamWriterWrapper", xmlStreamWriterWrapper);
-        }
-        if (schemaLocation != null) {
-            setProperty(camelContext, dataFormat, "schemaLocation", schemaLocation);
-        }
-        if (noNamespaceSchemaLocation != null) {
-            setProperty(camelContext, dataFormat, "noNamespaceSchemaLocation", noNamespaceSchemaLocation);
-        }
-        if (jaxbProviderProperties != null) {
-            Map map = CamelContextHelper.mandatoryLookup(camelContext, jaxbProviderProperties, Map.class);
-            setProperty(camelContext, dataFormat, "jaxbProviderProperties", map);
-        }
-    }
 }

@@ -36,10 +36,10 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 
 public class JmsInOutTransferExchangeTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:transfer")
+    @EndpointInject("mock:transfer")
     protected MockEndpoint transfer;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint result;
 
     @Override

@@ -23,7 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
-import org.apache.camel.impl.DefaultPackageScanClassResolver;
+import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;

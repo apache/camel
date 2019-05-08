@@ -95,7 +95,7 @@ public class MllpTcpServerCharsetTest extends CamelTestSupport {
     @Rule
     public MllpClientResource mllpClient = new MllpClientResource();
 
-    @EndpointInject(uri = TARGET_URI)
+    @EndpointInject(TARGET_URI)
     MockEndpoint target;
 
     @Override

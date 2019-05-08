@@ -78,8 +78,7 @@ public class CuratorLeaderRoutePolicy extends RoutePolicySupport implements Elec
     public void onInit(Route route) {
         ensureElectionIsCreated(route);
         LOG.info("Route managed by {}. Setting route {} AutoStartup flag to false.", this.getClass(), route.getId());
-        RouteDefinition definition = (RouteDefinition) route.getRouteContext().getRoute();
-        definition.setAutoStartup("false");
+        route.getRouteContext().setAutoStartup(false);
         ensureElectionIsCreated(route);
 
         if (election.isMaster()) {

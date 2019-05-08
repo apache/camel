@@ -163,11 +163,6 @@ public class SolrEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Consumer not supported for Solr endpoint.");
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     /**
      * Set the request handler to be used
      */

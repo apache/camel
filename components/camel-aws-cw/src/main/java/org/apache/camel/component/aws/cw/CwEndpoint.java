@@ -57,10 +57,6 @@ public class CwEndpoint extends DefaultEndpoint {
         return new CwProducer(this);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     public void doStart() throws Exception {
         super.doStart();

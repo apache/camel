@@ -41,11 +41,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.language.xpath.InvalidXPathException;
+import org.apache.camel.language.xpath.XPathBuilder;
 import org.apache.camel.support.builder.xml.Namespaces;
 import org.apache.camel.util.StringHelper;
 import org.junit.Test;
 
-import static org.apache.camel.builder.xml.XPathBuilder.xpath;
+import static org.apache.camel.language.xpath.XPathBuilder.xpath;
 
 public class XPathTest extends ContextTestSupport {
 
@@ -83,7 +85,7 @@ public class XPathTest extends ContextTestSupport {
         try {
             assertPredicate("/foo/", "<foo><bar xyz='cheese'/></foo>", true);
             fail("Should have thrown exception");
-        } catch (InvalidXPathExpression e) {
+        } catch (InvalidXPathException e) {
             assertEquals("/foo/", e.getXpath());
             assertIsInstanceOf(XPathExpressionException.class, e.getCause());
         }

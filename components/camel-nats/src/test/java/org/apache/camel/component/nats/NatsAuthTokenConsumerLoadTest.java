@@ -30,7 +30,7 @@ import org.junit.Test;
 
 public class NatsAuthTokenConsumerLoadTest extends NatsAuthTokenTestSupport {
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
 
     @Test

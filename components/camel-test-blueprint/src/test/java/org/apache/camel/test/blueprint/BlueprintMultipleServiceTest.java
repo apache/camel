@@ -30,10 +30,10 @@ import org.junit.Test;
 
 public class BlueprintMultipleServiceTest extends CamelBlueprintTestSupport {
 
-    @EndpointInject(uri = "fakeservice1:mock")
+    @EndpointInject("fakeservice1:mock")
     private MockEndpoint fakeServiceOneMock;
 
-    @EndpointInject(uri = "fakeservice2:mock")
+    @EndpointInject("fakeservice2:mock")
     private MockEndpoint fakeServiceTwoMock;
 
     private MockComponent mockComponentOne = new MockComponent();

@@ -41,10 +41,10 @@ import org.junit.Test;
 @Ignore("Must be manually tested")
 public class SmppComponentIntegrationTest extends CamelTestSupport {
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
     
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     private Endpoint start;
     
     @Test

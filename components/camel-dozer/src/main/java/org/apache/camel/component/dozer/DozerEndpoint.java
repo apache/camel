@@ -71,11 +71,6 @@ public class DozerEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Consumer not supported for Dozer endpoints");
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public Mapper getMapper() throws Exception {
         return mapper;
     }

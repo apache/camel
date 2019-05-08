@@ -41,10 +41,10 @@ public class BindySimpleKeyValuePairMarshallDslTest extends AbstractJUnit4Spring
     private String result = "1=BE.CHM.00111=CHM0001-0122=448=BE0001245678"
         + "54=158=this is a camel - bindy test777=17-02-2011 23:29:59\r\n";
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
 
     @Test

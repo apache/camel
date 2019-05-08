@@ -63,13 +63,13 @@ public class GaugeRouteTest {
 
     private static SortedMap<String, Gauge> mockGauges = new TreeMap<>();
 
-    @EndpointInject(uri = "mock:out")
+    @EndpointInject("mock:out")
     private MockEndpoint endpoint;
 
-    @Produce(uri = "direct:in-1")
+    @Produce("direct:in-1")
     private ProducerTemplate producer1;
 
-    @Produce(uri = "direct:in-2")
+    @Produce("direct:in-2")
     private ProducerTemplate producer2;
 
     private MetricRegistry mockRegistry;

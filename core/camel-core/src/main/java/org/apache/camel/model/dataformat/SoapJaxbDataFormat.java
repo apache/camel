@@ -22,9 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -176,29 +174,6 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
      */
     public void setSchema(String schema) {
         this.schema = schema;
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (elementNameStrategy != null) {
-            setProperty(camelContext, dataFormat, "elementNameStrategy", elementNameStrategy);
-        }
-        if (elementNameStrategyRef != null) {
-            setProperty(camelContext, dataFormat, "elementNameStrategyRef", elementNameStrategyRef);
-        }
-        if (encoding != null) {
-            setProperty(camelContext, dataFormat, "encoding", encoding);
-        }
-        if (version != null) {
-            setProperty(camelContext, dataFormat, "version", version);
-        }
-        if (namespacePrefixRef != null) {
-            setProperty(camelContext, dataFormat, "namespacePrefixRef", namespacePrefixRef);
-        }
-        if (schema != null) {
-            setProperty(camelContext, dataFormat, "schema", schema);
-        }
-        setProperty(camelContext, dataFormat, "contextPath", contextPath);
     }
 
 }

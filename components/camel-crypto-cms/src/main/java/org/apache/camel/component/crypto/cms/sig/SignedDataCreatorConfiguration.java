@@ -35,8 +35,9 @@ public class SignedDataCreatorConfiguration extends CryptoCmsMarshallerConfigura
     @UriParam(label = "sign", defaultValue = "true")
     private Boolean includeContent = Boolean.TRUE;
 
-    @UriParam(label = "sign", multiValue = true, description = "Signer information: reference to a bean which implements org.apache.camel.component.crypto.cms.api.SignerInfo")
-    private final List<SignerInfo> signer = new ArrayList<>(3);
+    @UriParam(label = "sign", javaType = "java.lang.String", 
+              description = "Signer information: reference to bean(s) which implements org.apache.camel.component.crypto.cms.api.SignerInfo. Multiple values can be separated by comma")
+    private List<SignerInfo> signer = new ArrayList<>();
 
     public SignedDataCreatorConfiguration(CamelContext context) {
         super(context);
@@ -59,28 +60,30 @@ public class SignedDataCreatorConfiguration extends CryptoCmsMarshallerConfigura
         return signer;
     }
 
-    public void setSigner(SignerInfo signer) {
-        this.signer.add(signer);
+    public void setSigner(List<SignerInfo> signer) {
+        this.signer = signer;
     }
 
-    // for multi values
-    public void setSigner(List<?> signers) {
-        if (signers == null) {
-            return;
-        }
-        for (Object signerOb : signers) {
-            if (signerOb instanceof String) {
-                String signerName = (String)signerOb;
-                String valueNoHash = signerName.replaceAll("#", "");
-                if (getContext() != null && signerName != null) {
-                    SignerInfo signer = getContext().getRegistry().lookupByNameAndType(valueNoHash, SignerInfo.class);
-                    if (signer != null) {
-                        setSigner(signer);
-                    }
+    public void setSigner(String signer) {
+        String[] values = signer.split(",");
+        for (String s : values) {
+            if (s.startsWith("#")) {
+                s = s.substring(1);
+            }
+            if (getContext() != null) {
+                SignerInfo obj = getContext().getRegistry().lookupByNameAndType(s, SignerInfo.class);
+                if (obj != null) {
+                    addSigner(obj);
                 }
             }
         }
+    }
 
+    public void addSigner(SignerInfo info) {
+        if (this.signer == null) {
+            this.signer = new ArrayList<>();
+        }
+        this.signer.add(info);
     }
 
     public void init() throws CryptoCmsException {

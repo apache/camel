@@ -5,7 +5,7 @@
 This example shows how to work with AS2 and Camel.
 
 The Camel AS2 example is a demo of the camel-as2 component to show how to route messages between AS2 endpoints,
-with endpoints consuming and producting AS2 messages over HTTP request.  
+with endpoints consuming and producing AS2 messages over HTTP request.  
 
 ### Build
 

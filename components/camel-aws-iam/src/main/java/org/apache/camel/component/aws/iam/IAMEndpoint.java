@@ -57,10 +57,6 @@ public class IAMEndpoint extends ScheduledPollEndpoint {
         return new IAMProducer(this);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     public void doStart() throws Exception {
         super.doStart();

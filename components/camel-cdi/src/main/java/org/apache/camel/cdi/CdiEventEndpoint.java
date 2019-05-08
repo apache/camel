@@ -176,11 +176,6 @@ public final class CdiEventEndpoint<T> extends DefaultEndpoint {
         private Event<Object> event;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     void addConsumer(CdiEventConsumer<T> consumer) {
         synchronized (consumers) {
             consumers.add(consumer);

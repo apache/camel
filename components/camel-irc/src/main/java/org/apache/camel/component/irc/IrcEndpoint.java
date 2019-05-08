@@ -52,10 +52,6 @@ public class IrcEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public Exchange createExchange(ExchangePattern pattern) {
         Exchange exchange = super.createExchange(pattern);
         exchange.setProperty(Exchange.BINDING, getBinding());

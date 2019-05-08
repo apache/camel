@@ -52,7 +52,7 @@ public class CamelGroovyTest extends AbstractFeatureTest {
 
     @Configuration
     public Option[] configure() {
-        return CamelKarafTestSupport.configure("camel-test-karaf", "camel-script-groovy");
+        return CamelKarafTestSupport.configure("camel-test-karaf", "camel-groovy");
     }
 
 }

@@ -97,11 +97,6 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
         return exchange;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public AmazonKinesis getClient() {
         return kinesisClient;
     }

@@ -38,7 +38,7 @@ import static org.junit.Assert.assertNotNull;
 public class CharsetTest extends AbstractJUnit4SpringContextTests {
     private static final Logger LOG = LoggerFactory.getLogger(FixedLengthTest.class);
 
-    @EndpointInject(uri = "mock:results")
+    @EndpointInject("mock:results")
     protected MockEndpoint results;
 
     protected String[] expectedItemDesc = {"SOME VALVE", "AN ENGINE", "A BELT", "A ÄöÜ"};

@@ -22,9 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * To use a custom data format implementation that does not come out of the box from Apache Camel.
@@ -41,11 +39,6 @@ public class CustomDataFormat extends DataFormatDefinition {
 
     public CustomDataFormat(String ref) {
         this.ref = ref;
-    }
-
-    @Override
-    protected DataFormat createDataFormat(RouteContext routeContext) {
-        return DataFormatDefinition.getDataFormat(routeContext, null, ref);
     }
 
     /**

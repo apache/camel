@@ -36,7 +36,7 @@ public class SpringMailEndpointTest extends AbstractJUnit4SpringContextTests {
 
     @Autowired
     protected ProducerTemplate template;
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint result;
 
     @Test

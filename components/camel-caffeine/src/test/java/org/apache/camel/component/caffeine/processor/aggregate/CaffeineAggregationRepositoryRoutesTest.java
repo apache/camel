@@ -37,10 +37,10 @@ public class CaffeineAggregationRepositoryRoutesTest extends CamelTestSupport {
     private static final int SUM = IntStream.of(VALUES).reduce(0, (a, b) -> a + b);
     private static final String CORRELATOR = "CORRELATOR";
 
-    @EndpointInject(uri = ENDPOINT_MOCK)
+    @EndpointInject(ENDPOINT_MOCK)
     private MockEndpoint mock;
 
-    @Produce(uri = ENDPOINT_DIRECT)
+    @Produce(ENDPOINT_DIRECT)
     private ProducerTemplate producer;
 
     @Test

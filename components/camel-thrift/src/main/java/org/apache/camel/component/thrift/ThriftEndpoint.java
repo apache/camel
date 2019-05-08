@@ -58,10 +58,6 @@ public class ThriftEndpoint extends DefaultEndpoint {
         return new ThriftConsumer(this, processor, configuration);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-    
     public String getServiceName() {
         return serviceName;
     }

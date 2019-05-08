@@ -50,9 +50,7 @@ import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
-import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
-import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
@@ -64,7 +62,7 @@ import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.XmlRpcDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
-import org.apache.camel.model.dataformat.ZipDataFormat;
+import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.spi.Metadata;
 
@@ -108,9 +106,7 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
         @XmlElement(required = false, name = "protobuf", type = ProtobufDataFormat.class),
         @XmlElement(required = false, name = "rss", type = RssDataFormat.class),
         @XmlElement(required = false, name = "secureXML", type = XMLSecurityDataFormat.class),
-        @XmlElement(required = false, name = "serialization", type = SerializationDataFormat.class),
         @XmlElement(required = false, name = "soapjaxb", type = SoapJaxbDataFormat.class),
-        @XmlElement(required = false, name = "string", type = StringDataFormat.class),
         @XmlElement(required = false, name = "syslog", type = SyslogDataFormat.class),
         @XmlElement(required = false, name = "tarfile", type = TarFileDataFormat.class),
         @XmlElement(required = false, name = "thrift", type = ThriftDataFormat.class),
@@ -122,7 +118,7 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
         @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class),
         @XmlElement(required = false, name = "pgp", type = PGPDataFormat.class),
         @XmlElement(required = false, name = "yaml", type = YAMLDataFormat.class),
-        @XmlElement(required = false, name = "zip", type = ZipDataFormat.class),
+        @XmlElement(required = false, name = "zip", type = ZipDeflaterDataFormat.class),
         @XmlElement(required = false, name = "zipfile", type = ZipFileDataFormat.class)}
         )
     private DataFormatDefinition dataFormatType;

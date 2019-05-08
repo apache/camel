@@ -25,7 +25,7 @@ import org.apache.camel.Message;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
+import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.validator.CustomValidatorDefinition;

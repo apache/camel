@@ -30,7 +30,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * the <tt>useMaps</tt> option.
  */
 public class CsvUnmarshalMapLineSpringTest extends CamelSpringTestSupport {
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
     @SuppressWarnings("unchecked")

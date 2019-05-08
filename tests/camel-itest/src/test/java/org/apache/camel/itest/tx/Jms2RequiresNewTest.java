@@ -45,16 +45,16 @@ public class Jms2RequiresNewTest extends AbstractJUnit4SpringContextTests {
     @Autowired
     private CamelContext camelContext;
 
-    @EndpointInject(uri = "mock:result1")
+    @EndpointInject("mock:result1")
     private MockEndpoint result1;
 
-    @EndpointInject(uri = "mock:result2")
+    @EndpointInject("mock:result2")
     private MockEndpoint result2;
 
-    @EndpointInject(uri = "mock:dlq")
+    @EndpointInject("mock:dlq")
     private MockEndpoint dlq;
 
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     private ProducerTemplate start;
 
     @Before

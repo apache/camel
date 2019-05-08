@@ -1,0 +1,494 @@
+[[xpath-language]]
+== XPath Language
+
+*Available as of Camel version 1.1*
+
+Camel supports http://www.w3.org/TR/xpath[XPath] to allow an
+Expression or Predicate to be
+used in the DSL or link:xml-configuration.html[Xml
+Configuration]. For example you could use XPath to create an
+Predicate in a link:message-filter.html[Message
+Filter] or as an Expression for a
+Recipient List.
+
+*Streams*
+
+If the message body is stream based, which means the input it receives
+is submitted to Camel as a stream. That means you will only be able to
+read the content of the stream *once*. So often when you use
+<<xpath-language,XPath>> as <<xpath-language,Message Filter>> or
+Content Based Router then you need to
+access the data multiple times, and you should use
+Stream Caching or convert the message body to
+a `String` prior which is safe to be re-read multiple times.
+
+[source,java]
+----
+from("queue:foo").
+  filter().xpath("//foo")).
+  to("queue:bar")
+----
+
+[source,java]
+----
+from("queue:foo").
+  choice().xpath("//foo")).to("queue:bar").
+  otherwise().to("queue:others");
+----
+
+=== XPath Language options
+
+// language options: START
+The XPath language supports 9 options, which are listed below.
+
+
+
+[width="100%",cols="2,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| documentType |  | String | Name of class for document type The default value is org.w3c.dom.Document
+| resultType | NODESET | String | Sets the class name of the result type (type from output) The default result type is NodeSet
+| saxon | false | Boolean | Whether to use Saxon.
+| factoryRef |  | String | References to a custom XPathFactory to lookup in the registry
+| objectModel |  | String | The XPath object model to use
+| logNamespaces | false | Boolean | Whether to log namespaces which can assist during trouble shooting
+| headerName |  | String | Name of header to use as input, instead of the message body
+| threadSafety | false | Boolean | Whether to enable thread-safety for the returned result of the xpath expression. This applies to when using NODESET as the result type, and the returned set has multiple elements. In this situation there can be thread-safety issues if you process the NODESET concurrently such as from a Camel Splitter EIP in parallel processing mode. This option prevents concurrency issues by doing defensive copies of the nodes. It is recommended to turn this option on if you are using camel-saxon or Saxon in your application. Saxon has thread-safety issues which can be prevented by turning this option on.
+| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
+|===
+// language options: END
+
+=== Namespaces
+
+You can easily use namespaces with XPath expressions using the
+Namespaces helper class.
+
+=== Variables
+
+Variables in XPath is defined in different namespaces. The default
+namespace is `http://camel.apache.org/schema/spring`.
+
+[width="100%",cols="10%,10%,10%,70%",options="header",]
+|===
+|Namespace URI |Local part |Type |Description
+
+|http://camel.apache.org/xml/in/[http://camel.apache.org/xml/in/] |in |Message |the exchange.in message
+
+|http://camel.apache.org/xml/out/[http://camel.apache.org/xml/out/] |out |Message |the exchange.out message
+
+|http://camel.apache.org/xml/function/[http://camel.apache.org/xml/function/] |functions |Object |*Camel 2.5:* Additional functions
+
+|http://camel.apache.org/xml/variables/environment-variables[http://camel.apache.org/xml/variables/environment-variables] |env |Object |OS environment variables
+
+|http://camel.apache.org/xml/variables/system-properties[http://camel.apache.org/xml/variables/system-properties] |system |Object |Java System properties
+
+|http://camel.apache.org/xml/variables/exchange-property[http://camel.apache.org/xml/variables/exchange-property] |  | Object |the exchange property
+|===
+
+Camel will resolve variables according to either:
+
+* namespace given
+* no namespace given
+
+==== Namespace given
+
+If the namespace is given then Camel is instructed exactly what to
+return. However when resolving either *in* or *out* Camel will try to
+resolve a header with the given local part first, and return it. If the
+local part has the value *body* then the body is returned instead.
+
+==== No namespace given
+
+If there is no namespace given then Camel resolves only based on the
+local part. Camel will try to resolve a variable in the following steps:
+
+* from `variables` that has been set using the `variable(name, value)`
+fluent builder
+* from message.in.header if there is a header with the given key
+* from exchange.properties if there is a property with the given key
+
+=== Functions
+
+Camel adds the following XPath functions that can be used to access the
+exchange:
+
+[width="100%",cols="10%,10%,10%,70%",options="header",]
+|===
+|Function |Argument |Type |Description
+
+|in:body |none |Object |Will return the *in* message body.
+
+|in:header |the header name |Object |Will return the *in* message header.
+
+|out:body |none |Object |Will return the *out* message body.
+
+|out:header |the header name |Object |Will return the *out* message header.
+
+|function:properties |key for property |String |*Camel 2.5:* To lookup a property using the
+<<properties-component,Properties>> component (property placeholders).
+
+|function:simple |simple expression |Object |*Camel 2.5:* To evaluate a <<simple-language,Simple>> expression.
+|===
+
+CAUTION: `function:properties` and `function:simple` is not supported
+when the return type is a `NodeSet`, such as when using with a
+Splitter EIP.
+
+Here's an example showing some of these functions in use.
+
+And the new functions introduced in Camel 2.5:
+
+=== Using XML configuration
+
+If you prefer to configure your routes in your Spring
+XML file then you can use XPath expressions as follows
+
+[source,xml]
+----
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+  <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring" xmlns:foo="http://example.com/person">
+    <route>
+      <from uri="activemq:MyQueue"/>
+      <filter>
+        <xpath>/foo:person[@name='James']</xpath>
+        <to uri="mqseries:SomeOtherQueue"/>
+      </filter>
+    </route>
+  </camelContext>
+</beans>
+----
+
+Notice how we can reuse the namespace prefixes, *foo* in this case, in
+the XPath expression for easier namespace based XPath expressions!
+
+See also this
+http://camel.465427.n5.nabble.com/fail-filter-XPATH-camel-td476424.html[discussion
+on the mailinglist] about using your own namespaces with xpath
+
+=== Setting result type
+
+The <<xpath-language,XPath>> expression will return a result type using
+native XML objects such as `org.w3c.dom.NodeList`. But many times you
+want a result type to be a String. To do this you have to instruct the
+<<xpath-language,XPath>> which result type to use.
+
+In Java DSL:
+
+[source,java]
+----
+xpath("/foo:person/@id", String.class)
+----
+
+In Spring DSL you use the *resultType* attribute to provide a fully
+qualified classname:
+
+[source,xml]
+----
+<xpath resultType="java.lang.String">/foo:person/@id</xpath>
+----
+
+In @XPath: +
+ *Available as of Camel 2.1*
+
+[source,java]
+----
+@XPath(value = "concat('foo-',//order/name/)", resultType = String.class) String name)
+----
+
+Where we use the xpath function concat to prefix the order name with
+`foo-`. In this case we have to specify that we want a String as result
+type so the concat function works.
+
+=== Using XPath on Headers
+
+*Available as of Camel 2.11*
+
+Some users may have XML stored in a header. To apply an XPath to a
+header's value you can do this by defining the 'headerName' attribute.
+
+And in Java DSL you specify the headerName as the 2nd parameter as
+shown:
+
+[source,java]
+----
+  xpath("/invoice/@orderType = 'premium'", "invoiceDetails")
+----
+
+=== Examples
+
+Here is a simple
+https://github.com/apache/camel/blob/master/camel-core/src/test/java/org/apache/camel/processor/XPathFilterTest.java[example]
+using an XPath expression as a predicate in a
+Message Filter
+
+If you have a standard set of namespaces you wish to work with and wish
+to share them across many different XPath expressions you can use the
+NamespaceBuilder as shown
+https://github.com/apache/camel/blob/master/camel-core/src/test/java/org/apache/camel/processor/XPathWithNamespaceBuilderFilterTest.java[in
+this example]
+
+In this sample we have a choice construct. The first choice evaulates if
+the message has a header key *type* that has the value *Camel*. +
+ The 2nd choice evaluates if the message body has a name tag *<name>*
+which values is *Kong*. +
+ If neither is true the message is routed in the otherwise block:
+
+And the spring XML equivalent of the route:
+
+=== XPath injection
+
+You can use Bean Integration to invoke a
+method on a bean and use various languages such as XPath to extract a
+value from the message and bind it to a method parameter.
+
+The default XPath annotation has SOAP and XML namespaces available. If
+you want to use your own namespace URIs in an XPath expression you can
+use your own copy of the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/language/XPath.html[XPath
+annotation] to create whatever namespace prefixes you want to use.
+
+i.e. cut and paste upper code to your own project in a different package
+and/or annotation name then add whatever namespace prefix/uris you want
+in scope when you use your annotation on a method parameter. Then when
+you use your annotation on a method parameter all the namespaces you
+want will be available for use in your XPath expression.
+
+For example
+
+[source,java]
+----
+public class Foo {
+    
+    @MessageDriven(uri = "activemq:my.queue")
+    public void doSomething(@MyXPath("/ns1:foo/ns2:bar/text()") String correlationID, @Body String body) {
+        // process the inbound message here
+    }
+}
+----
+
+=== Using XPathBuilder without an Exchange
+
+*Available as of Camel 2.3*
+
+You can now use the `org.apache.camel.builder.XPathBuilder` without the
+need for an Exchange. This comes handy if you want
+to use it as a helper to do custom xpath evaluations.
+
+It requires that you pass in a CamelContext
+since a lot of the moving parts inside the XPathBuilder requires access
+to the Camel Type Converter and hence why
+CamelContext is needed.
+
+For example you can do something like this:
+
+[source,java]
+----
+boolean matches = XPathBuilder.xpath("/foo/bar/@xyz").matches(context, "<foo><bar xyz='cheese'/></foo>"));
+----
+
+This will match the given predicate.
+
+You can also evaluate for example as shown in the following three
+examples:
+
+[source,java]
+----
+String name = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>cheese</bar></foo>", String.class);
+Integer number = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>123</bar></foo>", Integer.class);
+Boolean bool = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>true</bar></foo>", Boolean.class);
+----
+
+Evaluating with a String result is a common requirement and thus you can
+do it a bit simpler:
+
+[source,java]
+----
+String name = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>cheese</bar></foo>");
+----
+
+=== Using Saxon with XPathBuilder
+
+*Available as of Camel 2.3*
+
+You need to add *camel-saxon* as dependency to your project.
+
+Its now easier to use http://saxon.sourceforge.net/[Saxon] with the
+XPathBuilder which can be done in several ways as shown below. +
+ Where as the latter ones are the easiest ones.
+
+* Using a factory
+* Using ObjectModel
+
+The easy one
+
+=== Setting a custom XPathFactory using System Property
+
+*Available as of Camel 2.3*
+
+Camel now supports reading the
+http://java.sun.com/j2se/1.5.0/docs/api/javax/xml/xpath/XPathFactory.html#newInstance(java.lang.String)[JVM
+system property `javax.xml.xpath.XPathFactory`] that can be used to set
+a custom XPathFactory to use.
+
+This unit test shows how this can be done to use Saxon instead:
+
+Camel will log at `INFO` level if it uses a non default XPathFactory
+such as:
+
+[source]
+----
+XPathBuilder  INFO  Using system property javax.xml.xpath.XPathFactory:http://saxon.sf.net/jaxp/xpath/om with value:
+                    net.sf.saxon.xpath.XPathFactoryImpl when creating XPathFactory
+----
+
+To use Apache Xerces you can configure the system property
+
+[source]
+----
+-Djavax.xml.xpath.XPathFactory=org.apache.xpath.jaxp.XPathFactoryImpl
+----
+
+=== Enabling Saxon from Spring DSL
+
+*Available as of Camel 2.10*
+
+Similarly to Java DSL, to enable Saxon from Spring DSL you have three
+options:
+
+Specifying the factory
+
+[source,xml]
+----
+<xpath factoryRef="saxonFactory" resultType="java.lang.String">current-dateTime()</xpath>
+----
+
+Specifying the object model
+
+[source,xml]
+----
+<xpath objectModel="http://saxon.sf.net/jaxp/xpath/om" resultType="java.lang.String">current-dateTime()</xpath>
+----
+
+Shortcut
+
+[source,xml]
+----
+<xpath saxon="true" resultType="java.lang.String">current-dateTime()</xpath>
+----
+
+=== Namespace auditing to aid debugging
+
+*Available as of Camel 2.10*
+
+A large number of XPath-related issues that users frequently face are
+linked to the usage of namespaces. You may have some misalignment
+between the namespaces present in your message and those that your XPath
+expression is aware of or referencing. XPath predicates or expressions
+that are unable to locate the XML elements and attributes due to
+namespaces issues may simply look like "they are not working", when in
+reality all there is to it is a lack of namespace definition.
+
+Namespaces in XML are completely necessary, and while we would love to
+simplify their usage by implementing some magic or voodoo to wire
+namespaces automatically, truth is that any action down this path would
+disagree with the standards and would greatly hinder interoperability.
+
+Therefore, the utmost we can do is assist you in debugging such issues
+by adding two new features to the XPath Expression Language and are thus
+accesible from both predicates and expressions.
+
+#=== Logging the Namespace Context of your XPath expression/predicate
+
+Every time a new XPath expression is created in the internal pool, Camel
+will log the namespace context of the expression under the
+`org.apache.camel.builder.xml.XPathBuilder` logger. Since Camel
+represents Namespace Contexts in a hierarchical fashion (parent-child
+relationships), the entire tree is output in a recursive manner with the
+following format:
+
+[source]
+----
+[me: {prefix -> namespace}, {prefix -> namespace}], [parent: [me: {prefix -> namespace}, {prefix -> namespace}], [parent: [me: {prefix -> namespace}]]]
+----
+
+Any of these options can be used to activate this logging:
+
+1.  Enable TRACE logging on the
+`org.apache.camel.builder.xml.XPathBuilder` logger, or some parent
+logger such as `org.apache.camel` or the root logger
+2.  Enable the `logNamespaces` option as indicated in
+<<xpath-language,Auditing Namespaces>>, in which case the logging will
+occur on the INFO level
+
+=== Auditing namespaces
+
+Camel is able to discover and dump all namespaces present on every
+incoming message before evaluating an XPath expression, providing all
+the richness of information you need to help you analyse and pinpoint
+possible namespace issues.
+
+To achieve this, it in turn internally uses another specially tailored
+XPath expression to extract all namespace mappings that appear in the
+message, displaying the prefix and the full namespace URI(s) for each
+individual mapping.
+
+Some points to take into account:
+
+* The implicit XML namespace
+(xmlns:xml="http://www.w3.org/XML/1998/namespace") is suppressed from
+the output because it adds no value
+* Default namespaces are listed under the DEFAULT keyword in the output
+* Keep in mind that namespaces can be remapped under different scopes.
+Think of a top-level 'a' prefix which in inner elements can be assigned
+a different namespace, or the default namespace changing in inner
+scopes. For each discovered prefix, all associated URIs are listed.
+
+You can enable this option in Java DSL and Spring DSL.
+
+Java DSL:
+
+[source,java]
+----
+XPathBuilder.xpath("/foo:person/@id", String.class).logNamespaces()
+----
+
+Spring DSL:
+
+[source,xml]
+----
+<xpath logNamespaces="true" resultType="String">/foo:person/@id</xpath>
+----
+
+The result of the auditing will be appear at the INFO level under the
+`org.apache.camel.builder.xml.XPathBuilder` logger and will look like
+the following:
+
+[source]
+----
+2012-01-16 13:23:45,878 [stSaxonWithFlag] INFO  XPathBuilder  - Namespaces discovered in message: 
+{xmlns:a=[http://apache.org/camel], DEFAULT=[http://apache.org/default], 
+xmlns:b=[http://apache.org/camelA, http://apache.org/camelB]}
+----
+
+=== Loading script from external resource
+
+*Available as of Camel 2.11*
+
+You can externalize the script and have Camel load it from a resource
+such as `"classpath:"`, `"file:"`, or `"http:"`. +
+ This is done using the following syntax: `"resource:scheme:location"`,
+eg to refer to a file on the classpath you can do:
+
+[source,java]
+----
+.setHeader("myHeader").xpath("resource:classpath:myxpath.txt", String.class)
+----
+
+=== Dependencies
+
+The XPath language is part of camel-core.

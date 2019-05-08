@@ -36,13 +36,13 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 @ContextConfiguration(classes = {BeanJavaConfigTest.ContextConfig.class}, loader = CamelSpringDelegatingTestContextLoader.class)
 public class BeanJavaConfigTest extends AbstractJUnit4SpringContextTests {
 
-    @EndpointInject(uri = "mock:end")
+    @EndpointInject("mock:end")
     protected MockEndpoint endpoint;
 
-    @EndpointInject(uri = "mock:error")
+    @EndpointInject("mock:error")
     protected MockEndpoint errorEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate producer;
 
     @Test

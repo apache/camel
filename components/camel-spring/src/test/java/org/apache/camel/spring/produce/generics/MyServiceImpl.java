@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MyServiceImpl extends MyServiceSupport<Double> {
 
-    @Consume(uri = "direct:myService")
+    @Consume("direct:myService")
     @Override
     public Double sqrt(Double number) {
         log(number);

@@ -35,7 +35,7 @@ public class AtomixSetProducerTest extends AtomixClientTestSupport {
     private static final String SET_NAME = UUID.randomUUID().toString();
     private DistributedSet<Object> set;
 
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     private FluentProducerTemplate fluent;
 
     // ************************************

@@ -36,7 +36,7 @@ import org.junit.Test;
 
 public class UndertowWsProducerRouteTest extends BaseUndertowTest {
 
-    @Produce(uri = "direct:shop")
+    @Produce("direct:shop")
     private ProducerTemplate producer;
 
     @Test

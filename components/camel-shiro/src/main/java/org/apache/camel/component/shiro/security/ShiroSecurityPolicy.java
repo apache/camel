@@ -110,7 +110,7 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
     
     public Processor wrap(RouteContext routeContext, final Processor processor) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Securing route {} using Shiro policy {}", routeContext.getRoute().getId(), this);
+            LOG.debug("Securing route {} using Shiro policy {}", routeContext.getRouteId(), this);
         }
         return new ShiroSecurityProcessor(processor, this);
     }

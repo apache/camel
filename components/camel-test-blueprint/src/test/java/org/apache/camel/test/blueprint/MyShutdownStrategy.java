@@ -16,7 +16,7 @@
  */
 package org.apache.camel.test.blueprint;
 
-import org.apache.camel.impl.DefaultShutdownStrategy;
+import org.apache.camel.impl.engine.DefaultShutdownStrategy;
 
 public class MyShutdownStrategy extends DefaultShutdownStrategy {
 

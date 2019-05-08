@@ -21,9 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -43,21 +41,6 @@ public class Base64DataFormat extends DataFormatDefinition {
 
     public Base64DataFormat() {
         super("base64");
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (getLineLength() != null) {
-            setProperty(camelContext, dataFormat, "lineLength", getLineLength());
-        }
-        if (getUrlSafe() != null) {
-            setProperty(camelContext, dataFormat, "urlSafe", getUrlSafe());
-        }
-        if (getLineSeparator() != null) {
-            // line separator must be a byte[]
-            byte[] bytes = getLineSeparator().getBytes();
-            setProperty(camelContext, dataFormat, "lineSeparator", bytes);
-        }
     }
 
     public Integer getLineLength() {

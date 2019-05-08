@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.language.bean.BeanLanguage;
+import org.apache.camel.language.bean.BeanExpression;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -146,7 +146,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
                 endpoint.setCamelContext(context);
                 endpoint.setFile(new File("target/data/filelanguage/"));
                 endpoint.setAutoCreate(false);
-                endpoint.setMove(BeanLanguage.bean("myguidgenerator"));
+                endpoint.setMove(new BeanExpression("myguidgenerator", null));
                 endpoint.setExclude(".*bak");
                 endpoint.setInitialDelay(10);
 

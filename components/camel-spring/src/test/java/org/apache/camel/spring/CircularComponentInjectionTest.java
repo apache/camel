@@ -26,10 +26,10 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration
 public class CircularComponentInjectionTest extends SpringRunWithTestSupport {
 
-    @EndpointInject(uri = "ref:seda")
+    @EndpointInject("ref:seda")
     protected Endpoint sedaEndpoint;
 
-    @EndpointInject(uri = "ref:log")
+    @EndpointInject("ref:log")
     protected Endpoint logEndpoint;
 
     @DirtiesContext

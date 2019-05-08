@@ -27,7 +27,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.language.simple.ast.BinaryExpression;
 import org.apache.camel.language.simple.ast.DoubleQuoteEnd;
 import org.apache.camel.language.simple.ast.DoubleQuoteStart;
@@ -48,6 +47,7 @@ import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
+import org.apache.camel.support.builder.PredicateBuilder;
 
 /**
  * A parser to parse simple language as a Camel {@link Predicate}

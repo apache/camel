@@ -28,7 +28,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.impl.DefaultUnitOfWork;
+import org.apache.camel.impl.engine.DefaultUnitOfWork;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.CollectionStringBuffer;

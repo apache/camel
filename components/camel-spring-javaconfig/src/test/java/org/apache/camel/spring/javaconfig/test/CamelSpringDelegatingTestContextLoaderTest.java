@@ -45,13 +45,13 @@ import org.springframework.test.context.ContextConfiguration;
     )
 @MockEndpoints
 public class CamelSpringDelegatingTestContextLoaderTest {
-    @EndpointInject(uri = "mock:direct:end")
+    @EndpointInject("mock:direct:end")
     protected MockEndpoint endEndpoint;
 
-    @EndpointInject(uri = "mock:direct:error")
+    @EndpointInject("mock:direct:error")
     protected MockEndpoint errorEndpoint;
 
-    @Produce(uri = "direct:test")
+    @Produce("direct:test")
     protected ProducerTemplate testProducer;
 
     @Configuration

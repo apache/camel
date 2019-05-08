@@ -31,10 +31,10 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 @ContextConfiguration(classes = {AutowiringContextConfig.class}, loader = CamelSpringDelegatingTestContextLoader.class)
 public class AutodetectingConfigTest extends AbstractJUnit4SpringContextTests {
 
-    @EndpointInject(uri = "mock:autowire")
+    @EndpointInject("mock:autowire")
     MockEndpoint autowireMockEndpoint;
 
-    @EndpointInject(uri = "mock:module")
+    @EndpointInject("mock:module")
     MockEndpoint moduleMockEndpoint;
 
     @Produce

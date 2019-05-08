@@ -26,35 +26,29 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.Schema;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
-import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.PulsarContainer;
 
-public class PulsarConsumerInTest extends CamelTestSupport {
+public class PulsarConsumerInTest extends PulsarTestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerInTest.class);
 
     private static final String TOPIC_URI = "persistent://public/default/camel-topic";
     private static final String PRODUCER = "camel-producer-1";
 
-    @Rule
-    public PulsarContainer pulsarContainer = new PulsarContainer();
-
-    @EndpointInject(uri = "pulsar:" + TOPIC_URI
+    @EndpointInject("pulsar:" + TOPIC_URI
         + "?numberOfConsumers=1&subscriptionType=Exclusive"
         + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
     )
     private Endpoint from;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint to;
 
     @Override
@@ -70,7 +64,7 @@ public class PulsarConsumerInTest extends CamelTestSupport {
 
             @Override
             public void configure() {
-                from(from).to(to).unmarshal().string().process(processor);
+                from(from).to(to).process(processor);
             }
         };
     }
@@ -97,7 +91,7 @@ public class PulsarConsumerInTest extends CamelTestSupport {
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
         return new ClientBuilderImpl()
-            .serviceUrl(pulsarContainer.getPulsarBrokerUrl())
+            .serviceUrl(getPulsarBrokerUrl())
             .ioThreads(1)
             .listenerThreads(1)
             .build();

@@ -44,18 +44,18 @@ import org.junit.Test;
 public class RabbitMQReConnectionIntTest extends AbstractRabbitMQIntTest {
     private static final String EXCHANGE = "ex3";
 
-    @Produce(uri = "direct:rabbitMQ")
+    @Produce("direct:rabbitMQ")
     protected ProducerTemplate directProducer;
 
-    @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE + "?username=cameltest&password=cameltest"
+    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE + "?username=cameltest&password=cameltest"
                           + "&queue=q3&routingKey=rk3" + "&automaticRecoveryEnabled=true"
                           + "&requestedHeartbeat=1000" + "&connectionTimeout=5000")
     private Endpoint rabbitMQEndpoint;
 
-    @EndpointInject(uri = "mock:producing")
+    @EndpointInject("mock:producing")
     private MockEndpoint producingMockEndpoint;
 
-    @EndpointInject(uri = "mock:consuming")
+    @EndpointInject("mock:consuming")
     private MockEndpoint consumingMockEndpoint;
 
     @Override

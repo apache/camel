@@ -16,23 +16,17 @@
  */
 package org.apache.camel.core.osgi;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -45,8 +39,8 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverters;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.TypeConverterLoader;

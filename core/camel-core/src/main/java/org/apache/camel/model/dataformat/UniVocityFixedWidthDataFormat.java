@@ -21,8 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -82,29 +80,4 @@ public class UniVocityFixedWidthDataFormat extends UniVocityAbstractDataFormat {
         this.padding = padding;
     }
 
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        super.configureDataFormat(dataFormat, camelContext);
-
-        if (headers != null) {
-            int[] lengths = new int[headers.size()];
-            for (int i = 0; i < lengths.length; i++) {
-                Integer length = headers.get(i).getLength();
-                if (length == null) {
-                    throw new IllegalArgumentException("The length of all headers must be defined.");
-                }
-                lengths[i] = length;
-            }
-            setProperty(camelContext, dataFormat, "fieldLengths", lengths);
-        }
-        if (skipTrailingCharsUntilNewline != null) {
-            setProperty(camelContext, dataFormat, "skipTrailingCharsUntilNewline", skipTrailingCharsUntilNewline);
-        }
-        if (recordEndsOnNewline != null) {
-            setProperty(camelContext, dataFormat, "recordEndsOnNewline", recordEndsOnNewline);
-        }
-        if (padding != null) {
-            setProperty(camelContext, dataFormat, "padding", singleCharOf("padding", padding));
-        }
-    }
 }

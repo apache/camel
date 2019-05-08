@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultManagementStrategy;
+import org.apache.camel.impl.engine.DefaultManagementStrategy;
 import org.apache.camel.processor.async.MyAsyncComponent;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;

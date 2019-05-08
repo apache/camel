@@ -73,26 +73,26 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
     @Rule
     public MllpServerResource mllpServer = new MllpServerResource("localhost", AvailablePortFinder.getNextAvailable());
 
-    @EndpointInject(uri = "direct://source")
+    @EndpointInject("direct://source")
     protected ProducerTemplate source;
 
-    @EndpointInject(uri = "mock://aa-ack")
+    @EndpointInject("mock://aa-ack")
     protected MockEndpoint aa;
-    @EndpointInject(uri = "mock://ae-nack")
+    @EndpointInject("mock://ae-nack")
     protected MockEndpoint ae;
-    @EndpointInject(uri = "mock://ar-nack")
+    @EndpointInject("mock://ar-nack")
     protected MockEndpoint ar;
 
-    @EndpointInject(uri = "mock://invalid-ack")
+    @EndpointInject("mock://invalid-ack")
     protected MockEndpoint invalid;
 
-    @EndpointInject(uri = "mock://ack-receive-error")
+    @EndpointInject("mock://ack-receive-error")
     protected MockEndpoint ackReceiveError;
 
-    @EndpointInject(uri = "mock://ack-timeout-error")
+    @EndpointInject("mock://ack-timeout-error")
     protected MockEndpoint ackTimeoutError;
 
-    @EndpointInject(uri = "mock://failed")
+    @EndpointInject("mock://failed")
     protected MockEndpoint failed;
 
 

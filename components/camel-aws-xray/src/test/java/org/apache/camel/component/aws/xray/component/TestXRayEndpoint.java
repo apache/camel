@@ -45,9 +45,4 @@ public class TestXRayEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) {
         throw new UnsupportedOperationException("You cannot create a Consumer for message monitoring");
     }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
 }

@@ -127,7 +127,7 @@ public class ComponentTest extends CamelTestSupport {
 
                 onException(CryptoCmsVerifierCertificateNotValidException.class).handled(false).to("mock:exception");
 
-                from("direct:start").to("crypto-cms:sign://testsign?signer=#signer1&signer=#signer2&includeContent=true")
+                from("direct:start").to("crypto-cms:sign://testsign?signer=#signer1,#signer2&includeContent=true")
                     .to("crypto-cms:encrypt://testencrpyt?toBase64=true&recipient=#recipient1&contentEncryptionAlgorithm=DESede/CBC/PKCS5Padding&secretKeyLength=128")
                     // .to("file:target/test_signed_encrypted.base64")
                     .to("crypto-cms:decrypt://testdecrypt?fromBase64=true&keyStoreParameters=#keyStoreParameters")

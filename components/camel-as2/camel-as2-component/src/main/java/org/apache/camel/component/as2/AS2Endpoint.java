@@ -49,7 +49,7 @@ import org.apache.http.entity.ContentType;
 /**
  * Component used for transferring data secure and reliable over the internet using the AS2 protocol.
  */
-@UriEndpoint(scheme = "as2", firstVersion = "2.22.0", title = "AS2", syntax = "as2:apiName", label = "AS2")
+@UriEndpoint(scheme = "as2", firstVersion = "2.22.0", title = "AS2", syntax = "as2:apiName/methodName", label = "AS2")
 public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuration> {
 
     @UriParam

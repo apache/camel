@@ -350,9 +350,14 @@ public class PrepareReadmeMojo extends AbstractMojo {
             Collections.sort(models, new DataFormatComparator());
 
             // how many different artifacts
-            int count = models.stream()
-                    .map(DataFormatModel::getArtifactId)
-                    .collect(toSet()).size();
+            int count;
+            if (coreOnly) {
+                count = 1;
+            } else {
+                count = models.stream()
+                            .map(DataFormatModel::getArtifactId)
+                            .collect(toSet()).size();
+            }
 
             // how many deprecated
             long deprecated = models.stream()

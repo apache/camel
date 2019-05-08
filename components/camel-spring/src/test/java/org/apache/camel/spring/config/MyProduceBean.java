@@ -22,7 +22,7 @@ import org.apache.camel.Producer;
 
 public class MyProduceBean {
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private Producer producer;
 
     public void testDoSomething(String body) throws Exception {

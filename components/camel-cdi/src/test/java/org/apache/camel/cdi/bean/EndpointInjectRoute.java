@@ -22,10 +22,10 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class EndpointInjectRoute extends RouteBuilder {
 
-    @EndpointInject(uri = "direct:inbound")
+    @EndpointInject("direct:inbound")
     private Endpoint inbound;
 
-    @EndpointInject(uri = "mock:outbound")
+    @EndpointInject("mock:outbound")
     private Endpoint outbound;
     
     @Override

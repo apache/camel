@@ -223,6 +223,13 @@ public final class DockerConstants {
     public static final String DOCKER_RESTART_POLICY = "CamelDockerRestartPolicy";
 
     /**
+     * Create Network *
+     * Attach to Network *
+     * Remove Network *
+     */
+    public static final String DOCKER_NETWORK = "CamelDockerNetwork";
+
+    /**
      * Exec *
      */
     public static final String DOCKER_DETACH = "CamelDockerDetach";

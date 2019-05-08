@@ -34,10 +34,10 @@ import org.junit.Test;
 
 public class JaxbDataFormatSchemaValidationTestWithObjectFactory extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:marshall")
+    @EndpointInject("mock:marshall")
     private MockEndpoint mockMarshall;
 
-    @EndpointInject(uri = "mock:unmarshall")
+    @EndpointInject("mock:unmarshall")
     private MockEndpoint mockUnmarshall;
 
     private JAXBContext jbCtx;

@@ -59,10 +59,6 @@ public class QueueServiceEndpoint extends DefaultEndpoint {
         return new QueueServiceProducer(this);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public QueueServiceConfiguration getConfiguration() {
         return configuration;
     }

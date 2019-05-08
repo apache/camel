@@ -94,10 +94,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return new StreamProducer(this, getEndpointUri());
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     protected Exchange createExchange(Object body, long index, boolean last) {
         Exchange exchange = createExchange();
         exchange.getIn().setBody(body);

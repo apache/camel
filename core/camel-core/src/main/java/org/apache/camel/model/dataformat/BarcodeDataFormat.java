@@ -21,9 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -44,25 +42,6 @@ public class BarcodeDataFormat extends DataFormatDefinition {
     
     public BarcodeDataFormat() {
         super("barcode");
-    }
-    
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (width != null) {
-            setProperty(camelContext, dataFormat, "width", width);
-        }
-
-        if (height != null) {
-            setProperty(camelContext, dataFormat, "height", height);
-        } 
-        
-        if (imageType != null) {
-            setProperty(camelContext, dataFormat, "barcodeImageType", imageType);
-        }
-
-        if (barcodeFormat != null) {
-            setProperty(camelContext, dataFormat, "barcodeFormat", barcodeFormat);
-        }
     }
     
     public Integer getWidth() {

@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 import org.apache.camel.support.language.LanguageAnnotation;
 
 /**
- * An annotation for injection of <a href="http://mvel.codehaus.org/">MVEL</a>
+ * An annotation for injection of MVEL
  * expressions into method parameters, fields or properties
  */
 @Retention(RetentionPolicy.RUNTIME)

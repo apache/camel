@@ -242,11 +242,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         return new RabbitMQProducer(this);
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     protected ExecutorService createExecutor() {
         if (getCamelContext() != null) {
             return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "RabbitMQConsumer", getThreadPoolSize());

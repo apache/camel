@@ -25,7 +25,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.xml.XPathBuilder;
+import org.apache.camel.language.xpath.XPathBuilder;
 import org.apache.camel.support.PredicateAssertHelper;
 import org.junit.Test;
 

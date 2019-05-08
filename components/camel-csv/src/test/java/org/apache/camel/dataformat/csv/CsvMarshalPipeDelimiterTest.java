@@ -29,7 +29,7 @@ import org.junit.Test;
 
 public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
     @Test

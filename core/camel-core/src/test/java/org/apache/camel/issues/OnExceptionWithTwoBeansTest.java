@@ -60,7 +60,6 @@ public class OnExceptionWithTwoBeansTest extends ContextTestSupport {
                         .end();
                
                 from("direct:start")
-                        .unmarshal().string()
                         .to("bean:checkin")
                         .to("mock:bean")
                         .to("bean:handler")

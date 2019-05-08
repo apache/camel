@@ -75,10 +75,6 @@ public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         return exchange;
     }
     
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     public NettyComponent getComponent() {
         return (NettyComponent) super.getComponent();

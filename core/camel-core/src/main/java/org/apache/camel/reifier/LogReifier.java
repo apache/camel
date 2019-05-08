@@ -77,7 +77,7 @@ class LogReifier extends ProcessorReifier<LogDefinition> {
                 }
             }
             if (name == null) {
-                name = routeContext.getRoute().getId();
+                name = routeContext.getRouteId();
                 log.debug("LogName is not configured, using route id as logName: {}", name);
             }
             logger = LoggerFactory.getLogger(name);

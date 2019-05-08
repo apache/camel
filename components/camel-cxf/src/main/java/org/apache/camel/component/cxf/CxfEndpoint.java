@@ -240,11 +240,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return answer;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    /**
+/**
      * Populate server factory bean
      */
     protected void setupServerFactoryBean(ServerFactoryBean sfb, Class<?> cls) {

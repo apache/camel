@@ -26,7 +26,7 @@ import org.junit.Test;
  */
 public class EchoProduceTest extends CamelTestSupport {
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private Echo echo;
 
     @Test

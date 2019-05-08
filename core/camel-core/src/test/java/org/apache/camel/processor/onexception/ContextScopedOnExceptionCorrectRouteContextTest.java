@@ -43,7 +43,7 @@ public class ContextScopedOnExceptionCorrectRouteContextTest extends ContextTest
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
-                            String routeId = exchange.getUnitOfWork().getRouteContext().getRoute().getId();
+                            String routeId = exchange.getUnitOfWork().getRouteContext().getRouteId();
                             assertEquals("bar", routeId);
                         }
                     });
@@ -85,7 +85,7 @@ public class ContextScopedOnExceptionCorrectRouteContextTest extends ContextTest
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
-                            String routeId = exchange.getUnitOfWork().getRouteContext().getRoute().getId();
+                            String routeId = exchange.getUnitOfWork().getRouteContext().getRouteId();
                             assertEquals("foo", routeId);
                         }
                     });

@@ -23,7 +23,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultClassResolver;
+import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;

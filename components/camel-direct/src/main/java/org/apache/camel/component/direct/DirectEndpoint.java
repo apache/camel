@@ -77,10 +77,6 @@ public class DirectEndpoint extends DefaultEndpoint {
         return answer;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public void addConsumer(DirectConsumer consumer) {
         String key = getKey();
         synchronized (consumers) {

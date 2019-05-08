@@ -41,16 +41,16 @@ import org.junit.Test;
  */
 public class SplitterAndExceptionRouteTwistIssueTest extends CamelTestSupport {
 
-    @Produce(uri = "direct:error")
+    @Produce("direct:error")
     protected ProducerTemplate templateError;
 
-    @Produce(uri = "direct:error2")
+    @Produce("direct:error2")
     protected ProducerTemplate templateError2;
 
-    @EndpointInject(uri = "mock:mockReject")
+    @EndpointInject("mock:mockReject")
     protected MockEndpoint mockRejectEndpoint;
 
-    @EndpointInject(uri = "mock:mock_output")
+    @EndpointInject("mock:mock_output")
     protected MockEndpoint mockOutput;
 
     @Test

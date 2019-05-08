@@ -94,10 +94,6 @@ public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, H
         setEndpointUri(uri);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     public boolean isLenientProperties() {
         // true to allow dynamic URI options to be configured and passed to external system.

@@ -77,11 +77,6 @@ public class BeanValidatorEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Consumer is not supported");
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     /**
      * Recognizes if component is executed in the OSGi environment.
      *

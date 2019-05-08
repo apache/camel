@@ -53,10 +53,6 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
         super(uri, component);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public List<Exchange> getExchanges() {
         if (exchanges == null) {
             exchanges = createExchangeList();

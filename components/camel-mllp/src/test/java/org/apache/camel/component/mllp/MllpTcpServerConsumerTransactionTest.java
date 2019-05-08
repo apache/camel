@@ -42,13 +42,13 @@ public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
     @Rule
     public MllpClientResource mllpClient = new MllpClientResource();
 
-    @EndpointInject(uri = "mock://result")
+    @EndpointInject("mock://result")
     MockEndpoint result;
 
-    @EndpointInject(uri = "mock://on-complete-only")
+    @EndpointInject("mock://on-complete-only")
     MockEndpoint complete;
 
-    @EndpointInject(uri = "mock://on-failure-only")
+    @EndpointInject("mock://on-failure-only")
     MockEndpoint failure;
 
     @Override

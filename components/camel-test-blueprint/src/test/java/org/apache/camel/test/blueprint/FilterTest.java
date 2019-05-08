@@ -29,10 +29,10 @@ import org.junit.Test;
 // START SNIPPET: example
 public class FilterTest extends CamelBlueprintTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     @Override

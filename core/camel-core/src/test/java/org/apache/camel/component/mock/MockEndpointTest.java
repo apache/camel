@@ -31,8 +31,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.language.xpath.XPathBuilder;
 import org.junit.Test;
 
 public class MockEndpointTest extends ContextTestSupport {

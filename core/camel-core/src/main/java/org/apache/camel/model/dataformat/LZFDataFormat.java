@@ -21,9 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -40,13 +38,6 @@ public class LZFDataFormat extends DataFormatDefinition {
         super("lzf");
     }
     
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (usingParallelCompression != null) {
-            setProperty(camelContext, dataFormat, "usingParallelCompression", usingParallelCompression);
-        }
-    }
-
     public Boolean getUsingParallelCompression() {
         return usingParallelCompression;
     }

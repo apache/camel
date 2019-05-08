@@ -16,7 +16,7 @@
  */
 package org.apache.camel.test.spring;
 
-import org.apache.camel.impl.DefaultManagementStrategy;
+import org.apache.camel.impl.engine.DefaultManagementStrategy;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;

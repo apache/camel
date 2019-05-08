@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.math.BigInteger;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -72,7 +71,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.StringSource;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.IOHelper;
@@ -257,7 +255,11 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         return new XQueryBuilder() {
             protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext)
                 throws XPathException, IOException {
-                return staticQueryContext.compileQuery(reader);
+                try {
+                    return staticQueryContext.compileQuery(reader);
+                } finally {
+                    IOHelper.close(reader);
+                }
             }
         };
     }
@@ -265,26 +267,27 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     public static XQueryBuilder xquery(final InputStream in, final String characterSet) {
         return new XQueryBuilder() {
             protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext)
-                throws XPathException, IOException {
-                return staticQueryContext.compileQuery(in, characterSet);
+                throws XPathException {
+                try {
+                    return staticQueryContext.compileQuery(in, characterSet);
+                } finally {
+                    IOHelper.close(in);
+                }
             }
         };
     }
 
-    public static XQueryBuilder xquery(File file, String characterSet) throws IOException {
-        return xquery(IOConverter.toInputStream(file), characterSet);
-    }
-
-    public static XQueryBuilder xquery(URL url, String characterSet) throws IOException {
-        return xquery(IOConverter.toInputStream(url), characterSet);
-    }
-
-    public static XQueryBuilder xquery(File file) throws IOException {
-        return xquery(IOConverter.toInputStream(file), ObjectHelper.getDefaultCharacterSet());
-    }
-
-    public static XQueryBuilder xquery(URL url) throws IOException {
-        return xquery(IOConverter.toInputStream(url), ObjectHelper.getDefaultCharacterSet());
+    public static XQueryBuilder xquery(final InputStream in) {
+        return new XQueryBuilder() {
+            protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext)
+                throws XPathException {
+                try {
+                    return staticQueryContext.compileQuery(in, ObjectHelper.getDefaultCharacterSet());
+                } finally {
+                    IOHelper.close(in);
+                }
+            }
+        };
     }
 
     // Fluent API

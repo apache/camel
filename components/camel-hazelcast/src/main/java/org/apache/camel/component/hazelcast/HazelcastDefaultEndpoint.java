@@ -64,10 +64,6 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
 
     public abstract Producer createProducer() throws Exception;
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public HazelcastCommand getCommand() {
         return command;
     }

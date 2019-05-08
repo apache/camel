@@ -56,10 +56,6 @@ public class FopEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Consumer not supported for FOP endpoint");
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public FopOutputType getOutputType() {
         return outputType;
     }

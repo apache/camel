@@ -68,10 +68,10 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     Job dynamicMockjob;
 
     // Camel fixtures
-    @EndpointInject(uri = "mock:test")
+    @EndpointInject("mock:test")
     MockEndpoint mockEndpoint;
 
-    @EndpointInject(uri = "mock:error")
+    @EndpointInject("mock:error")
     MockEndpoint errorEndpoint;
 
     @Override

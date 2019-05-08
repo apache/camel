@@ -29,7 +29,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 public class SqlProducerOutputTypeSelectOneNoResultTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     MockEndpoint result;
 
     private EmbeddedDatabase db;

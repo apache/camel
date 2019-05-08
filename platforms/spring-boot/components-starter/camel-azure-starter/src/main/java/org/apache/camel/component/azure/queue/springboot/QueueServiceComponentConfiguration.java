@@ -17,6 +17,9 @@
 package org.apache.camel.component.azure.queue.springboot;
 
 import javax.annotation.Generated;
+import com.microsoft.azure.storage.StorageCredentials;
+import com.microsoft.azure.storage.queue.CloudQueue;
+import org.apache.camel.component.azure.queue.QueueServiceOperations;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -38,11 +41,24 @@ public class QueueServiceComponentConfiguration
      */
     private Boolean enabled;
     /**
+     * The Queue Service configuration
+     */
+    private QueueServiceConfigurationNestedConfiguration configuration;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+
+    public QueueServiceConfigurationNestedConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(
+            QueueServiceConfigurationNestedConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;
@@ -51,5 +67,105 @@ public class QueueServiceComponentConfiguration
     public void setResolvePropertyPlaceholders(
             Boolean resolvePropertyPlaceholders) {
         this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    }
+
+    public static class QueueServiceConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.azure.queue.QueueServiceConfiguration.class;
+        /**
+         * The queue resource name
+         */
+        private String queueName;
+        /**
+         * The queue service client
+         */
+        private CloudQueue azureQueueClient;
+        /**
+         * Queue service operation hint to the producer
+         */
+        private QueueServiceOperations operation = QueueServiceOperations.listQueues;
+        /**
+         * Message Time To Live in seconds
+         */
+        private Integer messageTimeToLive;
+        /**
+         * Message Visibility Delay in seconds
+         */
+        private Integer messageVisibilityDelay;
+        /**
+         * Set a prefix which can be used for listing the queues
+         */
+        private String queuePrefix;
+        /**
+         * Set the Azure account name
+         */
+        private String accountName;
+        /**
+         * Set the storage credentials, required in most cases
+         */
+        private StorageCredentials credentials;
+
+        public String getQueueName() {
+            return queueName;
+        }
+
+        public void setQueueName(String queueName) {
+            this.queueName = queueName;
+        }
+
+        public CloudQueue getAzureQueueClient() {
+            return azureQueueClient;
+        }
+
+        public void setAzureQueueClient(CloudQueue azureQueueClient) {
+            this.azureQueueClient = azureQueueClient;
+        }
+
+        public QueueServiceOperations getOperation() {
+            return operation;
+        }
+
+        public void setOperation(QueueServiceOperations operation) {
+            this.operation = operation;
+        }
+
+        public Integer getMessageTimeToLive() {
+            return messageTimeToLive;
+        }
+
+        public void setMessageTimeToLive(Integer messageTimeToLive) {
+            this.messageTimeToLive = messageTimeToLive;
+        }
+
+        public Integer getMessageVisibilityDelay() {
+            return messageVisibilityDelay;
+        }
+
+        public void setMessageVisibilityDelay(Integer messageVisibilityDelay) {
+            this.messageVisibilityDelay = messageVisibilityDelay;
+        }
+
+        public String getQueuePrefix() {
+            return queuePrefix;
+        }
+
+        public void setQueuePrefix(String queuePrefix) {
+            this.queuePrefix = queuePrefix;
+        }
+
+        public String getAccountName() {
+            return accountName;
+        }
+
+        public void setAccountName(String accountName) {
+            this.accountName = accountName;
+        }
+
+        public StorageCredentials getCredentials() {
+            return credentials;
+        }
+
+        public void setCredentials(StorageCredentials credentials) {
+            this.credentials = credentials;
+        }
     }
 }

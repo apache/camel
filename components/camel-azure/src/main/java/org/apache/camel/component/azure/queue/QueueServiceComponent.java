@@ -17,27 +17,35 @@
 package org.apache.camel.component.azure.queue;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.microsoft.azure.storage.StorageCredentials;
+import com.microsoft.azure.storage.blob.CloudBlob;
 import com.microsoft.azure.storage.queue.CloudQueue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.azure.blob.BlobServiceConfiguration;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 @Component("azure-queue")
 public class QueueServiceComponent extends DefaultComponent {
+    
+    @Metadata(label = "advanced")
+    private QueueServiceConfiguration configuration;
 
     public QueueServiceComponent() {
     }
 
     public QueueServiceComponent(CamelContext context) {
         super(context);
+        this.configuration = new QueueServiceConfiguration();
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        QueueServiceConfiguration configuration = new QueueServiceConfiguration();
+        final QueueServiceConfiguration configuration = this.configuration.copy();
         setProperties(configuration, parameters);
 
         String[] parts = null;
@@ -63,6 +71,7 @@ public class QueueServiceComponent extends DefaultComponent {
             configuration.setQueueName(parts[1]);
         }
 
+        checkAndSetRegistryClient(configuration);
         checkCredentials(configuration);
 
         QueueServiceEndpoint endpoint = new QueueServiceEndpoint(uri, this, configuration);
@@ -70,11 +79,29 @@ public class QueueServiceComponent extends DefaultComponent {
         return endpoint;
     }
 
+    public QueueServiceConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * The Queue Service configuration
+     */
+    public void setConfiguration(QueueServiceConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
     private void checkCredentials(QueueServiceConfiguration cfg) {
         CloudQueue client = cfg.getAzureQueueClient();
         StorageCredentials creds = client == null ? cfg.getCredentials() : client.getServiceClient().getCredentials();
         if (creds == null) {
             throw new IllegalArgumentException("Credentials must be specified.");
+        }
+    }
+    
+    private void checkAndSetRegistryClient(QueueServiceConfiguration configuration) {
+        Set<CloudQueue> clients = getCamelContext().getRegistry().findByType(CloudQueue.class);
+        if (clients.size() == 1) {
+            configuration.setAzureQueueClient(clients.stream().findFirst().get());
         }
     }
 }

@@ -21,12 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.ErrorHandler;
-import org.apache.camel.processor.ErrorHandlerSupport;
-import org.apache.camel.processor.RedeliveryErrorHandler;
+import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
+import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
@@ -110,21 +108,12 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
      */
     public boolean removeOnExceptionList(String id) {
         for (RouteContext routeContext : onExceptions.keySet()) {
-            if (getRouteId(routeContext).equals(id)) {
+            if (routeContext.getRouteId().equals(id)) {
                 onExceptions.remove(routeContext);
                 return true;
             }
         }
         return false;
     }
-    
-    protected String getRouteId(RouteContext routeContext) {
-        CamelContext context = routeContext.getCamelContext();
-        if (context != null) {
-            RouteDefinition route = (RouteDefinition) routeContext.getRoute();
-            return route.idOrCreate(context.getNodeIdFactory());
-        } else {
-            return routeContext.getRoute().getId();
-        }
-    }
+
 }

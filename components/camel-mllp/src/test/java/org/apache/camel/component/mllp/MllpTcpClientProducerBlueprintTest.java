@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultComponentResolver;
+import org.apache.camel.impl.engine.DefaultComponentResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
@@ -44,19 +44,19 @@ public class MllpTcpClientProducerBlueprintTest extends CamelBlueprintTestSuppor
     @Rule
     public MllpServerResource mllpServer = new MllpServerResource("0.0.0.0", AvailablePortFinder.getNextAvailable());
 
-    @EndpointInject(uri = MOCK_ACKNOWLEDGED_URI)
+    @EndpointInject(MOCK_ACKNOWLEDGED_URI)
     MockEndpoint acknowledged;
 
-    @EndpointInject(uri = MOCK_TIMEOUT_URI)
+    @EndpointInject(MOCK_TIMEOUT_URI)
     MockEndpoint timeout;
 
-    @EndpointInject(uri = MOCK_AE_EX_URI)
+    @EndpointInject(MOCK_AE_EX_URI)
     MockEndpoint ae;
 
-    @EndpointInject(uri = MOCK_AR_EX_URI)
+    @EndpointInject(MOCK_AR_EX_URI)
     MockEndpoint ar;
 
-    @EndpointInject(uri = MOCK_FRAME_EX_URI)
+    @EndpointInject(MOCK_FRAME_EX_URI)
     MockEndpoint frame;
 
     @Override

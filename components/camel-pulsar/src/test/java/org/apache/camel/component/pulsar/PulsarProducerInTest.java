@@ -26,26 +26,20 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
-import org.junit.Rule;
 import org.junit.Test;
-import org.testcontainers.containers.PulsarContainer;
 
-public class PulsarProducerInTest extends CamelTestSupport {
+public class PulsarProducerInTest extends PulsarTestSupport {
 
     private static final String TOPIC_URI = "persistent://public/default/camel-producer-topic";
     private static final String PRODUCER = "camel-producer";
 
-    @Rule
-    public PulsarContainer pulsarContainer = new PulsarContainer();
-
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private ProducerTemplate producerTemplate;
 
-    @EndpointInject(uri = "pulsar:" + TOPIC_URI
+    @EndpointInject("pulsar:" + TOPIC_URI
         + "?numberOfConsumers=1&subscriptionType=Exclusive"
         + "&subscriptionName=camel-subscription&consumerQueueSize=1"
         + "&consumerName=camel-consumer"
@@ -53,7 +47,7 @@ public class PulsarProducerInTest extends CamelTestSupport {
     )
     private Endpoint from;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint to;
 
     @Override
@@ -90,7 +84,7 @@ public class PulsarProducerInTest extends CamelTestSupport {
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
         return new ClientBuilderImpl()
-            .serviceUrl(pulsarContainer.getPulsarBrokerUrl())
+            .serviceUrl(getPulsarBrokerUrl())
             .ioThreads(1)
             .listenerThreads(1)
             .build();

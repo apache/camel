@@ -115,7 +115,7 @@ Here is a simple unit test using JUnit 3.x support from Spring Test using http:/
 @ContextConfiguration
 public class FilterTest extends SpringRunWithTestSupport {
  
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
  
     @Produce(uri = "direct:start")
@@ -191,7 +191,7 @@ You can completely avoid using an XML configuration file by using http://camel.a
 @ContextConfiguration(classes = {FilterTest.ContextConfig.class}, loader = CamelSpringDelegatingTestContextLoader.class)
 public class FilterTest extends AbstractJUnit4SpringContextTests {
  
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
  
     @Produce(uri = "direct:start")
@@ -250,7 +250,7 @@ public class MyCamelTest {
     @Autowired
     protected CamelContext camelContext;
  
-    @EndpointInject(uri = "mock:foo")
+    @EndpointInject("mock:foo")
     protected MockEndpoint foo;
  
     @Test
@@ -279,7 +279,7 @@ public class MyCamelTest {
     @Autowired
     protected CamelContext camelContext;
  
-    @EndpointInject(uri = "mock:foo")
+    @EndpointInject("mock:foo")
     protected MockEndpoint foo;
  
     @Test
@@ -360,13 +360,13 @@ public class CamelSpringJUnit4ClassRunnerPlainTest {
  
     protected MockEndpoint mockB;
  
-    @EndpointInject(uri = "mock:c", context = "camelContext2")
+    @EndpointInject(value = "mock:c", context = "camelContext2")
     protected MockEndpoint mockC;
  
     @Produce(uri = "direct:start2", context = "camelContext2")
     protected ProducerTemplate start2;
  
-    @EndpointInject(uri = "mock:log:org.apache.camel.test.junit4.spring", context = "camelContext2")
+    @EndpointInject(value = "mock:log:org.apache.camel.test.junit4.spring", context = "camelContext2")
     protected MockEndpoint mockLog;
  
     @Test
@@ -391,7 +391,7 @@ public class MyCamelTest extends AbstractJUnit38SpringContextTests {
     @Autowired
     protected CamelContext camelContext;
  
-    @EndpointInject(uri = "mock:foo")
+    @EndpointInject("mock:foo")
     protected MockEndpoint foo;
  
     public void testMocksAreValid() throws Exception {
@@ -416,7 +416,7 @@ public class MyCamelTest extends AbstractJUnit38SpringContextTests {
     @Autowired
     protected CamelContext camelContext;
  
-    @EndpointInject(uri = "mock:foo")
+    @EndpointInject("mock:foo")
     protected MockEndpoint foo;
  
     public void testMocksAreValid() throws Exception {
@@ -442,7 +442,7 @@ To send or receive messages you should use the http://camel.apache.org/bean-inte
 [source,java]
 ----
 public class Foo {
-  @EndpointInject(uri = "activemq:foo.bar")
+  @EndpointInject("activemq:foo.bar")
   ProducerTemplate producer;
  
   public void doSomething() {

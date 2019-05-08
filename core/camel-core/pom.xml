@@ -91,6 +91,10 @@
         <!-- core components -->
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-bean</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-browse</artifactId>
         </dependency>
         <dependency>
@@ -172,6 +176,10 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-vm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xpath</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -447,6 +455,50 @@
                                 </resource>
                                 <resource>
                                     <directory>${basedir}/target/generated/camel/jaxb</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <!-- we need to copy the method.json schema file from camel-core to camel-bean because camel-bean is built before
+                         camel-core and we would have a chicken-and-egg situation where camel-bean needs method.json during its build phase
+                         but this file is not available, so we have copied the file to camel-xpath and then we use this maven plugin
+                         to copy over the file so its kept up to date -->
+                    <execution>
+                        <id>copy-bean-schema</id>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <outputDirectory>${basedir}/../../components/camel-bean/src/main/schema</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/target/classes/org/apache/camel/model/language</directory>
+                                    <includes>
+                                        <include>method.json</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <!-- we need to copy the xpath.json schema file from camel-core to camel-xpath because camel-xpath is built before
+                         camel-core and we would have a chicken-and-egg situation where camel-xpath needs xpath.json during its build phase
+                         but this file is not available, so we have copied the file to camel-xpath and then we use this maven plugin
+                         to copy over the file so its kept up to date -->
+                    <execution>
+                        <id>copy-xpath-schema</id>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <outputDirectory>${basedir}/../../components/camel-xpath/src/main/schema</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/target/classes/org/apache/camel/model/language</directory>
+                                    <includes>
+                                        <include>xpath.json</include>
+                                    </includes>
                                 </resource>
                             </resources>
                         </configuration>

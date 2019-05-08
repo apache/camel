@@ -31,16 +31,16 @@ import org.junit.Test;
 
 public class BindySimpleCsvFunctionWithClassMethodTest extends CamelTestSupport {
     
-    @EndpointInject(uri = "mock:resultMarshal1")
+    @EndpointInject("mock:resultMarshal1")
     private MockEndpoint mockEndPointMarshal1;
     
-    @EndpointInject(uri = "mock:resultUnMarshal1")
+    @EndpointInject("mock:resultUnMarshal1")
     private MockEndpoint mockEndPointUnMarshal1;
     
-    @EndpointInject(uri = "mock:resultMarshal2")
+    @EndpointInject("mock:resultMarshal2")
     private MockEndpoint mockEndPointMarshal2;
     
-    @EndpointInject(uri = "mock:resultUnMarshal2")
+    @EndpointInject("mock:resultUnMarshal2")
     private MockEndpoint mockEndPointUnMarshal2;
     
     @Test

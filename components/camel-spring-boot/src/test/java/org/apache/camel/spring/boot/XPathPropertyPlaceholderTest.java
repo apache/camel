@@ -46,13 +46,13 @@ public class XPathPropertyPlaceholderTest {
     @Autowired
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:output-filter")
+    @EndpointInject("mock:output-filter")
     private MockEndpoint mockOutputFilter;
 
-    @EndpointInject(uri = "mock:output-choice")
+    @EndpointInject("mock:output-choice")
     private MockEndpoint mockOutputChoice;
 
-    @EndpointInject(uri = "mock:output-choice2")
+    @EndpointInject("mock:output-choice2")
     private MockEndpoint mockOutputChoice2;
 
     @Test

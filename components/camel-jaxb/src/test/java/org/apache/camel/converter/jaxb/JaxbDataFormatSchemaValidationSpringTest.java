@@ -39,10 +39,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class JaxbDataFormatSchemaValidationSpringTest extends CamelSpringTestSupport {
 
-    @EndpointInject(uri = "mock:marshall")
+    @EndpointInject("mock:marshall")
     private MockEndpoint mockMarshall;
 
-    @EndpointInject(uri = "mock:unmarshall")
+    @EndpointInject("mock:unmarshall")
     private MockEndpoint mockUnmarshall;
 
     private JAXBContext jbCtx;

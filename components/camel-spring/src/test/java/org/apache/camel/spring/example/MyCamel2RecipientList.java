@@ -25,7 +25,7 @@ public class MyCamel2RecipientList {
 
     private static final Logger LOG = LoggerFactory.getLogger(MyCamel2RecipientList.class);
 
-    @Consume(uri = "direct:foo", context = "camel-2")
+    @Consume(value = "direct:foo", context = "camel-2")
     @RecipientList(context = "camel-2")
     public String[] doSomething(String body) {
         LOG.info("Received body: " + body);

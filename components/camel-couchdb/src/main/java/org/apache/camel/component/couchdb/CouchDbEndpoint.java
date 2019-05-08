@@ -105,11 +105,6 @@ public class CouchDbEndpoint extends DefaultEndpoint {
         return new CouchDbProducer(this, createClient());
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public Exchange createExchange(String seq, String id, JsonObject obj, boolean deleted) {
         Exchange exchange = super.createExchange();
         exchange.getIn().setHeader(CouchDbConstants.HEADER_DATABASE, database);

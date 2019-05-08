@@ -24,35 +24,12 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.transformer.DataFormatTransformer;
 import org.apache.camel.impl.transformer.ProcessorTransformer;
-import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.junit.Test;
 
 public class TransformerBuilderTest extends TestSupport {
-
-    @Test
-    public void testDataFormatTransformer() throws Exception {
-        CamelContext ctx = new DefaultCamelContext();
-        RouteBuilder builder = new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                transformer().fromType("xml:foo").toType("json:bar").withDataFormat(new StringDataFormat());
-                from("direct:input").log("test");
-            }
-        };
-        ctx.addRoutes(builder);
-        ctx.start();
-        Transformer transformer = ctx.resolveTransformer(new DataType("xml:foo"), new DataType("json:bar"));
-        assertNotNull(transformer);
-        assertEquals(DataFormatTransformer.class, transformer.getClass());
-        DataFormatTransformer dft = (DataFormatTransformer)transformer;
-        Field f = DataFormatTransformer.class.getDeclaredField("dataFormatType");
-        f.setAccessible(true);
-        Object dataFormatType = f.get(dft);
-        assertEquals(StringDataFormat.class, dataFormatType.getClass());
-    }
 
     @Test
     public void testEndpointTransformer() throws Exception {

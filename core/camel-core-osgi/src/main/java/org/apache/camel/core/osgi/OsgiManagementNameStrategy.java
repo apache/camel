@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultManagementNameStrategy;
+import org.apache.camel.impl.engine.DefaultManagementNameStrategy;
 import org.osgi.framework.BundleContext;
 
 /**

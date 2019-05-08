@@ -43,20 +43,20 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
     @Rule
     public MllpClientResource mllpClient = new MllpClientResource();
 
-    @EndpointInject(uri = "mock://result")
+    @EndpointInject("mock://result")
     MockEndpoint result;
 
-    @EndpointInject(uri = "mock://on-complete-only")
+    @EndpointInject("mock://on-complete-only")
     MockEndpoint complete;
 
-    @EndpointInject(uri = "mock://on-failure-only")
+    @EndpointInject("mock://on-failure-only")
     MockEndpoint failure;
 
-    @EndpointInject(uri = "mock://invalid-ack-ex")
+    @EndpointInject("mock://invalid-ack-ex")
     MockEndpoint invalidAckEx;
 
 
-    @EndpointInject(uri = "mock://ack-generation-ex")
+    @EndpointInject("mock://ack-generation-ex")
     MockEndpoint ackGenerationEx;
 
     @Override

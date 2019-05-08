@@ -22,8 +22,10 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointAware;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeConfiguration;
 import org.apache.camel.meta.Experimental;
 
@@ -31,6 +33,11 @@ import org.apache.camel.meta.Experimental;
  * The context used to activate new routing rules
  */
 public interface RouteContext extends RuntimeConfiguration, EndpointAware {
+
+    /**
+     * Gets the route id
+     */
+    String getRouteId();
 
     /**
      * Gets the from type
@@ -100,7 +107,7 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
      * For completing the route creation, creating a single event driven route
      * for the current from endpoint with any processors required
      */
-    void commit();
+    Route commit();
 
     /**
      * Adds an event driven processor
@@ -148,7 +155,7 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
     ManagementInterceptStrategy getManagementInterceptStrategy();
 
     /**
-     * If this flag is true, {@link org.apache.camel.model.ProcessorDefinition#addRoutes(RouteContext, java.util.Collection)}
+     * If this flag is true, {@link org.apache.camel.reifier.ProcessorReifier#addRoutes(RouteContext)}
      * will not add processor to addEventDrivenProcessor to the RouteContext and it
      * will prevent from adding an EventDrivenRoute.
      *
@@ -195,6 +202,8 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
      */
     Boolean isAutoStartup();
 
+    Integer getStartupOrder();
+
     /**
      * A private counter that increments, is used to as book keeping
      * when building a route based on the model
@@ -206,6 +215,8 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
      * @return the current count
      */
     int getAndIncrement(NamedNode node);
+
+    ErrorHandlerFactory getErrorHandlerFactory();
 
     /**
      * Gets the last error.
@@ -242,4 +253,5 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
     @Experimental
     default void setRouteController(RouteController controller) {
     }
+
 }

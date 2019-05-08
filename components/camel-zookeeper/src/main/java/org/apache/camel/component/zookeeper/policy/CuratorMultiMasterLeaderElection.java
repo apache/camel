@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.StatefulService;
-import org.apache.camel.impl.JavaUuidGenerator;
+import org.apache.camel.impl.engine.JavaUuidGenerator;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;

@@ -43,4 +43,9 @@ public interface NamedNode {
      */
     String getDescriptionText();
 
+    /**
+     * Returns the parent
+     */
+    NamedNode getParent();
+
 }

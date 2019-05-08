@@ -57,10 +57,6 @@ public class ECSEndpoint extends ScheduledPollEndpoint {
         return new ECSProducer(this);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     public void doStart() throws Exception {
         super.doStart();

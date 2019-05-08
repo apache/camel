@@ -15,7 +15,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -28,15 +29,15 @@
     <packaging>jar</packaging>
     <name>Camel :: Example :: Spring :: Pulsar</name>
     <description>An example using Spring XML to talk to the Pulsar server from different kind of client techniques</description>
+
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.example.server.*</camel.osgi.export.pkg>
-        <camel.osgi.import.additional>org.apache.activemq.xbean</camel.osgi.import.additional>
         <skipTests>true</skipTests>
+        <category>Messaging</category>
     </properties>
 
     <dependencies>
-        <!-- START SNIPPET: e1 -->
-        <!-- required by both client and server -->
+
+        <!-- camel -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
@@ -48,50 +49,39 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-pulsar</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
         </dependency>
-        <!-- END SNIPPET: e1 -->
 
-        <!-- START SNIPPET: e2 -->
-        <!-- xbean is required for ActiveMQ broker configuration in the spring xml file -->
+        <!-- logging -->
         <dependency>
-            <groupId>org.apache.xbean</groupId>
-            <artifactId>xbean-spring</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j2-version}</version>
         </dependency>
-        <!-- END SNIPPET: e2 -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j2-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j2-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-1.2-api</artifactId>
+            <version>${log4j2-version}</version>
+        </dependency>
 
-        <!-- for logging using log4j.properties in src/main/resources -->
-                    <!-- logging -->
-                    <dependency>
-                        <groupId>org.apache.logging.log4j</groupId>
-                        <artifactId>log4j-api</artifactId>
-                        <version>${log4j2-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.apache.logging.log4j</groupId>
-                        <artifactId>log4j-core</artifactId>
-                        <version>${log4j2-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.apache.logging.log4j</groupId>
-                        <artifactId>log4j-slf4j-impl</artifactId>
-                        <version>${log4j2-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.apache.logging.log4j</groupId>
-                        <artifactId>log4j-1.2-api</artifactId>
-                        <version>${log4j2-version}</version>
-                    </dependency>
-        
         <!-- for testing -->
         <dependency>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-test-spring</artifactId>
-          <scope>test</scope>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-spring</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
-  
+
     <profiles>
         <profile>
             <id>CamelServer</id>
@@ -123,44 +113,20 @@
             </properties>
         </profile>
     </profiles>
+
     <build>
-
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-artifacts</id>
-						<phase>package</phase>
-						<goals>
-							<goal>attach-artifact</goal>
-						</goals>
-						<configuration>
-							<artifacts>
-								<artifact>
-									<file>target/classes/features.xml</file>
-									<type>xml</type>
-									<classifier>features</classifier>
-								</artifact>
-							</artifacts>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-      <!-- Allows the example to be run via 'mvn compile exec:java' -->
-      <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>exec-maven-plugin</artifactId>
-          <configuration>
-              <mainClass>${target.main.class}</mainClass>
-              <includePluginDependencies>false</includePluginDependencies>
-              <commandlineArgs>${target.cmd.args}</commandlineArgs>
-          </configuration>
-      </plugin>
-    </plugins>
-
-  </build>
+        <plugins>
+            <!-- Allows the example to be run via 'mvn compile exec:java' -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>${target.main.class}</mainClass>
+                    <includePluginDependencies>false</includePluginDependencies>
+                    <commandlineArgs>${target.cmd.args}</commandlineArgs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

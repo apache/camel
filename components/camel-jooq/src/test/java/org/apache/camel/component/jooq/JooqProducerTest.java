@@ -74,13 +74,13 @@ public class JooqProducerTest extends BaseJooqTest {
                         .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord");
 
                 from("direct:update")
-                        .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/execute");
+                        .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=execute");
 
                 from("direct:delete")
-                        .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/execute");
+                        .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=execute");
 
                 from("direct:select")
-                        .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/fetch");
+                        .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=fetch");
             }
         };
     }

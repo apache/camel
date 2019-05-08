@@ -38,7 +38,7 @@ public class ServerLocalTest extends CamelTestSupport {
 
     private static final String MOCK_TEST = "mock:test";
 
-    @EndpointInject(uri = MOCK_TEST)
+    @EndpointInject(MOCK_TEST)
     protected MockEndpoint testEndpoint;
 
     @Before

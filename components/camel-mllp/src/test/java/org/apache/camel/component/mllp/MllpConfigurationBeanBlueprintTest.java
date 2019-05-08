@@ -22,14 +22,14 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultComponentResolver;
+import org.apache.camel.impl.engine.DefaultComponentResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.apache.camel.util.KeyValueHolder;
 import org.junit.Test;
 
 public class MllpConfigurationBeanBlueprintTest extends CamelBlueprintTestSupport {
-    @EndpointInject(uri = "mock://target")
+    @EndpointInject("mock://target")
     MockEndpoint received;
 
     @Override

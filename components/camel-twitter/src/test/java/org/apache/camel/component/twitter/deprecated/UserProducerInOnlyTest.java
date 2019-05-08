@@ -38,7 +38,7 @@ import static org.hamcrest.core.Is.is;
 public class UserProducerInOnlyTest extends CamelTwitterTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(UserProducerInOnlyTest.class);
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     @Test

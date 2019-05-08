@@ -39,7 +39,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
     private static final String MAP_NAME = UUID.randomUUID().toString();
     private DistributedMultiMap<Object, Object> map;
 
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     private FluentProducerTemplate fluent;
 
     // ************************************

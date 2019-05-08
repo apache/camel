@@ -98,9 +98,7 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Chatscript consumer not supported");
     }
-    public boolean isSingleton() {
-        return true;
-    }
+
     public String getHost() {
         return host;
     }

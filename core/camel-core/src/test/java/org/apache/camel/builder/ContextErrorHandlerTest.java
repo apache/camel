@@ -23,10 +23,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.impl.EventDrivenConsumerRoute;
-import org.apache.camel.processor.DeadLetterChannel;
-import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.impl.engine.EventDrivenConsumerRoute;
 import org.apache.camel.processor.SendProcessor;
+import org.apache.camel.processor.errorhandler.DeadLetterChannel;
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.junit.Before;
 import org.junit.Test;
 

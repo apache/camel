@@ -22,7 +22,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.MemoryStateRepository;
+import org.apache.camel.impl.engine.MemoryStateRepository;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.After;
 import org.junit.Test;
@@ -30,7 +30,7 @@ import org.junit.Test;
 public class KafkaConsumerOffsetRepositoryEmptyTest extends BaseEmbeddedKafkaTest {
     private static final String TOPIC = "offset-initialize";
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;

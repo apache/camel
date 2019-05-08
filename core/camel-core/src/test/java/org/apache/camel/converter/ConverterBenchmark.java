@@ -21,10 +21,10 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.impl.DefaultClassResolver;
-import org.apache.camel.impl.DefaultFactoryFinderResolver;
-import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.camel.impl.engine.DefaultClassResolver;
+import org.apache.camel.impl.engine.DefaultFactoryFinderResolver;
+import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.util.ReflectionInjector;

@@ -59,11 +59,6 @@ public class NetWeaverEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Consumer is not supported");
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public String getUrl() {
         return url;
     }

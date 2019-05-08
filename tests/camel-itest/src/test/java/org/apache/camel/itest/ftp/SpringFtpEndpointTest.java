@@ -54,10 +54,10 @@ public class SpringFtpEndpointTest extends AbstractJUnit4SpringContextTests {
     @Autowired
     protected ProducerTemplate template;
 
-    @EndpointInject(uri = "ref:myFTPEndpoint")
+    @EndpointInject("ref:myFTPEndpoint")
     protected Endpoint inputFTP;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint result;
 
     @Test

@@ -21,7 +21,7 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultCamelContextNameStrategy;
+import org.apache.camel.impl.engine.DefaultCamelContextNameStrategy;
 import org.junit.After;
 import org.junit.Test;
 

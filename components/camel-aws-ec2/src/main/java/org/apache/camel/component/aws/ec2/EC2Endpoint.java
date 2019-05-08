@@ -59,10 +59,6 @@ public class EC2Endpoint extends ScheduledPollEndpoint {
         return new EC2Producer(this);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     public void doStart() throws Exception {
         super.doStart();

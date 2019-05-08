@@ -98,10 +98,6 @@ public class GridFsEndpoint extends DefaultEndpoint {
         return new GridFsConsumer(this, processor);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public void initializeConnection() throws Exception {
         log.info("Initialize GridFS endpoint: {}", this);
         if (database == null) {

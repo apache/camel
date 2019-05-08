@@ -32,7 +32,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = ComponentRouteTest.class)
 public class ComponentRouteTest extends Assert {
 
-    @EndpointInject(uri = "mock:componentRoute")
+    @EndpointInject("mock:componentRoute")
     MockEndpoint mock;
 
     @Autowired

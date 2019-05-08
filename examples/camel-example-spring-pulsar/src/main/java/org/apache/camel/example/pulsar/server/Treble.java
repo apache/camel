@@ -31,4 +31,3 @@ public class Treble implements Multiplier {
     }
 
 }
-// END SNIPPET: e1

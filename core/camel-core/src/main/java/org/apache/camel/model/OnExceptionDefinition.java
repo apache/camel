@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -35,6 +36,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
@@ -70,8 +72,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     @XmlTransient
-    private List<Class<? extends Throwable>> exceptionClasses;
-    @XmlTransient
     private Predicate handledPolicy;
     @XmlTransient
     private Predicate continuedPolicy;
@@ -91,12 +91,11 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     public OnExceptionDefinition(List<Class<? extends Throwable>> exceptionClasses) {
-        this.exceptionClasses = exceptionClasses;
+        this.exceptions.addAll(exceptionClasses.stream().map(Class::getName).collect(Collectors.toList()));
     }
 
     public OnExceptionDefinition(Class<? extends Throwable> exceptionType) {
-        exceptionClasses = new ArrayList<>();
-        exceptionClasses.add(exceptionType);
+        this.exceptions.add(exceptionType.getName());
     }
 
     public void setRouteScoped(boolean routeScoped) {
@@ -118,7 +117,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
     
     protected String description() {
-        return getExceptionClasses() + (onWhen != null ? " " + onWhen : "");
+        return getExceptions() + (onWhen != null ? " " + onWhen : "");
     }
 
     @Override
@@ -146,7 +145,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
             throw new IllegalArgumentException(this + " cannot have the inheritErrorHandler option set to true");
         }
 
-        List<Class<? extends Throwable>> exceptions = getExceptionClasses();
         if (exceptions == null || exceptions.isEmpty()) {
             throw new IllegalArgumentException("At least one exception must be configured on " + this);
         }
@@ -177,7 +175,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
 
     @Override
     public OnExceptionDefinition onException(Class<? extends Throwable> exceptionType) {
-        getExceptionClasses().add(exceptionType);
+        getExceptions().add(exceptionType.getName());
         return this;
     }
 
@@ -365,7 +363,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     /**
      * Allow synchronous delayed redelivery.
      *
-     * @see org.apache.camel.processor.RedeliveryPolicy#setAsyncDelayedRedelivery(boolean)
+     * @see RedeliveryPolicy#setAsyncDelayedRedelivery(boolean)
      * @return the builder
      */
     public OnExceptionDefinition asyncDelayedRedelivery() {
@@ -622,7 +620,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     /**
-     * Sets a reference to a {@link org.apache.camel.processor.RedeliveryPolicy} to lookup in the {@link org.apache.camel.spi.Registry} to be used.
+     * Sets a reference to a {@link RedeliveryPolicy} to lookup in the {@link org.apache.camel.spi.Registry} to be used.
      *
      * @param redeliveryPolicyRef reference to use for lookup
      * @return the builder
@@ -722,14 +720,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
 
     public boolean isOutputSupported() {
         return true;
-    }
-
-    public List<Class<? extends Throwable>> getExceptionClasses() {
-        return exceptionClasses;
-    }
-
-    public void setExceptionClasses(List<Class<? extends Throwable>> exceptionClasses) {
-        this.exceptionClasses = exceptionClasses;
     }
 
     public List<String> getExceptions() {

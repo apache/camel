@@ -37,7 +37,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @MockEndpointsAndSkip("fhir*")
 public class MyCamelApplicationTest {
 
-    @EndpointInject(uri = "mock:fhir:create/resource")
+    @EndpointInject("mock:fhir:create/resource")
     private MockEndpoint mock;
 
     @Before

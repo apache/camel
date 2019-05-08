@@ -49,24 +49,24 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
     private static final String EXCHANGE = "ex5";
     private static final String EXCHANGE_NO_ACK = "ex5.noAutoAck";
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
-    @Produce(uri = "direct:rabbitMQ")
+    @Produce("direct:rabbitMQ")
     protected ProducerTemplate directProducer;
 
-    @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
+    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
                     + "&autoAck=true&queue=q4&routingKey=" + ROUTING_KEY
                     + "&transferException=true&requestTimeout=" + TIMEOUT_MS)
     private Endpoint rabbitMQEndpoint;
 
-    @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE_NO_ACK + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
+    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE_NO_ACK + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
             + "&autoAck=false&autoDelete=false&durable=false&queue=q5&routingKey=" + ROUTING_KEY
             + "&transferException=true&requestTimeout=" + TIMEOUT_MS
             + "&args=#args")
     private Endpoint noAutoAckEndpoint;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
 
     @Override

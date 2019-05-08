@@ -24,7 +24,6 @@ import org.apache.camel.example.cafe.stuff.DrinkRouter;
 import org.apache.camel.example.cafe.stuff.OrderSplitter;
 import org.apache.camel.example.cafe.stuff.Waiter;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Registry;
 
 /**

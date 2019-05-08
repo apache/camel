@@ -33,7 +33,7 @@ import static org.junit.Assert.assertNotNull;
         loader = CamelSpringDelegatingTestContextLoader.class)
 public class LoadingRawCamelConfigurationTest extends AbstractJUnit4SpringContextTests {
 
-    @EndpointInject(uri = "mock:rawConfigTest")
+    @EndpointInject("mock:rawConfigTest")
     MockEndpoint moduleMockEndpoint;
 
     @Test

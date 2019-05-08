@@ -24,7 +24,8 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.EventDrivenConsumerRoute;
+import org.apache.camel.impl.engine.EventDrivenConsumerRoute;
+import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.junit.Test;
 
 /**

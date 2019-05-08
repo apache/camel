@@ -25,14 +25,14 @@ import java.util.regex.Pattern;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.language.simple.types.BinaryOperatorType;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.builder.ExpressionBuilder;
+import org.apache.camel.support.builder.PredicateBuilder;
 
 /**
  * Represents a binary expression in the AST.
@@ -92,12 +92,16 @@ public class BinaryExpression extends BaseSimpleNode {
             return createExpression(leftExp, rightExp, PredicateBuilder.isLessThanOrEqualTo(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.NOT_EQ) {
             return createExpression(leftExp, rightExp, PredicateBuilder.isNotEqualTo(leftExp, rightExp));
+        } else if (operator == BinaryOperatorType.NOT_EQ_IGNORE) {
+            return createExpression(leftExp, rightExp, PredicateBuilder.not(PredicateBuilder.isEqualToIgnoreCase(leftExp, rightExp)));
         } else if (operator == BinaryOperatorType.CONTAINS) {
             return createExpression(leftExp, rightExp, PredicateBuilder.contains(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.NOT_CONTAINS) {
             return createExpression(leftExp, rightExp, PredicateBuilder.not(PredicateBuilder.contains(leftExp, rightExp)));
         } else if (operator == BinaryOperatorType.CONTAINS_IGNORECASE) {
             return createExpression(leftExp, rightExp, PredicateBuilder.containsIgnoreCase(leftExp, rightExp));
+        } else if (operator == BinaryOperatorType.NOT_CONTAINS_IGNORECASE) {
+            return createExpression(leftExp, rightExp, PredicateBuilder.not(PredicateBuilder.containsIgnoreCase(leftExp, rightExp)));
         } else if (operator == BinaryOperatorType.IS || operator == BinaryOperatorType.NOT_IS) {
             return createIsExpression(expression, leftExp, rightExp);
         } else if (operator == BinaryOperatorType.REGEX || operator == BinaryOperatorType.NOT_REGEX) {

@@ -155,6 +155,13 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
                             target = new File(dir, "camel-linkedin-component/target/classes");
                         } else if ("camel-servicenow".equals(dir.getName())) {
                             target = new File(dir, "camel-servicenow-component/target/classes");
+                        } else {
+                            // this module must be active with a source folder
+                            File src = new File(dir, "src");
+                            boolean active = src.isDirectory() && src.exists();
+                            if (!active) {
+                                continue;
+                            }
                         }
 
 
@@ -239,6 +246,12 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
                         if (!starters.contains(dir.getName())) {
                             continue;
                         }
+                        // this module must be active with a source folder
+                        File src = new File(dir, "src");
+                        boolean active = src.isDirectory() && src.exists();
+                        if (!active) {
+                            continue;
+                        }
                         File target = new File(dir, "target/classes");
                         findDataFormatFilesRecursive(target, jsonFiles, dataFormatFiles, new CamelDataFormatsFileFilter());
                     }
@@ -318,6 +331,12 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
                 for (File dir : languages) {
                     // the directory must be in the list of known starters
                     if (!starters.contains(dir.getName())) {
+                        continue;
+                    }
+                    // this module must be active with a source folder
+                    File src = new File(dir, "src");
+                    boolean active = src.isDirectory() && src.exists();
+                    if (!active) {
                         continue;
                     }
                     if (dir.isDirectory() && !"target".equals(dir.getName())) {
@@ -416,6 +435,13 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
                         || "camel-servicenow".equals(dir.getName())
                         || "camel-salesforce".equals(dir.getName());
                     if (special || special2) {
+                        continue;
+                    }
+
+                    // this module must be active with a source folder
+                    File src = new File(dir, "src");
+                    boolean active = src.isDirectory() && src.exists();
+                    if (!active) {
                         continue;
                     }
 

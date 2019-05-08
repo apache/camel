@@ -72,10 +72,6 @@ public class JBPMEndpoint extends DefaultEndpoint {
         return new JBPMConsumer(this, processor);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public void setConfiguration(JBPMConfiguration configuration) {
         this.configuration = configuration;
     }

@@ -75,6 +75,7 @@
         <include>org.apache.camel:camel-azure</include>
         <include>org.apache.camel:camel-barcode</include>
         <include>org.apache.camel:camel-base64</include>
+        <include>org.apache.camel:camel-bean</include>
         <include>org.apache.camel:camel-bean-validator</include>
         <include>org.apache.camel:camel-beanio</include>
         <include>org.apache.camel:camel-beanstalk</include>
@@ -261,7 +262,6 @@
         <include>org.apache.camel:camel-saxon</include>
         <include>org.apache.camel:camel-scheduler</include>
         <include>org.apache.camel:camel-schematron</include>
-        <include>org.apache.camel:camel-script</include>
         <include>org.apache.camel:camel-seda</include>
         <include>org.apache.camel:camel-service</include>
         <include>org.apache.camel:camel-servicenow</include>
@@ -332,10 +332,12 @@
         <include>org.apache.camel:camel-xchange</include>
         <include>org.apache.camel:camel-xmlsecurity</include>
         <include>org.apache.camel:camel-xmpp</include>
+        <include>org.apache.camel:camel-xpath</include>
         <include>org.apache.camel:camel-xslt</include>
         <include>org.apache.camel:camel-xstream</include>
         <include>org.apache.camel:camel-yammer</include>
         <include>org.apache.camel:camel-zendesk</include>
+        <include>org.apache.camel:camel-zip-deflater</include>
         <include>org.apache.camel:camel-zipfile</include>
         <include>org.apache.camel:camel-zipkin</include>
         <include>org.apache.camel:camel-zookeeper</include>
@@ -413,6 +415,7 @@
         <include>org.apache.camel:camel-azure-starter</include>
         <include>org.apache.camel:camel-barcode-starter</include>
         <include>org.apache.camel:camel-base64-starter</include>
+        <include>org.apache.camel:camel-bean-starter</include>
         <include>org.apache.camel:camel-bean-validator-starter</include>
         <include>org.apache.camel:camel-beanio-starter</include>
         <include>org.apache.camel:camel-beanstalk-starter</include>
@@ -591,7 +594,6 @@
         <include>org.apache.camel:camel-saxon-starter</include>
         <include>org.apache.camel:camel-scheduler-starter</include>
         <include>org.apache.camel:camel-schematron-starter</include>
-        <include>org.apache.camel:camel-script-starter</include>
         <include>org.apache.camel:camel-seda-starter</include>
         <include>org.apache.camel:camel-service-starter</include>
         <include>org.apache.camel:camel-servicenow-starter</include>
@@ -654,10 +656,12 @@
         <include>org.apache.camel:camel-xchange-starter</include>
         <include>org.apache.camel:camel-xmlsecurity-starter</include>
         <include>org.apache.camel:camel-xmpp-starter</include>
+        <include>org.apache.camel:camel-xpath-starter</include>
         <include>org.apache.camel:camel-xslt-starter</include>
         <include>org.apache.camel:camel-xstream-starter</include>
         <include>org.apache.camel:camel-yammer-starter</include>
         <include>org.apache.camel:camel-zendesk-starter</include>
+        <include>org.apache.camel:camel-zip-deflater-starter</include>
         <include>org.apache.camel:camel-zipfile-starter</include>
         <include>org.apache.camel:camel-zipkin-starter</include>
         <include>org.apache.camel:camel-zookeeper-master-starter</include>

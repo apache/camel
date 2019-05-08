@@ -394,6 +394,16 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         this.endpointUri = endpointUri;
     }
 
+    /**
+     * An endpoint should favour to be singleton by default, only in some rare special cases
+     * can an endpoint be non-singleton. This implementation is singleton and this method returns true.
+     */
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
+
+    @Override
     public boolean isLenientProperties() {
         // default should be false for most components
         return false;

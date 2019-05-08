@@ -26,7 +26,7 @@ import org.junit.Test;
 
 public class AtmosConsumerTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "atmos:foo/get?remotePath=/path&fullTokenId=fakeToken&secretKey=fakeSecret&uri=https://fake/uri")
+    @EndpointInject("atmos:foo/get?remotePath=/path&fullTokenId=fakeToken&secretKey=fakeSecret&uri=https://fake/uri")
     private AtmosEndpoint atmosEndpoint;
 
     @Override

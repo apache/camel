@@ -25,7 +25,7 @@ import org.junit.Test;
 
 public class HazelcastSedaTransferExchangeTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
 
     @Test

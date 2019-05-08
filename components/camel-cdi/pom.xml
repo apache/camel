@@ -258,10 +258,6 @@
                         <configuration>
                             <excludes>
                                 <exclude>**/*Cdi20Test.java</exclude>
-                                <!-- Reactivate when CAMEL-12834 is fixed -->
-                                <exclude>**/UnsatisfiedContextForEndpointInjectTest.java</exclude>
-                                <!-- Reactivate when CAMEL-12834 is fixed -->
-                                <exclude>**/UriWithWrongContextTest.java</exclude>
                             </excludes>
                         </configuration>
                     </plugin>
@@ -306,14 +302,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <excludes>
-                                <!-- Reactivate when CAMEL-12834 is fixed -->
-                                <exclude>**/UnsatisfiedContextForEndpointInjectTest.java</exclude>
-                                <!-- Reactivate when CAMEL-12834 is fixed -->
-                                <exclude>**/UriWithWrongContextTest.java</exclude>
-                            </excludes>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -531,12 +519,6 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <reuseForks>true</reuseForks>
-                            <excludes>
-                                <!-- Reactivate when CAMEL-12834 is fixed -->
-                                <exclude>**/UnsatisfiedContextForEndpointInjectTest.java</exclude>
-                                <!-- Reactivate when CAMEL-12834 is fixed -->
-                                <exclude>**/UriWithWrongContextTest.java</exclude>
-                            </excludes>
                         </configuration>
                     </plugin>
                     <plugin>

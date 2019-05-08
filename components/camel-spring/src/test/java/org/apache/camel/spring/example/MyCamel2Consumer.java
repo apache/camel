@@ -27,10 +27,10 @@ public class MyCamel2Consumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MyCamel2Consumer.class);
 
-    @EndpointInject(uri = "mock:result", context = "camel-2")
+    @EndpointInject(value = "mock:result", context = "camel-2")
     private ProducerTemplate destination;
 
-    @Consume(uri = "direct:start", context = "camel-2")
+    @Consume(value = "direct:start", context = "camel-2")
     public void doSomething(String body) {
         ObjectHelper.notNull(destination, "destination");
 

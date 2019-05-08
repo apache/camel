@@ -765,15 +765,17 @@ public abstract class AbstractCamelCatalog {
             boolean multiValued = isPropertyMultiValue(rows, key);
             if (multiValued) {
                 String prefix = getPropertyPrefix(rows, key);
-                // extra all the multi valued options
-                Map<String, Object> values = URISupport.extractProperties(parameters, prefix);
-                // build a string with the extra multi valued options with the prefix and & as separator
-                String csb = values.entrySet().stream()
-                        .map(multi -> prefix + multi.getKey() + "=" + (multi.getValue() != null ? multi.getValue().toString() : ""))
-                        .collect(Collectors.joining("&"));
-                // append the extra multi-values to the existing (which contains the first multi value)
-                if (!csb.isEmpty()) {
-                    value = value + "&" + csb;
+                if (prefix != null) {
+                    // extra all the multi valued options
+                    Map<String, Object> values = URISupport.extractProperties(parameters, prefix);
+                    // build a string with the extra multi valued options with the prefix and & as separator
+                    String csb = values.entrySet().stream()
+                            .map(multi -> prefix + multi.getKey() + "=" + (multi.getValue() != null ? multi.getValue().toString() : ""))
+                            .collect(Collectors.joining("&"));
+                    // append the extra multi-values to the existing (which contains the first multi value)
+                    if (!csb.isEmpty()) {
+                        value = value + "&" + csb;
+                    }
                 }
             }
 

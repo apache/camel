@@ -61,10 +61,6 @@ public class NsqEndpoint extends DefaultEndpoint {
         return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "NsqTopic[" + configuration.getTopic() + "]", configuration.getPoolSize());
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public NsqConfiguration getNsqConfiguration() {
         return configuration;
     }

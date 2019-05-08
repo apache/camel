@@ -35,10 +35,10 @@ public class PubsubEndpointTest extends PubsubTestSupport {
             + "&concurrentConsumers=5"
             + "&maxMessagesPerPoll=2";
 
-    @EndpointInject(uri = "google-pubsub://{{project.id}}:" + SUBSCRIPTION_URI)
+    @EndpointInject("google-pubsub://{{project.id}}:" + SUBSCRIPTION_URI)
     private Endpoint from;
 
-    @EndpointInject(uri = "direct:to")
+    @EndpointInject("direct:to")
     private Endpoint to;
 
     @Test

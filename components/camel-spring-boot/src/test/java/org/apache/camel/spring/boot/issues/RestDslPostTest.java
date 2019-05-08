@@ -44,9 +44,9 @@ public class RestDslPostTest extends Assert {
 
     static final int PORT = SocketUtils.findAvailableTcpPort(20000);
 
-    @EndpointInject(uri = "mock:user")
+    @EndpointInject("mock:user")
     protected MockEndpoint resultEndpointUser;
-    @EndpointInject(uri = "mock:country")
+    @EndpointInject("mock:country")
     protected MockEndpoint resultEndpointCountry;
 
     @Autowired

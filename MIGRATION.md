@@ -33,6 +33,7 @@ You may find how to do that in the examples.
 
 We have also modularized many of the core components and moved them out of `camel-core` to individual components:
 
+- camel-bean
 - camel-browse
 - camel-controlbus
 - camel-dataformat
@@ -53,7 +54,9 @@ We have also modularized many of the core components and moved them out of `came
 - camel-timer
 - camel-validator
 - camel-vm
+- camel-xpath
 - camel-xslt
+- camel-zip-defalter
 
 
 Migrating custom components
@@ -68,7 +71,7 @@ The classes from `org.apache.camel.impl` that was intended to support Camel deve
 Migrating custom languages
 --------------------------
 
-The `LanguageAnnotation` annotation class has been moved from packge `org.apache.camel.language` to `org.apache.camel.support.language`.
+The `LanguageAnnotation` annotation class has been moved from package `org.apache.camel.language` to `org.apache.camel.support.language`.
 
 Deprecated APIs and Components
 ------------------------------
@@ -87,6 +90,10 @@ We have removed all deprecated components from Camel 2.x, also including the old
 The `test` component has been renamed to `dataset-test` and moved out of `camel-core` into `camel-dataset` JAR.
 
 We have also renamed `camel-jetty9` to `camel-jetty`.
+
+### javax.script
+
+The `camel-script` component has been removed and there is no support for javax.script, which is also deprecated in the JDK and to be removed from Java 11 onwards.
 
 ### Mock component
 
@@ -155,11 +162,15 @@ The uri attribute has been deprecated, instead use value, which allows a shortha
 ### Routes with multiple inputs
 
 In Camel 2.x you could have 2 or more inputs to Camel routes, however this was not supported in all use-cases in Camel, and this functionality is seldom in use. This has
-also been deprecated in Camel 2.x. In Camel 3 we have removed the remaining code for specifying multipe inputs to routes, and its now only possible to specify exactly only 1 input to a route.
+also been deprecated in Camel 2.x. In Camel 3 we have removed the remaining code for specifying multiple inputs to routes, and its now only possible to specify exactly only 1 input to a route.
 
 ### JSon DataFormat
 
 The default JSon library with the JSon dataformat has changed from `XStream` to `Jackson`.
+
+### Zip and GZip DataFormat
+
+The zip and gzip dataformat has been renamed to zipdeflater and gzipdeflater as they are for deflating using the zip/gzip compression; and not for working with zip/gzip files. Instead use camel-zipfile dataformat. Also these dataformats has been moved out of `camel-core` into `camel-zip-deflater` JAR. The XML and Java DSL has also been modified so you should migrate there too to use their new names. And if you use these data formats you need to add the `camel-zip-deflater` as dependency as they are no longer included as transitive dependency with `camel-core`.
 
 ### Simple language
 
@@ -187,7 +198,7 @@ The class `SimpleRegistry` is moved from `org.apache.camel.impl` to `org.apache.
 
 The class `CompositeRegistry` and `PropertyPlaceholderDelegateRegistry` has been deleted. Instead use `DefaultRegistry`.
 
-The classes from `org.apache.camel.impl` that was intended to support Camel developers building custom components has been moved out of `camel-core` into `camel-support` into the `org.apache.camel.support` package. If you have built custom Camel components that may have used some of these APIs you would then need to migrate.
+The classes from `org.apache.camel.impl` that was intended to support Camel developers building custom components has been moved out of `camel-core` into `camel-support` into the `org.apache.camel.support` package. If you have built custom Camel components that may have used some of these APIs you would then need to migrate.  A large part of classes from the `org.apache.camel.impl` package have been moved to the `org.apache.camel.impl.engine` package in `camel-base`.
 
 All the classes in `org.apache.camel.util.component` has been moved from the camel-core JAR to the package `org.apache.camel.support.component` in the `camel-support` JAR.
 
@@ -208,6 +219,20 @@ The class `org.apache.camel.processor.aggregate.AggregationStrategy` has been mo
 The class `org.apache.camel.processor.loadbalancer.SimpleLoadBalancerSupport` has been removed, instead use `org.apache.camel.processor.loadbalancer.LoadBalancerSupport`.
 
 The class `org.apache.camel.management.JmxSystemPropertyKeys` has been moved to `org.apache.camel.api.management.JmxSystemPropertyKeys`.
+
+The class `org.apache.camel.builder.xml.XPathBuilder` has been moved to `org.apache.camel.language.xpath.XPathBuilder` and in the `camel-xpath` JAR.
+
+The annotation `org.apache.camel.language.XPath` has been moved to `org.apache.camel.language.xpath.XPath` and in the `camel-xpath` JAR.
+
+The exception `org.apache.camel.builder.xml.InvalidXPathExpression` has been renamed to `org.apache.camel.language.xpath.InvalidXPathException` and in the `camel-xpath` JAR.
+
+The annotation `org.apache.camel.language.Bean` has been moved to `org.apache.camel.language.bean.Bean` and in the `camel-bean` JAR.
+
+The annotation `org.apache.camel.language.Simple` has been moved to `org.apache.camel.language.simple.Simple`.
+
+The annotation `org.apache.camel.Constant` has been removed, use `@Simple` instead.
+
+The annotation `org.apache.camel.language.SpEL` has been moved to `org.apache.camel.language.spel.SpEL` and in the `camel-spring` JAR.
 
 #### camel-test
 

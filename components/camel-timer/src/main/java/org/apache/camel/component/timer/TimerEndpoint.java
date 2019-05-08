@@ -90,11 +90,6 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     protected void doStart() throws Exception {
         super.doStart();
         if (timerName == null) {

@@ -31,8 +31,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.netty4.NettyConsumer;
 import org.apache.camel.component.netty4.ServerInitializerFactory;
 import org.apache.camel.component.netty4.ssl.SSLEngineFactory;
-import org.apache.camel.impl.DefaultClassResolver;
-import org.apache.camel.spi.ClassResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

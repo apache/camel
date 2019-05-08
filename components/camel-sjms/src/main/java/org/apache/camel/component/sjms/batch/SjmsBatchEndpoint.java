@@ -111,11 +111,6 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public SjmsBatchComponent getComponent() {
         return (SjmsBatchComponent) super.getComponent();
     }

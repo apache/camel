@@ -43,7 +43,7 @@ public class FooApplicationTest {
     @Autowired
     private CamelContext camelContext;
 
-    @EndpointInject(uri = "mock:log:foo")
+    @EndpointInject("mock:log:foo")
     private MockEndpoint mock;
 
     @Test

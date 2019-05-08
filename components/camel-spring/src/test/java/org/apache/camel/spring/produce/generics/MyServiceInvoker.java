@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MyServiceInvoker {
 
-    @Produce(uri = "direct:myService")
+    @Produce("direct:myService")
     MyService<Double> myService;
 
     public Double invokeService(Double number) {

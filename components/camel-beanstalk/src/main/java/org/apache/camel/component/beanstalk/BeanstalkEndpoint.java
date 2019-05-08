@@ -196,9 +196,4 @@ public class BeanstalkEndpoint extends ScheduledPollEndpoint implements AsyncEnd
         configureConsumer(consumer);
         return consumer;
     }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
 }

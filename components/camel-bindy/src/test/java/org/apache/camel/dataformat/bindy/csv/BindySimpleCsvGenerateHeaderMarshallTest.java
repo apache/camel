@@ -41,10 +41,10 @@ public class BindySimpleCsvGenerateHeaderMarshallTest extends AbstractJUnit4Spri
     private String result = "Order Nr,Client Nr,First Name,Last Name,Instrument Code,Instrument Nr,Order Type,Instrument Type,amount,currency,Order Date\r\n"
                             + "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,400.25,EUR,14-01-2009\r\n";
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
 
     @Test

@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.camel.converter.TimePatternConverter;
-import org.apache.camel.impl.SupervisingRouteController;
-import org.apache.camel.impl.SupervisingRouteControllerFilters;
+import org.apache.camel.impl.engine.SupervisingRouteController;
+import org.apache.camel.impl.engine.SupervisingRouteControllerFilters;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spring.boot.SupervisingRouteControllerConfiguration.BackOffConfiguration;
 import org.apache.camel.spring.boot.SupervisingRouteControllerConfiguration.RouteConfiguration;

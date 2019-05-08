@@ -36,13 +36,13 @@ import static org.junit.Assert.assertEquals;
 public class JmsToHttpTXWithRollbackTest extends AbstractJUnit4SpringContextTests {
 
     // use uri to refer to our mock
-    @EndpointInject(uri = "mock:rollback")
+    @EndpointInject("mock:rollback")
     MockEndpoint mock;
 
     // use the spring id to refer to the endpoint we should send data to
     // notice using this id we can setup the actual endpoint in spring XML
     // and we can even use spring ${ } property in the spring XML
-    @EndpointInject(uri = "ref:data")
+    @EndpointInject("ref:data")
     private ProducerTemplate template;
 
     // the ok response to expect

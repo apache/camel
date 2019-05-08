@@ -74,7 +74,7 @@ public class KarafRuntimeProviderTest {
         assertFalse(names.isEmpty());
 
         assertTrue(names.contains("bindy-csv"));
-        assertTrue(names.contains("zip"));
+        assertTrue(names.contains("zipdeflater"));
         assertTrue(names.contains("zipfile"));
     }
 
@@ -85,6 +85,7 @@ public class KarafRuntimeProviderTest {
         assertNotNull(names);
         assertFalse(names.isEmpty());
 
+        assertTrue(names.contains("bean"));
         assertTrue(names.contains("simple"));
         assertTrue(names.contains("spel"));
         assertTrue(names.contains("xpath"));

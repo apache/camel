@@ -24,9 +24,10 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.core.xml.AbstractCamelRedeliveryPolicyFactoryBean;
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 
 /**
- * A factory which instantiates {@link org.apache.camel.processor.RedeliveryPolicy} objects
+ * A factory which instantiates {@link RedeliveryPolicy} objects
  */
 @XmlRootElement(name = "redeliveryPolicyProfile")
 @XmlAccessorType(XmlAccessType.FIELD)

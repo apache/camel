@@ -27,7 +27,7 @@ public class MongoDbStopEndpointTest extends AbstractMongoDbTest {
 
     private static final String MY_ID = "myId";
 
-    @EndpointInject(uri = "mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert")
+    @EndpointInject("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert")
     MongoDbEndpoint endpoint;
 
     @Override

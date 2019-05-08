@@ -22,6 +22,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.processor.DataFormatServiceTest;
 import org.junit.Test;
 
 public class ManagedDataFormatTest extends ManagementTestSupport {
@@ -49,7 +50,7 @@ public class ManagedDataFormatTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:test")
-                    .unmarshal().string("iso-8859-1")
+                    .unmarshal(new DataFormatServiceTest.MyDataFormat())
                         .to("mock:result");
             }
         };

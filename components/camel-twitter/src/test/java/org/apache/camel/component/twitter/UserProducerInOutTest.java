@@ -38,7 +38,7 @@ public class UserProducerInOutTest extends CamelTwitterTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserProducerInOutTest.class);
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     @Test

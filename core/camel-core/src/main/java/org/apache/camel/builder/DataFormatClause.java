@@ -49,9 +49,7 @@ import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
-import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
-import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
@@ -60,7 +58,7 @@ import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.YAMLLibrary;
-import org.apache.camel.model.dataformat.ZipDataFormat;
+import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.util.CollectionStringBuffer;
@@ -233,7 +231,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the GZIP deflater data format
      */
-    public T gzip() {
+    public T gzipDeflater() {
         GzipDataFormat gzdf = new GzipDataFormat();
         return dataFormat(gzdf);
     }
@@ -721,13 +719,6 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
-     * Uses the Java Serialization data format
-     */
-    public T serialization() {
-        return dataFormat(new SerializationDataFormat());
-    }
-
-    /**
      * Uses the Soap 1.1 JAXB data format
      */
     public T soapjaxb() {
@@ -789,22 +780,6 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         SoapJaxbDataFormat soap = new SoapJaxbDataFormat(contextPath, elementNameStrategy);
         soap.setVersion("1.2");
         return dataFormat(soap);
-    }
-
-    /**
-     * Uses the String data format
-     */
-    public T string() {
-        return string(null);
-    }
-
-    /**
-     * Uses the String data format supporting encoding using given charset
-     */
-    public T string(String charset) {
-        StringDataFormat sdf = new StringDataFormat();
-        sdf.setCharset(charset);
-        return dataFormat(sdf);
     }
 
     /**
@@ -1218,16 +1193,17 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the ZIP deflater data format
      */
-    public T zip() {
-        ZipDataFormat zdf = new ZipDataFormat(Deflater.DEFAULT_COMPRESSION);
+    public T zipDefalter() {
+        ZipDeflaterDataFormat zdf = new ZipDeflaterDataFormat();
         return dataFormat(zdf);
     }
 
     /**
      * Uses the ZIP deflater data format
      */
-    public T zip(int compressionLevel) {
-        ZipDataFormat zdf = new ZipDataFormat(compressionLevel);
+    public T zipDefalter(int compressionLevel) {
+        ZipDeflaterDataFormat zdf = new ZipDeflaterDataFormat();
+        zdf.setCompressionLevel(compressionLevel);
         return dataFormat(zdf);
     }
 

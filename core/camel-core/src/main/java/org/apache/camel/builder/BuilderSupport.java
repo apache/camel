@@ -19,17 +19,19 @@ package org.apache.camel.builder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.JsonPathExpression;
+import org.apache.camel.model.language.XPathExpression;
+import org.apache.camel.support.builder.xml.Namespaces;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -163,8 +165,8 @@ public abstract class BuilderSupport {
      * @param value the XPath expression
      * @return the builder
      */
-    public XPathBuilder xpath(String value) {
-        return xpath(value, null);
+    public ValueBuilder xpath(String value) {
+        return xpath(value, null, null);
     }
 
     /**
@@ -174,14 +176,42 @@ public abstract class BuilderSupport {
      * @param resultType the result type that the XPath expression will return.
      * @return the builder
      */
-    public XPathBuilder xpath(String value, Class<?> resultType) {
+    public ValueBuilder xpath(String value, Class<?> resultType) {
+        return xpath(value, resultType, null);
+    }
+
+    /**
+     * Returns a xpath expression value builder
+     *
+     * @param value      the XPath expression
+     * @param namespaces namespace mappings
+     * @return the builder
+     */
+    public ValueBuilder xpath(String value, Namespaces namespaces) {
+        return xpath(value, null, namespaces);
+    }
+
+    /**
+     * Returns a xpath expression value builder
+     *
+     * @param value      the XPath expression
+     * @param resultType the result type that the XPath expression will return.
+     * @param namespaces namespace mappings
+     * @return the builder
+     */
+    public ValueBuilder xpath(String value, Class<?> resultType, Namespaces namespaces) {
         // the value may contain property placeholders as it may be used directly from Java DSL
         try {
             value = getContext().resolvePropertyPlaceholders(value);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
-        return XPathBuilder.xpath(value, resultType);
+        XPathExpression exp = new XPathExpression(value);
+        exp.setResultType(resultType);
+        if (namespaces != null) {
+            exp.setNamespaces(namespaces.getNamespaces());
+        }
+        return new ValueBuilder(exp);
     }
 
     /**

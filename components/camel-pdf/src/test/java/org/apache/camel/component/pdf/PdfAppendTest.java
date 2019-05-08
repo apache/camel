@@ -45,7 +45,7 @@ import static org.hamcrest.Matchers.instanceOf;
 
 public class PdfAppendTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     @Override

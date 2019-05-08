@@ -94,11 +94,6 @@ public class PropertiesEndpoint extends DefaultEndpoint implements DelegateEndpo
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public Endpoint getEndpoint() {
         return endpoint;
     }

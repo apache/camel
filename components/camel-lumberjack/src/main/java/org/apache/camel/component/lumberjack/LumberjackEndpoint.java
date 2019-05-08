@@ -64,11 +64,6 @@ public class LumberjackEndpoint extends DefaultEndpoint {
         return new LumberjackConsumer(this, processor, host, port, provideSSLContext());
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public SSLContextParameters getSslContextParameters() {
         return sslContextParameters;
     }

@@ -76,10 +76,6 @@ public class SesEndpoint extends DefaultEndpoint {
         return new SesProducer(this);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public SesConfiguration getConfiguration() {
         return configuration;
     }

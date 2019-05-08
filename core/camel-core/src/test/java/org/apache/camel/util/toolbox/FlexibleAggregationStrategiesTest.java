@@ -37,6 +37,7 @@ import org.apache.camel.builder.FlexibleAggregationStrategy.CompletionAwareMixin
 import org.apache.camel.builder.FlexibleAggregationStrategy.TimeoutAwareMixin;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.language.xpath.XPathBuilder;
 import org.junit.Test;
 
 /**
@@ -297,10 +298,10 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
                     .aggregate(timeoutCompletionStrategy).constant(true)
                     .completionTimeout(500).completionSize(2)
                     .to("mock:result.timeoutAndCompletionAware");
-                
+
                 from("direct:start.xpath1")
                     .aggregate(AggregationStrategies.flexible(Node.class)
-                            .pick(xpath("//result[1]").nodeResult())
+                            .pick(XPathBuilder.xpath("//result[1]").nodeResult())
                             .accumulateInCollection(ArrayList.class))
                         .constant(true).completionSize(3)
                     .to("mock:result.xpath1");

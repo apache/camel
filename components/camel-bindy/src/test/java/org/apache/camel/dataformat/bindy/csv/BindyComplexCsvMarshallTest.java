@@ -42,10 +42,10 @@ public class BindyComplexCsvMarshallTest extends AbstractJUnit4SpringContextTest
     private List<Map<String, Object>> models = new ArrayList<>();
     private String result = "10,A1,Julia,Roberts,ISIN,LU123456789,BUY,Share,150.00,USD,14-01-2009\r\n";
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
 
     @Test

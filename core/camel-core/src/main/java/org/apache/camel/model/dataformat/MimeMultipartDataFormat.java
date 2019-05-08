@@ -21,9 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -49,25 +47,6 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
 
     public MimeMultipartDataFormat() {
         super("mime-multipart");
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (getMultipartSubType() != null) {
-            setProperty(camelContext, dataFormat, "multipartSubType", getMultipartSubType());
-        }
-        if (getMultipartWithoutAttachment() != null) {
-            setProperty(camelContext, dataFormat, "multipartWithoutAttachment", getMultipartWithoutAttachment());
-        }
-        if (getHeadersInline() != null) {
-            setProperty(camelContext, dataFormat, "headersInline", getHeadersInline());
-        }
-        if (getIncludeHeaders() != null) {
-            setProperty(camelContext, dataFormat, "includeHeaders", getIncludeHeaders());
-        }
-        if (getBinaryContent() != null) {
-            setProperty(camelContext, dataFormat, "binaryContent", getBinaryContent());
-        }
     }
 
     public String getMultipartSubType() {

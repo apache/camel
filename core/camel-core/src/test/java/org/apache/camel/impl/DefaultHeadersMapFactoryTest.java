@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.impl.engine.DefaultHeadersMapFactory;
 import org.junit.Assert;
 import org.junit.Test;
 

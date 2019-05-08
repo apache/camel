@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.List;
 import java.util.Map;
 import javax.naming.Context;
 
@@ -28,14 +27,39 @@ import org.apache.camel.Producer;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.camel.impl.engine.BeanProcessorFactoryResolver;
+import org.apache.camel.impl.engine.BeanProxyFactoryResolver;
+import org.apache.camel.impl.engine.DefaultAsyncProcessorAwaitManager;
+import org.apache.camel.impl.engine.DefaultCamelContextNameStrategy;
+import org.apache.camel.impl.engine.DefaultClassResolver;
+import org.apache.camel.impl.engine.DefaultComponentResolver;
+import org.apache.camel.impl.engine.DefaultDataFormatResolver;
+import org.apache.camel.impl.engine.DefaultEndpointRegistry;
+import org.apache.camel.impl.engine.DefaultFactoryFinderResolver;
+import org.apache.camel.impl.engine.DefaultInflightRepository;
+import org.apache.camel.impl.engine.DefaultInjector;
+import org.apache.camel.impl.engine.DefaultLanguageResolver;
+import org.apache.camel.impl.engine.DefaultManagementNameStrategy;
+import org.apache.camel.impl.engine.DefaultMessageHistoryFactory;
+import org.apache.camel.impl.engine.DefaultNodeIdFactory;
+import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
+import org.apache.camel.impl.engine.DefaultProcessorFactory;
+import org.apache.camel.impl.engine.DefaultRouteController;
+import org.apache.camel.impl.engine.DefaultShutdownStrategy;
+import org.apache.camel.impl.engine.DefaultStreamCachingStrategy;
+import org.apache.camel.impl.engine.DefaultUnitOfWorkFactory;
+import org.apache.camel.impl.engine.DefaultUuidGenerator;
+import org.apache.camel.impl.engine.EndpointKey;
+import org.apache.camel.impl.engine.HeadersMapFactoryResolver;
+import org.apache.camel.impl.engine.RestRegistryFactoryResolver;
+import org.apache.camel.impl.engine.ServicePool;
+import org.apache.camel.impl.engine.WebSpherePackageScanClassResolver;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
-import org.apache.camel.impl.transformer.TransformerKey;
-import org.apache.camel.impl.validator.ValidatorKey;
-import org.apache.camel.model.transformer.TransformerDefinition;
-import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.runtimecatalog.impl.DefaultRuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BeanProcessorFactory;
+import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
@@ -61,17 +85,15 @@ import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
-import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
-import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.support.DefaultRegistry;
 
 /**
  * Represents the context used to configure routes and the policies to use.
  */
-public class DefaultCamelContext extends AbstractCamelContext {
+public class DefaultCamelContext extends AbstractModelCamelContext {
 
     /**
      * Creates the {@link CamelContext} using {@link DefaultRegistry} as registry.
@@ -276,6 +298,14 @@ public class DefaultCamelContext extends AbstractCamelContext {
         return new HeadersMapFactoryResolver().resolve(this);
     }
 
+    protected BeanProxyFactory createBeanProxyFactory() {
+        return new BeanProxyFactoryResolver().resolve(this);
+    }
+
+    protected BeanProcessorFactory createBeanProcessorFactory() {
+        return new BeanProcessorFactoryResolver().resolve(this);
+    }
+
     protected LanguageResolver createLanguageResolver() {
         return new DefaultLanguageResolver();
     }
@@ -287,14 +317,6 @@ public class DefaultCamelContext extends AbstractCamelContext {
 
     protected EndpointRegistry<EndpointKey> createEndpointRegistry(Map<EndpointKey, Endpoint> endpoints) {
         return new DefaultEndpointRegistry(this, endpoints);
-    }
-
-    protected ValidatorRegistry<ValidatorKey> createValidatorRegistry(List<ValidatorDefinition> validators) throws Exception {
-        return new DefaultValidatorRegistry(this, validators);
-    }
-
-    protected TransformerRegistry<TransformerKey> createTransformerRegistry(List<TransformerDefinition> transformers) throws Exception {
-        return new DefaultTransformerRegistry(this, transformers);
     }
 
     @Override

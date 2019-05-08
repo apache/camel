@@ -37,7 +37,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 public class SqlProducerConcurrentTest extends CamelTestSupport {
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mockEndpoint;
     private EmbeddedDatabase db;
 

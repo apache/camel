@@ -48,11 +48,6 @@ public class PdfEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Consumer does not supported for PDF component:" + getEndpointUri());
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public PdfConfiguration getPdfConfiguration() {
         return pdfConfiguration;
     }

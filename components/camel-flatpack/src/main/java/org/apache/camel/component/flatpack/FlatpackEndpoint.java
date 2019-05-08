@@ -81,10 +81,6 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
         this.resourceUri = resourceUri;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public Producer createProducer() throws Exception {
         return new FlatpackProducer(this);
     }

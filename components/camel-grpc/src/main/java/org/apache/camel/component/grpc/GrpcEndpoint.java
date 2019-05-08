@@ -64,10 +64,6 @@ public class GrpcEndpoint extends DefaultEndpoint {
         return new GrpcConsumer(this, processor, configuration);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-    
     public String getServiceName() {
         return serviceName;
     }

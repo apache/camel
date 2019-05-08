@@ -18,7 +18,7 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
+import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
 import org.junit.Test;
 
 /**

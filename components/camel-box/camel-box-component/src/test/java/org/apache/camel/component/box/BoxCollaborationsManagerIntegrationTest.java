@@ -33,6 +33,7 @@ import org.apache.camel.component.box.internal.BoxApiCollection;
 import org.apache.camel.component.box.internal.BoxCollaborationsManagerApiMethod;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +73,7 @@ public class BoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSupp
         LOG.debug("addFolderCollaboration: " + result);
     }
 
+    @Ignore //creation of app users could be used only with JWT authentication, which is not possible in this time
     @Test
     public void testAddFolderCollaboration() throws Exception {
         // delete collaborator created by setupTest

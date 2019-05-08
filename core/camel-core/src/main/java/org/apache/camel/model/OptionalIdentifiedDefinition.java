@@ -32,7 +32,7 @@ import org.apache.camel.spi.NodeIdFactory;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY which is required by camel-spring / camel-blueprint for their namespace parsers
 public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedDefinition<T>> implements NamedNode {
-    private transient String shortName;
+
     private String id;
     private Boolean customId;
     private DescriptionDefinition description;
@@ -63,6 +63,11 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     @XmlElement
     public void setDescription(DescriptionDefinition description) {
         this.description = description;
+    }
+
+    @Override
+    public NamedNode getParent() {
+        return null;
     }
 
     // Fluent API

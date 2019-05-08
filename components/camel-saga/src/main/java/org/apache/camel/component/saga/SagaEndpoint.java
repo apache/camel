@@ -61,9 +61,4 @@ public class SagaEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Consumer not allowed for saga endpoint");
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
 }

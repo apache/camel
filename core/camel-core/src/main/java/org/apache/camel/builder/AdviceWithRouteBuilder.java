@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
+import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.support.EndpointHelper;
@@ -33,8 +33,6 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * <b>Important:</b> It is recommended to only advice a given route once (you can of course advice multiple routes).
  * If you do it multiple times, then it may not work as expected, especially when any kind of error handling is involved.
- *
- * @see org.apache.camel.model.RouteDefinition#adviceWith(org.apache.camel.CamelContext, RouteBuilder)
  */
 public abstract class AdviceWithRouteBuilder extends RouteBuilder {
 

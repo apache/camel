@@ -76,11 +76,6 @@ public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint {
         return configuration;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public Exchange createExchange(ExchangePattern pattern, Event event) {
         Exchange exchange = super.createExchange(pattern);
         Message message = exchange.getIn();

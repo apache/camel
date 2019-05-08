@@ -53,10 +53,6 @@ public class SipEndpoint extends DefaultEndpoint {
         return new SipPublisher(this, configuration);
     }
     
-    public boolean isSingleton() {
-        return true;
-    }
-
     public SipConfiguration getConfiguration() {
         return configuration;
     }

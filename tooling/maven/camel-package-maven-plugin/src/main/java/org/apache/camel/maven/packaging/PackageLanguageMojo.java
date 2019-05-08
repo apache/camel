@@ -59,6 +59,12 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
     protected File schemaOutDir;
 
     /**
+     * The project build directory
+     */
+    @Parameter(defaultValue = "${project.build.directory}")
+    protected File buildDir;
+
+    /**
      * Execute goal.
      *
      * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the
@@ -66,10 +72,10 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
      * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
-        prepareLanguage(getLog(), project, projectHelper, languageOutDir, schemaOutDir, buildContext);
+        prepareLanguage(getLog(), project, projectHelper, buildDir, languageOutDir, schemaOutDir, buildContext);
     }
 
-    public static int prepareLanguage(Log log, MavenProject project, MavenProjectHelper projectHelper, File languageOutDir,
+    public static int prepareLanguage(Log log, MavenProject project, MavenProjectHelper projectHelper, File buildDir, File languageOutDir,
                                       File schemaOutDir, BuildContext buildContext) throws MojoExecutionException {
 
         File camelMetaDir = new File(languageOutDir, "META-INF/services/org/apache/camel/");
@@ -121,8 +127,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         String name = entry.getKey();
                         String javaType = entry.getValue();
                         String modelName = asModelName(name);
-                        InputStream is = new FileInputStream(new File(core, "target/classes/org/apache/camel/model/language/" + modelName + ".json"));
-                        String json = loadText(is);
+
                         LanguageModel languageModel = new LanguageModel();
                         languageModel.setName(name);
                         languageModel.setTitle("");
@@ -134,6 +139,17 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         languageModel.setArtifactId(project.getArtifactId());
                         languageModel.setVersion(project.getVersion());
 
+                        InputStream is;
+                        if ("xpath".equals(name)) {
+                            // special for camel-xpath as we need to build this before camel-core so we load the schema from a static file
+                            is = new FileInputStream(new File(buildDir, "../src/main/schema/xpath.json"));
+                        } else if ("bean".equals(name)) {
+                            // special for camel-bean as we need to build this before camel-core so we load the schema from a static file
+                            is = new FileInputStream(new File(buildDir, "../src/main/schema/method.json"));
+                        } else {
+                            is = new FileInputStream(new File(core, "target/classes/org/apache/camel/model/language/" + modelName + ".json"));
+                        }
+                        String json = loadText(is);
                         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
                         for (Map<String, String> row : rows) {
                             if (row.containsKey("title")) {

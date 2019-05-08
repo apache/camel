@@ -73,11 +73,6 @@ public class JGroupsEndpoint extends DefaultEndpoint {
         return new JGroupsConsumer(this, processor, resolvedChannel, clusterName);
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public Exchange createExchange(Message message) {
         Exchange exchange = createExchange();
         exchange.getIn().setHeader(HEADER_JGROUPS_ORIGINAL_MESSAGE, message);

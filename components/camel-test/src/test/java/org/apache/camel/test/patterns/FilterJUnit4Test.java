@@ -30,10 +30,10 @@ import org.junit.Test;
 // START SNIPPET: example
 public class FilterJUnit4Test extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     @Test

@@ -56,6 +56,7 @@
     <bundle>mvn:org.apache.camel/camel-core-osgi/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cloud/${project.version}</bundle>
     <!-- core components -->
+    <bundle>mvn:org.apache.camel/camel-bean/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-browse/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-controlbus/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-dataformat/${project.version}</bundle>
@@ -76,6 +77,7 @@
     <bundle>mvn:org.apache.camel/camel-timer/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-validator/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-vm/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-xpath/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-xslt/${project.version}</bundle>
     <conditional>
       <condition>shell</condition>
@@ -656,7 +658,10 @@
   </feature>
   <feature name='camel-coap' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle>mvn:org.eclipse.californium/californium-osgi/${californium-version}</bundle>
+    <bundle>wrap:mvn:org.eclipse.californium/californium-core/${californium-version}</bundle>
+    <bundle>wrap:mvn:org.eclipse.californium/element-connector/${californium-version}</bundle>
+    <bundle>wrap:mvn:org.eclipse.californium/element-connector-tcp/${californium-version}</bundle>
+    <bundle>wrap:mvn:org.eclipse.californium/scandium/${californium-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-coap/${project.version}</bundle>
   </feature>
   <feature name='camel-cometd' version='${project.version}' start-level='50'>
@@ -1001,6 +1006,23 @@
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-github/${project.version}</bundle>
    </feature>
+  <feature name='camel-google-bigquery' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:com.google.apis/google-api-services-bigquery/${google-api-services-bigquery-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.api-client/google-api-client/${google-api-client-version}</bundle>
+    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-jackson2/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-java6/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-jetty/${google-api-client-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-google-bigquery/${project.version}</bundle>
+  </feature>
    <feature name='camel-google-calendar' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
@@ -1991,7 +2013,7 @@
   </feature>
   <feature name='camel-quartz2' version='${project.version}' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.c3p0/${c3p0-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.zaxxer/HikariCP-java6/${hikaricp-version}</bundle>
+    <bundle dependency='true'>mvn:com.zaxxer/HikariCP-java7/${hikaricp-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.quartz-scheduler/quartz/${quartz2-version}$overwrite=merge&amp;DynamicImport-Package=org.apache.camel.component.quartz2</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-quartz2/${project.version}</bundle>
@@ -2121,31 +2143,6 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.saxon/${saxon-bundle-version}</bundle>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-schematron/${project.version}</bundle>
-  </feature>
-   <feature name='camel-script-jruby' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-script</feature>
-    <bundle>mvn:org.jruby/jruby-complete/${jruby-version}</bundle>
-  </feature>
-  <feature name='camel-script-javascript' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-script</feature>
-    <bundle>mvn:com.google.code.scriptengines/scriptengines-javascript/${scriptengines-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rhino/${rhino-bundle-version}</bundle>
-  </feature>
-  <feature name='camel-script-groovy' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-script</feature>
-    <bundle>mvn:org.codehaus.groovy/groovy/${groovy-version}</bundle>
-    <bundle>mvn:org.codehaus.groovy/groovy-jsr223/${groovy-version}</bundle>
-    <bundle dependency='true'>mvn:org.ow2.asm/asm-commons/${asm-version}</bundle>
-    <bundle dependency='true'>mvn:org.ow2.asm/asm-tree/${asm-version}</bundle>
-    <bundle dependency='true'>mvn:org.ow2.asm/asm/${asm-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.aries/org.apache.aries.util/${aries-util-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.aries.spifly/org.apache.aries.spifly.dynamic.bundle/${aries-spifly-version}</bundle>
-  </feature>
-  <feature name='camel-script' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.antlr/${antlr-bundle-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rhino/${rhino-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-script/${project.version}</bundle>
   </feature>
   <feature name='camel-service' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -2685,6 +2682,10 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-zendesk/${project.version}</bundle>
+  </feature>
+  <feature name='camel-zip-deflater' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-zip-deflater/${project.version}</bundle>
   </feature>
   <feature name='camel-zipfile' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>

@@ -106,11 +106,6 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
         return configuration;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public Exchange createExchange(ExchangePattern pattern, com.google.api.services.gmail.model.Message mail) {
 
         Exchange exchange = super.createExchange(pattern);

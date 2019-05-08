@@ -82,11 +82,6 @@ public class MetricsEndpoint extends DefaultEndpoint {
         }
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public MetricRegistry getRegistry() {
         return registry;
     }

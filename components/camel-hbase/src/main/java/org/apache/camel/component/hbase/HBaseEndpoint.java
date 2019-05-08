@@ -104,10 +104,6 @@ public class HBaseEndpoint extends DefaultEndpoint {
         return consumer;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public Configuration getConfiguration() {
         return configuration;
     }

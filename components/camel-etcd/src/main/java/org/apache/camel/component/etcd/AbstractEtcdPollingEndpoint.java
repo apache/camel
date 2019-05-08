@@ -47,11 +47,6 @@ public abstract class AbstractEtcdPollingEndpoint extends DefaultPollingEndpoint
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public EtcdConfiguration getConfiguration() {
         return this.configuration;
     }

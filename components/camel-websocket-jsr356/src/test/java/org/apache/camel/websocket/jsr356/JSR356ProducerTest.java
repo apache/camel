@@ -51,7 +51,7 @@ public class JSR356ProducerTest extends CamelTestSupport {
     @Rule
     public final TestName testName = new TestName();
 
-    @Produce(uri = "direct:ensureServerModeSendsProperly")
+    @Produce("direct:ensureServerModeSendsProperly")
     private ProducerTemplate serverProducer;
 
     @Ignore

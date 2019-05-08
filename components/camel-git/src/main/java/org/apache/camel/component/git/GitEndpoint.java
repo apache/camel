@@ -91,11 +91,6 @@ public class GitEndpoint extends DefaultEndpoint {
         }
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     /**
      * The remote repository path
      */

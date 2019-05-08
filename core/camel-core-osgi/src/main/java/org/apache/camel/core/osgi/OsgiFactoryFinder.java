@@ -23,7 +23,7 @@ import java.net.URL;
 import java.util.Properties;
 
 import org.apache.camel.NoFactoryAvailableException;
-import org.apache.camel.impl.DefaultFactoryFinder;
+import org.apache.camel.impl.engine.DefaultFactoryFinder;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.IOHelper;
 

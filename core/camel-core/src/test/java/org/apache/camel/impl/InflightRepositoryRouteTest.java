@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.engine.DefaultInflightRepository;
 import org.junit.Test;
 
 public class InflightRepositoryRouteTest extends ContextTestSupport {

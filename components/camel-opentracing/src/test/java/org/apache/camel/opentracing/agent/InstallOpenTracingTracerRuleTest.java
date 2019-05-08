@@ -39,10 +39,10 @@ public class InstallOpenTracingTracerRuleTest extends CamelTestSupport {
 
     private static MockTracer tracer = new MockTracer(Propagator.TEXT_MAP);
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     @Before

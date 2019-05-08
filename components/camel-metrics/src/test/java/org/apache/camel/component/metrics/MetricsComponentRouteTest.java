@@ -33,10 +33,10 @@ import static org.apache.camel.component.metrics.MetricsConstants.HEADER_PREFIX;
 
 public class MetricsComponentRouteTest extends CamelTestSupport {
 
-    @Produce(uri = "direct:start-1")
+    @Produce("direct:start-1")
     protected ProducerTemplate template1;
 
-    @Produce(uri = "direct:start-2")
+    @Produce("direct:start-2")
     protected ProducerTemplate template2;
 
     @Test

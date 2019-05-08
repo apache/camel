@@ -39,13 +39,13 @@ import org.springframework.test.annotation.DirtiesContext;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class MockEndpointsAndSkipDirtiesContextTest {
 
-    @Produce(uri = "direct:a")
+    @Produce("direct:a")
     private ProducerTemplate producer;
 
-    @EndpointInject(uri = "mock:end")
+    @EndpointInject("mock:end")
     private MockEndpoint end;
 
-    @EndpointInject(uri = "mock:direct:b")
+    @EndpointInject("mock:direct:b")
     private MockEndpoint directB;
 
     @Autowired

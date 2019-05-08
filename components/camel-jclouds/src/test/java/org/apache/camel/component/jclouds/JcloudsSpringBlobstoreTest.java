@@ -33,10 +33,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class JcloudsSpringBlobstoreTest extends CamelSpringTestSupport {
 
-    @EndpointInject(uri = "mock:result-foo")
+    @EndpointInject("mock:result-foo")
     protected MockEndpoint resultFoo;
 
-    @EndpointInject(uri = "mock:result-bar")
+    @EndpointInject("mock:result-bar")
     protected MockEndpoint resultBar;
 
     @BeforeClass

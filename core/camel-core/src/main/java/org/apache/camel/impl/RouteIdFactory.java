@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.util.Optional;
 
 import org.apache.camel.NamedNode;
+import org.apache.camel.impl.engine.DefaultNodeIdFactory;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;

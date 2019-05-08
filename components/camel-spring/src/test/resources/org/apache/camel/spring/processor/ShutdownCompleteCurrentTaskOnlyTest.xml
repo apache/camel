@@ -24,7 +24,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="shutdown" class="org.apache.camel.impl.DefaultShutdownStrategy">
+    <bean id="shutdown" class="org.apache.camel.impl.engine.DefaultShutdownStrategy">
         <!-- give it 20 sec to shutdown -->
         <property name="timeout" value="20"/>
     </bean>

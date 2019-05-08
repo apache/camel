@@ -32,13 +32,13 @@ import org.junit.Test;
 
 public class FromQueueToQueueTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    @EndpointInject(uri = "ironmq:testqueue?client=#ironMock")
+    @EndpointInject("ironmq:testqueue?client=#ironMock")
     private IronMQEndpoint queue1;
 
-    @EndpointInject(uri = "ironmq:testqueue2?client=#ironMock")
+    @EndpointInject("ironmq:testqueue2?client=#ironMock")
     private IronMQEndpoint queue2;
 
     @Test

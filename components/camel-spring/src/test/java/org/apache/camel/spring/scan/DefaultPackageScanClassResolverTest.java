@@ -21,7 +21,7 @@ import java.net.URLClassLoader;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.camel.impl.DefaultPackageScanClassResolver;
+import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.spring.scan.a.ScanTargetOne;
 import org.apache.camel.spring.scan.b.ScanTargetTwo;
 import org.apache.camel.spring.scan.c.ScanTargetThree;

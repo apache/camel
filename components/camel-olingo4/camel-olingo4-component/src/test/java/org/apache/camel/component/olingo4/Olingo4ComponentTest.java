@@ -18,9 +18,9 @@ package org.apache.camel.component.olingo4;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -29,6 +29,7 @@ import org.apache.camel.component.olingo4.api.batch.Olingo4BatchQueryRequest;
 import org.apache.camel.component.olingo4.api.batch.Olingo4BatchRequest;
 import org.apache.camel.component.olingo4.api.batch.Olingo4BatchResponse;
 import org.apache.camel.component.olingo4.api.batch.Operation;
+import org.apache.olingo.client.api.domain.ClientCollectionValue;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
@@ -103,6 +104,15 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         final ClientComplexValue complexProperty = (ClientComplexValue)requestBodyAndHeaders("direct:readcomplexprop", null, headers);
         assertTrue(complexProperty.isComplex());
         assertEquals("San Francisco", complexProperty.get("City").getComplexValue().get("Name").getValue().toString());
+
+        final ClientCollectionValue<?> collectionProperty = (ClientCollectionValue<?>)requestBodyAndHeaders("direct:readcollectionprop", null, headers);
+        assertTrue(collectionProperty.isCollection());
+        assertEquals(1, collectionProperty.size());
+        Iterator<?> propIter = collectionProperty.iterator();
+        Object propValueObj = propIter.next();
+        assertIsInstanceOf(ClientComplexValue.class, propValueObj);
+        ClientComplexValue propValue = (ClientComplexValue) propValueObj;
+        assertEquals("Boise", propValue.get("City").getComplexValue().get("Name").getValue().toString());
 
         final ClientEntity entity = (ClientEntity)requestBodyAndHeaders("direct:readentitybyid", null, headers);
         assertNotNull(entity);
@@ -305,7 +315,7 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
     @Test
     public void testConsumerReadFilterAlreadySeen() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
-        String endpoint = "olingo4://read/People?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&consumer.splitResult=false";
+        String endpoint = "olingo4://read/" + PEOPLE + "?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&consumer.splitResult=false";
         int expectedEntities = 20;
         int expectedMsgCount = 3;
         MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-alreadyseen");
@@ -420,7 +430,7 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
     @Test
     public void testConsumerReadSplitResults() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
-        String endpoint = "olingo4://read/People?consumer.splitResult=true";
+        String endpoint = "olingo4://read/" + PEOPLE + "?consumer.splitResult=true";
         int expectedEntities = 20;
 
         int expectedMsgCount = 3;
@@ -457,6 +467,7 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
             }
         }
     }
+
     /**
      * Read value of the People object and split the results
      * into individual messages
@@ -464,7 +475,7 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
     @Test
     public void testConsumerReadClientValuesSplitResults() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
-        String endpoint = "olingo4://read/People('russellwhyte')/FavoriteFeature?consumer.splitResult=true";
+        String endpoint = "olingo4://read/" + TEST_PEOPLE + "/FavoriteFeature?consumer.splitResult=true";
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-splitresult-value");
         mockEndpoint.expectedMinimumMessageCount(1);
@@ -482,6 +493,61 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         assertEquals("Feature1", value.toString());
     }
 
+    /**
+     * Read value of the People object's AddressInfo collection value
+     * & split the results into individual messages for each address
+     */
+    @Test
+    public void testConsumerReadClientCollectionValuesSplitResults() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        String endpoint = "olingo4://read/" + TEST_PEOPLE + "/AddressInfo?consumer.splitResult=true";
+
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-splitresult-collection-value");
+        mockEndpoint.expectedMinimumMessageCount(1);
+
+        final ClientValue resultValue = requestBodyAndHeaders(endpoint, null, headers);
+        assertIsInstanceOf(ClientValue.class, resultValue);
+
+        mockEndpoint.assertIsSatisfied();
+        //
+        // 1 individual message in the exchange
+        //
+        Object body = mockEndpoint.getExchanges().get(0).getIn().getBody();
+        assertIsInstanceOf(ClientComplexValue.class, body);
+        ClientComplexValue value = (ClientComplexValue) body;
+        assertEquals("Boise", value.get("City").getComplexValue().get("Name").getValue().toString());
+    }
+
+    /**
+     * Read value of the People object's AddressInfo collection value
+     * & split the results into individual messages for each address
+     */
+    @Test
+    public void testConsumerReadClientCollectionValuesNoSplitResults() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        String endpoint = "olingo4://read/" + TEST_PEOPLE + "/AddressInfo?consumer.splitResult=false";
+
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-nosplitresult-colleciton-value");
+        mockEndpoint.expectedMinimumMessageCount(1);
+
+        final ClientValue resultValue = requestBodyAndHeaders(endpoint, null, headers);
+        assertIsInstanceOf(ClientValue.class, resultValue);
+
+        mockEndpoint.assertIsSatisfied();
+        //
+        // 1 individual collection value message in the exchange
+        //
+        Object body = mockEndpoint.getExchanges().get(0).getIn().getBody();
+        assertIsInstanceOf(ClientCollectionValue.class, body);
+        ClientCollectionValue<?> value = (ClientCollectionValue<?>) body;
+        assertEquals(1, value.size());
+        Iterator<?> propIter = value.iterator();
+        Object propValueObj = propIter.next();
+        assertIsInstanceOf(ClientComplexValue.class, propValueObj);
+        ClientComplexValue propValue = (ClientComplexValue) propValueObj;
+        assertEquals("Boise", propValue.get("City").getComplexValue().get("Name").getValue().toString());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -491,33 +557,35 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
 
                 from("direct:readdocument").to("olingo4://read/");
 
-                from("direct:readentities").to("olingo4://read/People?$top=5&$orderby=FirstName asc");
+                from("direct:readentities").to("olingo4://read/" + PEOPLE + "?$top=5&$orderby=FirstName asc");
 
-                from("direct:readcount").to("olingo4://read/People/$count");
+                from("direct:readcount").to("olingo4://read/" + PEOPLE + "/$count");
 
-                from("direct:readvalue").to("olingo4://read/People('russellwhyte')/Gender/$value");
+                from("direct:readvalue").to("olingo4://read/" + TEST_PEOPLE + "/Gender/$value");
 
                 from("direct:readsingleprop").to("olingo4://read/Airports('KSFO')/Name");
 
                 from("direct:readcomplexprop").to("olingo4://read/Airports('KSFO')/Location");
 
-                from("direct:readentitybyid").to("olingo4://read/People('russellwhyte')");
+                from("direct:readcollectionprop").to("olingo4://read/" + TEST_PEOPLE + "/AddressInfo");
+
+                from("direct:readentitybyid").to("olingo4://read/" + TEST_PEOPLE + "");
 
                 from("direct:readwithfilter").to("olingo4://read/Airports?$filter=Name eq 'San Francisco International Airport'");
 
                 from("direct:callunboundfunction").to("olingo4://read/GetNearestAirport(lat=33,lon=-118)");
 
                 // test route for create individual entity
-                from("direct:create-entity").to("olingo4://create/People");
+                from("direct:create-entity").to("olingo4://create/" + PEOPLE);
 
                 // test route for update
-                from("direct:update-entity").to("olingo4://update/People('lewisblack')");
+                from("direct:update-entity").to("olingo4://update/" + PEOPLE + "('lewisblack')");
 
                 // test route for delete
-                from("direct:delete-entity").to("olingo4://delete/People('lewisblack')");
+                from("direct:delete-entity").to("olingo4://delete/" + PEOPLE + "('lewisblack')");
 
                 // test route for delete
-                from("direct:read-deleted-entity").to("olingo4://delete/People('lewisblack')");
+                from("direct:read-deleted-entity").to("olingo4://delete/" + PEOPLE + "('lewisblack')");
 
                 // test route for batch
                 from("direct:batch").to("olingo4://batch");
@@ -526,22 +594,27 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
 
                 from("direct:delete-with-etag").to("olingo4://delete/Airlines('AA')");
 
-                from("direct:read-people-nofilterseen").to("olingo4://read/People").to("mock:producer-noalreadyseen");
+                from("direct:read-people-nofilterseen").to("olingo4://read/" + PEOPLE).to("mock:producer-noalreadyseen");
 
-                from("direct:read-people-filterseen").to("olingo4://read/People?filterAlreadySeen=true").to("mock:producer-alreadyseen");
+                from("direct:read-people-filterseen").to("olingo4://read/" + PEOPLE + "?filterAlreadySeen=true").to("mock:producer-alreadyseen");
 
                 //
                 // Consumer endpoint
                 //
-                from("olingo4://read/People?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&consumer.splitResult=false")
+                from("olingo4://read/" + PEOPLE + "?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&consumer.splitResult=false")
                     .to("mock:consumer-alreadyseen");
 
-                from("olingo4://read/People?consumer.splitResult=true")
+                from("olingo4://read/" + PEOPLE + "?consumer.splitResult=true")
                     .to("mock:consumer-splitresult");
 
-                from("olingo4://read/People('russellwhyte')/FavoriteFeature?consumer.splitResult=true")
+                from("olingo4://read/" + TEST_PEOPLE + "/FavoriteFeature?consumer.splitResult=true")
                     .to("mock:consumer-splitresult-value");
 
+                from("olingo4://read/" + TEST_PEOPLE + "/AddressInfo?consumer.splitResult=true")
+                    .to("mock:consumer-splitresult-collection-value");
+
+                from("olingo4://read/" + TEST_PEOPLE + "/AddressInfo?consumer.splitResult=false")
+                    .to("mock:consumer-nosplitresult-colleciton-value");
             }
         };
     }

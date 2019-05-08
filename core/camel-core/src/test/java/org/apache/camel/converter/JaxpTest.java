@@ -27,10 +27,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import org.apache.camel.TypeConverter;
-import org.apache.camel.impl.DefaultClassResolver;
-import org.apache.camel.impl.DefaultFactoryFinderResolver;
-import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.camel.impl.engine.DefaultClassResolver;
+import org.apache.camel.impl.engine.DefaultFactoryFinderResolver;
+import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ReflectionInjector;
 import org.junit.Assert;

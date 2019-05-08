@@ -33,7 +33,7 @@ public class BindyComplexCsvUnmarshallTest extends AbstractJUnit4SpringContextTe
 
     private static final Class<?> TYPE = org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order.class;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     private String record = "01,,Albert,Cartier,ISIN,BE12345678,SELL,,1500,EUR,08-01-2009\r\n" + "02,A1,,Preud'Homme,ISIN,XD12345678,BUY,,2500,USD,08-01-2009\r\n"
@@ -45,7 +45,7 @@ public class BindyComplexCsvUnmarshallTest extends AbstractJUnit4SpringContextTe
 
     private String singleRecord = "01,,Albert,Cartier,ISIN,BE12345678,SELL,,1500,EUR,08-01-2009";
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
 
     @Test

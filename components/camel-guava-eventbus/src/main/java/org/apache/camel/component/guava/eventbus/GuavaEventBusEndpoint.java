@@ -63,11 +63,6 @@ public class GuavaEventBusEndpoint extends DefaultEndpoint implements MultipleCo
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public boolean isMultipleConsumersSupported() {
         return true;
     }

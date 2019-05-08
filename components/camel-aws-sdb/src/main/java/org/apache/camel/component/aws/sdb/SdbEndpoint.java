@@ -67,10 +67,6 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
         return new SdbProducer(this);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     public void doStart() throws Exception {
         super.doStart();

@@ -29,7 +29,7 @@ public class FluentProduceTemplateTest extends SpringRunWithTestSupport {
     @Autowired
     protected FluentProducerTemplate producer;
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint result;
 
     @Test

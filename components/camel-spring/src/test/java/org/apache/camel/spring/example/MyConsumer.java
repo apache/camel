@@ -28,10 +28,10 @@ import org.slf4j.LoggerFactory;
  */
 public class MyConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(MyConsumer.class);
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private ProducerTemplate destination;
 
-    @Consume(uri = "direct:start")
+    @Consume("direct:start")
     public void doSomething(String body) {
         ObjectHelper.notNull(destination, "destination");
 

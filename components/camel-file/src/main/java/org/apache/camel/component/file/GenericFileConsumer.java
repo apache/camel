@@ -716,18 +716,18 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
     @Override
     public void onInit() throws Exception {
-        // noop as we do a manual on-demand poll with GenericFilePolllingConsumer
+        // noop as we do a manual on-demand poll with GenericFilePollingConsumer
     }
 
     @Override
     public long beforePoll(long timeout) throws Exception {
-        // noop as we do a manual on-demand poll with GenericFilePolllingConsumer
+        // noop as we do a manual on-demand poll with GenericFilePollingConsumer
         return timeout;
     }
 
     @Override
     public void afterPoll() throws Exception {
-        // noop as we do a manual on-demand poll with GenericFilePolllingConsumer
+        // noop as we do a manual on-demand poll with GenericFilePollingConsumer
     }
 
 }

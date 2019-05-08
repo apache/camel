@@ -38,7 +38,7 @@ import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.join;
  * Spring DSL.
  */
 public final class UniVocityCsvDataFormatUnmarshalTest extends CamelTestSupport {
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     MockEndpoint result;
 
     /**

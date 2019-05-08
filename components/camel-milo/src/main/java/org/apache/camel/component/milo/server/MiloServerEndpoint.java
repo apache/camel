@@ -72,11 +72,6 @@ public class MiloServerEndpoint extends DefaultEndpoint {
         return new MiloServerConsumer(this, processor, this.item);
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     /**
      * ID of the item
      *

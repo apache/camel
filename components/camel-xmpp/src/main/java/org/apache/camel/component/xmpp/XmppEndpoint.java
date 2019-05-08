@@ -155,10 +155,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return "xmpp://" + host + ":" + port + "/" + getParticipant() + "?serviceName=" + serviceName;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public synchronized XMPPTCPConnection createConnection() throws InterruptedException, IOException, SmackException, XMPPException {
         if (connection != null && connection.isConnected()) {
             // use existing working connection

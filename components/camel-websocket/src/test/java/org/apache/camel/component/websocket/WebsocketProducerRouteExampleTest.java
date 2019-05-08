@@ -42,7 +42,7 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
     private static CountDownLatch latch;
     protected int port;
 
-    @Produce(uri = "direct:shop")
+    @Produce("direct:shop")
     private ProducerTemplate producer;
 
     @Override

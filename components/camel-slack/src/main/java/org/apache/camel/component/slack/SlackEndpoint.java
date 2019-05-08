@@ -85,11 +85,6 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
         return consumer;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     /**
      * The incoming webhook URL
      */

@@ -31,10 +31,10 @@ import org.junit.Test;
 // tag::example[]
 public class FilterFluentTemplateTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected FluentProducerTemplate fluentTemplate;
 
     @Override

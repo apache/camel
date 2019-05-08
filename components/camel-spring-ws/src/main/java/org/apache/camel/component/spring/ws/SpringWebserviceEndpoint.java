@@ -53,10 +53,6 @@ public class SpringWebserviceEndpoint extends DefaultEndpoint {
         return new SpringWebserviceProducer(this);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public SpringWebserviceConfiguration getConfiguration() {
         return configuration;
     }

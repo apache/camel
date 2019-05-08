@@ -26,7 +26,7 @@
 
     <bean id="myProcessor" class="org.apache.camel.processor.ShutdownCompleteAllTasksTest$MyProcessor"/>
 
-    <bean id="shutdown" class="org.apache.camel.impl.DefaultShutdownStrategy">
+    <bean id="shutdown" class="org.apache.camel.impl.engine.DefaultShutdownStrategy">
         <!-- give it 30 sec to shutdown -->
         <property name="timeout" value="30"/>
     </bean>

@@ -35,7 +35,7 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
-import org.apache.camel.impl.DefaultCamelContextNameStrategy;
+import org.apache.camel.impl.engine.DefaultCamelContextNameStrategy;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spring.CamelBeanPostProcessor;
@@ -154,28 +154,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         parserMap.put("errorHandler", errorHandlerParser);
 
         // camel context
-        boolean osgi = false;
         Class<?> cl = CamelContextFactoryBean.class;
-        // These code will try to detected if we are in the OSGi environment.
-        // If so, camel will use the OSGi version of CamelContextFactoryBean to create the CamelContext.
-        try {
-            // Try to load the BundleActivator first
-            Class.forName("org.osgi.framework.BundleActivator");
-            Class<?> c = Class.forName("org.apache.camel.osgi.Activator");
-            Method mth = c.getDeclaredMethod("getBundle");
-            Object bundle = mth.invoke(null);
-            if (bundle != null) {
-                cl = Class.forName("org.apache.camel.osgi.CamelContextFactoryBean");
-                osgi = true;
-            }
-        } catch (Throwable t) {
-            // not running with camel-core-osgi so we fallback to the regular factory bean
-            LOG.trace("Cannot find class so assuming not running in OSGi container: {}", t.getMessage());
-        }
-        if (osgi) {
-            LOG.info("OSGi environment detected.");
-        } 
-        LOG.debug("Using {} as CamelContextBeanDefinitionParser", cl.getCanonicalName());
         registerParser("camelContext", new CamelContextBeanDefinitionParser(cl));
     }
 

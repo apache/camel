@@ -40,10 +40,10 @@ public class MonitorItemTest extends AbstractMiloServerTest {
 
     private static final String MOCK_TEST_1 = "mock:test1";
 
-    @EndpointInject(uri = MOCK_TEST_1)
+    @EndpointInject(MOCK_TEST_1)
     protected MockEndpoint test1Endpoint;
 
-    @Produce(uri = DIRECT_START_1)
+    @Produce(DIRECT_START_1)
     protected ProducerTemplate producer1;
 
     @Override

@@ -29,7 +29,7 @@ public class ProduceTemplateWithTwoCamelContextTest extends SpringRunWithTestSup
     @Autowired
     protected ProducerTemplate producer;
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint result;
 
     @Test

@@ -116,7 +116,7 @@ camel routes without them knowing
 * link:route-policy.adoc[RoutePolicy]
 * link:routes.adoc[Routes]
 * link:servicepool.adoc[ServicePool]
-* Stream caching
+* link:stream-caching.adoc[Stream caching]
 * link:threading-model.adoc[Threading Model]
 * ToAsync
 * Tracer

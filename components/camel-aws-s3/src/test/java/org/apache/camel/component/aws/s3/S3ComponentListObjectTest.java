@@ -33,10 +33,10 @@ public class S3ComponentListObjectTest extends CamelTestSupport {
     @BindToRegistry("amazonS3Client")
     AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
     
-    @EndpointInject(uri = "direct:listBuckets")
+    @EndpointInject("direct:listBuckets")
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
     @Test

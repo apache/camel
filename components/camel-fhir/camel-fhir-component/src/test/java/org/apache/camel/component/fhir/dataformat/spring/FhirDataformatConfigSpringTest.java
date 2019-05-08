@@ -24,7 +24,7 @@ import ca.uhn.fhir.context.ParserOptions;
 import ca.uhn.fhir.parser.LenientErrorHandler;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.fhir.FhirDataFormat;
-import org.apache.camel.model.dataformat.FhirDataformat;
+import org.apache.camel.reifier.dataformat.DataFormatReifier;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.hl7.fhir.dstu3.model.IdType;
 import org.junit.Before;
@@ -86,7 +86,7 @@ public class FhirDataformatConfigSpringTest extends CamelSpringTestSupport {
 
     private FhirDataFormat getDataformat(String name) {
         CamelContext camelContext = context();
-        return (FhirDataFormat) ((FhirDataformat) camelContext.getRegistry().lookupByName(name)).getDataFormat();
+        return (FhirDataFormat) DataFormatReifier.getDataFormat(camelContext, null, name);
     }
 
     @Override

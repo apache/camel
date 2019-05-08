@@ -127,10 +127,6 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public JdbcTemplate getJdbcTemplate() {
         return jdbcTemplate;
     }

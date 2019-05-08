@@ -25,7 +25,7 @@ import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.processor.ErrorHandlerSupport;
+import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.PredicateAssertHelper;
 import org.junit.After;

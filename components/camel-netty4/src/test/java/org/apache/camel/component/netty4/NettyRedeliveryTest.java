@@ -56,10 +56,10 @@ public class NettyRedeliveryTest extends CamelTestSupport {
 
     private ExecutorService listener = Executors.newSingleThreadExecutor();
 
-    @EndpointInject(uri = "mock:exception")
+    @EndpointInject("mock:exception")
     private MockEndpoint exception;
 
-    @EndpointInject(uri = "mock:downstream")
+    @EndpointInject("mock:downstream")
     private MockEndpoint downstream;
 
     private Deque<Object> tasks = new LinkedBlockingDeque<>();

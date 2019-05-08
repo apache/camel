@@ -39,7 +39,7 @@
         <route>
             <from uri="direct:start" />
             <to
-                uri="crypto-cms:sign://testsign?signer=#signer1&amp;signer=#signer2&amp;includeContent=true" />
+                uri="crypto-cms:sign://testsign?signer=#signer1,signer=#signer2&amp;includeContent=true" />
             <to
                 uri="crypto-cms:encrypt://testencrpyt?toBase64=true&amp;recipient=#recipient1&amp;contentEncryptionAlgorithm=DESede/CBC/PKCS5Padding&amp;secretKeyLength=128" />
             <to

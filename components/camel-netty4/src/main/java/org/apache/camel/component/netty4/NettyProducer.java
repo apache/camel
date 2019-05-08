@@ -76,11 +76,6 @@ public class NettyProducer extends DefaultAsyncProducer {
         return (NettyEndpoint) super.getEndpoint();
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public CamelContext getContext() {
         return context;
     }

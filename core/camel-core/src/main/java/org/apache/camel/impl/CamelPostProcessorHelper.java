@@ -19,8 +19,6 @@ package org.apache.camel.impl;
 import java.lang.reflect.Method;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consume;
@@ -38,9 +36,11 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ProxyInstantiationException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
-import org.apache.camel.builder.DefaultFluentProducerTemplate;
-import org.apache.camel.component.bean.ProxyHelper;
-import org.apache.camel.processor.DeferServiceFactory;
+import org.apache.camel.impl.engine.DefaultConsumerTemplate;
+import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
+import org.apache.camel.impl.engine.DefaultProducerTemplate;
+import org.apache.camel.impl.engine.SubscribeMethodProcessor;
+import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.service.ServiceHelper;
@@ -58,7 +58,6 @@ public class CamelPostProcessorHelper implements CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelPostProcessorHelper.class);
 
-    @XmlTransient
     private CamelContext camelContext;
 
     public CamelPostProcessorHelper() {
@@ -230,6 +229,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
      * {@link org.apache.camel.EndpointInject} or
      * {@link org.apache.camel.Produce} injection point
      */
+    @SuppressWarnings("unchecked")
     public Object getInjectionValue(Class<?> type, String endpointUri, String endpointProperty,
             String injectionPointName, Object bean, String beanName, boolean binding) {
         if (type.isAssignableFrom(ProducerTemplate.class)) {
@@ -250,7 +250,12 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                 } else if (type.isInterface()) {
                     // lets create a proxy
                     try {
-                        return ProxyHelper.createProxy(endpoint, binding, type);
+                        // use proxy service
+                        BeanProxyFactory factory = endpoint.getCamelContext().getBeanProxyFactory();
+                        if (factory == null) {
+                            throw new IllegalArgumentException("Cannot find BeanProxyFactory. Make sure camel-bean is on the classpath.");
+                        }
+                        return factory.createProxy(endpoint, binding, type);
                     } catch (Exception e) {
                         throw createProxyInstantiationRuntimeException(type, endpoint, e);
                     }
@@ -395,7 +400,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
      */
     protected Producer createInjectionProducer(Endpoint endpoint, Object bean, String beanName) {
         try {
-            return DeferServiceFactory.createProducer(endpoint);
+            return endpoint.getCamelContext().getDeferServiceFactory().createProducer(endpoint);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }

@@ -68,11 +68,6 @@ public class PulsarEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        return false;
-    }
-
-    @Override
     public Exchange createExchange() {
         return super.createExchange();
     }

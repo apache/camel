@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -66,11 +66,6 @@ public class JingEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("This endpoint does not support consumer");
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public String getResourceUri() {
         return resourceUri;
     }
