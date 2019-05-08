@@ -288,6 +288,7 @@
         <module>camel-slack</module>
         <module>camel-soap</module>
         <module>camel-solr</module>
+        <module>camel-soroush</module>
         <module>camel-spark</module>
         <module>camel-spark-rest</module>
         <module>camel-splunk</module>
