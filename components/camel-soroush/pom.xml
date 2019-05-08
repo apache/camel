@@ -28,7 +28,7 @@
 
     <artifactId>camel-soroush</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: SoroushBot</name>
+    <name>Camel :: Soroush</name>
     <description>Camel Soroush Support</description>
 
     <dependencies>
