@@ -291,7 +291,7 @@
 * xref:snmp-component.adoc[SNMP Component]
 * xref:soapjaxb-dataformat.adoc[SOAP DataFormat]
 * xref:solr-component.adoc[Solr Component]
-* xref:soroush-component.adoc[Soroush Component]
+* xref:soroush-component.adoc[SoroushBot Component]
 * xref:spark-rest-component.adoc[Spark Rest Component]
 * xref:spark-component.adoc[Apache Spark Component]
 * xref:splunk-component.adoc[Splunk Component]
