@@ -16,6 +16,7 @@ There are many ways you can help make Camel a better piece of software - please 
 - [If you find a bug or problem](#if-you-find-a-bug-or-problem)
 - [Working on the code](#working-on-the-code)
 - [Running checkstyle](#running-checkstyle)
+- [Checking Karaf and Spring Boot Integration Tests](#checking-karaf-and-spring-boot-integration-tests)
 - [Apache Camel committers should work on the ASF git repo](#apache-camel-committers-should-work-on-the—asf-git-repo)
 - [Creating patches](#creating-patches)
 - [Pull request at Github](#pull-request-at-github)
