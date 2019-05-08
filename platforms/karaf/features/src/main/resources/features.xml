@@ -2258,6 +2258,11 @@
     <bundle dependency='true'>mvn:org.glassfish.jersey.ext/jersey-entity-filtering/${jersey-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson2-version}</bundle>
 
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.okhttp/${okclient-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.okio/${squareup-okio-bundle-version}</bundle>
+
+    <bundle dependency='true'>wrap:mvn:com.squareup.okhttp3/okhttp-sse/${squareup-okhttp3-version}</bundle>
+
     <bundle dependency='true'>mvn:org.glassfish.jersey.inject/jersey-hk2/${jersey-version}</bundle>
     <bundle dependency='true'>mvn:org.glassfish.hk2/hk2-locator/${hk2-version}</bundle>
     <bundle dependency='true'>mvn:org.glassfish.hk2.external/aopalliance-repackaged/${hk2-version}</bundle>
