@@ -328,6 +328,7 @@
     <module>camel-snmp-starter</module>
     <module>camel-soap-starter</module>
     <module>camel-solr-starter</module>
+    <module>camel-soroush-starter</module>
     <module>camel-spark-starter</module>
     <module>camel-splunk-starter</module>
     <module>camel-spring-batch-starter</module>
