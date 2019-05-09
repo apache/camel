@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
 import org.apache.camel.component.netty4.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty4.NettyServerBootstrapFactory;
-import org.apache.camel.spi.ClassResolver;
 
 /**
  * A single interface to easily configure and setup a shared Netty HTTP server
