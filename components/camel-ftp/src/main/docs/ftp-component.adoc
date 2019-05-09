@@ -412,7 +412,7 @@ a timeout in millis to establish a network connection. An individual
 `soTimeout` can also be set on the FTP/FTPS, which corresponds to using
 `ftpClient.soTimeout`. Notice SFTP will automatically use
 `connectTimeout` as its `soTimeout`. The `timeout` option only applies
-for FTP/FTSP as the data timeout, which corresponds to the
+for FTP/FTPS as the data timeout, which corresponds to the
 `ftpClient.dataTimeout` value. All timeout values are in millis.
 
 === Using Local Work Directory
@@ -762,7 +762,7 @@ from("ftp://admin@localhost:21/nolist/?password=admin&stepwise=false&useList=fal
   .to("activemq:queue:report");
 ----
 
-Notice that we have use all the options we talked above above.
+Notice that we have used all the options we talked above.
 
 You can also use this with `ConsumerTemplate`. For example to download a
 single file (if it exists) and grab the file content as a String type:
