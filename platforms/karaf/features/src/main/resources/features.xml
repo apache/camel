@@ -810,7 +810,7 @@
   <feature name='camel-drill' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${spring-version-range}'>spring-jdbc</feature>
-	<bundle dependency='true'>wrap:mvn:org.apache.drill.exec/drill-jdbc-all/${apache-drill-version}</bundle>
+	<bundle dependency='true'>wrap:mvn:org.apache.drill.exec/drill-jdbc-all/${apache-drill-version}$Export-Package=org.apache.drill.*&amp;Import-Package=!org.apache.drill.*,!oadd.*&amp;Private-Package=oadd.*</bundle>
     <bundle>mvn:org.apache.camel/camel-drill/${project.version}</bundle>
   </feature>
   <feature name='camel-dozer' version='${project.version}' start-level='50'>

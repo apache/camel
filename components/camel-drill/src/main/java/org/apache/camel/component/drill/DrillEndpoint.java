@@ -21,11 +21,10 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import oadd.org.apache.commons.lang.StringUtils;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.drill.util.StringUtils;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
