@@ -18,10 +18,11 @@ package org.apache.camel.component.yammer;
 
 import java.net.URLEncoder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.yammer.model.Messages;
 import org.apache.camel.support.DefaultProducer;
-import org.codehaus.jackson.map.ObjectMapper;
 
 public class YammerMessageProducer extends DefaultProducer {
 

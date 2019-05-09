@@ -19,11 +19,12 @@ package org.apache.camel.component.yammer;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.yammer.model.User;
 import org.apache.camel.support.ScheduledPollConsumer;
-import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * A Yammer consumer that periodically polls messages from Yammer's user API.
