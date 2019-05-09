@@ -359,6 +359,16 @@
                     </executions>
                 </plugin>
 
+                <plugin>
+                    <artifactId>maven-invoker-plugin</artifactId>
+                    <configuration>
+                        <skipInstallation>${invoker.skip}</skipInstallation>
+                        <skipInvocation>${invoker.skip}</skipInvocation>
+                        <mavenOpts>-Xmx64m -XshowSettings</mavenOpts>
+                        <showVersion>true</showVersion>
+                    </configuration>
+                </plugin>
+
             </plugins>
         </pluginManagement>
     </build>
