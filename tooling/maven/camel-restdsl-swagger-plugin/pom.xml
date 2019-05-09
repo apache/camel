@@ -98,8 +98,6 @@
                     <postBuildHookScript>verify</postBuildHookScript>
                     <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                     <settingsFile>src/it/settings.xml</settingsFile>
-                    <skipInstallation>${invoker.skip}</skipInstallation>
-                    <skipInvocation>${invoker.skip}</skipInvocation>
                     <goals>
                         <goal>clean</goal>
                         <goal>verify</goal>
@@ -108,6 +106,7 @@
                 <executions>
                     <execution>
                         <id>integration-test</id>
+                        <phase>integration-test</phase>
                         <goals>
                             <goal>install</goal>
                             <goal>integration-test</goal>
