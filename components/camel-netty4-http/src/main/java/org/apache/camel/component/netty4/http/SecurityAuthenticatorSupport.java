@@ -18,7 +18,6 @@ package org.apache.camel.component.netty4.http;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Iterator;
 import java.util.Locale;
 
 import javax.security.auth.Subject;
