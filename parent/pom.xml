@@ -654,7 +654,6 @@
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>2.7.5</squareup-okhttp-version>
         <squareup-okhttp-bundle-version>2.7.5_1</squareup-okhttp-bundle-version>
-        <squareup-okhttp3-version>3.14.1</squareup-okhttp3-version>
         <squareup-okio-bundle-version>1.15.0_1</squareup-okio-bundle-version>
         <squareup-retrofit-bundle-version>1.9.0_1</squareup-retrofit-bundle-version>
         <squareup-retrofit2-bundle-version>2.4.0_1</squareup-retrofit2-bundle-version>
