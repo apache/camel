@@ -62,6 +62,7 @@ import com.github.dockerjava.api.command.LogContainerCmd;
 import com.github.dockerjava.api.command.LogSwarmObjectCmd;
 import com.github.dockerjava.api.command.PauseContainerCmd;
 import com.github.dockerjava.api.command.PingCmd;
+import com.github.dockerjava.api.command.PruneCmd.Exec;
 import com.github.dockerjava.api.command.PullImageCmd;
 import com.github.dockerjava.api.command.PushImageCmd;
 import com.github.dockerjava.api.command.RemoveContainerCmd;
@@ -450,4 +451,9 @@ public class FakeDockerCmdExecFactory implements DockerCmdExecFactory {
     public void close() throws IOException {
         // Noop
     }
+
+	@Override
+	public Exec pruneCmdExec() {
+		return null;
+	}
 }
