@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.weather.geolocation;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.camel.component.weather.WeatherComponent;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.notNull;
