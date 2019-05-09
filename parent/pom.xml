@@ -625,8 +625,8 @@
         <spark-rest-version>2.8.0</spark-rest-version>
         <spark-rest-bundle-version>2.8.0_1</spark-rest-bundle-version>
         <splunk-version>1.6.5.0_1</splunk-version>
-        <spring-batch-version>4.1.1.RELEASE</spring-batch-version>
-        <spring-batch-bundle-version>4.1.1.RELEASE_1</spring-batch-bundle-version>
+        <spring-batch-version>4.1.2.RELEASE</spring-batch-version>
+        <spring-batch-bundle-version>4.1.2.RELEASE_1</spring-batch-bundle-version>
         <spring-boot-version>2.1.4.RELEASE</spring-boot-version>
         <spring-cloud-commons-version>2.0.2.RELEASE</spring-cloud-commons-version>
         <spring-cloud-consul-version>2.0.2.RELEASE</spring-cloud-consul-version>
