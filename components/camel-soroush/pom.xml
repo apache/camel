@@ -39,7 +39,7 @@
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp-sse</artifactId>
-            <version>${squareup-okhttp3-version}</version>
+            <version>${okclient-version}</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
