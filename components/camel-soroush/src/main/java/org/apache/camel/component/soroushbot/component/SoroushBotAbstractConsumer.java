@@ -84,9 +84,9 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
                 .build();
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(endpoint.connectionTimeout, TimeUnit.MILLISECONDS)
-                .writeTimeout(Duration.ZERO)
-                .readTimeout(Duration.ZERO)
-                .callTimeout(Duration.ZERO).build();
+                .writeTimeout(0L, TimeUnit.MILLISECONDS)
+                .readTimeout(0L, TimeUnit.MILLISECONDS)
+                .build();
         connection = new ReconnectableEventSourceListener(client, request, endpoint.maxConnectionRetry) {
             @Override
             protected boolean onBeforeConnect() {
