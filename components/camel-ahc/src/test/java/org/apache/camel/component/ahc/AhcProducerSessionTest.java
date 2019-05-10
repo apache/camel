@@ -42,7 +42,7 @@ public class AhcProducerSessionTest extends BaseAhcTest {
     AsyncHttpClientConfig noCookieConfig = (new DefaultAsyncHttpClientConfig.Builder()).setCookieStore(null).build();
 
     @BindToRegistry("defaultConfig")
-    AsyncHttpClientConfig defaultConfig = (new DefaultAsyncHttpClientConfig.Builder()).build());
+    AsyncHttpClientConfig defaultConfig = (new DefaultAsyncHttpClientConfig.Builder()).build();
 
     @Test
     public void testProducerNoSession() throws Exception {
