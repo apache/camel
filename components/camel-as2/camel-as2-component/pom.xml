@@ -35,6 +35,8 @@
     <componentName>AS2</componentName>
     <componentPackage>org.apache.camel.component.as2</componentPackage>
     <outPackage>org.apache.camel.component.as2.internal</outPackage>
+    <camel.osgi.export.pkg>org.apache.camel.component.as2</camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=as2</camel.osgi.export.service>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
@@ -110,33 +112,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-      </plugin>
-
-      <!-- to generate the MANIFEST-FILE of the bundle -->
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <version>3.2.0</version>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <Bundle-Name>Camel Component for ${componentName}</Bundle-Name>
-            <Bundle-SymbolicName>org.apache.camel.camel-as2</Bundle-SymbolicName>
-            <Export-Service>org.apache.camel.spi.ComponentResolver;component=${schemeName}</Export-Service>
-            <Export-Package>${componentPackage};version=${project.version}</Export-Package>
-            <Import-Package>
-              ${componentPackage}.api;version=${project.version},
-              ${componentPackage};version=${project.version},
-              org.apache.camel.*;version=2.18.3
-            </Import-Package>
-            <Private-Package>${outPackage}</Private-Package>
-            <Implementation-Title>Apache Camel</Implementation-Title>
-            <Implementation-Version>${project.version}</Implementation-Version>
-            <Karaf-Info>Camel;${project.artifactId}=${project.version}</Karaf-Info>
-            <_versionpolicy>[$(version;==;$(@)),$(version;+;$(@)))</_versionpolicy>
-            <_failok>false</_failok>
-          </instructions>
-        </configuration>
       </plugin>
 
       <!-- generate Component source and test source -->
