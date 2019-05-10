@@ -59,7 +59,7 @@ public class ZipDeflaterDataFormatFileDeleteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/data/zip?initialDelay=0&delay=10&delete=true")
-                    .marshal().zipDefalter()
+                    .marshal().zipDeflater()
                     .to("file:target/data/zip/out?fileName=${file:name}.zip")
                     .to("mock:result");
             }
