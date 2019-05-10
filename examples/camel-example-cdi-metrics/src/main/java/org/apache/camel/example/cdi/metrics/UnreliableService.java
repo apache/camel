@@ -21,13 +21,15 @@ import javax.enterprise.context.ApplicationScoped;
 import com.codahale.metrics.annotation.Metered;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
+import java.util.Random;
 
 @ApplicationScoped
 public class UnreliableService {
 
     @Metered
     public void attempt(Exchange exchange) {
-        if (Math.random() < 0.5) {
+	Random rand = new Random();
+        if (rand.nextDouble() < 0.5) {
             throw new RuntimeExchangeException("Random failure", exchange);
         }
     }
