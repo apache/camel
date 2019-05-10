@@ -72,7 +72,7 @@ public class ZipDeflaterDataFormatTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal().zipDefalter(Deflater.BEST_COMPRESSION)
+                    .marshal().zipDeflater(Deflater.BEST_COMPRESSION)
                     .process(new ZippedMessageProcessor());
             }
         });
@@ -86,7 +86,7 @@ public class ZipDeflaterDataFormatTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal().zipDefalter(Deflater.BEST_SPEED)
+                    .marshal().zipDeflater(Deflater.BEST_SPEED)
                     .process(new ZippedMessageProcessor());
             }
         });
@@ -101,7 +101,7 @@ public class ZipDeflaterDataFormatTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal().zipDefalter(Deflater.DEFAULT_COMPRESSION)
+                    .marshal().zipDeflater(Deflater.DEFAULT_COMPRESSION)
                     .process(new ZippedMessageProcessor());
             }
         });
@@ -115,8 +115,8 @@ public class ZipDeflaterDataFormatTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal().zipDefalter()
-                    .unmarshal().zipDefalter()
+                    .marshal().zipDeflater()
+                    .unmarshal().zipDeflater()
                     .to("mock:result");
             }
         });
@@ -136,8 +136,8 @@ public class ZipDeflaterDataFormatTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                     .streamCaching()
-                    .marshal().zipDefalter()
-                    .unmarshal().zipDefalter()
+                    .marshal().zipDeflater()
+                    .unmarshal().zipDeflater()
                     .to("mock:result");
             }
         });
