@@ -56,7 +56,7 @@ We have also modularized many of the core components and moved them out of `came
 - camel-vm
 - camel-xpath
 - camel-xslt
-- camel-zip-defalter
+- camel-zip-deflater
 
 
 Migrating custom components
