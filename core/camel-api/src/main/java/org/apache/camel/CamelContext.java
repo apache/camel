@@ -763,9 +763,9 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param text the text such as an endpoint uri or the likes
      * @return the text with resolved property placeholders
-     * @throws Exception is thrown if property placeholders was used and there was an error resolving them
+     * @throws IllegalArgumentException is thrown if property placeholders was used and there was an error resolving them
      */
-    String resolvePropertyPlaceholders(String text) throws Exception;
+    String resolvePropertyPlaceholders(String text);
     
     /**
      * Returns the configured property placeholder prefix token if and only if the CamelContext has

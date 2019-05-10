@@ -460,9 +460,9 @@ public final class CamelContextHelper {
      * @param camelContext the camel context
      * @param text  the text
      * @return the boolean vale, or <tt>null</tt> if the text was <tt>null</tt>
-     * @throws Exception is thrown if illegal argument or type conversion not possible
+     * @throws IllegalArgumentException is thrown if illegal argument or type conversion not possible
      */
-    public static Boolean parseBoolean(CamelContext camelContext, String text) throws Exception {
+    public static Boolean parseBoolean(CamelContext camelContext, String text) {
         // ensure we support property placeholders
         String s = camelContext.resolvePropertyPlaceholders(text);
         if (s != null) {

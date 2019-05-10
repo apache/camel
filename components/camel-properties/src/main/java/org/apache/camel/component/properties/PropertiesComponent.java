@@ -172,11 +172,11 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         return answer;
     }
 
-    public String parseUri(String uri) throws Exception {
+    public String parseUri(String uri) {
         return parseUri(uri, locations);
     }
 
-    public String parseUri(String uri, String... locations) throws Exception {
+    public String parseUri(String uri, String... locations) {
         return parseUri(
             uri,
             locations != null
@@ -184,18 +184,18 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
                 : Collections.emptyList());
     }
 
-    public Properties loadProperties() throws Exception {
+    public Properties loadProperties() {
         return doLoadProperties(locations);
     }
 
-    public Properties loadProperties(String... locations) throws Exception {
+    public Properties loadProperties(String... locations) {
         if (locations != null) {
             return doLoadProperties(Arrays.stream(locations).map(PropertiesLocation::new).collect(Collectors.toList()));
         }
         return new Properties();
     }
 
-    protected Properties doLoadProperties(List<PropertiesLocation> paths) throws Exception {
+    protected Properties doLoadProperties(List<PropertiesLocation> paths) {
         Properties prop = new Properties();
 
         // use initial properties
@@ -233,7 +233,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         return prop;
     }
 
-    protected String parseUri(String uri, List<PropertiesLocation> paths) throws Exception {
+    protected String parseUri(String uri, List<PropertiesLocation> paths) {
         Properties prop = doLoadProperties(paths);
 
         // enclose tokens if missing

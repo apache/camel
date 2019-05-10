@@ -1546,7 +1546,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         }
     }
 
-    public String resolvePropertyPlaceholders(String text) throws Exception {
+    public String resolvePropertyPlaceholders(String text) {
         // While it is more efficient to only do the lookup if we are sure we
         // need the component,
         // with custom tokens, we cannot know if the URI contains a property or

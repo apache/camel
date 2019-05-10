@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.IOHelper;
 
 /**
@@ -45,7 +46,7 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
         this.propertiesComponent = propertiesComponent;
     }
 
-    public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations) throws Exception {
+    public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations) {
         Properties answer = new Properties();
         Properties prop;
 
@@ -74,7 +75,7 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
         return answer;
     }
 
-    protected Properties loadPropertiesFromFilePath(CamelContext context, boolean ignoreMissingLocation, PropertiesLocation location) throws IOException {
+    protected Properties loadPropertiesFromFilePath(CamelContext context, boolean ignoreMissingLocation, PropertiesLocation location) {
         Properties answer = new Properties();
         String path = location.getPath();
 
@@ -90,8 +91,10 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
             }
         } catch (FileNotFoundException e) {
             if (!ignoreMissingLocation && !location.isOptional()) {
-                throw e;
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
+        } catch (IOException e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } finally {
             IOHelper.close(reader, is);
         }
@@ -99,7 +102,7 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
         return answer;
     }
 
-    protected Properties loadPropertiesFromClasspath(CamelContext context, boolean ignoreMissingLocation, PropertiesLocation location) throws IOException {
+    protected Properties loadPropertiesFromClasspath(CamelContext context, boolean ignoreMissingLocation, PropertiesLocation location) {
         Properties answer = new Properties();
         String path = location.getPath();
 
@@ -107,7 +110,7 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
         Reader reader = null;
         if (is == null) {
             if (!ignoreMissingLocation && !location.isOptional()) {
-                throw new FileNotFoundException("Properties file " + path + " not found in classpath");
+                throw RuntimeCamelException.wrapRuntimeCamelException(new FileNotFoundException("Properties file " + path + " not found in classpath"));
             }
         } else {
             try {
@@ -117,6 +120,8 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
                 } else {
                     answer.load(is);
                 }
+            } catch (IOException e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             } finally {
                 IOHelper.close(reader, is);
             }
@@ -125,7 +130,7 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected Properties loadPropertiesFromRegistry(CamelContext context, boolean ignoreMissingLocation, PropertiesLocation location) throws IOException {
+    protected Properties loadPropertiesFromRegistry(CamelContext context, boolean ignoreMissingLocation, PropertiesLocation location) {
         String path = location.getPath();
         Properties answer;
         try {
@@ -137,7 +142,7 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
             answer.putAll(map);
         }
         if (answer == null && (!ignoreMissingLocation && !location.isOptional())) {
-            throw new FileNotFoundException("Properties " + path + " not found in registry");
+            throw RuntimeCamelException.wrapRuntimeCamelException(new FileNotFoundException("Properties " + path + " not found in registry"));
         }
         return answer != null ? answer : new Properties();
     }

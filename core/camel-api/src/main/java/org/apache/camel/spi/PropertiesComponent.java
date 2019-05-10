@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spi;
 
+import java.io.IOError;
 import java.util.Properties;
 
 import org.apache.camel.Component;
@@ -46,9 +47,9 @@ public interface PropertiesComponent extends Component {
      *
      * @param uri  input text
      * @return text with resolved property placeholders
-     * @throws Exception is thrown if error during parsing
+     * @throws IllegalArgumentException is thrown if error during parsing
      */
-    String parseUri(String uri) throws Exception;
+    String parseUri(String uri);
 
     /**
      * Parses the input text and resolve all property placeholders.
@@ -56,26 +57,26 @@ public interface PropertiesComponent extends Component {
      * @param uri  input text
      * @param locations locations to load as properties (will not use the default locations)
      * @return text with resolved property placeholders
-     * @throws Exception is thrown if error during parsing
+     * @throws IllegalArgumentException is thrown if error during parsing
      */
-    String parseUri(String uri, String... locations) throws Exception;
+    String parseUri(String uri, String... locations);
 
     /**
      * Loads the properties from the default locations.
      *
      * @return the properties loaded.
-     * @throws Exception is thrown if error loading properties
+     * @throws IOError is thrown if error loading properties
      */
-    Properties loadProperties() throws Exception;
+    Properties loadProperties();
 
     /**
      * Loads the properties from the given locations
      *
      * @param locations locations to load as properties (will not use the default locations)
      * @return the properties loaded.
-     * @throws Exception is thrown if error loading properties
+     * @throws IOError is thrown if error loading properties
      */
-    Properties loadProperties(String... locations) throws Exception;
+    Properties loadProperties(String... locations);
 
     /**
      * A list of locations to load properties. You can use comma to separate multiple locations.
