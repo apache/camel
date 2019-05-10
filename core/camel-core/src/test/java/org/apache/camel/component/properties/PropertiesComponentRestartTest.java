@@ -51,7 +51,7 @@ public class PropertiesComponentRestartTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         final PropertiesComponent pc = new PropertiesComponent("classpath:org/apache/camel/component/properties/myproperties.properties");
         pc.setPropertiesResolver(new PropertiesResolver() {
-            public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations) throws Exception {
+            public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations) {
                 resolvedCount++;
                 return new DefaultPropertiesResolver(pc).resolveProperties(context, ignoreMissingLocation, locations);
             }

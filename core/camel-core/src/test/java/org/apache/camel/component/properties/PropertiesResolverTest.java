@@ -63,7 +63,7 @@ public class PropertiesResolverTest extends ContextTestSupport {
 
     public static class MyCustomResolver implements PropertiesResolver {
 
-        public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations) throws Exception {
+        public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations) {
             Properties answer = new Properties();
             answer.put("foo", "mock:result");
             return answer;

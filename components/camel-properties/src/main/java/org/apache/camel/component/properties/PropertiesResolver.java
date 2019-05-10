@@ -35,7 +35,7 @@ public interface PropertiesResolver {
      * @param ignoreMissingLocation ignore silently if the property file is missing
      * @param locations location(s) defining the source(s)
      * @return the properties
-     * @throws Exception is thrown if resolving the properties failed
+     * @throws java.io.IOError is thrown if resolving the properties failed
      */
-    Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations) throws Exception;
+    Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations);
 }

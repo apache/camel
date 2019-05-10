@@ -73,7 +73,7 @@ public class CamelSpringPropertyPlaceholderConfigurer3Test extends SpringTestSup
     private static class MyBridgePropertyPlaceholderConfigurer extends BridgePropertyPlaceholderConfigurer {
 
         @Override
-        public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations) throws Exception {
+        public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations) {
             Properties answer = super.resolveProperties(context, ignoreMissingLocation, locations);
 
             // define the additional properties we need to provide so that the uri "direct:{{foo}}" by the "from" clause

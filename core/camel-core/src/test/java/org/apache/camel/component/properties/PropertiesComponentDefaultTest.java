@@ -17,10 +17,12 @@
 package org.apache.camel.component.properties;
 
 import java.io.FileNotFoundException;
+import java.io.IOError;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -56,7 +58,8 @@ public class PropertiesComponentDefaultTest extends ContextTestSupport {
             fail("Should throw exception");
         } catch (FailedToCreateRouteException e) {
             ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-            FileNotFoundException fnfe = assertIsInstanceOf(FileNotFoundException.class, cause.getCause());
+            RuntimeCamelException rce = assertIsInstanceOf(RuntimeCamelException.class, cause.getCause());
+            FileNotFoundException fnfe = assertIsInstanceOf(FileNotFoundException.class, rce.getCause());
             assertEquals("Properties file org/apache/camel/component/properties/unknown.properties not found in classpath", fnfe.getMessage());
         }
     }
