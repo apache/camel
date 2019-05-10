@@ -2009,8 +2009,8 @@
   </feature>
   <feature name='camel-pulsar' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>wrap:mvn:org.apache.pulsar/pulsar-client/${pulsar-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.apache.pulsar/pulsar-client-admin/${pulsar-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.pulsar-client/${pulsar-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.pulsar-client-admin/${pulsar-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-pulsar/${project.version}</bundle>
   </feature>
   <feature name='camel-quartz2' version='${project.version}' start-level='50'>
