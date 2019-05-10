@@ -452,8 +452,8 @@ public class FakeDockerCmdExecFactory implements DockerCmdExecFactory {
         // Noop
     }
 
-	@Override
-	public Exec pruneCmdExec() {
-		return null;
-	}
+    @Override
+    public Exec pruneCmdExec() {
+        return null;
+    }
 }
