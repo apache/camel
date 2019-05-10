@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.aggregate.jdbc;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,10 +36,12 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.AbstractLobCreatingPreparedStatementCallback;
+import org.springframework.jdbc.core.support.AbstractLobStreamingResultSetExtractor;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.jdbc.support.lob.LobCreator;
 import org.springframework.jdbc.support.lob.LobHandler;
@@ -48,6 +51,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.FileCopyUtils;
 
 /**
  * JDBC based {@link org.apache.camel.spi.AggregationRepository}
@@ -285,10 +289,16 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         return transactionTemplateReadOnly.execute(new TransactionCallback<Exchange>() {
             public Exchange doInTransaction(TransactionStatus status) {
                 try {
-                    final byte[] data = jdbcTemplate.queryForObject(
-                            "SELECT " + EXCHANGE + " FROM " + repositoryName + " WHERE " + ID + " = ?",
-                            new Object[]{key}, byte[].class);
-                    return codec.unmarshallExchange(camelContext, data);
+                	String sql = "SELECT " + EXCHANGE + " FROM " + repositoryName + " WHERE " + ID + " = ?";
+                	ByteArrayOutputStream bis = new ByteArrayOutputStream();
+                	jdbcTemplate.query(sql, new Object[]{key},
+                	  new AbstractLobStreamingResultSetExtractor() {
+                	    @Override
+                	    protected void streamData(ResultSet rs) throws SQLException, IOException, DataAccessException {
+                	      FileCopyUtils.copy(getLobHandler().getBlobAsBinaryStream(rs, EXCHANGE), bis);                                                                     
+                	    }
+                	  });
+                	  return codec.unmarshallExchange(camelContext, bis.toByteArray());
                 } catch (EmptyResultDataAccessException ex) {
                     return null;
                 } catch (IOException ex) {
