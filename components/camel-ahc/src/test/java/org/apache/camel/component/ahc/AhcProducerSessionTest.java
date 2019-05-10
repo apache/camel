@@ -26,6 +26,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.http.common.cookie.ExchangeCookieHandler;
 import org.apache.camel.http.common.cookie.InstanceCookieHandler;
+import org.asynchttpclient.AsyncHttpClientConfig;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.junit.Test;
 
 public class AhcProducerSessionTest extends BaseAhcTest {
@@ -36,11 +38,33 @@ public class AhcProducerSessionTest extends BaseAhcTest {
     @BindToRegistry("exchangeCookieHandler")
     ExchangeCookieHandler exchangeCookieHandler = new ExchangeCookieHandler();
 
+    @BindToRegistry("noCookieConfig")
+    AsyncHttpClientConfig noCookieConfig = (new DefaultAsyncHttpClientConfig.Builder()).setCookieStore(null).build();
+
+    @BindToRegistry("defaultConfig")
+    AsyncHttpClientConfig defaultConfig = (new DefaultAsyncHttpClientConfig.Builder()).build());
+
     @Test
     public void testProducerNoSession() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("New New World", "New New World");
         template.sendBody("direct:start", "World");
         template.sendBody("direct:start", "World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testProducerNoSessionWithConfig() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("New New World", "New New World");
+        template.sendBody("direct:config", "World");
+        template.sendBody("direct:config", "World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testProducerSessionFromAhcClient() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Old New World", "Old Old World");
+        template.sendBody("direct:defaultconfig", "World");
+        template.sendBody("direct:defaultconfig", "World");
         assertMockEndpointsSatisfied();
     }
 
@@ -79,14 +103,24 @@ public class AhcProducerSessionTest extends BaseAhcTest {
                     .to("ahc:" + getTestServerEndpointSessionUrl())
                     .to("mock:result");
 
+                from("direct:config")
+                    .to("ahc:" + getTestServerEndpointSessionUrl() + "?clientConfig=#noCookieConfig")
+                    .to("ahc:" + getTestServerEndpointSessionUrl() + "?clientConfig=#noCookieConfig")
+                    .to("mock:result");
+
+                from("direct:defaultconfig")
+                    .to("ahc:" + getTestServerEndpointSessionUrl() + "?clientConfig=#defaultConfig")
+                    .to("ahc:" + getTestServerEndpointSessionUrl() + "?clientConfig=#defaultConfig")
+                    .to("mock:result");
+
                 from("direct:instance")
                     .to("ahc:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#instanceCookieHandler")
                     .to("ahc:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#instanceCookieHandler")
                     .to("mock:result");
 
                 from("direct:exchange")
-                    .to("ahc:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#exchangeCookieHandler")
-                    .to("ahc:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#exchangeCookieHandler")
+                    .to("ahc:" + getTestServerEndpointSessionUrl() + "?clientConfig=#noCookieConfig&cookieHandler=#exchangeCookieHandler")
+                    .to("ahc:" + getTestServerEndpointSessionUrl() + "?clientConfig=#noCookieConfig&cookieHandler=#exchangeCookieHandler")
                     .to("mock:result");
 
                 from(getTestServerEndpointSessionUri())

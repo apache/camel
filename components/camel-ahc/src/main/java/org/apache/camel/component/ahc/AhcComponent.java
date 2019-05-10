@@ -35,6 +35,8 @@ import org.asynchttpclient.AsyncHttpClientConfig;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.Realm;
 import org.asynchttpclient.Realm.Builder;
+import org.asynchttpclient.cookie.CookieStore;
+import org.asynchttpclient.cookie.ThreadSafeCookieStore;
 
 /**
  *  To call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>
@@ -240,6 +242,21 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
      */
     static DefaultAsyncHttpClientConfig.Builder cloneConfig(AsyncHttpClientConfig clientConfig) {
         DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder(clientConfig);
+        /*
+         * The builder creates a new ThreadSafeCookieStore and does not copy the
+         * one from clientConfig. This might be desired in case no explicit
+         * cookie store was set on the builder that built the clientConfig,
+         * because otherwise all endpoints sharing a configuration will also
+         * share the cookie store. On the other hand if someone explicitly
+         * configured a cookie store (or no cookie store) on the provided
+         * config, he likely intends to use it, so we create either a new
+         * default implementation or we keep the non default one (or the null
+         * value).
+         */
+        CookieStore cookieStore = clientConfig.getCookieStore();
+        if (!(cookieStore instanceof ThreadSafeCookieStore)) {
+            builder.setCookieStore(cookieStore);
+        }
         return builder;
     }
 }
