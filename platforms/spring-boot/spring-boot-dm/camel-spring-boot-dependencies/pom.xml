@@ -73,7 +73,7 @@
       <dependency>
         <groupId>com.alibaba</groupId>
         <artifactId>fastjson</artifactId>
-        <version>1.2.56</version>
+        <version>1.2.57</version>
       </dependency>
       <dependency>
         <groupId>com.cloudbees.thirdparty</groupId>
@@ -3663,7 +3663,7 @@
       <dependency>
         <groupId>org.knowm.xchange</groupId>
         <artifactId>xchange-core</artifactId>
-        <version>4.3.17</version>
+        <version>4.3.18</version>
       </dependency>
       <dependency>
         <groupId>org.mozilla</groupId>
