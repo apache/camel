@@ -16,9 +16,10 @@
  */
 package org.apache.camel.loanbroker;
 
+import java.util.Random;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import java.util.Random;
 
 //START SNIPPET: creditAgency
 public class CreditAgencyProcessor implements Processor {
@@ -26,7 +27,7 @@ public class CreditAgencyProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         String ssn = exchange.getIn().getHeader(Constants.PROPERTY_SSN, String.class);
         Random rand = new Random();
-	int score = (int) (rand.nextDouble() * 600 + 300);
+        int score = (int) (rand.nextDouble() * 600 + 300);
         int hlength = (int) (rand.nextDouble() * 19 + 1);
 
         exchange.getOut().setHeader(Constants.PROPERTY_SCORE, score);
