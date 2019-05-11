@@ -16,11 +16,12 @@
  */
 package org.apache.camel.loanbroker.bank;
 
+import java.util.Random;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.loanbroker.Constants;
 
-import java.util.Random;
 //START SNIPPET: bank
 public class BankProcessor implements Processor {
     private final String bankName;
@@ -35,7 +36,7 @@ public class BankProcessor implements Processor {
         String ssn = exchange.getIn().getHeader(Constants.PROPERTY_SSN, String.class);
         Integer historyLength = exchange.getIn().getHeader(Constants.PROPERTY_HISTORYLENGTH, Integer.class);
         Random rand = new Random();
-	double rate = primeRate + (double) (historyLength / 12) / 10 + (rand.nextDouble()  * 10) / 10;
+        double rate = primeRate + (double) (historyLength / 12) / 10 + (rand.nextDouble()  * 10) / 10;
 
         // set reply details as headers
         exchange.getOut().setHeader(Constants.PROPERTY_BANK, bankName);
