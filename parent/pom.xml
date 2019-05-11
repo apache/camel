@@ -567,7 +567,7 @@
         <pulsar-version>2.2.1</pulsar-version>
         <pulsar-bundle-version>2.2.1_1</pulsar-bundle-version>
         <qpid-broker-version>7.1.2</qpid-broker-version>
-        <qpid-proton-j-version>0.32.0</qpid-proton-j-version>
+        <qpid-proton-j-version>0.33.0</qpid-proton-j-version>
         <qpid-jms-client-version>0.42.0</qpid-jms-client-version>
         <quartz2-version>2.3.1</quartz2-version>
         <quickfixj-version>2.1.1</quickfixj-version>
