@@ -119,16 +119,14 @@ public class PropertiesComponentConfiguration
      */
     private String overrideProperties;
     /**
-     * Sets the system property (and environment variable) mode. The default
-     * mode (override) is to check system properties (and environment variables)
-     * first, before trying the specified properties. This allows system
-     * properties/environment variables to override any other property source.
+     * Sets the system property mode. The default mode (override) is to use
+     * system properties if present, and override any existing properties.
      */
     private Integer systemPropertiesMode = 2;
     /**
-     * Sets the OS environment variables mode. The default mode (fallback) is to
-     * check OS environment variables, if the property cannot be resolved from
-     * its sources first. This allows environment variables as fallback values.
+     * Sets the OS environment variables mode. The default mode (override) is to
+     * use OS environment variables if present, and override any existing
+     * properties.
      */
     private Integer environmentVariableMode = 1;
     /**

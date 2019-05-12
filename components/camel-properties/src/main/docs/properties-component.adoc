@@ -37,8 +37,8 @@ The Properties component supports 18 options, which are listed below.
 | *suffixToken* (advanced) | Sets the value of the suffix token used to identify properties to replace. Setting a value of null restores the default token (link DEFAULT_SUFFIX_TOKEN). | }} | String
 | *initialProperties* (advanced) | Sets initial properties which will be used before any locations are resolved. |  | Properties
 | *overrideProperties* (advanced) | Sets a special list of override properties that take precedence and will use first, if a property exist. |  | Properties
-| *systemPropertiesMode* (common) | Sets the system property (and environment variable) mode. The default mode (override) is to check system properties (and environment variables) first, before trying the specified properties. This allows system properties/environment variables to override any other property source. | 2 | int
-| *environmentVariableMode* (common) | Sets the OS environment variables mode. The default mode (fallback) is to check OS environment variables, if the property cannot be resolved from its sources first. This allows environment variables as fallback values. | 1 | int
+| *systemPropertiesMode* (common) | Sets the system property mode. The default mode (override) is to use system properties if present, and override any existing properties. | 2 | int
+| *environmentVariableMode* (common) | Sets the OS environment variables mode. The default mode (override) is to use OS environment variables if present, and override any existing properties. | 1 | int
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
@@ -508,9 +508,8 @@ as values which can either be used as override or fallback values.
 The default mode is that JVM system properties are in override mode, which means they
 are checked first.
 
-And as of Camel 3.0 then OS environment variables are in fallback mode as default mode,
-which means that if a property was not found then as a fallback the OS environment variables
-is checked as last.
+And as of Camel 3.0 then OS environment variables are in override mode as default mode,
+which means that if a OS environment variable exists, then it will be used.
 
 You can control these modes using the `systemPropertiesMode` and `environmentVariableMode`
 options on the properties component.
