@@ -979,7 +979,6 @@ public abstract class MainSupport extends ServiceSupport {
                 }
             }
 
-
             String stringValue = value != null ? value.toString() : null;
             boolean hit = false;
 
