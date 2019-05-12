@@ -91,6 +91,10 @@ The `test` component has been renamed to `dataset-test` and moved out of `camel-
 
 We have also renamed `camel-jetty9` to `camel-jetty`.
 
+### Properties component
+
+The properties component will now use OS environment variables as perferred value. This means you can set an OS environment variable which will override any property values that has been set in property files, JVM system properties etc. You can configure this with the `environmentVariableMode` option on the properties component.
+
 ### javax.script
 
 The `camel-script` component has been removed and there is no support for javax.script, which is also deprecated in the JDK and to be removed from Java 11 onwards.
