@@ -843,7 +843,7 @@ public abstract class MainSupport extends ServiceSupport {
 
         if (!properties.isEmpty()) {
             long total = properties.values().stream().mapToLong(Map::size).sum();
-            LOG.info("Auto configuring {} properties component from loaded properties: {}", properties.size(), total);
+            LOG.info("Auto configuring properties component from loaded properties: {}", total);
         }
 
         for (Object obj : properties.keySet()) {
@@ -863,6 +863,10 @@ public abstract class MainSupport extends ServiceSupport {
             if (key.startsWith("camel.component.") && dot > 0) {
                 // grab component name
                 String name = key.substring(16, dot);
+                // skip properties as its already configured earlier
+                if ("properties".equals(name)) {
+                    continue;
+                }
                 Component component = camelContext.getComponent(name);
                 // grab the value
                 String value = prop.getProperty(key);
