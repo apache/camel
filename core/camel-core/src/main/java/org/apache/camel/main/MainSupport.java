@@ -794,7 +794,12 @@ public abstract class MainSupport extends ServiceSupport {
             camelContext.getManagementStrategy().addEventNotifier(notifier);
         }
 
-        // try to load configurations
+        // need to eager allow to auto configure properties component
+        if (autoConfigurationEnabled) {
+            autoConfigurationPropertiesComponent(camelContext);
+        }
+
+        // try to load configuration classes
         loadConfigurations(camelContext);
 
         // conventional configuration via properties to allow configuring options on
@@ -814,6 +819,36 @@ public abstract class MainSupport extends ServiceSupport {
         // allow to do configuration before its started
         for (MainListener listener : listeners) {
             listener.configure(camelContext);
+        }
+    }
+
+    protected void autoConfigurationPropertiesComponent(CamelContext camelContext) throws Exception {
+        // load properties
+        Properties prop = camelContext.getPropertiesComponent().loadProperties();
+
+        Map<Object, Map<String, Object>> properties = new LinkedHashMap<>();
+
+        for (String key : prop.stringPropertyNames()) {
+            int dot = key.indexOf(".", 26);
+            if (key.startsWith("camel.component.properties.") && dot > 0) {
+                Component component = camelContext.getPropertiesComponent();
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(dot + 1);
+                Map<String, Object> values = properties.getOrDefault(component, new LinkedHashMap<>());
+                values.put(option, value);
+                properties.put(component, values);
+            }
+        }
+
+        if (!properties.isEmpty()) {
+            long total = properties.values().stream().mapToLong(Map::size).sum();
+            LOG.info("Auto configuring {} properties component from loaded properties: {}", properties.size(), total);
+        }
+
+        for (Object obj : properties.keySet()) {
+            Map<String, Object> values = properties.get(obj);
+            setCamelProperties(camelContext, obj, values, true);
         }
     }
 

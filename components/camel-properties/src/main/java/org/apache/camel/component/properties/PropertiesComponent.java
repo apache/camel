@@ -57,7 +57,8 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     /**
      * Check system properties variables) first, before trying the specified properties.
-     * This allows system properties to override any other property source.
+     * This allows system properties to override any other property source
+     * (environment variable and then system properties takes precedence).
      * <p/>
      * This is the default.
      */
@@ -77,7 +78,8 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     /**
      * Check OS environment variables first, before trying the specified properties.
-     * This allows system properties to override any other property source.
+     * This allows environment variables to override any other property source
+     * (environment variable and then system properties takes precedence).
      */
     public static final int ENVIRONMENT_VARIABLES_MODE_OVERRIDE = 2;
 
@@ -122,7 +124,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     @Metadata(defaultValue = "" + SYSTEM_PROPERTIES_MODE_OVERRIDE, enums = "0,1,2")
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
     @Metadata(defaultValue = "" + SYSTEM_PROPERTIES_MODE_FALLBACK, enums = "0,1,2")
-    private int environmentVariableMode = ENVIRONMENT_VARIABLES_MODE_FALLBACK;
+    private int environmentVariableMode = ENVIRONMENT_VARIABLES_MODE_OVERRIDE;
 
     public PropertiesComponent() {
         super();
@@ -528,11 +530,10 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     }
 
     /**
-     * Sets the system property (and environment variable) mode.
+     * Sets the system property mode.
      *
-     * The default mode (override) is to check system properties (and environment variables) first,
-     * before trying the specified properties.
-     * This allows system properties/environment variables to override any other property source.
+     * The default mode (override) is to use system properties if present,
+     * and override any existing properties.
      *
      * @see #SYSTEM_PROPERTIES_MODE_NEVER
      * @see #SYSTEM_PROPERTIES_MODE_FALLBACK
@@ -550,9 +551,8 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     /**
      * Sets the OS environment variables mode.
      *
-     * The default mode (fallback) is to check OS environment variables,
-     * if the property cannot be resolved from its sources first.
-     * This allows environment variables as fallback values.
+     * The default mode (override) is to use OS environment variables if present,
+     * and override any existing properties.
      *
      * @see #ENVIRONMENT_VARIABLES_MODE_NEVER
      * @see #ENVIRONMENT_VARIABLES_MODE_FALLBACK
