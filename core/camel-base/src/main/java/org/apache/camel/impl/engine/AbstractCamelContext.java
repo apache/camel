@@ -2486,9 +2486,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         // stop route inputs in the same order as they was started so we stop
         // the very first inputs first
         try {
-            // force shutting down routes as they may otherwise cause shutdown
-            // to hang
-            shutdownStrategy.shutdownForced(this, getRouteStartupOrder());
+            // force shutting down routes as they may otherwise cause shutdown to hang
+            if (shutdownStrategy != null) {
+                shutdownStrategy.shutdownForced(this, getRouteStartupOrder());
+            }
         } catch (Throwable e) {
             log.warn("Error occurred while shutting down routes. This exception will be ignored.", e);
         }
