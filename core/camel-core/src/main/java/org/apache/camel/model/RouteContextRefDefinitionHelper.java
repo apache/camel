@@ -29,6 +29,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.NamespaceAwareExpression;
 import org.apache.camel.support.CamelContextHelper;
@@ -58,7 +59,7 @@ public final class RouteContextRefDefinitionHelper {
      * @return the routes.
      */
     @SuppressWarnings("unchecked")
-    public static synchronized List<RouteDefinition> lookupRoutes(ModelCamelContext camelContext, String ref) {
+    public static synchronized List<RouteDefinition> lookupRoutes(CamelContext camelContext, String ref) {
         ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(ref, "ref");
 
@@ -86,7 +87,7 @@ public final class RouteContextRefDefinitionHelper {
         return clones;
     }
 
-    private static synchronized JAXBContext getOrCreateJAXBContext(final ModelCamelContext camelContext) throws JAXBException {
+    private static synchronized JAXBContext getOrCreateJAXBContext(final CamelContext camelContext) throws JAXBException {
         if (jaxbContext == null) {
             jaxbContext = camelContext.getModelJAXBContextFactory().newJAXBContext();
         }

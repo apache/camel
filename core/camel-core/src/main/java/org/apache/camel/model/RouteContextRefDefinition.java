@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -54,7 +55,7 @@ public class RouteContextRefDefinition {
         this.ref = ref;
     }
     
-    public List<RouteDefinition> lookupRoutes(ModelCamelContext camelContext) {
+    public List<RouteDefinition> lookupRoutes(CamelContext camelContext) {
         return RouteContextRefDefinitionHelper.lookupRoutes(camelContext, ref);
     }
 

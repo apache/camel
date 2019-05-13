@@ -502,7 +502,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             throw new IllegalArgumentException("getCamelContextCreationTimeout cannot return a negative value.");
         }
         // must override context so we use the correct one in testing
-        context = (ModelCamelContext) answer;
+        context = answer.adapt(ModelCamelContext.class);
         return answer;
     }
    

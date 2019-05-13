@@ -23,14 +23,13 @@ import java.util.stream.Collectors;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.mbean.ManagedRouteControllerMBean;
-import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteController;
 
 public class ManagedRouteController implements ManagedRouteControllerMBean {
-    private final ModelCamelContext context;
+    private final CamelContext context;
 
-    public ManagedRouteController(ModelCamelContext context) {
+    public ManagedRouteController(CamelContext context) {
         this.context = context;
     }
 

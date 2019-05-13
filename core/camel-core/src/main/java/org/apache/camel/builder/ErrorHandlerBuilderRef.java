@@ -20,9 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
-import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RouteContext;
@@ -133,7 +133,7 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
                 if (!isErrorHandlerBuilderConfigured(otherRef)) {
                     // the other has also no explicit error handler configured then fallback to the handler
                     // configured on the parent camel context
-                    answer = lookupErrorHandlerBuilder((ModelCamelContext)routeContext.getCamelContext());
+                    answer = lookupErrorHandlerBuilder(routeContext.getCamelContext());
                 }
                 if (answer == null) {
                     // the other has also no explicit error handler configured then fallback to the default error handler
@@ -156,7 +156,7 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
         return answer;
     }
 
-    protected static ErrorHandlerFactory lookupErrorHandlerBuilder(ModelCamelContext camelContext) {
+    protected static ErrorHandlerFactory lookupErrorHandlerBuilder(CamelContext camelContext) {
         ErrorHandlerFactory answer = camelContext.getErrorHandlerFactory();
         if (answer instanceof ErrorHandlerBuilderRef) {
             ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef) answer;

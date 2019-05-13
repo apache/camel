@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -39,7 +39,7 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
     @XmlElementRef
     private List<RestDefinition> rests = new ArrayList<>();
     @XmlTransient
-    private ModelCamelContext camelContext;
+    private CamelContext camelContext;
 
     public RestsDefinition() {
     }
@@ -72,11 +72,11 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
         this.rests = rests;
     }
 
-    public ModelCamelContext getCamelContext() {
+    public CamelContext getCamelContext() {
         return camelContext;
     }
 
-    public void setCamelContext(ModelCamelContext camelContext) {
+    public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
