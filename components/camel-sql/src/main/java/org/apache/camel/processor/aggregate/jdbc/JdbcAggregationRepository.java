@@ -289,16 +289,15 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         return transactionTemplateReadOnly.execute(new TransactionCallback<Exchange>() {
             public Exchange doInTransaction(TransactionStatus status) {
                 try {
-                	String sql = "SELECT " + EXCHANGE + " FROM " + repositoryName + " WHERE " + ID + " = ?";
-                	ByteArrayOutputStream bis = new ByteArrayOutputStream();
-                	jdbcTemplate.query(sql, new Object[]{key},
-                	  new AbstractLobStreamingResultSetExtractor() {
-                	    @Override
-                	    protected void streamData(ResultSet rs) throws SQLException, IOException, DataAccessException {
-                	      FileCopyUtils.copy(getLobHandler().getBlobAsBinaryStream(rs, EXCHANGE), bis);                                                                     
-                	    }
-                	  });
-                	  return codec.unmarshallExchange(camelContext, bis.toByteArray());
+                    String sql = "SELECT " + EXCHANGE + " FROM " + repositoryName + " WHERE " + ID + " = ?";
+                    ByteArrayOutputStream bis = new ByteArrayOutputStream();
+                    jdbcTemplate.query(sql, new Object[] {key}, new AbstractLobStreamingResultSetExtractor<Object>() {
+                        @Override
+                        protected void streamData(ResultSet rs) throws SQLException, IOException, DataAccessException {
+                            FileCopyUtils.copy(getLobHandler().getBlobAsBinaryStream(rs, EXCHANGE), bis);
+                        }
+                    });
+                    return codec.unmarshallExchange(camelContext, bis.toByteArray());
                 } catch (EmptyResultDataAccessException ex) {
                     return null;
                 } catch (IOException ex) {
