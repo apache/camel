@@ -73,6 +73,7 @@
         <module>camel-example-hystrix</module>
         <module>camel-example-java8</module>
         <module>camel-example-jdbc</module>
+        <module>camel-example-jira</module>
         <module>camel-example-jmx</module>
         <module>camel-example-jms-file</module>
         <module>camel-example-jooq</module>

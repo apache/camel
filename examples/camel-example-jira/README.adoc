@@ -1,0 +1,17 @@
+# Jira API Example
+
+This example shows how to use Jira Camel Endpoint to retrieve new comments, add issue and add an attachment.
+
+## How to run
+
+You can run this example using
+
+    mvn compile exec:java
+
+## OAuth configuration
+
+This example uses OAuth authentication mechanism, then you should set the verificationCode, privateKey, accessToken in "application.properties" file.
+
+## More information
+
+You can find more information about Apache Camel at the website: http://camel.apache.org/
