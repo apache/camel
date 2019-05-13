@@ -26,6 +26,7 @@ import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.container.BlueprintContainer;
+import org.springframework.util.ReflectionUtils;
 
 public class CxfRsBlueprintEndpoint extends CxfRsEndpoint {
     private AbstractJAXRSFactoryBean bean;
@@ -91,9 +92,17 @@ public class CxfRsBlueprintEndpoint extends CxfRsEndpoint {
     @Override
     protected JAXRSClientFactoryBean newJAXRSClientFactoryBean() {
         checkBeanType(bean, JAXRSClientFactoryBean.class);
-        // TODO Need to find a way to setup the JAXRSClientFactory Bean, as the JAXRSClientFactoryBean properties could be changed by the configurer
-        return (RsClientBlueprintBean)bean;
+        return (RsClientBlueprintBean)newInstanceWithCommonProperties();
     }
-    
+
+    private RsClientBlueprintBean newInstanceWithCommonProperties() {
+        RsClientBlueprintBean cfb = new RsClientBlueprintBean();
+
+        if (bean instanceof RsClientBlueprintBean) {
+            ReflectionUtils.shallowCopyFieldState(bean, cfb);
+        }
+
+        return cfb;
+    }
 
 }
