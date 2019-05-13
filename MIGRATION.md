@@ -85,6 +85,8 @@ Migrating Camel applications
 
 We have removed all deprecated components from Camel 2.x, also including the old `camel-http` component. Instead you can use `camel-http4`.
 
+We removed `camel-jibx` component which wasn't working on JDK 8.
+
 ### Renamed components
 
 The `test` component has been renamed to `dataset-test` and moved out of `camel-core` into `camel-dataset` JAR.
