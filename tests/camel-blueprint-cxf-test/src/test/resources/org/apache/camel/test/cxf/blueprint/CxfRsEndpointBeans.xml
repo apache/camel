@@ -45,6 +45,13 @@
 		</cxf:providers>
     </cxf:rsClient>
 
+	<cxf:rsClient id="restClient" address="http://foo"
+		serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource"
+		loggingFeatureEnabled="true">
+		<cxf:providers>
+			<ref component-id="jsonProvider" />
+		</cxf:providers>
+	</cxf:rsClient>
 
 	<bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider" />
 
@@ -53,6 +60,18 @@
 		<camel:route>
 			<camel:from uri="direct:start" />
 			<camel:to uri="mock:result" />
+		</camel:route>
+
+
+		<camel:route autostart="false" id="url-override-route">
+
+			<camel:onException>
+				<camel:exception>javax.ws.rs.ProcessingException</camel:exception>
+				<camel:to uri="mock:resultURLOverride" />
+			</camel:onException>
+
+			<camel:from uri="direct:startURLOverride" />
+			<camel:to uri="cxfrs:bean:restClient" />
 		</camel:route>
 
 	</camel:camelContext>
