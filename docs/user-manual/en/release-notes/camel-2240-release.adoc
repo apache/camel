@@ -1,0 +1,31 @@
+[[Camel2.24.0Release-Camel2.24.0Release]]
+== Camel 2.24.0 Release
+ 
+### New and Noteworthy
+
+Welcome to the Apache Camel 2.24.0 release which is a new minor release and resolved 156 issues including new features,
+improvements and bug fixes.
+
+### Getting the Binaries using Maven
+
+To use this release in your maven project, the proper dependency
+configuration that you should use in your
+http://maven.apache.org/guides/introduction/introduction-to-the-pom.html[Maven
+POM] is:
+
+[source,java]
+-------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-core</artifactId>
+  <version>2.24.0</version>
+</dependency>
+-------------------------------------
+
+### Changelog
+
+For a more detailed view of new features and bug fixes, see the:
+
+https://issues.apache.org/jira/secure/ReleaseNote.jspa?version=12344459&projectId=12311211[Release
+notes for 2.24.0]
+
