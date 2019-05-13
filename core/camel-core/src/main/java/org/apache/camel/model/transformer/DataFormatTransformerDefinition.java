@@ -42,7 +42,6 @@ import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
 import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
-import org.apache.camel.model.dataformat.JibxDataFormat;
 import org.apache.camel.model.dataformat.JsonApiDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.LZFDataFormat;
@@ -98,7 +97,6 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
         @XmlElement(required = false, name = "ical", type = IcalDataFormat.class),
         @XmlElement(required = false, name = "jacksonxml", type = JacksonXMLDataFormat.class),
         @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
-        @XmlElement(required = false, name = "jibx", type = JibxDataFormat.class),
         @XmlElement(required = false, name = "json", type = JsonDataFormat.class),
         @XmlElement(required = false, name = "jsonApi", type = JsonApiDataFormat.class),
         @XmlElement(required = false, name = "lzf", type = LZFDataFormat.class),
