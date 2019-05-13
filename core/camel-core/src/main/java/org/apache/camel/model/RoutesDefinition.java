@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.spi.AsEndpointUri;
@@ -50,7 +51,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     @XmlTransient
     private List<OnCompletionDefinition> onCompletions = new ArrayList<>();
     @XmlTransient
-    private ModelCamelContext camelContext;
+    private CamelContext camelContext;
     @XmlTransient
     private ErrorHandlerFactory errorHandlerFactory;
 
@@ -121,11 +122,11 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
         this.onCompletions = onCompletions;
     }
 
-    public ModelCamelContext getCamelContext() {
+    public CamelContext getCamelContext() {
         return camelContext;
     }
 
-    public void setCamelContext(ModelCamelContext camelContext) {
+    public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 

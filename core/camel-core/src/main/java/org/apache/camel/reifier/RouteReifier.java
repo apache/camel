@@ -33,7 +33,7 @@ import org.apache.camel.builder.AdviceWithTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.model.FromDefinition;
-import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
@@ -51,10 +51,6 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
     public RouteReifier(ProcessorDefinition<?> definition) {
         super((RouteDefinition) definition);
-    }
-
-    public static RouteDefinition adviceWith(RouteDefinition definition, CamelContext camelContext, RouteBuilder builder) throws Exception {
-        return adviceWith(definition, camelContext.adapt(ModelCamelContext.class), builder);
     }
 
     /**
@@ -82,7 +78,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
      * @throws Exception can be thrown from the route builder
      * @see AdviceWithRouteBuilder
      */
-    public static RouteDefinition adviceWith(RouteDefinition definition, ModelCamelContext camelContext, RouteBuilder builder) throws Exception {
+    public static RouteDefinition adviceWith(RouteDefinition definition, CamelContext camelContext, RouteBuilder builder) throws Exception {
         return new RouteReifier(definition).adviceWith(camelContext, builder);
     }
 
@@ -91,7 +87,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         throw new UnsupportedOperationException("Not implemented for RouteDefinition");
     }
 
-    public Route addRoutes(ModelCamelContext camelContext) throws Exception {
+    public Route addRoutes(CamelContext camelContext) throws Exception {
         @SuppressWarnings("deprecation")
         ErrorHandlerFactory handler = camelContext.getErrorHandlerFactory();
         if (handler != null) {
@@ -112,10 +108,6 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
     public Endpoint resolveEndpoint(CamelContext camelContext, String uri) throws NoSuchEndpointException {
         ObjectHelper.notNull(camelContext, "CamelContext");
         return CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
-    }
-
-    public RouteDefinition adviceWith(CamelContext camelContext, RouteBuilder builder) throws Exception {
-        return adviceWith((ModelCamelContext)camelContext, builder);
     }
 
     /**
@@ -143,7 +135,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
      * @see AdviceWithRouteBuilder
      */
     @SuppressWarnings("deprecation")
-    public RouteDefinition adviceWith(ModelCamelContext camelContext, RouteBuilder builder) throws Exception {
+    public RouteDefinition adviceWith(CamelContext camelContext, RouteBuilder builder) throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
         ObjectHelper.notNull(builder, "RouteBuilder");
 
@@ -176,7 +168,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         String beforeAsXml = ModelHelper.dumpModelAsXml(camelContext, definition);
 
         // stop and remove this existing route
-        camelContext.removeRouteDefinition(definition);
+        camelContext.getExtension(Model.class).removeRouteDefinition(definition);
 
         // any advice with tasks we should execute first?
         if (builder instanceof AdviceWithRouteBuilder) {
@@ -190,7 +182,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         RouteDefinition merged = routes.route(definition);
 
         // add the new merged route
-        camelContext.getRouteDefinitions().add(0, merged);
+        camelContext.getExtension(Model.class).getRouteDefinitions().add(0, merged);
 
         // log the merged route at info level to make it easier to end users to spot any mistakes they may have made
         log.info("AdviceWith route after: {}", merged);
@@ -202,7 +194,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         if (camelContext instanceof StatefulService) {
             StatefulService service = (StatefulService) camelContext;
             if (service.isStarted()) {
-                camelContext.addRouteDefinition(merged);
+                camelContext.getExtension(Model.class).addRouteDefinition(merged);
             }
         }
         return merged;

@@ -19,14 +19,12 @@ package org.apache.camel.builder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.JsonPathExpression;
@@ -39,14 +37,14 @@ import org.apache.camel.util.ObjectHelper;
  * href="http://camel.apache.org/dsl.html">Java DSL</a>
  */
 public abstract class BuilderSupport {
-    private ModelCamelContext context;
+    private CamelContext context;
     private ErrorHandlerBuilder errorHandlerBuilder;
 
     protected BuilderSupport() {
     }
 
     protected BuilderSupport(CamelContext context) {
-        this.context = context != null ? context.adapt(ModelCamelContext.class) : null;
+        this.context = context;
     }
 
     // Builder methods
@@ -391,16 +389,11 @@ public abstract class BuilderSupport {
     // Properties
     // -------------------------------------------------------------------------
 
-    public ModelCamelContext getContext() {
+    public CamelContext getContext() {
         return context;
     }
 
     public void setContext(CamelContext context) {
-        ObjectHelper.notNull(context, "CamelContext", this);
-        this.context = context.adapt(ModelCamelContext.class);
-    }
-
-    public void setContext(ModelCamelContext context) {
         ObjectHelper.notNull(context, "CamelContext", this);
         this.context = context;
     }

@@ -258,6 +258,8 @@ public interface Model {
 
     /**
      * Start all routes from this model.
+     *
+     * @throws Exception
      */
     void startRouteDefinitions() throws Exception;
 

@@ -49,7 +49,7 @@ import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.api.management.mbean.RouteError;
-import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.InflightRepository;
@@ -68,11 +68,11 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     protected final Route route;
     protected final String description;
-    protected final ModelCamelContext context;
+    protected final CamelContext context;
     private final LoadTriplet load = new LoadTriplet();
     private final String jmxDomain;
 
-    public ManagedRoute(ModelCamelContext context, Route route) {
+    public ManagedRoute(CamelContext context, Route route) {
         this.route = route;
         this.context = context;
         this.description = route.getDescription();
@@ -328,7 +328,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     @Override
     public String dumpRouteAsXml(boolean resolvePlaceholders, boolean resolveDelegateEndpoints) throws Exception {
         String id = route.getId();
-        RouteDefinition def = context.getRouteDefinition(id);
+        RouteDefinition def = context.getExtension(Model.class).getRouteDefinition(id);
         if (def != null) {
             return ModelHelper.dumpModelAsXml(context, def, resolvePlaceholders, resolveDelegateEndpoints);
         }
@@ -357,7 +357,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
         try {
             // add will remove existing route first
-            context.addRouteDefinition(def);
+            context.getExtension(Model.class).addRouteDefinition(def);
         } catch (Exception e) {
             // log the error as warn as the management api may be invoked remotely over JMX which does not propagate such exception
             String msg = "Error updating route: " + def.getId() + " from xml: " + xml + " due: " + e.getMessage();

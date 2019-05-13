@@ -172,7 +172,7 @@ import org.apache.camel.support.processor.validation.PredicateValidatingProcesso
 public class DefaultManagementObjectStrategy implements ManagementObjectStrategy {
 
     public Object getManagedObjectForCamelContext(CamelContext context) {
-        ManagedCamelContext mc = new ManagedCamelContext((ModelCamelContext)context);
+        ManagedCamelContext mc = new ManagedCamelContext(context);
         mc.init(context.getManagementStrategy());
         return mc;
     }

@@ -30,7 +30,7 @@ import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
-import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.Model;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -378,8 +378,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     
     public void addRoutesToCamelContext(CamelContext context) throws Exception {
         // must configure routes before rests
-        configureRoutes((ModelCamelContext) context);
-        configureRests((ModelCamelContext) context);
+        configureRoutes(context);
+        configureRests(context);
 
         // but populate rests before routes, as we want to turn rests into routes
         populateRests();
@@ -395,7 +395,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @return the routes configured
      * @throws Exception can be thrown during configuration
      */
-    public RoutesDefinition configureRoutes(ModelCamelContext context) throws Exception {
+    public RoutesDefinition configureRoutes(CamelContext context) throws Exception {
         setContext(context);
         checkInitialized();
         routeCollection.setCamelContext(context);
@@ -409,7 +409,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @return the rests configured
      * @throws Exception can be thrown during configuration
      */
-    public RestsDefinition configureRests(ModelCamelContext context) throws Exception {
+    public RestsDefinition configureRests(CamelContext context) throws Exception {
         setContext(context);
         restCollection.setCamelContext(context);
         return restCollection;
@@ -426,7 +426,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     protected void checkInitialized() throws Exception {
         if (initialized.compareAndSet(false, true)) {
             // Set the CamelContext ErrorHandler here
-            ModelCamelContext camelContext = getContext();
+            CamelContext camelContext = getContext();
             if (camelContext.getErrorHandlerFactory() instanceof ErrorHandlerBuilder) {
                 setErrorHandlerBuilder((ErrorHandlerBuilder) camelContext.getErrorHandlerFactory());
             }
@@ -440,16 +440,16 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     protected void populateRoutes() throws Exception {
-        ModelCamelContext camelContext = getContext();
+        CamelContext camelContext = getContext();
         if (camelContext == null) {
             throw new IllegalArgumentException("CamelContext has not been injected!");
         }
         getRouteCollection().setCamelContext(camelContext);
-        camelContext.addRouteDefinitions(getRouteCollection().getRoutes());
+        camelContext.getExtension(Model.class).addRouteDefinitions(getRouteCollection().getRoutes());
     }
 
     protected void populateRests() throws Exception {
-        ModelCamelContext camelContext = getContext();
+        CamelContext camelContext = getContext();
         if (camelContext == null) {
             throw new IllegalArgumentException("CamelContext has not been injected!");
         }
@@ -467,7 +467,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             }
         }
         // cannot add rests as routes yet as we need to initialize this specially
-        camelContext.addRestDefinitions(getRestCollection().getRests(), false);
+        camelContext.getExtension(Model.class).addRestDefinitions(getRestCollection().getRests(), false);
 
         // convert rests api-doc into routes so they are routes for runtime
         for (RestConfiguration config : camelContext.getRestConfigurations()) {
@@ -476,7 +476,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 // to the CamelContext, as we only want to setup rest-api once
                 // so we check all existing routes if they have rest-api route already added
                 boolean hasRestApi = false;
-                for (RouteDefinition route : camelContext.getRouteDefinitions()) {
+                for (RouteDefinition route : camelContext.getExtension(Model.class).getRouteDefinitions()) {
                     FromDefinition from = route.getInput();
                     if (from.getUri() != null && from.getUri().startsWith("rest-api:")) {
                         hasRestApi = true;
@@ -496,7 +496,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     protected void populateTransformers() {
-        ModelCamelContext camelContext = getContext();
+        CamelContext camelContext = getContext();
         if (camelContext == null) {
             throw new IllegalArgumentException("CamelContext has not been injected!");
         }
@@ -506,7 +506,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     protected void populateValidators() {
-        ModelCamelContext camelContext = getContext();
+        CamelContext camelContext = getContext();
         if (camelContext == null) {
             throw new IllegalArgumentException("CamelContext has not been injected!");
         }

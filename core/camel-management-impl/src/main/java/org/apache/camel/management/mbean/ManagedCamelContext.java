@@ -46,7 +46,7 @@ import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedStepMBean;
-import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
@@ -62,11 +62,11 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     private static final Logger LOG = LoggerFactory.getLogger(ManagedCamelContext.class);
 
-    private final ModelCamelContext context;
+    private final CamelContext context;
     private final LoadTriplet load = new LoadTriplet();
     private final String jmxDomain;
 
-    public ManagedCamelContext(ModelCamelContext context) {
+    public ManagedCamelContext(CamelContext context) {
         this.context = context;
         this.jmxDomain = context.getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
     }
@@ -362,7 +362,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     @Override
     public String dumpRestsAsXml(boolean resolvePlaceholders) throws Exception {
-        List<RestDefinition> rests = context.getRestDefinitions();
+        List<RestDefinition> rests = context.getExtension(Model.class).getRestDefinitions();
         if (rests.isEmpty()) {
             return null;
         }
@@ -410,7 +410,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     @Override
     public String dumpRoutesAsXml(boolean resolvePlaceholders, boolean resolveDelegateEndpoints) throws Exception {
-        List<RouteDefinition> routes = context.getRouteDefinitions();
+        List<RouteDefinition> routes = context.getExtension(Model.class).getRouteDefinitions();
         if (routes.isEmpty()) {
             return null;
         }
@@ -436,7 +436,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         InputStream is = context.getTypeConverter().mandatoryConvertTo(InputStream.class, xml);
         try {
             // add will remove existing route first
-            context.addRouteDefinitions(is);
+            context.getExtension(Model.class).addRouteDefinitions(is);
         } catch (Exception e) {
             // log the error as warn as the management api may be invoked remotely over JMX which does not propagate such exception
             String msg = "Error updating routes from xml: " + xml + " due: " + e.getMessage();
