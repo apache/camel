@@ -30,7 +30,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.HystrixDefinition;
-import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.Model;
 import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.IntrospectionSupport;
@@ -215,7 +215,7 @@ public class HystrixReifier extends ProcessorReifier<HystrixDefinition> {
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry
         loadProperties(properties, Suppliers.firstNotNull(
-            () -> camelContext.adapt(ModelCamelContext.class).getHystrixConfiguration(null),
+            () -> camelContext.getExtension(Model.class).getHystrixConfiguration(null),
             () -> lookup(camelContext, HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, HystrixConfigurationDefinition.class))
         );
 
@@ -225,7 +225,7 @@ public class HystrixReifier extends ProcessorReifier<HystrixDefinition> {
             final String ref = definition.getHystrixConfigurationRef();
 
             loadProperties(properties, Suppliers.firstNotNull(
-                () -> camelContext.adapt(ModelCamelContext.class).getHystrixConfiguration(ref),
+                () -> camelContext.getExtension(Model.class).getHystrixConfiguration(ref),
                 () -> mandatoryLookup(camelContext, ref, HystrixConfigurationDefinition.class))
             );
         }

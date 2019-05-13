@@ -72,7 +72,7 @@ import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.MarshalDefinition;
-import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.Model;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ResequenceDefinition;
@@ -1025,13 +1025,13 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             Set<String> dataformats = new HashSet<>();
 
             // regular camel routes
-            for (RouteDefinition rd : camelContext.adapt(ModelCamelContext.class).getRouteDefinitions()) {
+            for (RouteDefinition rd : camelContext.getExtension(Model.class).getRouteDefinitions()) {
                 findInputComponents(rd.getInput(), components, languages, dataformats);
                 findOutputComponents(rd.getOutputs(), components, languages, dataformats);
             }
 
             // rest services can have embedded routes or a singular to
-            for (RestDefinition rd : camelContext.adapt(ModelCamelContext.class).getRestDefinitions()) {
+            for (RestDefinition rd : camelContext.getExtension(Model.class).getRestDefinitions()) {
                 for (VerbDefinition vd : rd.getVerbs()) {
                     Object o = vd.getToOrRoute();
                     if (o instanceof RouteDefinition) {

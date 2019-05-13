@@ -22,7 +22,7 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.Model;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
@@ -142,7 +142,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
             }
 
             // try to let resolver see if it can resolve it, its not always possible
-            type = camelContext.adapt(ModelCamelContext.class).resolveDataFormatDefinition(ref);
+            type = camelContext.getExtension(Model.class).resolveDataFormatDefinition(ref);
 
             if (type == null) {
                 dataFormat = camelContext.resolveDataFormat(ref);

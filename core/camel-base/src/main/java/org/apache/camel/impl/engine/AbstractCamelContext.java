@@ -329,6 +329,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
 
     @Override
     public <T> T getExtension(Class<T> type) {
+        if (type.isInstance(this)) {
+            return type.cast(this);
+        }
         Object extension = extensions.get(type);
         if (extension instanceof Supplier) {
             extension = ((Supplier)extension).get();
@@ -981,7 +984,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         return answer != null && answer;
     }
 
-    protected void setStartingRoutes(boolean starting) {
+    public void setStartingRoutes(boolean starting) {
         if (starting) {
             isStartingRoutes.set(true);
         } else {
@@ -2721,7 +2724,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     /**
      * Starts the given route service
      */
-    protected synchronized void startRouteService(BaseRouteService routeService, boolean addingRoutes) throws Exception {
+    public synchronized void startRouteService(BaseRouteService routeService, boolean addingRoutes) throws Exception {
         // we may already be starting routes so remember this, so we can unset
         // accordingly in finally block
         boolean alreadyStartingRoutes = isStartingRoutes();

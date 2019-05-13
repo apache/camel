@@ -98,7 +98,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
  * End users are advised to use suspend/resume. Using stop is for shutting down Camel and it's not guaranteed that
  * when it's being started again using the start method that Camel will operate consistently.
  */
-public interface CamelContext extends SuspendableService, RuntimeConfiguration {
+public interface CamelContext extends StatefulService, RuntimeConfiguration {
 
     /**
      * Adapts this {@link org.apache.camel.CamelContext} to the specialized type.

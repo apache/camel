@@ -298,7 +298,7 @@ public final class RouteDefinitionHelper {
      * @param context the camel context
      * @param route   the route
      */
-    public static void prepareRoute(ModelCamelContext context, RouteDefinition route) {
+    public static void prepareRoute(CamelContext context, RouteDefinition route) {
         prepareRoute(context, route, null, null, null, null, null);
     }
 
@@ -315,7 +315,7 @@ public final class RouteDefinitionHelper {
      * @param interceptSendToEndpointDefinitions optional list of interceptSendToEndpoints
      * @param onCompletions                      optional list onCompletions
      */
-    public static void prepareRoute(ModelCamelContext context, RouteDefinition route,
+    public static void prepareRoute(CamelContext context, RouteDefinition route,
                                     List<OnExceptionDefinition> onExceptions,
                                     List<InterceptDefinition> intercepts,
                                     List<InterceptFromDefinition> interceptFromDefinitions,
@@ -344,7 +344,7 @@ public final class RouteDefinitionHelper {
      * @param interceptSendToEndpointDefinitions optional list of interceptSendToEndpoints
      * @param onCompletions                      optional list onCompletions
      */
-    private static void prepareRouteImp(ModelCamelContext context, RouteDefinition route,
+    private static void prepareRouteImp(CamelContext context, RouteDefinition route,
                                     List<OnExceptionDefinition> onExceptions,
                                     List<InterceptDefinition> intercepts,
                                     List<InterceptFromDefinition> interceptFromDefinitions,
@@ -441,7 +441,7 @@ public final class RouteDefinitionHelper {
         }
     }
 
-    private static void initParentAndErrorHandlerBuilder(ModelCamelContext context, RouteDefinition route,
+    private static void initParentAndErrorHandlerBuilder(CamelContext context, RouteDefinition route,
                                                          List<ProcessorDefinition<?>> abstracts, List<OnExceptionDefinition> onExceptions) {
 
         if (context != null) {

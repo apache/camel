@@ -30,7 +30,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.StartupListener;
 import org.apache.camel.main.MainDurationEventNotifier;
-import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.Model;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.Type;
 import org.apache.camel.spi.EventNotifier;
@@ -296,7 +296,7 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                 Resource[] xmlRoutes = applicationContext.getResources(part);
                 for (Resource xmlRoute : xmlRoutes) {
                     LOG.debug("Found XML route: {}", xmlRoute);
-                    camelContext.adapt(ModelCamelContext.class).addRouteDefinitions(xmlRoute.getInputStream());
+                    camelContext.getExtension(Model.class).addRouteDefinitions(xmlRoute.getInputStream());
                 }
             } catch (FileNotFoundException e) {
                 LOG.debug("No XML routes found in {}. Skipping XML routes detection.", part);
@@ -311,7 +311,7 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
             try {
                 final Resource[] xmlRests = applicationContext.getResources(part);
                 for (final Resource xmlRest : xmlRests) {
-                    camelContext.adapt(ModelCamelContext.class).addRestDefinitions(xmlRest.getInputStream(), true);
+                    camelContext.getExtension(Model.class).addRestDefinitions(xmlRest.getInputStream(), true);
                 }
             } catch (FileNotFoundException e) {
                 LOG.debug("No XML rests found in {}. Skipping XML rests detection.", part);

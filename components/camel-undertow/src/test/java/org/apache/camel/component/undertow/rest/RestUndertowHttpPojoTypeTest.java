@@ -26,7 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.undertow.BaseUndertowTest;
-import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.Model;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
@@ -40,7 +40,7 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
         // Wasn't clear if there's a way to put this test into camel-core just to test the model
         // perhaps without starting the Camel Context?
 
-        List<RestDefinition> restDefinitions = context().adapt(ModelCamelContext.class).getRestDefinitions();
+        List<RestDefinition> restDefinitions = context().getExtension(Model.class).getRestDefinitions();
         assertNotNull(restDefinitions);
         assertTrue(restDefinitions.size() > 0);
 

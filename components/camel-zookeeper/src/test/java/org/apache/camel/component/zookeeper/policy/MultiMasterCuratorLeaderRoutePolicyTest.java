@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.Model;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -272,9 +272,9 @@ public class MultiMasterCuratorLeaderRoutePolicyTest extends ZooKeeperTestSuppor
         first.shutdown();
         // let's find out who's active now:
 
-        CuratorMultiMasterLeaderRoutePolicy routePolicySecond = (CuratorMultiMasterLeaderRoutePolicy) arr[0].controlledContext.adapt(ModelCamelContext.class)
+        CuratorMultiMasterLeaderRoutePolicy routePolicySecond = (CuratorMultiMasterLeaderRoutePolicy) arr[0].controlledContext.getExtension(Model.class)
                                                                 .getRouteDefinition(secondDestination).getRoutePolicies().get(0);
-        CuratorMultiMasterLeaderRoutePolicy routePolicyThird = (CuratorMultiMasterLeaderRoutePolicy) arr[1].controlledContext.adapt(ModelCamelContext.class)
+        CuratorMultiMasterLeaderRoutePolicy routePolicyThird = (CuratorMultiMasterLeaderRoutePolicy) arr[1].controlledContext.getExtension(Model.class)
                                                                 .getRouteDefinition(thirdDestination).getRoutePolicies().get(0);
 
         MultiMasterZookeeperPolicyEnforcedContext newMaster = null;

@@ -33,7 +33,7 @@ import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.cloud.ServiceFilterAware;
 import org.apache.camel.cloud.ServiceLoadBalancer;
 import org.apache.camel.impl.engine.TypedProcessorFactory;
-import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.Model;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinitionConstants;
@@ -134,7 +134,7 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
 
     private ServiceCallConfigurationDefinition retrieveDefaultConfig(CamelContext camelContext) {
         // check if a default configuration is bound to the registry
-        ServiceCallConfigurationDefinition config = camelContext.adapt(ModelCamelContext.class).getServiceCallConfiguration(null);
+        ServiceCallConfigurationDefinition config = camelContext.getExtension(Model.class).getServiceCallConfiguration(null);
 
         if (config == null) {
             // Or if it is in the registry
@@ -158,7 +158,7 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
             config = lookup(camelContext, definition.getConfigurationRef(), ServiceCallConfigurationDefinition.class);
             if (config == null) {
                 // and fallback as service configuration
-                config = camelContext.adapt(ModelCamelContext.class).getServiceCallConfiguration(definition.getConfigurationRef());
+                config = camelContext.getExtension(Model.class).getServiceCallConfiguration(definition.getConfigurationRef());
             }
         }
 
