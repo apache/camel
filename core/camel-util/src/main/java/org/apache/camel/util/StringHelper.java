@@ -795,28 +795,28 @@ public final class StringHelper {
      * - Ant style matching
      * - Regexp
      *
-     * @param patter the pattern
+     * @param pattern the pattern
      * @param target the string to test
      * @return true if target matches the pattern
      */
-    public static boolean matches(String patter, String target) {
-        if (Objects.equals(patter, target)) {
+    public static boolean matches(String pattern, String target) {
+        if (Objects.equals(pattern, target)) {
             return true;
         }
 
-        if (Objects.isNull(patter)) {
+        if (Objects.isNull(pattern)) {
             return true;
         }
 
-        if (Objects.equals("*", patter)) {
+        if (Objects.equals("*", pattern)) {
             return true;
         }
 
-        if (AntPathMatcher.INSTANCE.match(patter, target)) {
+        if (AntPathMatcher.INSTANCE.match(pattern, target)) {
             return true;
         }
 
-        Pattern p = Pattern.compile(patter);
+        Pattern p = Pattern.compile(pattern);
         Matcher m = p.matcher(target);
 
         return m.matches();
