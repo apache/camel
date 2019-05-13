@@ -77,7 +77,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        NettyConfiguration config;
+        NettyHttpConfiguration config;
         if (getConfiguration() != null) {
             config = getConfiguration().copy();
         } else {
@@ -111,13 +111,14 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         }
 
         // we must include the protocol in the remaining
-        boolean hasProtocol = remaining.startsWith("http://") || remaining.startsWith("http:")
-                || remaining.startsWith("https://") || remaining.startsWith("https:");
+        boolean hasProtocol = remaining != null && (remaining.startsWith("http://") || remaining.startsWith("http:")
+                || remaining.startsWith("https://") || remaining.startsWith("https:")
+                || remaining.startsWith("proxy://") || remaining.startsWith("proxy:"));
         if (!hasProtocol) {
             // http is the default protocol
             remaining = "http://" + remaining;
         }
-        boolean hasSlash = remaining.startsWith("http://") || remaining.startsWith("https://");
+        boolean hasSlash = remaining.startsWith("http://") || remaining.startsWith("https://") || remaining.startsWith("proxy://");
         if (!hasSlash) {
             // must have double slash after protocol
             if (remaining.startsWith("http:")) {
@@ -136,6 +137,8 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
                 config.setPort(80);
             } else if (remaining.startsWith("https:")) {
                 config.setPort(443);
+            } else if (remaining.startsWith("proxy:")) {
+                config.setPort(3128); // homage to Squid proxy
             }
         }
         if (config.getPort() == -1) {
@@ -207,20 +210,25 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     }
 
     @Override
-    protected NettyConfiguration parseConfiguration(NettyConfiguration configuration, String remaining, Map<String, Object> parameters) throws Exception {
+    protected NettyHttpConfiguration parseConfiguration(NettyConfiguration configuration, String remaining, Map<String, Object> parameters) throws Exception {
         // ensure uri is encoded to be valid
         String safe = UnsafeUriCharactersEncoder.encodeHttpURI(remaining);
         URI uri = new URI(safe);
-        configuration.parseURI(uri, parameters, this, "http", "https");
+        configuration.parseURI(uri, parameters, this, "http", "https", "proxy");
 
         // force using tcp as the underlying transport
         configuration.setProtocol("tcp");
         configuration.setTextline(false);
 
         if (configuration instanceof NettyHttpConfiguration) {
-            ((NettyHttpConfiguration) configuration).setPath(uri.getPath());
+            final NettyHttpConfiguration httpConfiguration = (NettyHttpConfiguration) configuration;
+
+            httpConfiguration.setPath(uri.getPath());
+
+            return httpConfiguration;
         }
-        return configuration;
+
+        throw new IllegalStateException("Received NettyConfiguration instead of expected NettyHttpConfiguration, this is not supported.");
     }
 
     public NettyHttpBinding getNettyHttpBinding() {
