@@ -237,6 +237,7 @@
     <module>camel-jgroups-raft-starter</module>
     <module>camel-jgroups-starter</module>
     <module>camel-jing-starter</module>
+    <module>camel-jira-starter</module>
     <module>camel-jms-starter</module>
     <module>camel-jmx-starter</module>
     <module>camel-johnzon-starter</module>
