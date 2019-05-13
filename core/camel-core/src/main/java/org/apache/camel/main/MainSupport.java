@@ -73,19 +73,23 @@ public abstract class MainSupport extends ServiceSupport {
     protected final CountDownLatch latch = new CountDownLatch(1);
     protected final AtomicBoolean completed = new AtomicBoolean(false);
     protected final AtomicInteger exitCode = new AtomicInteger(UNINITIALIZED_EXIT_CODE);
+
+    // TODO: Move these to mainConfigurationProperties (delegate)
     protected long duration = -1;
     protected long durationIdle = -1;
     protected int durationMaxMessages;
     protected TimeUnit timeUnit = TimeUnit.SECONDS;
     protected boolean trace;
+    protected String fileWatchDirectory;
+    protected boolean fileWatchDirectoryRecursively;
 
     protected CamelContext camelContext;
+    // TODO: Make it possible to configure MainConfigurationProperties from application.properties via camel.main.xxx
+    protected final MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
     protected List<RouteBuilder> routeBuilders = new ArrayList<>();
     protected String routeBuilderClasses;
     protected List<Object> configurations = new ArrayList<>();
     protected String configurationClasses;
-    protected String fileWatchDirectory;
-    protected boolean fileWatchDirectoryRecursively;
     protected ProducerTemplate camelTemplate;
     protected boolean hangupInterceptorEnabled = true;
     protected int durationHitExitCode = DEFAULT_EXIT_CODE;
