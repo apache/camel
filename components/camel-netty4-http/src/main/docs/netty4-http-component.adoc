@@ -131,7 +131,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *protocol* | *Required* The protocol to use which is either http or https |  | String
+| *protocol* | *Required* The protocol to use which is either http, https or proxy - a consumer only option. |  | String
 | *host* | *Required* The local hostname such as localhost, or 0.0.0.0 when being a consumer. The remote HTTP server hostname when using producer. |  | String
 | *port* | The host port number |  | int
 | *path* | Resource path |  | String
@@ -391,7 +391,7 @@ ProducerTemplate as shown below:
 
 And we get back "Bye World" as the output.
 
-=== How do I let Netty match wildcards
+==== How do I let Netty match wildcards
 
 By default Netty4 HTTP will only match on exact uri's. But you can
 instruct Netty to match prefixes. For example
@@ -422,7 +422,7 @@ To match *any* endpoint you can do:
 from("netty4-http:http://0.0.0.0:8123?matchOnUriPrefix=true").to("mock:foo");
 -----------------------------------------------------------------------------
 
-=== Using multiple routes with same port
+==== Using multiple routes with same port
 
 In the same CamelContext you can have multiple
 routes from Netty4 HTTP that shares the same port (eg a
@@ -516,6 +516,37 @@ And in the routes you refer to this option as shown below
 
 See the Netty HTTP Server Example
 for more details and example how to do that.
+
+==== Implementing a reverse proxy
+
+Netty HTTP component can act as a reverse proxy, in that case
+`Exchange.HTTP_SCHEME`, `Exchange.HTTP_HOST` and
+`Exchange.HTTP_PORT` headers are populated from the absolute
+URL received on the request line of the HTTP request.
+
+Here's an example of a HTTP proxy that simply transforms the response
+from the origin server to uppercase.
+
+[source,java]
+------------------------------------------------------------------------------------------
+from("netty-http:proxy://0.0.0.0:8080")
+    .toD("netty-http:"
+        + "${headers." + Exchange.HTTP_SCHEME + "}://"
+        + "${headers." + Exchange.HTTP_HOST + "}:"
+        + "${headers." + Exchange.HTTP_PORT + "}")
+    .process(this::processResponse);
+
+void processResponse(final Exchange exchange) {
+    final NettyHttpMessage message = exchange.getIn(NettyHttpMessage.class);
+    final FullHttpResponse response = message.getHttpResponse();
+
+    final ByteBuf buf = response.content();
+    final String string = buf.toString(StandardCharsets.UTF_8);
+
+    buf.resetWriterIndex();
+    ByteBufUtil.writeUtf8(buf, string.toUpperCase(Locale.US));
+}
+------------------------------------------------------------------------------------------
 
 === Using HTTP Basic Authentication
 

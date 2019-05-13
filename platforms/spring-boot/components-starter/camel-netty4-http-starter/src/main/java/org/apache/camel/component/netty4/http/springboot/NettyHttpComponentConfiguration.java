@@ -165,7 +165,8 @@ public class NettyHttpComponentConfiguration
     public static class NettyHttpConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.netty4.http.NettyHttpConfiguration.class;
         /**
-         * The protocol to use which is either http or https
+         * The protocol to use which is either http, https or proxy - a consumer
+         * only option.
          */
         private String protocol;
         /**

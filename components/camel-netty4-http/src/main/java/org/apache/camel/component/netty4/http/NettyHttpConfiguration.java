@@ -97,7 +97,7 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     }
 
     /**
-     * The protocol to use which is either http or https
+     * The protocol to use which is either http, https or proxy - a consumer only option.
      */
     public void setProtocol(String protocol) {
         this.protocol = protocol;
@@ -317,5 +317,9 @@ public class NettyHttpConfiguration extends NettyConfiguration {
 
     public boolean isUseRelativePath() {
         return this.useRelativePath;
+    }
+
+    public boolean isHttpProxy() {
+        return "proxy".equals(super.protocol);
     }
 }

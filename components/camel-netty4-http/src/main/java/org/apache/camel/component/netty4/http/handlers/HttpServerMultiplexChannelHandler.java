@@ -36,6 +36,7 @@ import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.netty4.http.HttpServerConsumerChannelFactory;
+import org.apache.camel.component.netty4.http.NettyHttpConfiguration;
 import org.apache.camel.component.netty4.http.NettyHttpConsumer;
 import org.apache.camel.http.common.CamelServlet;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
@@ -193,6 +194,16 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
     private HttpServerChannelHandler getHandler(HttpRequest request, String method) {
         HttpServerChannelHandler answer = null;
 
+        // quick path to find if there are handlers with HTTP proxy consumers
+        for (final HttpServerChannelHandler handler : consumers) {
+            NettyHttpConsumer consumer = handler.getConsumer();
+
+            final NettyHttpConfiguration configuration = consumer.getConfiguration();
+            if (configuration.isHttpProxy()) {
+                return handler;
+            }
+        }
+
         // need to strip out host and port etc, as we only need the context-path for matching
         if (method == null) {
             return null;
@@ -222,6 +233,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
         if (answer == null) {
             for (final HttpServerChannelHandler handler : consumers) {
                 NettyHttpConsumer consumer = handler.getConsumer();
+
                 String consumerPath = consumer.getConfiguration().getPath();
                 boolean matchOnUriPrefix = consumer.getEndpoint().getConfiguration().isMatchOnUriPrefix();
                 // Just make sure the we get the right consumer path first
