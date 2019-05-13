@@ -184,9 +184,8 @@ public class MainConfigurationProperties {
      * This can be used to refer to files that may have secret configuration that
      * has been mounted on the file system for containers.
      *
-     * You must use either file: or classpath: as prefix to load
-     * from file system or classpath. Then you can specify a pattern to load
-     * from sub directories and a name pattern such as file:/var/app/secret/*.properties
+     * You can specify a pattern to load from sub directories and a name pattern such as /var/app/secret/*.properties,
+     * multiple directories can be separated by comma.
      */
     public void setFileConfigurations(String fileConfigurations) {
         this.fileConfigurations = fileConfigurations;

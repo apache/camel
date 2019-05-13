@@ -16,6 +16,8 @@
  */
 package org.apache.camel.main;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,6 +87,7 @@ import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import org.slf4j.Logger;
@@ -92,6 +95,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.support.ObjectHelper.invokeMethod;
 import static org.apache.camel.util.ReflectionHelper.findMethod;
+import static org.apache.camel.util.StringHelper.matches;
 
 /**
  * Base class for main implementations to allow starting up a JVM with Camel embedded.
@@ -107,7 +111,6 @@ public abstract class MainSupport extends ServiceSupport {
     protected final AtomicInteger exitCode = new AtomicInteger(UNINITIALIZED_EXIT_CODE);
 
     // TODO: Fluent builder on Main configuration properties
-    // TODO: Make it possible to configure MainConfigurationProperties from application.properties via camel.main.xxx
     // TODO: Move these to mainConfigurationProperties (delegate)
     protected long duration = -1;
     protected String fileWatchDirectory;
@@ -846,6 +849,35 @@ public abstract class MainSupport extends ServiceSupport {
      * Configures CamelContext from the {@link MainConfigurationProperties} properties.
      */
     protected void doConfigureCamelContextFromMainConfiguration(CamelContext camelContext, MainConfigurationProperties config) throws Exception {
+        if (config.getFileConfigurations() != null) {
+            String[] locs = config.getFileConfigurations().split(",");
+            for (String loc : locs) {
+                String path = FileUtil.onlyPath(loc);
+                if (path != null) {
+                    String pattern = loc.length() > path.length() ? loc.substring(path.length() + 1) : null;
+                    File[] files = new File(path).listFiles(f -> matches(pattern, f.getName()));
+                    if (files != null) {
+                        for (File file : files) {
+                            Properties props = new Properties();
+                            try (FileInputStream is = new FileInputStream(file)) {
+                                props.load(is);
+                            }
+                            if (!props.isEmpty()) {
+                                if (overrideProperties == null) {
+                                    // setup override properties on properties component
+                                    overrideProperties = new Properties();
+                                    PropertiesComponent pc = camelContext.getPropertiesComponent();
+                                    pc.setOverrideProperties(overrideProperties);
+                                }
+                                LOG.info("Loaded additional {} properties from file: {}", props.size(), file);
+                                overrideProperties.putAll(props);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         if (!config.isJmxEnabled()) {
             camelContext.disableJMX();
         }
