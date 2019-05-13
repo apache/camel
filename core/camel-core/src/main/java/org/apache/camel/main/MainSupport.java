@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -31,26 +32,57 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.TypeConverters;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.cloud.ServiceRegistry;
+import org.apache.camel.cluster.CamelClusterService;
+import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.health.HealthCheckRepository;
+import org.apache.camel.health.HealthCheckService;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.FileWatcherReloadStrategy;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.processor.interceptor.BacklogTracer;
+import org.apache.camel.processor.interceptor.HandleFault;
+import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.LogListener;
+import org.apache.camel.spi.ManagementObjectNameStrategy;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ReloadStrategy;
+import org.apache.camel.spi.RouteController;
+import org.apache.camel.spi.RoutePolicyFactory;
+import org.apache.camel.spi.RuntimeEndpointRegistry;
+import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.spi.UnitOfWorkFactory;
+import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.LifecycleStrategySupport;
+import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -74,17 +106,14 @@ public abstract class MainSupport extends ServiceSupport {
     protected final AtomicBoolean completed = new AtomicBoolean(false);
     protected final AtomicInteger exitCode = new AtomicInteger(UNINITIALIZED_EXIT_CODE);
 
+    // TODO: Fluent builder on Main configuration properties
+    // TODO: Make it possible to configure MainConfigurationProperties from application.properties via camel.main.xxx
     // TODO: Move these to mainConfigurationProperties (delegate)
     protected long duration = -1;
-    protected long durationIdle = -1;
-    protected int durationMaxMessages;
-    protected TimeUnit timeUnit = TimeUnit.SECONDS;
-    protected boolean trace;
     protected String fileWatchDirectory;
     protected boolean fileWatchDirectoryRecursively;
 
     protected CamelContext camelContext;
-    // TODO: Make it possible to configure MainConfigurationProperties from application.properties via camel.main.xxx
     protected final MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
     protected List<RouteBuilder> routeBuilders = new ArrayList<>();
     protected String routeBuilderClasses;
@@ -386,8 +415,8 @@ public abstract class MainSupport extends ServiceSupport {
         this.duration = duration;
     }
 
-    public long getDurationIdle() {
-        return durationIdle;
+    public int getDurationIdle() {
+        return mainConfigurationProperties.getDurationMaxIdleSeconds();
     }
 
     /**
@@ -396,12 +425,12 @@ public abstract class MainSupport extends ServiceSupport {
      * then the application should be terminated.
      * Defaults to -1. Any value <= 0 will run forever.
      */
-    public void setDurationIdle(long durationIdle) {
-        this.durationIdle = durationIdle;
+    public void setDurationIdle(int durationIdle) {
+        mainConfigurationProperties.setDurationMaxIdleSeconds(durationIdle);
     }
 
     public int getDurationMaxMessages() {
-        return durationMaxMessages;
+        return mainConfigurationProperties.getDurationMaxMessages();
     }
 
     /**
@@ -409,18 +438,7 @@ public abstract class MainSupport extends ServiceSupport {
      * should be terminated. Defaults to -1. Any value <= 0 will run forever.
      */
     public void setDurationMaxMessages(int durationMaxMessages) {
-        this.durationMaxMessages = durationMaxMessages;
-    }
-
-    public TimeUnit getTimeUnit() {
-        return timeUnit;
-    }
-
-    /**
-     * Sets the time unit duration (seconds by default).
-     */
-    public void setTimeUnit(TimeUnit timeUnit) {
-        this.timeUnit = timeUnit;
+        mainConfigurationProperties.setDurationMaxMessages(durationMaxMessages);
     }
 
     /**
@@ -578,11 +596,11 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     public boolean isTrace() {
-        return trace;
+        return mainConfigurationProperties.isTracing();
     }
 
     public void enableTrace() {
-        this.trace = true;
+        mainConfigurationProperties.setTracing(true);
     }
 
     protected void doStop() throws Exception {
@@ -597,19 +615,17 @@ public abstract class MainSupport extends ServiceSupport {
         while (!completed.get()) {
             try {
                 if (duration > 0) {
-                    TimeUnit unit = getTimeUnit();
-                    LOG.info("Waiting for: {} {}", duration, unit);
-                    latch.await(duration, unit);
+                    LOG.info("Waiting for: {} seconds", duration);
+                    latch.await(duration, TimeUnit.SECONDS);
                     exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, durationHitExitCode);
                     completed.set(true);
-                } else if (durationIdle > 0) {
-                    TimeUnit unit = getTimeUnit();
-                    LOG.info("Waiting to be idle for: {} {}", duration, unit);
+                } else if (mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
+                    LOG.info("Waiting to be idle for: {} seconds", mainConfigurationProperties.getDurationMaxIdleSeconds());
                     exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, durationHitExitCode);
                     latch.await();
                     completed.set(true);
-                } else if (durationMaxMessages > 0) {
-                    LOG.info("Waiting until: {} messages has been processed", durationMaxMessages);
+                } else if (mainConfigurationProperties.getDurationMaxMessages() > 0) {
+                    LOG.info("Waiting until: {} messages has been processed", mainConfigurationProperties.getDurationMaxMessages());
                     exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, durationHitExitCode);
                     latch.await();
                     completed.set(true);
@@ -760,9 +776,6 @@ public abstract class MainSupport extends ServiceSupport {
             }
             LOG.info("Using optional properties from classpath:application.properties");
         }
-        if (trace) {
-            camelContext.setTracing(true);
-        }
         if (fileWatchDirectory != null) {
             ReloadStrategy reload = new FileWatcherReloadStrategy(fileWatchDirectory, fileWatchDirectoryRecursively);
             camelContext.setReloadStrategy(reload);
@@ -788,11 +801,10 @@ public abstract class MainSupport extends ServiceSupport {
             }
         }
 
-        if (durationMaxMessages > 0 || durationIdle > 0) {
-            // convert to seconds as that is what event notifier uses
-            long seconds = timeUnit.toSeconds(durationIdle);
+        if (mainConfigurationProperties.getDurationMaxMessages() > 0 || mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
             // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
-            EventNotifier notifier = new MainDurationEventNotifier(camelContext, durationMaxMessages, seconds, completed, latch, true);
+            EventNotifier notifier = new MainDurationEventNotifier(camelContext, mainConfigurationProperties.getDurationMaxMessages(),
+                    mainConfigurationProperties.getDurationMaxIdleSeconds(), completed, latch, true);
             // register our event notifier
             ServiceHelper.startService(notifier);
             camelContext.getManagementStrategy().addEventNotifier(notifier);
@@ -801,7 +813,11 @@ public abstract class MainSupport extends ServiceSupport {
         // need to eager allow to auto configure properties component
         if (autoConfigurationEnabled) {
             autoConfigurationPropertiesComponent(camelContext);
+            autoConfigurationMainConfiguration(camelContext, mainConfigurationProperties);
         }
+
+        // configure from main configuration properties
+        doConfigureCamelContextFromMainConfiguration(camelContext, mainConfigurationProperties);
 
         // try to load configuration classes
         loadConfigurations(camelContext);
@@ -824,6 +840,244 @@ public abstract class MainSupport extends ServiceSupport {
         for (MainListener listener : listeners) {
             listener.configure(camelContext);
         }
+    }
+
+    /**
+     * Configures CamelContext from the {@link MainConfigurationProperties} properties.
+     */
+    protected void doConfigureCamelContextFromMainConfiguration(CamelContext camelContext, MainConfigurationProperties config) throws Exception {
+        if (!config.isJmxEnabled()) {
+            camelContext.disableJMX();
+        }
+
+        if (config.getName() != null) {
+            ((DefaultCamelContext) camelContext).setName(config.getName());
+        }
+
+        if (config.getShutdownTimeout() > 0) {
+            camelContext.getShutdownStrategy().setTimeout(config.getShutdownTimeout());
+        }
+        camelContext.getShutdownStrategy().setSuppressLoggingOnTimeout(config.isShutdownSuppressLoggingOnTimeout());
+        camelContext.getShutdownStrategy().setShutdownNowOnTimeout(config.isShutdownNowOnTimeout());
+        camelContext.getShutdownStrategy().setShutdownRoutesInReverseOrder(config.isShutdownRoutesInReverseOrder());
+        camelContext.getShutdownStrategy().setLogInflightExchangesOnTimeout(config.isShutdownLogInflightExchangesOnTimeout());
+
+        if (config.getLogDebugMaxChars() != 0) {
+            camelContext.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "" + config.getLogDebugMaxChars());
+        }
+
+        // stream caching
+        camelContext.setStreamCaching(config.isStreamCachingEnabled());
+        camelContext.getStreamCachingStrategy().setAnySpoolRules(config.isStreamCachingAnySpoolRules());
+        camelContext.getStreamCachingStrategy().setBufferSize(config.getStreamCachingBufferSize());
+        camelContext.getStreamCachingStrategy().setRemoveSpoolDirectoryWhenStopping(config.isStreamCachingRemoveSpoolDirectoryWhenStopping());
+        camelContext.getStreamCachingStrategy().setSpoolChiper(config.getStreamCachingSpoolChiper());
+        if (config.getStreamCachingSpoolDirectory() != null) {
+            camelContext.getStreamCachingStrategy().setSpoolDirectory(config.getStreamCachingSpoolDirectory());
+        }
+        if (config.getStreamCachingSpoolThreshold() != 0) {
+            camelContext.getStreamCachingStrategy().setSpoolThreshold(config.getStreamCachingSpoolThreshold());
+        }
+        if (config.getStreamCachingSpoolUsedHeapMemoryLimit() != null) {
+            StreamCachingStrategy.SpoolUsedHeapMemoryLimit limit;
+            if ("Committed".equalsIgnoreCase(config.getStreamCachingSpoolUsedHeapMemoryLimit())) {
+                limit = StreamCachingStrategy.SpoolUsedHeapMemoryLimit.Committed;
+            } else if ("Max".equalsIgnoreCase(config.getStreamCachingSpoolUsedHeapMemoryLimit())) {
+                limit = StreamCachingStrategy.SpoolUsedHeapMemoryLimit.Max;
+            } else {
+                throw new IllegalArgumentException("Invalid option " + config.getStreamCachingSpoolUsedHeapMemoryLimit() + " must either be Committed or Max");
+            }
+            camelContext.getStreamCachingStrategy().setSpoolUsedHeapMemoryLimit(limit);
+        }
+        if (config.getStreamCachingSpoolUsedHeapMemoryThreshold() != 0) {
+            camelContext.getStreamCachingStrategy().setSpoolUsedHeapMemoryThreshold(config.getStreamCachingSpoolUsedHeapMemoryThreshold());
+        }
+
+        camelContext.setMessageHistory(config.isMessageHistory());
+        camelContext.setLogMask(config.isLogMask());
+        camelContext.setLogExhaustedMessageBody(config.isLogExhaustedMessageBody());
+        camelContext.setHandleFault(config.isHandleFault());
+        camelContext.setAutoStartup(config.isAutoStartup());
+        camelContext.setAllowUseOriginalMessage(config.isAllowUseOriginalMessage());
+        camelContext.setUseBreadcrumb(config.isUseBreadcrumb());
+        camelContext.setUseDataType(config.isUseDataType());
+        camelContext.setUseMDCLogging(config.isUseMdcLogging());
+
+        if (camelContext.getManagementStrategy().getManagementAgent() != null) {
+            camelContext.getManagementStrategy().getManagementAgent().setEndpointRuntimeStatisticsEnabled(config.isEndpointRuntimeStatisticsEnabled());
+            camelContext.getManagementStrategy().getManagementAgent().setStatisticsLevel(config.getJmxManagementStatisticsLevel());
+            camelContext.getManagementStrategy().getManagementAgent().setManagementNamePattern(config.getJmxManagementNamePattern());
+            camelContext.getManagementStrategy().getManagementAgent().setCreateConnector(config.isJmxCreateConnector());
+        }
+
+        // tracing
+        camelContext.setTracing(config.isTracing());
+
+        if (config.getThreadNamePattern() != null) {
+            camelContext.getExecutorServiceManager().setThreadNamePattern(config.getThreadNamePattern());
+        }
+
+        // additional advanced configuration which is not configured using CamelConfigurationProperties
+        afterPropertiesSet(camelContext.getRegistry(), camelContext);
+    }
+
+    /**
+     * Performs additional configuration to lookup beans of Camel types to configure
+     * advanced configurations.
+     * <p/>
+     * Similar code in camel-core-xml module in class org.apache.camel.core.xml.AbstractCamelContextFactoryBean
+     * or in camel-spring-boot module in class org.apache.camel.spring.boot.CamelAutoConfiguration.
+     */
+    static void afterPropertiesSet(Registry registry, CamelContext camelContext) throws Exception {
+        final ManagementStrategy managementStrategy = camelContext.getManagementStrategy();
+
+        registerPropertyForBeanType(registry, BacklogTracer.class, bt -> camelContext.setExtension(BacklogTracer.class, bt));
+        registerPropertyForBeanType(registry, HandleFault.class, camelContext::addInterceptStrategy);
+        registerPropertyForBeanType(registry, InflightRepository.class, camelContext::setInflightRepository);
+        registerPropertyForBeanType(registry, AsyncProcessorAwaitManager.class, camelContext::setAsyncProcessorAwaitManager);
+        registerPropertyForBeanType(registry, ManagementStrategy.class, camelContext::setManagementStrategy);
+        registerPropertyForBeanType(registry, ManagementObjectNameStrategy.class, managementStrategy::setManagementObjectNameStrategy);
+        registerPropertyForBeanType(registry, EventFactory.class, managementStrategy::setEventFactory);
+        registerPropertyForBeanType(registry, UnitOfWorkFactory.class, camelContext::setUnitOfWorkFactory);
+        registerPropertyForBeanType(registry, RuntimeEndpointRegistry.class, camelContext::setRuntimeEndpointRegistry);
+
+        registerPropertiesForBeanTypes(registry, TypeConverters.class, camelContext.getTypeConverterRegistry()::addTypeConverters);
+
+        final Predicate<EventNotifier> containsEventNotifier = managementStrategy.getEventNotifiers()::contains;
+        registerPropertiesForBeanTypesWithCondition(registry, EventNotifier.class, containsEventNotifier.negate(), managementStrategy::addEventNotifier);
+
+        registerPropertiesForBeanTypes(registry, EndpointStrategy.class, camelContext::addRegisterEndpointCallback);
+
+        registerPropertyForBeanType(registry, ShutdownStrategy.class, camelContext::setShutdownStrategy);
+
+        final Predicate<InterceptStrategy> containsInterceptStrategy = camelContext.getInterceptStrategies()::contains;
+        registerPropertiesForBeanTypesWithCondition(registry, InterceptStrategy.class, containsInterceptStrategy.negate(), camelContext::addInterceptStrategy);
+
+        final Predicate<LifecycleStrategy> containsLifecycleStrategy = camelContext.getLifecycleStrategies()::contains;
+        registerPropertiesForBeanTypesWithCondition(registry, LifecycleStrategy.class, containsLifecycleStrategy.negate(), camelContext::addLifecycleStrategy);
+
+        registerPropertiesForBeanTypes(registry, CamelClusterService.class, addServiceToContext(camelContext));
+
+        // service registry
+        Map<String, ServiceRegistry> serviceRegistries = registry.findByTypeWithName(ServiceRegistry.class);
+        if (serviceRegistries != null && !serviceRegistries.isEmpty()) {
+            for (Map.Entry<String, ServiceRegistry> entry : serviceRegistries.entrySet()) {
+                ServiceRegistry service = entry.getValue();
+
+                if (service.getId() == null) {
+                    service.setId(camelContext.getUuidGenerator().generateUuid());
+                }
+
+                LOG.info("Using ServiceRegistry with id: {} and implementation: {}", service.getId(), service);
+                camelContext.addService(service);
+            }
+        }
+
+        registerPropertiesForBeanTypes(registry, RoutePolicyFactory.class, camelContext::addRoutePolicyFactory);
+
+        // add SSL context parameters
+        GlobalSSLContextParametersSupplier sslContextParametersSupplier = getSingleBeanOfType(registry, GlobalSSLContextParametersSupplier.class);
+        if (sslContextParametersSupplier != null) {
+            camelContext.setSSLContextParameters(sslContextParametersSupplier.get());
+        }
+        // Health check registry
+        HealthCheckRegistry healthCheckRegistry = getSingleBeanOfType(registry, HealthCheckRegistry.class);
+        if (healthCheckRegistry != null) {
+            healthCheckRegistry.setCamelContext(camelContext);
+            LOG.info("Using HealthCheckRegistry: {}", healthCheckRegistry);
+            camelContext.setExtension(HealthCheckRegistry.class, healthCheckRegistry);
+        } else {
+            healthCheckRegistry = HealthCheckRegistry.get(camelContext);
+            healthCheckRegistry.setCamelContext(camelContext);
+        }
+
+        registerPropertiesForBeanTypes(registry, HealthCheckRepository.class, healthCheckRegistry::addRepository);
+
+        registerPropertyForBeanType(registry, HealthCheckService.class, addServiceToContext(camelContext));
+        registerPropertyForBeanType(registry, RouteController.class, camelContext::setRouteController);
+        registerPropertyForBeanType(registry, UuidGenerator.class, camelContext::setUuidGenerator);
+
+        final Predicate<LogListener> containsLogListener = camelContext.getLogListeners()::contains;
+        registerPropertiesForBeanTypesWithCondition(registry, LogListener.class, containsLogListener.negate(), camelContext::addLogListener);
+
+        registerPropertyForBeanType(registry, ExecutorServiceManager.class, camelContext::setExecutorServiceManager);
+
+        // set the default thread pool profile if defined
+        initThreadPoolProfiles(registry, camelContext);
+    }
+
+    private static void initThreadPoolProfiles(Registry registry, CamelContext camelContext) {
+        Set<String> defaultIds = new HashSet<>();
+
+        // lookup and use custom profiles from the registry
+        Map<String, ThreadPoolProfile> profiles = registry.findByTypeWithName(ThreadPoolProfile.class);
+        if (profiles != null && !profiles.isEmpty()) {
+            for (Map.Entry<String, ThreadPoolProfile> entry : profiles.entrySet()) {
+                ThreadPoolProfile profile = entry.getValue();
+                // do not add if already added, for instance a tracer that is also an InterceptStrategy class
+                if (profile.isDefaultProfile()) {
+                    LOG.info("Using custom default ThreadPoolProfile with id: {} and implementation: {}", entry.getKey(), profile);
+                    camelContext.getExecutorServiceManager().setDefaultThreadPoolProfile(profile);
+                    defaultIds.add(entry.getKey());
+                } else {
+                    camelContext.getExecutorServiceManager().registerThreadPoolProfile(profile);
+                }
+            }
+        }
+
+        // validate at most one is defined
+        if (defaultIds.size() > 1) {
+            throw new IllegalArgumentException("Only exactly one default ThreadPoolProfile is allowed, was " + defaultIds.size() + " ids: " + defaultIds);
+        }
+    }
+
+    private static <T> void registerPropertyForBeanType(final Registry registry, final Class<T> beanType, final Consumer<T> propertySetter) {
+        T propertyBean = getSingleBeanOfType(registry, beanType);
+        if (propertyBean == null) {
+            return;
+        }
+
+        LOG.info("Using custom {}: {}", beanType.getSimpleName(), propertyBean);
+        propertySetter.accept(propertyBean);
+    }
+
+    private static <T> T getSingleBeanOfType(Registry registry, Class<T> type) {
+        Map<String, T> beans = registry.findByTypeWithName(type);
+        if (beans.size() == 1) {
+            return beans.values().iterator().next();
+        } else {
+            return null;
+        }
+    }
+
+    private static <T> void registerPropertiesForBeanTypes(final Registry registry, final Class<T> beanType, final Consumer<T> propertySetter) {
+        registerPropertiesForBeanTypesWithCondition(registry, beanType, b -> true, propertySetter);
+    }
+
+    private static <T> void registerPropertiesForBeanTypesWithCondition(final Registry registry, final Class<T> beanType, final Predicate<T> condition,
+                                                                        final Consumer<T> propertySetter) {
+        final Map<String, T> beans = registry.findByTypeWithName(beanType);
+        if (!ObjectHelper.isNotEmpty(beans)) {
+            return;
+        }
+
+        final String simpleName = beanType.getSimpleName();
+        beans.forEach((name, bean) -> {
+            if (condition.test(bean)) {
+                LOG.info("Adding custom {} with id: {} and implementation: {}", simpleName, name, bean);
+                propertySetter.accept(bean);
+            }
+        });
+    }
+
+    private static <T> Consumer<T> addServiceToContext(final CamelContext camelContext) {
+        return service -> {
+            try {
+                camelContext.addService(service);
+            } catch (Exception e) {
+                throw new RuntimeException("Unable to add service to Camel context", e);
+            }
+        };
     }
 
     protected void autoConfigurationPropertiesComponent(CamelContext camelContext) throws Exception {
@@ -854,6 +1108,28 @@ public abstract class MainSupport extends ServiceSupport {
             Map<String, Object> values = properties.get(obj);
             setCamelProperties(camelContext, obj, values, true);
         }
+    }
+
+    protected void autoConfigurationMainConfiguration(CamelContext camelContext, MainConfigurationProperties config) throws Exception {
+        // load properties
+        Properties prop = camelContext.getPropertiesComponent().loadProperties();
+
+        Map<String, Object> properties = new LinkedHashMap<>();
+
+        for (String key : prop.stringPropertyNames()) {
+            if (key.startsWith("camel.main.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(11);
+                properties.put(option, value);
+            }
+        }
+
+        if (!properties.isEmpty()) {
+            LOG.info("Auto configuring main from loaded properties: {}", properties.size());
+        }
+
+        setCamelProperties(camelContext, config, properties, true);
     }
 
     protected void autoConfigurationFromProperties(CamelContext camelContext) throws Exception {

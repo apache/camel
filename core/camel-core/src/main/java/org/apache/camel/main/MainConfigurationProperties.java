@@ -198,7 +198,7 @@ public class MainConfigurationProperties {
 
     /**
      * To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM.
-     * You can use this to run Spring Boot for a short while.
+     * You can use this to run Camel for a short while.
      */
     public void setDurationMaxSeconds(int durationMaxSeconds) {
         this.durationMaxSeconds = durationMaxSeconds;
@@ -210,7 +210,7 @@ public class MainConfigurationProperties {
 
     /**
      * To specify for how long time in seconds Camel can be idle before automatic terminating the JVM.
-     * You can use this to run Spring Boot for a short while.
+     * You can use this to run Camel for a short while.
      */
     public void setDurationMaxIdleSeconds(int durationMaxIdleSeconds) {
         this.durationMaxIdleSeconds = durationMaxIdleSeconds;
@@ -222,7 +222,7 @@ public class MainConfigurationProperties {
 
     /**
      * To specify how many messages to process by Camel before automatic terminating the JVM.
-     * You can use this to run Spring Boot for a short while.
+     * You can use this to run Camel for a short while.
      */
     public void setDurationMaxMessages(int durationMaxMessages) {
         this.durationMaxMessages = durationMaxMessages;
@@ -573,4 +573,6 @@ public class MainConfigurationProperties {
     public void setThreadNamePattern(String threadNamePattern) {
         this.threadNamePattern = threadNamePattern;
     }
+
+    
 }
