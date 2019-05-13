@@ -388,7 +388,6 @@
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
         <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
         <libthrift-version>0.12.0</libthrift-version>
-        <jibx-version>1.2.6</jibx-version>
         <jing-bundle-version>20030619_5</jing-bundle-version>
         <jing-version>20030619</jing-version>
         <jmh-version>1.21</jmh-version>
@@ -1559,11 +1558,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jgroups-raft</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jibx</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3083,11 +3077,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jgroups-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jibx-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

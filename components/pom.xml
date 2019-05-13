@@ -206,8 +206,6 @@
         <module>camel-jdbc</module>
         <module>camel-jgroups</module>
         <module>camel-jgroups-raft</module>
-        <!-- camel-jibx doesn't work under JDK8, but may be build without tests -->
-        <module>camel-jibx</module>
         <module>camel-jing</module>
         <module>camel-jmx</module>
         <module>camel-jolt</module>

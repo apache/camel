@@ -180,7 +180,6 @@
         <include>org.apache.camel:camel-jetty-common</include>
         <include>org.apache.camel:camel-jgroups</include>
         <include>org.apache.camel:camel-jgroups-raft</include>
-        <include>org.apache.camel:camel-jibx</include>
         <include>org.apache.camel:camel-jing</include>
         <include>org.apache.camel:camel-jms</include>
         <include>org.apache.camel:camel-jmx</include>
@@ -516,7 +515,6 @@
         <include>org.apache.camel:camel-jetty-starter</include>
         <include>org.apache.camel:camel-jgroups-raft-starter</include>
         <include>org.apache.camel:camel-jgroups-starter</include>
-        <include>org.apache.camel:camel-jibx-starter</include>
         <include>org.apache.camel:camel-jing-starter</include>
         <include>org.apache.camel:camel-jms-starter</include>
         <include>org.apache.camel:camel-jmx-starter</include>
