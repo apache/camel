@@ -173,7 +173,6 @@
 * xref:jetty-component.adoc[Jetty Component]
 * xref:jgroups-raft-component.adoc[JGroups raft Component]
 * xref:jgroups-component.adoc[JGroups Component]
-* xref:jibx-dataformat.adoc[JiBX DataFormat]
 * xref:jing-component.adoc[Jing Component]
 * xref:jms-component.adoc[JMS Component]
 * xref:jmx-component.adoc[JMX Component]

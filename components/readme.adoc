@@ -899,7 +899,7 @@ Number of Components: 295 in 232 JAR artifacts (0 deprecated)
 ==== Data Formats
 
 // dataformats: START
-Number of Data Formats: 44 in 36 JAR artifacts (0 deprecated)
+Number of Data Formats: 43 in 35 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -942,8 +942,6 @@ Number of Data Formats: 44 in 36 JAR artifacts (0 deprecated)
 | link:camel-jacksonxml/src/main/docs/jacksonxml-dataformat.adoc[JacksonXML] (camel-jacksonxml) | 2.16 | JacksonXML data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
 
 | link:camel-jaxb/src/main/docs/jaxb-dataformat.adoc[JAXB] (camel-jaxb) | 1.0 | JAXB data format uses the JAXB2 XML marshalling standard to unmarshal an XML payload into Java objects or to marshal Java objects into an XML payload.
-
-| link:camel-jibx/src/main/docs/jibx-dataformat.adoc[JiBX] (camel-jibx) | 2.6 | JiBX data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
 
 | link:camel-fastjson/src/main/docs/json-fastjson-dataformat.adoc[JSon Fastjson] (camel-fastjson) | 2.20 | JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
 
