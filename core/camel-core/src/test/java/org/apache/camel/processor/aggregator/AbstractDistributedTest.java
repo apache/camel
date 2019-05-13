@@ -22,7 +22,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.support.service.ServiceHelper;
 import org.junit.After;
 import org.junit.Before;
@@ -43,7 +42,7 @@ public abstract class AbstractDistributedTest extends ContextTestSupport {
         ServiceHelper.startService(template2, context2);
 
         // add routes after CamelContext has been started
-        context2.adapt(ModelCamelContext.class).addRoutes(createRouteBuilder2());
+        context2.addRoutes(createRouteBuilder2());
     }
 
     @After

@@ -39,7 +39,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
-import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -375,7 +375,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         if (context == null) {
             return null;
         }
-        RouteDefinition route = context.adapt(ModelCamelContext.class).getRouteDefinition(routeId);
+        RouteDefinition route = context.getExtension(Model.class).getRouteDefinition(routeId);
         if (route == null) {
             return null;
         }
@@ -437,7 +437,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             return null;
         }
 
-        List<RestDefinition> rests = context.adapt(ModelCamelContext.class).getRestDefinitions();
+        List<RestDefinition> rests = context.getExtension(Model.class).getRestDefinitions();
         if (rests == null || rests.isEmpty()) {
             return null;
         }

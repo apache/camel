@@ -30,7 +30,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
-import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
@@ -148,7 +148,7 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
                     log.warn("Routes with no id's detected. Its recommended to assign id's to your routes so Camel can reload the routes correctly.");
                 }
                 // update the routes (add will remove and shutdown first)
-                camelContext.adapt(ModelCamelContext.class).addRouteDefinitions(routes);
+                camelContext.getExtension(Model.class).addRouteDefinitions(routes);
 
                 log.info("Reloaded routes: [{}] from XML resource: {}", csb, name);
             } catch (Exception e) {

@@ -19,7 +19,7 @@ package org.apache.camel.management.mbean;
 import java.util.Iterator;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.Model;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
@@ -43,7 +43,7 @@ public final class ModelCamelContextHelper {
      * @return <tt>true</tt> if in use, <tt>false</tt> if not
      */
     public static boolean isEipInUse(CamelContext camelContext, String name) {
-        for (RouteDefinition route : camelContext.adapt(ModelCamelContext.class).getRouteDefinitions()) {
+        for (RouteDefinition route : camelContext.getExtension(Model.class).getRouteDefinitions()) {
             if (name.equals(route.getInput().getShortName())) {
                 return true;
             }

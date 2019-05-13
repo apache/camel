@@ -202,7 +202,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         if (camelContext instanceof StatefulService) {
             StatefulService service = (StatefulService) camelContext;
             if (service.isStarted()) {
-                camelContext.adapt(ModelCamelContext.class).addRouteDefinition(merged);
+                camelContext.addRouteDefinition(merged);
             }
         }
         return merged;
