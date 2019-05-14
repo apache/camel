@@ -171,14 +171,14 @@ public abstract class MainSupport extends ServiceSupport {
                 if (parameter.endsWith("s") || parameter.endsWith("S")) {
                     parameter = parameter.substring(0, parameter.length() - 1);
                 }
-                setDuration(Integer.parseInt(parameter));
+                configure().setDuration(Integer.parseInt(parameter));
             }
         });
         addOption(new ParameterOption("dm", "durationMaxMessages",
             "Sets the duration of maximum number of messages that the application will process before terminating.",
             "durationMaxMessages") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                setDurationMaxMessages(Integer.parseInt(parameter));
+                configure().setDurationMaxMessages(Integer.parseInt(parameter));
             }
         });
         addOption(new ParameterOption("di", "durationIdle",
@@ -189,7 +189,7 @@ public abstract class MainSupport extends ServiceSupport {
                 if (parameter.endsWith("s") || parameter.endsWith("S")) {
                     parameter = parameter.substring(0, parameter.length() - 1);
                 }
-                setDurationIdle(Integer.parseInt(parameter));
+                configure().setDurationMaxIdleSeconds(Integer.parseInt(parameter));
             }
         });
         addOption(new Option("t", "trace", "Enables tracing") {
@@ -201,7 +201,7 @@ public abstract class MainSupport extends ServiceSupport {
             "Sets the exit code if duration was hit",
             "exitcode") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                setDurationHitExitCode(Integer.parseInt(parameter));
+                configure().setDurationHitExitCode(Integer.parseInt(parameter));
             }
         });
         addOption(new ParameterOption("watch", "fileWatch",
@@ -209,7 +209,7 @@ public abstract class MainSupport extends ServiceSupport {
             "fileWatch") {
             @Override
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                setFileWatchDirectory(parameter);
+                configure().setFileWatchDirectory(parameter);
             }
         });
         addOption(new ParameterOption("pl", "propertiesLocation",
