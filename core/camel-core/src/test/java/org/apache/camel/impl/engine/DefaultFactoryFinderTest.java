@@ -97,7 +97,7 @@ public class DefaultFactoryFinderTest {
             factoryFinder.newInstance("TestImplX");
             fail("NoFactoryAvailableException should have been thrown");
         } catch (final NoFactoryAvailableException e) {
-            assertEquals("Could not find factory class for resource: TestImplX", e.getMessage());
+            assertEquals("Cannot find factory class for resource: TestImplX", e.getMessage());
         }
     }
 
