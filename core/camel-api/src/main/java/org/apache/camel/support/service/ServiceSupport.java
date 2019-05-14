@@ -56,7 +56,11 @@ public abstract class ServiceSupport implements StatefulService {
             synchronized (lock) {
                 if (status == NEW) {
                     log.trace("Initializing service: {}", this);
-                    doInit();
+                    try {
+                        doInit();
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error initializing service", e);
+                    }
                     status = INITIALIZED;
                 }
             }
@@ -79,7 +83,13 @@ public abstract class ServiceSupport implements StatefulService {
                 log.trace("Service: {} already starting", this);
                 return;
             }
-            init();
+            try {
+                init();
+            } catch (Exception e) {
+                status = FAILED;
+                log.trace("Error while initializing service: " + this, e);
+                throw e;
+            }
             try {
                 status = STARTING;
                 log.trace("Starting service: {}", this);
@@ -304,7 +314,7 @@ public abstract class ServiceSupport implements StatefulService {
      * Initialize the service.
      * This method will only be called once before starting.
      */
-    protected void doInit() {
+    protected void doInit() throws Exception {
     }
 
     /**

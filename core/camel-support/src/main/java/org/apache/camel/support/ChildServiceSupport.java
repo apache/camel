@@ -40,9 +40,16 @@ public abstract class ChildServiceSupport extends ServiceSupport {
                 log.trace("Service: {} already starting", this);
                 return;
             }
-            status = STARTING;
-            log.trace("Starting service: {}", this);
             try {
+                initService(childServices);
+            } catch (Exception e) {
+                status = FAILED;
+                log.trace("Error while initializing service: " + this, e);
+                throw e;
+            }
+            try {
+                status = STARTING;
+                log.trace("Starting service: {}", this);
                 ServiceHelper.startService(childServices);
                 doStart();
                 status = STARTED;
@@ -123,6 +130,12 @@ public abstract class ChildServiceSupport extends ServiceSupport {
 
     protected boolean removeChildService(Object childService) {
         return childServices != null && childServices.remove(childService);
+    }
+
+    private void initService(List<Service> services) {
+        if (services != null) {
+            services.forEach(Service::init);
+        }
     }
 
 }

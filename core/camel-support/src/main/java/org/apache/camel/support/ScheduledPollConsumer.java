@@ -399,8 +399,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     protected abstract int poll() throws Exception;
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         // validate that if backoff multiplier is in use, the threshold values is set correctly
         if (backoffMultiplier > 0) {
@@ -415,7 +415,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         }
         scheduler.setCamelContext(getEndpoint().getCamelContext());
         scheduler.onInit(this);
-        scheduler.scheduleTask(this);
 
         // configure scheduler with options from this consumer
         Map<String, Object> properties = new HashMap<>();
@@ -435,11 +434,19 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
         ObjectHelper.notNull(scheduler, "scheduler", this);
         ObjectHelper.notNull(pollStrategy, "pollStrategy", this);
+    }
 
-        ServiceHelper.startService(scheduler);
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
 
-        if (isStartScheduler()) {
-            startScheduler();
+        if (scheduler != null) {
+            scheduler.scheduleTask(this);
+            ServiceHelper.startService(scheduler);
+
+            if (isStartScheduler()) {
+                startScheduler();
+            }
         }
     }
 

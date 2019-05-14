@@ -118,8 +118,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public void start() throws Exception {
+    public void init() {
         // setup cache which requires CamelContext to be set first
         if (cacheExpression == null && cachePredicate == null && getCamelContext() != null) {
             int maxSize = CamelContextHelper.getMaximumSimpleCacheSize(getCamelContext());
@@ -131,6 +130,11 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
                 LOG.debug("Simple language disabled predicate/expression cache");
             }
         }
+    }
+
+    @Override
+    public void start() throws Exception {
+        // noop
     }
 
     @Override

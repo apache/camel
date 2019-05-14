@@ -43,7 +43,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
@@ -307,7 +306,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         this.startupListeners.add(deferStartupListener);
 
         if (init) {
-            init();
+            try {
+                init();
+            } catch (Exception e) {
+                throw new RuntimeException("Error initializing CamelContext", e);
+            }
         }
     }
 
