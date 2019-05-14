@@ -53,16 +53,18 @@ public class SpringNettyHttpSSLTest extends Assert {
     }
 
     @BeforeClass
-    public static void setUpJaas() throws Exception {
-        // ensure jsse clients can validate the self signed dummy localhost cert,
+    public static void setUpJSSE() throws Exception {
+        // ensure JSSE clients can validate the self signed dummy localhost cert,
         // use the server keystore as the trust store for these tests
         URL trustStoreUrl = NettyHttpSSLTest.class.getClassLoader().getResource("jsse/localhost.ks");
         System.setProperty("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
+        System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
     }
 
     @AfterClass
-    public static void tearDownJaas() throws Exception {
-        System.clearProperty("java.security.auth.login.config");
+    public static void tearDownJSSE() throws Exception {
+        System.clearProperty("javax.net.ssl.trustStore");
+        System.clearProperty("javax.net.ssl.trustStorePassword");
     }
 
     @Test

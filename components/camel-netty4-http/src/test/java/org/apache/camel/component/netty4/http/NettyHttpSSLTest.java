@@ -42,6 +42,7 @@ public class NettyHttpSSLTest extends BaseNettyTest {
         // use the server keystore as the trust store for these tests
         URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
         setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
+        setSystemProp("javax.net.ssl.trustStorePassword", "changeit");
 
         super.setUp();
     }
