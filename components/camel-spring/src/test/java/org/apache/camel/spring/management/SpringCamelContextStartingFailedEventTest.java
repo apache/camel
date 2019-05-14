@@ -35,8 +35,8 @@ public class SpringCamelContextStartingFailedEventTest extends SpringTestSupport
         try {
             new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringCamelContextStartingFailedEventTest.xml");
             fail("Should thrown an exception");
-        } catch (RuntimeCamelException e) {
-            FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e.getCause());
+        } catch (Exception e) {
+            FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);
             assertIsInstanceOf(ResolveEndpointFailedException.class, ftcre.getCause());
             // expected
         }
