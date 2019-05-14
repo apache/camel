@@ -23,7 +23,6 @@ package org.apache.camel;
  * to send messages to Camel.
  */
 public class CamelExecutionException extends RuntimeExchangeException {
-    private static final long serialVersionUID = -5821095325248904305L;
 
     public CamelExecutionException(String message, Exchange exchange) {
         super(message, exchange);

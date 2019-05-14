@@ -45,8 +45,8 @@ public class OnExceptionHandledAndContinueTest extends ContextTestSupport {
             context.start();
             fail("Should thrown an exception");
         } catch (Exception e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertTrue(e.getCause().getMessage().startsWith("Only one of handled or continued is allowed to be configured"));
+            assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+            assertTrue(e.getCause().getCause().getMessage().startsWith("Only one of handled or continued is allowed to be configured"));
         }
     }
 

@@ -22,12 +22,11 @@ import java.io.IOException;
  * Thrown if no factory resource is available for the given URI
  */
 public class NoFactoryAvailableException extends IOException {
-    private static final long serialVersionUID = -425141860196708627L;
 
     private final String uri;
 
     public NoFactoryAvailableException(String uri) {
-        super("Could not find factory class for resource: " + uri);
+        super("Cannot find factory class for resource: " + uri);
         this.uri = uri;
     }
 

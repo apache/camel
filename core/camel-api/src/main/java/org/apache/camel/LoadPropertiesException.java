@@ -22,7 +22,7 @@ import java.net.URL;
  * Represents a failure to open a Properties file at a given URL
  */
 public class LoadPropertiesException extends CamelException {
-    private static final long serialVersionUID = 3684303677685065529L;
+
     private final URL url;
 
     public LoadPropertiesException(URL url, Exception cause) {

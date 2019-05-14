@@ -24,7 +24,7 @@ package org.apache.camel;
  * 
  */
 public class NoSuchPropertyException extends CamelExchangeException {
-    private static final long serialVersionUID = -8721487431101572630L;
+
     private final String propertyName;
     private final transient Class<?> type;
 

@@ -205,7 +205,7 @@ public abstract class BaseRouteService extends ChildServiceSupport {
         try {
             warmUp();
         } catch (FailedToStartRouteException e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeException(e);
         }
 
         try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {

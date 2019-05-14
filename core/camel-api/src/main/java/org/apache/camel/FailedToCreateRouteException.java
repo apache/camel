@@ -21,8 +21,8 @@ import org.apache.camel.util.URISupport;
 /**
  * Exception when failing to create a {@link org.apache.camel.Route}.
  */
-public class FailedToCreateRouteException extends CamelException {
-    private static final long serialVersionUID = 1L;
+public class FailedToCreateRouteException extends RuntimeCamelException {
+
     private final String routeId;
 
     public FailedToCreateRouteException(String routeId, String route, Throwable cause) {
