@@ -87,7 +87,7 @@ public class HttpsTwoDifferentSslContextParametersGetTest extends BaseHttpsTest 
         try {
             context.start();
             fail("Should have thrown exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             IllegalArgumentException iae = (IllegalArgumentException) e.getCause().getCause();
             assertNotNull(iae);
             assertTrue(iae.getMessage().startsWith("Only same instance of SSLContextParameters is supported."));

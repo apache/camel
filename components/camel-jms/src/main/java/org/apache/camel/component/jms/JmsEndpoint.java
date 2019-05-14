@@ -485,7 +485,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         int running = runningMessageListeners.get();
         if (running <= 0) {
             super.stop();
@@ -495,7 +495,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     @Override
-    public void shutdown() throws Exception {
+    public void shutdown() {
         int running = runningMessageListeners.get();
         if (running <= 0) {
             super.shutdown();

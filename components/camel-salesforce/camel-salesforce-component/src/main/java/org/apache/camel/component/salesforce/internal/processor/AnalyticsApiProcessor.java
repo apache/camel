@@ -222,12 +222,12 @@ public class AnalyticsApiProcessor extends AbstractSalesforceProcessor {
     }
 
     @Override
-    public void start() throws Exception {
+    public void start() {
         ServiceHelper.startService(analyticsClient);
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         // stop the client
         ServiceHelper.stopService(analyticsClient);
     }

@@ -29,11 +29,11 @@ public class CamelJaxbSpringTest extends CamelJaxbTest {
         setUseRouteBuilder(false);
         final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/jaxb/CamelJaxbTest.xml");
         setCamelContextService(new Service() {
-            public void start() throws Exception {
+            public void start() {
                 applicationContext.start();
             }
 
-            public void stop() throws Exception {
+            public void stop() {
                 applicationContext.stop();
             }
         });

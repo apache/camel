@@ -100,12 +100,16 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
         this.terminationTimeout = terminationTimeout;
     }
 
-    public void start() throws Exception {
+    public void start() {
         // local cache
         accessToken = session.getAccessToken();
         if (accessToken == null) {
             // lazy login here!
-            accessToken = session.login(accessToken);
+            try {
+                accessToken = session.login(accessToken);
+            } catch (SalesforceException e) {
+                throw new RuntimeException(e);
+            }
         }
         instanceUrl = session.getInstanceUrl();
 
@@ -116,7 +120,7 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         if (inflightRequests != null) {
             inflightRequests.arrive();
             if (!inflightRequests.isTerminated()) {

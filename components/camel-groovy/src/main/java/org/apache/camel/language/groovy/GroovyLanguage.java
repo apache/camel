@@ -40,11 +40,11 @@ public class GroovyLanguage extends LanguageSupport {
         }
 
         @Override
-        public void start() throws Exception {
+        public void start() {
         }
 
         @Override
-        public void stop() throws Exception {
+        public void stop() {
             InvokerHelper.removeClass(script);
         }
 

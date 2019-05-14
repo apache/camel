@@ -94,12 +94,12 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     }
 
     @Override
-    public void start() throws Exception {
+    public void start() {
         ServiceHelper.startService(restClient);
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         ServiceHelper.stopService(restClient);
     }
 

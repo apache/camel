@@ -29,11 +29,11 @@ public class CamelJaxbNoNamespaceSchemaLocationSpringTest extends CamelJaxbNoNam
         setUseRouteBuilder(false);
         final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/jaxb/CamelJaxbNoNamespaceSchemaLocationTest.xml");
         setCamelContextService(new Service() {
-            public void start() throws Exception {
+            public void start() {
                 applicationContext.start();
             }
 
-            public void stop() throws Exception {
+            public void stop() {
                 applicationContext.stop();
             }
         });
