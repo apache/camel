@@ -57,11 +57,11 @@ public class JdbcIdempotentRepository implements IdempotentRepository {
         jdbc.update("DELETE * FROM ProcessedPayments");
     }
 
-    public void start() throws Exception {
+    public void start() {
         // noop
     }
 
-    public void stop() throws Exception {
+    public void stop() {
         // noop
     }
 }
