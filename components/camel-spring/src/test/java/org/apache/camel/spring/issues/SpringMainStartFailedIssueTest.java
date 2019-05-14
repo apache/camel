@@ -32,8 +32,8 @@ public class SpringMainStartFailedIssueTest extends TestSupport {
         try {
             main.run(args);
             fail("Should have thrown an exception");
-        } catch (RuntimeCamelException e) {
-            assertIsInstanceOf(FailedToCreateRouteException.class, e.getCause());
+        } catch (Exception e) {
+            assertIsInstanceOf(FailedToCreateRouteException.class, e);
         }
 
         assertNull("Spring application context should NOT be created", main.getApplicationContext());

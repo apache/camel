@@ -16,9 +16,7 @@
  */
 package org.apache.camel.spring;
 
-
 import org.apache.camel.FailedToCreateRouteException;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.IOHelper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,8 +30,8 @@ public class CircularComponentCreationTest {
             doTest("org/apache/camel/spring/CircularComponentCreationSimpleTest.xml");
 
             Assert.fail("Exception should have been thrown");
-        } catch (RuntimeCamelException e) {
-            Assert.assertTrue(e.getCause() instanceof FailedToCreateRouteException);
+        } catch (Exception e) {
+            Assert.assertTrue(e instanceof FailedToCreateRouteException);
         }
     }
 

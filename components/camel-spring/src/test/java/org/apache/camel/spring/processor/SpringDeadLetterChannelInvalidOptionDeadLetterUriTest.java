@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.processor;
+
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeCamelException;
@@ -37,8 +38,8 @@ public class SpringDeadLetterChannelInvalidOptionDeadLetterUriTest extends Sprin
         try {
             super.setUp();
             fail("Should have thrown an exception");
-        } catch (RuntimeCamelException e) {
-            FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e.getCause());
+        } catch (Exception e) {
+            FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);
             ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, ftcre.getCause());
             assertTrue(cause.getMessage().endsWith("Unknown parameters=[{foo=bar}]"));
         }
