@@ -17,12 +17,14 @@
 package org.apache.camel.main;
 
 import org.apache.camel.ManagementStatisticsLevel;
+import org.apache.camel.spi.ReloadStrategy;
 
 /**
  * Global configuration for Camel Main to setup context name, stream caching and other global configurations.
  */
 public class MainConfigurationProperties {
 
+    private boolean autoConfigurationEnabled = true;
     private String name;
     private int shutdownTimeout = 300;
     private boolean shutdownSuppressLoggingOnTimeout;
@@ -33,9 +35,12 @@ public class MainConfigurationProperties {
     private int producerTemplateCacheSize = 1000;
     private int consumerTemplateCacheSize = 1000;
     private String fileConfigurations;
+    private long duration = -1;
     private int durationMaxSeconds;
     private int durationMaxIdleSeconds;
     private int durationMaxMessages;
+    private boolean hangupInterceptorEnabled = true;
+    private int durationHitExitCode;
     private int logDebugMaxChars;
     private boolean streamCachingEnabled;
     private String streamCachingSpoolDirectory;
@@ -62,9 +67,40 @@ public class MainConfigurationProperties {
     private boolean jmxCreateConnector;
     private boolean useMdcLogging;
     private String threadNamePattern;
+    private String fileWatchDirectory;
+    private boolean fileWatchDirectoryRecursively;
+    private ReloadStrategy reloadStrategy;
 
     // getter and setters
     // --------------------------------------------------------------
+
+    public boolean isAutoConfigurationEnabled() {
+        return autoConfigurationEnabled;
+    }
+
+    /**
+     * Whether auto configuration of components/dataformats/languages is enabled or not.
+     * When enabled the configuration parameters are loaded from the properties component
+     * and configured as defaults (similar to spring-boot auto-configuration). You can prefix
+     * the parameters in the properties file with:
+     * - camel.component.name.option1=value1
+     * - camel.component.name.option2=value2
+     * - camel.dataformat.name.option1=value1
+     * - camel.dataformat.name.option2=value2
+     * - camel.language.name.option1=value1
+     * - camel.language.name.option2=value2
+     * Where name is the name of the component, dataformat or language such as seda,direct,jaxb.
+     * <p/>
+     * The auto configuration also works for any options on components
+     * that is a complex type (not standard Java type) and there has been an explicit single
+     * bean instance registered to the Camel registry via the {@link org.apache.camel.spi.Registry#bind(String, Object)} method
+     * or by using the {@link org.apache.camel.BindToRegistry} annotation style.
+     * <p/>
+     * This option is default enabled.
+     */
+    public void setAutoConfigurationEnabled(boolean autoConfigurationEnabled) {
+        this.autoConfigurationEnabled = autoConfigurationEnabled;
+    }
 
     public String getName() {
         return name;
@@ -574,8 +610,86 @@ public class MainConfigurationProperties {
         this.threadNamePattern = threadNamePattern;
     }
 
+    public long getDuration() {
+        return duration;
+    }
+
+    /**
+     * Sets the duration (in seconds) to run the application until it
+     * should be terminated. Defaults to -1. Any value <= 0 will run forever.
+     */
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
+    public boolean isHangupInterceptorEnabled() {
+        return hangupInterceptorEnabled;
+    }
+
+    /**
+     * Whether to use graceful hangup when Camel is stopping or when the JVM terminates.
+     */
+    public void setHangupInterceptorEnabled(boolean hangupInterceptorEnabled) {
+        this.hangupInterceptorEnabled = hangupInterceptorEnabled;
+    }
+
+    public int getDurationHitExitCode() {
+        return durationHitExitCode;
+    }
+
+    /**
+     * Sets the exit code for the application if duration was hit
+     */
+    public void setDurationHitExitCode(int durationHitExitCode) {
+        this.durationHitExitCode = durationHitExitCode;
+    }
+
+    public String getFileWatchDirectory() {
+        return fileWatchDirectory;
+    }
+
+    /**
+     * Sets the directory name to watch XML file changes to trigger live reload of Camel routes.
+     * <p/>
+     * Notice you cannot set this value and a custom {@link ReloadStrategy} as well.
+     */
+    public void setFileWatchDirectory(String fileWatchDirectory) {
+        this.fileWatchDirectory = fileWatchDirectory;
+    }
+
+    public boolean isFileWatchDirectoryRecursively() {
+        return fileWatchDirectoryRecursively;
+    }
+
+    /**
+     * Sets the flag to watch directory of XML file changes recursively to trigger live reload of Camel routes.
+     * <p/>
+     * Notice you cannot set this value and a custom {@link ReloadStrategy} as well.
+     */
+    public void setFileWatchDirectoryRecursively(boolean fileWatchDirectoryRecursively) {
+        this.fileWatchDirectoryRecursively = fileWatchDirectoryRecursively;
+    }
+
+    public ReloadStrategy getReloadStrategy() {
+        return reloadStrategy;
+    }
+
+    /**
+     * Sets a custom {@link ReloadStrategy} to be used.
+     * <p/>
+     * Notice you cannot set this value and the fileWatchDirectory as well.
+     */
+    public void setReloadStrategy(ReloadStrategy reloadStrategy) {
+        this.reloadStrategy = reloadStrategy;
+    }
+
     // fluent builders
     // --------------------------------------------------------------
+
+    public MainConfigurationProperties withAutoConfigurationEnabled(boolean autoConfigurationEnabled) {
+        this.autoConfigurationEnabled = autoConfigurationEnabled;
+        return this;
+    }
 
     public MainConfigurationProperties withName(String name) {
         this.name = name;
@@ -769,6 +883,36 @@ public class MainConfigurationProperties {
 
     public MainConfigurationProperties withThreadNamePattern(String threadNamePattern) {
         this.threadNamePattern = threadNamePattern;
+        return this;
+    }
+
+    public MainConfigurationProperties withDuration(long duration) {
+        this.duration = duration;
+        return this;
+    }
+
+    public MainConfigurationProperties withHangupInterceptorEnabled(boolean hangupInterceptorEnabled) {
+        this.hangupInterceptorEnabled = hangupInterceptorEnabled;
+        return this;
+    }
+
+    public MainConfigurationProperties withDurationHitExitCode(int durationHitExitCode) {
+        this.durationHitExitCode = durationHitExitCode;
+        return this;
+    }
+
+    public MainConfigurationProperties withFileWatchDirectory(String fileWatchDirectory) {
+        this.fileWatchDirectory = fileWatchDirectory;
+        return this;
+    }
+
+    public MainConfigurationProperties withFileWatchDirectoryRecursively(boolean fileWatchDirectoryRecursively) {
+        this.fileWatchDirectoryRecursively = fileWatchDirectoryRecursively;
+        return this;
+    }
+
+    public MainConfigurationProperties withReloadStrategy(ReloadStrategy reloadStrategy) {
+        this.reloadStrategy = reloadStrategy;
         return this;
     }
 
