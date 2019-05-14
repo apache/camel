@@ -44,7 +44,7 @@
         <dependency>
             <groupId>javax.enterprise</groupId>
             <artifactId>cdi-api</artifactId>
-            <version>1.2</version>
+            <version>${cdi-api-2.0-version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -87,8 +87,8 @@
                     </dependency>
                     <dependency>
                         <groupId>org.jboss.weld.se</groupId>
-                        <artifactId>weld-se</artifactId>
-                        <version>${weld2-version}</version>
+                        <artifactId>weld-se-shaded</artifactId>
+                        <version>${weld3-version}</version>
                     </dependency>
                     <!-- logging -->
                     <dependency>
