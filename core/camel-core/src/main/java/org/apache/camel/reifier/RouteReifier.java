@@ -75,7 +75,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
      * <p/>
      * Will stop and remove the old route from camel context and add and start this new advised route.
      *
-     * @param definition
+     * @param definition   the model definition
      * @param camelContext the camel context
      * @param builder      the route builder
      * @return a new route which is this route merged with the route builder
