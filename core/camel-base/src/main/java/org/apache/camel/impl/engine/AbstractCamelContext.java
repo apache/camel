@@ -2171,7 +2171,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
                 try {
                     doStartOrResumeRoutes(routeServices, true, true, false, true);
                 } catch (Exception e) {
-                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeException(e);
                 }
             }
 
@@ -2195,7 +2195,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
                         return;
                     }
                 } else {
-                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeException(e);
                 }
             }
 
@@ -2229,7 +2229,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
                     try {
                         ((ExtendedStartupListener)startup).onCamelContextFullyStarted(this, isStarted());
                     } catch (Exception e) {
-                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                        throw RuntimeCamelException.wrapRuntimeException(e);
                     }
                 }
             }

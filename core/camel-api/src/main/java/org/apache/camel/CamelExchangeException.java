@@ -16,7 +16,6 @@
  */
 package org.apache.camel;
 
-
 /**
  * An exception caused by a specific message {@link Exchange}
  */

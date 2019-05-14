@@ -20,7 +20,6 @@ package org.apache.camel;
  * An exception thrown if an InOut exchange times out receiving the OUT message
  */
 public class ExchangeTimedOutException extends CamelExchangeException {
-    private static final long serialVersionUID = -7899162905421788853L;
 
     private final long timeout;
 

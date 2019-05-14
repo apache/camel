@@ -20,7 +20,6 @@ package org.apache.camel;
  * A runtime exception thrown if an {@link Endpoint} cannot be resolved via URI
  */
 public class ResolveEndpointFailedException extends RuntimeCamelException {
-    private static final long serialVersionUID = -9121465713858552263L;
 
     private final String uri;
 

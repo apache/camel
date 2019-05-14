@@ -20,7 +20,7 @@ package org.apache.camel;
  * An exception caused when an invalid property name is used on an object
  */
 public class InvalidPropertyException extends RuntimeCamelException {
-    private static final long serialVersionUID = 3450859794325167954L;
+
     private final transient Object owner;
     private final String propertyName;
 

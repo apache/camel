@@ -19,8 +19,7 @@ package org.apache.camel;
 /**
  * Exception thrown in situations when a {@link Service} has already been stopped.
  */
-public class AlreadyStoppedException extends CamelException {
-    private static final long serialVersionUID = -8721487434390572639L;
+public class AlreadyStoppedException extends RuntimeCamelException {
 
     public AlreadyStoppedException() {
         super("Already stopped");

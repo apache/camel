@@ -23,7 +23,7 @@ package org.apache.camel;
  * @see org.apache.camel.support.ExchangeHelper#getMandatoryHeader(Exchange, String, Class)
  */
 public class NoSuchHeaderException extends CamelExchangeException {
-    private static final long serialVersionUID = -8721487431101572630L;
+
     private final String headerName;
     private final transient Class<?> type;
 

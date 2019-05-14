@@ -25,7 +25,7 @@ package org.apache.camel;
  * @see org.apache.camel.spi.LifecycleStrategy
  */
 public class VetoCamelContextStartException extends Exception {
-    private static final long serialVersionUID = 8046489554418284257L;
+
     private final CamelContext context;
     private final boolean rethrowException;
 

@@ -52,4 +52,20 @@ public class RuntimeCamelException extends RuntimeException {
             return new RuntimeCamelException(e);
         }
     }
+
+    /**
+     * Wraps the caused exception in a {@link RuntimeCamelException} if its not
+     * already a runtime exception.
+     *
+     * @param e the caused exception
+     * @return the wrapper exception
+     */
+    public static RuntimeException wrapRuntimeException(Throwable e) {
+        if (e instanceof RuntimeException) {
+            // don't double wrap
+            return (RuntimeException) e;
+        } else {
+            return new RuntimeCamelException(e);
+        }
+    }
 }

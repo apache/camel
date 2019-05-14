@@ -21,8 +21,6 @@ package org.apache.camel;
  */
 public class ExpressionEvaluationException extends RuntimeCamelException {
 
-    private static final long serialVersionUID = 2939802714638174540L;
-    
     private final transient Expression expression;
     private final transient Exchange exchange;
 
