@@ -46,6 +46,10 @@ public class SynchronousDelegateProducer implements Producer {
         producer.process(exchange);
     }
 
+    public void init() {
+        producer.init();
+    }
+
     public void start() throws Exception {
         producer.start();
     }
