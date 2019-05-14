@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.processor;
+
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
@@ -37,8 +38,8 @@ public class SpringDeadLetterChannelInvalidDeadLetterUriTest extends SpringTestS
         try {
             super.setUp();
             fail("Should have thrown an exception");
-        } catch (RuntimeCamelException e) {
-            FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e.getCause());
+        } catch (Exception e) {
+            FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);
             NoSuchEndpointException cause = assertIsInstanceOf(NoSuchEndpointException.class, ftcre.getCause());
             assertEquals("No endpoint could be found for: xxx, please check your classpath contains the needed Camel component jar.", cause.getMessage());
         }

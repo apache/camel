@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.processor;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
@@ -32,8 +33,8 @@ public class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSup
         try {
             super.setUp();
             fail("Should have thrown exception");
-        } catch (RuntimeCamelException e) {
-            FailedToCreateRouteException fe = assertIsInstanceOf(FailedToCreateRouteException.class, e.getCause());
+        } catch (Exception e) {
+            FailedToCreateRouteException fe = assertIsInstanceOf(FailedToCreateRouteException.class, e);
             IllegalArgumentException ie = assertIsInstanceOf(IllegalArgumentException.class, fe.getCause());
             assertTrue(ie.getMessage().startsWith("Loadbalancer already configured to: RandomLoadBalancer. Cannot set it to: LoadBalanceType[RoundRobinLoadBalancer"));
         }
