@@ -93,7 +93,7 @@ public class BeanTest extends LanguageTestSupport {
             exp.evaluate(exchange, Object.class);
             fail("Should throw exception");
         } catch (Exception e) {
-            MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
+            MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, e);
             assertSame(user, mnfe.getBean());
             assertEquals("unknown", mnfe.getMethodName());
         }

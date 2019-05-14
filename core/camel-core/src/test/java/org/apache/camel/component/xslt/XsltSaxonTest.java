@@ -37,7 +37,7 @@ public class XsltSaxonTest extends TestSupport {
 
             fail("Should have thrown an exception due XSLT saxon not on classpath");
         } catch (Exception e) {
-            assertIsInstanceOf(ClassNotFoundException.class, e.getCause());
+            assertIsInstanceOf(ClassNotFoundException.class, e.getCause().getCause());
         }
     }
 

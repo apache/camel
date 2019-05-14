@@ -41,7 +41,7 @@ public class BeanLanguageInvalidOGNLTest extends ContextTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            RuntimeCamelException rce = assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
+            RuntimeCamelException rce = assertIsInstanceOf(RuntimeCamelException.class, e);
             MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, rce.getCause());
             assertEquals("getOther[xx", mnfe.getMethodName());
             ExpressionIllegalSyntaxException cause = assertIsInstanceOf(ExpressionIllegalSyntaxException.class, mnfe.getCause());

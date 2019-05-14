@@ -54,9 +54,8 @@ public class BeanInvokeStaticTest extends ContextTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
-            assertIsInstanceOf(MethodNotFoundException.class, e.getCause().getCause());
-            assertEquals("Static method with name: doSomething not found on class: org.apache.camel.component.bean.MyStaticClass", e.getCause().getCause().getMessage());
+            assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
+            assertEquals("Static method with name: doSomething not found on class: org.apache.camel.component.bean.MyStaticClass", e.getCause().getMessage());
         }
     }
 
