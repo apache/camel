@@ -24,11 +24,11 @@ import org.apache.camel.component.http4.HttpMethods;
 import org.junit.Test;
 
 
-public class NettyHttpBindingUseRelativePath extends BaseNettyTest {
+public class NettyHttpBindingUseAbsolutePath extends BaseNettyTest {
 
     @Test
     public void testSendToNettyWithPath() throws Exception {
-        Exchange exchange = template.request("netty4-http:http://localhost:{{port}}/mypath", new Processor() {
+        Exchange exchange = template.request("netty4-http:http://localhost:{{port}}/mypath?useRelativePath=false", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST);
             }
@@ -41,7 +41,7 @@ public class NettyHttpBindingUseRelativePath extends BaseNettyTest {
 
     @Test
     public void testSendToNettyWithoutPath() throws Exception {
-        Exchange exchange = template.request("netty4-http:http://localhost:{{port}}", new Processor() {
+        Exchange exchange = template.request("netty4-http:http://localhost:{{port}}?useRelativePath=false", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST);
             }
@@ -54,7 +54,7 @@ public class NettyHttpBindingUseRelativePath extends BaseNettyTest {
 
     @Test
     public void testSendToNettyWithoutPath2() throws Exception {
-        Exchange exchange = template.request("netty4-http:http://localhost:{{port}}/", new Processor() {
+        Exchange exchange = template.request("netty4-http:http://localhost:{{port}}/?useRelativePath=false", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST);
             }
@@ -75,7 +75,7 @@ public class NettyHttpBindingUseRelativePath extends BaseNettyTest {
 
                         NettyHttpMessage in = (NettyHttpMessage) exchange.getIn();
                         FullHttpRequest request = in.getHttpRequest();
-                        assertEquals("Relative path not used in POST", "/mypath", request.uri());
+                        assertEquals("Relative path not used in POST", "http://localhost:" + getPort() + "/mypath", request.uri());
 
                         // send a response
                         exchange.getOut().getHeaders().clear();
@@ -90,7 +90,7 @@ public class NettyHttpBindingUseRelativePath extends BaseNettyTest {
 
                         NettyHttpMessage in = (NettyHttpMessage) exchange.getIn();
                         FullHttpRequest request = in.getHttpRequest();
-                        assertEquals("Relative path not used in POST", "/", request.uri());
+                        assertEquals("Relative path not used in POST", "http://localhost:" + getPort() + "/", request.uri());
 
                         // send a response
                         exchange.getOut().getHeaders().clear();
