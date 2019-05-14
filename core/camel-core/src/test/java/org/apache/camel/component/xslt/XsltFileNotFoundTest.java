@@ -41,8 +41,8 @@ public class XsltFileNotFoundTest extends TestSupport {
 
             fail("Should have thrown an exception due XSLT file not found");
         } catch (Exception e) {
-            assertIsInstanceOf(TransformerException.class, e.getCause());
-            assertIsInstanceOf(FileNotFoundException.class, e.getCause().getCause());
+            assertIsInstanceOf(TransformerException.class, e.getCause().getCause());
+            assertIsInstanceOf(FileNotFoundException.class, e.getCause().getCause().getCause());
         }
     }
 
