@@ -17,7 +17,6 @@
 package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -41,7 +40,7 @@ public class SedaBlockWhenFullInvalidConfigurationTest extends ContextTestSuppor
         try {
             context.start();
             fail("Should fail");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             ResolveEndpointFailedException refe = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             assertEquals("Value [true, true] converted to java.lang.Boolean cannot be null", refe.getCause().getMessage());
         }

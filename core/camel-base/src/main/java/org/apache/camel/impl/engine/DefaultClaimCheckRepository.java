@@ -73,12 +73,12 @@ public class DefaultClaimCheckRepository implements ClaimCheckRepository {
     }
 
     @Override
-    public void start() throws Exception {
+    public void start() {
         // noop
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         // noop
     }
 }

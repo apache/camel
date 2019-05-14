@@ -17,7 +17,6 @@
 package org.apache.camel.component.validator;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -82,7 +81,7 @@ public class ValidatorIllegalImportTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should have thrown exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
             assertTrue(iae.getMessage().startsWith("Resource: org/apache/camel/component/validator/BroadcastMonitor.xsd refers an invalid resource without SystemId."));
         }

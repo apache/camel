@@ -17,7 +17,6 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -72,7 +71,7 @@ public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should have thrown an exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             // expected
         }
     }

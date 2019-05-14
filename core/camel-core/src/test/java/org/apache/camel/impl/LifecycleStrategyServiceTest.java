@@ -48,12 +48,12 @@ public class LifecycleStrategyServiceTest extends TestSupport {
         private volatile boolean started;
 
         @Override
-        public void start() throws Exception {
+        public void start() {
             started = true;
         }
 
         @Override
-        public void stop() throws Exception {
+        public void stop() {
             started = false;
         }
 

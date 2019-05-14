@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.junit.Test;
@@ -53,7 +52,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                             .to("mock:test");
                 }
             });
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             assertTrue(e.getCause() instanceof IllegalArgumentException);
             assertTrue(e.getCause().getMessage().startsWith("ThreadName"));
             return;
@@ -86,7 +85,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                             .to("mock:test");
                 }
             });
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             assertTrue(e.getCause() instanceof IllegalArgumentException);
             assertTrue(e.getCause().getMessage().startsWith("PoolSize"));
             return;
@@ -106,7 +105,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                             .to("mock:test");
                 }
             });
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             assertTrue(e.getCause() instanceof IllegalArgumentException);
             assertTrue(e.getCause().getMessage().startsWith("MaxPoolSize"));
             return;
@@ -126,7 +125,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                             .to("mock:test");
                 }
             });
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             assertTrue(e.getCause() instanceof IllegalArgumentException);
             assertTrue(e.getCause().getMessage().startsWith("KeepAliveTime"));
             return;
@@ -146,7 +145,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                             .to("mock:test");
                 }
             });
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             assertTrue(e.getCause() instanceof IllegalArgumentException);
             assertTrue(e.getCause().getMessage().startsWith("MaxQueueSize"));
             return;
@@ -166,7 +165,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                             .to("mock:test");
                 }
             });
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             assertTrue(e.getCause() instanceof IllegalArgumentException);
             assertTrue(e.getCause().getMessage().startsWith("RejectedPolicy"));
             return;

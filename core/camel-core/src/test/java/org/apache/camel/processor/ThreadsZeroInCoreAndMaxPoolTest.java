@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -44,7 +43,7 @@ public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
                 }
             });
             fail("Expect FailedToCreateRouteException exception here");
-        } catch (FailedToCreateRouteException ex) {
+        } catch (Exception ex) {
             assertTrue(ex.getCause() instanceof IllegalArgumentException);
         }
     }

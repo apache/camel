@@ -17,7 +17,6 @@
 package org.apache.camel.component.properties;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -62,7 +61,7 @@ public class PropertiesComponentOnlyUseDefaultValuesTest extends ContextTestSupp
         try {
             context.start();
             fail("Should have thrown exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             // expected
         }
     }
@@ -81,7 +80,7 @@ public class PropertiesComponentOnlyUseDefaultValuesTest extends ContextTestSupp
         try {
             context.start();
             fail("Should have thrown exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             // expected
         }
     }

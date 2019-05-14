@@ -16,7 +16,6 @@
  */
 package org.apache.camel.management;
 
-import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -50,8 +49,8 @@ public class ManagedDuplicateIdTest extends ManagementTestSupport {
         try {
             context.start();
             fail("Should fail");
-        } catch (FailedToStartRouteException e) {
-            assertEquals("Failed to start route foo because of duplicate id detected: clash. Please correct ids to be unique among all your routes.", e.getMessage());
+        } catch (Exception e) {
+            assertEquals("Failed to start route foo because of duplicate id detected: clash. Please correct ids to be unique among all your routes.", e.getCause().getMessage());
         }
     }
 

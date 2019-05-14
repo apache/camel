@@ -25,10 +25,10 @@ public class SuspendableServiceTest extends Assert {
 
         private boolean suspended;
 
-        public void start() throws Exception {
+        public void start() {
         }
 
-        public void stop() throws Exception {
+        public void stop() {
         }
 
         public void suspend() {

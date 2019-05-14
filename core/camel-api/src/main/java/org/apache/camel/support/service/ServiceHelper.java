@@ -25,6 +25,7 @@ import java.util.Set;
 import org.apache.camel.Channel;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.ShutdownableService;
 import org.apache.camel.StatefulService;
@@ -50,7 +51,7 @@ public final class ServiceHelper {
      * <p/>
      * Calling this method has no effect if {@code value} is {@code null}.
      */
-    public static void startService(Object value) throws Exception {
+    public static void startService(Object value) {
         if (value instanceof Service) {
             ((Service) value).start();
         } else if (value instanceof Iterable) {
@@ -66,7 +67,7 @@ public final class ServiceHelper {
      * 
      * @see #startService(Object)
      */
-    public static void startService(Object... services) throws Exception {
+    public static void startService(Object... services) {
         if (services != null) {
             for (Object o : services) {
                 startService(o);
@@ -83,7 +84,7 @@ public final class ServiceHelper {
      * 
      * @see #stopService(Collection)
      */
-    public static void stopService(Object... services) throws Exception {
+    public static void stopService(Object... services) {
         if (services != null) {
             for (Object o : services) {
                 stopService(o);
@@ -99,7 +100,7 @@ public final class ServiceHelper {
      * @see Service#stop()
      * @see #stopService(Collection)
      */
-    public static void stopService(Object value) throws Exception {
+    public static void stopService(Object value) {
         if (value instanceof Service) {
             ((Service) value).stop();
         } else if (value instanceof Iterable) {
@@ -118,15 +119,15 @@ public final class ServiceHelper {
      * 
      * @see #stopService(Object)
      */
-    public static void stopService(Collection<?> services) throws Exception {
+    public static void stopService(Collection<?> services) {
         if (services == null) {
             return;
         }
-        Exception firstException = null;
+        RuntimeException firstException = null;
         for (Object value : services) {
             try {
                 stopService(value);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Caught exception stopping service: {}", value, e);
                 }
@@ -149,7 +150,7 @@ public final class ServiceHelper {
      * 
      * @see #stopAndShutdownServices(Collection)
      */
-    public static void stopAndShutdownServices(Object... services) throws Exception {
+    public static void stopAndShutdownServices(Object... services) {
         if (services == null) {
             return;
         }
@@ -165,7 +166,7 @@ public final class ServiceHelper {
      * @see #stopService(Object)
      * @see ShutdownableService#shutdown()
      */
-    public static void stopAndShutdownService(Object value) throws Exception {
+    public static void stopAndShutdownService(Object value) {
         stopService(value);
 
         // then try to shutdown
@@ -186,11 +187,11 @@ public final class ServiceHelper {
      * @see #stopService(Object)
      * @see ShutdownableService#shutdown()
      */
-    public static void stopAndShutdownServices(Collection<?> services) throws Exception {
+    public static void stopAndShutdownServices(Collection<?> services) {
         if (services == null) {
             return;
         }
-        Exception firstException = null;
+        RuntimeException firstException = null;
 
         for (Object value : services) {
 
@@ -204,7 +205,7 @@ public final class ServiceHelper {
                     LOG.trace("Shutting down service: {}", service);
                     service.shutdown();
                 }
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Caught exception shutting down service: {}", value, e);
                 }
@@ -227,17 +228,17 @@ public final class ServiceHelper {
      * 
      * @see #resumeService(Object)
      */
-    public static void resumeServices(Collection<?> services) throws Exception {
+    public static void resumeServices(Collection<?> services) {
         if (services == null) {
             return;
         }
-        Exception firstException = null;
+        RuntimeException firstException = null;
         for (Object value : services) {
             if (value instanceof Service) {
                 Service service = (Service)value;
                 try {
                     resumeService(service);
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Caught exception resuming service: {}", service, e);
                     }
@@ -273,7 +274,7 @@ public final class ServiceHelper {
      * @throws Exception is thrown if error occurred
      * @see #startService(Object)
      */
-    public static boolean resumeService(Object service) throws Exception {
+    public static boolean resumeService(Object service) {
         if (service instanceof Suspendable && service instanceof SuspendableService) {
             SuspendableService ss = (SuspendableService) service;
             if (ss.isSuspended()) {
@@ -298,17 +299,17 @@ public final class ServiceHelper {
      * 
      * @see #suspendService(Object)
      */
-    public static void suspendServices(Collection<?> services) throws Exception {
+    public static void suspendServices(Collection<?> services) {
         if (services == null) {
             return;
         }
-        Exception firstException = null;
+        RuntimeException firstException = null;
         for (Object value : services) {
             if (value instanceof Service) {
                 Service service = (Service)value;
                 try {
                     suspendService(service);
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Caught exception suspending service: {}", service, e);
                     }
@@ -344,7 +345,7 @@ public final class ServiceHelper {
      * @throws Exception is thrown if error occurred
      * @see #stopService(Object)
      */
-    public static boolean suspendService(Object service) throws Exception {
+    public static boolean suspendService(Object service) {
         if (service instanceof Suspendable && service instanceof SuspendableService) {
             SuspendableService ss = (SuspendableService) service;
             if (!ss.isSuspended()) {

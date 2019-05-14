@@ -100,11 +100,11 @@ public final class AsyncProcessorConverterHelper {
             }
         }
 
-        public void start() throws Exception {
+        public void start() {
             ServiceHelper.startService(processor);
         }
 
-        public void stop() throws Exception {
+        public void stop() {
             ServiceHelper.stopService(processor);
         }
 

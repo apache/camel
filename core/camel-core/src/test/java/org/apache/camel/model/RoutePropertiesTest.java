@@ -17,7 +17,6 @@
 package org.apache.camel.model;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -71,7 +70,7 @@ public class RoutePropertiesTest extends ContextTestSupport {
             context.start();
 
             fail("");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
         }
     }
 }

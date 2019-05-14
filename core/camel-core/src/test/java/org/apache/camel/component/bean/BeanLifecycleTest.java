@@ -107,12 +107,12 @@ public class BeanLifecycleTest extends ContextTestSupport {
         }
 
         @Override
-        public void start() throws Exception {
+        public void start() {
             status = "started";
         }
 
         @Override
-        public void stop() throws Exception {
+        public void stop() {
             status = "stopped";
         }
     }
@@ -124,12 +124,12 @@ public class BeanLifecycleTest extends ContextTestSupport {
         }
 
         @Override
-        public void start() throws Exception {
+        public void start() {
             fail("Should not be invoked");
         }
 
         @Override
-        public void stop() throws Exception {
+        public void stop() {
             fail("Should not be invoked");
         }
     }
@@ -146,11 +146,11 @@ public class BeanLifecycleTest extends ContextTestSupport {
         }
 
         @Override
-        public void start() throws Exception {
+        public void start() {
         }
 
         @Override
-        public void stop() throws Exception {
+        public void stop() {
         }
     }
 }

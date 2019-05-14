@@ -123,7 +123,7 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
      * Do not invoke this method directly, use {@link org.apache.camel.spi.RouteController#startRoute(String)} to start a route.
      */
     @Override
-    public void start() throws Exception {
+    public void start() {
         super.start();
     }
 
@@ -131,7 +131,7 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
      * Do not invoke this method directly, use {@link org.apache.camel.spi.RouteController#stopRoute(String)} to stop a route.
      */
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         super.stop();
     }
 

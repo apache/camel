@@ -314,7 +314,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         }
     }
 
-    public void doInit() {
+    public void doInit() throws Exception {
         // setup management first since end users may use it to add event
         // notifiers
         // using the management strategy before the CamelContext has been
@@ -2149,7 +2149,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     }
 
     @Override
-    public void start() throws Exception {
+    public void start() {
         try (MDCHelper mdcHelper = new MDCHelper()) {
             init();
             vetoStarted.set(false);
@@ -2168,7 +2168,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
             if (firstStartDone && !isAutoStartup() && isStarted()) {
                 // invoke this logic to warm up the routes and if possible also
                 // start the routes
-                doStartOrResumeRoutes(routeServices, true, true, false, true);
+                try {
+                    doStartOrResumeRoutes(routeServices, true, true, false, true);
+                } catch (Exception e) {
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                }
             }
 
             // super will invoke doStart which will prepare internal services
@@ -2176,17 +2180,22 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
             try {
                 firstStartDone = true;
                 super.start();
-            } catch (VetoCamelContextStartException e) {
-                // mark we veto against starting Camel
-                vetoStarted.set(true);
-                if (e.isRethrowException()) {
-                    throw e;
+            } catch (Exception e) {
+                VetoCamelContextStartException veto = ObjectHelper.getException(VetoCamelContextStartException.class, e);
+                if (veto != null) {
+                    // mark we veto against starting Camel
+                    vetoStarted.set(true);
+                    if (veto.isRethrowException()) {
+                        throw e;
+                    } else {
+                        log.info("CamelContext ({}) vetoed to not start due {}", getName(), e.getMessage());
+                        // swallow exception and change state of this camel context
+                        // to stopped
+                        stop();
+                        return;
+                    }
                 } else {
-                    log.info("CamelContext ({}) vetoed to not start due {}", getName(), e.getMessage());
-                    // swallow exception and change state of this camel context
-                    // to stopped
-                    stop();
-                    return;
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
             }
 
@@ -2217,35 +2226,39 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
             // now call the startup listeners where the routes has been started
             for (StartupListener startup : startupListeners) {
                 if (startup instanceof ExtendedStartupListener) {
-                    ((ExtendedStartupListener)startup).onCamelContextFullyStarted(this, isStarted());
+                    try {
+                        ((ExtendedStartupListener)startup).onCamelContextFullyStarted(this, isStarted());
+                    } catch (Exception e) {
+                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                    }
                 }
             }
         }
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         try (MDCHelper mdcHelper = new MDCHelper()) {
             super.stop();
         }
     }
 
     @Override
-    public void suspend() throws Exception {
+    public void suspend() {
         try (MDCHelper mdcHelper = new MDCHelper()) {
             super.suspend();
         }
     }
 
     @Override
-    public void resume() throws Exception {
+    public void resume() {
         try (MDCHelper mdcHelper = new MDCHelper()) {
             super.resume();
         }
     }
 
     @Override
-    public void shutdown() throws Exception {
+    public void shutdown() {
         try (MDCHelper mdcHelper = new MDCHelper()) {
             super.shutdown();
         }
@@ -2939,7 +2952,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         return true;
     }
 
-    private void doWarmUpRoutes(Map<Integer, DefaultRouteStartupOrder> inputs, boolean autoStartup) throws Exception {
+    private void doWarmUpRoutes(Map<Integer, DefaultRouteStartupOrder> inputs, boolean autoStartup) throws FailedToStartRouteException {
         // now prepare the routes by starting its services before we start the
         // input
         for (Map.Entry<Integer, DefaultRouteStartupOrder> entry : inputs.entrySet()) {

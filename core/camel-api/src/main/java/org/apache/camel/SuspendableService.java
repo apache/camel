@@ -35,16 +35,16 @@ public interface SuspendableService extends Service {
     /**
      * Suspends the service.
      *
-     * @throws Exception is thrown if suspending failed
+     * @throws RuntimeCamelException is thrown if suspending failed
      */
-    void suspend() throws Exception;
+    void suspend();
 
     /**
      * Resumes the service.
      *
-     * @throws Exception is thrown if resuming failed
+     * @throws RuntimeCamelException is thrown if resuming failed
      */
-    void resume() throws Exception;
+    void resume();
 
     /**
      * Tests whether the service is suspended or not.

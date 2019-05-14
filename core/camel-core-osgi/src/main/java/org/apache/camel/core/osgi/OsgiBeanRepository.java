@@ -135,12 +135,12 @@ public class OsgiBeanRepository extends LifecycleStrategySupport implements Bean
     }
 
     @Override
-    public void start() throws Exception {
+    public void start() {
         // noop
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         // Unget the OSGi service as OSGi uses reference counting
         // and we should do this as one of the last actions when stopping Camel
         this.serviceReferenceUsageMap.forEach(this::drainServiceUsage);

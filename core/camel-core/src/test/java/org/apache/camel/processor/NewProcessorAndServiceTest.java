@@ -53,11 +53,11 @@ public class NewProcessorAndServiceTest extends ContextTestSupport {
             exchange.getOut().setBody("Bye World");
         }
 
-        public void start() throws Exception {
+        public void start() {
             started = true;
         }
 
-        public void stop() throws Exception {
+        public void stop() {
             started = false;
         }
 

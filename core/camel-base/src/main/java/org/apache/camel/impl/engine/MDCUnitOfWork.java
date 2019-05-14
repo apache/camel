@@ -78,7 +78,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         super.stop();
         // and remove when stopping
         clear();

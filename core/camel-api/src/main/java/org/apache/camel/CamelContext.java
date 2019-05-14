@@ -138,18 +138,18 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * <p/>
      * See more details at the class-level javadoc of this class.
      *
-     * @throws Exception is thrown if starting failed
+     * @throws RuntimeCamelException is thrown if starting failed
      */
-    void start() throws Exception;
+    void start();
 
     /**
      * Stop and shutdown the {@link CamelContext} (will stop all routes/components/endpoints etc and clear internal state/cache).
      * <p/>
      * See more details at the class-level javadoc of this class.
      *
-     * @throws Exception is thrown if stopping failed
+     * @throws RuntimeCamelException is thrown if stopping failed
      */
-    void stop() throws Exception;
+    void stop();
 
     /**
      * Gets the name (id) of the this CamelContext.
