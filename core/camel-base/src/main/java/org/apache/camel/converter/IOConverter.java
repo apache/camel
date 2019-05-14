@@ -73,21 +73,6 @@ public final class IOConverter {
         return IOHelper.buffered(new FileInputStream(file));
     }
 
-    /**
-     * Converts the given {@link File} with the given charset to {@link InputStream} with the JVM default charset
-     *
-     * @param file the file to be converted
-     * @param charset the charset the file is read with
-     * @return the input stream with the JVM default charset
-     */
-    public static InputStream toInputStream(File file, String charset) throws IOException {
-        if (charset != null) {
-            return new IOHelper.EncodingInputStream(file, charset);
-        } else {
-            return toInputStream(file);
-        }
-    }
-
     @Converter
     public static BufferedReader toReader(File file, Exchange exchange) throws IOException {
         return IOHelper.toReader(file, ExchangeHelper.getCharsetName(exchange));
@@ -106,15 +91,11 @@ public final class IOConverter {
     @Converter
     public static BufferedWriter toWriter(File file, Exchange exchange) throws IOException {
         FileOutputStream os = new FileOutputStream(file, false);
-        return toWriter(os, ExchangeHelper.getCharsetName(exchange));
+        return IOHelper.toWriter(os, ExchangeHelper.getCharsetName(exchange));
     }
 
     public static BufferedWriter toWriter(File file, boolean append, String charset) throws IOException {
-        return toWriter(new FileOutputStream(file, append), charset);
-    }
-
-    public static BufferedWriter toWriter(FileOutputStream os, String charset) throws IOException {
-        return IOHelper.buffered(new IOHelper.EncodingFileWriter(os, charset));
+        return IOHelper.toWriter(new FileOutputStream(file, append), charset);
     }
 
     @Converter

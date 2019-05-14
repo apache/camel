@@ -125,7 +125,7 @@ public final class GenericFileConverter {
                 } else {
                     LOG.debug("Read file {} (no charset)", f);
                 }
-                return toInputStream(f, charset);
+                return IOHelper.toInputStream(f, charset);
             }
         }
         if (exchange != null) {
@@ -143,7 +143,7 @@ public final class GenericFileConverter {
         // use reader first as it supports the file charset
         BufferedReader reader = genericFileToReader(file, exchange);
         if (reader != null) {
-            return toString(reader);
+            return IOHelper.toString(reader);
         }
         if (exchange != null) {
             // otherwise ensure the body is loaded as we want the content of the body
@@ -184,120 +184,13 @@ public final class GenericFileConverter {
             String charset = file.getCharset();
             if (charset != null) {
                 LOG.debug("Read file {} with charset {}", f, file.getCharset());
-                return toReader(f, charset);
+                return IOHelper.toReader(f, charset);
             } else {
                 LOG.debug("Read file {} (no charset)", f);
-                return toReader(f, ExchangeHelper.getCharsetName(exchange));
+                return IOHelper.toReader(f, ExchangeHelper.getCharsetName(exchange));
             }
         }
         return null;
-    }
-
-    private static BufferedReader toReader(File file, String charset) throws IOException {
-        FileInputStream in = new FileInputStream(file);
-        return IOHelper.buffered(new EncodingFileReader(in, charset));
-    }
-
-    private static InputStream toInputStream(File file, String charset) throws IOException {
-        if (charset != null) {
-            return new EncodingInputStream(file, charset);
-        } else {
-            return toInputStream(file);
-        }
-    }
-
-    private static InputStream toInputStream(File file) throws IOException {
-        return IOHelper.buffered(new FileInputStream(file));
-    }
-
-    private static String toString(BufferedReader reader) throws IOException {
-        StringBuilder sb = new StringBuilder(1024);
-        char[] buf = new char[1024];
-        try {
-            int len;
-            // read until we reach then end which is the -1 marker
-            while ((len = reader.read(buf)) != -1) {
-                sb.append(buf, 0, len);
-            }
-        } finally {
-            IOHelper.close(reader, "reader", LOG);
-        }
-
-        return sb.toString();
-    }
-
-    /**
-     * Encoding-aware file reader.
-     */
-    private static class EncodingFileReader extends InputStreamReader {
-
-        private final FileInputStream in;
-
-        /**
-         * @param in file to read
-         * @param charset character set to use
-         */
-        EncodingFileReader(FileInputStream in, String charset)
-            throws FileNotFoundException, UnsupportedEncodingException {
-            super(in, charset);
-            this.in = in;
-        }
-
-        @Override
-        public void close() throws IOException {
-            try {
-                super.close();
-            } finally {
-                in.close();
-            }
-        }
-    }
-
-    /**
-     * Encoding-aware input stream.
-     */
-    public static class EncodingInputStream extends InputStream {
-
-        private final File file;
-        private final BufferedReader reader;
-        private final Charset defaultStreamCharset;
-
-        private ByteBuffer bufferBytes;
-        private CharBuffer bufferedChars = CharBuffer.allocate(4096);
-
-        public EncodingInputStream(File file, String charset) throws IOException {
-            this.file = file;
-            reader = toReader(file, charset);
-            defaultStreamCharset = defaultCharset.get();
-        }
-
-        @Override
-        public int read() throws IOException {
-            if (bufferBytes == null || bufferBytes.remaining() <= 0) {
-                bufferedChars.clear();
-                int len = reader.read(bufferedChars);
-                bufferedChars.flip();
-                if (len == -1) {
-                    return -1;
-                }
-                bufferBytes = defaultStreamCharset.encode(bufferedChars);
-            }
-            return bufferBytes.get();
-        }
-
-        @Override
-        public void close() throws IOException {
-            reader.close();
-        }
-
-        @Override
-        public void reset() throws IOException {
-            reader.reset();
-        }
-
-        public InputStream toOriginalInputStream() throws FileNotFoundException {
-            return new FileInputStream(file);
-        }
     }
 
 }
