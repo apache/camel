@@ -17,7 +17,6 @@
 package org.apache.camel.component.direct;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -44,7 +43,7 @@ public class DirectNoMultipleConsumersTest extends TestSupport {
         try {
             container.start();
             fail("Should have thrown an FailedToStartRouteException");
-        } catch (FailedToStartRouteException e) {
+        } catch (Exception e) {
             // expected
         } finally {
             container.stop();

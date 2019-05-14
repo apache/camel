@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +33,7 @@ public class RouteWithConstantFieldFromExchangeFailTest extends ContextTestSuppo
         try {
             super.setUp();
             fail("Should have thrown an exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("Constant field with name: XXX not found on Exchange.class", iae.getMessage());
         }

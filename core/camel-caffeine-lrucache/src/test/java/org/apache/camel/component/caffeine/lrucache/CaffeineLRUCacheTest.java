@@ -154,10 +154,10 @@ public class CaffeineLRUCacheTest {
 
         private Boolean stopped;
 
-        public void start() throws Exception {
+        public void start() {
         }
 
-        public void stop() throws Exception {
+        public void stop() {
             stopped = true;
         }
 

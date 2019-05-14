@@ -110,11 +110,11 @@ public class LimitedPollingConsumerPollStrategy extends DefaultPollingConsumerPo
         return false;
     }
 
-    public void start() throws Exception {
+    public void start() {
         // noop
     }
 
-    public void stop() throws Exception {
+    public void stop() {
         state.clear();
     }
 }

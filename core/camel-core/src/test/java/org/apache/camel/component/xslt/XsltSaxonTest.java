@@ -17,7 +17,6 @@
 package org.apache.camel.component.xslt;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -37,7 +36,7 @@ public class XsltSaxonTest extends TestSupport {
             context.start();
 
             fail("Should have thrown an exception due XSLT saxon not on classpath");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             assertIsInstanceOf(ClassNotFoundException.class, e.getCause());
         }
     }

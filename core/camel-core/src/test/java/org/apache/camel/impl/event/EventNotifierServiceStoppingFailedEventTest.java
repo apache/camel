@@ -84,10 +84,10 @@ public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupp
             this.fail = fail;
         }
 
-        public void start() throws Exception {
+        public void start() {
         }
 
-        public void stop() throws Exception {
+        public void stop() {
             stopOrder = stopOrder + name;
 
             if (fail) {

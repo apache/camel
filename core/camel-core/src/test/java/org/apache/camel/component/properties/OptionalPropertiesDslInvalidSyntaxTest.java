@@ -18,7 +18,6 @@ package org.apache.camel.component.properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -40,7 +39,7 @@ public class OptionalPropertiesDslInvalidSyntaxTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should have thrown exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("Property with key [xxx] not found in properties from text: {{xxx}}", cause.getMessage());
         }
@@ -59,7 +58,7 @@ public class OptionalPropertiesDslInvalidSyntaxTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should have thrown exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("No setter to set property: xxx to: true on: Multicast[[To[mock:a], ThrowException[java.lang.IllegalAccessException], To[mock:b]]]", cause.getMessage());
         }

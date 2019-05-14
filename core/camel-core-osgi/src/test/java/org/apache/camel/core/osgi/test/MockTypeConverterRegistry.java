@@ -112,11 +112,11 @@ public class MockTypeConverterRegistry implements TypeConverterRegistry {
         return null;
     }
 
-    public void start() throws Exception {
+    public void start() {
         // noop
     }
 
-    public void stop() throws Exception {
+    public void stop() {
         // noop
     }
 }

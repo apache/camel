@@ -40,9 +40,10 @@ public class FromHasNoOutputRouteTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should throw exception");
-        } catch (FailedToCreateRouteException e) {
-            assertEquals("route1", e.getRouteId());
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        } catch (Exception e) {
+            FailedToCreateRouteException failed = assertIsInstanceOf(FailedToCreateRouteException.class, e.getCause());
+            assertEquals("route1", failed.getRouteId());
+            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
             assertEquals("Route route1 has no output processors. You need to add outputs to the route such as to(\"log:foo\").", cause.getMessage());
         }
     }

@@ -120,13 +120,13 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
         return producer.isSingleton();
     }
 
-    public void start() throws Exception {
+    public void start() {
         ServiceHelper.startService(endpoint.getDetour());
         // here we also need to start the producer
         ServiceHelper.startService(producer);
     }
 
-    public void stop() throws Exception {
+    public void stop() {
         // do not stop detour as it should only be stopped when the interceptor stops
         // we should stop the producer here
         ServiceHelper.stopService(producer);

@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -45,7 +44,7 @@ public class RouteStartupOrderClashTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should have thrown an exception");
-        } catch (FailedToStartRouteException e) {
+        } catch (Exception e) {
             // expected
             assertTrue(e.getMessage().contains("startupOrder 2"));
         }

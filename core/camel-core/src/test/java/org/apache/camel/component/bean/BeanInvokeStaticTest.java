@@ -17,7 +17,6 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -54,7 +53,7 @@ public class BeanInvokeStaticTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should have thrown exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
             assertIsInstanceOf(MethodNotFoundException.class, e.getCause().getCause());
             assertEquals("Static method with name: doSomething not found on class: org.apache.camel.component.bean.MyStaticClass", e.getCause().getCause().getMessage());

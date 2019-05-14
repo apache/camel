@@ -52,12 +52,12 @@ public class DefaultRuntimeCamelCatalog extends AbstractCamelCatalog implements 
     }
 
     @Override
-    public void start() throws Exception {
+    public void start() {
         // noop
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         cache.clear();
     }
 

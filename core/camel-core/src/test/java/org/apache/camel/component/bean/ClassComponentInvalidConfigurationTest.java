@@ -17,7 +17,6 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -42,7 +41,7 @@ public class ClassComponentInvalidConfigurationTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should have thrown exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             ClassNotFoundException not = assertIsInstanceOf(ClassNotFoundException.class, cause.getCause());
             assertEquals("org.apache.camel.component.bean.XXX", not.getMessage());
@@ -62,7 +61,7 @@ public class ClassComponentInvalidConfigurationTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should have thrown exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             assertTrue(cause.getMessage().contains("Unknown parameters"));
             assertTrue(cause.getMessage().contains("foo=bar"));

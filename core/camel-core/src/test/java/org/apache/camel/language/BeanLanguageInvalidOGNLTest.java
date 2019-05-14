@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExpressionIllegalSyntaxException;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.MethodNotFoundException;
@@ -41,7 +40,7 @@ public class BeanLanguageInvalidOGNLTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should have thrown exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             RuntimeCamelException rce = assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
             MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, rce.getCause());
             assertEquals("getOther[xx", mnfe.getMethodName());

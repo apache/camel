@@ -19,7 +19,6 @@ package org.apache.camel.component.xslt;
 import javax.xml.transform.TransformerConfigurationException;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
@@ -43,7 +42,7 @@ public class XsltRouteXsltWithErrorTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should have thrown exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             TransformerConfigurationException cause = ObjectHelper.getException(TransformerConfigurationException.class, e);
             assertNotNull(cause);
             // not sure if XSLT errors may be i18n and not english always so just check for the spelling mistake of select -> slect
