@@ -48,7 +48,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("OnException[[java.lang.Exception] -> []] is not configured.", iae.getMessage());
         }
     }
@@ -67,7 +67,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("OnException[[java.lang.Exception] -> []] is not configured.", iae.getMessage());
         }
     }
@@ -87,7 +87,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("OnException[[java.lang.Exception] -> []] is not configured.", iae.getMessage());
         }
     }
@@ -107,7 +107,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("OnException[[java.lang.Exception] -> []] is not configured.", iae.getMessage());
         }
     }
@@ -128,7 +128,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertTrue(iae.getMessage().startsWith("At least one exception must be configured"));
         }
     }

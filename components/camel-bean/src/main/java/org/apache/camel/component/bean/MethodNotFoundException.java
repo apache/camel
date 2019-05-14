@@ -16,12 +16,11 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.util.ObjectHelper;
 
-public class MethodNotFoundException extends CamelExchangeException {
-    private static final long serialVersionUID = -7411465307141051012L;
+public class MethodNotFoundException extends RuntimeExchangeException {
 
     private final Object bean;
     private final String methodName;

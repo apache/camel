@@ -21,16 +21,24 @@ package org.apache.camel;
  */
 public class FailedToStartRouteException extends RuntimeCamelException {
 
+    private String routeId;
+
     public FailedToStartRouteException(String routeId, String message) {
         super("Failed to start route " + routeId + " because of " + message);
+        this.routeId = routeId;
     }
 
     public FailedToStartRouteException(String routeId, String message, Throwable cause) {
         super("Failed to start route " + routeId + " because of " + message, cause);
+        this.routeId = routeId;
     }
 
     public FailedToStartRouteException(Throwable cause) {
         super(cause);
+    }
+
+    public String getRouteId() {
+        return routeId;
     }
 }
 
