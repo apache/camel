@@ -110,23 +110,14 @@ public abstract class MainSupport extends ServiceSupport {
     protected final AtomicBoolean completed = new AtomicBoolean(false);
     protected final AtomicInteger exitCode = new AtomicInteger(UNINITIALIZED_EXIT_CODE);
 
-    // TODO: Move these to mainConfigurationProperties (delegate)
-    protected long duration = -1;
-    protected String fileWatchDirectory;
-    protected boolean fileWatchDirectoryRecursively;
-
-    protected CamelContext camelContext;
+    protected volatile CamelContext camelContext;
+    protected volatile ProducerTemplate camelTemplate;
     protected final MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
     protected List<RouteBuilder> routeBuilders = new ArrayList<>();
     protected String routeBuilderClasses;
     protected List<Object> configurations = new ArrayList<>();
     protected String configurationClasses;
-    protected ProducerTemplate camelTemplate;
-    protected boolean hangupInterceptorEnabled = true;
-    protected int durationHitExitCode = DEFAULT_EXIT_CODE;
-    protected ReloadStrategy reloadStrategy;
     protected String propertyPlaceholderLocations;
-    protected boolean autoConfigurationEnabled = true;
     protected Properties initialProperties;
     protected Properties overrideProperties;
 
@@ -258,14 +249,14 @@ public abstract class MainSupport extends ServiceSupport {
      * Hangup signal.
      */
     public void disableHangupSupport() {
-        hangupInterceptorEnabled = false;
+        mainConfigurationProperties.setHangupInterceptorEnabled(false);
     }
 
     /**
      * Hangup support is enabled by default.
      */
     public void enableHangupSupport() {
-        hangupInterceptorEnabled = true;
+        mainConfigurationProperties.setHangupInterceptorEnabled(true);
     }
 
     /**
@@ -309,7 +300,7 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     private void internalBeforeStart() {
-        if (hangupInterceptorEnabled) {
+        if (mainConfigurationProperties.isHangupInterceptorEnabled()) {
             String threadName = ThreadHelper.resolveThreadName(null, "CamelHangupInterceptor");
 
             Thread task = new HangupInterceptor(this);
@@ -412,18 +403,22 @@ public abstract class MainSupport extends ServiceSupport {
         return mainConfigurationProperties;
     }
 
+    @Deprecated
     public long getDuration() {
-        return duration;
+        return mainConfigurationProperties.getDuration();
     }
 
     /**
      * Sets the duration (in seconds) to run the application until it
      * should be terminated. Defaults to -1. Any value <= 0 will run forever.
+     * @deprecated use {@link #configure()}
      */
+    @Deprecated
     public void setDuration(long duration) {
-        this.duration = duration;
+        mainConfigurationProperties.setDuration(duration);
     }
 
+    @Deprecated
     public int getDurationIdle() {
         return mainConfigurationProperties.getDurationMaxIdleSeconds();
     }
@@ -433,11 +428,14 @@ public abstract class MainSupport extends ServiceSupport {
      * if there has been no message processed after being idle for more than this duration
      * then the application should be terminated.
      * Defaults to -1. Any value <= 0 will run forever.
+     * @deprecated use {@link #configure()}
      */
+    @Deprecated
     public void setDurationIdle(int durationIdle) {
         mainConfigurationProperties.setDurationMaxIdleSeconds(durationIdle);
     }
 
+    @Deprecated
     public int getDurationMaxMessages() {
         return mainConfigurationProperties.getDurationMaxMessages();
     }
@@ -445,20 +443,25 @@ public abstract class MainSupport extends ServiceSupport {
     /**
      * Sets the duration to run the application to process at most max messages until it
      * should be terminated. Defaults to -1. Any value <= 0 will run forever.
+     * @deprecated use {@link #configure()}
      */
+    @Deprecated
     public void setDurationMaxMessages(int durationMaxMessages) {
         mainConfigurationProperties.setDurationMaxMessages(durationMaxMessages);
     }
 
     /**
      * Sets the exit code for the application if duration was hit
+     * @deprecated use {@link #configure()}
      */
+    @Deprecated
     public void setDurationHitExitCode(int durationHitExitCode) {
-        this.durationHitExitCode = durationHitExitCode;
+        mainConfigurationProperties.setDurationHitExitCode(durationHitExitCode);
     }
 
+    @Deprecated
     public int getDurationHitExitCode() {
-        return durationHitExitCode;
+        return mainConfigurationProperties.getDurationHitExitCode();
     }
 
     public int getExitCode() {
@@ -501,43 +504,52 @@ public abstract class MainSupport extends ServiceSupport {
         this.routeBuilderClasses = builders;
     }
 
+    @Deprecated
     public String getFileWatchDirectory() {
-        return fileWatchDirectory;
+        return mainConfigurationProperties.getFileWatchDirectory();
     }
 
     /**
      * Sets the directory name to watch XML file changes to trigger live reload of Camel routes.
      * <p/>
      * Notice you cannot set this value and a custom {@link ReloadStrategy} as well.
+     * @deprecated use {@link #configure()}
      */
+    @Deprecated
     public void setFileWatchDirectory(String fileWatchDirectory) {
-        this.fileWatchDirectory = fileWatchDirectory;
+        mainConfigurationProperties.setFileWatchDirectory(fileWatchDirectory);
     }
 
+    @Deprecated
     public boolean isFileWatchDirectoryRecursively() {
-        return fileWatchDirectoryRecursively;
+        return mainConfigurationProperties.isFileWatchDirectoryRecursively();
     }
 
     /**
      * Sets the flag to watch directory of XML file changes recursively to trigger live reload of Camel routes.
      * <p/>
      * Notice you cannot set this value and a custom {@link ReloadStrategy} as well.
+     * @deprecated use {@link #configure()}
      */
+    @Deprecated
     public void setFileWatchDirectoryRecursively(boolean fileWatchDirectoryRecursively) {
-        this.fileWatchDirectoryRecursively = fileWatchDirectoryRecursively;
+        mainConfigurationProperties.setFileWatchDirectoryRecursively(fileWatchDirectoryRecursively);
     }
 
+    @Deprecated
     public ReloadStrategy getReloadStrategy() {
-        return reloadStrategy;
+        return mainConfigurationProperties.getReloadStrategy();
     }
 
     /**
      * Sets a custom {@link ReloadStrategy} to be used.
      * <p/>
      * Notice you cannot set this value and the fileWatchDirectory as well.
+     * @deprecated use {@link #configure()}
      */
+    @Deprecated
     public void setReloadStrategy(ReloadStrategy reloadStrategy) {
-        this.reloadStrategy = reloadStrategy;
+        mainConfigurationProperties.setReloadStrategy(reloadStrategy);
     }
 
     public String getPropertyPlaceholderLocations() {
@@ -552,8 +564,9 @@ public abstract class MainSupport extends ServiceSupport {
         this.propertyPlaceholderLocations = location;
     }
 
+    @Deprecated
     public boolean isAutoConfigurationEnabled() {
-        return autoConfigurationEnabled;
+        return mainConfigurationProperties.isAutoConfigurationEnabled();
     }
 
     /**
@@ -575,9 +588,11 @@ public abstract class MainSupport extends ServiceSupport {
      * or by using the {@link org.apache.camel.BindToRegistry} annotation style.
      * <p/>
      * This option is default enabled.
+     * @deprecated use {@link #configure()}
      */
+    @Deprecated
     public void setAutoConfigurationEnabled(boolean autoConfigurationEnabled) {
-        this.autoConfigurationEnabled = autoConfigurationEnabled;
+        mainConfigurationProperties.setAutoConfigurationEnabled(autoConfigurationEnabled);
     }
 
     public Properties getInitialProperties() {
@@ -623,19 +638,19 @@ public abstract class MainSupport extends ServiceSupport {
     protected void waitUntilCompleted() {
         while (!completed.get()) {
             try {
-                if (duration > 0) {
-                    LOG.info("Waiting for: {} seconds", duration);
-                    latch.await(duration, TimeUnit.SECONDS);
-                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, durationHitExitCode);
+                if (mainConfigurationProperties.getDuration() > 0) {
+                    LOG.info("Waiting for: {} seconds", mainConfigurationProperties.getDuration());
+                    latch.await(mainConfigurationProperties.getDuration(), TimeUnit.SECONDS);
+                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, mainConfigurationProperties.getDurationHitExitCode());
                     completed.set(true);
                 } else if (mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
                     LOG.info("Waiting to be idle for: {} seconds", mainConfigurationProperties.getDurationMaxIdleSeconds());
-                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, durationHitExitCode);
+                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, mainConfigurationProperties.getDurationHitExitCode());
                     latch.await();
                     completed.set(true);
                 } else if (mainConfigurationProperties.getDurationMaxMessages() > 0) {
                     LOG.info("Waiting until: {} messages has been processed", mainConfigurationProperties.getDurationMaxMessages());
-                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, durationHitExitCode);
+                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, mainConfigurationProperties.getDurationHitExitCode());
                     latch.await();
                     completed.set(true);
                 } else {
@@ -785,8 +800,8 @@ public abstract class MainSupport extends ServiceSupport {
             }
             LOG.info("Using optional properties from classpath:application.properties");
         }
-        if (fileWatchDirectory != null) {
-            ReloadStrategy reload = new FileWatcherReloadStrategy(fileWatchDirectory, fileWatchDirectoryRecursively);
+        if (mainConfigurationProperties.getFileWatchDirectory() != null) {
+            ReloadStrategy reload = new FileWatcherReloadStrategy(mainConfigurationProperties.getFileWatchDirectory(), mainConfigurationProperties.isFileWatchDirectoryRecursively());
             camelContext.setReloadStrategy(reload);
             // ensure reload is added as service and started
             camelContext.addService(reload);
@@ -820,7 +835,7 @@ public abstract class MainSupport extends ServiceSupport {
         }
 
         // need to eager allow to auto configure properties component
-        if (autoConfigurationEnabled) {
+        if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
             autoConfigurationPropertiesComponent(camelContext);
             autoConfigurationMainConfiguration(camelContext, mainConfigurationProperties);
         }
@@ -833,7 +848,7 @@ public abstract class MainSupport extends ServiceSupport {
 
         // conventional configuration via properties to allow configuring options on
         // component, dataformat, and languages (like spring-boot auto-configuration)
-        if (autoConfigurationEnabled) {
+        if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
             autoConfigurationFromRegistry(camelContext);
             autoConfigurationFromProperties(camelContext);
         }
