@@ -110,7 +110,6 @@ public abstract class MainSupport extends ServiceSupport {
     protected final AtomicBoolean completed = new AtomicBoolean(false);
     protected final AtomicInteger exitCode = new AtomicInteger(UNINITIALIZED_EXIT_CODE);
 
-    // TODO: Fluent builder on Main configuration properties
     // TODO: Move these to mainConfigurationProperties (delegate)
     protected long duration = -1;
     protected String fileWatchDirectory;
@@ -404,6 +403,13 @@ public abstract class MainSupport extends ServiceSupport {
 
     public void addOption(Option option) {
         options.add(option);
+    }
+
+    /**
+     * To configure options on Camel Main.
+     */
+    public MainConfigurationProperties configure() {
+        return mainConfigurationProperties;
     }
 
     public long getDuration() {

@@ -1,13 +1,13 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -64,6 +64,7 @@ public class MainConfigurationProperties {
     private String threadNamePattern;
 
     // getter and setters
+    // --------------------------------------------------------------
 
     public String getName() {
         return name;
@@ -573,5 +574,202 @@ public class MainConfigurationProperties {
         this.threadNamePattern = threadNamePattern;
     }
 
-    
+    // fluent builders
+    // --------------------------------------------------------------
+
+    public MainConfigurationProperties withName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public MainConfigurationProperties withShutdownTimeout(int shutdownTimeout) {
+        this.shutdownTimeout = shutdownTimeout;
+        return this;
+    }
+
+    public MainConfigurationProperties withShutdownSuppressLoggingOnTimeout(boolean shutdownSuppressLoggingOnTimeout) {
+        this.shutdownSuppressLoggingOnTimeout = shutdownSuppressLoggingOnTimeout;
+        return this;
+    }
+
+    public MainConfigurationProperties withShutdownNowOnTimeout(boolean shutdownNowOnTimeout) {
+        this.shutdownNowOnTimeout = shutdownNowOnTimeout;
+        return this;
+    }
+
+    public MainConfigurationProperties withShutdownRoutesInReverseOrder(boolean shutdownRoutesInReverseOrder) {
+        this.shutdownRoutesInReverseOrder = shutdownRoutesInReverseOrder;
+        return this;
+    }
+
+    public MainConfigurationProperties withShutdownLogInflightExchangesOnTimeout(boolean shutdownLogInflightExchangesOnTimeout) {
+        this.shutdownLogInflightExchangesOnTimeout = shutdownLogInflightExchangesOnTimeout;
+        return this;
+    }
+
+    public MainConfigurationProperties withJmxEnabled(boolean jmxEnabled) {
+        this.jmxEnabled = jmxEnabled;
+        return this;
+    }
+
+    public MainConfigurationProperties withProducerTemplateCacheSize(int producerTemplateCacheSize) {
+        this.producerTemplateCacheSize = producerTemplateCacheSize;
+        return this;
+    }
+
+    public MainConfigurationProperties withConsumerTemplateCacheSize(int consumerTemplateCacheSize) {
+        this.consumerTemplateCacheSize = consumerTemplateCacheSize;
+        return this;
+    }
+
+    public MainConfigurationProperties withFileConfigurations(String fileConfigurations) {
+        this.fileConfigurations = fileConfigurations;
+        return this;
+    }
+
+    public MainConfigurationProperties withDurationMaxSeconds(int durationMaxSeconds) {
+        this.durationMaxSeconds = durationMaxSeconds;
+        return this;
+    }
+
+    public MainConfigurationProperties withDurationMaxIdleSeconds(int durationMaxIdleSeconds) {
+        this.durationMaxIdleSeconds = durationMaxIdleSeconds;
+        return this;
+    }
+
+    public MainConfigurationProperties withDurationMaxMessages(int durationMaxMessages) {
+        this.durationMaxMessages = durationMaxMessages;
+        return this;
+    }
+
+    public MainConfigurationProperties withLogDebugMaxChars(int logDebugMaxChars) {
+        this.logDebugMaxChars = logDebugMaxChars;
+        return this;
+    }
+
+    public MainConfigurationProperties withStreamCachingEnabled(boolean streamCachingEnabled) {
+        this.streamCachingEnabled = streamCachingEnabled;
+        return this;
+    }
+
+    public MainConfigurationProperties withStreamCachingSpoolDirectory(String streamCachingSpoolDirectory) {
+        this.streamCachingSpoolDirectory = streamCachingSpoolDirectory;
+        return this;
+    }
+
+    public MainConfigurationProperties withStreamCachingSpoolChiper(String streamCachingSpoolChiper) {
+        this.streamCachingSpoolChiper = streamCachingSpoolChiper;
+        return this;
+    }
+
+    public MainConfigurationProperties withStreamCachingSpoolThreshold(long streamCachingSpoolThreshold) {
+        this.streamCachingSpoolThreshold = streamCachingSpoolThreshold;
+        return this;
+    }
+
+    public MainConfigurationProperties withStreamCachingSpoolUsedHeapMemoryThreshold(int streamCachingSpoolUsedHeapMemoryThreshold) {
+        this.streamCachingSpoolUsedHeapMemoryThreshold = streamCachingSpoolUsedHeapMemoryThreshold;
+        return this;
+    }
+
+    public MainConfigurationProperties withStreamCachingSpoolUsedHeapMemoryLimit(String streamCachingSpoolUsedHeapMemoryLimit) {
+        this.streamCachingSpoolUsedHeapMemoryLimit = streamCachingSpoolUsedHeapMemoryLimit;
+        return this;
+    }
+
+    public MainConfigurationProperties withStreamCachingAnySpoolRules(boolean streamCachingAnySpoolRules) {
+        this.streamCachingAnySpoolRules = streamCachingAnySpoolRules;
+        return this;
+    }
+
+    public MainConfigurationProperties withStreamCachingBufferSize(int streamCachingBufferSize) {
+        this.streamCachingBufferSize = streamCachingBufferSize;
+        return this;
+    }
+
+    public MainConfigurationProperties withStreamCachingRemoveSpoolDirectoryWhenStopping(boolean streamCachingRemoveSpoolDirectoryWhenStopping) {
+        this.streamCachingRemoveSpoolDirectoryWhenStopping = streamCachingRemoveSpoolDirectoryWhenStopping;
+        return this;
+    }
+
+    public MainConfigurationProperties withStreamCachingStatisticsEnabled(boolean streamCachingStatisticsEnabled) {
+        this.streamCachingStatisticsEnabled = streamCachingStatisticsEnabled;
+        return this;
+    }
+
+    public MainConfigurationProperties withTracing(boolean tracing) {
+        this.tracing = tracing;
+        return this;
+    }
+
+    public MainConfigurationProperties withMessageHistory(boolean messageHistory) {
+        this.messageHistory = messageHistory;
+        return this;
+    }
+
+    public MainConfigurationProperties withLogMask(boolean logMask) {
+        this.logMask = logMask;
+        return this;
+    }
+
+    public MainConfigurationProperties withLogExhaustedMessageBody(boolean logExhaustedMessageBody) {
+        this.logExhaustedMessageBody = logExhaustedMessageBody;
+        return this;
+    }
+
+    public MainConfigurationProperties withHandleFault(boolean handleFault) {
+        this.handleFault = handleFault;
+        return this;
+    }
+
+    public MainConfigurationProperties withAutoStartup(boolean autoStartup) {
+        this.autoStartup = autoStartup;
+        return this;
+    }
+
+    public MainConfigurationProperties withAllowUseOriginalMessage(boolean allowUseOriginalMessage) {
+        this.allowUseOriginalMessage = allowUseOriginalMessage;
+        return this;
+    }
+
+    public MainConfigurationProperties withEndpointRuntimeStatisticsEnabled(boolean endpointRuntimeStatisticsEnabled) {
+        this.endpointRuntimeStatisticsEnabled = endpointRuntimeStatisticsEnabled;
+        return this;
+    }
+
+    public MainConfigurationProperties withUseDataType(boolean useDataType) {
+        this.useDataType = useDataType;
+        return this;
+    }
+
+    public MainConfigurationProperties withUseBreadcrumb(boolean useBreadcrumb) {
+        this.useBreadcrumb = useBreadcrumb;
+        return this;
+    }
+
+    public MainConfigurationProperties withJmxManagementStatisticsLevel(ManagementStatisticsLevel jmxManagementStatisticsLevel) {
+        this.jmxManagementStatisticsLevel = jmxManagementStatisticsLevel;
+        return this;
+    }
+
+    public MainConfigurationProperties withJmxManagementNamePattern(String jmxManagementNamePattern) {
+        this.jmxManagementNamePattern = jmxManagementNamePattern;
+        return this;
+    }
+
+    public MainConfigurationProperties withJmxCreateConnector(boolean jmxCreateConnector) {
+        this.jmxCreateConnector = jmxCreateConnector;
+        return this;
+    }
+
+    public MainConfigurationProperties withUseMdcLogging(boolean useMdcLogging) {
+        this.useMdcLogging = useMdcLogging;
+        return this;
+    }
+
+    public MainConfigurationProperties withThreadNamePattern(String threadNamePattern) {
+        this.threadNamePattern = threadNamePattern;
+        return this;
+    }
+
 }
