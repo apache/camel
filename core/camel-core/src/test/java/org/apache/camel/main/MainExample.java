@@ -43,6 +43,8 @@ public class MainExample {
         main.addMainListener(new Events());
         // set the properties from a file
         main.setPropertyPlaceholderLocations("example.properties");
+        // to configure some options
+        main.configure().withName("MyMainCamel").withJmxEnabled(false).withMessageHistory(false);
         // run until you terminate the JVM
         System.out.println("Starting Camel. Use ctrl + c to terminate the JVM.\n");
         main.run();
