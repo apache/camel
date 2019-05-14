@@ -55,7 +55,7 @@
         <dependency>
             <groupId>org.jboss.weld.se</groupId>
             <artifactId>weld-se-core</artifactId>
-            <version>${weld2-version}</version>
+            <version>${weld3-version}</version>
         </dependency>
 
         <!-- test dependencies -->
