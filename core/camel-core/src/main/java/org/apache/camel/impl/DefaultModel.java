@@ -29,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Route;
+import org.apache.camel.impl.engine.AbstractCamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
@@ -287,7 +288,7 @@ public class DefaultModel implements Model {
 
         // indicate we are staring the route using this thread so
         // we are able to query this if needed
-        AbstractModelCamelContext mcc = camelContext.adapt(AbstractModelCamelContext.class);
+        AbstractCamelContext mcc = camelContext.adapt(AbstractCamelContext.class);
         mcc.setStartingRoutes(true);
         try {
 
