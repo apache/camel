@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.netty4.NettyConfiguration;
 import org.apache.camel.component.netty4.NettyConstants;
 import org.apache.camel.component.netty4.NettyProducer;
+import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.support.SynchronizationAdapter;
 
 
@@ -59,12 +60,13 @@ public class NettyHttpProducer extends NettyProducer {
     @Override
     protected Object getRequestBody(Exchange exchange) throws Exception {
         // creating the url to use takes 2-steps
-        String uri = NettyHttpHelper.createURL(exchange, getEndpoint());
-        URI u = NettyHttpHelper.createURI(exchange, uri, getEndpoint());
+        final NettyHttpEndpoint endpoint = getEndpoint();
+        final String uri = NettyHttpHelper.createURL(exchange, endpoint);
+        final URI u = NettyHttpHelper.createURI(exchange, uri, endpoint);
 
-        final HttpRequest request = getEndpoint().getNettyHttpBinding().toNettyRequest(exchange.getIn(), u.toString(), getConfiguration());
-        String actualUri = request.uri();
-        exchange.getIn().setHeader(Exchange.HTTP_URL, actualUri);
+        final NettyHttpBinding nettyHttpBinding = endpoint.getNettyHttpBinding();
+        final HttpRequest request = nettyHttpBinding.toNettyRequest(exchange.getIn(), u.toString(), getConfiguration());
+        exchange.getIn().setHeader(Exchange.HTTP_URL, uri);
         // Need to check if we need to close the connection or not
         if (!HttpUtil.isKeepAlive(request)) {
             // just want to make sure we close the channel if the keepAlive is not true
@@ -75,8 +77,9 @@ public class NettyHttpProducer extends NettyProducer {
             exchange.getIn().removeHeader("host");
         }
 
-        if (getEndpoint().getCookieHandler() != null) {
-            Map<String, List<String>> cookieHeaders = getEndpoint().getCookieHandler().loadCookies(exchange, new URI(actualUri));
+        final CookieHandler cookieHandler = endpoint.getCookieHandler();
+        if (cookieHandler != null) {
+            Map<String, List<String>> cookieHeaders = cookieHandler.loadCookies(exchange, u);
             for (Map.Entry<String, List<String>> entry : cookieHeaders.entrySet()) {
                 String key = entry.getKey();
                 if (entry.getValue().size() > 0) {

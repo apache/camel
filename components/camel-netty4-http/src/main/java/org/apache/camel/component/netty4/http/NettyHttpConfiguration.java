@@ -65,8 +65,8 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private int maxHeaderSize = 8192;
     @UriParam(label = "producer,advanced", defaultValue = "200-299")
     private String okStatusCodeRange = "200-299";
-    @UriParam(label = "producer,advanced")
-    private boolean useRelativePath;
+    @UriParam(label = "producer,advanced", defaultValue = "true")
+    private boolean useRelativePath = true;
     
     public NettyHttpConfiguration() {
         // we need sync=true as http is request/reply by nature
@@ -316,6 +316,6 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     }
 
     public boolean isUseRelativePath() {
-        return this.useRelativePath;        
+        return this.useRelativePath;
     }
 }

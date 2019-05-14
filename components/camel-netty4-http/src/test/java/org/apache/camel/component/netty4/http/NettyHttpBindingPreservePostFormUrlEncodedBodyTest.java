@@ -60,7 +60,7 @@ public class NettyHttpBindingPreservePostFormUrlEncodedBodyTest extends BaseNett
 
                         NettyHttpMessage in = (NettyHttpMessage) exchange.getIn();
                         FullHttpRequest request = in.getHttpRequest();
-                        assertNotEquals("Relative path should NOT be used in POST", "/myapp/myservice?query1=a&query2=b", request.uri());
+                        assertEquals("Relative path should be used", "/myapp/myservice?query1=a&query2=b", request.uri());
 
                         // send a response
                         exchange.getOut().getHeaders().clear();
