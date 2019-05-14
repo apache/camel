@@ -18,15 +18,14 @@ package org.apache.camel.component.bean;
 
 import java.util.Collection;
 
-import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeExchangeException;
 
 /**
  * An exception thrown if an attempted method invocation resulted in an ambiguous method
  * such that multiple methods match the inbound message exchange
  */
-public class AmbiguousMethodCallException extends CamelExchangeException {
-    private static final long serialVersionUID = -8867010485101806951L;
+public class AmbiguousMethodCallException extends RuntimeExchangeException {
 
     private final Collection<MethodInfo> methods;
 

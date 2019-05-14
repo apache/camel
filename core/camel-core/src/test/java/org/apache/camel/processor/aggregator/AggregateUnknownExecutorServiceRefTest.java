@@ -48,7 +48,7 @@ public class AggregateUnknownExecutorServiceRefTest extends ContextTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertTrue(cause.getMessage().contains("myUnknownProfile"));
         }
     }
