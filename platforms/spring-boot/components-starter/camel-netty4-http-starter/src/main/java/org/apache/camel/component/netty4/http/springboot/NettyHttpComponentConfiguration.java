@@ -286,7 +286,7 @@ public class NettyHttpComponentConfiguration
         /**
          * Sets whether to use a relative path in HTTP requests.
          */
-        private Boolean useRelativePath = false;
+        private Boolean useRelativePath = true;
 
         public String getProtocol() {
             return protocol;

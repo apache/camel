@@ -183,7 +183,7 @@ with the following path and query parameters:
 | *producerPoolMaxIdle* (producer) | Sets the cap on the number of idle instances in the pool. | 100 | int
 | *producerPoolMinEvictable Idle* (producer) | Sets the minimum amount of time (value in millis) an object may sit idle in the pool before it is eligible for eviction by the idle object evictor. | 300000 | long
 | *producerPoolMinIdle* (producer) | Sets the minimum number of instances allowed in the producer pool before the evictor thread (if active) spawns new objects. |  | int
-| *useRelativePath* (producer) | Sets whether to use a relative path in HTTP requests. | false | boolean
+| *useRelativePath* (producer) | Sets whether to use a relative path in HTTP requests. | true | boolean
 | *allowSerializedHeaders* (advanced) | Only used for TCP when transferExchange is true. When set to true, serializable objects in headers and properties will be added to the exchange. Otherwise Camel will exclude any non-serializable objects and log it at WARN level. | false | boolean
 | *channelGroup* (advanced) | To use a explicit ChannelGroup. |  | ChannelGroup
 | *configuration* (advanced) | To use a custom configured NettyHttpConfiguration for configuring this endpoint. |  | NettyHttpConfiguration
