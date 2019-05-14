@@ -55,11 +55,15 @@ public final class UnitOfWorkProducer extends DefaultAsyncProducer {
         return processor.process(exchange, callback);
     }
 
-    public void start() throws Exception {
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
         ServiceHelper.startService(processor);
     }
 
-    public void stop() throws Exception {
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
         ServiceHelper.stopService(processor);
     }
 

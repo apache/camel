@@ -330,11 +330,6 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
     }
 
     @Override
-    public void start() throws Exception {
-        super.start();
-    }
-
-    @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
 
