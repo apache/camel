@@ -21,8 +21,6 @@ package org.apache.camel;
  */
 public class RuntimeExpressionException extends RuntimeCamelException {
 
-    private static final long serialVersionUID = -8417806626073055262L;
-
     public RuntimeExpressionException(String message) {
         super(message);
     }

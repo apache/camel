@@ -22,7 +22,7 @@ package org.apache.camel;
  * Camel should not process the message as a result.
  */
 public class CamelAuthorizationException extends CamelExchangeException {
-    private static final long serialVersionUID = 1L;
+
     private final String policyId;
     
     public CamelAuthorizationException(String message, Exchange exchange) {

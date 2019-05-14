@@ -60,7 +60,7 @@ public abstract class ServiceSupport implements StatefulService {
                     try {
                         doInit();
                     } catch (Exception e) {
-                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                        throw RuntimeCamelException.wrapRuntimeException(e);
                     }
                     status = INITIALIZED;
                 }
@@ -100,7 +100,7 @@ public abstract class ServiceSupport implements StatefulService {
             } catch (Exception e) {
                 status = FAILED;
                 log.trace("Error while starting service: " + this, e);
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
     }
@@ -130,7 +130,7 @@ public abstract class ServiceSupport implements StatefulService {
             } catch (Exception e) {
                 status = FAILED;
                 log.trace("Error while stopping service: " + this, e);
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
     }
@@ -161,7 +161,7 @@ public abstract class ServiceSupport implements StatefulService {
             } catch (Exception e) {
                 status = FAILED;
                 log.trace("Error while suspending service: " + this, e);
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
     }
@@ -188,7 +188,7 @@ public abstract class ServiceSupport implements StatefulService {
             } catch (Exception e) {
                 status = FAILED;
                 log.trace("Error while resuming service: " + this, e);
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
     }
@@ -220,7 +220,7 @@ public abstract class ServiceSupport implements StatefulService {
             } catch (Exception e) {
                 status = FAILED;
                 log.trace("Error shutting down service: " + this, e);
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
     }

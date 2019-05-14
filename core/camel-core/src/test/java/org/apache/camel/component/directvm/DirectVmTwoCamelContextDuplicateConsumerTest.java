@@ -34,8 +34,8 @@ public class DirectVmTwoCamelContextDuplicateConsumerTest extends AbstractDirect
         try {
             third.start();
             fail("Should have thrown exception");
-        } catch (IllegalStateException e) {
-            assertEquals("A consumer Consumer[direct-vm://foo] already exists from CamelContext: camel-1. Multiple consumers not supported", e.getMessage());
+        } catch (Exception e) {
+            assertEquals("A consumer Consumer[direct-vm://foo] already exists from CamelContext: camel-1. Multiple consumers not supported", e.getCause().getMessage());
         }
 
         // stop first camel context then

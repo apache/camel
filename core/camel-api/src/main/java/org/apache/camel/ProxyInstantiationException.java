@@ -20,7 +20,6 @@ package org.apache.camel;
  * Exception indicating a failure while trying to create a proxy of a given type and on a given endpoint
  */
 public class ProxyInstantiationException extends RuntimeCamelException {
-    private static final long serialVersionUID = -2050115486047385506L;
 
     private final Class<?> type;
     private final Endpoint endpoint;

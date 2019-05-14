@@ -130,7 +130,7 @@ public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
             assertEquals("Loadbalacing with 3 should match number of distributions 2", iae.getMessage());
         }
     }
