@@ -83,7 +83,7 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
 
         assertNotNull(rollbackCause);
 
-        MethodNotFoundException e = assertIsInstanceOf(MethodNotFoundException.class, rollbackCause.getCause());
+        MethodNotFoundException e = assertIsInstanceOf(MethodNotFoundException.class, rollbackCause);
         assertNotNull(e);
         assertEquals("doNotExistMethod", e.getMethodName());
     }

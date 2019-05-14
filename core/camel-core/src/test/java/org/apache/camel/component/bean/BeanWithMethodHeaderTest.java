@@ -102,7 +102,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
             });
             fail("Should throw an exception");
         } catch (Exception e) {
-            MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, e.getCause().getCause());
+            MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
             assertEquals("ups", mnfe.getMethodName());
             assertSame(bean, mnfe.getBean());
         }
@@ -120,7 +120,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
             });
             fail("Should throw an exception");
         } catch (Exception e) {
-            MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, e.getCause().getCause());
+            MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
             assertEquals("ups", mnfe.getMethodName());
             assertSame(myBean, mnfe.getBean());
         }
