@@ -38,6 +38,7 @@ import java.util.concurrent.TimeoutException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.component.salesforce.AuthenticationType;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
@@ -355,15 +356,23 @@ public class SalesforceSession implements Service {
     }
 
     @Override
-    public void start() throws Exception {
+    public void start() {
         // auto-login at start if needed
-        login(accessToken);
+        try {
+            login(accessToken);
+        } catch (SalesforceException e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         // logout
-        logout();
+        try {
+            logout();
+        } catch (SalesforceException e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
     }
 
     public long getTimeout() {

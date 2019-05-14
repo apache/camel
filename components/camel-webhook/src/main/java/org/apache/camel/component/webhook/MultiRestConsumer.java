@@ -71,14 +71,14 @@ public class MultiRestConsumer implements Consumer {
     }
 
     @Override
-    public void start() throws Exception {
+    public void start() {
         for (Consumer consumer : this.delegateConsumers) {
             consumer.start();
         }
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         for (Consumer consumer : this.delegateConsumers) {
             consumer.stop();
         }

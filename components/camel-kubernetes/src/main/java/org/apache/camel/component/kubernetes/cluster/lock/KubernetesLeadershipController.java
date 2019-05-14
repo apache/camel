@@ -75,7 +75,7 @@ public class KubernetesLeadershipController implements Service {
     }
 
     @Override
-    public void start() throws Exception {
+    public void start() {
         if (serializedExecutor == null) {
             LOG.debug("{} Starting leadership controller...", logPrefix());
             serializedExecutor = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "CamelKubernetesLeadershipController");
@@ -87,7 +87,7 @@ public class KubernetesLeadershipController implements Service {
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         LOG.debug("{} Stopping leadership controller...", logPrefix());
         if (serializedExecutor != null) {
             serializedExecutor.shutdownNow();

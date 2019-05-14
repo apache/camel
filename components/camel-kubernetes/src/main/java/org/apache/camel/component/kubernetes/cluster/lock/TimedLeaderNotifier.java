@@ -92,20 +92,24 @@ public class TimedLeaderNotifier implements Service {
     }
 
     @Override
-    public void start() throws Exception {
+    public void start() {
         if (this.executor == null) {
             this.executor = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "CamelKubernetesLeaderNotifier");
         }
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         if (this.executor != null) {
             ScheduledExecutorService executor = this.executor;
             this.executor = null;
 
             executor.shutdownNow();
-            executor.awaitTermination(1, TimeUnit.SECONDS);
+            try {
+                executor.awaitTermination(1, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                // ignore
+            }
         }
     }
 

@@ -385,11 +385,8 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
                 subscriptionHelper = null;
             }
             if (session != null && session.getAccessToken() != null) {
-                try {
-                    // logout of Salesforce
-                    ServiceHelper.stopService(session);
-                } catch (SalesforceException ignored) {
-                }
+                // logout of Salesforce
+                ServiceHelper.stopService(session);
             }
         } finally {
             if (httpClient != null) {

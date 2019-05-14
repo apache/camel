@@ -33,11 +33,11 @@ public final class SpringTestHelper {
 
         final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(classpathUri);
         test.setCamelContextService(new Service() {
-            public void start() throws Exception {
+            public void start() {
                 applicationContext.start();
             }
 
-            public void stop() throws Exception {
+            public void stop() {
                 applicationContext.stop();
             }
         });

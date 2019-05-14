@@ -492,7 +492,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         if (getConsumers().isEmpty()) {
             super.stop();
         } else {
@@ -501,7 +501,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     @Override
-    public void shutdown() throws Exception {
+    public void shutdown() {
         if (isShutdown()) {
             log.trace("Service already shut down");
             return;
