@@ -17,12 +17,14 @@
 package org.apache.camel;
 
 /**
- * Represents the core lifecycle API for POJOs which can be started and stopped
+ * Represents the core lifecycle API for services which can be initialized, started and stopped
  */
 public interface Service {
 
     /**
      * Initialize the service
+     *
+     * @throws RuntimeException is thrown if initialization failed
      */
     default void init() {
     }
