@@ -105,7 +105,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
         this.bundleStateService = bundleStateService;
     }
    
-    public void doInit() {
+    public void doInit() throws Exception {
         log.trace("init {}", this);
         // add service listener so we can be notified when blueprint container is done
         // and we would be ready to start CamelContext
@@ -234,7 +234,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     }
 
     @Override
-    public void start() throws Exception {
+    public void start() {
         final ClassLoader original = Thread.currentThread().getContextClassLoader();
         try {
             // let's set a more suitable TCCL while starting the context

@@ -95,12 +95,12 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
     }
 
     @Override
-    public void start() throws Exception {
+    public void start() {
         ServiceHelper.startService(compositeClient);
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         ServiceHelper.stopService(compositeClient);
     }
 

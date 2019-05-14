@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf;
 
-import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -49,7 +48,7 @@ public class CxfMultipleConsumersSupportTest extends CamelTestSupport {
         try {
             context.start();
             fail("Should have thrown an exception");
-        } catch (FailedToStartRouteException e) {
+        } catch (Exception e) {
             assertTrue(e.getMessage().endsWith(
                 "Multiple consumers for the same endpoint is not allowed: cxf://http://localhost:" + port1 
                 + "/CxfMultipleConsumersSupportTest/test?serviceClass=org.apache.camel.component.cxf.HelloService"));

@@ -29,12 +29,12 @@ public class SpringMarshalListTest extends MarshalListTest {
 
         final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/dataformat/xstream/SpringMarshalListTest.xml");
         setCamelContextService(new Service() {
-            public void start() throws Exception {
+            public void start() {
                 applicationContext.start();
 
             }
 
-            public void stop() throws Exception {
+            public void stop() {
                 applicationContext.stop();
             }
         });

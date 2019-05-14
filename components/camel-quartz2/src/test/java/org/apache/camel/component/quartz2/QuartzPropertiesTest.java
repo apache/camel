@@ -15,13 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.quartz2;
+
 import java.io.InputStream;
 import java.util.Properties;
 
 import org.junit.After;
 import org.junit.Test;
-import org.quartz.SchedulerException;
-
 
 public class QuartzPropertiesTest extends BaseQuartzTest {
 
@@ -60,7 +59,7 @@ public class QuartzPropertiesTest extends BaseQuartzTest {
         try {
             quartz.start();
             fail("Should have thrown exception");
-        } catch (SchedulerException e) {
+        } catch (Exception e) {
             assertEquals("Error loading Quartz properties file: doesnotexist.properties", e.getMessage());
         }
     }

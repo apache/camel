@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.restlet;
 
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.apache.camel.impl.JndiRegistry;
@@ -58,7 +57,7 @@ public class RestRestletCustomDataFormatInvalidTest extends RestletTestSupport {
         try {
             context.start();
             fail("Should have thrown exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             assertTrue(e.getCause().getMessage().contains("JsonDataFormat name: bla must not be an existing bean instance from the registry"));
         }
     }

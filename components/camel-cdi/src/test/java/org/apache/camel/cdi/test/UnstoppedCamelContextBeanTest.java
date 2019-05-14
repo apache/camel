@@ -80,7 +80,7 @@ class UnstoppedCamelContext extends DefaultCamelContext {
     static boolean isStopCalled;
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         super.stop();
         isStopCalled = true;
     }

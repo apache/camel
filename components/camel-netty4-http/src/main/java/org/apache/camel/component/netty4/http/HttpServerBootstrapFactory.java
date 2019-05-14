@@ -88,7 +88,7 @@ public class HttpServerBootstrapFactory extends SingleTCPNettyServerBootstrapFac
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         // only stop if no more active consumers
         int consumers = channelFactory.consumers();
         if (consumers == 0) {

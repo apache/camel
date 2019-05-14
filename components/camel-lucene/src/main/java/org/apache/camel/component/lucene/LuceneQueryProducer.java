@@ -39,12 +39,14 @@ public class LuceneQueryProducer extends DefaultProducer {
         maxNumberOfHits = config.getMaxHits();
     }
     
-    public void start() throws Exception {
+    @Override
+    public void doStart() throws Exception {
         searcher = new LuceneSearcher();
         super.doStart();
     }
 
-    public void stop() throws Exception {
+    @Override
+    public void doStop() throws Exception {
         searcher.close();
         super.doStop();
     }

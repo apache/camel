@@ -99,11 +99,11 @@ public class KafkaConsumerRebalancePartitionRevokeTest extends BaseEmbeddedKafka
         }
 
         @Override
-        public void start() throws Exception {
+        public void start() {
         }
 
         @Override
-        public void stop() throws Exception {
+        public void stop() {
         }
 
         @Override
