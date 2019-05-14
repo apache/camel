@@ -63,9 +63,11 @@ public class SqsConsumerMessageIntegrationTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start").startupOrder(2).to(sqsEndpointUri);
 
-                from("aws-sqs://camel-1?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=EU_WEST_1&deleteAfterRead=false&deleteIfFiltered=true").startupOrder(1).filter(simple("${body} != 'ignore'")).log("${body}")
-                .log("${header.CamelAwsSqsReceiptHandle}")
-                .to("mock:result");
+                from("aws-sqs://camel-1?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=EU_WEST_1&deleteAfterRead=false&deleteIfFiltered=true").startupOrder(1)
+                  .filter(simple("${body} != 'ignore'"))
+                    .log("${body}")
+                    .log("${header.CamelAwsSqsReceiptHandle}")
+                    .to("mock:result");
             }
         };
     }
