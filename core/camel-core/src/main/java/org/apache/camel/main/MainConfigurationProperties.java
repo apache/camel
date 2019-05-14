@@ -686,231 +686,472 @@ public class MainConfigurationProperties {
     // fluent builders
     // --------------------------------------------------------------
 
+    /**
+     * Whether auto configuration of components/dataformats/languages is enabled or not.
+     * When enabled the configuration parameters are loaded from the properties component
+     * and configured as defaults (similar to spring-boot auto-configuration). You can prefix
+     * the parameters in the properties file with:
+     * - camel.component.name.option1=value1
+     * - camel.component.name.option2=value2
+     * - camel.dataformat.name.option1=value1
+     * - camel.dataformat.name.option2=value2
+     * - camel.language.name.option1=value1
+     * - camel.language.name.option2=value2
+     * Where name is the name of the component, dataformat or language such as seda,direct,jaxb.
+     * <p/>
+     * The auto configuration also works for any options on components
+     * that is a complex type (not standard Java type) and there has been an explicit single
+     * bean instance registered to the Camel registry via the {@link org.apache.camel.spi.Registry#bind(String, Object)} method
+     * or by using the {@link org.apache.camel.BindToRegistry} annotation style.
+     * <p/>
+     * This option is default enabled.
+     */
     public MainConfigurationProperties withAutoConfigurationEnabled(boolean autoConfigurationEnabled) {
         this.autoConfigurationEnabled = autoConfigurationEnabled;
         return this;
     }
 
+    /**
+     * Sets the name of the CamelContext.
+     */
     public MainConfigurationProperties withName(String name) {
         this.name = name;
         return this;
     }
 
+    /**
+     * Timeout in seconds to graceful shutdown Camel.
+     */
     public MainConfigurationProperties withShutdownTimeout(int shutdownTimeout) {
         this.shutdownTimeout = shutdownTimeout;
         return this;
     }
 
+    /**
+     * Whether Camel should try to suppress logging during shutdown and timeout was triggered,
+     * meaning forced shutdown is happening. And during forced shutdown we want to avoid logging
+     * errors/warnings et all in the logs as a side-effect of the forced timeout.
+     * Notice the suppress is a best effort as there may still be some logs coming
+     * from 3rd party libraries and whatnot, which Camel cannot control.
+     * This option is default false.
+     */
     public MainConfigurationProperties withShutdownSuppressLoggingOnTimeout(boolean shutdownSuppressLoggingOnTimeout) {
         this.shutdownSuppressLoggingOnTimeout = shutdownSuppressLoggingOnTimeout;
         return this;
     }
 
+    /**
+     * Sets whether to force shutdown of all consumers when a timeout occurred and thus
+     * not all consumers was shutdown within that period.
+     *
+     * You should have good reasons to set this option to false as it means that the routes
+     * keep running and is halted abruptly when CamelContext has been shutdown.
+     */
     public MainConfigurationProperties withShutdownNowOnTimeout(boolean shutdownNowOnTimeout) {
         this.shutdownNowOnTimeout = shutdownNowOnTimeout;
         return this;
     }
 
+    /**
+     * Sets whether routes should be shutdown in reverse or the same order as they where started.
+     */
     public MainConfigurationProperties withShutdownRoutesInReverseOrder(boolean shutdownRoutesInReverseOrder) {
         this.shutdownRoutesInReverseOrder = shutdownRoutesInReverseOrder;
         return this;
     }
 
+    /**
+     * Sets whether to log information about the inflight Exchanges which are still running
+     * during a shutdown which didn't complete without the given timeout.
+     */
     public MainConfigurationProperties withShutdownLogInflightExchangesOnTimeout(boolean shutdownLogInflightExchangesOnTimeout) {
         this.shutdownLogInflightExchangesOnTimeout = shutdownLogInflightExchangesOnTimeout;
         return this;
     }
 
+    /**
+     * Enable JMX in your Camel application.
+     */
     public MainConfigurationProperties withJmxEnabled(boolean jmxEnabled) {
         this.jmxEnabled = jmxEnabled;
         return this;
     }
 
+    /**
+     * Producer template endpoints cache size.
+     */
     public MainConfigurationProperties withProducerTemplateCacheSize(int producerTemplateCacheSize) {
         this.producerTemplateCacheSize = producerTemplateCacheSize;
         return this;
     }
 
+    /**
+     * Consumer template endpoints cache size.
+     */
     public MainConfigurationProperties withConsumerTemplateCacheSize(int consumerTemplateCacheSize) {
         this.consumerTemplateCacheSize = consumerTemplateCacheSize;
         return this;
     }
 
+    /**
+     * Directory to load additional configuration files that contains
+     * configuration values that takes precedence over any other configuration.
+     * This can be used to refer to files that may have secret configuration that
+     * has been mounted on the file system for containers.
+     *
+     * You can specify a pattern to load from sub directories and a name pattern such as /var/app/secret/*.properties,
+     * multiple directories can be separated by comma.
+     */
     public MainConfigurationProperties withFileConfigurations(String fileConfigurations) {
         this.fileConfigurations = fileConfigurations;
         return this;
     }
 
+    /**
+     * To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM.
+     * You can use this to run Camel for a short while.
+     */
     public MainConfigurationProperties withDurationMaxSeconds(int durationMaxSeconds) {
         this.durationMaxSeconds = durationMaxSeconds;
         return this;
     }
 
+    /**
+     * To specify for how long time in seconds Camel can be idle before automatic terminating the JVM.
+     * You can use this to run Camel for a short while.
+     */
     public MainConfigurationProperties withDurationMaxIdleSeconds(int durationMaxIdleSeconds) {
         this.durationMaxIdleSeconds = durationMaxIdleSeconds;
         return this;
     }
 
+    /**
+     * To specify how many messages to process by Camel before automatic terminating the JVM.
+     * You can use this to run Camel for a short while.
+     */
     public MainConfigurationProperties withDurationMaxMessages(int durationMaxMessages) {
         this.durationMaxMessages = durationMaxMessages;
         return this;
     }
 
+    /**
+     * Is used to limit the maximum length of the logging Camel message bodies. If the message body
+     * is longer than the limit, the log message is clipped. Use -1 to have unlimited length.
+     * Use for example 1000 to log at most 1000 characters.
+     */
     public MainConfigurationProperties withLogDebugMaxChars(int logDebugMaxChars) {
         this.logDebugMaxChars = logDebugMaxChars;
         return this;
     }
 
+    /**
+     * Sets whether stream caching is enabled or not.
+     *
+     * Default is false.
+     */
     public MainConfigurationProperties withStreamCachingEnabled(boolean streamCachingEnabled) {
         this.streamCachingEnabled = streamCachingEnabled;
         return this;
     }
 
+    /**
+     * Sets the stream caching spool (temporary) directory to use for overflow and spooling to disk.
+     *
+     * If no spool directory has been explicit configured, then a temporary directory
+     * is created in the java.io.tmpdir directory.
+     */
     public MainConfigurationProperties withStreamCachingSpoolDirectory(String streamCachingSpoolDirectory) {
         this.streamCachingSpoolDirectory = streamCachingSpoolDirectory;
         return this;
     }
 
+    /**
+     * Sets a stream caching chiper name to use when spooling to disk to write with encryption.
+     * By default the data is not encrypted.
+     */
     public MainConfigurationProperties withStreamCachingSpoolChiper(String streamCachingSpoolChiper) {
         this.streamCachingSpoolChiper = streamCachingSpoolChiper;
         return this;
     }
 
+    /**
+     * Stream caching threshold in bytes when overflow to disk is activated.
+     * The default threshold is 128kb.
+     * Use -1 to disable overflow to disk.
+     */
     public MainConfigurationProperties withStreamCachingSpoolThreshold(long streamCachingSpoolThreshold) {
         this.streamCachingSpoolThreshold = streamCachingSpoolThreshold;
         return this;
     }
 
+    /**
+     * Sets a percentage (1-99) of used heap memory threshold to activate stream caching spooling to disk.
+     */
     public MainConfigurationProperties withStreamCachingSpoolUsedHeapMemoryThreshold(int streamCachingSpoolUsedHeapMemoryThreshold) {
         this.streamCachingSpoolUsedHeapMemoryThreshold = streamCachingSpoolUsedHeapMemoryThreshold;
         return this;
     }
 
+    /**
+     * Sets what the upper bounds should be when streamCachingSpoolUsedHeapMemoryThreshold is in use.
+     */
     public MainConfigurationProperties withStreamCachingSpoolUsedHeapMemoryLimit(String streamCachingSpoolUsedHeapMemoryLimit) {
         this.streamCachingSpoolUsedHeapMemoryLimit = streamCachingSpoolUsedHeapMemoryLimit;
         return this;
     }
 
+    /**
+     * Sets whether if just any of the org.apache.camel.spi.StreamCachingStrategy.SpoolRule rules
+     * returns true then shouldSpoolCache(long) returns true, to allow spooling to disk.
+     * If this option is false, then all the org.apache.camel.spi.StreamCachingStrategy.SpoolRule must
+     * return true.
+     *
+     * The default value is false which means that all the rules must return true.
+     */
     public MainConfigurationProperties withStreamCachingAnySpoolRules(boolean streamCachingAnySpoolRules) {
         this.streamCachingAnySpoolRules = streamCachingAnySpoolRules;
         return this;
     }
 
+    /**
+     * Sets the stream caching buffer size to use when allocating in-memory buffers used for in-memory stream caches.
+     *
+     * The default size is 4096.
+     */
     public MainConfigurationProperties withStreamCachingBufferSize(int streamCachingBufferSize) {
         this.streamCachingBufferSize = streamCachingBufferSize;
         return this;
     }
 
+    /**
+     * Whether to remove stream caching temporary directory when stopping.
+     * This option is default true.
+     */
     public MainConfigurationProperties withStreamCachingRemoveSpoolDirectoryWhenStopping(boolean streamCachingRemoveSpoolDirectoryWhenStopping) {
         this.streamCachingRemoveSpoolDirectoryWhenStopping = streamCachingRemoveSpoolDirectoryWhenStopping;
         return this;
     }
 
+    /**
+     * Sets whether stream caching statistics is enabled.
+     */
     public MainConfigurationProperties withStreamCachingStatisticsEnabled(boolean streamCachingStatisticsEnabled) {
         this.streamCachingStatisticsEnabled = streamCachingStatisticsEnabled;
         return this;
     }
 
+    /**
+     * Sets whether tracing is enabled or not.
+     *
+     * Default is false.
+     */
     public MainConfigurationProperties withTracing(boolean tracing) {
         this.tracing = tracing;
         return this;
     }
 
+    /**
+     * Sets whether message history is enabled or not.
+     *
+     * Default is true.
+     */
     public MainConfigurationProperties withMessageHistory(boolean messageHistory) {
         this.messageHistory = messageHistory;
         return this;
     }
 
+    /**
+     * Sets whether log mask is enabled or not.
+     *
+     * Default is false.
+     */
     public MainConfigurationProperties withLogMask(boolean logMask) {
         this.logMask = logMask;
         return this;
     }
 
+    /**
+     * Sets whether to log exhausted message body with message history.
+     *
+     * Default is false.
+     */
     public MainConfigurationProperties withLogExhaustedMessageBody(boolean logExhaustedMessageBody) {
         this.logExhaustedMessageBody = logExhaustedMessageBody;
         return this;
     }
 
+    /**
+     * Sets whether fault handling is enabled or not.
+     *
+     * Default is false.
+     */
     public MainConfigurationProperties withHandleFault(boolean handleFault) {
         this.handleFault = handleFault;
         return this;
     }
 
+    /**
+     * Sets whether the object should automatically start when Camel starts.
+     * Important: Currently only routes can be disabled, as CamelContext's are always started.
+     * Note: When setting auto startup false on CamelContext then that takes precedence
+     * and no routes is started. You would need to start CamelContext explicit using
+     * the org.apache.camel.CamelContext.start() method, to start the context, and then
+     * you would need to start the routes manually using CamelContext.getRouteController().startRoute(String).
+     *
+     * Default is true to always start up.
+     */
     public MainConfigurationProperties withAutoStartup(boolean autoStartup) {
         this.autoStartup = autoStartup;
         return this;
     }
 
+    /**
+     * Sets whether to allow access to the original message from Camel's error handler,
+     * or from org.apache.camel.spi.UnitOfWork.getOriginalInMessage().
+     * Turning this off can optimize performance, as defensive copy of the original message is not needed.
+     *
+     * Default is false.
+     */
     public MainConfigurationProperties withAllowUseOriginalMessage(boolean allowUseOriginalMessage) {
         this.allowUseOriginalMessage = allowUseOriginalMessage;
         return this;
     }
 
+    /**
+     * Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints).
+     *
+     * The default value is false.
+     */
     public MainConfigurationProperties withEndpointRuntimeStatisticsEnabled(boolean endpointRuntimeStatisticsEnabled) {
         this.endpointRuntimeStatisticsEnabled = endpointRuntimeStatisticsEnabled;
         return this;
     }
 
+    /**
+     * Whether to enable using data type on Camel messages.
+     *
+     * Data type are automatic turned on if one ore more routes has been explicit configured with input and output types.
+     * Otherwise data type is default off.
+     */
     public MainConfigurationProperties withUseDataType(boolean useDataType) {
         this.useDataType = useDataType;
         return this;
     }
 
+    /**
+     * Set whether breadcrumb is enabled.
+     * The default value is false.
+     */
     public MainConfigurationProperties withUseBreadcrumb(boolean useBreadcrumb) {
         this.useBreadcrumb = useBreadcrumb;
         return this;
     }
 
+    /**
+     * Sets the JMX statistics level
+     * The level can be set to Extended to gather additional information
+     *
+     * The default value is Default.
+     */
     public MainConfigurationProperties withJmxManagementStatisticsLevel(ManagementStatisticsLevel jmxManagementStatisticsLevel) {
         this.jmxManagementStatisticsLevel = jmxManagementStatisticsLevel;
         return this;
     }
 
+    /**
+     * The naming pattern for creating the CamelContext JMX management name.
+     *
+     * The default pattern is #name#
+     */
     public MainConfigurationProperties withJmxManagementNamePattern(String jmxManagementNamePattern) {
         this.jmxManagementNamePattern = jmxManagementNamePattern;
         return this;
     }
 
+    /**
+     * Whether JMX connector is created, allowing clients to connect remotely
+     *
+     * The default value is false.
+     */
     public MainConfigurationProperties withJmxCreateConnector(boolean jmxCreateConnector) {
         this.jmxCreateConnector = jmxCreateConnector;
         return this;
     }
 
+    /**
+     * To turn on MDC logging
+     */
     public MainConfigurationProperties withUseMdcLogging(boolean useMdcLogging) {
         this.useMdcLogging = useMdcLogging;
         return this;
     }
 
+    /**
+     * Sets the thread name pattern used for creating the full thread name.
+     *
+     * The default pattern is: Camel (#camelId#) thread ##counter# - #name#
+     *
+     * Where #camelId# is the name of the CamelContext.
+     * and #counter# is a unique incrementing counter.
+     * and #name# is the regular thread name.
+     *
+     * You can also use #longName# which is the long thread name which can includes endpoint parameters etc.
+     */
     public MainConfigurationProperties withThreadNamePattern(String threadNamePattern) {
         this.threadNamePattern = threadNamePattern;
         return this;
     }
 
+    /**
+     * Sets the duration (in seconds) to run the application until it
+     * should be terminated. Defaults to -1. Any value <= 0 will run forever.
+     */
     public MainConfigurationProperties withDuration(long duration) {
         this.duration = duration;
         return this;
     }
 
+    /**
+     * Whether to use graceful hangup when Camel is stopping or when the JVM terminates.
+     */
     public MainConfigurationProperties withHangupInterceptorEnabled(boolean hangupInterceptorEnabled) {
         this.hangupInterceptorEnabled = hangupInterceptorEnabled;
         return this;
     }
 
+    /**
+     * Sets the exit code for the application if duration was hit
+     */
     public MainConfigurationProperties withDurationHitExitCode(int durationHitExitCode) {
         this.durationHitExitCode = durationHitExitCode;
         return this;
     }
 
+    /**
+     * Sets the directory name to watch XML file changes to trigger live reload of Camel routes.
+     * <p/>
+     * Notice you cannot set this value and a custom {@link ReloadStrategy} as well.
+     */
     public MainConfigurationProperties withFileWatchDirectory(String fileWatchDirectory) {
         this.fileWatchDirectory = fileWatchDirectory;
         return this;
     }
 
+    /**
+     * Sets the flag to watch directory of XML file changes recursively to trigger live reload of Camel routes.
+     * <p/>
+     * Notice you cannot set this value and a custom {@link ReloadStrategy} as well.
+     */
     public MainConfigurationProperties withFileWatchDirectoryRecursively(boolean fileWatchDirectoryRecursively) {
         this.fileWatchDirectoryRecursively = fileWatchDirectoryRecursively;
         return this;
     }
 
+    /**
+     * Sets a custom {@link ReloadStrategy} to be used.
+     * <p/>
+     * Notice you cannot set this value and the fileWatchDirectory as well.
+     */
     public MainConfigurationProperties withReloadStrategy(ReloadStrategy reloadStrategy) {
         this.reloadStrategy = reloadStrategy;
         return this;
