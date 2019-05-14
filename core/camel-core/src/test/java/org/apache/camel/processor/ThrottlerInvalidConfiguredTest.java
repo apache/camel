@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -35,7 +34,7 @@ public class ThrottlerInvalidConfiguredTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should have thrown exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertTrue(cause.getMessage().startsWith("MaxRequestsPerPeriod expression must be provided"));
         }

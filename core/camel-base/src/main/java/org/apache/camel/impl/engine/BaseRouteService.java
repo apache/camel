@@ -32,9 +32,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointAware;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -126,11 +128,11 @@ public abstract class BaseRouteService extends ChildServiceSupport {
         this.removingRoutes = removingRoutes;
     }
 
-    public void warmUp() throws Exception {
+    public void warmUp() throws FailedToStartRouteException {
         try {
             doWarmUp();
         } catch (Exception e) {
-            throw new FailedToCreateRouteException(id, getRouteDescription(), e);
+            throw new FailedToStartRouteException(id, getRouteDescription(), e);
         }
     }
 
@@ -199,8 +201,12 @@ public abstract class BaseRouteService extends ChildServiceSupport {
         }
     }
 
-    protected void doStart() throws Exception {
-        warmUp();
+    protected void doStart() {
+        try {
+            warmUp();
+        } catch (FailedToStartRouteException e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
 
         try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
             // start the route itself
@@ -218,7 +224,7 @@ public abstract class BaseRouteService extends ChildServiceSupport {
         }
     }
 
-    protected void doStop() throws Exception {
+    protected void doStop() {
 
         // if we are stopping CamelContext then we are shutting down
         boolean isShutdownCamelContext = camelContext.isStopping();
@@ -263,7 +269,7 @@ public abstract class BaseRouteService extends ChildServiceSupport {
     }
 
     @Override
-    protected void doShutdown() throws Exception {
+    protected void doShutdown() {
         try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
             log.debug("Shutting down services on route: {}", route.getId());
 
@@ -308,7 +314,7 @@ public abstract class BaseRouteService extends ChildServiceSupport {
     }
 
     @Override
-    protected void doSuspend() throws Exception {
+    protected void doSuspend() {
         // suspend and resume logic is provided by DefaultCamelContext which leverages ShutdownStrategy
         // to safely suspend and resume
         try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
@@ -321,7 +327,7 @@ public abstract class BaseRouteService extends ChildServiceSupport {
     }
 
     @Override
-    protected void doResume() throws Exception {
+    protected void doResume() {
         // suspend and resume logic is provided by DefaultCamelContext which leverages ShutdownStrategy
         // to safely suspend and resume
         try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
@@ -333,7 +339,7 @@ public abstract class BaseRouteService extends ChildServiceSupport {
         }
     }
 
-    protected void startChildService(Route route, List<Service> services) throws Exception {
+    protected void startChildService(Route route, List<Service> services) {
         for (Service service : services) {
             log.debug("Starting child service on route: {} -> {}", route.getId(), service);
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
@@ -344,7 +350,7 @@ public abstract class BaseRouteService extends ChildServiceSupport {
         }
     }
 
-    protected void stopChildService(Route route, Set<Service> services, boolean shutdown) throws Exception {
+    protected void stopChildService(Route route, Set<Service> services, boolean shutdown) {
         for (Service service : services) {
             log.debug("{} child service on route: {} -> {}", shutdown ? "Shutting down" : "Stopping", route.getId(), service);
             if (service instanceof ErrorHandler) {

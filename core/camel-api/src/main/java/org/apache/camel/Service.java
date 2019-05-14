@@ -24,22 +24,22 @@ public interface Service {
     /**
      * Initialize the service
      *
-     * @throws RuntimeException is thrown if initialization failed
+     * @throws RuntimeCamelException is thrown if initialization failed
      */
     default void init() {
     }
 
     /**
      * Starts the service
-     * 
-     * @throws Exception is thrown if starting failed
+     *
+     * @throws RuntimeCamelException is thrown if starting failed
      */
-    void start() throws Exception;
+    void start();
 
     /**
      * Stops the service
-     * 
-     * @throws Exception is thrown if stopping failed
+     *
+     * @throws RuntimeCamelException is thrown if stopping failed
      */
-    void stop() throws Exception;
+    void stop();
 }

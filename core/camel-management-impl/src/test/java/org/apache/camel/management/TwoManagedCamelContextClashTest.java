@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
-import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.After;
 import org.junit.Test;
@@ -107,8 +107,8 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
         try {
             camel2.start();
             fail("Should have thrown an exception");
-        } catch (VetoCamelContextStartException e) {
-            assertTrue(e.getMessage().contains("is already registered"));
+        } catch (Exception e) {
+            assertTrue(e.getCause().getMessage().contains("is already registered"));
         }
     }
 

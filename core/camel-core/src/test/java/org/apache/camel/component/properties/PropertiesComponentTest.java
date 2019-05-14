@@ -18,7 +18,6 @@ package org.apache.camel.component.properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -213,7 +212,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should throw exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
             assertEquals("Property with key [foo.unknown] not found in properties from text: {{foo.unknown}}", iae.getMessage());
@@ -231,7 +230,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should throw exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
             assertEquals("Circular reference detected with key [cool.a] from text: {{cool.a}}", iae.getMessage());
@@ -366,7 +365,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
             context.start();
             
             fail("Should throw exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
             assertEquals("Property with key [cool.doesnotexist] (and original key [doesnotexist]) not found in properties from text: {{doesnotexist}}", iae.getMessage());
@@ -391,7 +390,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
             context.start();
             
             fail("Should throw exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
             assertEquals("Property with key [cool.cool.end] not found in properties from text: {{cool.end}}", iae.getMessage());
@@ -455,7 +454,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
             context.start();
             
             fail("Should throw exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
             assertEquals("Property with key [cool.end.end] not found in properties from text: {{cool.end}}", iae.getMessage());
@@ -473,7 +472,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
             });
             context.start();
             fail("Should thrown an exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
             assertEquals("Cannot find JVM system property with key: xxx", cause.getMessage());
         }
@@ -590,7 +589,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should have thrown exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             assertEquals("Property with key [beer] not found in properties from text: mock:{{beer}}", e.getCause().getMessage());
         }
 
@@ -681,7 +680,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should have thrown exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             assertEquals("Property with key [UNKNOWN] not found in properties from text: mock:{{UNKNOWN}}", e.getCause().getMessage());
         }
     }

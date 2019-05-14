@@ -56,9 +56,10 @@ public class SameSedaQueueMultipleConsumersDifferenceTest extends ContextTestSup
                 }
             });
             fail("Should have thrown exception");
-        } catch (FailedToCreateRouteException e) {
-            assertEquals("fail", e.getRouteId());
-            assertEquals("Cannot use existing queue seda://foo as the existing queue multiple consumers true does not match given multiple consumers false", e.getCause().getMessage());
+        } catch (Exception e) {
+            FailedToCreateRouteException failed = assertIsInstanceOf(FailedToCreateRouteException.class, e.getCause());
+            assertEquals("fail", failed.getRouteId());
+            assertEquals("Cannot use existing queue seda://foo as the existing queue multiple consumers true does not match given multiple consumers false", e.getCause().getCause().getMessage());
         }
     }
 

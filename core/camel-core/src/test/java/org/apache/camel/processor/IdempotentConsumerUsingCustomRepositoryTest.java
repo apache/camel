@@ -131,11 +131,11 @@ public class IdempotentConsumerUsingCustomRepositoryTest extends ContextTestSupp
             return true;
         }
 
-        public void start() throws Exception {
+        public void start() {
             // noop
         }
 
-        public void stop() throws Exception {
+        public void stop() {
             // noop
         }
     }

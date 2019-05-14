@@ -124,16 +124,16 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
         return delegate.isSingleton();
     }
 
-    public void start() throws Exception {
+    public void start() {
         ServiceHelper.startService(detour, delegate);
     }
 
-    public void stop() throws Exception {
+    public void stop() {
         ServiceHelper.stopService(delegate, detour);
     }
 
     @Override
-    public void shutdown() throws Exception {
+    public void shutdown() {
         ServiceHelper.stopAndShutdownServices(delegate, detour);
     }
 

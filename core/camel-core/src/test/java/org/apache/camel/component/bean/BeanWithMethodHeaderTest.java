@@ -22,7 +22,6 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.jndi.JndiContext;
@@ -102,7 +101,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
                 }
             });
             fail("Should throw an exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, e.getCause().getCause());
             assertEquals("ups", mnfe.getMethodName());
             assertSame(bean, mnfe.getBean());
@@ -120,7 +119,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
                 }
             });
             fail("Should throw an exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, e.getCause().getCause());
             assertEquals("ups", mnfe.getMethodName());
             assertSame(myBean, mnfe.getBean());

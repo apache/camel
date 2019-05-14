@@ -29,12 +29,12 @@ import org.apache.camel.support.LRUCacheFactory;
 class ProvisionalEndpointRegistry extends HashMap<EndpointKey, Endpoint> implements EndpointRegistry<EndpointKey> {
 
     @Override
-    public void start() throws Exception {
+    public void start() {
         // noop
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         // noop
     }
 

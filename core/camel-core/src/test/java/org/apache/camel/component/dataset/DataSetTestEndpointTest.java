@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultExchange;
@@ -81,15 +82,19 @@ public class DataSetTestEndpointTest extends ContextTestSupport {
                 }
 
                 @Override
-                public void start() throws Exception {
+                public void start() {
                     // when starting then send a message to the processor
                     Exchange exchange = new DefaultExchange(getEndpoint());
                     exchange.getIn().setBody(expectedBody);
-                    processor.process(exchange);
+                    try {
+                        processor.process(exchange);
+                    } catch (Exception e) {
+                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                    }
                 }
 
                 @Override
-                public void stop() throws Exception {
+                public void stop() {
                     // noop
                 }
             };

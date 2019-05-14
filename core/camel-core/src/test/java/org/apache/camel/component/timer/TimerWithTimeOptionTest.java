@@ -21,7 +21,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
@@ -202,7 +201,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should throw an exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             assertIsInstanceOf(ParseException.class, e.getCause().getCause());
         }
     }

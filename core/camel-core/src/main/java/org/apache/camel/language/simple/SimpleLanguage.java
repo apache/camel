@@ -133,12 +133,12 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     }
 
     @Override
-    public void start() throws Exception {
+    public void start() {
         // noop
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         if (cachePredicate instanceof LRUCache) {
             if (LOG.isDebugEnabled()) {
                 LRUCache cache = (LRUCache) cachePredicate;

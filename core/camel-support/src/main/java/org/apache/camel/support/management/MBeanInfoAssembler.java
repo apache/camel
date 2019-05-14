@@ -64,13 +64,12 @@ public class MBeanInfoAssembler implements Service {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public void start() throws Exception {
+    public void start() {
         cache = LRUCacheFactory.newLRUWeakCache(1000);
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         if (cache != null) {
             if (LOG.isDebugEnabled() && cache instanceof LRUCache) {
                 LRUCache cache = (LRUCache) this.cache;

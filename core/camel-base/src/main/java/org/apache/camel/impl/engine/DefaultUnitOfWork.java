@@ -155,11 +155,11 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         return answer;
     }
 
-    public void start() throws Exception {
+    public void start() {
         id = null;
     }
 
-    public void stop() throws Exception {
+    public void stop() {
         // need to clean up when we are stopping to not leak memory
         if (synchronizations != null) {
             synchronizations.clear();

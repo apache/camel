@@ -29,8 +29,8 @@ public interface ShutdownableService extends Service {
     /**
      * Shutdown the service, which means it cannot be started again.
      *
-     * @throws Exception thrown if shutting down failed
+     * @throws RuntimeCamelException is thrown if shutdown failed
      */
-    void shutdown() throws Exception;
+    void shutdown();
 
 }

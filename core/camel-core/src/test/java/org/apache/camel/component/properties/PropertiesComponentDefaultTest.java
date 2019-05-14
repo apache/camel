@@ -20,7 +20,6 @@ import java.io.FileNotFoundException;
 import java.io.IOError;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
@@ -56,7 +55,7 @@ public class PropertiesComponentDefaultTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should throw exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             RuntimeCamelException rce = assertIsInstanceOf(RuntimeCamelException.class, cause.getCause());
             FileNotFoundException fnfe = assertIsInstanceOf(FileNotFoundException.class, rce.getCause());
@@ -136,7 +135,7 @@ public class PropertiesComponentDefaultTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should have thrown exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             assertEquals("Cannot find JVM system property with key: my.home", e.getCause().getCause().getMessage());
         }
     }

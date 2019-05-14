@@ -26,6 +26,10 @@ public class FailedToStartRouteException extends CamelException {
         super("Failed to start route " + routeId + " because of " + message);
     }
 
+    public FailedToStartRouteException(String routeId, String message, Throwable cause) {
+        super("Failed to start route " + routeId + " because of " + message, cause);
+    }
+
     public FailedToStartRouteException(Throwable cause) {
         super(cause);
     }
