@@ -35,7 +35,7 @@ import org.junit.Test;
 
 public class CxfRsEndpointBeansTest extends CamelBlueprintTestSupport {
 
-    @Produce(uri = "direct:startURLOverride")
+    @Produce("direct:startURLOverride")
     private ProducerTemplate pT;
 
     @Override
