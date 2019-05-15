@@ -50,7 +50,7 @@ public class PgEventWithDefinedDatasourceIntegrationTest extends AbstractPgEvent
         PGDataSource dataSource = new PGDataSource();
         dataSource.setHost(properties.getProperty("host"));
         dataSource.setPort(Integer.parseInt(properties.getProperty("port")));
-        dataSource.setDatabase(properties.getProperty("database"));
+        dataSource.setDatabaseName(properties.getProperty("database"));
         dataSource.setUser(properties.getProperty("userName"));
         dataSource.setPassword(properties.getProperty("password"));
 
