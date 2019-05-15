@@ -142,9 +142,13 @@ public class DockerClientProfile {
 
     public String toUrl() throws DockerException {
         ObjectHelper.notNull(this.host, "host");
-        ObjectHelper.notNull(this.port, "port");
 
-        return ((this.socket) ? "unix" : "tcp") + "://" + host + ":" + port;
+        if (this.socket != null && this.socket) {
+            return String.format("unix://%s", host);
+        }
+
+        ObjectHelper.notNull(this.port, "port");
+        return String.format("tcp://%s:%d", host, port);
     }
 
     public Boolean isTlsVerify() {
