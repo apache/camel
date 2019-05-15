@@ -38,7 +38,7 @@
         <category>Beginner</category>
         <title>POJO Routing</title>
 
-        <camel.osgi.export.pkg>org.apache.camel.example.pojo_messaging.*</camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>org.apache.camel.example.pojo.*</camel.osgi.export.pkg>
         <camel.osgi.import.additional>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool
         </camel.osgi.import.additional>
     </properties>

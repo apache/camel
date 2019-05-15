@@ -45,8 +45,8 @@
   <!-- END SNIPPET: activemq -->
 
   <!-- START SNIPPET: ex -->
-  <bean class="org.apache.camel.example.pojo_messaging.SendFileRecordsToQueueBean"/>
-  <bean class="org.apache.camel.example.pojo_messaging.DistributeRecordsBean"/>
+  <bean class="org.apache.camel.example.pojo.SendFileRecordsToQueueBean"/>
+  <bean class="org.apache.camel.example.pojo.DistributeRecordsBean"/>
 
   <!-- depend on the broker so Spring will shutdown the embedded broker after Camel -->
   <camelContext xmlns="http://camel.apache.org/schema/spring" depends-on="broker"/>
