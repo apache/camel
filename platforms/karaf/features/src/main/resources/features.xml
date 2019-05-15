@@ -1978,7 +1978,7 @@
     <feature version='${project.version}'>camel-core</feature>
     <feature>transaction</feature>
     <feature>jdbc</feature>
-    <bundle dependency='true'>mvn:com.impossibl.pgjdbc-ng/pgjdbc-ng/${pgjdbc-ng-driver-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.impossibl.pgjdbc-ng/pgjdbc-ng/${pgjdbc-ng-driver-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-transport/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty-version}</bundle>
