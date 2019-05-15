@@ -14,31 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.example.pojo_messaging;
+package org.apache.camel.example.pojo;
 
 import org.apache.camel.Consume;
-import org.apache.camel.RecipientList;
-import org.apache.camel.language.xpath.XPath;
+import org.apache.camel.Header;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 //START SNIPPET: ex
-public class DistributeRecordsBean {
+public class SendFileRecordsToQueueBean {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DistributeRecordsBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SendFileRecordsToQueueBean.class);
 
-    @Consume("activemq:personnel.records")
-    @RecipientList
-    public String[] route(@XPath("/person/city/text()") String city) {
-        if (city.equals("London")) {
-            LOG.info("Person is from EMEA region");
-            return new String[] {"file:target/messages/emea/hr_pickup", 
-                                 "file:target/messages/emea/finance_pickup"};
-        } else {
-            LOG.info("Person is from AMER region");
-            return new String[] {"file:target/messages/amer/hr_pickup",
-                                 "file:target/messages/amer/finance_pickup"};
-        }
+    @Produce("activemq:personnel.records")
+    ProducerTemplate producer;
+
+    @Consume("file:src/data?noop=true")
+    public void onFileSendToQueue(String body, @Header("CamelFileName") String name) {
+        LOG.info("Incoming file: {}", name);
+        producer.sendBody(body);
     }
 }
 //END SNIPPET: ex

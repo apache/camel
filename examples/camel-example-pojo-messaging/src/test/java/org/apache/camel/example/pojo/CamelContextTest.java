@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.example.pojo_messaging;
+package org.apache.camel.example.pojo;
 
 import java.io.File;
 
@@ -25,13 +25,13 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CamelContextTest extends CamelSpringTestSupport {
-    
+
     @Before
     public void setUp() throws Exception {
         deleteDirectory("target/messages");
         super.setUp();
     }
-       
+
     @Test
     public void testCheckFiles() throws Exception {
         // wait a little for the files to be picked up and processed
@@ -42,11 +42,11 @@ public class CamelContextTest extends CamelSpringTestSupport {
         assertEquals("There should be 1 dumped files", 1, file.list().length);
         file = new File("target/messages/amer/hr_pickup");
         assertTrue("The pickup folder should exists", file.exists());
-        assertEquals("There should be 2 dumped files", 2, file.list().length);    
+        assertEquals("There should be 2 dumped files", 2, file.list().length);
     }
 
     @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {        
+    protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("META-INF/spring/camel-context.xml");
     }
 
