@@ -96,7 +96,7 @@
     <profiles>
 
         <profile>
-            <id>weld-2.0</id>
+            <id>weld-3.0</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
