@@ -60,6 +60,10 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-cdi</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+    </dependency>
 
     <!-- logging -->
     <dependency>
@@ -122,8 +126,8 @@
           </dependency>
           <dependency>
             <groupId>org.jboss.weld.se</groupId>
-            <artifactId>weld-se</artifactId>
-            <version>${weld2-version}</version>
+            <artifactId>weld-se-shaded</artifactId>
+            <version>${weld3-version}</version>
           </dependency>
         </dependencies>
       </plugin>
