@@ -67,7 +67,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (14 parameters):
+==== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -76,12 +76,14 @@ with the following path and query parameters:
 | *amazonSNSClient* (producer) | To use the AmazonSNS as the client |  | AmazonSNS
 | *amazonSQSClient* (producer) | An SQS Client to use as bridge between SNS and SQS |  | AmazonSQS
 | *headerFilterStrategy* (producer) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
+| *kmsMasterKeyId* (producer) | The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a custom CMK. |  | String
 | *messageStructure* (producer) | The message structure to use such as json |  | String
 | *policy* (producer) | The policy for this queue |  | String
 | *proxyHost* (producer) | To define a proxy host when instantiating the SNS client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the SNS client |  | Integer
 | *queueUrl* (producer) | The queueUrl to subscribe to |  | String
 | *region* (producer) | The region in which SNS client needs to work |  | String
+| *serverSideEncryptionEnabled* (producer) | Define if Server Side Encryption is enabled or not on the topic | false | boolean
 | *subject* (producer) | The subject which is used if the message header 'CamelAwsSnsSubject' is not present. |  | String
 | *subscribeSNStoSQS* (producer) | Define if the subscription between SNS Topic and SQS must be done or not | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
@@ -105,7 +107,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 19 options, which are listed below.
+The component supports 21 options, which are listed below.
 
 
 
@@ -116,6 +118,7 @@ The component supports 19 options, which are listed below.
 | *camel.component.aws-sns.configuration.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-sns.configuration.amazon-s-n-s-client* | To use the AmazonSNS as the client |  | AmazonSNS
 | *camel.component.aws-sns.configuration.amazon-s-q-s-client* | An SQS Client to use as bridge between SNS and SQS |  | AmazonSQS
+| *camel.component.aws-sns.configuration.kms-master-key-id* | The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a custom CMK. |  | String
 | *camel.component.aws-sns.configuration.message-structure* | The message structure to use such as json |  | String
 | *camel.component.aws-sns.configuration.policy* | The policy for this queue |  | String
 | *camel.component.aws-sns.configuration.proxy-host* | To define a proxy host when instantiating the SNS client |  | String
@@ -123,6 +126,7 @@ The component supports 19 options, which are listed below.
 | *camel.component.aws-sns.configuration.queue-url* | The queueUrl to subscribe to |  | String
 | *camel.component.aws-sns.configuration.region* | The region in which SNS client needs to work |  | String
 | *camel.component.aws-sns.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-sns.configuration.server-side-encryption-enabled* | Define if Server Side Encryption is enabled or not on the topic | false | Boolean
 | *camel.component.aws-sns.configuration.subject* | The subject which is used if the message header 'CamelAwsSnsSubject' is not present. |  | String
 | *camel.component.aws-sns.configuration.subscribe-s-n-sto-s-q-s* | Define if the subscription between SNS Topic and SQS must be done or not | false | Boolean
 | *camel.component.aws-sns.configuration.topic-arn* | The Amazon Resource Name (ARN) assigned to the created topic. |  | String
