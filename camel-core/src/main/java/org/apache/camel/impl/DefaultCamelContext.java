@@ -43,6 +43,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -3498,6 +3499,21 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         
         // Stop the route controller
         ServiceHelper.stopAndShutdownService(this.routeController);
+
+        // fill all the routes to be stopped to be able to stop routes even if they failed to start
+        for (RouteService routeService : routeServices.values()) {
+            boolean found = false;
+            for (RouteStartupOrder routeStartupOrder : getRouteStartupOrder()) {
+                if (routeStartupOrder.getRoute().getId().equals(routeService.getId())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                getRouteStartupOrder().add(doPrepareRouteToBeStarted(routeService));
+            }
+        }
+        // getRouteStartupOrder().addAll(routeServices.values().stream().map(this::doPrepareRouteToBeStarted).collect(Collectors.toList()));
 
         // stop route inputs in the same order as they was started so we stop the very first inputs first
         try {
