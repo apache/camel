@@ -81,7 +81,7 @@ public class DockerClientProfileTest {
         DockerClientProfile profile = new DockerClientProfile();
         profile.setHost("localhost");
         expectedException.expectMessage("port must be specified");
-        assertEquals("tcp://localhost:2375", profile.toUrl());
+        profile.toUrl();
     }
 
     @Test
