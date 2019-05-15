@@ -42,14 +42,14 @@ public class MemoryWebSocketStore implements WebSocketStore {
      * @see org.apache.camel.Service#start()
      */
     @Override
-    public void start() throws Exception {
+    public void start() {
     }
 
     /* (non-Javadoc)
      * @see org.apache.camel.Service#stop()
      */
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         values.clear();
         keys.clear();
     }

@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import org.apache.camel.Exchange;
-import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -104,7 +104,7 @@ public class BasicPublisherTest extends CamelTestSupport {
         disp3.dispose();
     }
 
-    @Test(expected = FailedToCreateRouteException.class)
+    @Test(expected = FailedToStartRouteException.class)
     public void testOnlyOneCamelProducerPerPublisher() throws Exception {
 
         new RouteBuilder() {

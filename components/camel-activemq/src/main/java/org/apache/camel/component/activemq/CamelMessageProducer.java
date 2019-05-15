@@ -69,8 +69,6 @@ public class CamelMessageProducer extends ActiveMQMessageProducerSupport {
             closed = true;
             try {
                 producer.stop();
-            } catch (JMSException e) {
-                throw e;
             } catch (Exception e) {
                 throw JMSExceptionSupport.create(e);
             }

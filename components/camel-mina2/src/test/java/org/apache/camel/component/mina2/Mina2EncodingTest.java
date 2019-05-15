@@ -193,7 +193,7 @@ public class Mina2EncodingTest extends BaseMina2Test {
                 }
             });
             fail("Should have thrown a ResolveEndpointFailedException due invalid encoding parameter");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("The encoding: XXX is not supported", iae.getMessage());
         }

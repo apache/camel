@@ -84,7 +84,7 @@ public class SupervisingRouteControllerRestartTest {
         try {
             controller.startRoute("dummy");
         } catch (Exception e) {
-            Assert.assertEquals("Forced error on restart", e.getMessage());
+            Assert.assertEquals("Forced error on restart", e.getCause().getMessage());
         }
 
         Assert.assertTrue(controller.getBackOffContext("dummy").isPresent());

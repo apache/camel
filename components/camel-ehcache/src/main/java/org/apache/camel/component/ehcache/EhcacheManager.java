@@ -52,12 +52,12 @@ public class EhcacheManager implements Service {
     }
 
     @Override
-    public synchronized void start() throws Exception {
+    public synchronized void start() {
         refCount.retain();
     }
 
     @Override
-    public synchronized void stop() throws Exception {
+    public synchronized void stop() {
         refCount.release();
         userCaches.values().forEach(UserManagedCache::close);
     }
