@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.aws.sns;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
@@ -31,9 +34,6 @@ import com.amazonaws.services.sns.model.ListTopicsResult;
 import com.amazonaws.services.sns.model.SetTopicAttributesRequest;
 import com.amazonaws.services.sns.model.Topic;
 import com.amazonaws.services.sns.util.Topics;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -126,11 +126,11 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             CreateTopicRequest request = new CreateTopicRequest(configuration.getTopicName());
             
             if (configuration.isServerSideEncryptionEnabled()) {
-            	if (ObjectHelper.isNotEmpty(configuration.getKmsMasterKeyId())) {
-            	    Map<String, String> attributes = new HashMap<>();
-            	    attributes.put("KmsMasterKeyId", configuration.getKmsMasterKeyId());
-            	    request.setAttributes(attributes);
-            	}
+                if (ObjectHelper.isNotEmpty(configuration.getKmsMasterKeyId())) {
+                    Map<String, String> attributes = new HashMap<>();
+                    attributes.put("KmsMasterKeyId", configuration.getKmsMasterKeyId());
+                    request.setAttributes(attributes);
+                }
             }
 
             log.trace("Creating topic [{}] with request [{}]...", configuration.getTopicName(), request);
