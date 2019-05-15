@@ -190,112 +190,10 @@
 
     <profiles>
         <profile>
-            <id>weld-1.0</id>
+            <id>weld-3.0</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <excludes>
-                                <exclude>**/*Cdi12Test.java</exclude>
-                                <exclude>**/*Cdi20Test.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-
-            <dependencies>
-
-                <!-- provided dependencies -->
-
-                <dependency>
-                    <groupId>javax.enterprise</groupId>
-                    <artifactId>cdi-api</artifactId>
-                    <version>${cdi-api-1.0-version}</version>
-                    <scope>provided</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>javax.el</groupId>
-                    <artifactId>javax.el-api</artifactId>
-                    <version>${javax.el-api-version}</version>
-                    <scope>provided</scope>
-                </dependency>
-
-                <!-- test dependencies -->
-
-                <dependency>
-                    <groupId>org.jboss.weld</groupId>
-                    <artifactId>weld-core</artifactId>
-                    <version>${weld1-version}</version>
-                    <scope>test</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.jboss.arquillian.container</groupId>
-                    <artifactId>arquillian-weld-se-embedded-1.1</artifactId>
-                    <version>1.0.0.CR9</version>
-                    <scope>test</scope>
-                </dependency>
-
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>weld-1.2</id>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <excludes>
-                                <exclude>**/*Cdi20Test.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-
-            <dependencies>
-
-                <!-- provided dependencies -->
-
-                <dependency>
-                    <groupId>javax.enterprise</groupId>
-                    <artifactId>cdi-api</artifactId>
-                    <version>${cdi-api-1.2-version}</version>
-                    <scope>provided</scope>
-                </dependency>
-
-                <!-- test dependencies -->
-
-                <dependency>
-                    <groupId>org.jboss.weld</groupId>
-                    <artifactId>weld-core-impl</artifactId>
-                    <version>${weld2-version}</version>
-                    <scope>test</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.jboss.arquillian.container</groupId>
-                    <artifactId>arquillian-weld-embedded</artifactId>
-                    <version>${arquillian-weld-embedded-version}</version>
-                    <scope>test</scope>
-                </dependency>
-
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>weld-2.0</id>
 
             <build>
                 <plugins>
@@ -478,7 +376,7 @@
         </profile>
 
         <profile>
-            <id>jdk9+-weld-2.0</id>
+            <id>jdk9+-weld-3.0</id>
             <activation>
                 <jdk>[9,)</jdk>
             </activation>
