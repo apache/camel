@@ -164,6 +164,15 @@ public class SnsComponentConfiguration
          * not
          */
         private Boolean subscribeSNStoSQS = false;
+        /**
+         * The ID of an AWS-managed customer master key (CMK) for Amazon SNS or
+         * a custom CMK.
+         */
+        private String kmsMasterKeyId;
+        /**
+         * Define if Server Side Encryption is enabled or not on the topic
+         */
+        private Boolean serverSideEncryptionEnabled = false;
 
         public String getSubject() {
             return subject;
@@ -275,6 +284,23 @@ public class SnsComponentConfiguration
 
         public void setSubscribeSNStoSQS(Boolean subscribeSNStoSQS) {
             this.subscribeSNStoSQS = subscribeSNStoSQS;
+        }
+
+        public String getKmsMasterKeyId() {
+            return kmsMasterKeyId;
+        }
+
+        public void setKmsMasterKeyId(String kmsMasterKeyId) {
+            this.kmsMasterKeyId = kmsMasterKeyId;
+        }
+
+        public Boolean getServerSideEncryptionEnabled() {
+            return serverSideEncryptionEnabled;
+        }
+
+        public void setServerSideEncryptionEnabled(
+                Boolean serverSideEncryptionEnabled) {
+            this.serverSideEncryptionEnabled = serverSideEncryptionEnabled;
         }
     }
 }

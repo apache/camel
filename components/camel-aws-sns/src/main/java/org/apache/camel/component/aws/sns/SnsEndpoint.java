@@ -32,6 +32,9 @@ import com.amazonaws.services.sns.model.SetTopicAttributesRequest;
 import com.amazonaws.services.sns.model.Topic;
 import com.amazonaws.services.sns.util.Topics;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -121,6 +124,14 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         if (configuration.getTopicArn() == null) {
             // creates a new topic, or returns the URL of an existing one
             CreateTopicRequest request = new CreateTopicRequest(configuration.getTopicName());
+            
+            if (configuration.isServerSideEncryptionEnabled()) {
+            	if (ObjectHelper.isNotEmpty(configuration.getKmsMasterKeyId())) {
+            	    Map<String, String> attributes = new HashMap<>();
+            	    attributes.put("KmsMasterKeyId", configuration.getKmsMasterKeyId());
+            	    request.setAttributes(attributes);
+            	}
+            }
 
             log.trace("Creating topic [{}] with request [{}]...", configuration.getTopicName(), request);
 

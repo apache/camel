@@ -46,6 +46,10 @@ public class SnsConfiguration implements Cloneable {
     private String queueUrl;
     @UriParam
     private boolean subscribeSNStoSQS;
+    @UriParam
+    private String kmsMasterKeyId;
+    @UriParam
+    private boolean serverSideEncryptionEnabled;
 
     // Producer only properties
     @UriParam
@@ -209,6 +213,28 @@ public class SnsConfiguration implements Cloneable {
      */
     public void setSubscribeSNStoSQS(boolean subscribeSNStoSQS) {
         this.subscribeSNStoSQS = subscribeSNStoSQS;
+    }
+    
+    public String getKmsMasterKeyId() {
+        return kmsMasterKeyId;
+    }
+
+    /**
+     * The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a custom CMK.
+     */
+    public void setKmsMasterKeyId(String kmsMasterKeyId) {
+        this.kmsMasterKeyId = kmsMasterKeyId;
+    }
+
+    public boolean isServerSideEncryptionEnabled() {
+        return serverSideEncryptionEnabled;
+    }
+
+    /**
+     * Define if Server Side Encryption is enabled or not on the topic
+     */
+    public void setServerSideEncryptionEnabled(boolean serverSideEncryptionEnabled) {
+        this.serverSideEncryptionEnabled = serverSideEncryptionEnabled;
     }
     
     // *************************************************
