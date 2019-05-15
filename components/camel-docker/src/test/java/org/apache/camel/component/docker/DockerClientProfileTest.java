@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.docker;
 
+import org.apache.camel.component.docker.exception.DockerException;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -24,6 +27,9 @@ import static org.junit.Assert.assertEquals;
  * Validates the {@link DockerClientProfile}
  */
 public class DockerClientProfileTest {
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void clientProfileTest() {
@@ -62,4 +68,29 @@ public class DockerClientProfileTest {
         assertEquals(clientProfile1, clientProfile2);
     }
 
+    @Test
+    public void clientProfileUrlTest() throws DockerException {
+        DockerClientProfile profile = new DockerClientProfile();
+        profile.setHost("localhost");
+        profile.setPort(2375);
+        assertEquals("tcp://localhost:2375", profile.toUrl());
+    }
+
+    @Test
+    public void clientProfileNoPortSpecifiedUrlTest() throws DockerException {
+        DockerClientProfile profile = new DockerClientProfile();
+        profile.setHost("localhost");
+        expectedException.expectMessage("port must be specified");
+        assertEquals("tcp://localhost:2375", profile.toUrl());
+    }
+
+    @Test
+    public void clientProfileWithSocketUrlTest() throws DockerException {
+        DockerClientProfile profile = new DockerClientProfile();
+        profile.setHost("/var/run/docker.sock");
+        // Port should be ignored
+        profile.setPort(2375);
+        profile.setSocket(true);
+        assertEquals("unix:///var/run/docker.sock", profile.toUrl());
+    }
 }

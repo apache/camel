@@ -72,7 +72,6 @@ public final class DockerClientFactory {
 
         DockerClientProfile clientProfile = new DockerClientProfile();
         clientProfile.setHost(host);
-        clientProfile.setPort(port);
         clientProfile.setEmail(email);
         clientProfile.setUsername(username);
         clientProfile.setPassword(password);
@@ -85,6 +84,10 @@ public final class DockerClientFactory {
         clientProfile.setTlsVerify(tlsVerify);
         clientProfile.setSocket(socket);
         clientProfile.setCmdExecFactory(cmdExecFactory);
+
+        if (!socket) {
+            clientProfile.setPort(port);
+        }
 
         DockerClient dockerClient = dockerComponent.getClient(clientProfile);
 
