@@ -60,7 +60,7 @@ public class QuartzPropertiesTest extends BaseQuartzTest {
             quartz.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            assertEquals("Error loading Quartz properties file: doesnotexist.properties", e.getMessage());
+            assertEquals("Error loading Quartz properties file: doesnotexist.properties", e.getCause().getMessage());
         }
     }
 

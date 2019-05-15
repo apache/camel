@@ -19,6 +19,7 @@ package org.apache.camel.component.sjms.batch;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.SjmsComponent;
@@ -87,7 +88,7 @@ public class SjmsBatchEndpointTest extends CamelTestSupport {
         context.start();
     }
 
-    @Test(expected = FailedToCreateRouteException.class)
+    @Test(expected = FailedToStartRouteException.class)
     public void testConsumerNegativePollDuration() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -99,7 +100,7 @@ public class SjmsBatchEndpointTest extends CamelTestSupport {
         context.start();
     }
 
-    @Test(expected = FailedToCreateRouteException.class)
+    @Test(expected = FailedToStartRouteException.class)
     public void testConsumerNegativeConsumerCount() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

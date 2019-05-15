@@ -463,7 +463,7 @@ Number of Components: 295 in 232 JAR artifacts (0 deprecated)
 | link:camel-jing/src/main/docs/jing-component.adoc[Jing] (camel-jing) +
 `jing:resourceUri` | 1.1 | Validates the payload of a message using RelaxNG Syntax using Jing library.
 
-| link:@@@ARTIFACTID@@@/src/main/docs/jms-component.adoc[JMS] (@@@ARTIFACTID@@@) +
+| link:camel-jms/src/main/docs/jms-component.adoc[JMS] (camel-jms) +
 `jms:destinationType:destinationName` | 1.0 | The jms component allows messages to be sent to (or consumed from) a JMS Queue or Topic.
 
 | link:camel-jmx/src/main/docs/jmx-component.adoc[JMX] (camel-jmx) +

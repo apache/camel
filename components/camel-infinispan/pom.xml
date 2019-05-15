@@ -37,7 +37,6 @@
     </properties>
 
     <dependencies>
-        <!-- TODO: requires camel-core -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
