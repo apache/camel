@@ -18,7 +18,6 @@ package org.apache.camel.component.guava.eventbus;
 
 import com.google.common.eventbus.EventBus;
 import org.apache.camel.CamelContext;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
@@ -49,7 +48,7 @@ public class GuavaEventBusConsumerConfigurationTest extends CamelTestSupport {
         try {
             context.start();
             fail("Should throw exception");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             IllegalStateException ise = assertIsInstanceOf(IllegalStateException.class, e.getCause());
             assertEquals("You cannot set both 'eventClass' and 'listenerInterface' parameters.", ise.getMessage());
         }

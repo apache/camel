@@ -22,7 +22,7 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Service;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.infinispan.cache.impl.DecoratedCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
@@ -33,7 +33,7 @@ import org.infinispan.manager.DefaultCacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class InfinispanManager implements Service {
+public class InfinispanManager extends ServiceSupport {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(InfinispanManager.class);
 
     private final InfinispanConfiguration configuration;
@@ -57,7 +57,7 @@ public class InfinispanManager implements Service {
     }
 
     @Override
-    public void start() throws Exception {
+    public void doStart() throws Exception {
         cacheContainer = configuration.getCacheContainer();
 
         if (cacheContainer == null) {
@@ -129,7 +129,7 @@ public class InfinispanManager implements Service {
     }
 
     @Override
-    public void stop() throws Exception {
+    public void doStop() throws Exception {
         if (isManagedCacheContainer) {
             cacheContainer.stop();
         }

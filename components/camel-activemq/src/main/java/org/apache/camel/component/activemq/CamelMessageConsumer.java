@@ -63,8 +63,6 @@ public class CamelMessageConsumer implements MessageConsumer {
                 if (pollingConsumer != null) {
                     pollingConsumer.stop();
                 }
-            } catch (JMSException e) {
-                throw e;
             } catch (Exception e) {
                 throw JMSExceptionSupport.create(e);
             }

@@ -31,15 +31,15 @@ public class WsConsumer extends DefaultConsumer {
     }
 
     @Override
-    public void start() throws Exception {
-        super.start();
+    public void doStart() throws Exception {
+        super.doStart();
         getEndpoint().connect(this);
     }
 
     @Override
-    public void stop() throws Exception {
+    public void doStop() throws Exception {
         getEndpoint().disconnect(this);
-        super.stop();
+        super.doStop();
     }
 
     @Override

@@ -103,10 +103,10 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
             return;  
         }
 
-        public void start() throws Exception {
+        public void start() {
         }
 
-        public void stop() throws Exception {
+        public void stop() {
         }
     }
 }
