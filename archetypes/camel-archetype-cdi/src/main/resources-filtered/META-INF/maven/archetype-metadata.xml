@@ -25,13 +25,13 @@
       <defaultValue>${project.version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="cdi-api-version">
-      <defaultValue>${cdi-api-1.2-version}</defaultValue>
+      <defaultValue>${cdi-api-2.0-version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="deltaspike-version">
       <defaultValue>${deltaspike-version}</defaultValue>
     </requiredProperty>
-    <requiredProperty key="weld2-version">
-      <defaultValue>${weld2-version}</defaultValue>
+    <requiredProperty key="weld3-version">
+      <defaultValue>${weld3-version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="maven-compiler-plugin-version">
       <defaultValue>${maven-compiler-plugin-version}</defaultValue>
