@@ -113,8 +113,6 @@
         <cassandra-unit-version>3.1.3.2</cassandra-unit-version>
         <castor-version>1.3.3</castor-version>
         <castor-bundle-version>1.3.3_1</castor-bundle-version>
-        <cdi-api-1.0-version>1.0-SP4</cdi-api-1.0-version>
-        <cdi-api-1.1-version>1.1</cdi-api-1.1-version>
         <cdi-api-1.2-version>1.2</cdi-api-1.2-version>
         <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
@@ -689,8 +687,6 @@
         <vysper-version>0.7</vysper-version>
         <web3j-version>3.6.0</web3j-version>
         <web3j-quorum-version>0.8.0</web3j-quorum-version>
-        <weld1-version>1.1.28.Final</weld1-version>
-        <weld2-version>2.4.7.Final</weld2-version>
         <weld3-version>3.0.5.Final</weld3-version>
         <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
         <wiremock-version>2.23.2</wiremock-version>
