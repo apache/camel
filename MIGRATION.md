@@ -186,9 +186,6 @@ The functionality to change the simple language tokens for start/end functions h
 
 The following API changes may affect your existing Camel applications, which needs to be migrated.
 
-TODO: Should this be a table?
-TODO: Add the other moved classes/packages etc
-
 #### CamelContext
 
 The methods on `CamelContext` that are related to catalog has been moved into a new `CatalogCamelContext` interface, which you can access by adapting:
@@ -197,6 +194,11 @@ The methods on `CamelContext` that are related to catalog has been moved into a 
 
 The `loadRouteDefinitions` and `loadRestDefinitions` on `ModelCamelContext` has been changed to `addRouteDefinitions` and `addRestDefinitions` to be aligned with the other methods. You can find loader methods on the `ModelHelper` utility class.
 
+#### Checked vs unchecked exceptions
+
+Most of the Camel exception classes has been migrated to be unchecked (eg extends `RuntimeException`). 
+
+Also the lifecycle of the `start`, `stop` and `suspend`, `resume` methods on `Service` and `SuspendableService` has been changed to not throw checked exceptions.
 
 #### Generic Information
 
