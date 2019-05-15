@@ -21,14 +21,39 @@ import io.netty.channel.ChannelHandlerContext;
 
 public class DelimiterBasedFrameDecoder extends io.netty.handler.codec.DelimiterBasedFrameDecoder {
 
+    private final LineBasedFrameDecoder lineBasedFrameDecoder;
+
     public DelimiterBasedFrameDecoder(int maxFrameLength, boolean stripDelimiter, ByteBuf[] delimiters) {
         super(maxFrameLength, stripDelimiter, delimiters);
+        if (isLineBased(delimiters)) {
+            this.lineBasedFrameDecoder = new LineBasedFrameDecoder(maxFrameLength, stripDelimiter, true);
+        } else {
+            this.lineBasedFrameDecoder = null;
+        }
     }
     
     @Override
     public Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
+        if (lineBasedFrameDecoder != null) {
+            return lineBasedFrameDecoder.decode(ctx, in);
+        }
         return super.decode(ctx, in);
     }
 
-
+    /** Returns true if the delimiters are "\n" and "\r\n".
+     * Copied from io.netty.handler.codec.DelimiterBasedFrameDecoder */
+    private static boolean isLineBased(final ByteBuf[] delimiters) {
+        if (delimiters.length != 2) {
+            return false;
+        }
+        ByteBuf a = delimiters[0];
+        ByteBuf b = delimiters[1];
+        if (a.capacity() < b.capacity()) {
+            a = delimiters[1];
+            b = delimiters[0];
+        }
+        return a.capacity() == 2 && b.capacity() == 1
+                && a.getByte(0) == '\r' && a.getByte(1) == '\n'
+                && b.getByte(0) == '\n';
+    }
 }
