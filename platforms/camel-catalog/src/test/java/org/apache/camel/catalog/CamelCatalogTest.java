@@ -1191,6 +1191,22 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testNetty4Http4DynamicToIssueHost() throws Exception {
+        String uri = "netty4-http:http://a-b-c.hostname.tld:8080/anything";
+        Map<String, String> params = catalog.endpointProperties(uri);
+        assertEquals("http", params.get("protocol"));
+        assertEquals("a-b-c.hostname.tld", params.get("host"));
+        assertEquals("8080", params.get("port"));
+        assertEquals("anything", params.get("path"));
+
+        // remove path
+        params.remove("path");
+
+        String resolved = catalog.asEndpointUri("netty4-http", params, false);
+        assertEquals("netty4-http:http:a-b-c.hostname.tld:8080", resolved);
+    }
+
+    @Test
     public void testJSonSchemaHelper() throws Exception {
         String json = loadText(new FileInputStream("src/test/resources/org/foo/camel/dummy.json"));
         assertNotNull(json);
