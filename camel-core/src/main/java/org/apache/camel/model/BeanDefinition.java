@@ -86,7 +86,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
             }
             return "ref:" + ref + methodText;
         } else if (bean != null) {
-            return bean.toString();
+            return ObjectHelper.className(bean);
         } else if (beanClass != null) {
             return beanClass.getName();
         } else if (beanType != null) {
