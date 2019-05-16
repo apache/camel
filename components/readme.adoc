@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 292 in 229 JAR artifacts (0 deprecated)
+Number of Components: 295 in 232 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -111,6 +111,12 @@ Number of Components: 292 in 229 JAR artifacts (0 deprecated)
 
 | link:camel-aws-ses/src/main/docs/aws-ses-component.adoc[AWS Simple Email Service] (camel-aws-ses) +
 `aws-ses:from` | 2.9 | The aws-ses component is used for sending emails with Amazon's SES service.
+
+| link:camel-aws-sns/src/main/docs/aws-sns-component.adoc[AWS Simple Notification System] (camel-aws-sns) +
+`aws-sns:topicNameOrArn` | 2.8 | The aws-sns component is used for sending messages to an Amazon Simple Notification Topic.
+
+| link:camel-aws-sqs/src/main/docs/aws-sqs-component.adoc[AWS Simple Queue Service] (camel-aws-sqs) +
+`aws-sqs:queueNameOrArn` | 2.6 | The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.
 
 | link:camel-aws-swf/src/main/docs/aws-swf-component.adoc[AWS Simple Workflow] (camel-aws-swf) +
 `aws-swf:type` | 2.13 | The aws-swf component is used for managing workflows from Amazon Simple Workflow.
@@ -753,6 +759,9 @@ Number of Components: 292 in 229 JAR artifacts (0 deprecated)
 
 | link:camel-solr/src/main/docs/solr-component.adoc[Solr] (camel-solr) +
 `solr:url` | 2.9 | The solr component allows you to interface with an Apache Lucene Solr server.
+
+| link:camel-soroush/src/main/docs/soroush-component.adoc[SoroushBot] (camel-soroush) +
+`soroush:<endpoint>[/authorizationToken][?options]` | 3.0 | this class represents Soroush Endpoint, it is also a bean containing the configuration of the Endpoint
 
 | link:camel-spark-rest/src/main/docs/spark-rest-component.adoc[Spark Rest] (camel-spark-rest) +
 `spark-rest:verb:path` | 2.14 | The spark-rest component is used for hosting REST services which has been defined using Camel rest-dsl.
