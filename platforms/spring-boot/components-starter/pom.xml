@@ -227,6 +227,7 @@
     <module>camel-jacksonxml-starter</module>
     <module>camel-jasypt-starter</module>
     <module>camel-jaxb-starter</module>
+    <module>camel-jaxp-starter</module>
     <module>camel-jbpm-starter</module>
     <module>camel-jcache-starter</module>
     <module>camel-jclouds-starter</module>

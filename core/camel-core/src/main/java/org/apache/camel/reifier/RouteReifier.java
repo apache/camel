@@ -87,7 +87,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         throw new UnsupportedOperationException("Not implemented for RouteDefinition");
     }
 
-    public Route addRoutes(CamelContext camelContext) throws Exception {
+    public Route createRoute(CamelContext camelContext) throws Exception {
         @SuppressWarnings("deprecation")
         ErrorHandlerFactory handler = camelContext.getErrorHandlerFactory();
         if (handler != null) {
@@ -95,7 +95,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         }
 
         try {
-            return addRoutes(camelContext, definition.getInput());
+            return createRoute(camelContext, definition.getInput());
         } catch (FailedToCreateRouteException e) {
             throw e;
         } catch (Exception e) {
@@ -202,7 +202,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
     // Implementation methods
     // -------------------------------------------------------------------------
-    protected Route addRoutes(CamelContext camelContext, FromDefinition fromType) throws Exception {
+    protected Route createRoute(CamelContext camelContext, FromDefinition fromType) throws Exception {
         DefaultRouteContext routeContext = new DefaultRouteContext(camelContext, definition, fromType);
 
         // configure tracing

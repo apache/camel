@@ -29,7 +29,7 @@ import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.XPathExpression;
-import org.apache.camel.support.builder.xml.Namespaces;
+import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.util.ObjectHelper;
 
 /**

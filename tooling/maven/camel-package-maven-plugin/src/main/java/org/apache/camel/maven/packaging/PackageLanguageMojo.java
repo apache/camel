@@ -146,6 +146,9 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         } else if ("bean".equals(name)) {
                             // special for camel-bean as we need to build this before camel-core so we load the schema from a static file
                             is = new FileInputStream(new File(buildDir, "../src/main/schema/method.json"));
+                        } else if ("xtokenize".equals(name)) {
+                            // special for camel-jaxp as we need to build this before camel-core so we load the schema from a static file
+                            is = new FileInputStream(new File(buildDir, "../src/main/schema/xtokenize.json"));
                         } else {
                             is = new FileInputStream(new File(core, "target/classes/org/apache/camel/model/language/" + modelName + ".json"));
                         }

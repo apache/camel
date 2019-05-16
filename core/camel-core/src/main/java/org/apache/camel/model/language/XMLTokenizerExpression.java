@@ -24,13 +24,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.language.tokenizer.XMLTokenizeLanguage;
 import org.apache.camel.spi.Metadata;
 
 /**
  * To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.
  *
- * @see XMLTokenizeLanguage
+ * @see org.apache.camel.language.xtokenizer.XMLTokenizeLanguage
  */
 @Metadata(firstVersion = "2.14.0", label = "language,core,xml", title = "XML Tokenize")
 @XmlRootElement(name = "xtokenize")

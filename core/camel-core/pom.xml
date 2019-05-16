@@ -85,6 +85,12 @@
         <!-- required dependencies by camel-core -->
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jaxp</artifactId>
+        </dependency>
+
+        <!-- required dependencies by camel-core -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
 
@@ -461,7 +467,7 @@
                     </execution>
                     <!-- we need to copy the method.json schema file from camel-core to camel-bean because camel-bean is built before
                          camel-core and we would have a chicken-and-egg situation where camel-bean needs method.json during its build phase
-                         but this file is not available, so we have copied the file to camel-xpath and then we use this maven plugin
+                         but this file is not available, so we have copied the file to camel-bean and then we use this maven plugin
                          to copy over the file so its kept up to date -->
                     <execution>
                         <id>copy-bean-schema</id>
@@ -476,6 +482,28 @@
                                     <directory>${basedir}/target/classes/org/apache/camel/model/language</directory>
                                     <includes>
                                         <include>method.json</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <!-- we need to copy the xtokenize.json schema file from camel-core to camel-jaxp because camel-jaxp is built before
+                         camel-core and we would have a chicken-and-egg situation where camel-jaxp needs xtokenize.json during its build phase
+                         but this file is not available, so we have copied the file to camel-jaxp and then we use this maven plugin
+                         to copy over the file so its kept up to date -->
+                    <execution>
+                        <id>copy-jaxp-schema</id>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <outputDirectory>${basedir}/../../components/camel-jaxp/src/main/schema</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/target/classes/org/apache/camel/model/language</directory>
+                                    <includes>
+                                        <include>xtokenize.json</include>
                                     </includes>
                                 </resource>
                             </resources>

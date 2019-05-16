@@ -43,7 +43,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.xpath.InvalidXPathException;
 import org.apache.camel.language.xpath.XPathBuilder;
-import org.apache.camel.support.builder.xml.Namespaces;
+import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.util.StringHelper;
 import org.junit.Test;
 

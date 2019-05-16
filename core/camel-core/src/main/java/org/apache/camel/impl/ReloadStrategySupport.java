@@ -40,7 +40,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.XmlLineNumberParser;
+import org.apache.camel.util.xml.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

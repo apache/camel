@@ -29,6 +29,8 @@ import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.engine.AbstractCamelContext;
 import org.apache.camel.impl.engine.BaseRouteService;
+import org.apache.camel.impl.engine.DefaultTransformerRegistry;
+import org.apache.camel.impl.engine.DefaultValidatorRegistry;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.model.DataFormatDefinition;
@@ -43,12 +45,18 @@ import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
+import org.apache.camel.reifier.transformer.TransformerReifier;
+import org.apache.camel.reifier.validator.ValidatorReifier;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
+import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -224,11 +232,31 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
     }
 
     protected ValidatorRegistry<ValidatorKey> createValidatorRegistry() throws Exception {
-        return new DefaultValidatorRegistry(this, getValidators());
+        DefaultValidatorRegistry registry = new DefaultValidatorRegistry(this);
+        for (ValidatorDefinition def : getValidators()) {
+            Validator validator = ValidatorReifier.reifier(def).createValidator(this);
+            registry.put(createKey(def), doAddService(validator));
+        }
+        return registry;
+    }
+
+    private ValidatorKey createKey(ValidatorDefinition def) {
+        return new ValidatorKey(new DataType(def.getType()));
     }
 
     protected TransformerRegistry<TransformerKey> createTransformerRegistry() throws Exception {
-        return new DefaultTransformerRegistry(this, getTransformers());
+        DefaultTransformerRegistry registry = new DefaultTransformerRegistry(this);
+        for (TransformerDefinition def : getTransformers()) {
+            Transformer transformer = TransformerReifier.reifier(def).createTransformer(this);
+            registry.put(createKey(def), doAddService(transformer));
+        }
+        return registry;
+    }
+
+    private TransformerKey createKey(TransformerDefinition def) {
+        return ObjectHelper.isNotEmpty(def.getScheme())
+                ? new TransformerKey(def.getScheme())
+                : new TransformerKey(new DataType(def.getFromType()), new DataType(def.getToType()));
     }
 
     protected abstract HealthCheckRegistry createHealthCheckRegistry();

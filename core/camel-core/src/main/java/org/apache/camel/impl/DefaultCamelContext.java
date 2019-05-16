@@ -82,6 +82,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestRegistry;
+import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
@@ -311,8 +312,8 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     }
 
     @Override
-    protected RestRegistry createRestRegistry() {
-        return new RestRegistryFactoryResolver().resolve(this).createRegistry();
+    protected RestRegistryFactory createRestRegistryFactory() {
+        return new RestRegistryFactoryResolver().resolve(this);
     }
 
     protected EndpointRegistry<EndpointKey> createEndpointRegistry(Map<EndpointKey, Endpoint> endpoints) {

@@ -94,7 +94,8 @@ import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.ObjectHelper;
-import org.apache.camel.support.builder.xml.Namespaces;
+import org.apache.camel.support.builder.Namespaces;
+import org.apache.camel.support.builder.xml.NamespacesHelper;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SecureRandomParameters;
@@ -342,7 +343,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 if (object instanceof NamespaceAware) {
                     NamespaceAware namespaceAware = (NamespaceAware) object;
                     if (namespaces == null) {
-                        namespaces = new Namespaces(element);
+                        namespaces = NamespacesHelper.namespaces(element);
                     }
                     namespaces.configure(namespaceAware);
                 }

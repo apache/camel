@@ -122,6 +122,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
+import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteError.Phase;
 import org.apache.camel.spi.RoutePolicyFactory;
@@ -225,6 +226,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
     private volatile DataFormatResolver dataFormatResolver;
     private volatile ManagementStrategy managementStrategy;
     private volatile ManagementMBeanAssembler managementMBeanAssembler;
+    private volatile RestRegistryFactory restRegistryFactory;
     private volatile RestRegistry restRegistry;
     private volatile HeadersMapFactory headersMapFactory;
     private volatile BeanProxyFactory beanProxyFactory;
@@ -3133,7 +3135,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         getPackageScanClassResolver();
         getProducerServicePool();
         getPollingConsumerServicePool();
-        getRestRegistry();
+        getRestRegistryFactory();
 
         if (isTypeConverterStatisticsEnabled() != null) {
             getTypeConverterRegistry().getStatistics().setStatisticsEnabled(isTypeConverterStatisticsEnabled());
@@ -3689,6 +3691,29 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         this.restRegistry = doAddService(restRegistry);
     }
 
+    protected RestRegistry createRestRegistry() {
+        RestRegistryFactory factory = getRestRegistryFactory();
+        if (factory == null) {
+            throw new IllegalStateException("No RestRegistryFactory implementation found.  You need to add camel-rest to the classpath.");
+        }
+        return factory.createRegistry();
+    }
+
+    public RestRegistryFactory getRestRegistryFactory() {
+        if (restRegistryFactory == null) {
+            synchronized (lock) {
+                if (restRegistryFactory == null) {
+                    setRestRegistryFactory(createRestRegistryFactory());
+                }
+            }
+        }
+        return restRegistryFactory;
+    }
+
+    public void setRestRegistryFactory(RestRegistryFactory restRegistryFactory) {
+        this.restRegistryFactory = doAddService(restRegistryFactory);
+    }
+
     @Override
     public String getGlobalOption(String key) {
         String value = getGlobalOptions().get(key);
@@ -3902,7 +3927,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
 
     protected abstract LanguageResolver createLanguageResolver();
 
-    protected abstract RestRegistry createRestRegistry();
+    protected abstract RestRegistryFactory createRestRegistryFactory();
 
     protected abstract EndpointRegistry<EndpointKey> createEndpointRegistry(Map<EndpointKey, Endpoint> endpoints);
 

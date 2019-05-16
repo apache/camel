@@ -292,8 +292,8 @@ public class DefaultModel implements Model {
         mcc.setStartingRoutes(true);
         try {
 
-            Route route = new RouteReifier(routeDefinition).addRoutes(mcc);
-            RouteService routeService = new RouteService(mcc, routeDefinition, route.getRouteContext(), route);
+            Route route = new RouteReifier(routeDefinition).createRoute(mcc);
+            RouteService routeService = new RouteService(route);
             mcc.startRouteService(routeService, true);
         } finally {
             // we are done staring routes

@@ -52,7 +52,8 @@ public class TypeConverterProcessor extends AbstractCamelAnnotationProcessor {
             }
         }
         if (!converterClasses.isEmpty()
-                && !converterClasses.containsKey("org.apache.camel.converter.IOConverter")) {
+                && !converterClasses.containsKey("org.apache.camel.converter.IOConverter")
+                && !converterClasses.containsKey("org.apache.camel.converter.jaxp.DomConverter")) {
             Filer filer = processingEnv.getFiler();
             FileObject resource = filer.createResource(StandardLocation.CLASS_OUTPUT,
                     "", "META-INF/services/org/apache/camel/TypeConverter",
