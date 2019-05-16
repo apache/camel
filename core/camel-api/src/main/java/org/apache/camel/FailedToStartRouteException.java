@@ -19,6 +19,7 @@ package org.apache.camel;
 /**
  * Exception when failing to start a {@link Route}.
  */
+// CHECKSTYLE:OFF
 public class FailedToStartRouteException extends RuntimeCamelException {
 
     private String routeId;

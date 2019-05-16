@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class CamelUnitOfWorkException extends CamelExchangeException {
 
-    private transient final List<Exception> causes;
+    private final transient List<Exception> causes;
 
     public CamelUnitOfWorkException(Exchange exchange, List<Exception> causes) {
         // just provide the first exception as cause, as it will be logged in the stacktraces
