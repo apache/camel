@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.googlecode.junittoolbox.ParallelParameterized;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
@@ -381,7 +380,6 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
 
     @Parameters(name = "format = {0}, version = {1}")
     public static Iterable<Object[]> formats() {
-        return VERSIONS.stream().flatMap(v -> Stream.of(new Object[] {"JSON", v}, new Object[] {"XML", v}))
-            .collect(Collectors.toList());
+        return VERSIONS.stream().map(v -> new Object[] {"JSON", v}).collect(Collectors.toList());
     }
 }
