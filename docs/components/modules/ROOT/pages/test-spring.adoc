@@ -118,7 +118,7 @@ public class FilterTest extends SpringRunWithTestSupport {
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
  
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
  
     @DirtiesContext
@@ -194,7 +194,7 @@ public class FilterTest extends AbstractJUnit4SpringContextTests {
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
  
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
  
     @DirtiesContext
@@ -363,7 +363,7 @@ public class CamelSpringJUnit4ClassRunnerPlainTest {
     @EndpointInject(value = "mock:c", context = "camelContext2")
     protected MockEndpoint mockC;
  
-    @Produce(uri = "direct:start2", context = "camelContext2")
+    @Produce("direct:start2", context = "camelContext2")
     protected ProducerTemplate start2;
  
     @EndpointInject(value = "mock:log:org.apache.camel.test.junit4.spring", context = "camelContext2")
