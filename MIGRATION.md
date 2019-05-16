@@ -242,6 +242,8 @@ The annotation `org.apache.camel.Constant` has been removed, use `@Simple` inste
 
 The annotation `org.apache.camel.language.SpEL` has been moved to `org.apache.camel.language.spel.SpEL` and in the `camel-spring` JAR.
 
+Rename various APIs in camel-core to fix the typo `chiper` to `cipher`.
+
 #### camel-test
 
 If you are using camel-test and override the `createRegistry` method, for example to register beans from the `JndiRegisty` class, then this is no longer necessary, and instead

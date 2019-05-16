@@ -165,13 +165,13 @@ public interface StreamCachingStrategy extends StaticService {
     int getBufferSize();
 
     /**
-     * Sets a chiper name to use when spooling to disk to write with encryption.
+     * Sets a cipher name to use when spooling to disk to write with encryption.
      * <p/>
      * By default the data is not encrypted.
      */
-    void setSpoolChiper(String chiper);
+    void setSpoolCipher(String cipher);
 
-    String getSpoolChiper();
+    String getSpoolCipher();
 
     /**
      * Whether to remove the temporary directory when stopping.

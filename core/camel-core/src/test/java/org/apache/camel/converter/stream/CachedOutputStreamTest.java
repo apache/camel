@@ -142,7 +142,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
     @Test
     public void testCacheStreamToFileAndCloseStreamEncrypted() throws Exception {
         // set some stream or 8-bit block cipher transformation name
-        context.getStreamCachingStrategy().setSpoolChiper("RC4");
+        context.getStreamCachingStrategy().setSpoolCipher("RC4");
 
         context.start();
 

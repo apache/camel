@@ -584,9 +584,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             StreamCachingStrategy.SpoolUsedHeapMemoryLimit ul = CamelContextHelper.mandatoryConvertTo(getContext(), StreamCachingStrategy.SpoolUsedHeapMemoryLimit.class, limit);
             getContext().getStreamCachingStrategy().setSpoolUsedHeapMemoryLimit(ul);
         }
-        String spoolChiper = CamelContextHelper.parseText(getContext(), streamCaching.getSpoolChiper());
-        if (spoolChiper != null) {
-            getContext().getStreamCachingStrategy().setSpoolChiper(spoolChiper);
+        String spoolCipher = CamelContextHelper.parseText(getContext(), streamCaching.getSpoolCipher());
+        if (spoolCipher != null) {
+            getContext().getStreamCachingStrategy().setSpoolCipher(spoolCipher);
         }
         Boolean remove = CamelContextHelper.parseBoolean(getContext(), streamCaching.getRemoveSpoolDirectoryWhenStopping());
         if (remove != null) {

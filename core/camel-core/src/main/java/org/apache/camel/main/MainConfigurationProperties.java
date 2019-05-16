@@ -44,7 +44,7 @@ public class MainConfigurationProperties {
     private int logDebugMaxChars;
     private boolean streamCachingEnabled;
     private String streamCachingSpoolDirectory;
-    private String streamCachingSpoolChiper;
+    private String streamCachingSpoolCipher;
     private long streamCachingSpoolThreshold;
     private int streamCachingSpoolUsedHeapMemoryThreshold;
     private String streamCachingSpoolUsedHeapMemoryLimit;
@@ -304,16 +304,16 @@ public class MainConfigurationProperties {
         this.streamCachingSpoolDirectory = streamCachingSpoolDirectory;
     }
 
-    public String getStreamCachingSpoolChiper() {
-        return streamCachingSpoolChiper;
+    public String getStreamCachingSpoolCipher() {
+        return streamCachingSpoolCipher;
     }
 
     /**
-     * Sets a stream caching chiper name to use when spooling to disk to write with encryption.
+     * Sets a stream caching cipher name to use when spooling to disk to write with encryption.
      * By default the data is not encrypted.
      */
-    public void setStreamCachingSpoolChiper(String streamCachingSpoolChiper) {
-        this.streamCachingSpoolChiper = streamCachingSpoolChiper;
+    public void setStreamCachingSpoolCipher(String streamCachingSpoolCipher) {
+        this.streamCachingSpoolCipher = streamCachingSpoolCipher;
     }
 
     public long getStreamCachingSpoolThreshold() {
@@ -866,11 +866,11 @@ public class MainConfigurationProperties {
     }
 
     /**
-     * Sets a stream caching chiper name to use when spooling to disk to write with encryption.
+     * Sets a stream caching cipher name to use when spooling to disk to write with encryption.
      * By default the data is not encrypted.
      */
-    public MainConfigurationProperties withStreamCachingSpoolChiper(String streamCachingSpoolChiper) {
-        this.streamCachingSpoolChiper = streamCachingSpoolChiper;
+    public MainConfigurationProperties withStreamCachingSpoolCipher(String streamCachingSpoolCipher) {
+        this.streamCachingSpoolCipher = streamCachingSpoolCipher;
         return this;
     }
 

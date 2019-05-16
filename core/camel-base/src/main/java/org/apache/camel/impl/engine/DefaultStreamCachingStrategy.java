@@ -46,7 +46,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
     private long spoolThreshold = StreamCache.DEFAULT_SPOOL_THRESHOLD;
     private int spoolUsedHeapMemoryThreshold;
     private SpoolUsedHeapMemoryLimit spoolUsedHeapMemoryLimit;
-    private String spoolChiper;
+    private String spoolCipher;
     private int bufferSize = IOHelper.DEFAULT_BUFFER_SIZE;
     private boolean removeSpoolDirectoryWhenStopping = true;
     private final UtilizationStatistics statistics = new UtilizationStatistics();
@@ -105,12 +105,12 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
         this.spoolThreshold = spoolThreshold;
     }
 
-    public String getSpoolChiper() {
-        return spoolChiper;
+    public String getSpoolCipher() {
+        return spoolCipher;
     }
 
-    public void setSpoolChiper(String spoolChiper) {
-        this.spoolChiper = spoolChiper;
+    public void setSpoolCipher(String spoolCipher) {
+        this.spoolCipher = spoolCipher;
     }
 
     public int getBufferSize() {
@@ -299,7 +299,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
     public String toString() {
         return "DefaultStreamCachingStrategy["
             + "spoolDirectory=" + spoolDirectory
-            + ", spoolChiper=" + spoolChiper
+            + ", spoolCipher=" + spoolCipher
             + ", spoolThreshold=" + spoolThreshold
             + ", spoolUsedHeapMemoryThreshold=" + spoolUsedHeapMemoryThreshold
             + ", bufferSize=" + bufferSize

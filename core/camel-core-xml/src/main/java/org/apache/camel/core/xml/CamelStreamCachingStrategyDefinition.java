@@ -37,7 +37,7 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
     @XmlAttribute
     private String spoolDirectory;
     @XmlAttribute
-    private String spoolChiper;
+    private String spoolCipher;
     @XmlAttribute
     private String spoolThreshold;
     @XmlAttribute
@@ -82,17 +82,17 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
         this.spoolDirectory = spoolDirectory;
     }
 
-    public String getSpoolChiper() {
-        return spoolChiper;
+    public String getSpoolCipher() {
+        return spoolCipher;
     }
 
     /**
-     * Sets a chiper name to use when spooling to disk to write with encryption.
+     * Sets a cipher name to use when spooling to disk to write with encryption.
      * <p/>
      * By default the data is not encrypted.
      */
-    public void setSpoolChiper(String spoolChiper) {
-        this.spoolChiper = spoolChiper;
+    public void setSpoolCipher(String spoolCipher) {
+        this.spoolCipher = spoolCipher;
     }
 
     public String getSpoolThreshold() {
