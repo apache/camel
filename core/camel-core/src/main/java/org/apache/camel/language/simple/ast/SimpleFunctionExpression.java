@@ -361,8 +361,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             remainder = ifStartsWithReturnRemainder("header", function);
         }
         if (remainder != null) {
-            // remove leading character (dot or ?)
-            if (remainder.startsWith(".") || remainder.startsWith("?")) {
+            // remove leading character (dot, colon or ?)
+            if (remainder.startsWith(".") || remainder.startsWith(":") || remainder.startsWith("?")) {
                 remainder = remainder.substring(1);
             }
             // remove starting and ending brackets
@@ -390,7 +390,13 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // out header function
         remainder = ifStartsWithReturnRemainder("out.header.", function);
         if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("out.header:", function);
+        }
+        if (remainder == null) {
             remainder = ifStartsWithReturnRemainder("out.headers.", function);
+        }
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("out.headers:", function);
         }
         if (remainder != null) {
             return ExpressionBuilder.outHeaderExpression(remainder);

@@ -248,7 +248,9 @@ public class SimpleTest extends LanguageTestSupport {
         exchange.getOut().setHeader("quote", "Camel rocks");
         assertExpression("${out.body}", "Bye World");
         assertExpression("${out.header.quote}", "Camel rocks");
+        assertExpression("${out.header:quote}", "Camel rocks");
         assertExpression("${out.headers.quote}", "Camel rocks");
+        assertExpression("${out.headers:quote}", "Camel rocks");
     }
 
     @Test
@@ -637,23 +639,37 @@ public class SimpleTest extends LanguageTestSupport {
     @Test
     public void testComplexExpressions() throws Exception {
         assertExpression("hey ${in.header.foo}", "hey abc");
+        assertExpression("hey ${in.header:foo}", "hey abc");
         assertExpression("hey ${in.header.foo}!", "hey abc!");
+        assertExpression("hey ${in.header:foo}!", "hey abc!");
         assertExpression("hey ${in.header.foo}-${in.header.foo}!", "hey abc-abc!");
+        assertExpression("hey ${in.header:foo}-${in.header.foo}!", "hey abc-abc!");
         assertExpression("hey ${in.header.foo}${in.header.foo}", "hey abcabc");
+        assertExpression("hey ${in.header:foo}${in.header.foo}", "hey abcabc");
         assertExpression("${in.header.foo}${in.header.foo}", "abcabc");
+        assertExpression("${in.header:foo}${in.header:foo}", "abcabc");
         assertExpression("${in.header.foo}", "abc");
+        assertExpression("${in.header:foo}", "abc");
         assertExpression("${in.header.foo}!", "abc!");
+        assertExpression("${in.header:foo}!", "abc!");
     }
 
     @Test
     public void testComplexExpressionsUsingAlternativeStartToken() throws Exception {
         assertExpression("hey $simple{in.header.foo}", "hey abc");
+        assertExpression("hey $simple{in.header:foo}", "hey abc");
         assertExpression("hey $simple{in.header.foo}!", "hey abc!");
+        assertExpression("hey $simple{in.header:foo}!", "hey abc!");
         assertExpression("hey $simple{in.header.foo}-$simple{in.header.foo}!", "hey abc-abc!");
+        assertExpression("hey $simple{in.header:foo}-$simple{in.header.foo}!", "hey abc-abc!");
         assertExpression("hey $simple{in.header.foo}$simple{in.header.foo}", "hey abcabc");
+        assertExpression("hey $simple{in.header:foo}$simple{in.header.foo}", "hey abcabc");
         assertExpression("$simple{in.header.foo}$simple{in.header.foo}", "abcabc");
+        assertExpression("$simple{in.header:foo}$simple{in.header.foo}", "abcabc");
         assertExpression("$simple{in.header.foo}", "abc");
+        assertExpression("$simple{in.header:foo}", "abc");
         assertExpression("$simple{in.header.foo}!", "abc!");
+        assertExpression("$simple{in.header:foo}!", "abc!");
     }
 
     @Test
@@ -753,9 +769,13 @@ public class SimpleTest extends LanguageTestSupport {
         exchange.getIn().setBody(null);
 
         assertExpression("${header.foo}", "abc");
+        assertExpression("${header:foo}", "abc");
         assertExpression("${headers.foo}", "abc");
+        assertExpression("${headers:foo}", "abc");
         assertExpression("${in.header.foo}", "abc");
+        assertExpression("${in.header:foo}", "abc");
         assertExpression("${in.headers.foo}", "abc");
+        assertExpression("${in.headers:foo}", "abc");
     }
 
     @Test
