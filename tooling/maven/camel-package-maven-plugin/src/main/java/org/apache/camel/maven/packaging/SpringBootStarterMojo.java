@@ -525,6 +525,10 @@ public class SpringBootStarterMojo extends AbstractMojo {
             return true;
         }
 
+        if (baseDir.getName().equals("camel-jaxp")) {
+            return true;
+        }
+
         getLog().debug("Component directory mismatch");
         return false;
     }

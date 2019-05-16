@@ -57,7 +57,7 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.CamelVersionHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-import org.apache.camel.util.XmlLineNumberParser;
+import org.apache.camel.util.xml.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

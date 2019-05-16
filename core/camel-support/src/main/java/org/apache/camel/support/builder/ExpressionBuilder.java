@@ -168,7 +168,7 @@ public class ExpressionBuilder {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 String name = simpleExpression(headerName).evaluate(exchange, String.class);
-                Object header = exchange.getIn().getHeader(name, type);
+                T header = exchange.getIn().getHeader(name, type);
                 if (header == null) {
                     // fall back on a property
                     header = exchange.getProperty(name, type);
