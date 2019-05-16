@@ -47,7 +47,8 @@ To edit the documentation:
    - This file contains a static part and a dynamically generated part: the former can be edited directly in the .adoc file, while the latter needs your intervention on the javadoc
    - Once you modify the javadoc, you'll need to rebuild the component and the .adoc will be automatically updated
    - Create a commit and raise a Pull Request
-- If you want to add more documentation check for .adoc in codebase
+- If you want to add more documentation check for .adoc in codebase 
+
 For more information see [How does the website work](https://github.com/apache/camel/blob/master/docs/user-manual/en/faq/how-does-the-website-work.adoc) or [How do I edit the website for more details](https://github.com/apache/camel/blob/master/docs/user-manual/en/faq/how-do-i-edit-the-website.adoc).
 
 ## If you find a bug or problem
