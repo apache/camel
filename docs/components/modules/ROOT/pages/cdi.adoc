@@ -417,11 +417,11 @@ See configuration properties for more details.
 |Producer template injection (default Camel context) a|
 [source,java]
 ----
-@Produce(uri = "mock:outbound")
+@Produce("mock:outbound")
 ProducerTemplate producer;
 
 // or using fluent template
-@Produce(uri = "mock:outbound")
+@Produce("mock:outbound")
 FluentProducerTemplate producer;
 ----
 
@@ -433,7 +433,7 @@ FluentProducerTemplate producer;
 ProducerTemplate producer;
 
 // or using fluent template
-@Produce(uri = "direct:outbound")
+@Produce("direct:outbound")
 FluentProducerTemplate producer;
 ----
 
@@ -501,7 +501,7 @@ MyBean bean;
 |POJO consuming a|
 [source,java]
 ----
-@Consume(uri = "seda:inbound")
+@Consume("seda:inbound")
 void consume(@Body String body) {
     //...
 }

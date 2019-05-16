@@ -275,7 +275,7 @@ For example
 ----
 public class Foo {
     
-    @Consume(uri = "activemq:queue:books.new")
+    @Consume("activemq:queue:books.new")
     public void doSomething(@JsonPath("$.store.book[*].author") String author, @Body String json) {
       // process the inbound message here
     }
