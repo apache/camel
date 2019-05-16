@@ -37,7 +37,7 @@ import org.junit.Test;
 
 public class ProducerDownloadFileWithoutThumbnail extends SoroushBotTestSupport {
 
-    @EndpointInject(uri = "direct:soroush")
+    @EndpointInject("direct:soroush")
     org.apache.camel.Endpoint endpoint;
 
 

@@ -35,7 +35,7 @@ import org.junit.Test;
 
 public class ProducerAutoUploadFileIsFalse extends SoroushBotTestSupport {
 
-    @EndpointInject(uri = "direct:soroush")
+    @EndpointInject("direct:soroush")
     org.apache.camel.Endpoint endpoint;
 
     @Override

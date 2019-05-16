@@ -31,7 +31,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class ProducerTest extends SoroushBotTestSupport {
-    @EndpointInject(uri = "direct:soroush")
+	
+    @EndpointInject("direct:soroush")
     org.apache.camel.Endpoint endpoint;
 
     @Override
