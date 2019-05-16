@@ -31,7 +31,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointAware;
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -42,7 +41,6 @@ import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ChildServiceSupport;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -60,21 +58,19 @@ public abstract class BaseRouteService extends ChildServiceSupport {
     private final AbstractCamelContext camelContext;
     private final RouteContext routeContext;
     private final Route route;
-    private final String id;
     private boolean removingRoutes;
     private final Map<Route, Consumer> inputs = new HashMap<>();
     private final AtomicBoolean warmUpDone = new AtomicBoolean(false);
     private final AtomicBoolean endpointDone = new AtomicBoolean(false);
 
-    public BaseRouteService(AbstractCamelContext camelContext, RouteContext routeContext, Route route, String id) {
-        this.camelContext = camelContext;
-        this.routeContext = routeContext;
+    public BaseRouteService(Route route) {
         this.route = route;
-        this.id = id;
+        this.routeContext = this.route.getRouteContext();
+        this.camelContext = this.routeContext.getCamelContext().adapt(AbstractCamelContext.class);
     }
 
     public String getId() {
-        return id;
+        return route.getId();
     }
 
     public CamelContext getCamelContext() {
@@ -132,7 +128,7 @@ public abstract class BaseRouteService extends ChildServiceSupport {
         try {
             doWarmUp();
         } catch (Exception e) {
-            throw new FailedToStartRouteException(id, getRouteDescription(), e);
+            throw new FailedToStartRouteException(getId(), getRouteDescription(), e);
         }
     }
 
@@ -213,11 +209,7 @@ public abstract class BaseRouteService extends ChildServiceSupport {
             ServiceHelper.startService(route);
 
             // invoke callbacks on route policy
-            if (routeContext.getRoutePolicyList() != null) {
-                for (RoutePolicy routePolicy : routeContext.getRoutePolicyList()) {
-                    routePolicy.onStart(route);
-                }
-            }
+            routePolicyCallback(RoutePolicy::onStart);
 
             // fire event
             EventHelper.notifyRouteStarted(camelContext, route);
@@ -253,11 +245,8 @@ public abstract class BaseRouteService extends ChildServiceSupport {
             }
 
             // invoke callbacks on route policy
-            if (routeContext.getRoutePolicyList() != null) {
-                for (RoutePolicy routePolicy : routeContext.getRoutePolicyList()) {
-                    routePolicy.onStop(route);
-                }
-            }
+            routePolicyCallback(RoutePolicy::onStop);
+
             // fire event
             EventHelper.notifyRouteStopped(camelContext, route);
         }
@@ -285,12 +274,9 @@ public abstract class BaseRouteService extends ChildServiceSupport {
             // endpoints should only be stopped when Camel is shutting down
             // see more details in the warmUp method
             ServiceHelper.stopAndShutdownServices(route.getEndpoint());
+
             // invoke callbacks on route policy
-            if (routeContext.getRoutePolicyList() != null) {
-                for (RoutePolicy routePolicy : routeContext.getRoutePolicyList()) {
-                    routePolicy.onRemove(route);
-                }
-            }
+            routePolicyCallback(RoutePolicy::onRemove);
 
             // fire event
             EventHelper.notifyRouteRemoved(camelContext, route);
@@ -318,11 +304,7 @@ public abstract class BaseRouteService extends ChildServiceSupport {
         // suspend and resume logic is provided by DefaultCamelContext which leverages ShutdownStrategy
         // to safely suspend and resume
         try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
-            if (routeContext.getRoutePolicyList() != null) {
-                for (RoutePolicy routePolicy : routeContext.getRoutePolicyList()) {
-                    routePolicy.onSuspend(route);
-                }
-            }
+            routePolicyCallback(RoutePolicy::onSuspend);
         }
     }
 
@@ -331,10 +313,14 @@ public abstract class BaseRouteService extends ChildServiceSupport {
         // suspend and resume logic is provided by DefaultCamelContext which leverages ShutdownStrategy
         // to safely suspend and resume
         try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
-            if (routeContext.getRoutePolicyList() != null) {
-                for (RoutePolicy routePolicy : routeContext.getRoutePolicyList()) {
-                    routePolicy.onResume(route);
-                }
+            routePolicyCallback(RoutePolicy::onResume);
+        }
+    }
+
+    private void routePolicyCallback(java.util.function.BiConsumer<RoutePolicy, Route> callback) {
+        if (routeContext.getRoutePolicyList() != null) {
+            for (RoutePolicy routePolicy : routeContext.getRoutePolicyList()) {
+                callback.accept(routePolicy, route);
             }
         }
     }

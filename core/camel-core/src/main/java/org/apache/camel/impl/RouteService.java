@@ -22,14 +22,12 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
-import org.apache.camel.impl.engine.AbstractCamelContext;
 import org.apache.camel.impl.engine.BaseRouteService;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.CamelContextHelper;
 
 /**
@@ -40,9 +38,9 @@ public class RouteService extends BaseRouteService {
 
     private final RouteDefinition routeDefinition;
 
-    public RouteService(AbstractCamelContext camelContext, RouteDefinition routeDefinition, RouteContext routeContext, Route route) {
-        super(camelContext, routeContext, route, routeDefinition.idOrCreate(camelContext.getNodeIdFactory()));
-        this.routeDefinition = routeDefinition;
+    public RouteService(Route route) {
+        super(route);
+        this.routeDefinition = (RouteDefinition) route.getRouteContext().getRoute();
     }
 
     public RouteDefinition getRouteDefinition() {

@@ -17,7 +17,7 @@
 package org.apache.camel.builder.xml;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.support.builder.xml.Namespaces;
+import org.apache.camel.support.builder.Namespaces;
 
 /**
  * XPath with namespace test

@@ -59,7 +59,8 @@ public class RestRegistryFactoryResolver {
             }
         }
 
-        throw new IllegalArgumentException("No RestRegistryFactory implementation found.  You need to add camel-rest to the classpath.");
+        LOG.debug("No RestRegistryFactory implementation found.  You need to add camel-rest to the classpath.");
+        return null;
     }
 
     private Class<?> findFactory(String name, CamelContext context) throws ClassNotFoundException, IOException {

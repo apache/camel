@@ -51,7 +51,8 @@ import org.apache.camel.spring.CamelThreadPoolFactoryBean;
 import org.apache.camel.spring.SpringModelJAXBContextFactory;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
 import org.apache.camel.spring.remoting.CamelServiceExporter;
-import org.apache.camel.support.builder.xml.Namespaces;
+import org.apache.camel.support.builder.Namespaces;
+import org.apache.camel.support.builder.xml.NamespacesHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.spring.KeyStoreParametersFactoryBean;
@@ -483,7 +484,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 if (object instanceof NamespaceAware) {
                     NamespaceAware namespaceAware = (NamespaceAware) object;
                     if (namespaces == null) {
-                        namespaces = new Namespaces(element);
+                        namespaces = NamespacesHelper.namespaces(element);
                     }
                     namespaces.configure(namespaceAware);
                 }

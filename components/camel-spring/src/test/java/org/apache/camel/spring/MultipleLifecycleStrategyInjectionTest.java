@@ -32,7 +32,7 @@ public class MultipleLifecycleStrategyInjectionTest extends SpringTestSupport {
 
     @Test
     public void testInjectedStrategy() throws Exception {
-        assertEquals(3, context.getLifecycleStrategies().size());
+        assertEquals(2, context.getLifecycleStrategies().size());
         assertIsInstanceOf(DummyLifecycleStrategy.class, context.getLifecycleStrategies().get(0));
         assertIsInstanceOf(DummyLifecycleStrategy.class, context.getLifecycleStrategies().get(1));
     }

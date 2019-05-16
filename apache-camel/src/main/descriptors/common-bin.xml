@@ -507,6 +507,7 @@
         <include>org.apache.camel:camel-jacksonxml-starter</include>
         <include>org.apache.camel:camel-jasypt-starter</include>
         <include>org.apache.camel:camel-jaxb-starter</include>
+        <include>org.apache.camel:camel-jaxp-starter</include>
         <include>org.apache.camel:camel-jbpm-starter</include>
         <include>org.apache.camel:camel-jcache-starter</include>
         <include>org.apache.camel:camel-jclouds-starter</include>
