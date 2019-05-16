@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.soroushbot.support;
 
 import org.eclipse.jetty.server.Server;
@@ -25,7 +24,6 @@ public class SoroushMockServer extends Thread {
 
     private Server jettyServer;
     private Integer port = 8080;
-
 
     public void start() {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);

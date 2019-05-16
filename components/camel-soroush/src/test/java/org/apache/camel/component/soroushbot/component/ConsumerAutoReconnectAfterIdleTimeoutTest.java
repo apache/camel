@@ -17,19 +17,11 @@
 
 package org.apache.camel.component.soroushbot.component;
 
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.soroushbot.models.Endpoint;
-import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
-import org.apache.camel.component.soroushbot.support.SoroushBotWS;
-import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
 import org.junit.Test;
 
 public class ConsumerAutoReconnectAfterIdleTimeoutTest extends SoroushBotTestSupport {

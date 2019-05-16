@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.soroushbot.component;
 
 import java.io.IOException;
@@ -52,7 +51,6 @@ import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * this class represents Soroush Endpoint, it is also a bean containing the configuration of the Endpoint
