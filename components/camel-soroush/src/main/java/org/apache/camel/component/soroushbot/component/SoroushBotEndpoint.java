@@ -53,17 +53,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * this class represents Soroush Endpoint, it is also a bean containing the configuration of the Endpoint
+ * To integrate with the Soroush chat bot.
  */
-@UriEndpoint(firstVersion = "3.0", scheme = "soroush", title = "SoroushBot", syntax = "soroush:<endpoint>[/authorizationToken][?options]", label = "chat")
+@UriEndpoint(firstVersion = "3.0", scheme = "soroush", title = "Soroush", syntax = "soroush:endpoint/authorizationToken", label = "chat")
 public class SoroushBotEndpoint extends DefaultEndpoint {
-    private static Logger log = LoggerFactory.getLogger(SoroushBotEndpoint.class);
 
-    @UriPath(name = "endpoint", enums = "Endpoint", javaType = "Endpoint",
-            description = "The endpoint type. it support `getMessage` as consumer and `sendMessage`,`uploadFile`,`downloadFile` as producer")
+    private static final Logger LOG = LoggerFactory.getLogger(SoroushBotEndpoint.class);
+
+    @UriPath(name = "endpoint", description = "The endpoint type. Support `getMessage` as consumer and `sendMessage`,`uploadFile`,`downloadFile` as producer")
     @Metadata(required = true)
     Endpoint type;
-
     @UriPath(label = "global,security", description = "The authorization token for using"
             + " the bot (ask the @mrbot) e.g. 9yDv09nqKvP9CkBGKNmKQHir1dj2qLpN-YWa8hP7Rm3LK\"\n"
             + "            + \"3MqQXYdXZIA5W4e0agPiUb-3eUKX69ozUNdY9yZBMlJiwnlksslkjWjsxcARo5cYtDnKTElig0xa\"\n"
@@ -139,7 +138,6 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
     public SoroushBotEndpoint(String endpointUri, SoroushBotComponent component) {
         super(endpointUri, component);
     }
-
 
     /**
      * @return supported Soroush endpoint as string to display in error.
@@ -294,8 +292,6 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
 
     /**
      * return the lazily created instance of {@link SoroushBotEndpoint#uploadFileTarget} to used for uploading file to soroush.
-     *
-     * @return WebTarget
      */
     private WebTarget getUploadFileTarget() {
         if (uploadFileTarget == null) {
@@ -310,8 +306,6 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
 
     /**
      * return the lazily created instance of {@link SoroushBotEndpoint#sendMessageTarget} to used for sending message to soroush.
-     *
-     * @return WebTarget
      */
     WebTarget getSendMessageTarget() {
         if (sendMessageTarget == null) {
@@ -462,10 +456,6 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
 
     /**
      * try to upload an inputStream to server
-     *
-     * @param inputStream
-     * @param message
-     * @param fileType
      */
     private UploadFileResponse uploadToServer(InputStream inputStream, SoroushMessage message, String fileType) throws SoroushException, InterruptedException {
         javax.ws.rs.core.Response response;
@@ -476,8 +466,8 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
             multipart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
             multipart.bodyPart(new StreamDataBodyPart("file", inputStream, null, MediaType.APPLICATION_OCTET_STREAM_TYPE));
             try {
-                if (log.isDebugEnabled()) {
-                    log.debug("try to upload " + fileType + " for the " + StringUtils.ordinal(count + 1) + " time for message:" + message);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("try to upload " + fileType + " for the " + StringUtils.ordinal(count + 1) + " time for message:" + message);
                 }
                 response = getUploadFileTarget().request(MediaType.APPLICATION_JSON_TYPE)
                         .post(Entity.entity(multipart, multipart.getMediaType()));
@@ -488,12 +478,12 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
                     throw new MaximumConnectionRetryReachedException("uploading " + fileType + " for message " + message + " failed. Maximum retry limit reached!"
                             + " aborting upload file and send message", ex, message);
                 }
-                if (log.isWarnEnabled()) {
-                    log.warn("uploading " + fileType + " for message " + message + " failed", ex);
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("uploading " + fileType + " for message " + message + " failed", ex);
                 }
             }
         }
-        log.error("should never reach this line of code because maxConnectionRetry is greater than -1 and at least the above for must execute single time and");
+        LOG.error("should never reach this line of code because maxConnectionRetry is greater than -1 and at least the above for must execute single time and");
         //for backup
         throw new MaximumConnectionRetryReachedException("uploading " + fileType + " for message " + message + " failed. Maximum retry limit reached! aborting "
                 + "upload file and send message", message);
@@ -503,33 +493,32 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
      * check if {@link SoroushMessage#file} or {@link SoroushMessage#thumbnail} is populated and upload them to the server.
      * after that it set {@link SoroushMessage#fileUrl} and {@link SoroushMessage#thumbnailUrl} to appropriate value
      *
-     * @param message
      * @throws SoroushException if soroush reject the file
      */
     void handleFileUpload(SoroushMessage message) throws SoroushException, InterruptedException {
-        if (log.isTraceEnabled()) {
-            log.trace("try to upload file(s) to server if exists for message:" + message.toString());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("try to upload file(s) to server if exists for message:" + message.toString());
         }
         InputStream file = message.getFile();
         if (file != null && (message.getFileUrl() == null || forceUpload)) {
-            if (log.isDebugEnabled()) {
-                log.debug("uploading file to server for message: " + message);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("uploading file to server for message: " + message);
             }
             UploadFileResponse response = uploadToServer(file, message, "file");
             message.setFileUrl(response.getFileUrl());
-            if (log.isDebugEnabled()) {
-                log.debug("uploaded file url is: " + response.getFileUrl() + " for message: " + message);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("uploaded file url is: " + response.getFileUrl() + " for message: " + message);
             }
         }
         InputStream thumbnail = message.getThumbnail();
         if (thumbnail != null && message.getThumbnailUrl() == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("uploading thumbnail to server for message: " + message);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("uploading thumbnail to server for message: " + message);
             }
             UploadFileResponse response = uploadToServer(thumbnail, message, "thumbnail");
             message.setThumbnailUrl(response.getFileUrl());
-            if (log.isDebugEnabled()) {
-                log.debug("uploaded thumbnail url is: " + response.getFileUrl() + " for message: " + message);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("uploaded thumbnail url is: " + response.getFileUrl() + " for message: " + message);
             }
         }
     }
@@ -539,28 +528,27 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
      * this function only set {@link SoroushMessage#file} to {@link InputStream} get from {@link Response#readEntity(Class)} )}
      * and does not store the resource in file.
      *
-     * @param message
      * @throws SoroushException if the file does not exists on soroush or soroush reject the request
      */
     public void handleDownloadFiles(SoroushMessage message) throws SoroushException {
         if (message.getFileUrl() != null && (message.getFile() == null || forceDownload)) {
-            if (log.isDebugEnabled()) {
-                log.debug("downloading file from server for message: " + message);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("downloading file from server for message: " + message);
             }
             InputStream inputStream = downloadFromServer(message.getFileUrl(), message, "file");
             message.setFile(inputStream);
-            if (log.isDebugEnabled()) {
-                log.debug("file successfully downloaded for message: " + message);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("file successfully downloaded for message: " + message);
             }
         }
         if (downloadThumbnail && message.getThumbnailUrl() != null && (message.getThumbnail() == null || forceDownload)) {
-            if (log.isDebugEnabled()) {
-                log.debug("downloading thumbnail from server for message: " + message);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("downloading thumbnail from server for message: " + message);
             }
             InputStream inputStream = downloadFromServer(message.getThumbnailUrl(), message, "thumbnail");
             message.setThumbnail(inputStream);
-            if (log.isDebugEnabled()) {
-                log.debug("thumbnail successfully downloaded for message: " + message);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("thumbnail successfully downloaded for message: " + message);
             }
         }
     }
@@ -569,21 +557,17 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
      * download the resource stored with the key {@code fileUrl} from Soroush Server.
      * other parameters are used only for logging.
      *
-     * @param fileUrl
-     * @param message
-     * @param type
-     * @return
      * @throws SoroushException if soroush reject the request
      */
     private InputStream downloadFromServer(String fileUrl, SoroushMessage message, String type) throws SoroushException {
         Response response = null;
         for (int i = 0; i <= maxConnectionRetry; i++) {
             WebTarget target = getDownloadFileTarget(fileUrl);
-            if (log.isDebugEnabled()) {
+            if (LOG.isDebugEnabled()) {
                 if (i != 0) {
-                    log.debug("retry downloading " + type + ": " + fileUrl + " for the " + StringUtils.ordinal(i) + " time");
+                    LOG.debug("retry downloading " + type + ": " + fileUrl + " for the " + StringUtils.ordinal(i) + " time");
                 }
-                log.debug("try to download " + type + ": " + fileUrl + " with url: " + target.getUri() + "\nfor message: " + message);
+                LOG.debug("try to download " + type + ": " + fileUrl + " with url: " + target.getUri() + "\nfor message: " + message);
             }
             try {
                 response = target.request().get();
@@ -592,13 +576,13 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
                 if (i == maxConnectionRetry) {
                     throw new MaximumConnectionRetryReachedException("maximum connection retry reached for " + type + ": " + fileUrl, ex, message);
                 }
-                if (log.isWarnEnabled()) {
-                    log.warn("can not download " + type + ": " + fileUrl + " from soroush. Response code is", ex);
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("can not download " + type + ": " + fileUrl + " from soroush. Response code is", ex);
                 }
             }
         }
         //should never reach this line
-        log.error("should never reach this line. An exception should have been thrown by catch block for target.request().get");
+        LOG.error("should never reach this line. An exception should have been thrown by catch block for target.request().get");
         throw new MaximumConnectionRetryReachedException("can not upload " + type + ": " + fileUrl + " response:" + ((response == null) ? null : response.getStatus()), message);
     }
 
