@@ -68,6 +68,7 @@ public abstract class AbstractCamelCatalog {
     // CHECKSTYLE:OFF
 
     private static final Pattern SYNTAX_PATTERN = Pattern.compile("([\\w.]+)");
+    private static final Pattern SYNTAX_DASH_PATTERN = Pattern.compile("([\\w.-]+)");
     private static final Pattern COMPONENT_SYNTAX_PARSER = Pattern.compile("([^\\w-]*)([\\w-]+)");
 
     private SuggestionStrategy suggestionStrategy;
@@ -759,17 +760,19 @@ public abstract class AbstractCamelCatalog {
             boolean multiValued = isPropertyMultiValue(rows, key);
             if (multiValued) {
                 String prefix = getPropertyPrefix(rows, key);
-                // extra all the multi valued options
-                Map<String, Object> values = URISupport.extractProperties(parameters, prefix);
-                // build a string with the extra multi valued options with the prefix and & as separator
-                CollectionStringBuffer csb = new CollectionStringBuffer("&");
-                for (Map.Entry<String, Object> multi : values.entrySet()) {
-                    String line = prefix + multi.getKey() + "=" + (multi.getValue() != null ? multi.getValue().toString() : "");
-                    csb.append(line);
-                }
-                // append the extra multi-values to the existing (which contains the first multi value)
-                if (!csb.isEmpty()) {
-                    value = value + "&" + csb.toString();
+                if (prefix != null) {
+                    // extra all the multi valued options
+                    Map<String, Object> values = URISupport.extractProperties(parameters, prefix);
+                    // build a string with the extra multi valued options with the prefix and & as separator
+                    CollectionStringBuffer csb = new CollectionStringBuffer("&");
+                    for (Map.Entry<String, Object> multi : values.entrySet()) {
+                        String line = prefix + multi.getKey() + "=" + (multi.getValue() != null ? multi.getValue().toString() : "");
+                        csb.append(line);
+                    }
+                    // append the extra multi-values to the existing (which contains the first multi value)
+                    if (!csb.isEmpty()) {
+                        value = value + "&" + csb.toString();
+                    }
                 }
             }
 
@@ -951,7 +954,7 @@ public abstract class AbstractCamelCatalog {
             // oh darn some options is missing, so we need a complex way of building the uri
 
             // the tokens between the options in the path
-            String[] tokens = syntax.split("[\\w.]+");
+            String[] tokens = SYNTAX_DASH_PATTERN.split(syntax);
 
             // parse the syntax into each options
             Matcher matcher = SYNTAX_PATTERN.matcher(originalSyntax);
@@ -967,7 +970,7 @@ public abstract class AbstractCamelCatalog {
             syntax = syntax.replaceAll("\\}\\}", "ENDCAMELPLACEHOLDER");
 
             // parse the syntax into each options
-            Matcher matcher2 = SYNTAX_PATTERN.matcher(syntax);
+            Matcher matcher2 = SYNTAX_DASH_PATTERN.matcher(syntax);
             List<String> options2 = new ArrayList<>();
             while (matcher2.find()) {
                 String s = matcher2.group(1);
