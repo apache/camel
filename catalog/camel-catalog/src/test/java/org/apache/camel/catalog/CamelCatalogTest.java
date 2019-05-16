@@ -316,6 +316,25 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testAsEndpointUriNettyHttpHostnameWithDash() throws Exception {
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("protocol", "http");
+        map.put("host", "a-b-c.hostname.tld");
+        map.put("port", "8080");
+        map.put("path", "anything");
+        String uri = catalog.asEndpointUri("netty4-http", map, false);
+        assertEquals("netty4-http:http:a-b-c.hostname.tld:8080/anything", uri);
+
+        map = new LinkedHashMap<>();
+        map.put("protocol", "http");
+        map.put("host", "a-b-c.server.net");
+        map.put("port", "8888");
+        map.put("path", "service/v3");
+        uri = catalog.asEndpointUri("netty4-http", map, true);
+        assertEquals("netty4-http:http:a-b-c.server.net:8888/service/v3", uri);
+    }
+
+    @Test
     public void testEndpointProperties() throws Exception {
         Map<String, String> map = catalog.endpointProperties("ftp:someserver:21/foo?connectTimeout=5000");
         assertNotNull(map);
@@ -1192,6 +1211,12 @@ public class CamelCatalogTest {
 
         String resolved = catalog.asEndpointUri("netty4-http", params, false);
         assertEquals("netty4-http:http:10.192.1.10:8080", resolved);
+
+        // another example with dash in hostname
+        uri = "netty4-http:http://a-b-c.hostname.tld:8080/anything";
+        params = catalog.endpointProperties(uri);
+        resolved = catalog.asEndpointUri("netty4-http", params, false);
+        assertEquals("netty4-http:http:a-b-c.hostname.tld:8080/anything", resolved);
     }
 
     @Test
