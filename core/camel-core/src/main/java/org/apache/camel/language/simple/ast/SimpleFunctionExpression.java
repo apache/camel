@@ -150,7 +150,13 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
         remainder = ifStartsWithReturnRemainder("sysenv.", function);
         if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("sysenv:", function);
+        }
+        if (remainder == null) {
             remainder = ifStartsWithReturnRemainder("env.", function);
+        }
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("env:", function);
         }
         if (remainder != null) {
             return ExpressionBuilder.systemEnvironmentExpression(remainder);

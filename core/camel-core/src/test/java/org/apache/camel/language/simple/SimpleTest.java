@@ -164,7 +164,7 @@ public class SimpleTest extends LanguageTestSupport {
     public void testBodyOgnlExpression() throws Exception {
         Expression exp = SimpleLanguage.simple("${body.xxx}");
         assertNotNull(exp);
-        
+
         // must start with a dot
         try {
             SimpleLanguage.simple("${bodyxxx}");
@@ -268,16 +268,20 @@ public class SimpleTest extends LanguageTestSupport {
         String path = System.getenv("PATH");
         if (path != null) {
             assertExpression("${sysenv.PATH}", path);
+            assertExpression("${sysenv:PATH}", path);
             assertExpression("${env.PATH}", path);
+            assertExpression("${env:PATH}", path);
         }
     }
-    
+
     @Test
     public void testSimpleSystemEnvironmentExpressionsIfDash() throws Exception {
         String foo = System.getenv("FOO_SERVICE_HOST");
         if (foo != null) {
             assertExpression("${sysenv.FOO-SERVICE-HOST}", foo);
+            assertExpression("${sysenv:FOO-SERVICE-HOST}", foo);
             assertExpression("${env.FOO-SERVICE-HOST}", foo);
+            assertExpression("${env:FOO-SERVICE-HOST}", foo);
         }
     }
 
@@ -286,7 +290,9 @@ public class SimpleTest extends LanguageTestSupport {
         String path = System.getenv("PATH");
         if (path != null) {
             assertExpression("${sysenv.path}", path);
+            assertExpression("${sysenv:path}", path);
             assertExpression("${env.path}", path);
+            assertExpression("${env:path}", path);
         }
     }
 
@@ -418,11 +424,11 @@ public class SimpleTest extends LanguageTestSupport {
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
             if (getJavaMajorVersion() <= 8) {
-                assertEquals(JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());    
+                assertEquals(JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
             } else {
                 assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
             }
-            
+
         }
         assertExpression("${exchangeProperty.unknown[cool]}", null);
     }
@@ -551,7 +557,7 @@ public class SimpleTest extends LanguageTestSupport {
         Calendar inHeaderCalendar = Calendar.getInstance();
         inHeaderCalendar.set(1974, Calendar.APRIL, 20);
         exchange.getIn().setHeader("birthday", inHeaderCalendar.getTime());
-        
+
         Calendar outHeaderCalendar = Calendar.getInstance();
         outHeaderCalendar.set(1975, Calendar.MAY, 21);
         exchange.getOut().setHeader("birthday", outHeaderCalendar.getTime());
@@ -563,11 +569,11 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${date:header.birthday}", inHeaderCalendar.getTime());
         assertExpression("${date:header.birthday:yyyyMMdd}", "19740420");
         assertExpression("${date:header.birthday+24h:yyyyMMdd}", "19740421");
-        
+
         assertExpression("${date:in.header.birthday}", inHeaderCalendar.getTime());
         assertExpression("${date:in.header.birthday:yyyyMMdd}", "19740420");
         assertExpression("${date:in.header.birthday+24h:yyyyMMdd}", "19740421");
-        
+
         assertExpression("${date:out.header.birthday}", outHeaderCalendar.getTime());
         assertExpression("${date:out.header.birthday:yyyyMMdd}", "19750521");
         assertExpression("${date:out.header.birthday+24h:yyyyMMdd}", "19750522");
