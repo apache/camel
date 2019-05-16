@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Calls a java bean
@@ -69,7 +70,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
             }
             return "ref:" + ref + methodText;
         } else if (bean != null) {
-            return bean.toString();
+            return ObjectHelper.className(bean);
         } else if (beanClass != null) {
             return beanClass.getName();
         } else if (beanType != null) {
