@@ -208,7 +208,7 @@ The strategy has the following options:
 | spoolDirectory | ${java.io.tmpdir}/camel/camel-tmp-\#uuid#
 | Base directory where temporary files for spooled streams should be stored. This option supports naming patterns as documented below.
 
-| spoolChiper | null
+| spoolCipher | null
 | If set, the temporary files are encrypted using the specified cipher transformation (i.e., a valid stream or 8-bit cipher name such as "RC4", "AES/CTR/NoPadding". An empty name "" is treated as null).
 
 | spoolThreshold | 128 KB
@@ -275,7 +275,7 @@ context.getStreamCachingStrategy().setSpoolDirectory"/tmp/cachedir");
 context.getStreamCachingStrategy().setSpoolThreshold(64 * 1024);
 context.getStreamCachingStrategy().setBufferSize(16 * 1024);
 // to enable encryption using RC4
-// context.getStreamCachingStrategy().setSpoolChiper("RC4");
+// context.getStreamCachingStrategy().setSpoolCipher("RC4");
 ----
 
 And remember to enable Stream caching on the CamelContext or on routes:

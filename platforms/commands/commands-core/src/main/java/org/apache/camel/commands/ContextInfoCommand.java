@@ -137,7 +137,7 @@ public class ContextInfoCommand extends AbstractContextCommand {
             enabled = (boolean) row.get("streamCachingEnabled");
             if (enabled) {
                 Object spoolDirectory = safeNull(row.get("streamCaching.spoolDirectory"));
-                Object spoolChiper = safeNull(row.get("streamCaching.spoolChiper"));
+                Object spoolCipher = safeNull(row.get("streamCaching.spoolCipher"));
                 Object spoolThreshold = safeNull(row.get("streamCaching.spoolThreshold"));
                 Object spoolUsedHeapMemoryThreshold = safeNull(row.get("streamCaching.spoolUsedHeapMemoryThreshold"));
                 Object spoolUsedHeapMemoryLimit = safeNull(row.get("streamCaching.spoolUsedHeapMemoryLimit"));
@@ -146,9 +146,9 @@ public class ContextInfoCommand extends AbstractContextCommand {
                 Object removeSpoolDirectoryWhenStopping = safeNull(row.get("streamCaching.removeSpoolDirectoryWhenStopping"));
                 boolean statisticsEnabled = (boolean) row.get("streamCaching.statisticsEnabled");
 
-                String text = String.format("\tStream caching: [spoolDirectory=%s, spoolChiper=%s, spoolThreshold=%s, spoolUsedHeapMemoryThreshold=%s, "
+                String text = String.format("\tStream caching: [spoolDirectory=%s, spoolCipher=%s, spoolThreshold=%s, spoolUsedHeapMemoryThreshold=%s, "
                                 + "spoolUsedHeapMemoryLimit=%s, anySpoolRules=%s, bufferSize=%s, removeSpoolDirectoryWhenStopping=%s, statisticsEnabled=%s]",
-                        spoolDirectory, spoolChiper, spoolThreshold, spoolUsedHeapMemoryThreshold, spoolUsedHeapMemoryLimit, anySpoolRules, bufferSize,
+                        spoolDirectory, spoolCipher, spoolThreshold, spoolUsedHeapMemoryThreshold, spoolUsedHeapMemoryLimit, anySpoolRules, bufferSize,
                         removeSpoolDirectoryWhenStopping, statisticsEnabled);
                 out.println(stringEscape.unescapeJava(text));
 
