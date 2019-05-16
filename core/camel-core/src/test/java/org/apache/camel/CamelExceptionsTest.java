@@ -310,7 +310,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
 
     @Test
     public void testFailedToStartRouteException() {
-        FailedToStartRouteException e = new FailedToStartRouteException(new IllegalArgumentException("Forced"));
+        FailedToStartRouteException e = new FailedToStartRouteException("myRoute", "Forced error", new IllegalArgumentException("Forced"));
         assertNotNull(e.getMessage());
         assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
     }
