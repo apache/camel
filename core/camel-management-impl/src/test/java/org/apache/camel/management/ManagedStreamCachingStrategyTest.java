@@ -76,8 +76,8 @@ public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
         cacheSize = (Long) mbeanServer.getAttribute(name, "CacheSpoolSize");
         assertEquals(0, cacheSize.longValue());
 
-        String chiper = (String) mbeanServer.getAttribute(name, "SpoolChiper");
-        assertNull(chiper);
+        String cipher = (String) mbeanServer.getAttribute(name, "SpoolCipher");
+        assertNull(cipher);
 
         Boolean remove = (Boolean) mbeanServer.getAttribute(name, "RemoveSpoolDirectoryWhenStopping");
         assertEquals(Boolean.TRUE, remove);

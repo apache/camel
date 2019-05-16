@@ -241,10 +241,10 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
 
             LOG.trace("Creating temporary stream cache file: {}", tempFile);
             OutputStream out = new BufferedOutputStream(Files.newOutputStream(tempFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE));
-            if (ObjectHelper.isNotEmpty(strategy.getSpoolChiper())) {
+            if (ObjectHelper.isNotEmpty(strategy.getSpoolCipher())) {
                 try {
                     if (ciphers == null) {
-                        ciphers = new CipherPair(strategy.getSpoolChiper());
+                        ciphers = new CipherPair(strategy.getSpoolCipher());
                     }
                 } catch (GeneralSecurityException e) {
                     throw new IOException(e.getMessage(), e);

@@ -34,8 +34,8 @@ public interface ManagedStreamCachingStrategyMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Directory used when overflow and spooling to disk")
     String getSpoolDirectory();
 
-    @ManagedAttribute(description = "Chiper used if writing with encryption")
-    String getSpoolChiper();
+    @ManagedAttribute(description = "Cipher used if writing with encryption")
+    String getSpoolCipher();
 
     @ManagedAttribute(description = "Threshold in bytes when overflow and spooling to disk instead of keeping in memory")
     void setSpoolThreshold(long threshold);

@@ -227,10 +227,10 @@ public class CamelConfigurationProperties {
     private String streamCachingSpoolDirectory;
 
     /**
-     * Sets a stream caching chiper name to use when spooling to disk to write with encryption.
+     * Sets a stream caching cipher name to use when spooling to disk to write with encryption.
      * By default the data is not encrypted.
      */
-    private String streamCachingSpoolChiper;
+    private String streamCachingSpoolCipher;
 
     /**
      * Stream caching threshold in bytes when overflow to disk is activated.
@@ -666,12 +666,12 @@ public class CamelConfigurationProperties {
         this.streamCachingSpoolDirectory = streamCachingSpoolDirectory;
     }
 
-    public String getStreamCachingSpoolChiper() {
-        return streamCachingSpoolChiper;
+    public String getStreamCachingSpoolCipher() {
+        return streamCachingSpoolCipher;
     }
 
-    public void setStreamCachingSpoolChiper(String streamCachingSpoolChiper) {
-        this.streamCachingSpoolChiper = streamCachingSpoolChiper;
+    public void setStreamCachingSpoolCipher(String streamCachingSpoolCipher) {
+        this.streamCachingSpoolCipher = streamCachingSpoolCipher;
     }
 
     public long getStreamCachingSpoolThreshold() {

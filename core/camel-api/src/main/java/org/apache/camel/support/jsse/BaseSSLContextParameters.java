@@ -828,7 +828,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         @Override
         public String toString() {
             return String.format("SSLContext[hash=%h, provider=%s, protocol=%s, needClientAuth=%s, " 
-                + "wantClientAuth=%s\n\tdefaultProtocols=%s\n\tdefaultChiperSuites=%s\n\tsupportedProtocols=%s\n\tsupportedChiperSuites=%s\n]",
+                + "wantClientAuth=%s\n\tdefaultProtocols=%s\n\tdefaultCipherSuites=%s\n\tsupportedProtocols=%s\n\tsupportedCipherSuites=%s\n]",
                 hashCode(), getProvider(), getProtocol(), getDefaultSSLParameters().getNeedClientAuth(), getDefaultSSLParameters().getWantClientAuth(),
                 collectionAsCommaDelimitedString(getDefaultSSLParameters().getProtocols()),
                 collectionAsCommaDelimitedString(getDefaultSSLParameters().getCipherSuites()),
