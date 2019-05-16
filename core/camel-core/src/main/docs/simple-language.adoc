@@ -142,9 +142,11 @@ classname
 |exchangeProperty.foo.*OGNL* |Object |refer to the foo property on the exchange and invoke its
 value using a Camel OGNL expression.
 
-|sys.foo |String |refer to the system property
+|sys.foo |String |refer to the JVM system property
 
-|sysenv.foo |String |refer to the system environment
+|sysenv.foo |String |refer to the system environment variable
+
+|env.foo |String |refer to the system environment variable
 
 |exception |Object |refer to the exception object on the exchange, is *null* if
 no exception set on exchange. Will fallback and grab caught exceptions

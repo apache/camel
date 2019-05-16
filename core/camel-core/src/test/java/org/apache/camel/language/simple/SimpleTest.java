@@ -268,6 +268,7 @@ public class SimpleTest extends LanguageTestSupport {
         String path = System.getenv("PATH");
         if (path != null) {
             assertExpression("${sysenv.PATH}", path);
+            assertExpression("${env.PATH}", path);
         }
     }
     
@@ -276,6 +277,7 @@ public class SimpleTest extends LanguageTestSupport {
         String foo = System.getenv("FOO_SERVICE_HOST");
         if (foo != null) {
             assertExpression("${sysenv.FOO-SERVICE-HOST}", foo);
+            assertExpression("${env.FOO-SERVICE-HOST}", foo);
         }
     }
 
@@ -284,6 +286,7 @@ public class SimpleTest extends LanguageTestSupport {
         String path = System.getenv("PATH");
         if (path != null) {
             assertExpression("${sysenv.path}", path);
+            assertExpression("${env.path}", path);
         }
     }
 

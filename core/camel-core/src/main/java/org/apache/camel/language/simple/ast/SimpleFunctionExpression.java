@@ -149,6 +149,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.systemPropertyExpression(remainder);
         }
         remainder = ifStartsWithReturnRemainder("sysenv.", function);
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("env.", function);
+        }
         if (remainder != null) {
             return ExpressionBuilder.systemEnvironmentExpression(remainder);
         }
