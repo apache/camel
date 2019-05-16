@@ -39,14 +39,15 @@ There are various ways of communicating with the Camel community.
 
 Documentation is massively important to help users make the most of Apache Camel and its probably the area that needs the most help!
 So if you are interested in helping the documentation effort; whether its just to fix a page here or there, correct a link or even write a tutorial or improve what documentation is already there please do dive in and help!
-Most of the documentation is stored on the wiki. We are currently moving the documentation into the code (AsciiDoc). From there it is automatically converted to the wiki. So before editing the wiki check the code because otherwise your changes may be lost. This transition is work-in-progress.
+We moved the documentation into the code (AsciiDoc). We are not using the wiki system anymore.
 
-See [How does the website work](http://camel.apache.org/how-does-the-website-work.html) or [How do I edit the website for more details](http://camel.apache.org/how-do-i-edit-the-website.html).
-To be able to edit the wiki you need
-- an appropriate licence agreement on file with the ASF
-- an account on the wiki (on the bottom of each page there is an edit button, that allows you to create an account)
-- karma - mail the dev list asking for permission (to prevent spam we only offer access to the wiki by folks sending mail to the mailing list).
-
+To edit the documentation:
+- It's easy as opening a Pull Request
+- You'll find on each component under src/main/docs an .adoc file
+   - This file contains a static part and a dynamically generated part: the former can be edited directly in the .adoc file, while the latter needs your intervention on the javadoc
+   - Once you modify the javadoc, you'll need to rebuild the component and the .adoc will be automatically updated
+   - Create a commit and raise a Pull Request
+- If you want to add more documentation check for .adoc in codebase
 
 ## If you find a bug or problem
 
