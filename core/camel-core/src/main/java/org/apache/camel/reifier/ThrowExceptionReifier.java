@@ -32,7 +32,7 @@ class ThrowExceptionReifier extends ProcessorReifier<ThrowExceptionDefinition> {
     @Override
     public Processor createProcessor(RouteContext routeContext) {
         if (definition.getRef() != null && definition.getException() == null) {
-            definition.setException(routeContext.getCamelContext().getRegistry().lookupByNameAndType(definition.getRef(), Exception.class));
+            definition.setException(routeContext.lookup(definition.getRef(), Exception.class));
         }
 
         if (definition.getExceptionType() != null && definition.getExceptionClass() == null) {

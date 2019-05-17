@@ -61,9 +61,9 @@ public interface Route extends EndpointAware {
     String getUptime();
 
     /**
-     * Gets the uptime in milli seconds
+     * Gets the uptime in milliseconds
      *
-     * @return the uptime in millis seconds
+     * @return the uptime in milliseconds
      */
     long getUptimeMillis();
 
@@ -110,6 +110,13 @@ public interface Route extends EndpointAware {
      * @return the route context
      */
     RouteContext getRouteContext();
+
+    /**
+     * Gets the camel context
+     *
+     * @return the camel context
+     */
+    CamelContext getCamelContext();
 
     /**
      * A strategy callback allowing special initialization when services are starting.

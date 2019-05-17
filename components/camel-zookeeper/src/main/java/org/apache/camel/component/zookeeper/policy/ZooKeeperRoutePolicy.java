@@ -95,7 +95,7 @@ public class ZooKeeperRoutePolicy extends RoutePolicySupport implements Election
             electionLock.lock();
             try {
                 if (election == null) { // re-test
-                    election = new ZooKeeperElection(route.getRouteContext().getCamelContext(), uri, enabledCount);
+                    election = new ZooKeeperElection(route.getCamelContext(), uri, enabledCount);
                     election.addElectionWatcher(this);
                 }
             } finally {

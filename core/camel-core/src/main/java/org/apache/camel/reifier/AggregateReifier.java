@@ -85,7 +85,7 @@ class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         ScheduledExecutorService timeoutThreadPool = definition.getTimeoutCheckerExecutorService();
         if (timeoutThreadPool == null && definition.getTimeoutCheckerExecutorServiceRef() != null) {
             // lookup existing thread pool
-            timeoutThreadPool = routeContext.getCamelContext().getRegistry().lookupByNameAndType(definition.getTimeoutCheckerExecutorServiceRef(), ScheduledExecutorService.class);
+            timeoutThreadPool = routeContext.lookup(definition.getTimeoutCheckerExecutorServiceRef(), ScheduledExecutorService.class);
             if (timeoutThreadPool == null) {
                 // then create a thread pool assuming the ref is a thread pool profile id
                 timeoutThreadPool = routeContext.getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this,

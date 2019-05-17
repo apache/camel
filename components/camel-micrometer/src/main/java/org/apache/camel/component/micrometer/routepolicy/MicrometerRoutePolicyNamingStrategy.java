@@ -40,7 +40,7 @@ public interface MicrometerRoutePolicyNamingStrategy {
 
     default Tags getTags(Route route, Exchange exchange) {
         return Tags.of(
-                CAMEL_CONTEXT_TAG, route.getRouteContext().getCamelContext().getName(),
+                CAMEL_CONTEXT_TAG, route.getCamelContext().getName(),
                 SERVICE_NAME, MicrometerRoutePolicyService.class.getSimpleName(),
                 ROUTE_ID_TAG, route.getId(),
                 FAILED_TAG, Boolean.toString(exchange.isFailed())

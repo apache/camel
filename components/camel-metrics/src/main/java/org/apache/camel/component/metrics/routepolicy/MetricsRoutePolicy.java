@@ -141,7 +141,7 @@ public class MetricsRoutePolicy extends RoutePolicySupport implements NonManaged
 
         this.route = route;
         try {
-            registryService = route.getRouteContext().getCamelContext().hasService(MetricsRegistryService.class);
+            registryService = route.getCamelContext().hasService(MetricsRegistryService.class);
             if (registryService == null) {
                 registryService = new MetricsRegistryService();
                 registryService.setMetricsRegistry(getMetricsRegistry());
@@ -150,7 +150,7 @@ public class MetricsRoutePolicy extends RoutePolicySupport implements NonManaged
                 registryService.setPrettyPrint(isPrettyPrint());
                 registryService.setRateUnit(getRateUnit());
                 registryService.setDurationUnit(getDurationUnit());
-                route.getRouteContext().getCamelContext().addService(registryService);
+                route.getCamelContext().addService(registryService);
             }
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -171,7 +171,7 @@ public class MetricsRoutePolicy extends RoutePolicySupport implements NonManaged
     }
 
     private String createName(String type) {
-        CamelContext context = route.getRouteContext().getCamelContext();
+        CamelContext context = route.getCamelContext();
         String name = context.getManagementName() != null ? context.getManagementName() : context.getName();
 
         String answer = namePattern;

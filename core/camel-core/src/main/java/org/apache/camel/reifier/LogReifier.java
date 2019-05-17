@@ -93,7 +93,7 @@ class LogReifier extends ProcessorReifier<LogDefinition> {
 
     private MaskingFormatter getMaskingFormatter(RouteContext routeContext) {
         if (routeContext.isLogMask()) {
-            MaskingFormatter formatter = routeContext.getCamelContext().getRegistry().lookupByNameAndType(MaskingFormatter.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
+            MaskingFormatter formatter = routeContext.lookup(MaskingFormatter.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
             if (formatter == null) {
                 formatter = new DefaultMaskingFormatter();
             }

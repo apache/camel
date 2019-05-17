@@ -97,7 +97,7 @@ public class CuratorLeaderRoutePolicy extends RoutePolicySupport implements Elec
             electionLock.lock();
             try {
                 if (election == null) { // re-test
-                    election = new CuratorLeaderElection(route.getRouteContext().getCamelContext(), uri);
+                    election = new CuratorLeaderElection(route.getCamelContext(), uri);
                     election.addElectionWatcher(this);
                 }
             } finally {
