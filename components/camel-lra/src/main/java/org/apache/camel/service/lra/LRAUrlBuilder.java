@@ -27,9 +27,6 @@ import org.apache.camel.Endpoint;
 import static org.apache.camel.service.lra.LRAConstants.URL_COMPENSATION_KEY;
 import static org.apache.camel.service.lra.LRAConstants.URL_COMPLETION_KEY;
 
-/**
- *
- */
 public class LRAUrlBuilder {
 
     private String host;

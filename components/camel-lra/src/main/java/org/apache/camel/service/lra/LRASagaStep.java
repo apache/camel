@@ -26,9 +26,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.saga.CamelSagaStep;
 
-/**
- *
- */
 public final class LRASagaStep {
 
     private Optional<Endpoint> compensation;
