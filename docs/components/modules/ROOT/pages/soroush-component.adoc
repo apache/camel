@@ -90,7 +90,6 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *authorizationToken* (security) | The authorization token for using the bot. if uri path does not contain authorization token, this token will be used. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *concurrentConsumers* (consumer) | Number of Thread created by consumer in the route. if you use this method for parallelism, it is guaranteed that messages from same user always execute in the same thread and therefore messages from the same user are processed sequentially. Default value notice: using SoroushBotSingleThreadConsumer | 1 | Integer
 | *queueCapacityPerThread* (consumer) | Maximum capacity of each queue when concurrentConsumers is greater than 1. if a queue become full, every message that should go to that queue will be dropped. If bridgeErrorHandler is set to true, an exchange with CongestionException is directed to ErrorHandler. You can then processed the error using onException(CongestionException.class) route. Default value notice: infinite capacity | 0 | Integer
@@ -108,6 +107,7 @@ with the following path and query parameters:
 | *retryExponentialCoefficient* (global) | Coefficient to compute back off time when using Exponential Back Off strategy | 2 | Long
 | *retryLinearIncrement* (global) | The amount of time (in millisecond) which adds to waiting time when using Linear back off strategy | 10000 | Long
 | *retryWaitingTime* (global) | Waiting time before retry failed request (Millisecond). If backOffStrategy is not Fixed this is the based value for computing back off waiting time. the first retry is always happen immediately after failure and retryWaitingTime do not apply to the first retry. | 1000 | Long
+| *authorizationToken* (security) | The authorization token for using the bot. if uri path does not contain authorization token, this token will be used. |  | String
 | *autoUploadFile* (sendMessage) | Automatically upload attachments when a message goes to the sendMessage endpoint and the SoroushMessage.file (SoroushMessage.thumbnail) has been set and SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is null | true | Boolean
 | *forceUpload* (uploadFile) | Force to upload SoroushMessage.file(SoroushMessage.thumbnail) if exists, even if the SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is not null in the message | false | Boolean
 |===
