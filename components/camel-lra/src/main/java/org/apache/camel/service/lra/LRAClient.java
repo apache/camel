@@ -38,9 +38,6 @@ import static org.apache.camel.service.lra.LRAConstants.HEADER_TIME_LIMIT;
 import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPENSATE;
 import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPLETE;
 
-/**
- *
- */
 public class LRAClient {
 
 

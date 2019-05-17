@@ -24,9 +24,6 @@ import org.apache.camel.saga.CamelSagaCoordinator;
 import org.apache.camel.saga.CamelSagaStep;
 import org.apache.camel.util.ObjectHelper;
 
-/**
- *
- */
 public class LRASagaCoordinator implements CamelSagaCoordinator {
 
     private LRASagaService sagaService;

@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.SagaCompletionMode;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class LRATimeoutIT extends AbstractLRATestSupport {
