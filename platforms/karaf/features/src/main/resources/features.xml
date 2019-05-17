@@ -231,8 +231,8 @@
     <feature version='${project.version}'>camel-core</feature>
     <feature version="[9,10)">jetty</feature>
     <bundle dependency='true'>mvn:org.apache.avro/avro/${avro-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.avro/avro-ipc-jetty/${avro-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.avro/avro-ipc-netty/${avro-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.avro/avro-ipc-jetty/${avro-ipc-jetty-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.avro/avro-ipc-netty/${avro-ipc-netty-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
