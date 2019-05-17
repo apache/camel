@@ -702,7 +702,7 @@ public final class CamelContextHelper {
      *                   has been configured.
      * @return the properties component, or <tt>null</tt> if none has been defined, and auto create is <tt>false</tt>.
      */
-    public static Component lookupPropertiesComponent(CamelContext camelContext, boolean autoCreate) {
+    public static PropertiesComponent lookupPropertiesComponent(CamelContext camelContext, boolean autoCreate) {
         // no existing properties component so lookup and add as component if possible
         PropertiesComponent answer = (PropertiesComponent) camelContext.hasComponent("properties");
         if (answer == null) {
