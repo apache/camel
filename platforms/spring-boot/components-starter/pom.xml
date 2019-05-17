@@ -313,6 +313,7 @@
     <module>camel-rest-swagger-starter</module>
     <module>camel-restlet-starter</module>
     <module>camel-ribbon-starter</module>
+    <module>camel-robotframework-starter</module>
     <module>camel-rss-starter</module>
     <module>camel-rxjava-starter</module>
     <module>camel-saga-starter</module>
