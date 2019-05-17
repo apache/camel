@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
@@ -90,6 +91,11 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
 
     public RouteContext getRouteContext() {
         return routeContext;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return routeContext.getCamelContext();
     }
 
     public Map<String, Object> getProperties() {

@@ -117,17 +117,17 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         super.onInit(route);
         if (getMeterRegistry() == null) {
             setMeterRegistry(MicrometerUtils.getOrCreateMeterRegistry(
-                    route.getRouteContext().getCamelContext().getRegistry(), METRICS_REGISTRY_NAME));
+                    route.getCamelContext().getRegistry(), METRICS_REGISTRY_NAME));
         }
         try {
-            MicrometerRoutePolicyService registryService = route.getRouteContext().getCamelContext().hasService(MicrometerRoutePolicyService.class);
+            MicrometerRoutePolicyService registryService = route.getCamelContext().hasService(MicrometerRoutePolicyService.class);
             if (registryService == null) {
                 registryService = new MicrometerRoutePolicyService();
                 registryService.setMeterRegistry(getMeterRegistry());
                 registryService.setPrettyPrint(isPrettyPrint());
                 registryService.setDurationUnit(getDurationUnit());
                 registryService.setMatchingTags(Tags.of(SERVICE_NAME, MicrometerRoutePolicyService.class.getSimpleName()));
-                route.getRouteContext().getCamelContext().addService(registryService);
+                route.getCamelContext().addService(registryService);
                 ServiceHelper.startService(registryService);
             }
         } catch (Exception e) {
