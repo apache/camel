@@ -277,6 +277,7 @@
         <module>camel-reactor</module>
         <module>camel-rest-swagger</module>
         <module>camel-restlet</module>
+	<module>camel-robotframework</module>
         <module>camel-rss</module>
         <module>camel-rxjava</module>
         <module>camel-saga</module>

@@ -394,7 +394,8 @@
         <junit-version>4.12</junit-version>
         <junit-jupiter-version>5.5.1</junit-jupiter-version>
         <jxmpp-version>0.6.3</jxmpp-version>
-        <jython-version>2.5.3</jython-version>
+	<jython-version>2.5.3</jython-version>
+        <jython-standalone-version>2.5.3</jython-standalone-version>
         <jzlib-version>1.1.3</jzlib-version>
         <jzlib-bundle-version>1.1.3_2</jzlib-bundle-version>
         <kafka-version>2.3.0</kafka-version>
@@ -547,6 +548,7 @@
         <rhino-js-version>1.7R2</rhino-js-version>
         <ribbon-version>2.3.0</ribbon-version>
         <roaster-version>2.20.1.Final</roaster-version>
+	<robotframework-version>3.1.1</robotframework-version>
         <rome-version>1.12.1</rome-version>
         <rxjava-version>1.3.8</rxjava-version>
         <rxjava2-version>2.2.12</rxjava2-version>
@@ -1952,6 +1954,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ribbon</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-robotframework</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3486,6 +3493,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ribbon-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-robotframework-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
