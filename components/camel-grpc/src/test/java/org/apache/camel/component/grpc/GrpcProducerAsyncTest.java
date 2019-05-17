@@ -30,12 +30,10 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Ignore("TODO: investigate for Camel 3.0")
 public class GrpcProducerAsyncTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(GrpcProducerAsyncTest.class);
 
@@ -117,7 +115,7 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
         assertEquals(asyncPongResponseList.get(1).getPongId(), GRPC_TEST_PONG_ID02);
         assertEquals(asyncPongResponseList.get(0).getPongName(), GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE);
     }
-    
+
     @Test
     public void testPingAsyncSyncMethodInvocation() throws Exception {
         LOG.info("gRPC PingAsyncSync method test start");
@@ -144,7 +142,7 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
         assertEquals(asyncPongResponseList.get(0).getPongId(), GRPC_TEST_PING_ID);
         assertEquals(asyncPongResponseList.get(0).getPongName(), GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE);
     }
-    
+
     @Test
     public void testPingAsyncAsyncMethodInvocation() throws Exception {
         LOG.info("gRPC PingAsyncAsync method test start");
@@ -206,7 +204,7 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
             responseObserver.onNext(response02);
             responseObserver.onCompleted();
         }
-        
+
         @Override
         public StreamObserver<PingRequest> pingAsyncSync(StreamObserver<PongResponse> responseObserver) {
             StreamObserver<PingRequest> requestObserver = new StreamObserver<PingRequest>() {
@@ -229,7 +227,7 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
             };
             return requestObserver;
         }
-        
+
         @Override
         public StreamObserver<PingRequest> pingAsyncAsync(StreamObserver<PongResponse> responseObserver) {
             StreamObserver<PingRequest> requestObserver = new StreamObserver<PingRequest>() {
