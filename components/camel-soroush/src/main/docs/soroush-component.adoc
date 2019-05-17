@@ -143,7 +143,7 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-=== Usage
+### Usage
 
 Every exchange that you send to soroush endpoint must contain a
 body of type `org.apache.camel.component.soroushbot.models.MessageModel`.
@@ -155,7 +155,7 @@ of `MessageModel` too.
 SoroushMessage message = exchange.getIn().getBody(SoroushMessage.class)
 ------------
 
-==== Receive Message
+#### Receive Message
 With this endpoint you can receive messages from users.
 
 The following is a basic example of how to receive all messages that your Soroush users are sending to the configured Bot.
@@ -177,7 +177,7 @@ and in Spring XML
 <bean id="processorBean" class="com.example.ProcessorBean"/>
 ------------
 
-==== Download File
+#### Download File
 This endpoint is useful when you want to conditionally download the files specified in the message.
 When you send a message to this endpoint it opens a connection to Soroush Server
 for downloading the files and store `InputStream` of that connection in
@@ -203,7 +203,7 @@ from("soroush:getMessage/YourAuthorizationToken")
     .bean(ProcessorBean.class)
 -------------
 
-==== Send Message
+#### Send Message
 This endpoint is your primary way to send messages and upload files. You can simply
 send a message to a user by sending the message to this endpoint.
 
@@ -234,7 +234,7 @@ SoroushMessage.setThumbnail(InputStream thumbnailStream)
 -------------
 
 
-==== Upload File
+#### Upload File
 This endpoint is a utility endpoint that allows you to upload a file without sending the message.
 The only thing you need to do for uploading a file is to set `SoroushMessage.file` and `Send Message.thumbnail`
 and this endpoint upload them to the Soroush server.
@@ -251,7 +251,7 @@ from("soroush:getMessage/YourAuthorizationToken")
     .process(exchage->System.out.println(exchange.getIn().getBody(SoroushMessage.class).getFileUrl())
 -------------
 
-=== Error Handling
+#### Error Handling
 There are 3 types of exceptions that can be produced in Soroush Component.
 [width="100%",cols="2,5",options="header"]
 |===
@@ -277,4 +277,4 @@ One way to handle these exceptions is by using `onException` route definition:
 onException(CongestionException.class).log("Failed to processing ${id}")
 -------------
 
-_Developed and supported by https://www.mohaymen.ir[Mohaymen ICT]_
+_Donated by https://www.mohaymen.ir[Mohaymen ICT] to ASF_
