@@ -39,7 +39,7 @@ public interface MicrometerMessageHistoryNamingStrategy {
 
     default Tags getTags(Route route, NamedNode node) {
         return Tags.of(
-                CAMEL_CONTEXT_TAG, route.getRouteContext().getCamelContext().getName(),
+                CAMEL_CONTEXT_TAG, route.getCamelContext().getName(),
                 SERVICE_NAME, MicrometerMessageHistoryService.class.getSimpleName(),
                 ROUTE_ID_TAG, route.getId(),
                 NODE_ID_TAG, node.getId()

@@ -57,7 +57,7 @@ public class RouteHealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
         if (route.getId() != null) {
-            final CamelContext context = route.getRouteContext().getCamelContext();
+            final CamelContext context = route.getCamelContext();
             final ServiceStatus status = context.getRouteController().getRouteStatus(route.getId());
 
             builder.detail("route.id", route.getId());

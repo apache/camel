@@ -60,7 +60,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
     protected void onJobExecute(Action action, Route route) throws Exception {
         LOG.debug("Scheduled Event notification received. Performing action: {} on route: {}", action, route.getId());
 
-        ServiceStatus routeStatus = route.getRouteContext().getCamelContext().getRouteController().getRouteStatus(route.getId());
+        ServiceStatus routeStatus = route.getCamelContext().getRouteController().getRouteStatus(route.getId());
         if (action == Action.START) {
             if (routeStatus == ServiceStatus.Stopped) {
                 startRoute(route);
@@ -110,7 +110,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         
         loadCallbackDataIntoSchedulerContext(jobDetail, action, route);
 
-        boolean isClustered = route.getRouteContext().getCamelContext().getComponent("quartz2", QuartzComponent.class).isClustered();
+        boolean isClustered = route.getCamelContext().getComponent("quartz2", QuartzComponent.class).isClustered();
         if (isClustered) {
             // check to see if the same job has already been setup through another node of the cluster
             JobDetail existingJobDetail = getScheduler().getJobDetail(jobDetail.getKey());

@@ -41,7 +41,7 @@ class SortReifier<T, U extends SortDefinition<T>> extends ExpressionReifier<U> {
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         // lookup in registry
         if (isNotEmpty(definition.getComparatorRef())) {
-            definition.setComparator(routeContext.getCamelContext().getRegistry().lookupByNameAndType(definition.getComparatorRef(), Comparator.class));
+            definition.setComparator(routeContext.lookup(definition.getComparatorRef(), Comparator.class));
         }
 
         // if no comparator then default on to string representation

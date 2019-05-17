@@ -22,10 +22,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.support.RoutePolicySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,7 +156,7 @@ public class CuratorMultiMasterLeaderRoutePolicy extends RoutePolicySupport impl
                     log.info("{} route(s) have been stopped previously by policy, restarting.", suspendedRoutes.size());
                 }
                 for (Route suspended : suspendedRoutes) {
-                    DefaultCamelContext ctx = (DefaultCamelContext)suspended.getRouteContext().getCamelContext();
+                    CamelContext ctx = suspended.getCamelContext();
                     while (!ctx.isStarted()) {
                         log.info("Context {} is not started yet. Sleeping for a bit.", ctx.getName());
                         Thread.sleep(5000);
