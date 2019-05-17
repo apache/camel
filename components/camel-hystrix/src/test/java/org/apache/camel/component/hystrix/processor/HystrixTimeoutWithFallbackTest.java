@@ -30,14 +30,14 @@ public class HystrixTimeoutWithFallbackTest extends CamelTestSupport {
     public void testFast() throws Exception {
         // this calls the fast route and therefore we get a response
         Object out = template.requestBody("direct:start", "fast");
-        assertEquals("Fast response", out);
+        assertEquals("LAST CHANGE", out);
     }
 
     @Test
     public void testSlow() throws Exception {
         // this calls the slow route and therefore causes a timeout which triggers the fallback
         Object out = template.requestBody("direct:start", "slow");
-        assertEquals("Fallback response", out);
+        assertEquals("LAST CHANGE", out);
     }
 
     @Override
@@ -58,7 +58,10 @@ public class HystrixTimeoutWithFallbackTest extends CamelTestSupport {
                         .transform().constant("Fallback response")
                         .log("Hystrix fallback end: ${threadName}")
                     .end()
-                    .log("After Hystrix ${body}");
+                    .log("After Hystrix ${body}")
+                    .transform(simple("A CHANGE"))
+                    .transform(simple("LAST CHANGE"))
+                    .log("End ${body}");
 
                 from("direct:fast")
                     // this is a fast route and takes 1 second to respond
