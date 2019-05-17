@@ -36,7 +36,7 @@ There are also a number of optional runtime settings:
 ### Build and run
 The test XML file is built once beforehand using `@BeforeClass`.
 ```sh
-mvn clean test
+mvn clean test -DskipTests=false
 ```
 
 ### Test results
