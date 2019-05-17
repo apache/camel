@@ -1,7 +1,7 @@
 = Components
 
 // components: START
-Number of Components: 300 in 238 JAR artifacts (0 deprecated)
+Number of Components: 301 in 239 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -714,6 +714,9 @@ Number of Components: 300 in 238 JAR artifacts (0 deprecated)
 
 | link:camel-restlet/src/main/docs/restlet-component.adoc[Restlet] (camel-restlet) +
 `restlet:protocol:host:port/uriPattern` | 2.0 | Component for consuming and producing Restful resources using Restlet.
+
+| link:camel-robotframework/src/main/docs/robotframework-component.adoc[Robot Framework] (camel-robotframework) +
+`robotframework:resourceUri` | 3.0 | Represents a RobotFramework endpoint.
 
 | link:camel-rss/src/main/docs/rss-component.adoc[RSS] (camel-rss) +
 `rss:feedUri` | 2.0 | The rss component is used for consuming RSS feeds.

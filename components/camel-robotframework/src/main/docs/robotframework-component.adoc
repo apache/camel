@@ -1,0 +1,307 @@
+= Robot Framework Component
+== Robotframework Component
+
+*Available as of Camel version 3.0*
+
+The *robotframework:* component allows for processing camel exchanges
+in acceptence test suites which are already implemented with its own DSL. 
+The depending keyword libraries that can be used inside test suites 
+implemented in Robot DSL, could have been implemented either via 
+Java or Pyhton.
+
+This component will let you execute business logic of acceptence test cases 
+in Robot language on which you can pass parameters to feed data via power 
+of Camel Routes, however there is no reverse binding of parameters back where
+you can pass values back into Camel exchange. Therefore, for that reason, it actually
+acts like a template language passing camel exchanges by binding data into the test 
+cases implemented. 
+
+[source,xml]
+-------------------------------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-robotframework</artifactId>
+    <version>x.x.x</version> <!-- use the same version as your Camel core version -->
+</dependency>
+-------------------------------------------------------------------------------------
+
+### URI format
+
+[source,java]
+-------------------------------
+robotframework:templateName[?options]
+-------------------------------
+
+Where *templateName* is the classpath-local URI of the template to
+invoke; or the complete URL of the remote template (eg:
+\file://folder/myfile.robot).
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+### Options
+
+// component options: START
+The Robot Framework component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | The configuration |  | RobotFrameworkCamelConfiguration
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
+
+// endpoint options: START
+The Robot Framework endpoint is configured using URI syntax:
+
+----
+robotframework:resourceUri
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resourceUri* | *Required* Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod. |  | String
+|===
+
+
+=== Query Parameters (67 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *argumentFile* (common) | A text file to read more arguments from. |  | File
+| *combinedTagStats* (common) | Creates combined statistics based on tags. Use the format tags:title List |  | String
+| *contentCache* (common) | Sets whether to use resource content cache or not | false | boolean
+| *criticalTags* (common) | Tests that have the given tags are considered critical. List |  | String
+| *debugFile* (common) | A debug file that is written during execution. |  | File
+| *document* (common) | Sets the documentation of the top-level tests suites. |  | String
+| *dryrun* (common) | Sets dryrun mode on use. In the dry run mode tests are run without executing keywords originating from test libraries. Useful for validating test data syntax. | false | boolean
+| *excludes* (common) | Selects the tests cases by tags. List |  | String
+| *exitOnFailure* (common) | Sets robot to stop execution immediately if a critical test fails. | false | boolean
+| *includes* (common) | Selects the tests cases by tags. List |  | String
+| *listener* (common) | Sets a single listener for monitoring tests execution |  | String
+| *listeners* (common) | Sets multiple listeners for monitoring tests execution. Use the format ListenerWithArgs:arg1:arg2 or simply ListenerWithoutArgs List |  | String
+| *log* (common) | Sets the path to the generated log file. |  | File
+| *logLevel* (common) | Sets the threshold level for logging. |  | String
+| *logTitle* (common) | Sets a title for the generated tests log. |  | String
+| *metadata* (common) | Sets free metadata for the top level tests suites. comma seperated list of string resulting as List |  | String
+| *monitorColors* (common) | Using ANSI colors in console. Normally colors work in unixes but not in Windows. Default is 'on'. 'on' - use colors in unixes but not in Windows 'off' - never use colors 'force' - always use colors (also in Windows) |  | String
+| *monitorWidth* (common) | Width of the monitor output. Default is 78. | 78 | String
+| *name* (common) | Sets the name of the top-level tests suites. |  | String
+| *nonCriticalTags* (common) | Tests that have the given tags are not critical. List |  | String
+| *noStatusReturnCode* (common) | If true, sets the return code to zero regardless of failures in test cases. Error codes are returned normally. | false | boolean
+| *output* (common) | Sets the path to the generated output file. |  | File
+| *outputDirectory* (common) | Configures where generated reports are to be placed. |  | File
+| *randomize* (common) | Sets the test execution order to be randomized. Valid values are all, suite, and test |  | String
+| *report* (common) | Sets the path to the generated report file. |  | File
+| *reportBackground* (common) | Sets background colors for the generated report and summary. |  | String
+| *reportTitle* (common) | Sets a title for the generated tests report. |  | String
+| *runEmptySuite* (common) | Executes tests also if the top level test suite is empty. Useful e.g. with --include/--exclude when it is not an error that no test matches the condition. | false | boolean
+| *runFailed* (common) | Re-run failed tests, based on output.xml file. |  | File
+| *runMode* (common) | Sets the execution mode for this tests run. Note that this setting has been deprecated in Robot Framework 2.8. Use separate dryryn, skipTeardownOnExit, exitOnFailure, and randomize settings instead. |  | String
+| *skipTeardownOnExit* (common) | Sets whether the teardowns are skipped if the test execution is prematurely stopped. | false | boolean
+| *splitOutputs* (common) | Splits output and log files. |  | String
+| *suites* (common) | Selects the tests suites by name. List |  | String
+| *suiteStatLevel* (common) | Defines how many levels to show in the Statistics by Suite table in outputs. |  | String
+| *summaryTitle* (common) | Sets a title for the generated summary report. |  | String
+| *tagDocs* (common) | Adds documentation to the specified tags. List |  | String
+| *tags* (common) | Sets the tags(s) to all executed tests cases. List |  | String
+| *tagStatExcludes* (common) | Excludes these tags from the Statistics by Tag and Test Details by Tag tables in outputs. List |  | String
+| *tagStatIncludes* (common) | Includes only these tags in the Statistics by Tag and Test Details by Tag tables in outputs. List |  | String
+| *tagStatLinks* (common) | Adds external links to the Statistics by Tag table in outputs. Use the format pattern:link:title List |  | String
+| *tests* (common) | Selects the tests cases by name. List |  | String
+| *timestampOutputs* (common) | Adds a timestamp to all output files. | false | boolean
+| *variableFiles* (common) | Sets variables using variables files. Use the format path:args List |  | String
+| *variables* (common) | Sets individual variables. Use the format name:value List |  | String
+| *warnOnSkippedFiles* (common) | Show a warning when an invalid file is skipped. | false | boolean
+| *xunitFile* (common) | Sets the path to the generated XUnit compatible result file, relative to outputDirectory. The file is in xml format. By default, the file name is derived from the testCasesDirectory parameter, replacing blanks in the directory name by underscores. |  | File
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component | none | String
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-robotframework-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 47 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.robotframework.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.robotframework.configuration.argument-file* | A text file to read more arguments from. |  | File
+| *camel.component.robotframework.configuration.combined-tag-stats* | Creates combined statistics based on tags. Use the format "tags:title" List<String> |  | String
+| *camel.component.robotframework.configuration.critical-tags* | Tests that have the given tags are considered critical. List<String> |  | String
+| *camel.component.robotframework.configuration.debug-file* | A debug file that is written during execution. |  | File
+| *camel.component.robotframework.configuration.document* | Sets the documentation of the top-level tests suites. |  | String
+| *camel.component.robotframework.configuration.dryrun* | Sets dryrun mode on use. In the dry run mode tests are run without executing keywords originating from test libraries. Useful for validating test data syntax. | false | Boolean
+| *camel.component.robotframework.configuration.excludes* | Selects the tests cases by tags. List<String> |  | String
+| *camel.component.robotframework.configuration.exit-on-failure* | Sets robot to stop execution immediately if a critical test fails. | false | Boolean
+| *camel.component.robotframework.configuration.includes* | Selects the tests cases by tags. List<String> |  | String
+| *camel.component.robotframework.configuration.listener* | Sets a single listener for monitoring tests execution |  | String
+| *camel.component.robotframework.configuration.listeners* | Sets multiple listeners for monitoring tests execution. Use the format "ListenerWithArgs:arg1:arg2" or simply "ListenerWithoutArgs" List<String> |  | String
+| *camel.component.robotframework.configuration.log* | Sets the path to the generated log file. |  | File
+| *camel.component.robotframework.configuration.log-level* | Sets the threshold level for logging. |  | String
+| *camel.component.robotframework.configuration.log-title* | Sets a title for the generated tests log. |  | String
+| *camel.component.robotframework.configuration.metadata* | Sets free metadata for the top level tests suites. comma seperated list of string resulting as List<String> |  | String
+| *camel.component.robotframework.configuration.monitor-colors* | Using ANSI colors in console. Normally colors work in unixes but not in Windows. Default is 'on'. <ul> <li>'on' - use colors in unixes but not in Windows</li> <li>'off' - never use colors</li> <li>'force' - always use colors (also in Windows)</li> </ul> |  | String
+| *camel.component.robotframework.configuration.monitor-width* | Width of the monitor output. Default is 78. | 78 | String
+| *camel.component.robotframework.configuration.name* | Sets the name of the top-level tests suites. |  | String
+| *camel.component.robotframework.configuration.no-status-return-code* | If true, sets the return code to zero regardless of failures in test cases. Error codes are returned normally. | false | Boolean
+| *camel.component.robotframework.configuration.non-critical-tags* | Tests that have the given tags are not critical. List<String> |  | String
+| *camel.component.robotframework.configuration.output* | Sets the path to the generated output file. |  | File
+| *camel.component.robotframework.configuration.output-directory* | Configures where generated reports are to be placed. |  | File
+| *camel.component.robotframework.configuration.randomize* | Sets the test execution order to be randomized. Valid values are all, suite, and test |  | String
+| *camel.component.robotframework.configuration.report* | Sets the path to the generated report file. |  | File
+| *camel.component.robotframework.configuration.report-background* | Sets background colors for the generated report and summary. |  | String
+| *camel.component.robotframework.configuration.report-title* | Sets a title for the generated tests report. |  | String
+| *camel.component.robotframework.configuration.run-empty-suite* | Executes tests also if the top level test suite is empty. Useful e.g. with --include/--exclude when it is not an error that no test matches the condition. | false | Boolean
+| *camel.component.robotframework.configuration.run-failed* | Re-run failed tests, based on output.xml file. |  | File
+| *camel.component.robotframework.configuration.run-mode* | Sets the execution mode for this tests run. Note that this setting has been deprecated in Robot Framework 2.8. Use separate dryryn, skipTeardownOnExit, exitOnFailure, and randomize settings instead. |  | String
+| *camel.component.robotframework.configuration.skip-teardown-on-exit* | Sets whether the teardowns are skipped if the test execution is prematurely stopped. | false | Boolean
+| *camel.component.robotframework.configuration.split-outputs* | Splits output and log files. |  | String
+| *camel.component.robotframework.configuration.suite-stat-level* | Defines how many levels to show in the Statistics by Suite table in outputs. |  | String
+| *camel.component.robotframework.configuration.suites* | Selects the tests suites by name. List<String> |  | String
+| *camel.component.robotframework.configuration.summary-title* | Sets a title for the generated summary report. |  | String
+| *camel.component.robotframework.configuration.tag-docs* | Adds documentation to the specified tags. List<String> |  | String
+| *camel.component.robotframework.configuration.tag-stat-excludes* | Excludes these tags from the Statistics by Tag and Test Details by Tag tables in outputs. List<String> |  | String
+| *camel.component.robotframework.configuration.tag-stat-includes* | Includes only these tags in the Statistics by Tag and Test Details by Tag tables in outputs. List<String> |  | String
+| *camel.component.robotframework.configuration.tag-stat-links* | Adds external links to the Statistics by Tag table in outputs. Use the format "pattern:link:title" List<String> |  | String
+| *camel.component.robotframework.configuration.tags* | Sets the tags(s) to all executed tests cases. List<String> |  | String
+| *camel.component.robotframework.configuration.tests* | Selects the tests cases by name. List<String> |  | String
+| *camel.component.robotframework.configuration.timestamp-outputs* | Adds a timestamp to all output files. | false | Boolean
+| *camel.component.robotframework.configuration.variable-files* | Sets variables using variables files. Use the format "path:args" List<String> |  | String
+| *camel.component.robotframework.configuration.variables* | Sets individual variables. Use the format "name:value" List<String> |  | String
+| *camel.component.robotframework.configuration.warn-on-skipped-files* | Show a warning when an invalid file is skipped. | false | Boolean
+| *camel.component.robotframework.configuration.xunit-file* | Sets the path to the generated XUnit compatible result file, relative to outputDirectory. The file is in xml format. By default, the file name is derived from the testCasesDirectory parameter, replacing blanks in the directory name by underscores. |  | File
+| *camel.component.robotframework.enabled* | Whether to enable auto configuration of the robotframework component. This is enabled by default. |  | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+### Samples
+
+For example you could use something like:
+
+[source,java]
+-------------------------------------------
+from("direct:setVariableCamelBody")
+.to("robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_body.robot")
+-------------------------------------------
+
+To use a robot test case to execute and collect the results
+and pass them to generate custom report if such need happens
+
+It's possible to specify what template the component
+should use dynamically via a header, so for example:
+
+[source,java]
+---------------------------------------------------------------------------------------------
+from("direct:in")
+.setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("path/to/my/template.robot").
+  to("robotframework:dummy");
+---------------------------------------------------------------------------------------------
+
+Robotframework component helps you pass values into robot test cases 
+with the similar approach how you would be able to pass values using 
+Camel Simple Language. Components supports passing values in three
+different ways. Exchange body, headers and properties.
+
+[source,java]
+---------------------------------------------------------------------------------------------
+from("direct:in")
+.setBody(constant("Hello Robot"))
+.setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("path/to/my/template.robot").
+  to("robotframework:dummy");
+---------------------------------------------------------------------------------------------
+
+.. code:: robotframework
+
+    *** Test Cases ***
+    Set Variable Camel Body Test Case
+    ${myvar} =    Set Variable    ${body}
+    Should Be True    ${myvar} == ${body}
+    
+[source,java]
+---------------------------------------------------------------------------------------------
+from("direct:in")
+.setHeader("testHeader", constant("testHeaderValue"))
+.setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("path/to/my/template.robot").
+  to("robotframework:dummy");
+---------------------------------------------------------------------------------------------
+
+.. code:: robotframework
+
+    *** Test Cases ***
+    Set Variable Camel Header Test Case
+    ${myvar} =    Set Variable    ${headers.testHeader}
+    Should Be True    ${myvar} == ${headers.testHeader}
+    
+[source,java]
+---------------------------------------------------------------------------------------------
+from("direct:in")
+.setProperty"testProperty", constant("testPropertyValue"))
+.setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("path/to/my/template.robot").
+  to("robotframework:dummy");
+---------------------------------------------------------------------------------------------
+
+.. code:: robotframework
+
+    *** Test Cases ***
+    Set Variable Camel Header Test Case
+    ${myvar} =    Set Variable    ${properties.testProperty}
+    Should Be True    ${myvar} == ${properties.testProperty}
+
+Please note that when you pass values through Camel Exchange to test cases,
+they will be available as case-sensitive ``body``, ``headers.[yourHeaderName]`` and ``properties.[yourPropertyName]``
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
