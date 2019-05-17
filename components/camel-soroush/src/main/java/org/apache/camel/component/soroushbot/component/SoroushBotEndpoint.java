@@ -63,10 +63,6 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
     @UriPath(name = "endpoint", description = "The endpoint type. Support `getMessage` as consumer and `sendMessage`,`uploadFile`,`downloadFile` as producer")
     @Metadata(required = true)
     Endpoint type;
-    @UriPath(label = "global,security", description = "The authorization token for using"
-            + " the bot (ask the @mrbot) e.g. 9yDv09nqKvP9CkBGKNmKQHir1dj2qLpN-YWa8hP7Rm3LK\"\n"
-            + "            + \"3MqQXYdXZIA5W4e0agPiUb-3eUKX69ozUNdY9yZBMlJiwnlksslkjWjsxcARo5cYtDnKTElig0xa\"\n"
-            + "            + \"e1Cjt1Bexz2cw-t6cJ7t1f ")
     @UriParam(label = "global,security", description = "The authorization token for using"
             + " the bot. if uri path does not contain authorization token, this token will be used.", secret = true)
     String authorizationToken;
