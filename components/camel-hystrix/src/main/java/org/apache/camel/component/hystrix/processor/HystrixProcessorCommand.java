@@ -117,6 +117,15 @@ public class HystrixProcessorCommand extends HystrixCommand {
             copy.setException(e);
         }
 
+        // if hystrix execution timeout is enabled and fallback is enabled and a timeout occurs
+        // then a hystrix timer thread executes the fallback so we can stop run() execution
+        if(getProperties().executionTimeoutEnabled().get()
+                && getProperties().fallbackEnabled().get()
+                && isCommandTimedOut.get() == TimedOutStatus.TIMED_OUT) {
+            LOG.debug("Exiting run command due to a hystrix execution timeout in processing exchange: {}", exchange);
+            return null;
+        }
+
         // when a hystrix timeout occurs then a hystrix timer thread executes the fallback
         // and therefore we need this thread to not do anymore if fallback is already in process
         if (fallbackInUse.get()) {
@@ -129,7 +138,6 @@ public class HystrixProcessorCommand extends HystrixCommand {
         Exception camelExchangeException = copy.getException();
 
         synchronized (lock) {
-
             // when a hystrix timeout occurs then a hystrix timer thread executes the fallback
             // and therefore we need this thread to not do anymore if fallback is already in process
             if (fallbackInUse.get()) {
