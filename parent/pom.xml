@@ -79,7 +79,7 @@
         <automaton-bundle-version>1.11-8_1</automaton-bundle-version>
         <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
         <avalon-version>4.3.1</avalon-version>
-        <avro-version>1.8.2</avro-version>
+        <avro-version>1.9.0</avro-version>
         <avro-bundle-version>1.8.2_1</avro-bundle-version>
         <avro-ipc-bundle-version>1.8.2_1</avro-ipc-bundle-version>
         <awaitility-version>3.1.6</awaitility-version>
