@@ -57,7 +57,7 @@ public class GrpcConsumer extends DefaultConsumer {
         this.endpoint = endpoint;
         this.configuration = configuration;
     }
-    
+
     public GrpcConfiguration getConfiguration() {
         return configuration;
     }
@@ -89,59 +89,59 @@ public class GrpcConsumer extends DefaultConsumer {
         ProxyFactory serviceProxy = new ProxyFactory();
         ServerInterceptor headerInterceptor = new GrpcHeaderInterceptor();
         MethodHandler methodHandler = new GrpcMethodHandler(endpoint, this);
-        
+
         serviceProxy.setSuperclass(GrpcUtils.constructGrpcImplBaseClass(endpoint.getServicePackage(), endpoint.getServiceName(), endpoint.getCamelContext()));
         try {
             bindableService = (BindableService)serviceProxy.create(new Class<?>[0], new Object[0], methodHandler);
         } catch (NoSuchMethodException | IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new IllegalArgumentException("Unable to create bindable proxy service for " + configuration.getService());
         }
-        
+
         if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
             log.debug("Building gRPC server on {}:{}", configuration.getHost(), configuration.getPort());
             serverBuilder = NettyServerBuilder.forAddress(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         } else {
             throw new IllegalArgumentException("No server start properties (host, port) specified");
         }
-        
+
         if (configuration.getNegotiationType() == NegotiationType.TLS) {
             ObjectHelper.notNull(configuration.getKeyCertChainResource(), "keyCertChainResource");
             ObjectHelper.notNull(configuration.getKeyResource(), "keyResource");
-            
+
             ClassResolver classResolver = endpoint.getCamelContext().getClassResolver();
-            
+
             SslContextBuilder sslContextBuilder = SslContextBuilder.forServer(ResourceHelper.resolveResourceAsInputStream(classResolver, configuration.getKeyCertChainResource()),
                                                                               ResourceHelper.resolveResourceAsInputStream(classResolver, configuration.getKeyResource()),
                                                                               configuration.getKeyPassword())
                                                                    .clientAuth(ClientAuth.REQUIRE)
                                                                    .sslProvider(SslProvider.OPENSSL);
-            
+
             if (ObjectHelper.isNotEmpty(configuration.getTrustCertCollectionResource())) {
                 sslContextBuilder = sslContextBuilder.trustManager(ResourceHelper.resolveResourceAsInputStream(classResolver, configuration.getTrustCertCollectionResource()));
             }
-            
+
             serverBuilder = serverBuilder.sslContext(GrpcSslContexts.configure(sslContextBuilder).build());
         }
-        
+
         if (configuration.getAuthenticationType() == GrpcAuthType.JWT) {
             ObjectHelper.notNull(configuration.getJwtSecret(), "jwtSecret");
-            
+
             serverBuilder = serverBuilder.intercept(new JwtServerInterceptor(configuration.getJwtAlgorithm(), configuration.getJwtSecret(),
                                                                              configuration.getJwtIssuer(), configuration.getJwtSubject()));
         }
-        
+
         server = serverBuilder.addService(ServerInterceptors.intercept(bindableService, headerInterceptor))
-                              .maxMessageSize(configuration.getMaxMessageSize())
+                              .maxInboundMessageSize(configuration.getMaxMessageSize())
                               .flowControlWindow(configuration.getFlowControlWindow())
                               .maxConcurrentCallsPerConnection(configuration.getMaxConcurrentCallsPerConnection())
                               .build();
     }
-    
+
     public boolean process(Exchange exchange, AsyncCallback callback) {
         exchange.getIn().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_NEXT);
         return doSend(exchange, callback);
     }
-    
+
     public void onCompleted(Exchange exchange) {
         if (configuration.isForwardOnCompleted()) {
             exchange.getIn().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED);
@@ -154,12 +154,12 @@ public class GrpcConsumer extends DefaultConsumer {
         if (configuration.isForwardOnError()) {
             exchange.getIn().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_ERROR);
             exchange.getIn().setBody(error);
-        
+
             doSend(exchange, done -> {
             });
         }
     }
-        
+
     private boolean doSend(Exchange exchange, AsyncCallback callback) {
         if (this.isRunAllowed()) {
             this.getAsyncProcessor().process(exchange, doneSync -> {
