@@ -21,4 +21,4 @@ components/camel-solr/data
 log-camel-lsp.out
 .vscode
 *.code-workspace
-
+.flattened-pom.xml
