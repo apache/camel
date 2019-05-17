@@ -563,7 +563,7 @@
         <properties-maven-plugin-version>1.0-alpha-2</properties-maven-plugin-version>
         <protobuf-version>3.5.1</protobuf-version>
         <protobuf-javanano-version>3.1.0</protobuf-javanano-version>
-        <protobuf-maven-plugin-version>0.5.1</protobuf-maven-plugin-version>
+        <protobuf-maven-plugin-version>0.6.1</protobuf-maven-plugin-version>
         <protonpack-version>1.8</protonpack-version>
         <pubnub-version>4.25.0</pubnub-version>
         <pulsar-version>2.3.1</pulsar-version>
