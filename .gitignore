@@ -21,4 +21,4 @@ components/camel-solr/data
 .pmd
 .sts4-cache
 log-camel-lsp.out
-
+.flattened-pom.xml
