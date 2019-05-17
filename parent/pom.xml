@@ -563,7 +563,7 @@
         <protobuf-javanano-version>3.1.0</protobuf-javanano-version>
         <protobuf-maven-plugin-version>0.5.1</protobuf-maven-plugin-version>
         <protonpack-version>1.8</protonpack-version>
-        <pubnub-version>4.21.0</pubnub-version>
+        <pubnub-version>4.23.0</pubnub-version>
         <pulsar-version>2.3.1</pulsar-version>
         <pulsar-bundle-version>2.3.1_1</pulsar-bundle-version>
         <qpid-broker-version>7.1.3</qpid-broker-version>
