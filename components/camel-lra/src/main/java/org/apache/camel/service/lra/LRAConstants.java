@@ -16,9 +16,6 @@
  */
 package org.apache.camel.service.lra;
 
-/**
- *
- */
 public final class LRAConstants {
 
     public static final String DEFAULT_COORDINATOR_CONTEXT_PATH = "/lra-coordinator";
