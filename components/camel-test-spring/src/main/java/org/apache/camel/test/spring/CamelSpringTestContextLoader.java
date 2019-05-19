@@ -27,7 +27,6 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.processor.interceptor.DefaultDebugger;
 import org.apache.camel.spi.Breakpoint;
@@ -55,7 +54,7 @@ import org.springframework.util.StringUtils;
 import static org.apache.camel.test.spring.CamelSpringTestHelper.getAllMethods;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.spi.PropertiesComponent;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
@@ -486,7 +485,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
                 public Object postProcessAfterInitialization(Object bean, String beanName) {
                     if (bean instanceof CamelContext) {
                         CamelContext camelContext = (CamelContext) bean;
-                        PropertiesComponent pc = CamelContextHelper.lookupPropertiesComponent(camelContext, true);
+                        PropertiesComponent pc = camelContext.getPropertiesComponent(true);
                         LOG.info("Using {} properties to override any existing properties on the PropertiesComponent on CamelContext with name [{}].", extra.size(), camelContext.getName());
                         pc.setOverrideProperties(extra);
                     }
