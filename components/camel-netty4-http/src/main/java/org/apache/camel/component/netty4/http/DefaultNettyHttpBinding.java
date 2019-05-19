@@ -509,37 +509,68 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             httpMethod = HttpMethod.valueOf(headerMethod);
         }
 
-        FullHttpRequest request = new DefaultFullHttpRequest(protocol, httpMethod, uriForRequest);
-        if (body != null) {
-            // support bodies as native Netty
-            ByteBuf buffer;
-            if (body instanceof ByteBuf) {
-                buffer = (ByteBuf) body;
-            } else {
-                // try to convert to buffer first
-                buffer = message.getBody(ByteBuf.class);
-                if (buffer == null) {
-                    // fallback to byte array as last resort
-                    byte[] data = message.getMandatoryBody(byte[].class);
+        final Exchange exchange = message.getExchange();
+        final Object proxyRequest;
+        if (exchange != null) {
+            proxyRequest = exchange.getProperty(NettyHttpConstants.PROXY_REQUEST);
+        } else {
+            proxyRequest = null;
+        }
 
-                    if (data.length > 0) {
-                        buffer = NettyConverter.toByteBuffer(data);
+        FullHttpRequest request = null;
+        if (message instanceof NettyHttpMessage) {
+            // if the request is already given we should set the values
+            // from message headers and pass on the same request
+            final FullHttpRequest givenRequest = ((NettyHttpMessage) message).getHttpRequest();
+            // we need to make sure that the givenRequest is the original
+            // request received by the proxy
+            if (givenRequest != null && proxyRequest == givenRequest) {
+                request = givenRequest
+                        .setProtocolVersion(protocol)
+                        .setMethod(httpMethod)
+                        .setUri(uriForRequest);
+            }
+        }
+
+        if (request == null) {
+            request = new DefaultFullHttpRequest(protocol, httpMethod, uriForRequest);
+
+            if (body != null) {
+                // support bodies as native Netty
+                ByteBuf buffer;
+                if (body instanceof ByteBuf) {
+                    buffer = (ByteBuf) body;
+                } else {
+                    // try to convert to buffer first
+                    buffer = message.getBody(ByteBuf.class);
+                    if (buffer == null) {
+                        // fallback to byte array as last resort
+                        byte[] data = message.getMandatoryBody(byte[].class);
+    
+                        if (data.length > 0) {
+                            buffer = NettyConverter.toByteBuffer(data);
+                        }
+                    }
+                }
+    
+                if (buffer != null) {
+                    if (buffer.readableBytes() > 0) {
+                        request = request.replace(buffer);
+                        int len = buffer.readableBytes();
+                        // set content-length
+                        request.headers().set(HttpHeaderNames.CONTENT_LENGTH.toString(), len);
+                        LOG.trace("Content-Length: {}", len);
+                    } else {
+                        buffer.release();
                     }
                 }
             }
 
-            if (buffer != null && buffer.readableBytes() > 0) {
-                request = request.replace(buffer);
-                int len = buffer.readableBytes();
-                // set content-length
-                request.headers().set(HttpHeaderNames.CONTENT_LENGTH.toString(), len);
-                LOG.trace("Content-Length: {}", len);
-            }
+            // update HTTP method accordingly as we know if we have a body or not
+            HttpMethod method = NettyHttpHelper.createMethod(message, body != null);
+            request.setMethod(method);
         }
 
-        // update HTTP method accordingly as we know if we have a body or not
-        HttpMethod method = NettyHttpHelper.createMethod(message, body != null);
-        request.setMethod(method);
 
         TypeConverter tc = message.getExchange().getContext().getTypeConverter();
 
