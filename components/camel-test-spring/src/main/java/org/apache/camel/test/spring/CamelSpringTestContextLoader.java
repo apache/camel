@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
@@ -37,8 +38,10 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.ExcludingPackageScanClassResolver;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.test.spring.CamelSpringTestHelper.DoToSpringCamelContextsStrategy;
+import org.apache.camel.util.CamelContextHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
@@ -53,10 +56,6 @@ import org.springframework.test.context.support.GenericXmlContextLoader;
 import org.springframework.util.StringUtils;
 
 import static org.apache.camel.test.spring.CamelSpringTestHelper.getAllMethods;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.util.CamelContextHelper;
-import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
  * Replacement for the default {@link GenericXmlContextLoader} that provides hooks for
