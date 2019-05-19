@@ -56,7 +56,7 @@ public class UserRouteBuilder extends RouteBuilder {
             .put().description("Updates or create a user").type(User.class)
                 .param().name("body").type(body).description("The user to update or create").endParam()
                 .to("bean:userService?method=updateUser")
-            .get("/findAll").description("Find all users").outTypeList(User.class)
+            .get("/findAll").description("Find all users").outType(User[].class)
                 .to("bean:userService?method=listUsers");
     }
 }
