@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.RoutesBuilder;
@@ -411,7 +412,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             LOG.debug("Setting up routes");
 
             // mark that we are setting up routes
-            getContext().setupRoutes(false);
+            getContext().adapt(ExtendedCamelContext.class).setupRoutes(false);
 
             // must init route refs before we prepare the routes below
             initRouteRefs();
@@ -462,7 +463,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             installRoutes();
 
             // and we are now finished setting up the routes
-            getContext().setupRoutes(true);
+            getContext().adapt(ExtendedCamelContext.class).setupRoutes(true);
         }
     }
 
@@ -867,7 +868,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             context.setHandleFault(CamelContextHelper.parseBoolean(context, getHandleFault()));
         }
         if (getErrorHandlerRef() != null) {
-            context.setErrorHandlerFactory(new ErrorHandlerBuilderRef(getErrorHandlerRef()));
+            context.adapt(ExtendedCamelContext.class).setErrorHandlerFactory(new ErrorHandlerBuilderRef(getErrorHandlerRef()));
         }
         if (getAutoStartup() != null) {
             context.setAutoStartup(CamelContextHelper.parseBoolean(context, getAutoStartup()));
@@ -1113,7 +1114,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         ModelJAXBContextFactory modelJAXBContextFactory = getBeanForType(ModelJAXBContextFactory.class);
         if (modelJAXBContextFactory != null) {
             LOG.info("Using custom ModelJAXBContextFactory: {}", modelJAXBContextFactory);
-            getContext().setModelJAXBContextFactory(modelJAXBContextFactory);
+            getContext().adapt(ExtendedCamelContext.class).setModelJAXBContextFactory(modelJAXBContextFactory);
         }
         ClassResolver classResolver = getBeanForType(ClassResolver.class);
         if (classResolver != null) {
@@ -1138,7 +1139,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         ProcessorFactory processorFactory = getBeanForType(ProcessorFactory.class);
         if (processorFactory != null) {
             LOG.info("Using custom ProcessorFactory: {}", processorFactory);
-            getContext().setProcessorFactory(processorFactory);
+            getContext().adapt(ExtendedCamelContext.class).setProcessorFactory(processorFactory);
         }
         Debugger debugger = getBeanForType(Debugger.class);
         if (debugger != null) {
@@ -1153,7 +1154,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         NodeIdFactory nodeIdFactory = getBeanForType(NodeIdFactory.class);
         if (nodeIdFactory != null) {
             LOG.info("Using custom NodeIdFactory: {}", nodeIdFactory);
-            getContext().setNodeIdFactory(nodeIdFactory);
+            getContext().adapt(ExtendedCamelContext.class).setNodeIdFactory(nodeIdFactory);
         }
         StreamCachingStrategy streamCachingStrategy = getBeanForType(StreamCachingStrategy.class);
         if (streamCachingStrategy != null) {

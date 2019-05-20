@@ -41,6 +41,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TypeConverters;
 import org.apache.camel.builder.RouteBuilder;
@@ -726,7 +727,7 @@ public abstract class MainSupport extends ServiceSupport {
     protected void loadRouteBuilders(CamelContext camelContext) throws Exception {
         // lets use Camel's bean post processor on any existing route builder classes
         // so the instance has some support for dependency injection
-        CamelBeanPostProcessor postProcessor = camelContext.getBeanPostProcessor();
+        CamelBeanPostProcessor postProcessor = camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
         for (RouteBuilder routeBuilder : getRouteBuilders()) {
             postProcessor.postProcessBeforeInitialization(routeBuilder, routeBuilder.getClass().getName());
             postProcessor.postProcessAfterInitialization(routeBuilder, routeBuilder.getClass().getName());
@@ -750,7 +751,7 @@ public abstract class MainSupport extends ServiceSupport {
     protected void loadConfigurations(CamelContext camelContext) throws Exception {
         // lets use Camel's bean post processor on any existing configuration classes
         // so the instance has some support for dependency injection
-        CamelBeanPostProcessor postProcessor = camelContext.getBeanPostProcessor();
+        CamelBeanPostProcessor postProcessor = camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
         for (Object configuration : getConfigurations()) {
             postProcessor.postProcessBeforeInitialization(configuration, configuration.getClass().getName());
             postProcessor.postProcessAfterInitialization(configuration, configuration.getClass().getName());

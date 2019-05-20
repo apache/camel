@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
@@ -43,7 +44,7 @@ public class ErrorHandlerBuilderRefTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.setErrorHandlerFactory(errorHandlerBuilderRef);
+        context.adapt(ExtendedCamelContext.class).setErrorHandlerFactory(errorHandlerBuilderRef);
         return context;
     }
     

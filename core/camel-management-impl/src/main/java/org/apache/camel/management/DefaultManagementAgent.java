@@ -44,6 +44,7 @@ import javax.management.remote.JMXServiceURL;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.spi.ManagementAgent;
@@ -393,7 +394,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         }
 
         // ensure assembler is started
-        assembler = camelContext.getManagementMBeanAssembler();
+        assembler = camelContext.adapt(ExtendedCamelContext.class).getManagementMBeanAssembler();
         if (assembler == null) {
             assembler = new DefaultManagementMBeanAssembler(camelContext);
         }

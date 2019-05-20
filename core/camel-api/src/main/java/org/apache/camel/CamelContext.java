@@ -20,21 +20,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
-import org.apache.camel.spi.BeanProcessorFactory;
-import org.apache.camel.spi.BeanProxyFactory;
-import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
-import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.ExecutorServiceManager;
@@ -47,14 +41,10 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
-import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
-import org.apache.camel.spi.ModelJAXBContextFactory;
-import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ReloadStrategy;
@@ -97,6 +87,8 @@ import org.apache.camel.support.jsse.SSLContextParameters;
  * <p/>
  * End users are advised to use suspend/resume. Using stop is for shutting down Camel and it's not guaranteed that
  * when it's being started again using the start method that Camel will operate consistently.
+ * <p/>
+ * For more advanced APIs with {@link CamelContext} see {@link ExtendedCamelContext}.
  */
 public interface CamelContext extends StatefulService, RuntimeConfiguration {
 
@@ -655,14 +647,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     boolean removeRoute(String routeId) throws Exception;
 
     /**
-     * Method to signal to {@link CamelContext} that the process to initialize setup routes is in progress.
-     *
-     * @param done <tt>false</tt> to start the process, call again with <tt>true</tt> to signal its done.
-     * @see #isSetupRoutes()
-     */
-    void setupRoutes(boolean done);
-
-    /**
      * Indicates whether current thread is setting up route(s) as part of starting Camel from spring/blueprint.
      * <p/>
      * This can be useful to know by {@link LifecycleStrategy} or the likes, in case
@@ -723,20 +707,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * @return the injector
      */
     Injector getInjector();
-
-    /**
-     * Returns the bean post processor used to do any bean customization.
-     *
-     * @return the bean post processor.
-     */
-    CamelBeanPostProcessor getBeanPostProcessor();
-
-    /**
-     * Returns the management mbean assembler
-     *
-     * @return the mbean assembler
-     */
-    ManagementMBeanAssembler getManagementMBeanAssembler();
 
     /**
      * Returns the lifecycle strategies used to handle lifecycle notifications
@@ -912,16 +882,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     ConsumerTemplate createConsumerTemplate(int maximumCacheSize);
 
     /**
-     * Creates a new multicast processor which sends an exchange to all the processors.
-     *
-     * @param processors the list of processors to send to
-     * @param executor the executor to use
-     * @return a multicasting processor
-     */
-    AsyncProcessor createMulticast(Collection<Processor> processors,
-                                   ExecutorService executor, boolean shutdownExecutorService);
-
-    /**
      * Adds the given interceptor strategy
      *
      * @param interceptStrategy the strategy
@@ -934,20 +894,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * @return the list of current interceptor strategies
      */
     List<InterceptStrategy> getInterceptStrategies();
-
-    /**
-     * Gets the default error handler builder which is inherited by the routes
-     *
-     * @return the builder
-     */
-    ErrorHandlerFactory getErrorHandlerFactory();
-
-    /**
-     * Sets the default error handler builder which is inherited by the routes
-     *
-     * @param errorHandlerFactory the builder
-     */
-    void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory);
 
     /**
      * Gets the default shared thread pool for error handlers which
@@ -1110,20 +1056,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     void setPackageScanClassResolver(PackageScanClassResolver resolver);
 
     /**
-     * Uses a custom node id factory when generating auto assigned ids to the nodes in the route definitions
-     *
-     * @param factory custom factory to use
-     */
-    void setNodeIdFactory(NodeIdFactory factory);
-
-    /**
-     * Gets the node id factory
-     *
-     * @return the node id factory
-     */
-    NodeIdFactory getNodeIdFactory();
-
-    /**
      * Gets the management strategy
      *
      * @return the management strategy
@@ -1175,7 +1107,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     AsyncProcessorAwaitManager getAsyncProcessorAwaitManager();
 
     /**
-     * Sets a custom  {@link org.apache.camel.AsyncProcessor} await manager.
+     * Sets a custom {@link org.apache.camel.AsyncProcessor} await manager.
      *
      * @param manager the manager
      */
@@ -1222,20 +1154,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * @param executorServiceManager the custom manager
      */
     void setExecutorServiceManager(ExecutorServiceManager executorServiceManager);
-
-    /**
-     * Gets the current {@link org.apache.camel.spi.ProcessorFactory}
-     *
-     * @return the factory, can be <tt>null</tt> if no custom factory has been set
-     */
-    ProcessorFactory getProcessorFactory();
-
-    /**
-     * Sets a custom {@link org.apache.camel.spi.ProcessorFactory}
-     *
-     * @param processorFactory the custom factory
-     */
-    void setProcessorFactory(ProcessorFactory processorFactory);
 
     /**
      * Gets the current {@link org.apache.camel.spi.MessageHistoryFactory}
@@ -1426,20 +1344,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     List<RoutePolicyFactory> getRoutePolicyFactories();
 
     /**
-     * Returns the JAXB Context factory used to create Models.
-     *
-     * @return the JAXB Context factory used to create Models.
-     */
-    ModelJAXBContextFactory getModelJAXBContextFactory();
-
-    /**
-     * Sets a custom JAXB Context factory to be used
-     *
-     * @param modelJAXBContextFactory a JAXB Context factory
-     */
-    void setModelJAXBContextFactory(ModelJAXBContextFactory modelJAXBContextFactory);
-
-    /**
      * Returns the {@link ReloadStrategy} if in use.
      *
      * @return the strategy, or <tt>null</tt> if none has been configured.
@@ -1480,25 +1384,5 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * Sets a custom {@link HeadersMapFactory} to be used.
      */
     void setHeadersMapFactory(HeadersMapFactory factory);
-
-    /**
-     * Gets the {@link DeferServiceFactory} to use.
-     */
-    DeferServiceFactory getDeferServiceFactory();
-
-    /**
-     * Gets the {@link AnnotationBasedProcessorFactory} to use.
-     */
-    AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory();
-
-    /**
-     * Gets the {@link BeanProxyFactory} to use.
-     */
-    BeanProxyFactory getBeanProxyFactory();
-
-    /**
-     * Gets the {@link BeanProcessorFactory} to use.
-     */
-    BeanProcessorFactory getBeanProcessorFactory();
 
 }

@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.rest.RestDefinition;
@@ -166,7 +167,7 @@ public final class RouteDefinitionHelper {
                 boolean done = false;
                 String id = null;
                 while (!done) {
-                    id = route.idOrCreate(context.getNodeIdFactory());
+                    id = route.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
                     done = !customIds.contains(id);
                 }
                 route.setId(id);
@@ -184,7 +185,7 @@ public final class RouteDefinitionHelper {
             if (rest != null && route.isRest()) {
                 VerbDefinition verb = findVerbDefinition(rest, route.getInput().getUri());
                 if (verb != null) {
-                    String id = verb.idOrCreate(context.getNodeIdFactory());
+                    String id = verb.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
                     if (!verb.getUsedForGeneratingNodeId()) {
                         id = route.getId();
                     }
@@ -448,7 +449,7 @@ public final class RouteDefinitionHelper {
             // let the route inherit the error handler builder from camel context if none already set
 
             // must clone to avoid side effects while building routes using multiple RouteBuilders
-            ErrorHandlerFactory builder = context.getErrorHandlerFactory();
+            ErrorHandlerFactory builder = context.adapt(ExtendedCamelContext.class).getErrorHandlerFactory();
             if (builder != null) {
                 if (builder instanceof ErrorHandlerBuilder) {
                     builder = ((ErrorHandlerBuilder) builder).cloneBuilder();
@@ -694,7 +695,7 @@ public final class RouteDefinitionHelper {
      */
     public static void forceAssignIds(CamelContext context, final ProcessorDefinition processor) {
         // force id on the child
-        processor.idOrCreate(context.getNodeIdFactory());
+        processor.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
 
         // if there was a custom id assigned, then make sure to support property placeholders
         if (processor.hasCustomIdAssigned()) {

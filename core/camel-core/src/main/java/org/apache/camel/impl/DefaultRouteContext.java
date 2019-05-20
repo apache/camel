@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
@@ -83,7 +84,7 @@ public class DefaultRouteContext implements RouteContext {
         this.camelContext = camelContext;
         this.route = route;
         this.from = from;
-        this.routeId = route.idOrCreate(camelContext.getNodeIdFactory());
+        this.routeId = route.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
     }
 
     public Endpoint getEndpoint() {
@@ -168,7 +169,7 @@ public class DefaultRouteContext implements RouteContext {
             Processor target = Pipeline.newInstance(getCamelContext(), eventDrivenProcessors);
 
             // force creating the route id so its known ahead of the route is started
-            String routeId = route.idOrCreate(getCamelContext().getNodeIdFactory());
+            String routeId = route.idOrCreate(getCamelContext().adapt(ExtendedCamelContext.class).getNodeIdFactory());
 
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
             CamelInternalProcessor internal = new CamelInternalProcessor(target);

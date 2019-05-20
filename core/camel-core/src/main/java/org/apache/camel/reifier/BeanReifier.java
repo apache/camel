@@ -17,6 +17,7 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -38,7 +39,7 @@ class BeanReifier extends ProcessorReifier<BeanDefinition> {
         String beanType = definition.getBeanType();
         Class<?> beanClass = definition.getBeanClass();
 
-        return camelContext.getBeanProcessorFactory().createBeanProcessor(camelContext,
+        return camelContext.adapt(ExtendedCamelContext.class).getBeanProcessorFactory().createBeanProcessor(camelContext,
                 bean, beanType, beanClass, ref, method, isCacheBean());
     }
 
