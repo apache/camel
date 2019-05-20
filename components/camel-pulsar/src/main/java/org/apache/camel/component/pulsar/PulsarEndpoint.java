@@ -28,7 +28,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 
-@UriEndpoint(scheme = "pulsar", title = "Apache Pulsar", syntax = "pulsar:persistence://tenant/namespace/topic", label = "messaging")
+@UriEndpoint(scheme = "pulsar", firstVersion = "2.24.0", title = "Apache Pulsar", syntax = "pulsar:persistence://tenant/namespace/topic", label = "messaging")
 public class PulsarEndpoint extends DefaultEndpoint {
 
     private PulsarClient pulsarClient;
