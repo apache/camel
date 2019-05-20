@@ -271,7 +271,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
         RouteDefinition route = new RouteDefinition();
         ErrorHandlerFactory handler = getErrorHandlerFactory();
         if (handler != null) {
-            route.setErrorHandlerBuilderIfNull(handler);
+            route.setErrorHandlerFactoryIfNull(handler);
         }
         return route;
     }

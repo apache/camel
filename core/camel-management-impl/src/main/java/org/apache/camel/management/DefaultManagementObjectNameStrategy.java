@@ -300,7 +300,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
 
             // it has not then its an indirection and we should do some work to lookup the real builder
             ref = builderRef.getRef();
-            ErrorHandlerFactory refBuilder = ErrorHandlerBuilderRef.lookupErrorHandlerBuilder(routeContext, builderRef.getRef(), false);
+            ErrorHandlerFactory refBuilder = ErrorHandlerBuilderRef.lookupErrorHandlerFactory(routeContext, builderRef.getRef(), false);
             if (refBuilder != null) {
                 builder = refBuilder;
             }
@@ -312,7 +312,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
                 builderRef = (ErrorHandlerBuilderRef) builder;
                 // does it refer to a non default error handler then do a 2nd lookup
                 if (!builderRef.getRef().equals(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER)) {
-                    refBuilder = ErrorHandlerBuilderRef.lookupErrorHandlerBuilder(routeContext, builderRef.getRef(), false);
+                    refBuilder = ErrorHandlerBuilderRef.lookupErrorHandlerFactory(routeContext, builderRef.getRef(), false);
                     if (refBuilder != null) {
                         ref = builderRef.getRef();
                         builder = refBuilder;

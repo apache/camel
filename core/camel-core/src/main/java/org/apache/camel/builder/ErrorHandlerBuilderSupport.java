@@ -38,11 +38,7 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
 
     public void addErrorHandlers(RouteContext routeContext, OnExceptionDefinition exception) {
         // only add if we not already have it
-        List<OnExceptionDefinition> list = onExceptions.get(routeContext);
-        if (list == null) {
-            list = new ArrayList<>();
-            onExceptions.put(routeContext, list);
-        }
+        List<OnExceptionDefinition> list = onExceptions.computeIfAbsent(routeContext, rc -> new ArrayList<>());
         if (!list.contains(exception)) {
             list.add(exception);
         }
