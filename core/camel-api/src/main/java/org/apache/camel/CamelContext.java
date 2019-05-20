@@ -463,7 +463,9 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * Returns a new {@link Map} containing all of the endpoints from the {@link org.apache.camel.spi.EndpointRegistry}
      *
      * @return map of endpoints
+     * @deprecated use {@link #getEndpointRegistry()}
      */
+    @Deprecated
     Map<String, Endpoint> getEndpointMap();
 
     /**
@@ -520,26 +522,18 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     //-----------------------------------------------------------------------
 
     /**
-     * NOTE: experimental api
+     * Sets a custom {@link RouteController} to use
      *
      * @param routeController the route controller
      */
     void setRouteController(RouteController routeController);
 
     /**
-     * NOTE: experimental api
+     * Gets the {@link RouteController}
      *
-     * @return the route controller or null if not set.
+     * @return the route controller.
      */
     RouteController getRouteController();
-
-    /**
-     * Method to signal to {@link CamelContext} that the process to initialize setup routes is in progress.
-     *
-     * @param done <tt>false</tt> to start the process, call again with <tt>true</tt> to signal its done.
-     * @see #isSetupRoutes()
-     */
-    void setupRoutes(boolean done);
 
     /**
      * Sets a custom {@link org.apache.camel.spi.RestConfiguration}
@@ -659,6 +653,14 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * @throws Exception is thrown if the route could not be shutdown for whatever reason
      */
     boolean removeRoute(String routeId) throws Exception;
+
+    /**
+     * Method to signal to {@link CamelContext} that the process to initialize setup routes is in progress.
+     *
+     * @param done <tt>false</tt> to start the process, call again with <tt>true</tt> to signal its done.
+     * @see #isSetupRoutes()
+     */
+    void setupRoutes(boolean done);
 
     /**
      * Indicates whether current thread is setting up route(s) as part of starting Camel from spring/blueprint.
@@ -802,7 +804,9 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * Gets a readonly list with the names of the languages currently registered.
      *
      * @return a readonly list with the names of the languages
+     * @deprecated not in use
      */
+    @Deprecated
     List<String> getLanguageNames();
 
     /**
@@ -1085,18 +1089,18 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     ClassResolver getClassResolver();
 
     /**
-     * Returns the package scanning class resolver
-     *
-     * @return the resolver
-     */
-    PackageScanClassResolver getPackageScanClassResolver();
-
-    /**
      * Sets the class resolver to be use
      *
      * @param resolver the resolver
      */
     void setClassResolver(ClassResolver resolver);
+
+    /**
+     * Returns the package scanning class resolver
+     *
+     * @return the resolver
+     */
+    PackageScanClassResolver getPackageScanClassResolver();
 
     /**
      * Sets the package scanning class resolver to use
