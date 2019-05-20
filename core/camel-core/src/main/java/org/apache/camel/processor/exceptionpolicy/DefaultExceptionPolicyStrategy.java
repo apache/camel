@@ -135,11 +135,11 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
             // if OnException is route scoped then the current route (Exchange) must match
             // so we will not pick an OnException from another route
             if (exchange != null && exchange.getUnitOfWork() != null && type.isRouteScoped()) {
-                RouteDefinition route = exchange.getUnitOfWork().getRouteContext() != null ? (RouteDefinition) exchange.getUnitOfWork().getRouteContext().getRoute() : null;
-                RouteDefinition typeRoute = ProcessorDefinitionHelper.getRoute(type);
-                if (route != null && typeRoute != null && route != typeRoute) {
+                String route = exchange.getUnitOfWork().getRouteContext() != null ? exchange.getUnitOfWork().getRouteContext().getRouteId() : null;
+                String typeRoute = ProcessorDefinitionHelper.getRouteId(type);
+                if (route != null && typeRoute != null && !route.equals(typeRoute)) {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("The type is scoped for route: {} however Exchange is at route: {}", typeRoute.getId(), route.getId());
+                        LOG.trace("The type is scoped for route: {} however Exchange is at route: {}", typeRoute, route);
                     }
                     continue;
                 }

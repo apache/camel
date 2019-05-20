@@ -36,7 +36,6 @@ import org.apache.camel.cluster.CamelClusterEventListener;
 import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.cluster.CamelClusterView;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 import org.apache.camel.support.EventNotifierSupport;
@@ -152,10 +151,6 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     // ****************************************************
     // life-cycle
     // ****************************************************
-
-    private RouteDefinition definition(Route route) {
-        return (RouteDefinition) route.getRouteContext().getRoute();
-    }
 
     private ServiceStatus getStatus(Route route) {
         if (camelContext != null) {

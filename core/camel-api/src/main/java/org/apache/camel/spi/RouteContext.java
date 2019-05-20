@@ -40,13 +40,6 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
     String getRouteId();
 
     /**
-     * Gets the from type
-     *
-     * @return the from type
-     */
-    NamedNode getFrom();
-
-    /**
      * Get the route type
      *
      * @return the route type
@@ -162,6 +155,8 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
      * @param value the flag
      */
     void setIsRouteAdded(boolean value);
+
+    void setEndpoint(Endpoint endpoint);
 
     /**
      * Returns the isRouteAdded flag

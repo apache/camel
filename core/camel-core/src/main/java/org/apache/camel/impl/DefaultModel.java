@@ -46,6 +46,7 @@ import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.reifier.RouteReifier;
+import org.apache.camel.spi.RouteContext;
 
 public class DefaultModel implements Model {
 
@@ -274,6 +275,11 @@ public class DefaultModel implements Model {
     }
 
     public void startRoute(RouteDefinition routeDefinition) throws Exception {
+        prepare(routeDefinition);
+        start(routeDefinition);
+    }
+
+    protected void prepare(RouteDefinition routeDefinition) throws Exception {
         // assign ids to the routes and validate that the id's is all unique
         RouteDefinitionHelper.forceAssignIds(camelContext, routeDefinitions);
         String duplicate = RouteDefinitionHelper.validateUniqueIds(routeDefinition, routeDefinitions);
@@ -286,14 +292,16 @@ public class DefaultModel implements Model {
             RouteDefinitionHelper.prepareRoute(camelContext, routeDefinition);
             routeDefinition.markPrepared();
         }
+    }
 
+    protected void start(RouteDefinition routeDefinition) throws Exception {
         // indicate we are staring the route using this thread so
         // we are able to query this if needed
         AbstractCamelContext mcc = camelContext.adapt(AbstractCamelContext.class);
         mcc.setStartingRoutes(true);
         try {
-
-            Route route = new RouteReifier(routeDefinition).createRoute(mcc);
+            RouteContext routeContext = new DefaultRouteContext(camelContext, routeDefinition);
+            Route route = new RouteReifier(routeDefinition).createRoute(camelContext, routeContext);
             RouteService routeService = new RouteService(route);
             mcc.startRouteService(routeService, true);
         } finally {
