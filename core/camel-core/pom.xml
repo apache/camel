@@ -46,12 +46,12 @@
 
     <dependencies>
 
+        <!-- camel annotations -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>spi-annotations</artifactId>
             <optional>true</optional>
         </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>meta-annotations</artifactId>
@@ -61,37 +61,31 @@
         <!-- required dependencies by camel-core -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-util</artifactId>
-        </dependency>
-
-        <!-- required dependencies by camel-core -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-api</artifactId>
         </dependency>
-
-        <!-- required dependencies by camel-core -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-management-api</artifactId>
-        </dependency>
-
-        <!-- required dependencies by camel-core -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-base</artifactId>
         </dependency>
-
-        <!-- required dependencies by camel-core -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jaxp</artifactId>
         </dependency>
-
-        <!-- required dependencies by camel-core -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-management-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util-json</artifactId>
         </dependency>
 
         <!-- core components -->
@@ -192,13 +186,7 @@
             <artifactId>camel-xslt</artifactId>
         </dependency>
 
-        <!-- required dependencies by camel-core -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-util-json</artifactId>
-        </dependency>
-
-        <!-- required dependencies by camel-core -->
+        <!-- required logging api dependency by camel-core -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -268,8 +256,13 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-        <!-- logging -->
+        <!-- logging for testing -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -286,12 +279,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <!-- for json tests -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -304,7 +291,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- validator -->
+        <!-- validator testing -->
         <dependency>
             <groupId>xml-resolver</groupId>
             <artifactId>xml-resolver</artifactId>
@@ -498,7 +485,7 @@
                         </goals>
                         <phase>prepare-package</phase>
                         <configuration>
-                            <outputDirectory>${basedir}/../../components/camel-jaxp/src/main/schema</outputDirectory>
+                            <outputDirectory>${basedir}/../camel-jaxp/src/main/schema</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${basedir}/target/classes/org/apache/camel/model/language</directory>
