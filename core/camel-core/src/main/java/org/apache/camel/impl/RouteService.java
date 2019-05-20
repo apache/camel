@@ -88,11 +88,12 @@ public class RouteService extends BaseRouteService {
      * Gather all other kind of route scoped services from the given route, except error handler
      */
     protected void doGetRouteScopedServices(List<Service> services) {
+
         for (ProcessorDefinition<?> output : routeDefinition.getOutputs()) {
             if (output instanceof OnExceptionDefinition) {
                 OnExceptionDefinition onExceptionDefinition = (OnExceptionDefinition) output;
                 if (onExceptionDefinition.isRouteScoped()) {
-                    Processor errorHandler = onExceptionDefinition.getErrorHandler(getId());
+                    Processor errorHandler = getRouteContext().getOnException(onExceptionDefinition.getId());
                     if (errorHandler instanceof Service) {
                         services.add((Service) errorHandler);
                     }
@@ -100,7 +101,7 @@ public class RouteService extends BaseRouteService {
             } else if (output instanceof OnCompletionDefinition) {
                 OnCompletionDefinition onCompletionDefinition = (OnCompletionDefinition) output;
                 if (onCompletionDefinition.isRouteScoped()) {
-                    Processor onCompletionProcessor = onCompletionDefinition.getOnCompletion(getId());
+                    Processor onCompletionProcessor = getRouteContext().getOnCompletion(onCompletionDefinition.getId());
                     if (onCompletionProcessor instanceof Service) {
                         services.add((Service) onCompletionProcessor);
                     }

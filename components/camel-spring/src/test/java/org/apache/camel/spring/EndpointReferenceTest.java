@@ -74,7 +74,7 @@ public class EndpointReferenceTest extends SpringTestSupport {
     @Test
     public void testReferenceEndpointFromOtherCamelContext() throws Exception {
         CamelContext context = applicationContext.getBean("camel2", CamelContext.class);
-        RouteContext routeContext = new DefaultRouteContext(context, new RouteDefinition("temporary"), null);
+        RouteContext routeContext = new DefaultRouteContext(context, new RouteDefinition("temporary"));
         try {
             routeContext.resolveEndpoint(null, "endpoint1");
             fail("Should have thrown exception");

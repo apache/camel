@@ -60,15 +60,13 @@ class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition> {
             routeContext.setAllowUseOriginalMessage(true);
         }
 
-        String routeId = routeContext.getRouteId();
-
         Processor childProcessor = this.createChildProcessor(routeContext, true);
 
         // wrap the on completion route in a unit of work processor
         CamelInternalProcessor internal = new CamelInternalProcessor(childProcessor);
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
 
-        definition.setOnCompletion(routeId, internal);
+        routeContext.setOnCompletion(getId(definition, routeContext), internal);
 
         Predicate when = null;
         if (definition.getOnWhen() != null) {

@@ -17,11 +17,8 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -33,7 +30,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 
@@ -64,9 +60,6 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     private ExecutorService executorService;
     @XmlTransient
     private Boolean routeScoped;
-    // TODO: in Camel 3.0 the OnCompletionDefinition should not contain state and OnCompletion processors
-    @XmlTransient
-    private final Map<String, Processor> onCompletions = new HashMap<>();
 
     public OnCompletionDefinition() {
     }
@@ -78,18 +71,6 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
 
     public Boolean getRouteScoped() {
         return routeScoped;
-    }
-
-    public Processor getOnCompletion(String routeId) {
-        return onCompletions.get(routeId);
-    }
-
-    public Collection<Processor> getOnCompletions() {
-        return onCompletions.values();
-    }
-
-    public void setOnCompletion(String routeId, Processor processor) {
-        onCompletions.put(routeId, processor);
     }
 
     @Override

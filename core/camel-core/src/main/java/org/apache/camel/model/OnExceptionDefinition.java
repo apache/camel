@@ -17,10 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -83,9 +80,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     private Processor onExceptionOccurred;
     @XmlTransient
     private Boolean routeScoped;
-    // TODO: in Camel 3.0 the OnExceptionDefinition should not contain state and ErrorHandler processors
-    @XmlTransient
-    private final Map<String, Processor> errorHandlers = new HashMap<>();
 
     public OnExceptionDefinition() {
     }
@@ -731,18 +725,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      */
     public void setExceptions(List<String> exceptions) {
         this.exceptions = exceptions;
-    }
-
-    public Processor getErrorHandler(String routeId) {
-        return errorHandlers.get(routeId);
-    }
-    
-    public Collection<Processor> getErrorHandlers() {
-        return errorHandlers.values();
-    }
-
-    public void setErrorHandler(String routeId, Processor errorHandler) {
-        errorHandlers.put(routeId, errorHandler);
     }
 
     public RedeliveryPolicyDefinition getRedeliveryPolicyType() {

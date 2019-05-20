@@ -199,18 +199,6 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
 
     Integer getStartupOrder();
 
-    /**
-     * A private counter that increments, is used to as book keeping
-     * when building a route based on the model
-     * <p/>
-     * We need this special book keeping be able to assign the correct
-     * {@link org.apache.camel.model.ProcessorDefinition} to the {@link org.apache.camel.Channel}
-     *
-     * @param node the current node
-     * @return the current count
-     */
-    int getAndIncrement(NamedNode node);
-
     ErrorHandlerFactory getErrorHandlerFactory();
 
     /**
@@ -248,5 +236,13 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
     @Experimental
     default void setRouteController(RouteController controller) {
     }
+
+    Processor getOnCompletion(String onCompletionId);
+
+    void setOnCompletion(String onCompletionId, Processor processor);
+
+    Processor getOnException(String onExceptionId);
+
+    void setOnException(String onExceptionId, Processor processor);
 
 }
