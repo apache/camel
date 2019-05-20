@@ -36,7 +36,9 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.DefaultBacklogTracerEventMessage;
+import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.spi.ManagementInterceptStrategy.InstrumentationProcessor;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
@@ -110,7 +112,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
      */
     public <T> T getAdvice(Class<T> type) {
         for (CamelInternalProcessorAdvice task : advices) {
-            Object advice = CamelInternalProcessorAdvice.unwrap(task);
+            Object advice = unwrap(task);
             if (type.isInstance(advice)) {
                 return type.cast(advice);
             }
@@ -735,4 +737,53 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             // noop
         }
     }
+
+    /**
+     * Wrap an InstrumentationProcessor into a CamelInternalProcessorAdvice
+     */
+    public static <T> CamelInternalProcessorAdvice<T> wrap(InstrumentationProcessor<T> instrumentationProcessor) {
+
+        if (instrumentationProcessor instanceof CamelInternalProcessor) {
+            return (CamelInternalProcessorAdvice<T>) instrumentationProcessor;
+        } else {
+            return new CamelInternalProcessorAdviceWrapper<T>(instrumentationProcessor);
+        }
+    }
+
+    public static Object unwrap(CamelInternalProcessorAdvice<?> advice) {
+        if (advice instanceof CamelInternalProcessorAdviceWrapper) {
+            return ((CamelInternalProcessorAdviceWrapper) advice).unwrap();
+        } else {
+            return advice;
+        }
+    }
+
+    static class CamelInternalProcessorAdviceWrapper<T> implements CamelInternalProcessorAdvice<T>, Ordered {
+
+        final InstrumentationProcessor<T> instrumentationProcessor;
+
+        public CamelInternalProcessorAdviceWrapper(InstrumentationProcessor<T> instrumentationProcessor) {
+            this.instrumentationProcessor = instrumentationProcessor;
+        }
+
+        InstrumentationProcessor<T> unwrap() {
+            return instrumentationProcessor;
+        }
+
+        @Override
+        public int getOrder() {
+            return instrumentationProcessor.getOrder();
+        }
+
+        @Override
+        public T before(Exchange exchange) throws Exception {
+            return instrumentationProcessor.before(exchange);
+        }
+
+        @Override
+        public void after(Exchange exchange, T data) throws Exception {
+            instrumentationProcessor.after(exchange, data);
+        }
+    }
+
 }

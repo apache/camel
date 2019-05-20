@@ -27,6 +27,7 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.AdviceWithTask;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,9 +35,13 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.processor.interceptor.HandleFault;
+import org.apache.camel.reifier.rest.RestBindingReifier;
+import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
@@ -191,6 +196,9 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
     // Implementation methods
     // -------------------------------------------------------------------------
     protected Route doCreateRoute(CamelContext camelContext, RouteContext routeContext) throws Exception {
+        // configure error handler
+        routeContext.setErrorHandlerFactory(definition.getErrorHandlerFactory());
+
         // configure tracing
         if (definition.getTrace() != null) {
             Boolean isTrace = CamelContextHelper.parseBoolean(camelContext, definition.getTrace());
@@ -297,6 +305,11 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             routeContext.setAutoStartup(isAutoStartup);
         }
 
+        // configure startup order
+        if (definition.getStartupOrder() != null) {
+            routeContext.setStartupOrder(definition.getStartupOrder());
+        }
+
         // configure shutdown
         if (definition.getShutdownRoute() != null) {
             log.debug("Using ShutdownRoute {} on route: {}", definition.getShutdownRoute(), definition.getId());
@@ -336,6 +349,70 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
                 ProcessorReifier.reifier(output).addRoutes(routeContext);
             } catch (Exception e) {
                 throw new FailedToCreateRouteException(definition.getId(), definition.toString(), output.toString(), e);
+            }
+        }
+
+        if (definition.getRestBindingDefinition() != null) {
+            try {
+                routeContext.addAdvice(new RestBindingReifier(definition.getRestBindingDefinition()).createRestBindingAdvice(routeContext));
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
+        }
+
+        // wrap in contract
+        if (definition.getInputType() != null || definition.getOutputType() != null) {
+            Contract contract = new Contract();
+            if (definition.getInputType() != null) {
+                contract.setInputType(definition.getInputType().getUrn());
+                contract.setValidateInput(definition.getInputType().isValidate());
+            }
+            if (definition.getOutputType() != null) {
+                contract.setOutputType(definition.getOutputType().getUrn());
+                contract.setValidateOutput(definition.getOutputType().isValidate());
+            }
+            routeContext.addAdvice(new ContractAdvice(contract));
+            // make sure to enable data type as its in use when using input/output types on routes
+            camelContext.setUseDataType(true);
+        }
+
+        // Set route properties
+        routeContext.addProperty(Route.ID_PROPERTY, definition.getId());
+        routeContext.addProperty(Route.CUSTOM_ID_PROPERTY, definition.hasCustomIdAssigned() ? "true" : "false");
+        routeContext.addProperty(Route.PARENT_PROPERTY, Integer.toHexString(definition.hashCode()));
+        routeContext.addProperty(Route.DESCRIPTION_PROPERTY, definition.getDescriptionText());
+        if (definition.getGroup() != null) {
+            routeContext.addProperty(Route.GROUP_PROPERTY, definition.getGroup());
+        }
+        String rest = Boolean.toString(definition.isRest() != null && definition.isRest());
+        routeContext.addProperty(Route.REST_PROPERTY, rest);
+
+        List<PropertyDefinition> properties = definition.getRouteProperties();
+        if (properties != null) {
+            final String[] reservedProperties = new String[] {
+                    Route.ID_PROPERTY,
+                    Route.CUSTOM_ID_PROPERTY,
+                    Route.PARENT_PROPERTY,
+                    Route.DESCRIPTION_PROPERTY,
+                    Route.GROUP_PROPERTY,
+                    Route.REST_PROPERTY
+            };
+
+            for (PropertyDefinition prop : properties) {
+                try {
+                    final String key = CamelContextHelper.parseText(camelContext, prop.getKey());
+                    final String val = CamelContextHelper.parseText(camelContext, prop.getValue());
+
+                    for (String property : reservedProperties) {
+                        if (property.equalsIgnoreCase(key)) {
+                            throw new IllegalArgumentException("Cannot set route property " + property + " as it is a reserved property");
+                        }
+                    }
+
+                    routeContext.addProperty(key, val);
+                } catch (Exception e) {
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                }
             }
         }
 
