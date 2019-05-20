@@ -28,8 +28,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.PropertyInject;
-import org.apache.camel.impl.CamelPostProcessorHelper;
-import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
+import org.apache.camel.impl.engine.CamelPostProcessorHelper;
+import org.apache.camel.impl.engine.DefaultCamelBeanPostProcessor;
 import org.apache.camel.util.ReflectionHelper;
 
 import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByType;

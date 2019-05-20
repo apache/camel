@@ -30,6 +30,7 @@ import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;

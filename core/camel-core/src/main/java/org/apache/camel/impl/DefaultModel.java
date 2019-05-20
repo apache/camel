@@ -31,6 +31,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Route;
 import org.apache.camel.impl.engine.AbstractCamelContext;
+import org.apache.camel.impl.engine.DefaultRouteContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
@@ -300,7 +301,8 @@ public class DefaultModel implements Model {
         AbstractCamelContext mcc = camelContext.adapt(AbstractCamelContext.class);
         mcc.setStartingRoutes(true);
         try {
-            RouteContext routeContext = new DefaultRouteContext(camelContext, routeDefinition);
+            String id = routeDefinition.idOrCreate(camelContext.getNodeIdFactory());
+            RouteContext routeContext = new DefaultRouteContext(camelContext, routeDefinition, id);
             Route route = new RouteReifier(routeDefinition).createRoute(camelContext, routeContext);
             RouteService routeService = new RouteService(route);
             mcc.startRouteService(routeService, true);

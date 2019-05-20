@@ -63,7 +63,7 @@ import org.apache.camel.blueprint.CamelEndpointFactoryBean;
 import org.apache.camel.blueprint.CamelRestContextFactoryBean;
 import org.apache.camel.blueprint.CamelRouteContextFactoryBean;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
-import org.apache.camel.impl.CamelPostProcessorHelper;
+import org.apache.camel.impl.engine.CamelPostProcessorHelper;
 import org.apache.camel.impl.engine.DefaultCamelContextNameStrategy;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.CatchDefinition;

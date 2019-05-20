@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.impl.engine;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -36,7 +36,7 @@ public class CustomThreadPoolFactoryTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        DefaultExecutorServiceManager executorServiceManager = new DefaultExecutorServiceManager(context);
+        BaseExecutorServiceManager executorServiceManager = new BaseExecutorServiceManager(context);
         executorServiceManager.setThreadPoolFactory(factory);
         context.setExecutorServiceManager(executorServiceManager);
         return context;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +24,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
@@ -32,15 +31,9 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
-import org.apache.camel.impl.engine.EventDrivenConsumerRoute;
-import org.apache.camel.model.PropertyDefinition;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
-import org.apache.camel.processor.CamelInternalProcessorAdvice;
-import org.apache.camel.processor.ContractAdvice;
+import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.processor.Pipeline;
-import org.apache.camel.reifier.rest.RestBindingReifier;
-import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -53,7 +46,7 @@ import org.apache.camel.support.CamelContextHelper;
  * The context used to activate new routing rules
  */
 public class DefaultRouteContext implements RouteContext {
-    private final RouteDefinition route;
+    private final NamedNode route;
     private final String routeId;
     private Route runtimeRoute;
     private Endpoint endpoint;
@@ -77,11 +70,15 @@ public class DefaultRouteContext implements RouteContext {
     private RouteController routeController;
     private final Map<String, Processor> onCompletions = new HashMap<>();
     private final Map<String, Processor> onExceptions = new HashMap<>();
+    private final List<CamelInternalProcessorAdvice<?>> advices = new ArrayList<>();
+    private final Map<String, Object> properties = new HashMap<>();
+    private ErrorHandlerFactory errorHandlerFactory;
+    private Integer startupOrder;
 
-    public DefaultRouteContext(CamelContext camelContext, RouteDefinition route) {
+    public DefaultRouteContext(CamelContext camelContext, NamedNode route, String routeId) {
         this.camelContext = camelContext;
         this.route = route;
-        this.routeId = route.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+        this.routeId = routeId;
     }
 
     public Endpoint getEndpoint() {
@@ -188,79 +185,18 @@ public class DefaultRouteContext implements RouteContext {
 
             // wrap in JMX instrumentation processor that is used for performance stats
             if (managementInterceptStrategy != null) {
-                internal.addAdvice(CamelInternalProcessorAdvice.wrap(managementInterceptStrategy.createProcessor("route")));
+                internal.addAdvice(CamelInternalProcessor.wrap(managementInterceptStrategy.createProcessor("route")));
             }
 
             // wrap in route lifecycle
             internal.addAdvice(new CamelInternalProcessor.RouteLifecycleAdvice());
 
             // wrap in REST binding
-            if (route.getRestBindingDefinition() != null) {
-                try {
-                    internal.addAdvice(new RestBindingReifier(route.getRestBindingDefinition()).createRestBindingAdvice(this));
-                } catch (Exception e) {
-                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                }
-            }
-
-            // wrap in contract
-            if (route.getInputType() != null || route.getOutputType() != null) {
-                Contract contract = new Contract();
-                if (route.getInputType() != null) {
-                    contract.setInputType(route.getInputType().getUrn());
-                    contract.setValidateInput(route.getInputType().isValidate());
-                }
-                if (route.getOutputType() != null) {
-                    contract.setOutputType(route.getOutputType().getUrn());
-                    contract.setValidateOutput(route.getOutputType().isValidate());
-                }
-                internal.addAdvice(new ContractAdvice(contract));
-                // make sure to enable data type as its in use when using input/output types on routes
-                camelContext.setUseDataType(true);
-            }
+            advices.forEach(internal::addAdvice);
 
             // and create the route that wraps the UoW
             Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), internal);
-            edcr.getProperties().put(Route.ID_PROPERTY, routeId);
-            edcr.getProperties().put(Route.CUSTOM_ID_PROPERTY, route.hasCustomIdAssigned() ? "true" : "false");
-            edcr.getProperties().put(Route.PARENT_PROPERTY, Integer.toHexString(route.hashCode()));
-            edcr.getProperties().put(Route.DESCRIPTION_PROPERTY, route.getDescriptionText());
-            if (route.getGroup() != null) {
-                edcr.getProperties().put(Route.GROUP_PROPERTY, route.getGroup());
-            }
-            String rest = "false";
-            if (route.isRest() != null && route.isRest()) {
-                rest = "true";
-            }
-            edcr.getProperties().put(Route.REST_PROPERTY, rest);
-
-            List<PropertyDefinition> properties = route.getRouteProperties();
-            if (properties != null) {
-                final String[] reservedProperties = new String[] {
-                    Route.ID_PROPERTY,
-                    Route.PARENT_PROPERTY,
-                    Route.GROUP_PROPERTY,
-                    Route.REST_PROPERTY,
-                    Route.DESCRIPTION_PROPERTY
-                };
-
-                for (PropertyDefinition prop : properties) {
-                    try {
-                        final String key = CamelContextHelper.parseText(camelContext, prop.getKey());
-                        final String val = CamelContextHelper.parseText(camelContext, prop.getValue());
-
-                        for (String property : reservedProperties) {
-                            if (property.equalsIgnoreCase(key)) {
-                                throw new IllegalArgumentException("Cannot set route property " + property + " as it is a reserved property");
-                            }
-                        }
-
-                        edcr.getProperties().put(key, val);
-                    } catch (Exception e) {
-                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                    }
-                }
-            }
+            edcr.getProperties().putAll(properties);
 
             // after the route is created then set the route on the policy processor so we get hold of it
             CamelInternalProcessor.RoutePolicyAdvice task = internal.getAdvice(CamelInternalProcessor.RoutePolicyAdvice.class);
@@ -419,14 +355,22 @@ public class DefaultRouteContext implements RouteContext {
         return true;
     }
 
+    public void setStartupOrder(Integer startupOrder) {
+        this.startupOrder = startupOrder;
+    }
+
     @Override
     public Integer getStartupOrder() {
-        return route.getStartupOrder();
+        return startupOrder;
+    }
+
+    public void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory) {
+        this.errorHandlerFactory = errorHandlerFactory;
     }
 
     @Override
     public ErrorHandlerFactory getErrorHandlerFactory() {
-        return route.getErrorHandlerFactory();
+        return errorHandlerFactory;
     }
 
     public void setShutdownRoute(ShutdownRoute shutdownRoute) {
@@ -512,4 +456,13 @@ public class DefaultRouteContext implements RouteContext {
     public void setOnException(String onExceptionId, Processor processor) {
         onExceptions.put(onExceptionId, processor);
     }
+
+    public void addAdvice(CamelInternalProcessorAdvice<?> advice) {
+        advices.add(advice);
+    }
+
+    public void addProperty(String key, Object value) {
+        properties.put(key, value);
+    }
+
 }

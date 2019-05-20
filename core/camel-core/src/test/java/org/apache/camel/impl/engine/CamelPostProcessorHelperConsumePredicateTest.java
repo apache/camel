@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.impl.engine;
 
 import java.lang.reflect.Method;
 
@@ -22,7 +22,7 @@ import org.apache.camel.Consume;
 import org.apache.camel.ContextTestSupport;
 import org.junit.Test;
 
-public class CamelPostProcessorHelperSedaConsumePredicateTest extends ContextTestSupport {
+public class CamelPostProcessorHelperConsumePredicateTest extends ContextTestSupport {
 
     @Test
     public void testConsumePredicate() throws Exception {
@@ -38,11 +38,11 @@ public class CamelPostProcessorHelperSedaConsumePredicateTest extends ContextTes
         getMockEndpoint("mock:low").expectedBodiesReceived("17", "89", "39");
         getMockEndpoint("mock:high").expectedBodiesReceived("219", "112");
 
-        template.sendBody("seda:foo", "17");
-        template.sendBody("seda:foo", "219");
-        template.sendBody("seda:foo", "89");
-        template.sendBody("seda:foo", "112");
-        template.sendBody("seda:foo", "39");
+        template.sendBody("direct:foo", "17");
+        template.sendBody("direct:foo", "219");
+        template.sendBody("direct:foo", "89");
+        template.sendBody("direct:foo", "112");
+        template.sendBody("direct:foo", "39");
 
         assertMockEndpointsSatisfied();
     }
@@ -61,22 +61,22 @@ public class CamelPostProcessorHelperSedaConsumePredicateTest extends ContextTes
         getMockEndpoint("mock:low").expectedBodiesReceived("17");
         getMockEndpoint("mock:high").expectedBodiesReceived("112");
 
-        template.sendBody("seda:foo", "17");
+        template.sendBody("direct:foo", "17");
         // should be dropped as it does not match any predicates
-        template.sendBody("seda:foo", "-1");
-        template.sendBody("seda:foo", "112");
+        template.sendBody("direct:foo", "-1");
+        template.sendBody("direct:foo", "112");
 
         assertMockEndpointsSatisfied();
     }
 
     public class MyConsumeBean {
 
-        @Consume(value = "seda:foo", predicate = "${body} >= 0 && ${body} < 100")
+        @Consume(value = "direct:foo", predicate = "${body} >= 0 && ${body} < 100")
         public void low(String body) {
             template.sendBody("mock:low", body);
         }
 
-        @Consume(value = "seda:foo", predicate = "${body} >= 100")
+        @Consume(value = "direct:foo", predicate = "${body} >= 100")
         public void high(String body) {
             template.sendBody("mock:high", body);
         }
