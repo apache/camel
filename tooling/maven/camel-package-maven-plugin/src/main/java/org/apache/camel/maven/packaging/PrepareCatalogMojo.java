@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -1060,6 +1061,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
         if (coreDir != null && coreDir.isDirectory()) {
             File target = new File(coreDir, "src/main/docs");
             findAsciiDocFilesRecursive(target, adocFiles, new CamelAsciiDocFileFilter());
+            // also look in camel-jaxp
+            target = new File(coreDir, "../camel-jaxp/src/main/docs");
+            findAsciiDocFilesRecursive(target, adocFiles, new CamelAsciiDocFileFilter());
         }
 
         getLog().info("Found " + adocFiles.size() + " ascii document files");
@@ -1105,7 +1109,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
                 try {
                     // now fix the html file because we don't want to include certain lines
-                    List<String> lines = FileUtils.readLines(toHtml);
+                    List<String> lines = FileUtils.readLines(toHtml, Charset.defaultCharset());
                     List<String> output = new ArrayList<>();
                     for (String line : lines) {
                         // skip these lines
