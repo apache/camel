@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.language.simple.types.BinaryOperatorType;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
@@ -33,6 +32,7 @@ import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.builder.PredicateBuilder;
+import org.apache.camel.support.builder.ValueBuilder;
 
 /**
  * Represents a binary expression in the AST.
