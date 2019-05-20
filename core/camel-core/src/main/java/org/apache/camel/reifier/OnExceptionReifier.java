@@ -24,7 +24,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.FatalFallbackErrorHandler;
 import org.apache.camel.spi.ClassResolver;
@@ -68,8 +67,8 @@ class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> {
         if (child != null) {
             // wrap in our special safe fallback error handler if OnException have child output
             Processor errorHandler = new FatalFallbackErrorHandler(child);
-            String id = routeContext.getRouteId();
-            definition.setErrorHandler(id, errorHandler);
+            String id = getId(definition, routeContext);
+            routeContext.setOnException(id, errorHandler);
         }
         // lookup the error handler builder
         ErrorHandlerBuilder builder = (ErrorHandlerBuilder) routeContext.getErrorHandlerFactory();

@@ -676,13 +676,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 Processor processor = null;
                 UnitOfWork uow = exchange.getUnitOfWork();
                 if (uow != null && uow.getRouteContext() != null) {
-                    String routeId = uow.getRouteContext().getRouteId();
-                    processor = exceptionPolicy.getErrorHandler(routeId);
-                } else if (!exceptionPolicy.getErrorHandlers().isEmpty()) {
+                    processor = uow.getRouteContext().getOnException(exceptionPolicy.getId());
+                } else {
                     // note this should really not happen, but we have this code as a fail safe
                     // to be backwards compatible with the old behavior
                     log.warn("Cannot determine current route from Exchange with id: {}, will fallback and use first error handler.", exchange.getExchangeId());
-                    processor = exceptionPolicy.getErrorHandlers().iterator().next();
                 }
                 if (processor != null) {
                     failureProcessor = processor;

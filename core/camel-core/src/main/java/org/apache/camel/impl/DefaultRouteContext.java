@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -54,7 +53,6 @@ import org.apache.camel.support.CamelContextHelper;
  * The context used to activate new routing rules
  */
 public class DefaultRouteContext implements RouteContext {
-    private final Map<NamedNode, AtomicInteger> nodeIndex = new HashMap<>();
     private final RouteDefinition route;
     private final String routeId;
     private Route runtimeRoute;
@@ -77,6 +75,8 @@ public class DefaultRouteContext implements RouteContext {
     private ShutdownRunningTask shutdownRunningTask;
     private RouteError routeError;
     private RouteController routeController;
+    private final Map<String, Processor> onCompletions = new HashMap<>();
+    private final Map<String, Processor> onExceptions = new HashMap<>();
 
     public DefaultRouteContext(CamelContext camelContext, RouteDefinition route) {
         this.camelContext = camelContext;
@@ -464,11 +464,6 @@ public class DefaultRouteContext implements RouteContext {
             return getCamelContext().getShutdownRunningTask();
         }
     }
-    
-    public int getAndIncrement(NamedNode node) {
-        AtomicInteger count = nodeIndex.computeIfAbsent(node, n -> new AtomicInteger());
-        return count.getAndIncrement();
-    }
 
     public void setRoutePolicyList(List<RoutePolicy> routePolicyList) {
         this.routePolicyList = routePolicyList;
@@ -496,5 +491,25 @@ public class DefaultRouteContext implements RouteContext {
     @Override
     public void setRouteController(RouteController routeController) {
         this.routeController = routeController;
+    }
+
+    @Override
+    public Processor getOnCompletion(String onCompletionId) {
+        return onCompletions.get(onCompletionId);
+    }
+
+    @Override
+    public void setOnCompletion(String onCompletionId, Processor processor) {
+        onCompletions.put(onCompletionId, processor);
+    }
+
+    @Override
+    public Processor getOnException(String onExceptionId) {
+        return onExceptions.get(onExceptionId);
+    }
+
+    @Override
+    public void setOnException(String onExceptionId, Processor processor) {
+        onExceptions.put(onExceptionId, processor);
     }
 }

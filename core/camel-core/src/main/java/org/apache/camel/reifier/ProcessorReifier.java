@@ -55,6 +55,7 @@ import org.apache.camel.model.MulticastDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.OnFallbackDefinition;
+import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.OtherwiseDefinition;
 import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.PolicyDefinition;
@@ -105,6 +106,7 @@ import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.RouteContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -450,7 +452,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
 
             // inject id
             if (processor instanceof IdAware) {
-                String id = output.idOrCreate(routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getNodeIdFactory());
+                String id = getId(output, routeContext);
                 ((IdAware) processor).setId(id);
             }
 
@@ -541,7 +543,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
 
         // inject id
         if (processor instanceof IdAware) {
-            String id = definition.idOrCreate(routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getNodeIdFactory());
+            String id = getId(definition, routeContext);
             ((IdAware) processor).setId(id);
         }
 
@@ -568,5 +570,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
         // noop
     }
 
-
+    protected String getId(OptionalIdentifiedDefinition<?> def, RouteContext routeContext) {
+        return def.idOrCreate(routeContext.getCamelContext()
+                .adapt(ExtendedCamelContext.class).getNodeIdFactory());
+    }
 }
