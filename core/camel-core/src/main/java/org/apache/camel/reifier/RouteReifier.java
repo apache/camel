@@ -22,18 +22,14 @@ import java.util.StringTokenizer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.StatefulService;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.AdviceWithTask;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultRouteContext;
-import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
@@ -88,15 +84,9 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         throw new UnsupportedOperationException("Not implemented for RouteDefinition");
     }
 
-    public Route createRoute(CamelContext camelContext) throws Exception {
-        @SuppressWarnings("deprecation")
-        ErrorHandlerFactory handler = camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory();
-        if (handler != null) {
-            definition.setErrorHandlerBuilderIfNull(handler);
-        }
-
+    public Route createRoute(CamelContext camelContext, RouteContext routeContext) {
         try {
-            return createRoute(camelContext, definition.getInput());
+            return doCreateRoute(camelContext, routeContext);
         } catch (FailedToCreateRouteException e) {
             throw e;
         } catch (Exception e) {
@@ -192,20 +182,15 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         log.info("Adviced route before/after as XML:\n{}\n{}", beforeAsXml, afterAsXml);
 
         // If the camel context is started then we start the route
-        if (camelContext instanceof StatefulService) {
-            StatefulService service = (StatefulService) camelContext;
-            if (service.isStarted()) {
-                camelContext.getExtension(Model.class).addRouteDefinition(merged);
-            }
+        if (camelContext.isStarted()) {
+            camelContext.getExtension(Model.class).addRouteDefinition(merged);
         }
         return merged;
     }
 
     // Implementation methods
     // -------------------------------------------------------------------------
-    protected Route createRoute(CamelContext camelContext, FromDefinition fromType) throws Exception {
-        DefaultRouteContext routeContext = new DefaultRouteContext(camelContext, definition, fromType);
-
+    protected Route doCreateRoute(CamelContext camelContext, RouteContext routeContext) throws Exception {
         // configure tracing
         if (definition.getTrace() != null) {
             Boolean isTrace = CamelContextHelper.parseBoolean(camelContext, definition.getTrace());
@@ -324,12 +309,14 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // should inherit the intercept strategies we have defined
         routeContext.setInterceptStrategies(definition.getInterceptStrategies());
+
         // resolve endpoint
-        Endpoint endpoint = routeContext.getFrom().getEndpoint();
+        Endpoint endpoint = definition.getInput().getEndpoint();
         if (endpoint == null) {
-            endpoint = routeContext.resolveEndpoint(routeContext.getFrom().getUri());
+            endpoint = routeContext.resolveEndpoint(definition.getInput().getUri());
         }
         routeContext.setEndpoint(endpoint);
+
         // notify route context created
         for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
             strategy.onRouteContextCreate(routeContext);
@@ -337,11 +324,10 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // validate route has output processors
         if (!ProcessorDefinitionHelper.hasOutputs(definition.getOutputs(), true)) {
-            RouteDefinition route = (RouteDefinition) routeContext.getRoute();
-            String at = fromType.toString();
-            Exception cause = new IllegalArgumentException("Route " + route.getId() + " has no output processors."
+            String at = definition.getInput().toString();
+            Exception cause = new IllegalArgumentException("Route " + definition.getId() + " has no output processors."
                     + " You need to add outputs to the route such as to(\"log:foo\").");
-            throw new FailedToCreateRouteException(route.getId(), route.toString(), at, cause);
+            throw new FailedToCreateRouteException(definition.getId(), definition.toString(), at, cause);
         }
 
         List<ProcessorDefinition<?>> list = new ArrayList<>(definition.getOutputs());
@@ -349,8 +335,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             try {
                 ProcessorReifier.reifier(output).addRoutes(routeContext);
             } catch (Exception e) {
-                RouteDefinition route = (RouteDefinition) routeContext.getRoute();
-                throw new FailedToCreateRouteException(route.getId(), route.toString(), output.toString(), e);
+                throw new FailedToCreateRouteException(definition.getId(), definition.toString(), output.toString(), e);
             }
         }
 

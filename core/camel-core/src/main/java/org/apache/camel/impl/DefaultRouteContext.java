@@ -34,7 +34,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.impl.engine.EventDrivenConsumerRoute;
-import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
@@ -58,7 +57,6 @@ public class DefaultRouteContext implements RouteContext {
     private final Map<NamedNode, AtomicInteger> nodeIndex = new HashMap<>();
     private final RouteDefinition route;
     private final String routeId;
-    private FromDefinition from;
     private Route runtimeRoute;
     private Endpoint endpoint;
     private final List<Processor> eventDrivenProcessors = new ArrayList<>();
@@ -80,10 +78,9 @@ public class DefaultRouteContext implements RouteContext {
     private RouteError routeError;
     private RouteController routeController;
 
-    public DefaultRouteContext(CamelContext camelContext, RouteDefinition route, FromDefinition from) {
+    public DefaultRouteContext(CamelContext camelContext, RouteDefinition route) {
         this.camelContext = camelContext;
         this.route = route;
-        this.from = from;
         this.routeId = route.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
     }
 
@@ -95,11 +92,7 @@ public class DefaultRouteContext implements RouteContext {
         this.endpoint = endpoint;
     }
 
-    public FromDefinition getFrom() {
-        return from;
-    }
-
-    public RouteDefinition getRoute() {
+    public NamedNode getRoute() {
         return route;
     }
 
@@ -167,9 +160,6 @@ public class DefaultRouteContext implements RouteContext {
         // now lets turn all of the event driven consumer processors into a single route
         if (!eventDrivenProcessors.isEmpty()) {
             Processor target = Pipeline.newInstance(getCamelContext(), eventDrivenProcessors);
-
-            // force creating the route id so its known ahead of the route is started
-            String routeId = route.idOrCreate(getCamelContext().adapt(ExtendedCamelContext.class).getNodeIdFactory());
 
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
             CamelInternalProcessor internal = new CamelInternalProcessor(target);
@@ -476,11 +466,7 @@ public class DefaultRouteContext implements RouteContext {
     }
     
     public int getAndIncrement(NamedNode node) {
-        AtomicInteger count = nodeIndex.get(node);
-        if (count == null) {
-            count = new AtomicInteger();
-            nodeIndex.put(node, count);
-        }
+        AtomicInteger count = nodeIndex.computeIfAbsent(node, n -> new AtomicInteger());
         return count.getAndIncrement();
     }
 
