@@ -119,7 +119,7 @@ public class HystrixProcessorCommand extends HystrixCommand {
 
         // if hystrix execution timeout is enabled and fallback is enabled and a timeout occurs
         // then a hystrix timer thread executes the fallback so we can stop run() execution
-        if(getProperties().executionTimeoutEnabled().get()
+        if (getProperties().executionTimeoutEnabled().get()
                 && getProperties().fallbackEnabled().get()
                 && isCommandTimedOut.get() == TimedOutStatus.TIMED_OUT) {
             LOG.debug("Exiting run command due to a hystrix execution timeout in processing exchange: {}", exchange);
