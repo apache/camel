@@ -19,7 +19,6 @@ package org.apache.camel.cdi.transaction;
 import javax.annotation.Resource;
 import javax.transaction.TransactionManager;
 
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -77,7 +76,7 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
 
         // find the existing error handler builder
         RouteDefinition route = (RouteDefinition) routeContext.getRoute();
-        ErrorHandlerBuilder builder = (ErrorHandlerBuilder) route.getErrorHandlerBuilder();
+        ErrorHandlerBuilder builder = (ErrorHandlerBuilder) route.getErrorHandlerFactory();
 
         // check if its a ref if so then do a lookup
         if (builder instanceof ErrorHandlerBuilderRef) {
@@ -87,9 +86,9 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
             // only lookup if there was explicit an error handler builder configured
             // otherwise its just the "default" that has not explicit been configured
             // and if so then we can safely replace that with our transacted error handler
-            if (ErrorHandlerBuilderRef.isErrorHandlerBuilderConfigured(ref)) {
+            if (ErrorHandlerBuilderRef.isErrorHandlerFactoryConfigured(ref)) {
                 LOG.debug("Looking up ErrorHandlerBuilder with ref: {}", ref);
-                builder = (ErrorHandlerBuilder) ErrorHandlerBuilderRef.lookupErrorHandlerBuilder(routeContext, ref);
+                builder = (ErrorHandlerBuilder) ErrorHandlerBuilderRef.lookupErrorHandlerFactory(routeContext, ref);
             }
         }
 
@@ -121,7 +120,7 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
         txBuilder.configure(routeContext, answer);
 
         // set the route to use our transacted error handler builder
-        route.setErrorHandlerBuilder(txBuilder);
+        route.setErrorHandlerFactory(txBuilder);
 
         // return with wrapped transacted error handler
         return answer;
