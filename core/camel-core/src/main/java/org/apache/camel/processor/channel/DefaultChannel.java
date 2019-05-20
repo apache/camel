@@ -35,7 +35,7 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.processor.CamelInternalProcessor;
-import org.apache.camel.processor.CamelInternalProcessorAdvice;
+import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
@@ -290,7 +290,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
             }
             if (!redeliveryPossible) {
                 // optimise to use advice as we cannot redeliver
-                addAdvice(CamelInternalProcessorAdvice.wrap(instrumentationProcessor));
+                addAdvice(CamelInternalProcessor.wrap(instrumentationProcessor));
             }
         }
     }

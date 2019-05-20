@@ -197,9 +197,17 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
      */
     Boolean isAutoStartup();
 
+    void setStartupOrder(Integer startupOrder);
+
     Integer getStartupOrder();
 
+    void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory);
+
     ErrorHandlerFactory getErrorHandlerFactory();
+
+    void addAdvice(CamelInternalProcessorAdvice<?> advice);
+
+    void addProperty(String key, Object value);
 
     /**
      * Gets the last error.

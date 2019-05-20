@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.ValidationException;
+import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;

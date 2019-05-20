@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.impl.engine;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -38,6 +38,8 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.impl.FooBar;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.SynchronizationAdapter;

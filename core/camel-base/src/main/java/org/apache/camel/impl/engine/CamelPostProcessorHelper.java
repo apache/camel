@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.impl.engine;
 
 import java.lang.reflect.Method;
 import java.util.Set;
@@ -37,10 +37,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ProxyInstantiationException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
-import org.apache.camel.impl.engine.DefaultConsumerTemplate;
-import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
-import org.apache.camel.impl.engine.DefaultProducerTemplate;
-import org.apache.camel.impl.engine.SubscribeMethodProcessor;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.IntrospectionSupport;
