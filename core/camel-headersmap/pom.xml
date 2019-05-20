@@ -35,7 +35,6 @@
     <properties>
         <firstVersion>2.20.0</firstVersion>
         <label>tooling</label>
-
     </properties>
 
     <dependencies>

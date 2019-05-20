@@ -39,24 +39,19 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>apt</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
+        <!-- camel annotations -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>spi-annotations</artifactId>
             <optional>true</optional>
         </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>meta-annotations</artifactId>
             <optional>true</optional>
         </dependency>
 
+        <!-- required dependencies by camel-cloud -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
@@ -109,5 +104,26 @@
         </dependency>
 
     </dependencies>
+
+    <profiles>
+        <!-- enables the APT dependency so that it can be disabled in IDE builds -->
+        <profile>
+            <id>apt</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
+            <dependencies>
+
+                <!-- enable the APT processor -->
+                <dependency>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>apt</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+
+            </dependencies>
+        </profile>
+    </profiles>
 
 </project>

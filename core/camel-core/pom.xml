@@ -192,20 +192,6 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
-        <!-- osgi support -->
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>osgi.core</artifactId>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>osgi.cmpn</artifactId>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-
         <!-- testing -->
         <dependency>
             <groupId>org.codehaus.woodstox</groupId>

@@ -36,7 +36,7 @@
 
     <dependencies>
 
-        <!-- required dependencies by camel-core -->
+        <!-- required dependencies by camel-util -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -239,73 +239,17 @@
             </build>
         </profile>
 
-        <!-- skip management tests on AIX as it hangs CI servers -->
-        <profile>
-            <id>aix</id>
-            <activation>
-                <os>
-                    <name>aix</name>
-                </os>
-            </activation>
-            <properties>
-                <platform.skip.tests>org/apache/camel/management/**/*.java</platform.skip.tests>
-            </properties>
-        </profile>
-        <profile>
-            <id>xalan</id>
-            <dependencies>
-                <!-- enable the Xalan processor -->
-                <dependency>
-                    <groupId>xalan</groupId>
-                    <artifactId>xalan</artifactId>
-                    <version>${xalan-version}</version>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>xerces</id>
-            <dependencies>
-                <!-- enable the xerces processor -->
-                <dependency>
-                    <groupId>xerces</groupId>
-                    <artifactId>xercesImpl</artifactId>
-                    <version>${xerces-version}</version>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>woodstox</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <dependencies>
-                <!-- xmltokenizer using woodstox -->
-                <dependency>
-                    <groupId>org.codehaus.woodstox</groupId>
-                    <artifactId>woodstox-core-asl</artifactId>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-
         <profile>
             <id>jdk9+-build</id>
             <activation>
                 <jdk>[9,)</jdk>
             </activation>
             <dependencies>
-
                 <!-- enable the APT processor -->
                 <dependency>
                     <groupId>org.apache.camel</groupId>
                     <artifactId>apt</artifactId>
                     <scope>provided</scope>
-                </dependency>
-                <!-- xmltokenizer using woodstox -->
-                <dependency>
-                    <groupId>org.codehaus.woodstox</groupId>
-                    <artifactId>woodstox-core-asl</artifactId>
-                    <scope>test</scope>
                 </dependency>
             </dependencies>
             <build>

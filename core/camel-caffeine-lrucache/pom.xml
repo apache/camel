@@ -34,13 +34,17 @@
     <description>Camel Caffeine LRUCache support</description>
 
     <properties>
+        <firstVersion>3.0</firstVersion>
+        <label>tooling</label>
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
