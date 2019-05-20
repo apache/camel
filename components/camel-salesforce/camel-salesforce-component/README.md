@@ -99,7 +99,7 @@ If your tests cannot be run alongside other tests you can use `@Category(Standal
 
 #### Manual Salesforce instance setup for integration tests
 
-This is include for those that wish to setup the Salesforce instance manually for integration tests.
+This is include for those that wish to setup the Salesforce instance manually for integration tests. It could also help to double-check your setup.
 
 Besides that account you'll need a _test user_ account that has `Bulk API Hard Delete` permission. You can create one by going to _My Developer Account_ (link from [developer.salesforce.com](https://login.salesforce.com/?lt=de)). Under _Administer_ expand _Manage Users_  and select _Profiles_ find _System Administrator_ profile and select _Clone_. Use `System Administrator With Hard Delete` as the profile name, and after saving under _Administrative Permissions_ click edit and tick _Bulk API Hard Delete_ and save. Next, create a new user under _Administer_ expand _Manage Users_  and select _Users_ and then click on _New User_. Fill in the required fields, and select _Salesforce_ for _User License_ and newly created profile for _Profile_. You get two user _Salesforce_ licenses so the newly created user will put you at a maximum.
 
@@ -111,6 +111,7 @@ Install the Warehouse package, tested with _Spring 2013_ (version 1.2) that can 
  - delete custom fields `Quantity`, `Invoice`, `Line_Item_Total` from the `Line_Item` object
  - delete custom field `Quantity` from the `Merchanidise` object, you will need to delete dependencies (ApexClass and Visualforce Page)
  - create new ApexClass named `MerchandiseRestResource` with the content of `MerchandiseRestResource.apxc`
+ - deactivate the `Contact Duplicate Rule` in salesforce configuration
 
 You'll need to access a Merchandise record and run a `Test Report` in order for them to appear in _Recent Items_ and _Recent Reports_. Do this by accessing _Warehouse_ application from the menu in the top right, and selecting _Merchandise_ click _Go!_ (preselected is View: _All_) and click on the single Merchandise item available. Next go to Reports and select and run _Test Report_ from _Test Reports_. This is needed by the integration tests as they access recent items and recently run reports.
 
