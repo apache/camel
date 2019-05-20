@@ -41,6 +41,7 @@ import org.apache.camel.component.netty4.NettyHelper;
 import org.apache.camel.component.netty4.handlers.ServerChannelHandler;
 import org.apache.camel.component.netty4.http.HttpPrincipal;
 import org.apache.camel.component.netty4.http.NettyHttpConfiguration;
+import org.apache.camel.component.netty4.http.NettyHttpConstants;
 import org.apache.camel.component.netty4.http.NettyHttpConsumer;
 import org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration;
 import org.apache.camel.component.netty4.http.SecurityAuthenticator;
@@ -282,6 +283,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
         final Message in = exchange.getIn();
         if (configuration.isHttpProxy()) {
+            exchange.setProperty(NettyHttpConstants.PROXY_REQUEST, request);
             in.removeHeader("Proxy-Connection");
         }
     }
