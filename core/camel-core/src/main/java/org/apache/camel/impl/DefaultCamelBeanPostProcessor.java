@@ -170,12 +170,14 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
 
                 EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
                 if (endpointInject != null && getPostProcessorHelper().matchContext(endpointInject.context())) {
+                    @SuppressWarnings("deprecation")
                     String uri = endpointInject.value().isEmpty() ? endpointInject.uri() : endpointInject.value();
                     injectField(field, uri, endpointInject.property(), bean, beanName);
                 }
 
                 Produce produce = field.getAnnotation(Produce.class);
                 if (produce != null && getPostProcessorHelper().matchContext(produce.context())) {
+                    @SuppressWarnings("deprecation")
                     String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
                     injectField(field, uri, produce.property(), bean, beanName, produce.binding());
                 }
