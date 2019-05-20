@@ -56,7 +56,7 @@ public class ExceptionRouteMicrometerMessageHistoryTest extends CamelTestSupport
         assertMockEndpointsSatisfied();
 
         // there should be 3 names
-        assertEquals(5, registry.getMeters().size());
+        assertEquals(3, registry.getMeters().size());
 
         // get the message history service
         MicrometerMessageHistoryService service = context.hasService(MicrometerMessageHistoryService.class);
@@ -67,7 +67,6 @@ public class ExceptionRouteMicrometerMessageHistoryTest extends CamelTestSupport
 
         assertTrue(json.contains("\"nodeId\" : \"foo\""));
         assertTrue(json.contains("\"nodeId\" : \"bar\""));
-        assertTrue(json.contains("\"nodeId\" : \"exception\""));
     }
 
     @Override
