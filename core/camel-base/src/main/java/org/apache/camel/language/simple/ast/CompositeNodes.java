@@ -16,46 +16,54 @@
  */
 package org.apache.camel.language.simple.ast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.Expression;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.support.builder.ExpressionBuilder;
 
 /**
- * Represents literals in the AST.
+ * A node which contains other {@link SimpleNode nodes}.
  */
-public class LiteralExpression extends BaseSimpleNode implements LiteralNode {
+public class CompositeNodes extends BaseSimpleNode {
 
-    protected StringBuilder text = new StringBuilder();
+    private final List<SimpleNode> children = new ArrayList<>();
 
-    public LiteralExpression(SimpleToken token) {
+    public CompositeNodes(SimpleToken token) {
         super(token);
     }
 
     @Override
     public String toString() {
-        return getText();
+        StringBuilder sb = new StringBuilder();
+        for (SimpleNode child : children) {
+            sb.append(child.toString());
+        }
+        return sb.toString();
     }
 
-    @Override
-    public void addText(String text) {
-        this.text.append(text);
+    public void addChild(SimpleNode child) {
+        children.add(child);
     }
 
-    @Override
-    public String getText() {
-        return text.toString();
-    }
-
-    @Override
-    public boolean quoteEmbeddedNodes() {
-        // we should quote embedded nodes if using the bean function as the nodes can be parameters
-        // to a bean method call so we want to ensure their parameter value is quoted to avoid parsing
-        // issues with commas in parameter values being mixed up with commas used for parameter separator
-        return text.toString().startsWith("bean:");
+    public List<SimpleNode> getChildren() {
+        return children;
     }
 
     @Override
     public Expression createExpression(String expression) {
-        return ExpressionBuilder.constantExpression(getText());
+        if (children.isEmpty()) {
+            return null;
+        } else if (children.size() == 1) {
+            return children.get(0).createExpression(expression);
+        } else {
+            List<Expression> answer = new ArrayList<>();
+            for (SimpleNode child : children) {
+                answer.add(child.createExpression(expression));
+            }
+            return ExpressionBuilder.concatExpression(answer);
+        }
     }
+
 }

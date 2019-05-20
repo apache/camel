@@ -35,7 +35,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExpressionAdapter;
@@ -534,12 +533,8 @@ public final class SimpleExpressionBuilder {
                 } catch (InvalidPayloadException e) {
                     throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
-                // ognl is able to evaluate method name if it contains nested functions
-                // so we should not eager evaluate ognl as a string
-                MethodCallExpression call = new MethodCallExpression(exchange, ognl);
-                // set the instance to use
-                call.setInstance(body);
-                return call.evaluate(exchange);
+                Expression exp = ExpressionBuilder.beanExpression(body, ognl);
+                return exp.evaluate(exchange, Object.class);
             }
 
             @Override
@@ -595,10 +590,8 @@ public final class SimpleExpressionBuilder {
                 if (body != null) {
                     // ognl is able to evaluate method name if it contains nested functions
                     // so we should not eager evaluate ognl as a string
-                    MethodCallExpression call = new MethodCallExpression(exchange, ognl);
-                    // set the instance to use
-                    call.setInstance(body);
-                    return call.evaluate(exchange);
+                    return ExpressionBuilder.beanExpression(body, ognl)
+                            .evaluate(exchange, Object.class);
                 } else {
                     return null;
                 }
@@ -622,7 +615,7 @@ public final class SimpleExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 // ognl is able to evaluate method name if it contains nested functions
                 // so we should not eager evaluate ognl as a string
-                return new MethodCallExpression(exchange, ognl).evaluate(exchange);
+                return ExpressionBuilder.beanExpression(exchange, ognl).evaluate(exchange, Object.class);
             }
 
             @Override
@@ -647,7 +640,7 @@ public final class SimpleExpressionBuilder {
                 }
                 // ognl is able to evaluate method name if it contains nested functions
                 // so we should not eager evaluate ognl as a string
-                return new MethodCallExpression(context, ognl).evaluate(exchange);
+                return ExpressionBuilder.beanExpression(context, ognl).evaluate(exchange, Object.class);
             }
 
             @Override
@@ -672,7 +665,7 @@ public final class SimpleExpressionBuilder {
                 }
                 // ognl is able to evaluate method name if it contains nested functions
                 // so we should not eager evaluate ognl as a string
-                return new MethodCallExpression(body, ognl).evaluate(exchange);
+                return ExpressionBuilder.beanExpression(body, ognl).evaluate(exchange, Object.class);
             }
 
             @Override
@@ -781,7 +774,7 @@ public final class SimpleExpressionBuilder {
 
                 // ognl is able to evaluate method name if it contains nested functions
                 // so we should not eager evaluate ognl as a string
-                return new MethodCallExpression(exception, ognl).evaluate(exchange);
+                return ExpressionBuilder.beanExpression(exception, ognl).evaluate(exchange, Object.class);
             }
 
             @Override
@@ -836,7 +829,7 @@ public final class SimpleExpressionBuilder {
             }
             // the remainder is the rest of the ognl without the key
             String remainder = StringHelper.after(ognl, key + keySuffix);
-            return new MethodCallExpression(property, remainder).evaluate(exchange);
+            return ExpressionBuilder.beanExpression(property, remainder).evaluate(exchange, Object.class);
         }
 
         @Override

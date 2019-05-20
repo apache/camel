@@ -17,44 +17,45 @@
 package org.apache.camel.language.simple.ast;
 
 import org.apache.camel.Expression;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.support.builder.ExpressionBuilder;
 
 /**
- * Starts a block enclosed by double quotes
+ * Represents literals in the AST.
  */
-public class DoubleQuoteStart extends BaseSimpleNode implements BlockStart {
+public class LiteralExpression extends BaseSimpleNode implements LiteralNode {
 
-    private final CompositeNodes block;
+    protected StringBuilder text = new StringBuilder();
 
-    public DoubleQuoteStart(SimpleToken token) {
+    public LiteralExpression(SimpleToken token) {
         super(token);
-        this.block = new CompositeNodes(token);
     }
 
     @Override
     public String toString() {
-        // output a nice toString so it makes debugging easier as we can see the entire block
-        return "\"" + block + "\"";
+        return getText();
+    }
+
+    @Override
+    public void addText(String text) {
+        this.text.append(text);
+    }
+
+    @Override
+    public String getText() {
+        return text.toString();
+    }
+
+    @Override
+    public boolean quoteEmbeddedNodes() {
+        // we should quote embedded nodes if using the bean function as the nodes can be parameters
+        // to a bean method call so we want to ensure their parameter value is quoted to avoid parsing
+        // issues with commas in parameter values being mixed up with commas used for parameter separator
+        return text.toString().startsWith("bean:");
     }
 
     @Override
     public Expression createExpression(String expression) {
-        Expression answer = null;
-        if (block != null) {
-            answer = block.createExpression(expression);
-        }
-        if (answer == null) {
-            // there quoted literal is empty
-            answer = ExpressionBuilder.constantExpression("");
-        }
-        return answer;
+        return ExpressionBuilder.constantExpression(getText());
     }
-
-    @Override
-    public boolean acceptAndAddNode(SimpleNode node) {
-        block.addChild(node);
-        return true;
-    }
-
 }
