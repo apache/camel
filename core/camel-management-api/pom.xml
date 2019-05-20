@@ -36,12 +36,12 @@
 
     <dependencies>
 
+        <!-- camel annotaions -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>spi-annotations</artifactId>
             <optional>true</optional>
         </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>meta-annotations</artifactId>
@@ -52,7 +52,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-util</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-util-json</artifactId>
