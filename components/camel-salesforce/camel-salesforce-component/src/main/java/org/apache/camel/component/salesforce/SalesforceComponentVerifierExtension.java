@@ -77,20 +77,17 @@ public class SalesforceComponentVerifierExtension extends DefaultComponentVerifi
 
         try {
             SalesforceClientTemplate.invoke(getCamelContext(), parameters, client -> {
-                client.getVersions(Collections.emptyMap(),
-                    (response, headers, exception) ->  processSalesforceException(builder, Optional.ofNullable(exception)));
+                client.getVersions(Collections.emptyMap(), (response, headers, exception) -> processSalesforceException(builder, Optional.ofNullable(exception)));
                 return null;
             });
         } catch (NoSuchOptionException e) {
-            builder.error(
-                ResultErrorBuilder.withMissingOption(e.getOptionName()).build()
-            );
-        } catch (SalesforceException e) {
-            processSalesforceException(builder, Optional.of(e));
+            builder.error(ResultErrorBuilder.withMissingOption(e.getOptionName()).build());
         } catch (Exception e) {
-            builder.error(
-                ResultErrorBuilder.withException(e).build()
-            );
+            if (e.getCause() instanceof SalesforceException) {
+                processSalesforceException(builder, Optional.of((SalesforceException)e.getCause()));
+            } else {
+                builder.error(ResultErrorBuilder.withException(e).build());
+            }
         }
 
         return builder.build();
