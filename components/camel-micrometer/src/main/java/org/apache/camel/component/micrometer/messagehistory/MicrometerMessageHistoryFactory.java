@@ -24,6 +24,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NonManagedService;
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.component.micrometer.MicrometerUtils;
@@ -102,7 +103,12 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport implements C
 
     @Override
     public MessageHistory newMessageHistory(String routeId, NamedNode namedNode, long timestamp) {
-        return new MicrometerMessageHistory(getMeterRegistry(), camelContext.getRoute(routeId), namedNode, getNamingStrategy(), timestamp);
+        Route route = camelContext.getRoute(routeId);
+        if (route != null) {
+            return new MicrometerMessageHistory(getMeterRegistry(), route, namedNode, getNamingStrategy(), timestamp);
+        } else {
+            return null;
+        }
     }
 
     @Override
