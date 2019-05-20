@@ -64,11 +64,7 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
     
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        ErrorHandlerBuilder handler = handlers.get(routeContext);
-        if (handler == null) {
-            handler = createErrorHandler(routeContext);
-            handlers.put(routeContext, handler);
-        }
+        ErrorHandlerFactory handler = handlers.computeIfAbsent(routeContext, this::createErrorHandler);
         return handler.createErrorHandler(routeContext, processor);
     }
 
@@ -98,8 +94,8 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
      * @param ref          reference id for the error handler
      * @return the error handler
      */
-    public static ErrorHandlerFactory lookupErrorHandlerBuilder(RouteContext routeContext, String ref) {
-        return lookupErrorHandlerBuilder(routeContext, ref, true);
+    public static ErrorHandlerFactory lookupErrorHandlerFactory(RouteContext routeContext, String ref) {
+        return lookupErrorHandlerFactory(routeContext, ref, true);
     }
 
     /**
@@ -110,16 +106,16 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
      * @param mandatory    whether the error handler must exists, if not a {@link org.apache.camel.NoSuchBeanException} is thrown
      * @return the error handler
      */
-    public static ErrorHandlerFactory lookupErrorHandlerBuilder(RouteContext routeContext, String ref, boolean mandatory) {
+    public static ErrorHandlerFactory lookupErrorHandlerFactory(RouteContext routeContext, String ref, boolean mandatory) {
         ErrorHandlerFactory answer;
 
         // if the ref is the default then we do not have any explicit error handler configured
         // if that is the case then use error handlers configured on the route, as for instance
         // the transacted error handler could have been configured on the route so we should use that one
-        if (!isErrorHandlerBuilderConfigured(ref)) {
+        if (!isErrorHandlerFactoryConfigured(ref)) {
             // see if there has been configured a route builder on the route
             RouteDefinition route = (RouteDefinition) routeContext.getRoute();
-            answer = route.getErrorHandlerBuilder();
+            answer = route.getErrorHandlerFactory();
             if (answer == null && route.getErrorHandlerRef() != null) {
                 answer = routeContext.lookup(route.getErrorHandlerRef(), ErrorHandlerBuilder.class);
             }
@@ -131,10 +127,10 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
             if (answer instanceof ErrorHandlerBuilderRef) {
                 ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef) answer;
                 String otherRef = other.getRef();
-                if (!isErrorHandlerBuilderConfigured(otherRef)) {
+                if (!isErrorHandlerFactoryConfigured(otherRef)) {
                     // the other has also no explicit error handler configured then fallback to the handler
                     // configured on the parent camel context
-                    answer = lookupErrorHandlerBuilder(routeContext.getCamelContext());
+                    answer = lookupErrorHandlerFactory(routeContext.getCamelContext());
                 }
                 if (answer == null) {
                     // the other has also no explicit error handler configured then fallback to the default error handler
@@ -157,12 +153,12 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
         return answer;
     }
 
-    protected static ErrorHandlerFactory lookupErrorHandlerBuilder(CamelContext camelContext) {
+    protected static ErrorHandlerFactory lookupErrorHandlerFactory(CamelContext camelContext) {
         ErrorHandlerFactory answer = camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory();
         if (answer instanceof ErrorHandlerBuilderRef) {
             ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef) answer;
             String otherRef = other.getRef();
-            if (isErrorHandlerBuilderConfigured(otherRef)) {
+            if (isErrorHandlerFactoryConfigured(otherRef)) {
                 answer = camelContext.getRegistry().lookupByNameAndType(otherRef, ErrorHandlerBuilder.class);
                 if (answer == null) {
                     throw new IllegalArgumentException("ErrorHandlerBuilder with id " + otherRef + " not found in registry.");
@@ -182,7 +178,7 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
      * This is for instance used by the transacted policy to setup a TransactedErrorHandlerBuilder
      * in camel-spring.
      */
-    public static boolean isErrorHandlerBuilderConfigured(String ref) {
+    public static boolean isErrorHandlerFactoryConfigured(String ref) {
         return !DEFAULT_ERROR_HANDLER_BUILDER.equals(ref);
     }
 
@@ -191,7 +187,7 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
     }
 
     private ErrorHandlerBuilder createErrorHandler(RouteContext routeContext) {
-        ErrorHandlerBuilder handler = (ErrorHandlerBuilder)lookupErrorHandlerBuilder(routeContext, getRef());
+        ErrorHandlerBuilder handler = (ErrorHandlerBuilder) lookupErrorHandlerFactory(routeContext, getRef());
         ObjectHelper.notNull(handler, "error handler '" + ref + "'");
 
         // configure if the handler support transacted

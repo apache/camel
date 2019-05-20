@@ -426,7 +426,7 @@ public class DefaultRouteContext implements RouteContext {
 
     @Override
     public ErrorHandlerFactory getErrorHandlerFactory() {
-        return route.getErrorHandlerBuilder();
+        return route.getErrorHandlerFactory();
     }
 
     public void setShutdownRoute(ShutdownRoute shutdownRoute) {

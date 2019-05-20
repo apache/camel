@@ -268,17 +268,6 @@ public final class RouteDefinitionHelper {
         }
     }
 
-    private static void initParentAndErrorHandlerBuilder(ProcessorDefinition parent) {
-        List<ProcessorDefinition<?>> children = parent.getOutputs();
-        for (ProcessorDefinition child : children) {
-            child.setParent(parent);
-            if (child.getOutputs() != null && !child.getOutputs().isEmpty()) {
-                // recursive the children
-                initParentAndErrorHandlerBuilder(child);
-            }
-        }
-    }
-
     public static void prepareRouteForInit(RouteDefinition route, List<ProcessorDefinition<?>> abstracts,
                                            List<ProcessorDefinition<?>> lower) {
         // filter the route into abstracts and lower
@@ -453,7 +442,7 @@ public final class RouteDefinitionHelper {
             if (builder != null) {
                 if (builder instanceof ErrorHandlerBuilder) {
                     builder = ((ErrorHandlerBuilder) builder).cloneBuilder();
-                    route.setErrorHandlerBuilderIfNull(builder);
+                    route.setErrorHandlerFactoryIfNull(builder);
                 } else {
                     throw new UnsupportedOperationException("The ErrorHandlerFactory must implement ErrorHandlerBuilder");
                 }
@@ -461,12 +450,12 @@ public final class RouteDefinitionHelper {
         }
 
         // init parent and error handler builder on the route
-        initParentAndErrorHandlerBuilder(route);
+        initParent(route);
 
         // set the parent and error handler builder on the global on exceptions
         if (onExceptions != null) {
             for (OnExceptionDefinition global : onExceptions) {
-                initParentAndErrorHandlerBuilder(global);
+                initParent(global);
             }
         }
     }

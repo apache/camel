@@ -66,7 +66,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private ShutdownRoute shutdownRoute;
     private ShutdownRunningTask shutdownRunningTask;
     private String errorHandlerRef;
-    private ErrorHandlerFactory errorHandlerBuilder;
+    private ErrorHandlerFactory errorHandlerFactory;
     // keep state whether the error handler is context scoped or not
     // (will by default be context scoped of no explicit error handler configured)
     private boolean contextScopedErrorHandler = true;
@@ -375,7 +375,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @return the current builder with the error handler configured
      */
     public RouteDefinition errorHandler(ErrorHandlerFactory errorHandlerBuilder) {
-        setErrorHandlerBuilder(errorHandlerBuilder);
+        setErrorHandlerFactory(errorHandlerBuilder);
         // we are now using a route scoped error handler
         contextScopedErrorHandler = false;
         return this;
@@ -831,7 +831,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         this.errorHandlerRef = errorHandlerRef;
         // we use an specific error handler ref (from Spring DSL) then wrap that
         // with a error handler build ref so Camel knows its not just the default one
-        setErrorHandlerBuilder(new ErrorHandlerBuilderRef(errorHandlerRef));
+        setErrorHandlerFactory(new ErrorHandlerBuilderRef(errorHandlerRef));
     }
 
     /**
@@ -844,9 +844,9 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * Sets the error handler if one is not already set
      */
-    public void setErrorHandlerBuilderIfNull(ErrorHandlerFactory errorHandlerBuilder) {
-        if (this.errorHandlerBuilder == null) {
-            setErrorHandlerBuilder(errorHandlerBuilder);
+    public void setErrorHandlerFactoryIfNull(ErrorHandlerFactory errorHandlerFactory) {
+        if (this.errorHandlerFactory == null) {
+            setErrorHandlerFactory(errorHandlerFactory);
         }
     }
 
@@ -913,18 +913,18 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     }
 
     @XmlTransient
-    public ErrorHandlerFactory getErrorHandlerBuilder() {
-        if (errorHandlerBuilder == null) {
-            errorHandlerBuilder = createErrorHandlerBuilder();
+    public ErrorHandlerFactory getErrorHandlerFactory() {
+        if (errorHandlerFactory == null) {
+            errorHandlerFactory = createErrorHandlerBuilder();
         }
-        return errorHandlerBuilder;
+        return errorHandlerFactory;
     }
 
     /**
      * Sets the error handler to use with processors created by this builder
      */
-    public void setErrorHandlerBuilder(ErrorHandlerFactory errorHandlerBuilder) {
-        this.errorHandlerBuilder = errorHandlerBuilder;
+    public void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory) {
+        this.errorHandlerFactory = errorHandlerFactory;
     }
 
     @XmlAttribute
