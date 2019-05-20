@@ -1140,7 +1140,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
     // read java type from project, returns null if not found
     private JavaClass readJavaType(String type) {
-        if (!type.startsWith("java.lang.")) {
+        if (!type.startsWith("java.lang.") && (!type.contains("<") || !type.contains(">"))) {
             final String fileName = type.replaceAll("[\\[\\]]", "").replaceAll("\\.", "\\/") + ".java";
             Path sourcePath = project.getCompileSourceRoots().stream().map(Paths::get).map(p -> p.resolve(fileName)).filter(Files::isRegularFile).findFirst().orElse(null);
             if (sourcePath == null) {
