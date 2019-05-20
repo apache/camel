@@ -17,8 +17,8 @@
 package org.apache.camel.language.simple.ast;
 
 import org.apache.camel.Expression;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.support.builder.ExpressionBuilder;
 
 /**
  * Starts a block enclosed by single quotes

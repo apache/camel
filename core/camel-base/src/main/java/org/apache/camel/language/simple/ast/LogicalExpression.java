@@ -19,11 +19,11 @@ package org.apache.camel.language.simple.ast;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.language.simple.types.LogicalOperatorType;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
+import org.apache.camel.support.builder.PredicateBuilder;
 import org.apache.camel.util.ObjectHelper;
 
 /**

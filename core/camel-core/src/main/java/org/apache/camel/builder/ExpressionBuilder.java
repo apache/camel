@@ -20,11 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionAdapter;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.util.StringHelper;
-
-import static org.apache.camel.support.IntrospectionSupport.setProperty;
 
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
@@ -92,15 +89,6 @@ public final class ExpressionBuilder extends org.apache.camel.support.builder.Ex
                 return "xtokenize(" + path + ")";
             }
         };
-    }
-
-    private static void setProperty(Object bean, String name, Object value) {
-        try {
-            IntrospectionSupport.setProperty(bean, name, value);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to set property " + name + " on " + bean
-                    + ". Reason: " + e, e);
-        }
     }
 
 }

@@ -44,6 +44,7 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.GroupIterator;
 import org.apache.camel.support.GroupTokenIterator;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -1520,6 +1521,21 @@ public class ExpressionBuilder {
         };
     }
 
+    public static Expression beanExpression(final Object bean, final String expression) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Language language = exchange.getContext().resolveLanguage("bean");
+                setProperty(language, "bean", bean);
+                setProperty(language, "method", expression);
+                return language.createExpression(null).evaluate(exchange, Object.class);
+            }
+
+            public String toString() {
+                return "bean(" + bean + ", " + expression + ")";
+            }
+        };
+    }
+
     /**
      * Returns Simple expression or fallback to Constant expression if expression str is not Simple expression.
      */
@@ -1567,6 +1583,14 @@ public class ExpressionBuilder {
                 return "properties(" + key + ")";
             }
         };
+    }
+
+    protected static void setProperty(Object bean, String name, Object value) {
+        try {
+            IntrospectionSupport.setProperty(bean, name, value);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to set property " + name + " on " + bean + ". Reason: " + e, e);
+        }
     }
 
 }

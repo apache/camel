@@ -16,54 +16,45 @@
  */
 package org.apache.camel.language.simple.ast;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.camel.Expression;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.support.builder.ExpressionBuilder;
 
 /**
- * A node which contains other {@link SimpleNode nodes}.
+ * Starts a block enclosed by double quotes
  */
-public class CompositeNodes extends BaseSimpleNode {
+public class DoubleQuoteStart extends BaseSimpleNode implements BlockStart {
 
-    private final List<SimpleNode> children = new ArrayList<>();
+    private final CompositeNodes block;
 
-    public CompositeNodes(SimpleToken token) {
+    public DoubleQuoteStart(SimpleToken token) {
         super(token);
+        this.block = new CompositeNodes(token);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (SimpleNode child : children) {
-            sb.append(child.toString());
-        }
-        return sb.toString();
-    }
-
-    public void addChild(SimpleNode child) {
-        children.add(child);
-    }
-
-    public List<SimpleNode> getChildren() {
-        return children;
+        // output a nice toString so it makes debugging easier as we can see the entire block
+        return "\"" + block + "\"";
     }
 
     @Override
     public Expression createExpression(String expression) {
-        if (children.isEmpty()) {
-            return null;
-        } else if (children.size() == 1) {
-            return children.get(0).createExpression(expression);
-        } else {
-            List<Expression> answer = new ArrayList<>();
-            for (SimpleNode child : children) {
-                answer.add(child.createExpression(expression));
-            }
-            return ExpressionBuilder.concatExpression(answer);
+        Expression answer = null;
+        if (block != null) {
+            answer = block.createExpression(expression);
         }
+        if (answer == null) {
+            // there quoted literal is empty
+            answer = ExpressionBuilder.constantExpression("");
+        }
+        return answer;
+    }
+
+    @Override
+    public boolean acceptAndAddNode(SimpleNode node) {
+        block.addChild(node);
+        return true;
     }
 
 }
