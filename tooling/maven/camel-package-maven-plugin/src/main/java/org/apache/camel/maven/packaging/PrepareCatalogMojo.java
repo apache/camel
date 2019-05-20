@@ -706,6 +706,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
         if (coreDir != null && coreDir.isDirectory()) {
             File target = new File(coreDir, "target/classes");
             findLanguageFilesRecursive(target, jsonFiles, languageFiles, new CamelLanguagesFileFilter());
+            // also look in camel-jaxp
+            target = new File(coreDir, "../camel-jaxp/target/classes");
+            findLanguageFilesRecursive(target, jsonFiles, languageFiles, new CamelLanguagesFileFilter());
         }
 
         getLog().info("Found " + languageFiles.size() + " language.properties files");
