@@ -158,14 +158,6 @@ You have to provide the containerOrBlob name and the credentials if the private 
 
 ### Usage
 
-#### Message headers evaluated by the Azure Storage Blob Service producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-| | |
-|=======================================================================
-
 #### Message headers set by the Azure Storage Blob Service producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
@@ -179,9 +171,7 @@ You have to provide the containerOrBlob name and the credentials if the private 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Header |Type |Description
-
 |`CamelFileName` |`String` |The file name for the downloaded blob content.
-
 |=======================================================================
 
 
@@ -249,10 +239,8 @@ create your own instance:
 
 [source,java]
 --------------------------------------------------------------------------------------
-StorageCredentials credentials = new StorageCredentialsAccountAndKey("camelazure", "thekey");
-
-CloudBlob client = new CloudBlob("camelazure", credentials);
-
+StorageCredentials credentials = new StorageCredentialsAccountAndKey("camelazure", Base64.encode("thekey".getBytes()));
+CloudBlob client = new CloudBlockBlob("camelazure", credentials);
 registry.bind("azureBlobClient", client);
 --------------------------------------------------------------------------------------
 
