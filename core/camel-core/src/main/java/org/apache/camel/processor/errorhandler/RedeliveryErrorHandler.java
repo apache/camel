@@ -29,6 +29,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
 import org.apache.camel.Navigate;
@@ -95,7 +96,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         ObjectHelper.notNull(redeliveryPolicy, "RedeliveryPolicy", this);
 
         this.camelContext = camelContext;
-        this.awaitManager = camelContext.getAsyncProcessorAwaitManager();
+        this.awaitManager = camelContext.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
         this.redeliveryProcessor = redeliveryProcessor;
         this.deadLetter = deadLetter;
         this.output = output;
@@ -1299,7 +1300,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         if (redeliveryEnabled) {
             if (executorService == null) {
                 // use default shared executor service
-                executorService = camelContext.getErrorHandlerExecutorService();
+                executorService = camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerExecutorService();
             }
             if (log.isDebugEnabled()) {
                 log.debug("Using ExecutorService: {} for redeliveries on error handler: {}", executorService, this);

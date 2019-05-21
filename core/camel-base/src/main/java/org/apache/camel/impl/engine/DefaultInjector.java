@@ -17,6 +17,7 @@
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Injector;
@@ -35,7 +36,7 @@ public class DefaultInjector implements Injector  {
     private final CamelBeanPostProcessor postProcessor;
 
     public DefaultInjector(CamelContext context) {
-        postProcessor = context.getBeanPostProcessor();
+        postProcessor = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
     }
 
     @Override

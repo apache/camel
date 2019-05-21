@@ -20,6 +20,7 @@ import java.util.Collection;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -29,9 +30,9 @@ public class AsyncProcessorAwaitManagerTest extends ContextTestSupport {
 
     @Test
     public void testAsyncAwait() throws Exception {
-        context.getAsyncProcessorAwaitManager().getStatistics().setStatisticsEnabled(true);
+        context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().getStatistics().setStatisticsEnabled(true);
 
-        assertEquals(0, context.getAsyncProcessorAwaitManager().size());
+        assertEquals(0, context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().size());
 
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:after").expectedBodiesReceived("Bye Camel");
@@ -42,9 +43,9 @@ public class AsyncProcessorAwaitManagerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(0, context.getAsyncProcessorAwaitManager().size());
-        assertEquals(1, context.getAsyncProcessorAwaitManager().getStatistics().getThreadsBlocked());
-        assertEquals(0, context.getAsyncProcessorAwaitManager().getStatistics().getThreadsInterrupted());
+        assertEquals(0, context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().size());
+        assertEquals(1, context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().getStatistics().getThreadsBlocked());
+        assertEquals(0, context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().getStatistics().getThreadsInterrupted());
     }
 
     @Override
@@ -61,11 +62,11 @@ public class AsyncProcessorAwaitManagerTest extends ContextTestSupport {
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                int size = context.getAsyncProcessorAwaitManager().size();
+                                int size = context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().size();
                                 log.info("async inflight: {}", size);
                                 assertEquals(1, size);
 
-                                Collection<AsyncProcessorAwaitManager.AwaitThread> threads = context.getAsyncProcessorAwaitManager().browse();
+                                Collection<AsyncProcessorAwaitManager.AwaitThread> threads = context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().browse();
                                 AsyncProcessorAwaitManager.AwaitThread thread = threads.iterator().next();
 
                                 long wait = thread.getWaitDuration();

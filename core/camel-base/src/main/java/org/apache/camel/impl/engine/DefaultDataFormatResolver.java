@@ -17,6 +17,7 @@
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatFactory;
@@ -69,7 +70,7 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
         Class<?> type = null;
         try {
             if (dataformatFactory == null) {
-                dataformatFactory = context.getFactoryFinder(DATAFORMAT_RESOURCE_PATH);
+                dataformatFactory = context.adapt(ExtendedCamelContext.class).getFactoryFinder(DATAFORMAT_RESOURCE_PATH);
             }
             type = dataformatFactory.findClass(name);
         } catch (NoFactoryAvailableException e) {

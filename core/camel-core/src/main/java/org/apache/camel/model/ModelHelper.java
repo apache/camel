@@ -36,6 +36,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerException;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -340,7 +341,7 @@ public final class ModelHelper {
     }
 
     private static JAXBContext getJAXBContext(CamelContext context) throws JAXBException {
-        ModelJAXBContextFactory factory = context.getModelJAXBContextFactory();
+        ModelJAXBContextFactory factory = context.adapt(ExtendedCamelContext.class).getModelJAXBContextFactory();
         return factory.newJAXBContext();
     }
 

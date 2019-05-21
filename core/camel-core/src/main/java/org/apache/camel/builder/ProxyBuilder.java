@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.util.ObjectHelper;
 
@@ -81,7 +82,7 @@ public final class ProxyBuilder {
     public <T> T build(Class<T>... interfaceClasses) throws Exception {
         ObjectHelper.notNull(endpoint, "endpoint");
         // use proxy service
-        BeanProxyFactory factory = camelContext.getBeanProxyFactory();
+        BeanProxyFactory factory = camelContext.adapt(ExtendedCamelContext.class).getBeanProxyFactory();
         if (factory == null) {
             throw new IllegalArgumentException("Cannot find BeanProxyFactory. Make sure camel-bean is on the classpath.");
         }

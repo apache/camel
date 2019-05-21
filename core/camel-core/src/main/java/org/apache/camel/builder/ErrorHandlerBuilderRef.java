@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -157,7 +158,7 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
     }
 
     protected static ErrorHandlerFactory lookupErrorHandlerBuilder(CamelContext camelContext) {
-        ErrorHandlerFactory answer = camelContext.getErrorHandlerFactory();
+        ErrorHandlerFactory answer = camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory();
         if (answer instanceof ErrorHandlerBuilderRef) {
             ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef) answer;
             String otherRef = other.getRef();

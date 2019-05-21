@@ -27,6 +27,7 @@ import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.HystrixDefinition;
@@ -55,7 +56,7 @@ public class HystrixReifier extends ProcessorReifier<HystrixDefinition> {
         }
 
         final HystrixConfigurationDefinition config = buildHystrixConfiguration(routeContext.getCamelContext());
-        final String id = definition.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+        final String id = definition.idOrCreate(routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getNodeIdFactory());
 
         // group and thread pool keys to use they can be configured on configRef and config, so look there first, and if none then use default
         String groupKey = config.getGroupKey();

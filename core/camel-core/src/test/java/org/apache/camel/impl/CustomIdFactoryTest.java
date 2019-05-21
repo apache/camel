@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -58,14 +59,14 @@ public class CustomIdFactoryTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // use our own id factory so we can generate the keys we like to use
-                context.setNodeIdFactory(new NodeIdFactory() {
+                context.adapt(ExtendedCamelContext.class).setNodeIdFactory(new NodeIdFactory() {
                     public String createId(NamedNode definition) {
                         return "#" + definition.getShortName() + ++counter + "#";
                     }
                 });
 
                 // add our debugger so we can debug camel routes when we send in messages
-                context.addInterceptStrategy(new MyDebuggerCheckingId());
+                context.adapt(ExtendedCamelContext.class).addInterceptStrategy(new MyDebuggerCheckingId());
 
                 // a little content based router so we got 2 paths to route at runtime
                 from("direct:start")
@@ -117,7 +118,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
 
             // MUST DO THIS
             // force id creation as sub nodes have lazy assigned ids
-            ((OptionalIdentifiedDefinition<?>) definition).idOrCreate(context.getNodeIdFactory());
+            ((OptionalIdentifiedDefinition<?>) definition).idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
 
             return new DelegateProcessor(target) {
                 @Override

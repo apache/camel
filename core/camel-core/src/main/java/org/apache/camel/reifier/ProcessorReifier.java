@@ -25,6 +25,7 @@ import java.util.function.Function;
 
 import org.apache.camel.Channel;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.BeanDefinition;
@@ -222,8 +223,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
     protected Processor createChildProcessor(RouteContext routeContext, boolean mandatory) throws Exception {
         Processor children = null;
         // at first use custom factory
-        if (routeContext.getCamelContext().getProcessorFactory() != null) {
-            children = routeContext.getCamelContext().getProcessorFactory().createChildProcessor(routeContext, definition, mandatory);
+        if (routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
+            children = routeContext.getCamelContext().adapt(ExtendedCamelContext.class)
+                    .getProcessorFactory().createChildProcessor(routeContext, definition, mandatory);
         }
         // fallback to default implementation if factory did not create the child
         if (children == null) {
@@ -279,7 +281,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
         channel.setNextProcessor(processor);
 
         // add interceptor strategies to the channel must be in this order: camel context, route context, local
-        addInterceptStrategies(routeContext, channel, routeContext.getCamelContext().getInterceptStrategies());
+        addInterceptStrategies(routeContext, channel, routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getInterceptStrategies());
         addInterceptStrategies(routeContext, channel, routeContext.getInterceptStrategies());
         addInterceptStrategies(routeContext, channel, definition.getInterceptStrategies());
 
@@ -448,7 +450,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
 
             // inject id
             if (processor instanceof IdAware) {
-                String id = output.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+                String id = output.idOrCreate(routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getNodeIdFactory());
                 ((IdAware) processor).setId(id);
             }
 
@@ -476,8 +478,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
     protected Processor createProcessor(RouteContext routeContext, ProcessorDefinition<?> output) throws Exception {
         Processor processor = null;
         // at first use custom factory
-        if (routeContext.getCamelContext().getProcessorFactory() != null) {
-            processor = routeContext.getCamelContext().getProcessorFactory().createProcessor(routeContext, output);
+        if (routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
+            processor = routeContext.getCamelContext().adapt(ExtendedCamelContext.class)
+                    .getProcessorFactory().createProcessor(routeContext, output);
         }
         // fallback to default implementation if factory did not create the processor
         if (processor == null) {
@@ -527,8 +530,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
         }
 
         // at first use custom factory
-        if (routeContext.getCamelContext().getProcessorFactory() != null) {
-            processor = routeContext.getCamelContext().getProcessorFactory().createProcessor(routeContext, definition);
+        if (routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
+            processor = routeContext.getCamelContext().adapt(ExtendedCamelContext.class)
+                    .getProcessorFactory().createProcessor(routeContext, definition);
         }
         // fallback to default implementation if factory did not create the processor
         if (processor == null) {
@@ -537,7 +541,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
 
         // inject id
         if (processor instanceof IdAware) {
-            String id = definition.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+            String id = definition.idOrCreate(routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getNodeIdFactory());
             ((IdAware) processor).setId(id);
         }
 

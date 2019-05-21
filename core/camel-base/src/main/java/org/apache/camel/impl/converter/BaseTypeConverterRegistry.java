@@ -37,6 +37,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -653,7 +654,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             injector = camelContext.getInjector();
         }
         if (resolver == null && camelContext != null) {
-            resolver = camelContext.getPackageScanClassResolver();
+            resolver = camelContext.adapt(ExtendedCamelContext.class).getPackageScanClassResolver();
         }
         initTypeConverterLoaders();
 

@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
@@ -47,7 +48,7 @@ public class DefaultProcessorFactory implements ProcessorFactory {
     @Override
     public Processor createChildProcessor(RouteContext routeContext, NamedNode definition, boolean mandatory) throws Exception {
         String name = definition.getClass().getSimpleName();
-        FactoryFinder finder = routeContext.getCamelContext().getFactoryFinder(RESOURCE_PATH);
+        FactoryFinder finder = routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
         try {
             if (finder != null) {
                 Object object = finder.newInstance(name);
@@ -66,7 +67,7 @@ public class DefaultProcessorFactory implements ProcessorFactory {
     @Override
     public Processor createProcessor(RouteContext routeContext, NamedNode definition) throws Exception {
         String name = definition.getClass().getSimpleName();
-        FactoryFinder finder = routeContext.getCamelContext().getFactoryFinder(RESOURCE_PATH);
+        FactoryFinder finder = routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
         try {
             if (finder != null) {
                 Object object = finder.newInstance(name);

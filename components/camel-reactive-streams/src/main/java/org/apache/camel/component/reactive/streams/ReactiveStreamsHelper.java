@@ -19,6 +19,7 @@ package org.apache.camel.component.reactive.streams;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsServiceFactory;
 import org.apache.camel.component.reactive.streams.api.DispatchCallback;
@@ -112,7 +113,7 @@ public final class ReactiveStreamsHelper {
     @SuppressWarnings("unchecked")
     public static CamelReactiveStreamsServiceFactory resolveServiceFactory(CamelContext context, String serviceType) {
         try {
-            FactoryFinder finder = context.getFactoryFinder(ReactiveStreamsConstants.SERVICE_PATH);
+            FactoryFinder finder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(ReactiveStreamsConstants.SERVICE_PATH);
             Class<?> serviceClass = finder.findClass(serviceType);
 
             return (CamelReactiveStreamsServiceFactory)context.getInjector().newInstance(serviceClass);

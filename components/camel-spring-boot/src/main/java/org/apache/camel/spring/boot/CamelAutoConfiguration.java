@@ -28,6 +28,7 @@ import java.util.function.Predicate;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TypeConverters;
@@ -216,7 +217,7 @@ public class CamelAutoConfiguration {
             camelContext.getManagementStrategy().getManagementAgent().setCreateConnector(config.isJmxCreateConnector());
         }
 
-        camelContext.setPackageScanClassResolver(new FatJarPackageScanClassResolver());
+        camelContext.adapt(ExtendedCamelContext.class).setPackageScanClassResolver(new FatJarPackageScanClassResolver());
 
         // tracing
         camelContext.setTracing(config.isTracing());
@@ -351,13 +352,13 @@ public class CamelAutoConfiguration {
         final ManagementStrategy managementStrategy = camelContext.getManagementStrategy();
 
         registerPropertyForBeanType(applicationContext, BacklogTracer.class, bt -> camelContext.setExtension(BacklogTracer.class, bt));
-        registerPropertyForBeanType(applicationContext, HandleFault.class, camelContext::addInterceptStrategy);
+        registerPropertyForBeanType(applicationContext, HandleFault.class, camelContext.adapt(ExtendedCamelContext.class)::addInterceptStrategy);
         registerPropertyForBeanType(applicationContext, InflightRepository.class, camelContext::setInflightRepository);
-        registerPropertyForBeanType(applicationContext, AsyncProcessorAwaitManager.class, camelContext::setAsyncProcessorAwaitManager);
+        registerPropertyForBeanType(applicationContext, AsyncProcessorAwaitManager.class, camelContext.adapt(ExtendedCamelContext.class)::setAsyncProcessorAwaitManager);
         registerPropertyForBeanType(applicationContext, ManagementStrategy.class, camelContext::setManagementStrategy);
         registerPropertyForBeanType(applicationContext, ManagementObjectNameStrategy.class, managementStrategy::setManagementObjectNameStrategy);
         registerPropertyForBeanType(applicationContext, EventFactory.class, managementStrategy::setEventFactory);
-        registerPropertyForBeanType(applicationContext, UnitOfWorkFactory.class, camelContext::setUnitOfWorkFactory);
+        registerPropertyForBeanType(applicationContext, UnitOfWorkFactory.class, camelContext.adapt(ExtendedCamelContext.class)::setUnitOfWorkFactory);
         registerPropertyForBeanType(applicationContext, RuntimeEndpointRegistry.class, camelContext::setRuntimeEndpointRegistry);
 
         registerPropertiesForBeanTypes(applicationContext, TypeConverters.class, camelContext.getTypeConverterRegistry()::addTypeConverters);
@@ -365,12 +366,12 @@ public class CamelAutoConfiguration {
         final Predicate<EventNotifier> containsEventNotifier = managementStrategy.getEventNotifiers()::contains;
         registerPropertiesForBeanTypesWithCondition(applicationContext, EventNotifier.class, containsEventNotifier.negate(), managementStrategy::addEventNotifier);
 
-        registerPropertiesForBeanTypes(applicationContext, EndpointStrategy.class, camelContext::addRegisterEndpointCallback);
+        registerPropertiesForBeanTypes(applicationContext, EndpointStrategy.class, camelContext.adapt(ExtendedCamelContext.class)::registerEndpointCallback);
 
         registerPropertyForBeanType(applicationContext, ShutdownStrategy.class, camelContext::setShutdownStrategy);
         
-        final Predicate<InterceptStrategy> containsInterceptStrategy = camelContext.getInterceptStrategies()::contains;
-        registerPropertiesForBeanTypesWithCondition(applicationContext, InterceptStrategy.class, containsInterceptStrategy.negate(), camelContext::addInterceptStrategy);
+        final Predicate<InterceptStrategy> containsInterceptStrategy = camelContext.adapt(ExtendedCamelContext.class).getInterceptStrategies()::contains;
+        registerPropertiesForBeanTypesWithCondition(applicationContext, InterceptStrategy.class, containsInterceptStrategy.negate(), camelContext.adapt(ExtendedCamelContext.class)::addInterceptStrategy);
 
         final Predicate<LifecycleStrategy> containsLifecycleStrategy = camelContext.getLifecycleStrategies()::contains;
         registerPropertiesForBeanTypesWithCondition(applicationContext, LifecycleStrategy.class, containsLifecycleStrategy.negate(), camelContext::addLifecycleStrategy);
@@ -416,8 +417,8 @@ public class CamelAutoConfiguration {
         registerPropertyForBeanType(applicationContext, RouteController.class, camelContext::setRouteController);
         registerPropertyForBeanType(applicationContext, UuidGenerator.class, camelContext::setUuidGenerator);
 
-        final Predicate<LogListener> containsLogListener = camelContext.getLogListeners()::contains;
-        registerPropertiesForBeanTypesWithCondition(applicationContext, LogListener.class, containsLogListener.negate(), camelContext::addLogListener);
+        final Predicate<LogListener> containsLogListener = camelContext.adapt(ExtendedCamelContext.class).getLogListeners()::contains;
+        registerPropertiesForBeanTypesWithCondition(applicationContext, LogListener.class, containsLogListener.negate(), camelContext.adapt(ExtendedCamelContext.class)::addLogListener);
 
         registerPropertyForBeanType(applicationContext, ExecutorServiceManager.class, camelContext::setExecutorServiceManager);
 

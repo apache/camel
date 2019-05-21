@@ -20,11 +20,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -32,8 +30,8 @@ import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.TabularData;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
@@ -50,7 +48,6 @@ import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.Validator;
-import org.apache.camel.support.JSonSchemaHelper;
 
 /**
  * Abstract {@link org.apache.camel.commands.LocalCamelController} that implementators should extend when implementing
@@ -88,7 +85,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             answer.put("logMask", context.isLogMask());
             answer.put("shutdownTimeout", context.getShutdownStrategy().getTimeUnit().toSeconds(context.getShutdownStrategy().getTimeout()));
             answer.put("classResolver", context.getClassResolver().toString());
-            answer.put("packageScanClassResolver", context.getPackageScanClassResolver().toString());
+            answer.put("packageScanClassResolver", context.adapt(ExtendedCamelContext.class).getPackageScanClassResolver().toString());
             answer.put("applicationContextClassLoader", context.getApplicationContextClassLoader().toString());
             answer.put("headersMapFactory", context.getHeadersMapFactory().toString());
 
@@ -119,14 +116,15 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             answer.put("typeConverter.failedCounter", context.getTypeConverterRegistry().getStatistics().getFailedCounter());
 
             // add async processor await manager details
-            answer.put("asyncProcessorAwaitManager.size", context.getAsyncProcessorAwaitManager().size());
-            answer.put("asyncProcessorAwaitManager.statisticsEnabled", context.getAsyncProcessorAwaitManager().getStatistics().isStatisticsEnabled());
-            answer.put("asyncProcessorAwaitManager.threadsBlocked", context.getAsyncProcessorAwaitManager().getStatistics().getThreadsBlocked());
-            answer.put("asyncProcessorAwaitManager.threadsInterrupted", context.getAsyncProcessorAwaitManager().getStatistics().getThreadsInterrupted());
-            answer.put("asyncProcessorAwaitManager.totalDuration", context.getAsyncProcessorAwaitManager().getStatistics().getTotalDuration());
-            answer.put("asyncProcessorAwaitManager.minDuration", context.getAsyncProcessorAwaitManager().getStatistics().getMinDuration());
-            answer.put("asyncProcessorAwaitManager.maxDuration", context.getAsyncProcessorAwaitManager().getStatistics().getMaxDuration());
-            answer.put("asyncProcessorAwaitManager.meanDuration", context.getAsyncProcessorAwaitManager().getStatistics().getMeanDuration());
+            ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+            answer.put("asyncProcessorAwaitManager.size", ecc.getAsyncProcessorAwaitManager().size());
+            answer.put("asyncProcessorAwaitManager.statisticsEnabled", ecc.getAsyncProcessorAwaitManager().getStatistics().isStatisticsEnabled());
+            answer.put("asyncProcessorAwaitManager.threadsBlocked", ecc.getAsyncProcessorAwaitManager().getStatistics().getThreadsBlocked());
+            answer.put("asyncProcessorAwaitManager.threadsInterrupted", ecc.getAsyncProcessorAwaitManager().getStatistics().getThreadsInterrupted());
+            answer.put("asyncProcessorAwaitManager.totalDuration", ecc.getAsyncProcessorAwaitManager().getStatistics().getTotalDuration());
+            answer.put("asyncProcessorAwaitManager.minDuration", ecc.getAsyncProcessorAwaitManager().getStatistics().getMinDuration());
+            answer.put("asyncProcessorAwaitManager.maxDuration", ecc.getAsyncProcessorAwaitManager().getStatistics().getMaxDuration());
+            answer.put("asyncProcessorAwaitManager.meanDuration", ecc.getAsyncProcessorAwaitManager().getStatistics().getMeanDuration());
 
             // add stream caching details if enabled
             if (context.getStreamCachingStrategy().isEnabled()) {

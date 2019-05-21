@@ -17,6 +17,7 @@
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
@@ -45,14 +46,14 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         this.context = context;
         this.processor = processor;
         this.definition = definition;
-        this.id = definition.idOrCreate(context.getNodeIdFactory());
+        this.id = definition.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
         StepDefinition step;
         if (definition instanceof StepDefinition) {
             step = (StepDefinition) definition;
         } else {
             step = ProcessorDefinitionHelper.findFirstParentOfType(StepDefinition.class, definition, true);
         }
-        this.stepId = step != null ? step.idOrCreate(context.getNodeIdFactory()) : null;
+        this.stepId = step != null ? step.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory()) : null;
     }
 
     @Override

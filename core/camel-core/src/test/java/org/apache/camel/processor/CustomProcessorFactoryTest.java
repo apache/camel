@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -38,7 +39,7 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         // register our custom factory
-        context.setProcessorFactory(new MyFactory());
+        context.adapt(ExtendedCamelContext.class).setProcessorFactory(new MyFactory());
         return context;
     }
     // END SNIPPET: e1

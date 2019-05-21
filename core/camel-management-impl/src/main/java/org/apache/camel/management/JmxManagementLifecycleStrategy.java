@@ -37,6 +37,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NonManagedService;
@@ -916,7 +917,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         }
 
         // always register if we are setting up routes
-        if (getCamelContext().isSetupRoutes()) {
+        if (getCamelContext().adapt(ExtendedCamelContext.class).isSetupRoutes()) {
             return true;
         }
 
