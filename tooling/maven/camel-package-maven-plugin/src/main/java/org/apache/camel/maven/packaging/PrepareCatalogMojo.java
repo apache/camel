@@ -135,10 +135,16 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File componentsDir;
 
     /**
-     * The camel-core directory where camel-core components are
+     * The camel-core directory
      */
     @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core")
     protected File coreDir;
+
+    /**
+     * The camel-base directory
+     */
+    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-base")
+    protected File baseDir;
 
     /**
      * The directory where the camel-spring XML models are
@@ -704,11 +710,11 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 }
             }
         }
-        if (coreDir != null && coreDir.isDirectory()) {
-            File target = new File(coreDir, "target/classes");
+        if (baseDir != null && baseDir.isDirectory()) {
+            File target = new File(baseDir, "target/classes");
             findLanguageFilesRecursive(target, jsonFiles, languageFiles, new CamelLanguagesFileFilter());
             // also look in camel-jaxp
-            target = new File(coreDir, "../camel-jaxp/target/classes");
+            target = new File(baseDir, "../camel-jaxp/target/classes");
             findLanguageFilesRecursive(target, jsonFiles, languageFiles, new CamelLanguagesFileFilter());
         }
 
