@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring.config;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.Test;
@@ -30,7 +31,7 @@ public class DefaultPackageResolverConfigureTest extends SpringTestSupport {
 
     @Test
     public void testSetAcceptableSchema() throws Exception {
-        DefaultPackageScanClassResolver resolver = (DefaultPackageScanClassResolver)context.getPackageScanClassResolver();
+        DefaultPackageScanClassResolver resolver = (DefaultPackageScanClassResolver)context.adapt(ExtendedCamelContext.class).getPackageScanClassResolver();
         assertNotNull(resolver);
         // just check the accept schema
         assertTrue("We should accept the test:!", resolver.isAcceptableScheme("test://test"));

@@ -28,7 +28,6 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.ExecutorServiceManager;
-import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
@@ -37,7 +36,6 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
-import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ReloadStrategy;
@@ -79,7 +77,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
  * End users are advised to use suspend/resume. Using stop is for shutting down Camel and it's not guaranteed that
  * when it's being started again using the start method that Camel will operate consistently.
  * <p/>
- * For more advanced APIs with {@link CamelContext} see {@link ExtendedCamelContext}.
+ * For more advanced APIs with {@link CamelContext} see {@link ExtendedCamelContext}, which you can obtain via the adapt method.
  */
 public interface CamelContext extends StatefulService, RuntimeConfiguration {
 
@@ -939,22 +937,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * @param resolver the resolver
      */
     void setClassResolver(ClassResolver resolver);
-
-    /**
-     * Returns the package scanning class resolver
-     *
-     * @return the resolver
-     */
-    // TODO: Extended
-    PackageScanClassResolver getPackageScanClassResolver();
-
-    /**
-     * Sets the package scanning class resolver to use
-     *
-     * @param resolver the resolver
-     */
-    // TODO: Extended
-    void setPackageScanClassResolver(PackageScanClassResolver resolver);
 
     /**
      * Gets the management strategy

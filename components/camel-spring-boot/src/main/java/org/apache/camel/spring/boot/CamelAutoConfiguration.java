@@ -217,7 +217,7 @@ public class CamelAutoConfiguration {
             camelContext.getManagementStrategy().getManagementAgent().setCreateConnector(config.isJmxCreateConnector());
         }
 
-        camelContext.setPackageScanClassResolver(new FatJarPackageScanClassResolver());
+        camelContext.adapt(ExtendedCamelContext.class).setPackageScanClassResolver(new FatJarPackageScanClassResolver());
 
         // tracing
         camelContext.setTracing(config.isTracing());
@@ -354,7 +354,7 @@ public class CamelAutoConfiguration {
         registerPropertyForBeanType(applicationContext, BacklogTracer.class, bt -> camelContext.setExtension(BacklogTracer.class, bt));
         registerPropertyForBeanType(applicationContext, HandleFault.class, camelContext.adapt(ExtendedCamelContext.class)::addInterceptStrategy);
         registerPropertyForBeanType(applicationContext, InflightRepository.class, camelContext::setInflightRepository);
-        registerPropertyForBeanType(applicationContext, AsyncProcessorAwaitManager.class, camelContext::setAsyncProcessorAwaitManager);
+        registerPropertyForBeanType(applicationContext, AsyncProcessorAwaitManager.class, camelContext.adapt(ExtendedCamelContext.class)::setAsyncProcessorAwaitManager);
         registerPropertyForBeanType(applicationContext, ManagementStrategy.class, camelContext::setManagementStrategy);
         registerPropertyForBeanType(applicationContext, ManagementObjectNameStrategy.class, managementStrategy::setManagementObjectNameStrategy);
         registerPropertyForBeanType(applicationContext, EventFactory.class, managementStrategy::setEventFactory);

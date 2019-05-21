@@ -85,7 +85,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             answer.put("logMask", context.isLogMask());
             answer.put("shutdownTimeout", context.getShutdownStrategy().getTimeUnit().toSeconds(context.getShutdownStrategy().getTimeout()));
             answer.put("classResolver", context.getClassResolver().toString());
-            answer.put("packageScanClassResolver", context.getPackageScanClassResolver().toString());
+            answer.put("packageScanClassResolver", context.adapt(ExtendedCamelContext.class).getPackageScanClassResolver().toString());
             answer.put("applicationContextClassLoader", context.getApplicationContextClassLoader().toString());
             answer.put("headersMapFactory", context.getHeadersMapFactory().toString());
 

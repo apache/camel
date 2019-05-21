@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
@@ -119,7 +120,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public String getPackageScanClassResolver() {
-        return context.getPackageScanClassResolver().getClass().getName();
+        return context.adapt(ExtendedCamelContext.class).getPackageScanClassResolver().getClass().getName();
     }
 
     public String getApplicationContextClassName() {
