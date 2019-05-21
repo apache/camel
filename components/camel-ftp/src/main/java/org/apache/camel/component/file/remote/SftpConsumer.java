@@ -173,7 +173,7 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
                 if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(remote, true, files)) {
                     // recursive scan and add the sub files and folders
                     String subDirectory = file.getFilename();
-                    String path = absolutePath + "/" + subDirectory;
+                    String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
                     boolean canPollMore = pollSubDirectory(path, subDirectory, fileList, depth);
                     if (!canPollMore) {
                         return false;

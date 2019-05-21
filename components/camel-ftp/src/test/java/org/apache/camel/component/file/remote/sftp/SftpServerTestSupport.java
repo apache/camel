@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote.sftp;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
@@ -26,6 +27,7 @@ import java.util.List;
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.io.FileUtils;
+import org.apache.sshd.common.file.virtualfs.VirtualFileSystemFactory;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.common.session.helpers.AbstractSession;
 import org.apache.sshd.server.SshServer;
@@ -43,6 +45,7 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
     protected SshServer sshd;
     protected boolean canTest;
     protected String oldUserHome;
+    protected boolean rootDirMode = false;
 
     @Override
     @Before
@@ -76,6 +79,9 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
             sshd.setCommandFactory(new ScpCommandFactory());
             sshd.setPasswordAuthenticator((username, password, session) -> true);
             sshd.setPublickeyAuthenticator((username, password, session) -> true);
+            if (rootDirMode) {
+              sshd.setFileSystemFactory(new VirtualFileSystemFactory(FileSystems.getDefault().getPath(System.getProperty("user.dir") + "/target/res")));
+            }
             sshd.start();
         } catch (Exception e) {
             // ignore if algorithm is not on the OS
