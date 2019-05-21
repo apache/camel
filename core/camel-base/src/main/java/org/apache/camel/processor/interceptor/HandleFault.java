@@ -19,6 +19,7 @@ package org.apache.camel.processor.interceptor;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.InterceptStrategy;
@@ -42,7 +43,7 @@ public final class HandleFault implements InterceptStrategy {
      * @return the stream cache or null if none can be found
      */
     public static HandleFault getHandleFault(CamelContext context) {
-        List<InterceptStrategy> list = context.getInterceptStrategies();
+        List<InterceptStrategy> list = context.adapt(ExtendedCamelContext.class).getInterceptStrategies();
         for (InterceptStrategy interceptStrategy : list) {
             if (interceptStrategy instanceof HandleFault) {
                 return (HandleFault)interceptStrategy;

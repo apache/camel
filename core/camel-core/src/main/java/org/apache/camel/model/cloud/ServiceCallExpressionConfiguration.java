@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.cloud.ServiceCallConstants;
 import org.apache.camel.cloud.ServiceExpressionFactory;
@@ -226,7 +227,7 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
                 Class<?> type;
                 try {
                     // Then use Service factory.
-                    type = camelContext.getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(factoryKey);
+                    type = camelContext.adapt(ExtendedCamelContext.class).getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(factoryKey);
                 } catch (Exception e) {
                     throw new NoFactoryAvailableException(ServiceCallDefinitionConstants.RESOURCE_PATH + factoryKey, e);
                 }

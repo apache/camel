@@ -22,6 +22,7 @@ import java.util.Set;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
@@ -284,7 +285,7 @@ public class RestEndpoint extends DefaultEndpoint {
             log.debug("Discovering camel-swagger-java on classpath for using api-doc: {}", apiDoc);
             // lookup on classpath using factory finder to automatic find it (just add camel-swagger-java to classpath etc)
             try {
-                FactoryFinder finder = getCamelContext().getFactoryFinder(RESOURCE_PATH);
+                FactoryFinder finder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
                 Object instance = finder.newInstance(DEFAULT_API_COMPONENT_NAME);
                 if (instance instanceof RestProducerFactory) {
                     // this factory from camel-swagger-java will facade the http component in use

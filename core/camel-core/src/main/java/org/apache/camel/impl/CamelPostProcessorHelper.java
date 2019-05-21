@@ -26,6 +26,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.MultipleConsumersSupport;
@@ -251,7 +252,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                     // lets create a proxy
                     try {
                         // use proxy service
-                        BeanProxyFactory factory = endpoint.getCamelContext().getBeanProxyFactory();
+                        BeanProxyFactory factory = endpoint.getCamelContext().adapt(ExtendedCamelContext.class).getBeanProxyFactory();
                         if (factory == null) {
                             throw new IllegalArgumentException("Cannot find BeanProxyFactory. Make sure camel-bean is on the classpath.");
                         }
@@ -400,7 +401,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
      */
     protected Producer createInjectionProducer(Endpoint endpoint, Object bean, String beanName) {
         try {
-            return endpoint.getCamelContext().getDeferServiceFactory().createProducer(endpoint);
+            return endpoint.getCamelContext().adapt(ExtendedCamelContext.class).getDeferServiceFactory().createProducer(endpoint);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }

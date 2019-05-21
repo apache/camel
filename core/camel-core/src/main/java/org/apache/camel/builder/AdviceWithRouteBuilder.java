@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -73,7 +74,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      * @throws Exception can be thrown if error occurred
      */
     public void mockEndpoints() throws Exception {
-        getContext().addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(null));
+        getContext().adapt(ExtendedCamelContext.class).registerEndpointCallback(new InterceptSendToMockEndpointStrategy(null));
     }
 
     /**
@@ -85,7 +86,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public void mockEndpoints(String... pattern) throws Exception {
         for (String s : pattern) {
-            getContext().addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(s));
+            getContext().adapt(ExtendedCamelContext.class).registerEndpointCallback(new InterceptSendToMockEndpointStrategy(s));
         }
     }
 
@@ -98,7 +99,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public void mockEndpointsAndSkip(String... pattern) throws Exception {
         for (String s : pattern) {
-            getContext().addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(s, true));
+            getContext().adapt(ExtendedCamelContext.class).registerEndpointCallback(new InterceptSendToMockEndpointStrategy(s, true));
         }
     }
 

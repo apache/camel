@@ -23,6 +23,7 @@ import java.util.StringTokenizer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
@@ -89,7 +90,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
     public Route createRoute(CamelContext camelContext) throws Exception {
         @SuppressWarnings("deprecation")
-        ErrorHandlerFactory handler = camelContext.getErrorHandlerFactory();
+        ErrorHandlerFactory handler = camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory();
         if (handler != null) {
             definition.setErrorHandlerBuilderIfNull(handler);
         }
@@ -161,7 +162,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // we must check the error handler on builder is not the same as on camel context, as that would be the default
         // context scoped error handler, in case no error handlers was configured
         if (builder.getRouteCollection().getErrorHandlerFactory() != null
-                && camelContext.getErrorHandlerFactory() != builder.getRouteCollection().getErrorHandlerFactory()) {
+                && camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory() != builder.getRouteCollection().getErrorHandlerFactory()) {
             throw new IllegalArgumentException("You can not advice with error handlers. Remove the error handlers from the route builder.");
         }
 

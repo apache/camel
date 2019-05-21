@@ -18,6 +18,7 @@ package org.apache.camel.spring.boot;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.LogListener;
 import org.junit.Test;
@@ -46,7 +47,7 @@ public class LogListenerDiscoveryTest {
 
     @Test
     public void testUuidDiscovery() {
-        assertThat(camelContext.getLogListeners()).contains(logListener);
+        assertThat(camelContext.adapt(ExtendedCamelContext.class).getLogListeners()).contains(logListener);
     }
 
     @Component

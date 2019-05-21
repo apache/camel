@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.model.LogDefinition;
@@ -87,7 +88,7 @@ class LogReifier extends ProcessorReifier<LogDefinition> {
         LoggingLevel level = definition.getLoggingLevel() != null ? definition.getLoggingLevel() : LoggingLevel.INFO;
         CamelLogger camelLogger = new CamelLogger(logger, level, definition.getMarker());
 
-        return new LogProcessor(exp, camelLogger, getMaskingFormatter(routeContext), routeContext.getCamelContext().getLogListeners());
+        return new LogProcessor(exp, camelLogger, getMaskingFormatter(routeContext), routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getLogListeners());
     }
 
     private MaskingFormatter getMaskingFormatter(RouteContext routeContext) {

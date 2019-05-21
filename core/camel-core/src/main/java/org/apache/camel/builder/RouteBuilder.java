@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.model.FromDefinition;
@@ -427,8 +428,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         if (initialized.compareAndSet(false, true)) {
             // Set the CamelContext ErrorHandler here
             CamelContext camelContext = getContext();
-            if (camelContext.getErrorHandlerFactory() instanceof ErrorHandlerBuilder) {
-                setErrorHandlerBuilder((ErrorHandlerBuilder) camelContext.getErrorHandlerFactory());
+            if (camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory() instanceof ErrorHandlerBuilder) {
+                setErrorHandlerBuilder((ErrorHandlerBuilder) camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory());
             }
             configure();
             // mark all route definitions as custom prepared because

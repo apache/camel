@@ -30,6 +30,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.StaticService;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
@@ -500,7 +501,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
 
         // extract id from source
         if (source instanceof NamedNode) {
-            id = ((OptionalIdentifiedDefinition<?>) source).idOrCreate(this.camelContext.getNodeIdFactory());
+            id = ((OptionalIdentifiedDefinition<?>) source).idOrCreate(this.camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
             // and let source be the short name of the pattern
             sourceId = ((NamedNode) source).getShortName();
         } else if (source instanceof String) {
@@ -525,7 +526,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         if (source instanceof ProcessorDefinition) {
             RouteDefinition route = ProcessorDefinitionHelper.getRoute((ProcessorDefinition<?>) source);
             if (route != null) {
-                routeId = route.idOrCreate(this.camelContext.getNodeIdFactory());
+                routeId = route.idOrCreate(this.camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
             }
         }
 

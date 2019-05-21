@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -732,7 +733,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
         String routeId = configuration.getApiContextRouteId();
         if (routeId == null) {
-            routeId = answer.idOrCreate(camelContext.getNodeIdFactory());
+            routeId = answer.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
         }
         options.put("routeId", routeId);
         if (configuration.getComponent() != null && !configuration.getComponent().isEmpty()) {

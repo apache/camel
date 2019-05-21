@@ -21,6 +21,7 @@ In Camel 2.x camel-core was one JAR file, which now has been splitup into many J
 - camel-caffeine-lrucache
 - camel-cloud
 - camel-core
+- camel-jaxp
 - camel-management-api
 - camel-management-impl
 - camel-support
@@ -154,6 +155,12 @@ In Camel 2.x we have deprecated `getProperties` on `CamelContext` in favour of `
       <globalOption key="CamelJacksonTypeConverterToPojo" value="true"/>
     </globalOptions>
 
+
+### Extended CamelContext
+
+The APIs on `CamelContext` has been reducded a bit to focus on relevant API for Camel end users. The advanced use-cases and for SPI and component developers, then some of the APIs from `CamelContext` has been moved to `ExtendedCamelContext` which you can access via adapt:
+
+    ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
 
 ### Main class
 

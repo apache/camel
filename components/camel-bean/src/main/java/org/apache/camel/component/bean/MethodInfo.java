@@ -38,6 +38,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionEvaluationException;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Pattern;
@@ -55,7 +56,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.asString;
-
 
 /**
  * Information about a method to be used for invocation.
@@ -124,7 +124,7 @@ public class MethodInfo {
         org.apache.camel.RoutingSlip routingSlipAnnotation =
             (org.apache.camel.RoutingSlip)collectedMethodAnnotation.get(org.apache.camel.RoutingSlip.class);
         if (routingSlipAnnotation != null && matchContext(routingSlipAnnotation.context())) {
-            routingSlip = camelContext.getAnnotationBasedProcessorFactory().createRoutingSlip(camelContext, routingSlipAnnotation);
+            routingSlip = camelContext.adapt(ExtendedCamelContext.class).getAnnotationBasedProcessorFactory().createRoutingSlip(camelContext, routingSlipAnnotation);
             // add created routingSlip as a service so we have its lifecycle managed
             try {
                 camelContext.addService(routingSlip);
@@ -137,7 +137,7 @@ public class MethodInfo {
             (org.apache.camel.DynamicRouter)collectedMethodAnnotation.get(org.apache.camel.DynamicRouter.class);
         if (dynamicRouterAnnotation != null
                 && matchContext(dynamicRouterAnnotation.context())) {
-            dynamicRouter = camelContext.getAnnotationBasedProcessorFactory().createDynamicRouter(camelContext, dynamicRouterAnnotation);
+            dynamicRouter = camelContext.adapt(ExtendedCamelContext.class).getAnnotationBasedProcessorFactory().createDynamicRouter(camelContext, dynamicRouterAnnotation);
             // add created dynamicRouter as a service so we have its lifecycle managed
             try {
                 camelContext.addService(dynamicRouter);
@@ -150,7 +150,7 @@ public class MethodInfo {
             (org.apache.camel.RecipientList)collectedMethodAnnotation.get(org.apache.camel.RecipientList.class);
         if (recipientListAnnotation != null
                 && matchContext(recipientListAnnotation.context())) {
-            recipientList = camelContext.getAnnotationBasedProcessorFactory().createRecipientList(camelContext, recipientListAnnotation);
+            recipientList = camelContext.adapt(ExtendedCamelContext.class).getAnnotationBasedProcessorFactory().createRecipientList(camelContext, recipientListAnnotation);
             // add created recipientList as a service so we have its lifecycle managed
             try {
                 camelContext.addService(recipientList);

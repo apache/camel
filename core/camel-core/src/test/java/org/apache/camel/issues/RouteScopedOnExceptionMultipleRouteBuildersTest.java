@@ -18,6 +18,7 @@ package org.apache.camel.issues;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -53,7 +54,7 @@ public class RouteScopedOnExceptionMultipleRouteBuildersTest extends ContextTest
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext(createRegistry());
-        context.setErrorHandlerFactory(new DeadLetterChannelBuilder("mock:dead"));
+        context.adapt(ExtendedCamelContext.class).setErrorHandlerFactory(new DeadLetterChannelBuilder("mock:dead"));
         return context;
     }
 

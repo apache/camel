@@ -19,6 +19,7 @@ package org.apache.camel.impl.engine;
 import java.io.IOException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.RestRegistryFactory;
 import org.slf4j.Logger;
@@ -65,7 +66,7 @@ public class RestRegistryFactoryResolver {
 
     private Class<?> findFactory(String name, CamelContext context) throws ClassNotFoundException, IOException {
         if (factoryFinder == null) {
-            factoryFinder = context.getFactoryFinder(RESOURCE_PATH);
+            factoryFinder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
         }
         return factoryFinder.findClass(name);
     }
