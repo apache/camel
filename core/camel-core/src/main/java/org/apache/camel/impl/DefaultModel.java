@@ -301,7 +301,7 @@ public class DefaultModel implements Model {
         AbstractCamelContext mcc = camelContext.adapt(AbstractCamelContext.class);
         mcc.setStartingRoutes(true);
         try {
-            String id = routeDefinition.idOrCreate(camelContext.getNodeIdFactory());
+            String id = routeDefinition.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
             RouteContext routeContext = new DefaultRouteContext(camelContext, routeDefinition, id);
             Route route = new RouteReifier(routeDefinition).createRoute(camelContext, routeContext);
             RouteService routeService = new RouteService(route);
