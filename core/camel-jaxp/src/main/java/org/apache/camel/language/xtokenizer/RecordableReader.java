@@ -23,7 +23,6 @@ import java.io.Reader;
 
 /**
  * This class is used by the tokenizer to extract data while reading from the stream.
- * TODO it is used package internally but may be moved to some common package.
  */
 class RecordableReader extends FilterReader {
     private TrimmableCharArrayWriter buf;
