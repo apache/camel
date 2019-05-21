@@ -32,6 +32,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
@@ -274,7 +275,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected GenericFileProcessStrategy<T> createGenericFileStrategy() {
         Class<?> factory = null;
         try {
-            FactoryFinder finder = getCamelContext().getFactoryFinder("META-INF/services/org/apache/camel/component/");
+            FactoryFinder finder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder("META-INF/services/org/apache/camel/component/");
             log.trace("Using FactoryFinder: {}", finder);
             factory = finder.findClass(getScheme(), "strategy.factory.", CamelContext.class);
         } catch (ClassNotFoundException e) {

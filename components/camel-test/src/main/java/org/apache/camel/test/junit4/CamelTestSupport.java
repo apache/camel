@@ -50,6 +50,7 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.Message;
 import org.apache.camel.NamedNode;
@@ -364,11 +365,11 @@ public abstract class CamelTestSupport extends TestSupport {
         // enable auto mocking if enabled
         String pattern = isMockEndpoints();
         if (pattern != null) {
-            context.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern));
+            context.adapt(ExtendedCamelContext.class).registerEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern));
         }
         pattern = isMockEndpointsAndSkip();
         if (pattern != null) {
-            context.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern, true));
+            context.adapt(ExtendedCamelContext.class).registerEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern, true));
         }
 
         // configure properties component (mandatory for testing)

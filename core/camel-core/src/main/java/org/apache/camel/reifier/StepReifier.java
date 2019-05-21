@@ -18,6 +18,7 @@ package org.apache.camel.reifier;
 
 import java.util.List;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.StepDefinition;
@@ -37,7 +38,7 @@ class StepReifier extends ProcessorReifier<StepDefinition> {
 
     @Override
     protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) throws Exception {
-        String stepId = definition.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+        String stepId = definition.idOrCreate(routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getNodeIdFactory());
         return StepProcessor.newInstance(routeContext.getCamelContext(), list, stepId);
     }
 }

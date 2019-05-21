@@ -30,6 +30,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.NamespaceAwareExpression;
 import org.apache.camel.support.CamelContextHelper;
@@ -89,7 +90,7 @@ public final class RouteContextRefDefinitionHelper {
 
     private static synchronized JAXBContext getOrCreateJAXBContext(final CamelContext camelContext) throws JAXBException {
         if (jaxbContext == null) {
-            jaxbContext = camelContext.getModelJAXBContextFactory().newJAXBContext();
+            jaxbContext = camelContext.adapt(ExtendedCamelContext.class).getModelJAXBContextFactory().newJAXBContext();
         }
         return jaxbContext;
     }

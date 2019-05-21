@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -139,7 +140,7 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
                 // collect route ids and force assign ids if not in use
                 for (RouteDefinition route : routes) {
                     unassignedRouteIds |= !route.hasCustomIdAssigned();
-                    String id = route.idOrCreate(camelContext.getNodeIdFactory());
+                    String id = route.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
                     csb.append(id);
                 }
                 log.debug("Reloading routes: [{}] from XML resource: {}", csb, name);

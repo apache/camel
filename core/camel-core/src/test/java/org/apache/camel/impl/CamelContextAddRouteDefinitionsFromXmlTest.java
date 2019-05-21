@@ -23,6 +23,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -37,7 +38,7 @@ public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSuppo
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        jaxbContext = context.getModelJAXBContextFactory().newJAXBContext();
+        jaxbContext = context.adapt(ExtendedCamelContext.class).getModelJAXBContextFactory().newJAXBContext();
     }
 
     protected Object parseUri(String uri) throws JAXBException {

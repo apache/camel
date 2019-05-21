@@ -25,6 +25,7 @@ import java.util.concurrent.RejectedExecutionException;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
@@ -82,7 +83,7 @@ public class SharedCamelInternalProcessor {
      * Synchronous API
      */
     public void process(Exchange exchange, AsyncProcessor processor, Processor resultProcessor) {
-        final AsyncProcessorAwaitManager awaitManager = exchange.getContext().getAsyncProcessorAwaitManager();
+        final AsyncProcessorAwaitManager awaitManager = exchange.getContext().adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
         awaitManager.process(new AsyncProcessor() {
             @Override
             public boolean process(Exchange exchange, AsyncCallback callback) {

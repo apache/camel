@@ -23,6 +23,7 @@ import java.util.function.Supplier;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.cloud.ServiceChooser;
 import org.apache.camel.cloud.ServiceChooserAware;
@@ -383,7 +384,7 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
 
                 try {
                     // Then use Service factory.
-                    type = camelContext.getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(lookupName);
+                    type = camelContext.adapt(ExtendedCamelContext.class).getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(lookupName);
                 } catch (Exception e) {
                 }
 

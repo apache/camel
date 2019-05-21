@@ -17,6 +17,7 @@
 package org.apache.camel.impl.model;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.component.rest.DummyRestProcessorFactory;
@@ -39,7 +40,7 @@ public class RouteIdFactoryTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.setNodeIdFactory(new RouteIdFactory());
+                context.adapt(ExtendedCamelContext.class).setNodeIdFactory(new RouteIdFactory());
                 from("direct:start1?timeout=30000").to("mock:result");
                 from("direct:start2").to("mock:result");
                 rest("/say/hello").get("/bar").to("mock:result");

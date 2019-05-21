@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Route;
 import org.apache.camel.impl.engine.AbstractCamelContext;
@@ -108,7 +109,7 @@ public class DefaultModel implements Model {
 
     public synchronized RouteDefinition getRouteDefinition(String id) {
         for (RouteDefinition route : routeDefinitions) {
-            if (route.idOrCreate(camelContext.getNodeIdFactory()).equals(id)) {
+            if (route.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory()).equals(id)) {
                 return route;
             }
         }

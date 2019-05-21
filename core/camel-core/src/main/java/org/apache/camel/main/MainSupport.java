@@ -41,6 +41,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TypeConverters;
 import org.apache.camel.builder.RouteBuilder;
@@ -726,7 +727,7 @@ public abstract class MainSupport extends ServiceSupport {
     protected void loadRouteBuilders(CamelContext camelContext) throws Exception {
         // lets use Camel's bean post processor on any existing route builder classes
         // so the instance has some support for dependency injection
-        CamelBeanPostProcessor postProcessor = camelContext.getBeanPostProcessor();
+        CamelBeanPostProcessor postProcessor = camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
         for (RouteBuilder routeBuilder : getRouteBuilders()) {
             postProcessor.postProcessBeforeInitialization(routeBuilder, routeBuilder.getClass().getName());
             postProcessor.postProcessAfterInitialization(routeBuilder, routeBuilder.getClass().getName());
@@ -750,7 +751,7 @@ public abstract class MainSupport extends ServiceSupport {
     protected void loadConfigurations(CamelContext camelContext) throws Exception {
         // lets use Camel's bean post processor on any existing configuration classes
         // so the instance has some support for dependency injection
-        CamelBeanPostProcessor postProcessor = camelContext.getBeanPostProcessor();
+        CamelBeanPostProcessor postProcessor = camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
         for (Object configuration : getConfigurations()) {
             postProcessor.postProcessBeforeInitialization(configuration, configuration.getClass().getName());
             postProcessor.postProcessAfterInitialization(configuration, configuration.getClass().getName());
@@ -985,13 +986,13 @@ public abstract class MainSupport extends ServiceSupport {
         final ManagementStrategy managementStrategy = camelContext.getManagementStrategy();
 
         registerPropertyForBeanType(registry, BacklogTracer.class, bt -> camelContext.setExtension(BacklogTracer.class, bt));
-        registerPropertyForBeanType(registry, HandleFault.class, camelContext::addInterceptStrategy);
+        registerPropertyForBeanType(registry, HandleFault.class, camelContext.adapt(ExtendedCamelContext.class)::addInterceptStrategy);
         registerPropertyForBeanType(registry, InflightRepository.class, camelContext::setInflightRepository);
-        registerPropertyForBeanType(registry, AsyncProcessorAwaitManager.class, camelContext::setAsyncProcessorAwaitManager);
+        registerPropertyForBeanType(registry, AsyncProcessorAwaitManager.class, camelContext.adapt(ExtendedCamelContext.class)::setAsyncProcessorAwaitManager);
         registerPropertyForBeanType(registry, ManagementStrategy.class, camelContext::setManagementStrategy);
         registerPropertyForBeanType(registry, ManagementObjectNameStrategy.class, managementStrategy::setManagementObjectNameStrategy);
         registerPropertyForBeanType(registry, EventFactory.class, managementStrategy::setEventFactory);
-        registerPropertyForBeanType(registry, UnitOfWorkFactory.class, camelContext::setUnitOfWorkFactory);
+        registerPropertyForBeanType(registry, UnitOfWorkFactory.class, camelContext.adapt(ExtendedCamelContext.class)::setUnitOfWorkFactory);
         registerPropertyForBeanType(registry, RuntimeEndpointRegistry.class, camelContext::setRuntimeEndpointRegistry);
 
         registerPropertiesForBeanTypes(registry, TypeConverters.class, camelContext.getTypeConverterRegistry()::addTypeConverters);
@@ -999,12 +1000,12 @@ public abstract class MainSupport extends ServiceSupport {
         final Predicate<EventNotifier> containsEventNotifier = managementStrategy.getEventNotifiers()::contains;
         registerPropertiesForBeanTypesWithCondition(registry, EventNotifier.class, containsEventNotifier.negate(), managementStrategy::addEventNotifier);
 
-        registerPropertiesForBeanTypes(registry, EndpointStrategy.class, camelContext::addRegisterEndpointCallback);
+        registerPropertiesForBeanTypes(registry, EndpointStrategy.class, camelContext.adapt(ExtendedCamelContext.class)::registerEndpointCallback);
 
         registerPropertyForBeanType(registry, ShutdownStrategy.class, camelContext::setShutdownStrategy);
 
-        final Predicate<InterceptStrategy> containsInterceptStrategy = camelContext.getInterceptStrategies()::contains;
-        registerPropertiesForBeanTypesWithCondition(registry, InterceptStrategy.class, containsInterceptStrategy.negate(), camelContext::addInterceptStrategy);
+        final Predicate<InterceptStrategy> containsInterceptStrategy = camelContext.adapt(ExtendedCamelContext.class).getInterceptStrategies()::contains;
+        registerPropertiesForBeanTypesWithCondition(registry, InterceptStrategy.class, containsInterceptStrategy.negate(), camelContext.adapt(ExtendedCamelContext.class)::addInterceptStrategy);
 
         final Predicate<LifecycleStrategy> containsLifecycleStrategy = camelContext.getLifecycleStrategies()::contains;
         registerPropertiesForBeanTypesWithCondition(registry, LifecycleStrategy.class, containsLifecycleStrategy.negate(), camelContext::addLifecycleStrategy);
@@ -1050,8 +1051,8 @@ public abstract class MainSupport extends ServiceSupport {
         registerPropertyForBeanType(registry, RouteController.class, camelContext::setRouteController);
         registerPropertyForBeanType(registry, UuidGenerator.class, camelContext::setUuidGenerator);
 
-        final Predicate<LogListener> containsLogListener = camelContext.getLogListeners()::contains;
-        registerPropertiesForBeanTypesWithCondition(registry, LogListener.class, containsLogListener.negate(), camelContext::addLogListener);
+        final Predicate<LogListener> containsLogListener = camelContext.adapt(ExtendedCamelContext.class).getLogListeners()::contains;
+        registerPropertiesForBeanTypesWithCondition(registry, LogListener.class, containsLogListener.negate(), camelContext.adapt(ExtendedCamelContext.class)::addLogListener);
 
         registerPropertyForBeanType(registry, ExecutorServiceManager.class, camelContext::setExecutorServiceManager);
 

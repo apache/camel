@@ -32,19 +32,7 @@ Just set the delay attribute of the camelContext tag as shown below:
 [[DelayInterceptor-ConfiguringusingJava]]
 ==== Configuring using Java
 
-You can add the delayer interceptor in the RouteBulder as shown below:
-
-[source,java]
-------------------------------------------------------------------
-    public void configure() throws Exception {
-        // add the delay interceptor to delay each step 200 millis
-        getContext().addInterceptStrategy(new Delayer(200));
-
-       ... // regular routes here
-    }
-------------------------------------------------------------------
-
-In *Camel 2.0* its a bit easier as you can just do
+You can add the delayer interceptor in the RouteBulder:
 
 [source,java]
 -----------------------------

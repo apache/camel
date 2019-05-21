@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.util.List;
 
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
@@ -76,7 +77,7 @@ public class RouteService extends BaseRouteService {
         // the XML DSL will configure error handlers using refs, so we need this additional test
         if (routeDefinition.getErrorHandlerRef() != null) {
             ErrorHandlerFactory routeScoped = getRouteContext().getErrorHandlerFactory();
-            ErrorHandlerFactory contextScoped = getCamelContext().getErrorHandlerFactory();
+            ErrorHandlerFactory contextScoped = getCamelContext().adapt(ExtendedCamelContext.class).getErrorHandlerFactory();
             return routeScoped != null && contextScoped != null && routeScoped == contextScoped;
         }
 

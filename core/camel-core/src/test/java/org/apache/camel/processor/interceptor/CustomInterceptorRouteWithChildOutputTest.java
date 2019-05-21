@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -62,7 +63,7 @@ public class CustomInterceptorRouteWithChildOutputTest extends ContextTestSuppor
             @Override
             public void configure() throws Exception {
                 // add our custom interceptor
-                context.addInterceptStrategy(myInterceptor);
+                context.adapt(ExtendedCamelContext.class).addInterceptStrategy(myInterceptor);
 
                 from("direct:start")
                     .split(body().tokenize(","))

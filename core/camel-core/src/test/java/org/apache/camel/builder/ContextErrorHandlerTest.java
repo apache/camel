@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.camel.Channel;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.impl.engine.EventDrivenConsumerRoute;
@@ -41,7 +42,7 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
         redeliveryPolicy.setUseExponentialBackOff(true);
         DeadLetterChannelBuilder deadLetterChannelBuilder = new DeadLetterChannelBuilder("mock:error");
         deadLetterChannelBuilder.setRedeliveryPolicy(redeliveryPolicy);
-        context.setErrorHandlerFactory(deadLetterChannelBuilder);
+        context.adapt(ExtendedCamelContext.class).setErrorHandlerFactory(deadLetterChannelBuilder);
     }
 
     protected void startCamelContext() throws Exception {

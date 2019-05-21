@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.StaticService;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
@@ -64,7 +65,7 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V>  implements
         V answer = staticMap.get(o);
         if (answer == null) {
             answer = dynamicMap.get(o);
-            if (answer != null && (context.isSetupRoutes() || context.getRouteController().isStartingRoutes())) {
+            if (answer != null && (context.adapt(ExtendedCamelContext.class).isSetupRoutes() || context.getRouteController().isStartingRoutes())) {
                 dynamicMap.remove(o);
                 staticMap.put((K) o, answer);
             }
@@ -90,7 +91,7 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V>  implements
         }
 
         // we want transformers to be static if they are part of setting up or starting routes
-        if (context.isSetupRoutes() || context.getRouteController().isStartingRoutes()) {
+        if (context.adapt(ExtendedCamelContext.class).isSetupRoutes() || context.getRouteController().isStartingRoutes()) {
             answer = staticMap.put(key, transformer);
         } else {
             answer = dynamicMap.put(key, transformer);

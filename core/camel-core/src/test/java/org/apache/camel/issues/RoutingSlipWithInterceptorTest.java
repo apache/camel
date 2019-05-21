@@ -20,6 +20,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -101,7 +102,7 @@ public class RoutingSlipWithInterceptorTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                context.addInterceptStrategy(interceptStrategy);
+                context.adapt(ExtendedCamelContext.class).addInterceptStrategy(interceptStrategy);
 
                 from("direct:start")
                     .routingSlip(header("slip"))

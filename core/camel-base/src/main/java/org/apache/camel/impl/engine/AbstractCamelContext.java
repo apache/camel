@@ -50,6 +50,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedStartupListener;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.FluentProducerTemplate;
@@ -161,7 +162,7 @@ import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
 /**
  * Represents the context used to configure routes and the policies to use.
  */
-public abstract class AbstractCamelContext extends ServiceSupport implements CamelContext, Suspendable {
+public abstract class AbstractCamelContext extends ServiceSupport implements ExtendedCamelContext, Suspendable {
 
     public enum Initialization {
         Eager, Default, Lazy
@@ -801,7 +802,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Cam
         }
     }
 
-    public void addRegisterEndpointCallback(EndpointStrategy strategy) {
+    public void registerEndpointCallback(EndpointStrategy strategy) {
         if (!endpointStrategies.contains(strategy)) {
             // let it be invoked for already registered endpoints so it can
             // catch-up.

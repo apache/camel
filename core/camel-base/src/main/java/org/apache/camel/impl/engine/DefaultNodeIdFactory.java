@@ -42,7 +42,6 @@ public class DefaultNodeIdFactory implements NodeIdFactory {
         return nodeCounters.computeIfAbsent(key, k -> new AtomicInteger(0));
     }
 
-
     /**
      * Helper method for test purposes that allows tests to start clean (made protected 
      *  to ensure that it is not called accidentally)

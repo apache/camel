@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.RoutesBuilder;
@@ -165,7 +166,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         PackageScanClassResolver packageResolver = getBeanForType(PackageScanClassResolver.class);
         if (packageResolver != null) {
             LOG.info("Using custom PackageScanClassResolver: {}", packageResolver);
-            getContext().setPackageScanClassResolver(packageResolver);
+            getContext().adapt(ExtendedCamelContext.class).setPackageScanClassResolver(packageResolver);
         }
 
         // also set type converter registry as early as possible
@@ -202,7 +203,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         HandleFault handleFault = getBeanForType(HandleFault.class);
         if (handleFault != null) {
             LOG.info("Using custom HandleFault: {}", handleFault);
-            getContext().addInterceptStrategy(handleFault);
+            getContext().adapt(ExtendedCamelContext.class).addInterceptStrategy(handleFault);
         }
         InflightRepository inflightRepository = getBeanForType(InflightRepository.class);
         if (inflightRepository != null) {
@@ -212,7 +213,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         AsyncProcessorAwaitManager asyncProcessorAwaitManager = getBeanForType(AsyncProcessorAwaitManager.class);
         if (asyncProcessorAwaitManager != null) {
             LOG.info("Using custom AsyncProcessorAwaitManager: {}", asyncProcessorAwaitManager);
-            getContext().setAsyncProcessorAwaitManager(asyncProcessorAwaitManager);
+            getContext().adapt(ExtendedCamelContext.class).setAsyncProcessorAwaitManager(asyncProcessorAwaitManager);
         }
         ManagementStrategy managementStrategy = getBeanForType(ManagementStrategy.class);
         if (managementStrategy != null) {
@@ -232,7 +233,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         UnitOfWorkFactory unitOfWorkFactory = getBeanForType(UnitOfWorkFactory.class);
         if (unitOfWorkFactory != null) {
             LOG.info("Using custom UnitOfWorkFactory: {}", unitOfWorkFactory);
-            getContext().setUnitOfWorkFactory(unitOfWorkFactory);
+            getContext().adapt(ExtendedCamelContext.class).setUnitOfWorkFactory(unitOfWorkFactory);
         }
         RuntimeEndpointRegistry runtimeEndpointRegistry = getBeanForType(RuntimeEndpointRegistry.class);
         if (runtimeEndpointRegistry != null) {
@@ -276,7 +277,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             for (Entry<String, EndpointStrategy> entry : endpointStrategies.entrySet()) {
                 EndpointStrategy strategy = entry.getValue();
                 LOG.info("Using custom EndpointStrategy with id: {} and implementation: {}", entry.getKey(), strategy);
-                getContext().addRegisterEndpointCallback(strategy);
+                getContext().adapt(ExtendedCamelContext.class).registerEndpointCallback(strategy);
             }
         }
         // shutdown
@@ -291,9 +292,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             for (Entry<String, InterceptStrategy> entry : interceptStrategies.entrySet()) {
                 InterceptStrategy strategy = entry.getValue();
                 // do not add if already added, for instance a tracer that is also an InterceptStrategy class
-                if (!getContext().getInterceptStrategies().contains(strategy)) {
+                if (!getContext().adapt(ExtendedCamelContext.class).getInterceptStrategies().contains(strategy)) {
                     LOG.info("Using custom InterceptStrategy with id: {} and implementation: {}", entry.getKey(), strategy);
-                    getContext().addInterceptStrategy(strategy);
+                    getContext().adapt(ExtendedCamelContext.class).addInterceptStrategy(strategy);
                 }
             }
         }
@@ -380,9 +381,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (logListeners != null && !logListeners.isEmpty()) {
             for (Map.Entry<String, LogListener> entry : logListeners.entrySet()) {
                 LogListener logListener = entry.getValue();
-                if (!getContext().getLogListeners().contains(logListener)) {
+                if (!getContext().adapt(ExtendedCamelContext.class).getLogListeners().contains(logListener)) {
                     LOG.info("Using custom LogListener with id: {} and implementation: {}", entry.getKey(), logListener);
-                    getContext().addLogListener(logListener);
+                    getContext().adapt(ExtendedCamelContext.class).addLogListener(logListener);
                 }
             }
         }
@@ -411,7 +412,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             LOG.debug("Setting up routes");
 
             // mark that we are setting up routes
-            getContext().setupRoutes(false);
+            getContext().adapt(ExtendedCamelContext.class).setupRoutes(false);
 
             // must init route refs before we prepare the routes below
             initRouteRefs();
@@ -462,7 +463,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             installRoutes();
 
             // and we are now finished setting up the routes
-            getContext().setupRoutes(true);
+            getContext().adapt(ExtendedCamelContext.class).setupRoutes(true);
         }
     }
 
@@ -553,7 +554,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                 properties.put("statisticsLevel", msLevel);
             }
 
-            getContext().setupManagement(properties);
+            getContext().adapt(ExtendedCamelContext.class).setupManagement(properties);
         }
     }
 
@@ -867,7 +868,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             context.setHandleFault(CamelContextHelper.parseBoolean(context, getHandleFault()));
         }
         if (getErrorHandlerRef() != null) {
-            context.setErrorHandlerFactory(new ErrorHandlerBuilderRef(getErrorHandlerRef()));
+            context.adapt(ExtendedCamelContext.class).setErrorHandlerFactory(new ErrorHandlerBuilderRef(getErrorHandlerRef()));
         }
         if (getAutoStartup() != null) {
             context.setAutoStartup(CamelContextHelper.parseBoolean(context, getAutoStartup()));
@@ -1113,7 +1114,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         ModelJAXBContextFactory modelJAXBContextFactory = getBeanForType(ModelJAXBContextFactory.class);
         if (modelJAXBContextFactory != null) {
             LOG.info("Using custom ModelJAXBContextFactory: {}", modelJAXBContextFactory);
-            getContext().setModelJAXBContextFactory(modelJAXBContextFactory);
+            getContext().adapt(ExtendedCamelContext.class).setModelJAXBContextFactory(modelJAXBContextFactory);
         }
         ClassResolver classResolver = getBeanForType(ClassResolver.class);
         if (classResolver != null) {
@@ -1123,7 +1124,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         FactoryFinderResolver factoryFinderResolver = getBeanForType(FactoryFinderResolver.class);
         if (factoryFinderResolver != null) {
             LOG.info("Using custom FactoryFinderResolver: {}", factoryFinderResolver);
-            getContext().setFactoryFinderResolver(factoryFinderResolver);
+            getContext().adapt(ExtendedCamelContext.class).setFactoryFinderResolver(factoryFinderResolver);
         }
         ExecutorServiceManager executorServiceStrategy = getBeanForType(ExecutorServiceManager.class);
         if (executorServiceStrategy != null) {
@@ -1138,7 +1139,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         ProcessorFactory processorFactory = getBeanForType(ProcessorFactory.class);
         if (processorFactory != null) {
             LOG.info("Using custom ProcessorFactory: {}", processorFactory);
-            getContext().setProcessorFactory(processorFactory);
+            getContext().adapt(ExtendedCamelContext.class).setProcessorFactory(processorFactory);
         }
         Debugger debugger = getBeanForType(Debugger.class);
         if (debugger != null) {
@@ -1153,7 +1154,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         NodeIdFactory nodeIdFactory = getBeanForType(NodeIdFactory.class);
         if (nodeIdFactory != null) {
             LOG.info("Using custom NodeIdFactory: {}", nodeIdFactory);
-            getContext().setNodeIdFactory(nodeIdFactory);
+            getContext().adapt(ExtendedCamelContext.class).setNodeIdFactory(nodeIdFactory);
         }
         StreamCachingStrategy streamCachingStrategy = getBeanForType(StreamCachingStrategy.class);
         if (streamCachingStrategy != null) {

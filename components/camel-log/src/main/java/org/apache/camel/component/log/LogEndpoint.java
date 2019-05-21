@@ -17,6 +17,7 @@
 package org.apache.camel.component.log;
 
 import org.apache.camel.Component;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -140,7 +141,7 @@ public class LogEndpoint extends ProcessorEndpoint {
             Long groupDelay = getGroupDelay();
             answer = new ThroughputLogger(camelLogger, this.getCamelContext(), getGroupInterval(), groupDelay, groupActiveOnly);
         } else {
-            answer = new CamelLogProcessor(camelLogger, localFormatter, getMaskingFormatter(), getCamelContext().getLogListeners());
+            answer = new CamelLogProcessor(camelLogger, localFormatter, getMaskingFormatter(), getCamelContext().adapt(ExtendedCamelContext.class).getLogListeners());
         }
         // the logger is the processor
         setProcessor(answer);

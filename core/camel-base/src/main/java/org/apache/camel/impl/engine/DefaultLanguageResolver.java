@@ -17,6 +17,7 @@
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.spi.FactoryFinder;
@@ -92,14 +93,14 @@ public class DefaultLanguageResolver implements LanguageResolver {
 
     protected Class<?> findLanguage(String name, CamelContext context) throws Exception {
         if (languageFactory == null) {
-            languageFactory = context.getFactoryFinder(LANGUAGE_RESOURCE_PATH);
+            languageFactory = context.adapt(ExtendedCamelContext.class).getFactoryFinder(LANGUAGE_RESOURCE_PATH);
         }
         return languageFactory.findClass(name);
     }
 
     protected Class<?> findLanguageResolver(String name, CamelContext context) throws Exception {
         if (languageResolver == null) {
-            languageResolver = context.getFactoryFinder(LANGUAGE_RESOLVER_RESOURCE_PATH);
+            languageResolver = context.adapt(ExtendedCamelContext.class).getFactoryFinder(LANGUAGE_RESOLVER_RESOURCE_PATH);
         }
         return languageResolver.findClass(name);
     }
