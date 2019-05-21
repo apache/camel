@@ -802,7 +802,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         }
     }
 
-    public void addRegisterEndpointCallback(EndpointStrategy strategy) {
+    public void registerEndpointCallback(EndpointStrategy strategy) {
         if (!endpointStrategies.contains(strategy)) {
             // let it be invoked for already registered endpoints so it can
             // catch-up.

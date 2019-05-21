@@ -25,6 +25,7 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
@@ -54,7 +55,6 @@ public final class CamelAnnotationsHandler {
     /**
      * Handles @ExcludeRoutes to make it easier to exclude other routes when testing with Spring Boot.
      *
-     * @param context the initialized Spring context
      * @param testClass the test class being executed
      */
     public static void handleExcludeRoutesForSpringBoot(Class<?> testClass) {
@@ -247,7 +247,7 @@ public final class CamelAnnotationsHandler {
                 public void execute(String contextName, SpringCamelContext camelContext)
                         throws Exception {
                     LOGGER.info("Enabling auto mocking of endpoints matching pattern [{}] on CamelContext with name [{}].", mockEndpoints, contextName);
-                    camelContext.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpoints));
+                    camelContext.adapt(ExtendedCamelContext.class).registerEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpoints));
                 }
             });
         }
@@ -270,7 +270,7 @@ public final class CamelAnnotationsHandler {
                     // resolve the property place holders of the mockEndpoints
                     String mockEndpointsValue = camelContext.resolvePropertyPlaceholders(mockEndpoints);
                     LOGGER.info("Enabling auto mocking and skipping of endpoints matching pattern [{}] on CamelContext with name [{}].", mockEndpointsValue, contextName);
-                    camelContext.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpointsValue, true));
+                    camelContext.adapt(ExtendedCamelContext.class).registerEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpointsValue, true));
                 }
             });
         }

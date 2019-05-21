@@ -27,6 +27,7 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.processor.interceptor.DefaultDebugger;
@@ -407,7 +408,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
                 public void execute(String contextName, SpringCamelContext camelContext)
                     throws Exception {
                     LOG.info("Enabling auto mocking of endpoints matching pattern [{}] on CamelContext with name [{}].", mockEndpoints, contextName);
-                    camelContext.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpoints));
+                    camelContext.adapt(ExtendedCamelContext.class).registerEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpoints));
                 }
             });
         }
@@ -431,7 +432,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
                     // resovle the property place holders of the mockEndpoints 
                     String mockEndpointsValue = camelContext.resolvePropertyPlaceholders(mockEndpoints);
                     LOG.info("Enabling auto mocking and skipping of endpoints matching pattern [{}] on CamelContext with name [{}].", mockEndpointsValue, contextName);
-                    camelContext.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpointsValue, true));
+                    camelContext.adapt(ExtendedCamelContext.class).registerEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpointsValue, true));
                 }
             });
         }

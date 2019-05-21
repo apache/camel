@@ -1000,7 +1000,7 @@ public abstract class MainSupport extends ServiceSupport {
         final Predicate<EventNotifier> containsEventNotifier = managementStrategy.getEventNotifiers()::contains;
         registerPropertiesForBeanTypesWithCondition(registry, EventNotifier.class, containsEventNotifier.negate(), managementStrategy::addEventNotifier);
 
-        registerPropertiesForBeanTypes(registry, EndpointStrategy.class, camelContext::addRegisterEndpointCallback);
+        registerPropertiesForBeanTypes(registry, EndpointStrategy.class, camelContext.adapt(ExtendedCamelContext.class)::registerEndpointCallback);
 
         registerPropertyForBeanType(registry, ShutdownStrategy.class, camelContext::setShutdownStrategy);
 

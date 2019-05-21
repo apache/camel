@@ -277,7 +277,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             for (Entry<String, EndpointStrategy> entry : endpointStrategies.entrySet()) {
                 EndpointStrategy strategy = entry.getValue();
                 LOG.info("Using custom EndpointStrategy with id: {} and implementation: {}", entry.getKey(), strategy);
-                getContext().addRegisterEndpointCallback(strategy);
+                getContext().adapt(ExtendedCamelContext.class).registerEndpointCallback(strategy);
             }
         }
         // shutdown

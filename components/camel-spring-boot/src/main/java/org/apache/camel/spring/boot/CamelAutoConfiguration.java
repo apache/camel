@@ -28,6 +28,7 @@ import java.util.function.Predicate;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TypeConverters;
@@ -365,7 +366,7 @@ public class CamelAutoConfiguration {
         final Predicate<EventNotifier> containsEventNotifier = managementStrategy.getEventNotifiers()::contains;
         registerPropertiesForBeanTypesWithCondition(applicationContext, EventNotifier.class, containsEventNotifier.negate(), managementStrategy::addEventNotifier);
 
-        registerPropertiesForBeanTypes(applicationContext, EndpointStrategy.class, camelContext::addRegisterEndpointCallback);
+        registerPropertiesForBeanTypes(applicationContext, EndpointStrategy.class, camelContext.adapt(ExtendedCamelContext.class)::registerEndpointCallback);
 
         registerPropertyForBeanType(applicationContext, ShutdownStrategy.class, camelContext::setShutdownStrategy);
         

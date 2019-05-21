@@ -469,10 +469,10 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     Endpoint hasEndpoint(String uri);
 
     /**
-     * Adds the endpoint to the {@link org.apache.camel.spi.EndpointRegistry} using the given URI.
+     * Adds and starts the endpoint to the {@link org.apache.camel.spi.EndpointRegistry} using the given URI.
      *
      * @param uri      the URI to be used to resolve this endpoint
-     * @param endpoint the endpoint to be added to the registry
+     * @param endpoint the endpoint to be started and added to the registry
      * @return the old endpoint that was previously registered or <tt>null</tt> if none was registered
      * @throws Exception if the new endpoint could not be started or the old endpoint could not be stopped
      */
@@ -499,16 +499,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * @see org.apache.camel.support.EndpointHelper#matchEndpoint(CamelContext, String, String) for pattern
      */
     Collection<Endpoint> removeEndpoints(String pattern) throws Exception;
-
-    /**
-     * Registers a {@link org.apache.camel.spi.EndpointStrategy callback} to allow you to do custom
-     * logic when an {@link Endpoint} is about to be registered to the {@link org.apache.camel.spi.EndpointRegistry}.
-     * <p/>
-     * When a callback is added it will be executed on the already registered endpoints allowing you to catch-up
-     *
-     * @param strategy callback to be invoked
-     */
-    void addRegisterEndpointCallback(EndpointStrategy strategy);
 
     // Route Management Methods
     //-----------------------------------------------------------------------

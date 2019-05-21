@@ -24,6 +24,7 @@ import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.DeferServiceFactory;
+import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
@@ -42,6 +43,16 @@ public interface ExtendedCamelContext extends CamelContext {
      * @see #isSetupRoutes()
      */
     void setupRoutes(boolean done);
+
+    /**
+     * Registers a {@link org.apache.camel.spi.EndpointStrategy callback} to allow you to do custom
+     * logic when an {@link Endpoint} is about to be registered to the {@link org.apache.camel.spi.EndpointRegistry}.
+     * <p/>
+     * When a callback is registered it will be executed on the already registered endpoints allowing you to catch-up
+     *
+     * @param strategy callback to be invoked
+     */
+    void registerEndpointCallback(EndpointStrategy strategy);
 
     /**
      * Returns the bean post processor used to do any bean customization.
