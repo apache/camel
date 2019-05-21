@@ -18,6 +18,7 @@ package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultRouteContext;
@@ -75,7 +76,8 @@ public class EndpointReferenceTest extends SpringTestSupport {
     public void testReferenceEndpointFromOtherCamelContext() throws Exception {
         CamelContext context = applicationContext.getBean("camel2", CamelContext.class);
         RouteDefinition route = new RouteDefinition("temporary");
-        RouteContext routeContext = new DefaultRouteContext(context, route, route.idOrCreate(context.getNodeIdFactory()));
+        String routeId = route.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+        RouteContext routeContext = new DefaultRouteContext(context, route, routeId);
         try {
             routeContext.resolveEndpoint(null, "endpoint1");
             fail("Should have thrown exception");
