@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.StaticService;
+
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -25,7 +27,7 @@ import javax.management.modelmbean.ModelMBean;
  * An assembler to assemble a {@link javax.management.modelmbean.RequiredModelMBean} which can be used
  * to register the object in JMX.
  */
-public interface ManagementMBeanAssembler {
+public interface ManagementMBeanAssembler extends StaticService {
 
     /**
      * Assemble the {@link javax.management.modelmbean.ModelMBean}.
