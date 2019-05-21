@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
@@ -29,6 +30,7 @@ import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.RouteStartupOrder;
 
 /**
  * Extended {@link CamelContext} which contains the methods and APIs that are not primary intended for Camel end users
@@ -53,6 +55,16 @@ public interface ExtendedCamelContext extends CamelContext {
      * @param strategy callback to be invoked
      */
     void registerEndpointCallback(EndpointStrategy strategy);
+
+    /**
+     * Returns the order in which the route inputs was started.
+     * <p/>
+     * The order may not be according to the startupOrder defined on the route.
+     * For example a route could be started manually later, or new routes added at runtime.
+     *
+     * @return a list in the order how routes was started
+     */
+    List<RouteStartupOrder> getRouteStartupOrder();
 
     /**
      * Returns the bean post processor used to do any bean customization.

@@ -33,6 +33,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoadPropertiesException;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NoSuchBeanException;
@@ -590,7 +591,7 @@ public final class CamelContextHelper {
      * @return the startup order, or <tt>0</tt> if not possible to determine
      */
     public static int getRouteStartupOrder(CamelContext camelContext, String routeId) {
-        for (RouteStartupOrder order : camelContext.getRouteStartupOrder()) {
+        for (RouteStartupOrder order : camelContext.adapt(ExtendedCamelContext.class).getRouteStartupOrder()) {
             if (order.getRoute().getId().equals(routeId)) {
                 return order.getStartupOrder();
             }

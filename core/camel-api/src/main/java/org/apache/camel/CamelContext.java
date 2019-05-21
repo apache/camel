@@ -554,16 +554,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     Collection<RestConfiguration> getRestConfigurations();
 
     /**
-     * Returns the order in which the route inputs was started.
-     * <p/>
-     * The order may not be according to the startupOrder defined on the route.
-     * For example a route could be started manually later, or new routes added at runtime.
-     *
-     * @return a list in the order how routes was started
-     */
-    List<RouteStartupOrder> getRouteStartupOrder();
-
-    /**
      * Returns the current routes in this CamelContext
      *
      * @return the current routes
