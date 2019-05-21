@@ -88,17 +88,25 @@ classname and then invoke methods using a Camel OGNL expression.
 
 |header.foo |Object |refer to the input foo header
 
+|header:foo |Object |refer to the input foo header
+
 |header[foo] |Object |refer to the input foo header
 
 |headers.foo |Object |refer to the input foo header
+
+|headers:foo |Object |refer to the input foo header
 
 |headers[foo] |Object |refer to the input foo header
 
 |in.header.foo |Object |*deprecated* refer to the input foo header
 
+|in.header:foo |Object |*deprecated* refer to the input foo header
+
 |in.header[foo] |Object |*deprecated* refer to the input foo header
 
 |in.headers.foo |Object |*deprecated* refer to the input foo header
+
+|in.headers:foo |Object |*deprecated* refer to the input foo header
 
 |in.headers[foo] |Object |*deprecated* refer to the input foo header
 
@@ -122,9 +130,13 @@ Camel OGNL expression.
 
 |out.header.foo |Object |*deprecated* refer to the out header foo
 
+|out.header:foo |Object |*deprecated* refer to the out header foo
+
 |out.header[foo] |Object |*deprecated* refer to the out header foo
 
 |out.headers.foo |Object |*deprecated* refer to the out header foo
+
+|out.headers:foo |Object |*deprecated* refer to the out header foo
 
 |out.headers[foo] |Object |*deprecated* refer to the out header foo
 
