@@ -58,4 +58,12 @@
     </dependency>
     <!--END OF GENERATED CODE-->
   </dependencies>
+
+  <repositories>
+    <repository>
+      <id>atlassian-public</id>
+      <url>https://packages.atlassian.com/maven-external</url>
+    </repository>
+  </repositories>
+
 </project>
