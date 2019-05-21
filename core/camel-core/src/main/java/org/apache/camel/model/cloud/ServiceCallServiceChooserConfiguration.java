@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.cloud.ServiceChooser;
 import org.apache.camel.cloud.ServiceChooserFactory;
@@ -144,7 +145,7 @@ public class ServiceCallServiceChooserConfiguration extends IdentifiedType imple
             Class<?> type;
             try {
                 // Then use Service factory.
-                type = camelContext.getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(factoryKey);
+                type = camelContext.adapt(ExtendedCamelContext.class).getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(factoryKey);
             } catch (Exception e) {
                 throw new NoFactoryAvailableException(ServiceCallDefinitionConstants.RESOURCE_PATH + factoryKey, e);
             }

@@ -22,6 +22,7 @@ import java.util.Set;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
@@ -147,7 +148,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
                 name = DEFAULT_API_COMPONENT_NAME;
             }
             try {
-                FactoryFinder finder = getCamelContext().getFactoryFinder(RESOURCE_PATH);
+                FactoryFinder finder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
                 Object instance = finder.newInstance(name);
                 if (instance instanceof RestApiProcessorFactory) {
                     factory = (RestApiProcessorFactory) instance;

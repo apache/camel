@@ -927,16 +927,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     String getGlobalOption(String key);
 
     /**
-     * Gets the FactoryFinder which will be used for the loading the factory class from META-INF in the given path
-     *
-     * @param path the META-INF path
-     * @return the factory finder
-     * @throws NoFactoryAvailableException is thrown if a factory could not be found
-     */
-    // TODO: Extended
-    FactoryFinder getFactoryFinder(String path) throws NoFactoryAvailableException;
-
-    /**
      * Returns the class resolver to be used for loading/lookup of classes.
      *
      * @return the resolver

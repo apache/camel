@@ -166,6 +166,15 @@ public interface ExtendedCamelContext extends CamelContext {
     FactoryFinder getDefaultFactoryFinder();
 
     /**
+     * Gets the FactoryFinder which will be used for the loading the factory class from META-INF in the given path
+     *
+     * @param path the META-INF path
+     * @return the factory finder
+     * @throws NoFactoryAvailableException is thrown if a factory could not be found
+     */
+    FactoryFinder getFactoryFinder(String path) throws NoFactoryAvailableException;
+
+    /**
      * Sets the factory finder resolver to use.
      *
      * @param resolver the factory finder resolver
