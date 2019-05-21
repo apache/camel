@@ -26,6 +26,7 @@ import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
@@ -45,6 +46,21 @@ public interface ExtendedCamelContext extends CamelContext {
      * @see #isSetupRoutes()
      */
     void setupRoutes(boolean done);
+
+    /**
+     * Indicates whether current thread is setting up route(s) as part of starting Camel from spring/blueprint.
+     * <p/>
+     * This can be useful to know by {@link LifecycleStrategy} or the likes, in case
+     * they need to react differently.
+     * <p/>
+     * As the startup procedure of {@link CamelContext} is slightly different when using plain Java versus
+     * Spring or Blueprint, then we need to know when Spring/Blueprint is setting up the routes, which
+     * can happen after the {@link CamelContext} itself is in started state, due the asynchronous event nature
+     * of especially Blueprint.
+     *
+     * @return <tt>true</tt> if current thread is setting up route(s), or <tt>false</tt> if not.
+     */
+    boolean isSetupRoutes();
 
     /**
      * Registers a {@link org.apache.camel.spi.EndpointStrategy callback} to allow you to do custom

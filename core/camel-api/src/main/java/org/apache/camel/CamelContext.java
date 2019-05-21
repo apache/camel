@@ -30,7 +30,6 @@ import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointRegistry;
-import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
@@ -52,7 +51,6 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicyFactory;
-import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
@@ -625,21 +623,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * @throws Exception is thrown if the route could not be shutdown for whatever reason
      */
     boolean removeRoute(String routeId) throws Exception;
-
-    /**
-     * Indicates whether current thread is setting up route(s) as part of starting Camel from spring/blueprint.
-     * <p/>
-     * This can be useful to know by {@link LifecycleStrategy} or the likes, in case
-     * they need to react differently.
-     * <p/>
-     * As the startup procedure of {@link CamelContext} is slightly different when using plain Java versus
-     * Spring or Blueprint, then we need to know when Spring/Blueprint is setting up the routes, which
-     * can happen after the {@link CamelContext} itself is in started state, due the asynchronous event nature
-     * of especially Blueprint.
-     *
-     * @return <tt>true</tt> if current thread is setting up route(s), or <tt>false</tt> if not.
-     */
-    boolean isSetupRoutes();
 
     // Properties
     //-----------------------------------------------------------------------
