@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder;
+package org.apache.camel.support.builder;
 
 import java.io.ByteArrayInputStream;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-public class RecordableInputStreamTest extends Assert {
+public class RecordableReaderTest extends Assert {
     private static final byte[] DATA;
     
     static {

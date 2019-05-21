@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder;
+package org.apache.camel.support.builder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FilterInputStream;
@@ -24,9 +24,8 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * This class is used by the tokenizer to extract data while reading from the stream.
- * TODO it is used package internally but may be moved to some common package.
  */
-class RecordableInputStream extends FilterInputStream {
+public class RecordableInputStream extends FilterInputStream {
     private TrimmableByteArrayOutputStream buf;
     private String charset;
     private boolean recording;
