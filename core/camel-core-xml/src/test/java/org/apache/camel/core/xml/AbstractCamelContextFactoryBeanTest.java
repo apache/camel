@@ -27,8 +27,10 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.impl.engine.DefaultFactoryFinder;
@@ -88,8 +90,10 @@ public class AbstractCamelContextFactoryBeanTest {
     public void shouldSupportPropertyPlaceholdersOnAllProperties() throws Exception {
         final Set<Invocation> invocations = new LinkedHashSet<>();
 
-        final ModelCamelContext context = mock(ModelCamelContext.class,
+        final DefaultCamelContext context = mock(DefaultCamelContext.class,
             withSettings().invocationListeners(i -> invocations.add((Invocation) i.getInvocation())));
+
+        when(context.adapt(ExtendedCamelContext.class)).thenReturn(context);
 
         // program the property resolution in context mock
         when(context.resolvePropertyPlaceholders(anyString())).thenAnswer(invocation -> {

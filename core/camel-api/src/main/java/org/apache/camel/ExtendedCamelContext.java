@@ -197,6 +197,13 @@ public interface ExtendedCamelContext extends CamelContext {
     void setFactoryFinderResolver(FactoryFinderResolver resolver);
 
     /**
+     * Gets the factory finder resolver to use
+     *
+     * @return the factory finder resolver
+     */
+    FactoryFinderResolver getFactoryFinderResolver();
+
+    /**
      * Gets the current {@link org.apache.camel.spi.ProcessorFactory}
      *
      * @return the factory, can be <tt>null</tt> if no custom factory has been set

@@ -24,8 +24,9 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StaticService;
 
-// TODO: Add javadoc
-
+/**
+ * Controller for managing the lifecycle of all the {@link Route}'s.
+ */
 public interface RouteController extends CamelContextAware, StaticService {
 
     /**
