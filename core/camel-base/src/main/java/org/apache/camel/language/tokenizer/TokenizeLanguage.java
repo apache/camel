@@ -19,9 +19,9 @@ package org.apache.camel.language.tokenizer;
 import org.apache.camel.Expression;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -39,8 +39,6 @@ import org.apache.camel.util.ObjectHelper;
  */
 @org.apache.camel.spi.annotations.Language("tokenize")
 public class TokenizeLanguage implements Language, IsSingleton {
-
-    // TODO: Move this to camel-base
 
     private String token;
     private String endToken;
