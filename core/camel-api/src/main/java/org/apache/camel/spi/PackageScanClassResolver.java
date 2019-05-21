@@ -16,13 +16,15 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.StaticService;
+
 import java.lang.annotation.Annotation;
 import java.util.Set;
 
 /**
  * A resolver that can find resources based on package scanning.
  */
-public interface PackageScanClassResolver {
+public interface PackageScanClassResolver extends StaticService {
 
     /**
      * Gets the ClassLoader instances that should be used when scanning for classes.

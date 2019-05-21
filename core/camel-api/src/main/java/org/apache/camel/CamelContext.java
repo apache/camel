@@ -507,42 +507,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     RouteController getRouteController();
 
     /**
-     * Sets a custom {@link org.apache.camel.spi.RestConfiguration}
-     *
-     * @param restConfiguration the REST configuration
-     */
-    void setRestConfiguration(RestConfiguration restConfiguration);
-
-    /**
-     * Gets the default REST configuration
-     *
-     * @return the configuration, or <tt>null</tt> if none has been configured.
-     */
-    RestConfiguration getRestConfiguration();
-    
-    /**
-     * Sets a custom {@link org.apache.camel.spi.RestConfiguration}
-     *
-     * @param restConfiguration the REST configuration
-     */
-    void addRestConfiguration(RestConfiguration restConfiguration);
-
-    /**
-     * Gets the REST configuration for the given component
-     *
-     * @param component the component name to get the configuration
-     * @param defaultIfNotFound determine if the default configuration is returned if there isn't a 
-     *        specific configuration for the given component  
-     * @return the configuration, or <tt>null</tt> if none has been configured.
-     */
-    RestConfiguration getRestConfiguration(String component, boolean defaultIfNotFound);
-    
-    /**
-     * Gets all the RestConfiguration's
-     */
-    Collection<RestConfiguration> getRestConfigurations();
-
-    /**
      * Returns the current routes in this CamelContext
      *
      * @return the current routes
@@ -614,6 +578,69 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * @throws Exception is thrown if the route could not be shutdown for whatever reason
      */
     boolean removeRoute(String routeId) throws Exception;
+
+    /**
+     * Adds the given route policy factory
+     *
+     * @param routePolicyFactory the factory
+     */
+    void addRoutePolicyFactory(RoutePolicyFactory routePolicyFactory);
+
+    /**
+     * Gets the route policy factories
+     *
+     * @return the list of current route policy factories
+     */
+    List<RoutePolicyFactory> getRoutePolicyFactories();
+
+    // Rest Methods
+    //-----------------------------------------------------------------------
+
+    /**
+     * Sets a custom {@link org.apache.camel.spi.RestConfiguration}
+     *
+     * @param restConfiguration the REST configuration
+     */
+    void setRestConfiguration(RestConfiguration restConfiguration);
+
+    /**
+     * Gets the default REST configuration
+     *
+     * @return the configuration, or <tt>null</tt> if none has been configured.
+     */
+    RestConfiguration getRestConfiguration();
+
+    /**
+     * Sets a custom {@link org.apache.camel.spi.RestConfiguration}
+     *
+     * @param restConfiguration the REST configuration
+     */
+    void addRestConfiguration(RestConfiguration restConfiguration);
+
+    /**
+     * Gets the REST configuration for the given component
+     *
+     * @param component the component name to get the configuration
+     * @param defaultIfNotFound determine if the default configuration is returned if there isn't a
+     *        specific configuration for the given component
+     * @return the configuration, or <tt>null</tt> if none has been configured.
+     */
+    RestConfiguration getRestConfiguration(String component, boolean defaultIfNotFound);
+
+    /**
+     * Gets all the RestConfiguration's
+     */
+    Collection<RestConfiguration> getRestConfigurations();
+
+    /**
+     * Gets the {@link org.apache.camel.spi.RestRegistry} to use
+     */
+    RestRegistry getRestRegistry();
+
+    /**
+     * Sets a custom {@link org.apache.camel.spi.RestRegistry} to use.
+     */
+    void setRestRegistry(RestRegistry restRegistry);
 
     // Properties
     //-----------------------------------------------------------------------
@@ -1170,30 +1197,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * Sets a custom {@link org.apache.camel.spi.RuntimeEndpointRegistry} to use.
      */
     void setRuntimeEndpointRegistry(RuntimeEndpointRegistry runtimeEndpointRegistry);
-
-    /**
-     * Gets the {@link org.apache.camel.spi.RestRegistry} to use
-     */
-    RestRegistry getRestRegistry();
-
-    /**
-     * Sets a custom {@link org.apache.camel.spi.RestRegistry} to use.
-     */
-    void setRestRegistry(RestRegistry restRegistry);
-
-    /**
-     * Adds the given route policy factory
-     *
-     * @param routePolicyFactory the factory
-     */
-    void addRoutePolicyFactory(RoutePolicyFactory routePolicyFactory);
-
-    /**
-     * Gets the route policy factories
-     *
-     * @return the list of current route policy factories
-     */
-    List<RoutePolicyFactory> getRoutePolicyFactories();
 
     /**
      * Returns the {@link ReloadStrategy} if in use.
