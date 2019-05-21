@@ -24,46 +24,46 @@ import org.junit.Test;
 
 public class FromSftpRecursiveNotStepwiseNoBasePath extends SftpServerTestSupport {
 
-  protected String getSftpUrl() {
-    return "sftp://admin@localhost:" + getPort() + "?password=admin&initialDelay=3000&stepwise=false"
-        + "&recursive=true";
-  }
+    protected String getSftpUrl() {
+        return "sftp://admin@localhost:" + getPort() + "?password=admin&initialDelay=3000&stepwise=false"
+                + "&recursive=true";
+    }
 
-  @Override
-  @Before
-  public void setUp() throws Exception {
-    rootDirMode = true;
-    super.setUp();
-    prepareFtpServer();
-  }
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        rootDirMode = true;
+        super.setUp();
+        prepareFtpServer();
+    }
 
-  @Test
-  public void testRecursiveNotStepwiseNoBasePath() throws Exception {
-    //CAMEL-13400
-    MockEndpoint mock = getMockEndpoint("mock:result");
-    mock.expectedBodiesReceivedInAnyOrder("Bye World", "Hello World", "Goodday World");
-    assertMockEndpointsSatisfied();
-  }
+    @Test
+    public void testRecursiveNotStepwiseNoBasePath() throws Exception {
+        //CAMEL-13400
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceivedInAnyOrder("Bye World", "Hello World", "Goodday World");
+        assertMockEndpointsSatisfied();
+    }
 
-  @Override
-  protected RouteBuilder createRouteBuilder() throws Exception {
-    return new RouteBuilder() {
-      @Override
-      public void configure() throws Exception {
-        from(getSftpUrl())
-            .convertBodyTo(String.class)
-            .to("mock:result");
-      }
-    };
-  }
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(getSftpUrl())
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
+            }
+        };
+    }
 
-  private void prepareFtpServer() throws Exception {
-    sendFile("Bye World", "bye.txt");
-    sendFile("Hello World", "sub/hello.txt");
-    sendFile("Goodday World", "sub/sub2/godday.txt");
-  }
+    private void prepareFtpServer() throws Exception {
+        sendFile("Bye World", "bye.txt");
+        sendFile("Hello World", "sub/hello.txt");
+        sendFile("Goodday World", "sub/sub2/godday.txt");
+    }
 
-  public void sendFile(Object body, String fileName) {
-    template.sendBodyAndHeader("file://" + FTP_ROOT_DIR, body, Exchange.FILE_NAME, fileName);
-  }
+    public void sendFile(Object body, String fileName) {
+        template.sendBodyAndHeader("file://" + FTP_ROOT_DIR, body, Exchange.FILE_NAME, fileName);
+    }
 }

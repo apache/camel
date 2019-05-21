@@ -45,7 +45,7 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
     protected SshServer sshd;
     protected boolean canTest;
     protected String oldUserHome;
-    protected boolean rootDirMode = false;
+    protected boolean rootDirMode;
 
     @Override
     @Before
@@ -80,7 +80,7 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
             sshd.setPasswordAuthenticator((username, password, session) -> true);
             sshd.setPublickeyAuthenticator((username, password, session) -> true);
             if (rootDirMode) {
-              sshd.setFileSystemFactory(new VirtualFileSystemFactory(FileSystems.getDefault().getPath(System.getProperty("user.dir") + "/target/res")));
+                sshd.setFileSystemFactory(new VirtualFileSystemFactory(FileSystems.getDefault().getPath(System.getProperty("user.dir") + "/target/res")));
             }
             sshd.start();
         } catch (Exception e) {
