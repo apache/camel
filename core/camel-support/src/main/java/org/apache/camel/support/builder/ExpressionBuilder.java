@@ -1585,6 +1585,61 @@ public class ExpressionBuilder {
         };
     }
 
+    /**
+     * Returns an {@link TokenPairExpressionIterator} expression
+     */
+    public static Expression tokenizePairExpression(String startToken, String endToken, boolean includeTokens) {
+        return new TokenPairExpressionIterator(startToken, endToken, includeTokens);
+    }
+
+    /**
+     * Returns an {@link TokenXMLExpressionIterator} expression
+     */
+    public static Expression tokenizeXMLExpression(String tagName, String inheritNamespaceTagName) {
+        StringHelper.notEmpty(tagName, "tagName");
+        return new TokenXMLExpressionIterator(tagName, inheritNamespaceTagName);
+    }
+
+    public static Expression tokenizeXMLAwareExpression(String path, char mode) {
+        return tokenizeXMLAwareExpression(null, path, mode, 1, null);
+    }
+
+    public static Expression tokenizeXMLAwareExpression(String path, char mode, int group) {
+        return tokenizeXMLAwareExpression(null, path, mode, group, null);
+    }
+
+    public static Expression tokenizeXMLAwareExpression(String path, char mode, int group, Namespaces namespaces) {
+        return tokenizeXMLAwareExpression(null, path, mode, group, namespaces);
+    }
+
+    public static Expression tokenizeXMLAwareExpression(String headerName, String path, char mode, int group, Namespaces namespaces) {
+        StringHelper.notEmpty(path, "path");
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Language language = exchange.getContext().resolveLanguage("xtokenize");
+                if (headerName != null) {
+                    setProperty(language, "headerName", headerName);
+                }
+                if (mode != 'i') {
+                    setProperty(language, "mode", mode);
+                }
+                if (group > 1) {
+                    setProperty(language, "group", group);
+                }
+                if (namespaces != null) {
+                    setProperty(language, "namespaces", namespaces);
+                }
+                setProperty(language, "path", path);
+                return language.createExpression(null).evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                return "xtokenize(" + path + ")";
+            }
+        };
+    }
+
     protected static void setProperty(Object bean, String name, Object value) {
         try {
             IntrospectionSupport.setProperty(bean, name, value);
