@@ -18,6 +18,7 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -70,7 +71,7 @@ public class AuditInterceptorDelegateIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                getContext().addInterceptStrategy(strategy);
+                getContext().adapt(ExtendedCamelContext.class).addInterceptStrategy(strategy);
 
                 onException(IllegalArgumentException.class)
                         .handled(true)

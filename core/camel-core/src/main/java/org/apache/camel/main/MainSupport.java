@@ -986,7 +986,7 @@ public abstract class MainSupport extends ServiceSupport {
         final ManagementStrategy managementStrategy = camelContext.getManagementStrategy();
 
         registerPropertyForBeanType(registry, BacklogTracer.class, bt -> camelContext.setExtension(BacklogTracer.class, bt));
-        registerPropertyForBeanType(registry, HandleFault.class, camelContext::addInterceptStrategy);
+        registerPropertyForBeanType(registry, HandleFault.class, camelContext.adapt(ExtendedCamelContext.class)::addInterceptStrategy);
         registerPropertyForBeanType(registry, InflightRepository.class, camelContext::setInflightRepository);
         registerPropertyForBeanType(registry, AsyncProcessorAwaitManager.class, camelContext::setAsyncProcessorAwaitManager);
         registerPropertyForBeanType(registry, ManagementStrategy.class, camelContext::setManagementStrategy);
@@ -1004,8 +1004,8 @@ public abstract class MainSupport extends ServiceSupport {
 
         registerPropertyForBeanType(registry, ShutdownStrategy.class, camelContext::setShutdownStrategy);
 
-        final Predicate<InterceptStrategy> containsInterceptStrategy = camelContext.getInterceptStrategies()::contains;
-        registerPropertiesForBeanTypesWithCondition(registry, InterceptStrategy.class, containsInterceptStrategy.negate(), camelContext::addInterceptStrategy);
+        final Predicate<InterceptStrategy> containsInterceptStrategy = camelContext.adapt(ExtendedCamelContext.class).getInterceptStrategies()::contains;
+        registerPropertiesForBeanTypesWithCondition(registry, InterceptStrategy.class, containsInterceptStrategy.negate(), camelContext.adapt(ExtendedCamelContext.class)::addInterceptStrategy);
 
         final Predicate<LifecycleStrategy> containsLifecycleStrategy = camelContext.getLifecycleStrategies()::contains;
         registerPropertiesForBeanTypesWithCondition(registry, LifecycleStrategy.class, containsLifecycleStrategy.negate(), camelContext::addLifecycleStrategy);

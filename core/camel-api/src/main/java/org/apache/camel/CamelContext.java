@@ -36,7 +36,6 @@ import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
-import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
@@ -843,20 +842,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * @throws RuntimeCamelException is thrown if error starting the template
      */
     ConsumerTemplate createConsumerTemplate(int maximumCacheSize);
-
-    /**
-     * Adds the given interceptor strategy
-     *
-     * @param interceptStrategy the strategy
-     */
-    void addInterceptStrategy(InterceptStrategy interceptStrategy);
-
-    /**
-     * Gets the interceptor strategies
-     *
-     * @return the list of current interceptor strategies
-     */
-    List<InterceptStrategy> getInterceptStrategies();
 
     /**
      * Gets the default shared thread pool for error handlers which

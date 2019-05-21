@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -81,7 +82,7 @@ public class FaultRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                getContext().addInterceptStrategy(new HandleFault());
+                getContext().adapt(ExtendedCamelContext.class).addInterceptStrategy(new HandleFault());
 
                 from("direct:start").to("mock:a").to("mock:b");
             }

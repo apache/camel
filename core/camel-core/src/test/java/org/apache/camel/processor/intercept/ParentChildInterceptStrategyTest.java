@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -64,7 +65,7 @@ public class ParentChildInterceptStrategyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.addInterceptStrategy(new MyParentChildInterceptStrategy());
+                context.adapt(ExtendedCamelContext.class).addInterceptStrategy(new MyParentChildInterceptStrategy());
 
                 from("direct:start").routeId("route")
                     .to("mock:a").id("task-a")

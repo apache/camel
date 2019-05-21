@@ -281,7 +281,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
         channel.setNextProcessor(processor);
 
         // add interceptor strategies to the channel must be in this order: camel context, route context, local
-        addInterceptStrategies(routeContext, channel, routeContext.getCamelContext().getInterceptStrategies());
+        addInterceptStrategies(routeContext, channel, routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getInterceptStrategies());
         addInterceptStrategies(routeContext, channel, routeContext.getInterceptStrategies());
         addInterceptStrategies(routeContext, channel, definition.getInterceptStrategies());
 

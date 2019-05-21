@@ -18,6 +18,7 @@ package org.apache.camel.issues;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -50,7 +51,7 @@ public class TwoTimerWithJMXIssue extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                context.addInterceptStrategy(new MyTracer());
+                context.adapt(ExtendedCamelContext.class).addInterceptStrategy(new MyTracer());
 
                 from("timer://kickoff_1?period=250").from("timer://kickoff_2?period=250&delay=10").to("mock:result");
             }

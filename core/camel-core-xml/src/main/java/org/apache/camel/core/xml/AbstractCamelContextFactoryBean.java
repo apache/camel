@@ -203,7 +203,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         HandleFault handleFault = getBeanForType(HandleFault.class);
         if (handleFault != null) {
             LOG.info("Using custom HandleFault: {}", handleFault);
-            getContext().addInterceptStrategy(handleFault);
+            getContext().adapt(ExtendedCamelContext.class).addInterceptStrategy(handleFault);
         }
         InflightRepository inflightRepository = getBeanForType(InflightRepository.class);
         if (inflightRepository != null) {
@@ -292,9 +292,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             for (Entry<String, InterceptStrategy> entry : interceptStrategies.entrySet()) {
                 InterceptStrategy strategy = entry.getValue();
                 // do not add if already added, for instance a tracer that is also an InterceptStrategy class
-                if (!getContext().getInterceptStrategies().contains(strategy)) {
+                if (!getContext().adapt(ExtendedCamelContext.class).getInterceptStrategies().contains(strategy)) {
                     LOG.info("Using custom InterceptStrategy with id: {} and implementation: {}", entry.getKey(), strategy);
-                    getContext().addInterceptStrategy(strategy);
+                    getContext().adapt(ExtendedCamelContext.class).addInterceptStrategy(strategy);
                 }
             }
         }

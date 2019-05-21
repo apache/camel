@@ -66,7 +66,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
                 });
 
                 // add our debugger so we can debug camel routes when we send in messages
-                context.addInterceptStrategy(new MyDebuggerCheckingId());
+                context.adapt(ExtendedCamelContext.class).addInterceptStrategy(new MyDebuggerCheckingId());
 
                 // a little content based router so we got 2 paths to route at runtime
                 from("direct:start")

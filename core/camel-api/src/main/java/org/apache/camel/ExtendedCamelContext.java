@@ -26,6 +26,7 @@ import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelJAXBContextFactory;
@@ -182,4 +183,17 @@ public interface ExtendedCamelContext extends CamelContext {
      */
     BeanProcessorFactory getBeanProcessorFactory();
 
+    /**
+     * Adds the given interceptor strategy
+     *
+     * @param interceptStrategy the strategy
+     */
+    void addInterceptStrategy(InterceptStrategy interceptStrategy);
+
+    /**
+     * Gets the interceptor strategies
+     *
+     * @return the list of current interceptor strategies
+     */
+    List<InterceptStrategy> getInterceptStrategies();
 }
