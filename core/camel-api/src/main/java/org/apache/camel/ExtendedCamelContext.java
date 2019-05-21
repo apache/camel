@@ -19,6 +19,7 @@ package org.apache.camel;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -33,6 +34,7 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
@@ -254,4 +256,13 @@ public interface ExtendedCamelContext extends CamelContext {
      */
     void setupManagement(Map<String, Object> options);
 
+    /**
+     * Gets a list of {@link LogListener}.
+     */
+    Set<LogListener> getLogListeners();
+
+    /**
+     * Adds a {@link LogListener}.
+     */
+    void addLogListener(LogListener listener);
 }

@@ -417,8 +417,8 @@ public class CamelAutoConfiguration {
         registerPropertyForBeanType(applicationContext, RouteController.class, camelContext::setRouteController);
         registerPropertyForBeanType(applicationContext, UuidGenerator.class, camelContext::setUuidGenerator);
 
-        final Predicate<LogListener> containsLogListener = camelContext.getLogListeners()::contains;
-        registerPropertiesForBeanTypesWithCondition(applicationContext, LogListener.class, containsLogListener.negate(), camelContext::addLogListener);
+        final Predicate<LogListener> containsLogListener = camelContext.adapt(ExtendedCamelContext.class).getLogListeners()::contains;
+        registerPropertiesForBeanTypesWithCondition(applicationContext, LogListener.class, containsLogListener.negate(), camelContext.adapt(ExtendedCamelContext.class)::addLogListener);
 
         registerPropertyForBeanType(applicationContext, ExecutorServiceManager.class, camelContext::setExecutorServiceManager);
 

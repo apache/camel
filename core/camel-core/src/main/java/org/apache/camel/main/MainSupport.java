@@ -1051,8 +1051,8 @@ public abstract class MainSupport extends ServiceSupport {
         registerPropertyForBeanType(registry, RouteController.class, camelContext::setRouteController);
         registerPropertyForBeanType(registry, UuidGenerator.class, camelContext::setUuidGenerator);
 
-        final Predicate<LogListener> containsLogListener = camelContext.getLogListeners()::contains;
-        registerPropertiesForBeanTypesWithCondition(registry, LogListener.class, containsLogListener.negate(), camelContext::addLogListener);
+        final Predicate<LogListener> containsLogListener = camelContext.adapt(ExtendedCamelContext.class).getLogListeners()::contains;
+        registerPropertiesForBeanTypesWithCondition(registry, LogListener.class, containsLogListener.negate(), camelContext.adapt(ExtendedCamelContext.class)::addLogListener);
 
         registerPropertyForBeanType(registry, ExecutorServiceManager.class, camelContext::setExecutorServiceManager);
 

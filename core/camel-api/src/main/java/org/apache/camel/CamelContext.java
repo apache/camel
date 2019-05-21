@@ -1258,18 +1258,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     void setReloadStrategy(ReloadStrategy reloadStrategy);
 
     /**
-     * Gets a list of {@link LogListener}.
-     */
-    // TODO: Extended
-    Set<LogListener> getLogListeners();
-
-    /**
-     * Adds a {@link LogListener}.
-     */
-    // TODO: Extended
-    void addLogListener(LogListener listener);
-
-    /**
      * Sets the global SSL context parameters.
      */
     void setSSLContextParameters(SSLContextParameters sslContextParameters);
