@@ -139,19 +139,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         languageModel.setArtifactId(project.getArtifactId());
                         languageModel.setVersion(project.getVersion());
 
-                        InputStream is;
-                        if ("xpath".equals(name)) {
-                            // special for camel-xpath as we need to build this before camel-core so we load the schema from a static file
-                            is = new FileInputStream(new File(buildDir, "../src/main/schema/xpath.json"));
-                        } else if ("bean".equals(name)) {
-                            // special for camel-bean as we need to build this before camel-core so we load the schema from a static file
-                            is = new FileInputStream(new File(buildDir, "../src/main/schema/method.json"));
-                        } else if ("xtokenize".equals(name)) {
-                            // special for camel-jaxp as we need to build this before camel-core so we load the schema from a static file
-                            is = new FileInputStream(new File(buildDir, "../src/main/schema/xtokenize.json"));
-                        } else {
-                            is = new FileInputStream(new File(core, "target/classes/org/apache/camel/model/language/" + modelName + ".json"));
-                        }
+                        InputStream is = new FileInputStream(new File(core, "src/main/schema/" + modelName + ".json"));
                         String json = loadText(is);
                         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
                         for (Map<String, String> row : rows) {
