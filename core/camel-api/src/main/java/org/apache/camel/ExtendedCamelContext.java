@@ -18,14 +18,19 @@ package org.apache.camel;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementMBeanAssembler;
@@ -33,6 +38,7 @@ import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.spi.UnitOfWorkFactory;
 
 /**
  * Extended {@link CamelContext} which contains the methods and APIs that are not primary intended for Camel end users
@@ -136,6 +142,34 @@ public interface ExtendedCamelContext extends CamelContext {
     NodeIdFactory getNodeIdFactory();
 
     /**
+     * Gets the current data format resolver
+     *
+     * @return the resolver
+     */
+    DataFormatResolver getDataFormatResolver();
+
+    /**
+     * Sets a custom data format resolver
+     *
+     * @param dataFormatResolver the resolver
+     */
+    void setDataFormatResolver(DataFormatResolver dataFormatResolver);
+
+    /**
+     * Gets the default FactoryFinder which will be used for the loading the factory class from META-INF
+     *
+     * @return the default factory finder
+     */
+    FactoryFinder getDefaultFactoryFinder();
+
+    /**
+     * Sets the factory finder resolver to use.
+     *
+     * @param resolver the factory finder resolver
+     */
+    void setFactoryFinderResolver(FactoryFinderResolver resolver);
+
+    /**
      * Gets the current {@link org.apache.camel.spi.ProcessorFactory}
      *
      * @return the factory, can be <tt>null</tt> if no custom factory has been set
@@ -169,6 +203,16 @@ public interface ExtendedCamelContext extends CamelContext {
     DeferServiceFactory getDeferServiceFactory();
 
     /**
+     * Gets the {@link UnitOfWorkFactory} to use.
+     */
+    UnitOfWorkFactory getUnitOfWorkFactory();
+
+    /**
+     * Sets a custom {@link UnitOfWorkFactory} to use.
+     */
+    void setUnitOfWorkFactory(UnitOfWorkFactory unitOfWorkFactory);
+
+    /**
      * Gets the {@link AnnotationBasedProcessorFactory} to use.
      */
     AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory();
@@ -184,6 +228,12 @@ public interface ExtendedCamelContext extends CamelContext {
     BeanProcessorFactory getBeanProcessorFactory();
 
     /**
+     * Gets the default shared thread pool for error handlers which
+     * leverages this for asynchronous redelivery tasks.
+     */
+    ScheduledExecutorService getErrorHandlerExecutorService();
+
+    /**
      * Adds the given interceptor strategy
      *
      * @param interceptStrategy the strategy
@@ -196,4 +246,12 @@ public interface ExtendedCamelContext extends CamelContext {
      * @return the list of current interceptor strategies
      */
     List<InterceptStrategy> getInterceptStrategies();
+
+    /**
+     * Setup management according to whether JMX is enabled or disabled.
+     *
+     * @param options optional parameters to configure {@link org.apache.camel.spi.ManagementAgent}.
+     */
+    void setupManagement(Map<String, Object> options);
+
 }

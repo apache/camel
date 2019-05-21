@@ -358,7 +358,7 @@ public class CamelAutoConfiguration {
         registerPropertyForBeanType(applicationContext, ManagementStrategy.class, camelContext::setManagementStrategy);
         registerPropertyForBeanType(applicationContext, ManagementObjectNameStrategy.class, managementStrategy::setManagementObjectNameStrategy);
         registerPropertyForBeanType(applicationContext, EventFactory.class, managementStrategy::setEventFactory);
-        registerPropertyForBeanType(applicationContext, UnitOfWorkFactory.class, camelContext::setUnitOfWorkFactory);
+        registerPropertyForBeanType(applicationContext, UnitOfWorkFactory.class, camelContext.adapt(ExtendedCamelContext.class)::setUnitOfWorkFactory);
         registerPropertyForBeanType(applicationContext, RuntimeEndpointRegistry.class, camelContext::setRuntimeEndpointRegistry);
 
         registerPropertiesForBeanTypes(applicationContext, TypeConverters.class, camelContext.getTypeConverterRegistry()::addTypeConverters);

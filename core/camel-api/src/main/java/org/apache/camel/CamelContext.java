@@ -844,12 +844,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     ConsumerTemplate createConsumerTemplate(int maximumCacheSize);
 
     /**
-     * Gets the default shared thread pool for error handlers which
-     * leverages this for asynchronous redelivery tasks.
-     */
-    ScheduledExecutorService getErrorHandlerExecutorService();
-
-    /**
      * Resolve a data format given its name
      *
      * @param name the data format name or a reference to it in the {@link Registry}
@@ -864,20 +858,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * @return the resolved data format, or <tt>null</tt> if not found
      */
     DataFormat createDataFormat(String name);
-
-    /**
-     * Gets the current data format resolver
-     *
-     * @return the resolver
-     */
-    DataFormatResolver getDataFormatResolver();
-
-    /**
-     * Sets a custom data format resolver
-     *
-     * @param dataFormatResolver the resolver
-     */
-    void setDataFormatResolver(DataFormatResolver dataFormatResolver);
 
     /**
      * Resolve a transformer given a scheme
@@ -953,26 +933,13 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     String getGlobalOption(String key);
 
     /**
-     * Gets the default FactoryFinder which will be used for the loading the factory class from META-INF
-     *
-     * @return the default factory finder
-     */
-    FactoryFinder getDefaultFactoryFinder();
-
-    /**
-     * Sets the factory finder resolver to use.
-     *
-     * @param resolver the factory finder resolver
-     */
-    void setFactoryFinderResolver(FactoryFinderResolver resolver);
-
-    /**
      * Gets the FactoryFinder which will be used for the loading the factory class from META-INF in the given path
      *
      * @param path the META-INF path
      * @return the factory finder
      * @throws NoFactoryAvailableException is thrown if a factory could not be found
      */
+    // TODO: Extended
     FactoryFinder getFactoryFinder(String path) throws NoFactoryAvailableException;
 
     /**
@@ -994,6 +961,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      *
      * @return the resolver
      */
+    // TODO: Extended
     PackageScanClassResolver getPackageScanClassResolver();
 
     /**
@@ -1001,6 +969,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      *
      * @param resolver the resolver
      */
+    // TODO: Extended
     void setPackageScanClassResolver(PackageScanClassResolver resolver);
 
     /**
@@ -1027,13 +996,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     void disableJMX() throws IllegalStateException;
 
     /**
-     * Setup management according to whether JMX is enabled or disabled.
-     *
-     * @param options optional parameters to configure {@link org.apache.camel.spi.ManagementAgent}.
-     */
-    void setupManagement(Map<String, Object> options);
-
-    /**
      * Gets the inflight repository
      *
      * @return the repository
@@ -1052,6 +1014,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      *
      * @return the manager
      */
+    // TODO: Extended
     AsyncProcessorAwaitManager getAsyncProcessorAwaitManager();
 
     /**
@@ -1059,6 +1022,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      *
      * @param manager the manager
      */
+    // TODO: Extended
     void setAsyncProcessorAwaitManager(AsyncProcessorAwaitManager manager);
 
     /**
@@ -1248,16 +1212,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     void setStreamCachingStrategy(StreamCachingStrategy streamCachingStrategy);
 
     /**
-     * Gets the {@link UnitOfWorkFactory} to use.
-     */
-    UnitOfWorkFactory getUnitOfWorkFactory();
-
-    /**
-     * Sets a custom {@link UnitOfWorkFactory} to use.
-     */
-    void setUnitOfWorkFactory(UnitOfWorkFactory unitOfWorkFactory);
-
-    /**
      * Gets the {@link org.apache.camel.spi.RuntimeEndpointRegistry} to use, or <tt>null</tt> if none is in use.
      */
     RuntimeEndpointRegistry getRuntimeEndpointRegistry();
@@ -1306,11 +1260,13 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     /**
      * Gets a list of {@link LogListener}.
      */
+    // TODO: Extended
     Set<LogListener> getLogListeners();
 
     /**
      * Adds a {@link LogListener}.
      */
+    // TODO: Extended
     void addLogListener(LogListener listener);
 
     /**

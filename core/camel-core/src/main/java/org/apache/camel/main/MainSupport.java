@@ -992,7 +992,7 @@ public abstract class MainSupport extends ServiceSupport {
         registerPropertyForBeanType(registry, ManagementStrategy.class, camelContext::setManagementStrategy);
         registerPropertyForBeanType(registry, ManagementObjectNameStrategy.class, managementStrategy::setManagementObjectNameStrategy);
         registerPropertyForBeanType(registry, EventFactory.class, managementStrategy::setEventFactory);
-        registerPropertyForBeanType(registry, UnitOfWorkFactory.class, camelContext::setUnitOfWorkFactory);
+        registerPropertyForBeanType(registry, UnitOfWorkFactory.class, camelContext.adapt(ExtendedCamelContext.class)::setUnitOfWorkFactory);
         registerPropertyForBeanType(registry, RuntimeEndpointRegistry.class, camelContext::setRuntimeEndpointRegistry);
 
         registerPropertiesForBeanTypes(registry, TypeConverters.class, camelContext.getTypeConverterRegistry()::addTypeConverters);
