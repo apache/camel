@@ -572,6 +572,23 @@ public class MockEndpointTest extends ContextTestSupport {
     }
 
     @Test
+    public void testHeaderNoMessageSent() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedHeaderReceived("foo", 123);
+        // just wait a little bit as we dont want to wait 10 seconds (default)
+        mock.setResultWaitTime(5);
+
+        // do not send any message
+
+        try {
+            mock.assertIsSatisfied();
+            fail("Should fail");
+        } catch (AssertionError e) {
+            assertEquals("mock://result Received message count 0, expected at least 1", e.getMessage());
+        }
+    }
+
+    @Test
     public void testHeaderInvalidValue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
