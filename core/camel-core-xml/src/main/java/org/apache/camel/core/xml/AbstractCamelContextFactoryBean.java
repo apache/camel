@@ -213,7 +213,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         AsyncProcessorAwaitManager asyncProcessorAwaitManager = getBeanForType(AsyncProcessorAwaitManager.class);
         if (asyncProcessorAwaitManager != null) {
             LOG.info("Using custom AsyncProcessorAwaitManager: {}", asyncProcessorAwaitManager);
-            getContext().setAsyncProcessorAwaitManager(asyncProcessorAwaitManager);
+            getContext().adapt(ExtendedCamelContext.class).setAsyncProcessorAwaitManager(asyncProcessorAwaitManager);
         }
         ManagementStrategy managementStrategy = getBeanForType(ManagementStrategy.class);
         if (managementStrategy != null) {

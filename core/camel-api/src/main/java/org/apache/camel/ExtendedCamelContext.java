@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
+import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
@@ -265,4 +266,19 @@ public interface ExtendedCamelContext extends CamelContext {
      * Adds a {@link LogListener}.
      */
     void addLogListener(LogListener listener);
+
+    /**
+     * Gets the {@link org.apache.camel.AsyncProcessor} await manager.
+     *
+     * @return the manager
+     */
+    AsyncProcessorAwaitManager getAsyncProcessorAwaitManager();
+
+    /**
+     * Sets a custom {@link org.apache.camel.AsyncProcessor} await manager.
+     *
+     * @param manager the manager
+     */
+    void setAsyncProcessorAwaitManager(AsyncProcessorAwaitManager manager);
+
 }

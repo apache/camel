@@ -20,25 +20,20 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ScheduledExecutorService;
 
-import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LifecycleStrategy;
-import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
@@ -56,7 +51,6 @@ import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
@@ -1008,22 +1002,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * @param repository the repository
      */
     void setInflightRepository(InflightRepository repository);
-
-    /**
-     * Gets the {@link org.apache.camel.AsyncProcessor} await manager.
-     *
-     * @return the manager
-     */
-    // TODO: Extended
-    AsyncProcessorAwaitManager getAsyncProcessorAwaitManager();
-
-    /**
-     * Sets a custom {@link org.apache.camel.AsyncProcessor} await manager.
-     *
-     * @param manager the manager
-     */
-    // TODO: Extended
-    void setAsyncProcessorAwaitManager(AsyncProcessorAwaitManager manager);
 
     /**
      * Gets the application CamelContext class loader which may be helpful for running camel in other containers

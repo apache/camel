@@ -988,7 +988,7 @@ public abstract class MainSupport extends ServiceSupport {
         registerPropertyForBeanType(registry, BacklogTracer.class, bt -> camelContext.setExtension(BacklogTracer.class, bt));
         registerPropertyForBeanType(registry, HandleFault.class, camelContext.adapt(ExtendedCamelContext.class)::addInterceptStrategy);
         registerPropertyForBeanType(registry, InflightRepository.class, camelContext::setInflightRepository);
-        registerPropertyForBeanType(registry, AsyncProcessorAwaitManager.class, camelContext::setAsyncProcessorAwaitManager);
+        registerPropertyForBeanType(registry, AsyncProcessorAwaitManager.class, camelContext.adapt(ExtendedCamelContext.class)::setAsyncProcessorAwaitManager);
         registerPropertyForBeanType(registry, ManagementStrategy.class, camelContext::setManagementStrategy);
         registerPropertyForBeanType(registry, ManagementObjectNameStrategy.class, managementStrategy::setManagementObjectNameStrategy);
         registerPropertyForBeanType(registry, EventFactory.class, managementStrategy::setEventFactory);
