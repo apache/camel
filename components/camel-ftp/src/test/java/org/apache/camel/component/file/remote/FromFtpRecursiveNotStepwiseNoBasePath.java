@@ -23,42 +23,42 @@ import org.junit.Test;
 
 public class FromFtpRecursiveNotStepwiseNoBasePath extends FtpServerTestSupport {
 
-  protected String getFtpUrl() {
-    return "ftp://admin@localhost:" + getPort() + "?password=admin&initialDelay=3000&stepwise=false"
-        + "&recursive=true";
-  }
+    protected String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "?password=admin&initialDelay=3000&stepwise=false"
+                + "&recursive=true";
+    }
 
-  @Override
-  @Before
-  public void setUp() throws Exception {
-    super.setUp();
-    prepareFtpServer();
-  }
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        prepareFtpServer();
+    }
 
-  @Test
-  public void testRecursiveNotStepwiseNoBasePath() throws Exception {
-    //CAMEL-13400
-    MockEndpoint mock = getMockEndpoint("mock:result");
-    mock.expectedBodiesReceivedInAnyOrder("Bye World", "Hello World", "Goodday World");
-    assertMockEndpointsSatisfied();
-  }
+    @Test
+    public void testRecursiveNotStepwiseNoBasePath() throws Exception {
+        //CAMEL-13400
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceivedInAnyOrder("Bye World", "Hello World", "Goodday World");
+        assertMockEndpointsSatisfied();
+    }
 
-  @Override
-  protected RouteBuilder createRouteBuilder() throws Exception {
-    return new RouteBuilder() {
-      @Override
-      public void configure() throws Exception {
-        from(getFtpUrl())
-            .convertBodyTo(String.class)
-            .to("log:ftp")
-            .to("mock:result");
-      }
-    };
-  }
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(getFtpUrl())
+                        .convertBodyTo(String.class)
+                        .to("log:ftp")
+                        .to("mock:result");
+            }
+        };
+    }
 
-  private void prepareFtpServer() throws Exception {
-    sendFile(getFtpUrl(), "Bye World", "bye.txt");
-    sendFile(getFtpUrl(), "Hello World", "sub/hello.txt");
-    sendFile(getFtpUrl(), "Goodday World", "sub/sub2/godday.txt");
-  }
+    private void prepareFtpServer() throws Exception {
+        sendFile(getFtpUrl(), "Bye World", "bye.txt");
+        sendFile(getFtpUrl(), "Hello World", "sub/hello.txt");
+        sendFile(getFtpUrl(), "Goodday World", "sub/sub2/godday.txt");
+    }
 }
