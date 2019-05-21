@@ -40,6 +40,8 @@ import org.apache.camel.util.ObjectHelper;
 @org.apache.camel.spi.annotations.Language("tokenize")
 public class TokenizeLanguage implements Language, IsSingleton {
 
+    // TODO: Move this to camel-base
+
     private String token;
     private String endToken;
     private String inheritNamespaceTagName;
