@@ -1046,37 +1046,241 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 ==== Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 30 in 30 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 139 in 139 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
 | Component | Available From | Description
 
+| link:camel-activemq/src/main/docs/activemq.adoc[Activemq] (camel-activemq) |  | ActiveMQ component for Camel
+
+| link:camel-ahc/src/main/docs/ahc.adoc[Ahc] (camel-ahc) |  | Camel Async Http Client support
+
+| link:camel-ahc-ws/src/main/docs/ahc-ws.adoc[Ahc Ws] (camel-ahc-ws) |  | Camel Websocket Client support
+
+| link:camel-amqp/src/main/docs/amqp.adoc[Amqp] (camel-amqp) |  | Camel AMQP component which is based on the Apache Qpid project
+
+| link:camel-apns/src/main/docs/apns.adoc[Apns] (camel-apns) |  | A Camel Apple Push Notification Server Component
+
+| link:camel-asn1/src/main/docs/asn1.adoc[Asn1] (camel-asn1) |  | Camel ASN.1 support
+
+| link:camel-asterisk/src/main/docs/asterisk.adoc[Asterisk] (camel-asterisk) |  | Camel Asterisk to interact with an Asterisk PBX Server
+
+| link:camel-atmos/src/main/docs/atmos.adoc[Atmos] (camel-atmos) |  | Camel Atmos support
+
+| link:camel-atmosphere-websocket/src/main/docs/atmosphere-websocket.adoc[Atmosphere Websocket] (camel-atmosphere-websocket) |  | Camel Atmosphere WebSocket Servlet
+
+| link:camel-atom/src/main/docs/atom.adoc[Atom] (camel-atom) |  | Camel Atom support
+
+| link:camel-atomix/src/main/docs/atomix.adoc[Atomix] (camel-atomix) |  | Camel Atomix support
+
+| link:camel-avro/src/main/docs/avro.adoc[Avro] (camel-avro) |  | Camel Avro data format
+
+| link:camel-aws-cw/src/main/docs/aws-cw.adoc[Aws Cw] (camel-aws-cw) |  | A Camel Amazon CW Web Service Component
+
+| link:camel-aws-ddb/src/main/docs/aws-ddb.adoc[Aws Ddb] (camel-aws-ddb) |  | A Camel Amazon DynamoDB Web Service Component
+
+| link:camel-aws-ec2/src/main/docs/aws-ec2.adoc[Aws Ec2] (camel-aws-ec2) |  | A Camel Amazon EC2 Web Service Component
+
+| link:camel-aws-ecs/src/main/docs/aws-ecs.adoc[Aws Ecs] (camel-aws-ecs) |  | A Camel Amazon ECS Web Service Component
+
+| link:camel-aws-eks/src/main/docs/aws-eks.adoc[Aws Eks] (camel-aws-eks) |  | A Camel Amazon EKS Web Service Component
+
+| link:camel-aws-iam/src/main/docs/aws-iam.adoc[Aws Iam] (camel-aws-iam) |  | A Camel Amazon IAM Web Service Component
+
+| link:camel-aws-kinesis/src/main/docs/aws-kinesis.adoc[Aws Kinesis] (camel-aws-kinesis) |  | A Camel Amazon Kinesis Web Service Component
+
+| link:camel-aws-kms/src/main/docs/aws-kms.adoc[Aws Kms] (camel-aws-kms) |  | A Camel Amazon KMS Web Service Component
+
+| link:camel-aws-lambda/src/main/docs/aws-lambda.adoc[Aws Lambda] (camel-aws-lambda) |  | A Camel Amazon Lambda We Service Component
+
+| link:camel-aws-mq/src/main/docs/aws-mq.adoc[Aws Mq] (camel-aws-mq) |  | A Camel Amazon MQ Web Service Component
+
+| link:camel-aws-msk/src/main/docs/aws-msk.adoc[Aws Msk] (camel-aws-msk) |  | A Camel Amazon MSK Web Service Component
+
+| link:camel-aws-s3/src/main/docs/aws-s3.adoc[Aws S3] (camel-aws-s3) |  | A Camel Amazon S3 Web Service Component
+
+| link:camel-aws-sdb/src/main/docs/aws-sdb.adoc[Aws Sdb] (camel-aws-sdb) |  | A Camel Amazon SDB Web Service Component
+
+| link:camel-aws-ses/src/main/docs/aws-ses.adoc[Aws Ses] (camel-aws-ses) |  | A Camel Amazon SES Web Service Component
+
+| link:camel-aws-sns/src/main/docs/aws-sns.adoc[Aws Sns] (camel-aws-sns) |  | A Camel Amazon SNS Web Service Component
+
+| link:camel-aws-sqs/src/main/docs/aws-sqs.adoc[Aws Sqs] (camel-aws-sqs) |  | A Camel Amazon SQS Web Service Component
+
+| link:camel-aws-swf/src/main/docs/aws-swf.adoc[Aws Swf] (camel-aws-swf) |  | A Camel Amazon SWF Web Service Component
+
+| link:camel-azure/src/main/docs/azure.adoc[Azure] (camel-azure) |  | Camel Microsoft Azure Components
+
+| link:camel-barcode/src/main/docs/barcode.adoc[Barcode] (camel-barcode) |  | Camel Barcode (e.g. QRcode, PDF417, DataMatrix) support
+
+| link:camel-base64/src/main/docs/base64.adoc[Base64] (camel-base64) |  | Camel Base64 data format support
+
+| link:camel-bean/src/main/docs/bean.adoc[Bean] (camel-bean) |  | Camel Bean component
+
+| link:camel-bean-validator/src/main/docs/bean-validator.adoc[Bean Validator] (camel-bean-validator) |  | Camel bean validation support (JSR 303)
+
+| link:camel-beanio/src/main/docs/beanio.adoc[Beanio] (camel-beanio) |  | Camel BeanIO data format support
+
+| link:camel-beanstalk/src/main/docs/beanstalk.adoc[Beanstalk] (camel-beanstalk) |  | Camel Beanstalk component
+
+| link:camel-bindy/src/main/docs/bindy.adoc[Bindy] (camel-bindy) |  | Camel Bindy data format support
+
 | link:camel-blueprint/src/main/docs/blueprint.adoc[Blueprint] (camel-blueprint) | 2.4 | Using Camel with OSGi Blueprint
+
+| link:camel-bonita/src/main/docs/bonita.adoc[Bonita] (camel-bonita) |  | Camel Bonita support
+
+| link:camel-boon/src/main/docs/boon.adoc[Boon] (camel-boon) |  | Camel Boon support
+
+| link:camel-braintree/src/main/docs/braintree.adoc[Braintree] (camel-braintree) |  | Camel Braintree support
+
+| link:camel-browse/src/main/docs/browse.adoc[Browse] (camel-browse) |  | Camel Browse component
+
+| link:camel-caffeine/src/main/docs/caffeine.adoc[Caffeine] (camel-caffeine) |  | Camel Caffeine support
+
+| link:camel-cassandraql/src/main/docs/cassandraql.adoc[Cassandraql] (camel-cassandraql) |  | Cassandra CQL3 support
 
 | link:camel-cdi/src/main/docs/cdi.adoc[CDI] (camel-cdi) | 2.10 | Using Camel with CDI
 
+| link:camel-chatscript/src/main/docs/chatscript.adoc[Chatscript] (camel-chatscript) |  | Camel support for ChatScript
+
+| link:camel-chunk/src/main/docs/chunk.adoc[Chunk] (camel-chunk) |  | Camel Chunk support
+
+| link:camel-cm-sms/src/main/docs/cm-sms.adoc[Cm Sms] (camel-cm-sms) |  | Camel CM SMS Gateway Component
+
+| link:camel-cmis/src/main/docs/cmis.adoc[Cmis] (camel-cmis) |  | Camel CMIS which is based on Apache Chemistry support
+
+| link:camel-coap/src/main/docs/coap.adoc[Coap] (camel-coap) |  | Camel CoAP support
+
+| link:camel-cometd/src/main/docs/cometd.adoc[Cometd] (camel-cometd) |  | Camel Cometd support based on Jetty
+
+| link:camel-controlbus/src/main/docs/controlbus.adoc[Controlbus] (camel-controlbus) |  | Camel Controlbus component
+
+| link:camel-corda/src/main/docs/corda.adoc[Corda] (camel-corda) |  | Camel Corda which is based on corda-rpc support
+
+| link:camel-couchbase/src/main/docs/couchbase.adoc[Couchbase] (camel-couchbase) |  | Camel Couchbase component
+
+| link:camel-crypto-cms/src/main/docs/crypto-cms.adoc[Crypto Cms] (camel-crypto-cms) |  | Camel Cryptographic Message Syntax Support
+
+| link:camel-csv/src/main/docs/csv.adoc[Csv] (camel-csv) |  | Camel CSV data format support
+
+| link:camel-cxf/src/main/docs/cxf.adoc[Cxf] (camel-cxf) |  | Camel CXF support
+
 | link:camel-cxf-transport/src/main/docs/cxf-transport.adoc[CXF Transport] (camel-cxf-transport) | 2.8 | Camel Transport for Apache CXF
+
+| link:camel-dataformat/src/main/docs/dataformat.adoc[Dataformat] (camel-dataformat) |  | Camel DataFormat component
+
+| link:camel-dataset/src/main/docs/dataset.adoc[Dataset] (camel-dataset) |  | Camel DataSet component
+
+| link:camel-digitalocean/src/main/docs/digitalocean.adoc[Digitalocean] (camel-digitalocean) |  | Camel DigitalOcean support
+
+| link:camel-direct/src/main/docs/direct.adoc[Direct] (camel-direct) |  | Camel Direct component
+
+| link:camel-directvm/src/main/docs/directvm.adoc[Directvm] (camel-directvm) |  | Camel Direct VM component
+
+| link:camel-disruptor/src/main/docs/disruptor.adoc[Disruptor] (camel-disruptor) |  | Camel :: Disruptor component
+
+| link:camel-dns/src/main/docs/dns.adoc[Dns] (camel-dns) |  | Camel DNS support
+
+| link:camel-docker/src/main/docs/docker.adoc[Docker] (camel-docker) |  | Camel Docker Support
+
+| link:camel-drill/src/main/docs/drill.adoc[Drill] (camel-drill) |  | Camel Apache Drill support
+
+| link:camel-ehcache/src/main/docs/ehcache.adoc[Ehcache] (camel-ehcache) |  | Camel Ehcache support
+
+| link:camel-ejb/src/main/docs/ejb.adoc[Ejb] (camel-ejb) |  | Camel EJB support
+
+| link:camel-elasticsearch-rest/src/main/docs/elasticsearch-rest.adoc[Elasticsearch Rest] (camel-elasticsearch-rest) |  | Camel ElasticSearch REST support
+
+| link:camel-elsql/src/main/docs/elsql.adoc[Elsql] (camel-elsql) |  | Camel ElSql support
+
+| link:camel-etcd/src/main/docs/etcd.adoc[Etcd] (camel-etcd) |  | Camel Etcd support
+
+| link:camel-exec/src/main/docs/exec.adoc[Exec] (camel-exec) |  | Camel support for system command execution
+
+| link:camel-facebook/src/main/docs/facebook.adoc[Facebook] (camel-facebook) |  | Camel Facebook Support
+
+| link:camel-fastjson/src/main/docs/fastjson.adoc[Fastjson] (camel-fastjson) |  | Camel Fastjson support
+
+| link:camel-file/src/main/docs/file.adoc[File] (camel-file) |  | Camel File component
+
+| link:camel-flatpack/src/main/docs/flatpack.adoc[Flatpack] (camel-flatpack) |  | Camel FlatPack support
+
+| link:camel-freemarker/src/main/docs/freemarker.adoc[Freemarker] (camel-freemarker) |  | Camel Freemarker support
+
+| link:camel-ftp/src/main/docs/ftp.adoc[Ftp] (camel-ftp) |  | Camel FTP support
+
+| link:camel-geocoder/src/main/docs/geocoder.adoc[Geocoder] (camel-geocoder) |  | Camel GeoCoder support
+
+| link:camel-git/src/main/docs/git.adoc[Git] (camel-git) |  | Camel Components
+
+| link:camel-github/src/main/docs/github.adoc[Github] (camel-github) |  | Camel Components
+
+| link:camel-google-bigquery/src/main/docs/google-bigquery.adoc[Google Bigquery] (camel-google-bigquery) |  | Camel Component for Google Cloud Platform BigQuery
+
+| link:camel-google-calendar/src/main/docs/google-calendar.adoc[Google Calendar] (camel-google-calendar) |  | Camel Component for GoogleCalendar
+
+| link:camel-google-drive/src/main/docs/google-drive.adoc[Google Drive] (camel-google-drive) |  | Camel Component for GoogleDrive
+
+| link:camel-google-mail/src/main/docs/google-mail.adoc[Google Mail] (camel-google-mail) |  | Camel Component for GoogleMail
+
+| link:camel-google-pubsub/src/main/docs/google-pubsub.adoc[Google Pubsub] (camel-google-pubsub) |  | Camel Component for Google Cloud Platform PubSub
+
+| link:camel-groovy/src/main/docs/groovy.adoc[Groovy] (camel-groovy) |  | Camel Groovy support
+
+| link:camel-guava-eventbus/src/main/docs/guava-eventbus.adoc[Guava Eventbus] (camel-guava-eventbus) |  | Camel Guava EventBus support
+
+| link:camel-hazelcast/src/main/docs/hazelcast.adoc[Hazelcast] (camel-hazelcast) |  | Camel HazelCast based work queue implementation
+
+| link:camel-hbase/src/main/docs/hbase.adoc[Hbase] (camel-hbase) |  | Camel HBase component
+
+| link:camel-http4/src/main/docs/http4.adoc[Http4] (camel-http4) |  | Camel HTTP (Apache HttpClient 4.x) support
 
 | link:camel-hystrix/src/main/docs/hystrix.adoc[Hystrix] (camel-hystrix) | 2.18 | Circuit Breaker EIP using Netflix Hystrix
 
+| link:camel-ipfs/src/main/docs/ipfs.adoc[Ipfs] (camel-ipfs) |  | Camel IPFS support
+
 | link:camel-jasypt/src/main/docs/jasypt.adoc[Jasypt] (camel-jasypt) | 2.5 | Security using Jasypt
+
+| link:camel-jetty/src/main/docs/jetty.adoc[Jetty] (camel-jetty) |  | Camel Jetty support
+
+| link:camel-jms/src/main/docs/jms.adoc[Jms] (camel-jms) |  | Camel JMS support
 
 | link:camel-kura/src/main/docs/kura.adoc[Kura] (camel-kura) | 2.15 | Using Camel with Eclipse Kura (OSGi)
 
+| link:camel-language/src/main/docs/language.adoc[Language] (camel-language) |  | Camel Language component
+
 | link:camel-leveldb/src/main/docs/leveldb.adoc[LevelDB] (camel-leveldb) | 2.10 | Using LevelDB as persistent EIP store
+
+| link:camel-log/src/main/docs/log.adoc[Log] (camel-log) |  | Camel Log component
 
 | link:camel-lra/src/main/docs/lra.adoc[Lra] (camel-lra) | 2.21 | Camel saga binding for Long-Running-Action framework
 
+| link:camel-master/src/main/docs/master.adoc[Master] (camel-master) |  | Camel Master Support
+
+| link:camel-mock/src/main/docs/mock.adoc[Mock] (camel-mock) |  | Camel Mock component
+
 | link:camel-opentracing/src/main/docs/opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
 
+| link:camel-properties/src/main/docs/properties.adoc[Properties] (camel-properties) |  | Camel Properties component
+
 | link:camel-reactor/src/main/docs/reactor.adoc[Reactor] (camel-reactor) | 2.20 | Reactor based back-end for Camel's reactive streams component
+
+| link:camel-ref/src/main/docs/ref.adoc[Ref] (camel-ref) |  | Camel Ref component
+
+| link:camel-rest/src/main/docs/rest.adoc[Rest] (camel-rest) |  | Camel REST component
 
 | link:camel-ribbon/src/main/docs/ribbon.adoc[Ribbon] (camel-ribbon) | 2.18 | Using Netflix Ribbon for client side load balancing
 
 | link:camel-rxjava2/src/main/docs/rxjava2.adoc[Rxjava2] (camel-rxjava2) | 2.22 | RxJava2 based back-end for Camel's reactive streams component
 
+| link:camel-seda/src/main/docs/seda.adoc[Seda] (camel-seda) |  | Camel Seda component
+
+| link:camel-service/src/main/docs/service.adoc[Service] (camel-service) |  | Camel service Support
+
 | link:camel-shiro/src/main/docs/shiro.adoc[Shiro] (camel-shiro) | 2.5 | Security using Shiro
+
+| link:camel-spring/src/main/docs/spring.adoc[Spring] (camel-spring) |  | Camel Spring with XML DSL
 
 | link:camel-spring-boot/src/main/docs/spring-boot.adoc[Spring Boot] (camel-spring-boot) | 2.15 | Using Camel with Spring Boot
 
@@ -1091,6 +1295,8 @@ Number of Miscellaneous Components: 30 in 30 JAR artifacts (0 deprecated)
 | link:camel-spring-javaconfig/src/main/docs/spring-javaconfig.adoc[Spring Java Configuration] (camel-spring-javaconfig) | 2.0 | Using Camel with Spring Java Configuration
 
 | link:camel-spring-security/src/main/docs/spring-security.adoc[Spring Security] (camel-spring-security) | 2.3 | Security using Spring Security
+
+| link:camel-stub/src/main/docs/stub.adoc[Stub] (camel-stub) |  | Camel Stub component
 
 | link:camel-swagger-java/src/main/docs/swagger-java.adoc[Swagger Java] (camel-swagger-java) | 2.16 | Rest-dsl support for using swagger api-doc
 
@@ -1108,7 +1314,19 @@ Number of Miscellaneous Components: 30 in 30 JAR artifacts (0 deprecated)
 
 | link:camel-testcontainers-spring/src/main/docs/testcontainers-spring.adoc[Testcontainers Spring] (camel-testcontainers-spring) | 2.22 | Camel unit testing with Spring and testcontainers
 
+| link:camel-timer/src/main/docs/timer.adoc[Timer] (camel-timer) |  | Camel Timer component
+
+| link:camel-undertow/src/main/docs/undertow.adoc[Undertow] (camel-undertow) |  | Camel Components
+
+| link:camel-validator/src/main/docs/validator.adoc[Validator] (camel-validator) |  | Camel Validator component
+
+| link:camel-vm/src/main/docs/vm.adoc[Vm] (camel-vm) |  | Camel VM component
+
+| link:camel-xpath/src/main/docs/xpath.adoc[Xpath] (camel-xpath) |  | Camel XPath language
+
 | link:camel-aws-xray/src/main/docs/aws-xray.adoc[XRay] (camel-aws-xray) | 2.21 | Distributed tracing using AWS XRay
+
+| link:camel-xslt/src/main/docs/xslt.adoc[Xslt] (camel-xslt) |  | Camel XSLT component
 
 | link:camel-zipkin/src/main/docs/zipkin.adoc[Zipkin] (camel-zipkin) | 2.18 | Distributed message tracing using Zipkin
 |===
