@@ -371,7 +371,8 @@ public class CamelAutoConfiguration {
         registerPropertyForBeanType(applicationContext, ShutdownStrategy.class, camelContext::setShutdownStrategy);
         
         final Predicate<InterceptStrategy> containsInterceptStrategy = camelContext.adapt(ExtendedCamelContext.class).getInterceptStrategies()::contains;
-        registerPropertiesForBeanTypesWithCondition(applicationContext, InterceptStrategy.class, containsInterceptStrategy.negate(), camelContext.adapt(ExtendedCamelContext.class)::addInterceptStrategy);
+        registerPropertiesForBeanTypesWithCondition(applicationContext, InterceptStrategy.class, containsInterceptStrategy.negate(), 
+            camelContext.adapt(ExtendedCamelContext.class)::addInterceptStrategy);
 
         final Predicate<LifecycleStrategy> containsLifecycleStrategy = camelContext.getLifecycleStrategies()::contains;
         registerPropertiesForBeanTypesWithCondition(applicationContext, LifecycleStrategy.class, containsLifecycleStrategy.negate(), camelContext::addLifecycleStrategy);
