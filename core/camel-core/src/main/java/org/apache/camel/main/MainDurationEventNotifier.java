@@ -17,6 +17,7 @@
 package org.apache.camel.main;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -113,7 +114,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
             camelContext.addStartupListener((context, alreadyStarted) -> watch = new StopWatch());
 
             // okay we need to trigger on idle after X period, and therefore we need a background task that checks this
-            executorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "MainDurationIdleChecker");
+            executorService = Executors.newSingleThreadScheduledExecutor();
             Runnable task = () -> {
                 if (watch == null) {
                     // camel has not been started yet
@@ -144,6 +145,8 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
                         } finally {
                             // trigger stopping the Main
                             latch.countDown();
+                            // shutdown the pool
+                            executorService.shutdownNow();
                         }
                     }
                 }
