@@ -3406,9 +3406,18 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             }
         }
 
+        // preserve any existing event notifiers that may have been already added
+        List<EventNotifier> notifiers = null;
+        if (managementStrategy != null) {
+            notifiers = managementStrategy.getEventNotifiers();
+        }
+
         log.debug("Setting up management with factory: {}", factory);
         try {
             ManagementStrategy strategy = factory.create(this, options);
+            if (notifiers != null) {
+                notifiers.forEach(strategy::addEventNotifier);
+            }
             LifecycleStrategy lifecycle = factory.createLifecycle(this);
             factory.setupManagement(this, strategy, lifecycle);
         } catch (Exception e) {

@@ -48,7 +48,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
 
     private volatile int doneMessages;
     private volatile StopWatch watch;
-    private volatile ScheduledExecutorService executorService;
+    private volatile ScheduledExecutorService idleExecutorService;
 
     public MainDurationEventNotifier(CamelContext camelContext, int maxMessages, long maxIdleSeconds,
                                      AtomicBoolean completed, CountDownLatch latch, boolean stopCamelContext) {
@@ -74,16 +74,12 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
             if (result) {
                 if (completed.compareAndSet(false, true)) {
                     LOG.info("Duration max messages triggering shutdown of the JVM.");
-                    try {
-                        // shutting down CamelContext
-                        if (stopCamelContext) {
-                            camelContext.stop();
-                        }
-                    } catch (Exception e) {
-                        LOG.warn("Error during stopping CamelContext. This exception is ignored.", e);
-                    } finally {
-                        // trigger stopping the Main
-                        latch.countDown();
+                    // use thread to stop Camel as otherwise we would block current thread
+                    Thread thread = camelContext.getExecutorServiceManager().newThread("CamelMainShutdownCamelContext", new ShutdownTask());
+                    thread.start();
+                    // shutdown idle checker if in use as we are stopping
+                    if (idleExecutorService != null) {
+                        idleExecutorService.shutdownNow();
                     }
                 }
             }
@@ -98,7 +94,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
 
     @Override
     public boolean isEnabled(CamelEvent event) {
-        return event instanceof ExchangeCompletedEvent || event instanceof ExchangeFailedEvent;
+        return event instanceof ExchangeCreatedEvent || event instanceof ExchangeCompletedEvent || event instanceof ExchangeFailedEvent;
     }
 
     @Override
@@ -114,7 +110,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
             camelContext.addStartupListener((context, alreadyStarted) -> watch = new StopWatch());
 
             // okay we need to trigger on idle after X period, and therefore we need a background task that checks this
-            executorService = Executors.newSingleThreadScheduledExecutor();
+            idleExecutorService = Executors.newSingleThreadScheduledExecutor();
             Runnable task = () -> {
                 if (watch == null) {
                     // camel has not been started yet
@@ -135,23 +131,31 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
                 if (result) {
                     if (completed.compareAndSet(false, true)) {
                         LOG.info("Duration max idle triggering shutdown of the JVM.");
-                        try {
-                            // shutting down CamelContext
-                            if (stopCamelContext) {
-                                camelContext.stop();
-                            }
-                        } catch (Exception e) {
-                            LOG.warn("Error during stopping CamelContext. This exception is ignored.", e);
-                        } finally {
-                            // trigger stopping the Main
-                            latch.countDown();
-                            // shutdown the pool
-                            executorService.shutdownNow();
-                        }
+                        // use thread to stop Camel as otherwise we would block current thread
+                        Thread thread = camelContext.getExecutorServiceManager().newThread("CamelMainShutdownCamelContext", new ShutdownTask());
+                        thread.start();
                     }
                 }
             };
-            executorService.scheduleAtFixedRate(task, 1, 1, TimeUnit.SECONDS);
+            idleExecutorService.scheduleAtFixedRate(task, 1, 1, TimeUnit.SECONDS);
+        }
+    }
+
+    private class ShutdownTask implements Runnable {
+
+        @Override
+        public void run() {
+            try {
+                // shutting down CamelContext
+                if (stopCamelContext) {
+                    camelContext.stop();
+                }
+            } catch (Exception e) {
+                LOG.warn("Error during stopping CamelContext. This exception is ignored.", e);
+            } finally {
+                // trigger stopping the Main
+                latch.countDown();
+            }
         }
     }
 

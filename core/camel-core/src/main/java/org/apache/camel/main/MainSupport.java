@@ -639,18 +639,21 @@ public abstract class MainSupport extends ServiceSupport {
     protected void waitUntilCompleted() {
         while (!completed.get()) {
             try {
+                int idle = mainConfigurationProperties.getDurationMaxIdleSeconds();
+                int max = mainConfigurationProperties.getDurationMaxMessages();
                 if (mainConfigurationProperties.getDuration() > 0) {
                     LOG.info("Waiting for: {} seconds", mainConfigurationProperties.getDuration());
                     latch.await(mainConfigurationProperties.getDuration(), TimeUnit.SECONDS);
                     exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, mainConfigurationProperties.getDurationHitExitCode());
                     completed.set(true);
-                } else if (mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
-                    LOG.info("Waiting to be idle for: {} seconds", mainConfigurationProperties.getDurationMaxIdleSeconds());
-                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, mainConfigurationProperties.getDurationHitExitCode());
-                    latch.await();
-                    completed.set(true);
-                } else if (mainConfigurationProperties.getDurationMaxMessages() > 0) {
-                    LOG.info("Waiting until: {} messages has been processed", mainConfigurationProperties.getDurationMaxMessages());
+                } else if (idle > 0 || max > 0) {
+                    if (idle > 0 && max > 0) {
+                        LOG.info("Waiting to be idle for: {} seconds or until: {} messages has been processed", idle, max);
+                    } else if (idle > 0) {
+                        LOG.info("Waiting to be idle for: {} seconds", idle);
+                    } else {
+                        LOG.info("Waiting until: {} messages has been processed", max);
+                    }
                     exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, mainConfigurationProperties.getDurationHitExitCode());
                     latch.await();
                     completed.set(true);
@@ -658,6 +661,9 @@ public abstract class MainSupport extends ServiceSupport {
                     latch.await();
                 }
             } catch (InterruptedException e) {
+                // okay something interrupted us so terminate
+                completed.set(true);
+                latch.countDown();
                 Thread.currentThread().interrupt();
             }
         }
