@@ -38,11 +38,6 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
     }
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
-    @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("counter", new MyGuidGenerator());
@@ -67,8 +62,6 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Goodday World");
 
-        context.start();
-
         assertMockEndpointsSatisfied();
     }
 
@@ -91,8 +84,6 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
         // we should only get one as we only poll a single file using the file expression
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Goodday World");
-
-        context.start();
 
         assertMockEndpointsSatisfied();
     }

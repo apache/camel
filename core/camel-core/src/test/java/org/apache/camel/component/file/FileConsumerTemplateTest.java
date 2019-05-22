@@ -31,11 +31,6 @@ public class FileConsumerTemplateTest extends ContextTestSupport {
         super.setUp();
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testFileConsumerTemplate() throws Exception {
         template.sendBodyAndHeader("file:target/data/consumer", "Hello World", Exchange.FILE_NAME, "hello.txt");

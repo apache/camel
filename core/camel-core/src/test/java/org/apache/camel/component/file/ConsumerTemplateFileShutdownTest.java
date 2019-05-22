@@ -40,8 +40,4 @@ public class ConsumerTemplateFileShutdownTest extends ContextTestSupport {
         consumer.stop();
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
 }

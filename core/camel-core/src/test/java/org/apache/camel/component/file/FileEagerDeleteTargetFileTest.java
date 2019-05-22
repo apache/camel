@@ -62,8 +62,4 @@ public class FileEagerDeleteTargetFileTest extends ContextTestSupport {
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
 }

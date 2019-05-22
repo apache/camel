@@ -91,8 +91,4 @@ public class FileSedaShutdownCompleteAllTasksTest extends ContextTestSupport {
         assertEquals("Should complete all messages", 5, bar.getReceivedCounter());
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
 }

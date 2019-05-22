@@ -22,11 +22,6 @@ import org.junit.Test;
 
 public class DataSetTestSedaTest extends ContextTestSupport {
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testSeda() throws Exception {
         template.sendBody("seda:testme", "Hello World");
@@ -38,7 +33,6 @@ public class DataSetTestSedaTest extends ContextTestSupport {
                         .to("dataset-test:seda:testme?timeout=0");
             }
         });
-        context.start();
 
         template.sendBody("direct:start", "Hello World");
 

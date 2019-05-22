@@ -32,6 +32,9 @@ public class LanguageLoadScriptFromFileUpdateTest extends ContextTestSupport {
 
     @Test
     public void testLanguage() throws Exception {
+        // create script to start with
+        template.sendBodyAndHeader("file:target/data/script", "Hello ${body}", Exchange.FILE_NAME, "myscript.txt");
+
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
 
         template.sendBody("direct:start", "World");
@@ -47,8 +50,6 @@ public class LanguageLoadScriptFromFileUpdateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // create script to start with
-                template.sendBodyAndHeader("file:target/data/script", "Hello ${body}", Exchange.FILE_NAME, "myscript.txt");
 
                 // START SNIPPET: e1
                 from("direct:start")

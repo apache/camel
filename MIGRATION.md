@@ -377,6 +377,7 @@ The APIs that could find, and explain EIPs, components, endpoints etc has been r
 
 The default for use breadcrumbs has been changed from `true` to `false`.
 
+The `ProducerTemplate` and `ConsumerTemplate` now fails when being used, if `CamelContext` has not been started first. 
 
 ### XML DSL Migration
 

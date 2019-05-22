@@ -32,11 +32,6 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
         super.setUp();
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testIllegalConfiguration() throws Exception {
         try {

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 import java.util.Properties;
 
@@ -138,8 +139,4 @@ public class FilerProducerDoneFileNameTest extends ContextTestSupport {
         assertEquals("Done file should exists", true, done.exists());
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
 }

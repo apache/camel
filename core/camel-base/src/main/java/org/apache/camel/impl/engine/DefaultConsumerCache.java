@@ -27,6 +27,8 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
+import java.util.concurrent.RejectedExecutionException;
+
 /**
  * Cache containing created {@link org.apache.camel.Consumer}.
  */
@@ -94,6 +96,10 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
     }
  
     public Exchange receive(Endpoint endpoint) {
+        if (camelContext.isStopped()) {
+            throw new RejectedExecutionException("CamelContext is stopped");
+        }
+
         log.debug("<<<< {}", endpoint);
         PollingConsumer consumer = null;
         try {
@@ -107,6 +113,10 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
     }
 
     public Exchange receive(Endpoint endpoint, long timeout) {
+        if (camelContext.isStopped()) {
+            throw new RejectedExecutionException("CamelContext is stopped");
+        }
+
         log.debug("<<<< {}", endpoint);
         PollingConsumer consumer = null;
         try {
@@ -120,6 +130,10 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
     }
 
     public Exchange receiveNoWait(Endpoint endpoint) {
+        if (camelContext.isStopped()) {
+            throw new RejectedExecutionException("CamelContext is stopped");
+        }
+
         log.debug("<<<< {}", endpoint);
         PollingConsumer consumer = null;
         try {

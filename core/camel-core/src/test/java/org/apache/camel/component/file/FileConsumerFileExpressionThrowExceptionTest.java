@@ -49,11 +49,6 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
     }
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
-    @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("counter", new MyGuidGenerator());
@@ -73,8 +68,6 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
                     // specify a method name that does not exists
             }
         });
-
-        context.start();
 
         await().atMost(2, TimeUnit.SECONDS).until(() -> LATCH.getCount() == 0);
 

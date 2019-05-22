@@ -130,8 +130,4 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
     
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
 }

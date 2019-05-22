@@ -36,11 +36,6 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
         super.setUp();
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     private void prepareFolder(String folder) {
         template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello Paris",
             Exchange.FILE_NAME, "report-3.dat");
