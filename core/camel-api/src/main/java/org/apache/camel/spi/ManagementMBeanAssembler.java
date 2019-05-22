@@ -16,12 +16,12 @@
  */
 package org.apache.camel.spi;
 
-import org.apache.camel.StaticService;
-
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.modelmbean.ModelMBean;
+
+import org.apache.camel.StaticService;
 
 /**
  * An assembler to assemble a {@link javax.management.modelmbean.RequiredModelMBean} which can be used
