@@ -60,6 +60,7 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
     private String triggerId;
     private String triggerGroup = "QuartzScheduledPollConsumerScheduler";
     private TimeZone timeZone = TimeZone.getDefault();
+    private boolean deleteJob = true;
     private volatile CronTrigger trigger;
     private volatile JobDetail job;
 
@@ -154,6 +155,14 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
 
     public void setTriggerGroup(String triggerGroup) {
         this.triggerGroup = triggerGroup;
+    }
+
+    public boolean isDeleteJob() {
+        return deleteJob;
+    }
+
+    public void setDeleteJob(boolean deleteJob) {
+        this.deleteJob = deleteJob;
     }
 
     @Override
@@ -253,9 +262,12 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
 
     @Override
     protected void doStop() throws Exception {
-        if (trigger != null) {
-            LOG.debug("Unscheduling trigger: {}", trigger.getKey());
-            quartzScheduler.unscheduleJob(trigger.getKey());
+        if (trigger != null && deleteJob) {
+            boolean isClustered = quartzScheduler.getMetaData().isJobStoreClustered();
+            if (!quartzScheduler.isShutdown() && !isClustered) {
+                LOG.info("Deleting job {}", trigger.getKey());
+                quartzScheduler.unscheduleJob(trigger.getKey());
+            }
         }
     }
 
