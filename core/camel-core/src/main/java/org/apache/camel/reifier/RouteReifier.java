@@ -390,12 +390,12 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         List<PropertyDefinition> properties = definition.getRouteProperties();
         if (properties != null) {
             final String[] reservedProperties = new String[] {
-                    Route.ID_PROPERTY,
-                    Route.CUSTOM_ID_PROPERTY,
-                    Route.PARENT_PROPERTY,
-                    Route.DESCRIPTION_PROPERTY,
-                    Route.GROUP_PROPERTY,
-                    Route.REST_PROPERTY
+            Route.ID_PROPERTY,
+            Route.CUSTOM_ID_PROPERTY,
+            Route.PARENT_PROPERTY,
+            Route.DESCRIPTION_PROPERTY,
+            Route.GROUP_PROPERTY,
+            Route.REST_PROPERTY
             };
 
             for (PropertyDefinition prop : properties) {
