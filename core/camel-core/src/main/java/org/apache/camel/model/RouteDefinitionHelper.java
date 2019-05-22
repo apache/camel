@@ -166,9 +166,19 @@ public final class RouteDefinitionHelper {
                 
                 boolean done = false;
                 String id = null;
-                while (!done) {
+                int attempts = 0;
+                while (!done && attempts < 1000) {
+                    attempts++;
                     id = route.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
-                    done = !customIds.contains(id);
+                    if (customIds.contains(id)) {
+                        // reset id and try again
+                        route.setId(null);
+                    } else {
+                        done = true;
+                    }
+                }
+                if (!done) {
+                    throw new IllegalArgumentException("Cannot auto assign id to route: " + route);
                 }
                 route.setId(id);
                 ProcessorDefinitionHelper.addPropertyPlaceholdersChangeRevertAction(new Runnable() {
