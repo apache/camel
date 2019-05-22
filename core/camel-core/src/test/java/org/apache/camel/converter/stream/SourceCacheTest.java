@@ -19,6 +19,7 @@ package org.apache.camel.converter.stream;
 import java.io.ByteArrayOutputStream;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.util.xml.SourceCache;
 import org.junit.Test;
 
 public class SourceCacheTest extends ContextTestSupport {

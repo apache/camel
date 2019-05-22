@@ -35,7 +35,7 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.InputSource;
 
-import org.apache.camel.BytesSource;
+import org.apache.camel.util.xml.BytesSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;

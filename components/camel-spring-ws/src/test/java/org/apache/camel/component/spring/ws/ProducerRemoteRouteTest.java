@@ -20,7 +20,7 @@ import javax.xml.transform.Source;
 
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.StringSource;
+import org.apache.camel.util.xml.StringSource;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;

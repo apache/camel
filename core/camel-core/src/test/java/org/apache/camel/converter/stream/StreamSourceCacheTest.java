@@ -23,6 +23,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.util.xml.StreamSourceCache;
 import org.junit.Test;
 
 public class StreamSourceCacheTest extends ContextTestSupport {

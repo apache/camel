@@ -27,7 +27,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 import org.xml.sax.SAXException;
-import org.apache.camel.BytesSource;
+import org.apache.camel.util.xml.BytesSource;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.validator.DefaultLSResourceResolver;

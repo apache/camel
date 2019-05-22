@@ -38,7 +38,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.converter.stream.CachedOutputStream;
-import org.apache.camel.converter.stream.StreamSourceCache;
+import org.apache.camel.util.xml.StreamSourceCache;
 import org.apache.camel.support.builder.xml.StAX2SAXSource;
 import org.apache.camel.support.builder.xml.XMLConverterHelper;
 import org.apache.camel.util.ObjectHelper;

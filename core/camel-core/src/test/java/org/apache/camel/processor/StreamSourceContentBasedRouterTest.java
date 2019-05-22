@@ -20,7 +20,7 @@ import java.io.StringReader;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.StringSource;
+import org.apache.camel.util.xml.StringSource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
