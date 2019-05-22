@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 import java.util.List;
 
@@ -35,11 +36,6 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
     public void setUp() throws Exception {
         deleteDirectory("target/data/browse");
         super.setUp();
-    }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
     }
 
     @Test

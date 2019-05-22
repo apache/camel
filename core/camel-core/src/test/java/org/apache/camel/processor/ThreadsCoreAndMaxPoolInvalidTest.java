@@ -22,11 +22,6 @@ import org.junit.Test;
 
 public class ThreadsCoreAndMaxPoolInvalidTest extends ContextTestSupport {
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return super.isUseRouteBuilder();
-    }
-
     @Test
     public void testInvalidSyntax() throws Exception {
         try {

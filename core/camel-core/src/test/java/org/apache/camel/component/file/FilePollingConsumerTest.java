@@ -36,11 +36,6 @@ public class FilePollingConsumerTest extends ContextTestSupport {
         super.setUp();
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testPollingConsumer() throws Exception {
         template.sendBodyAndHeader("file:target/data/enrich", "Hello World", Exchange.FILE_NAME, "hello.txt");

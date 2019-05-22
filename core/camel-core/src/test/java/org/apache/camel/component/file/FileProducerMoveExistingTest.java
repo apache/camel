@@ -128,8 +128,4 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
         assertEquals("Old file", context.getTypeConverter().convertTo(String.class, new File("target/data/file/renamed-hello.txt")));
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
 }

@@ -39,11 +39,6 @@ public class FileConvertBodyToUTF8Test extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/data/utf8", body, Exchange.FILE_NAME, "utf8.txt");
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testFileUTF8() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -54,7 +49,6 @@ public class FileConvertBodyToUTF8Test extends ContextTestSupport {
                     .to("mock:result");
             }
         });
-        context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

@@ -28,11 +28,6 @@ public class FileToFileWithFlattenTest extends ContextTestSupport {
     private String fileUrl = "file://target/data/flatten-in";
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
-    @Override
     @Before
     public void setUp() throws Exception {
         deleteDirectory("target/data/flatten-in");

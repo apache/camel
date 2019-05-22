@@ -17,6 +17,7 @@
 package org.apache.camel.impl.engine;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -27,7 +28,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
-import org.apache.camel.Producer;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.SharedCamelInternalProcessor;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
@@ -39,7 +39,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StopWatch;
 
 /**
- * Cache containing created {@link Producer}.
+ * Default implementation of {@link ProducerCache}.
  */
 public class DefaultProducerCache extends ServiceSupport implements ProducerCache {
 
@@ -74,9 +74,6 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         return eventNotifierEnabled;
     }
 
-    /**
-     * Whether {@link org.apache.camel.spi.EventNotifier} is enabled
-     */
     public void setEventNotifierEnabled(boolean eventNotifierEnabled) {
         this.eventNotifierEnabled = eventNotifierEnabled;
     }
@@ -96,22 +93,10 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         return camelContext;
     }
 
-    /**
-     * Gets the source which uses this cache
-     *
-     * @return the source
-     */
     public Object getSource() {
         return source;
     }
 
-    /**
-     * Acquires a pooled producer which you <b>must</b> release back again after usage using the
-     * {@link #releaseProducer(org.apache.camel.Endpoint, org.apache.camel.AsyncProducer)} method.
-     *
-     * @param endpoint the endpoint
-     * @return the producer
-     */
     public AsyncProducer acquireProducer(Endpoint endpoint) {
         try {
             AsyncProducer producer = producers.acquire(endpoint);
@@ -124,26 +109,16 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         }
     }
 
-    /**
-     * Releases an acquired producer back after usage.
-     *
-     * @param endpoint the endpoint
-     * @param producer the producer to release
-     */
     public void releaseProducer(Endpoint endpoint, AsyncProducer producer) {
         producers.release(endpoint, producer);
     }
 
-    /**
-     * Sends the exchange to the given endpoint.
-     * <p>
-     * This method will <b>not</b> throw an exception. If processing of the given
-     * Exchange failed then the exception is stored on the provided Exchange
-     *
-     * @param endpoint the endpoint to send the exchange to
-     * @param exchange the exchange to send
-     */
     public Exchange send(Endpoint endpoint, Exchange exchange, Processor resultProcessor) {
+        if (camelContext.isStopped()) {
+            exchange.setException(new RejectedExecutionException("CamelContext is stopped"));
+            return exchange;
+        }
+
         AsyncProducer producer = acquireProducer(endpoint);
         try {
             // now lets dispatch
@@ -197,6 +172,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
      * @return future that completes with exchange when processing is done. Either passed into future parameter
      *              or new one if parameter was null
      */
+    @Deprecated
     public CompletableFuture<Exchange> asyncSend(Endpoint endpoint,
                                                  ExchangePattern pattern,
                                                  Processor processor,
@@ -205,23 +181,6 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         return asyncSendExchange(endpoint, pattern, processor, resultProcessor, null, future);
     }
 
-    /**
-     * Asynchronously sends an exchange to an endpoint using a supplied
-     * {@link Processor} to populate the exchange
-     * <p>
-     * This method will <b>neither</b> throw an exception <b>nor</b> complete future exceptionally.
-     * If processing of the given Exchange failed then the exception is stored on the return Exchange
-     *
-     * @param endpoint        the endpoint to send the exchange to
-     * @param pattern         the message {@link ExchangePattern} such as
-     *                        {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
-     * @param processor       the transformer used to populate the new exchange
-     * @param resultProcessor a processor to process the exchange when the send is complete.
-     * @param exchange        an exchange to use in processing. Exchange will be created if parameter is null.
-     * @param future          the preexisting future to complete when processing is done or null if to create new one
-     * @return future that completes with exchange when processing is done. Either passed into future parameter
-     *              or new one if parameter was null
-     */
     public CompletableFuture<Exchange> asyncSendExchange(Endpoint endpoint,
                                                          ExchangePattern pattern,
                                                          Processor processor,
@@ -259,17 +218,6 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         return future;
     }
 
-    /**
-     * Sends an exchange to an endpoint using a supplied callback supporting the asynchronous routing engine.
-     * <p/>
-     * If an exception was thrown during processing, it would be set on the given Exchange
-     *
-     * @param endpoint         the endpoint to send the exchange to
-     * @param exchange         the exchange, can be <tt>null</tt> if so then create a new exchange from the producer
-     * @param callback         the asynchronous callback
-     * @param producerCallback the producer template callback to be executed
-     * @return (doneSync) <tt>true</tt> to continue execute synchronously, <tt>false</tt> to continue being executed asynchronously
-     */
     public boolean doInAsyncProducer(Endpoint endpoint,
                                      Exchange exchange,
                                      AsyncCallback callback,
@@ -381,11 +329,6 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         }
     }
 
-    /**
-     * Returns the current size of the cache
-     *
-     * @return the current size
-     */
     public int size() {
         int size = producers.size();
 
@@ -393,51 +336,22 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         return size;
     }
 
-    /**
-     * Gets the maximum cache size (capacity).
-     *
-     * @return the capacity
-     */
     public int getCapacity() {
         return maxCacheSize;
     }
 
-    /**
-     * Gets the cache hits statistic
-     * <p/>
-     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
-     *
-     * @return the hits
-     */
     public long getHits() {
         return producers.getHits();
     }
 
-    /**
-     * Gets the cache misses statistic
-     * <p/>
-     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
-     *
-     * @return the misses
-     */
     public long getMisses() {
         return producers.getMisses();
     }
 
-    /**
-     * Gets the cache evicted statistic
-     * <p/>
-     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
-     *
-     * @return the evicted
-     */
     public long getEvicted() {
         return producers.getEvicted();
     }
 
-    /**
-     * Resets the cache statistics
-     */
     public void resetCacheStatistics() {
         producers.resetStatistics();
         if (statistics != null) {
@@ -445,9 +359,6 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         }
     }
 
-    /**
-     * Purges this cache
-     */
     public synchronized void purge() {
         try {
             producers.stop();
@@ -460,9 +371,6 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         }
     }
 
-    /**
-     * Cleanup the cache (purging stale entries)
-     */
     public void cleanUp() {
         producers.cleanUp();
     }

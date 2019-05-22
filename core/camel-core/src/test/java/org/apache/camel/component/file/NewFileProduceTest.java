@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 import java.util.HashMap;
 
@@ -35,11 +36,6 @@ public class NewFileProduceTest extends ContextTestSupport {
     public void setUp() throws Exception {
         deleteDirectory("target/data/producefile");
         super.setUp();
-    }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
     }
 
     @Test

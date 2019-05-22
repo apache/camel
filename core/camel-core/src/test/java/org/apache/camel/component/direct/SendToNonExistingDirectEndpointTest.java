@@ -30,6 +30,8 @@ public class SendToNonExistingDirectEndpointTest extends ContextTestSupport {
 
     @Test
     public void testDirect() throws Exception {
+        context.start();
+
         context.getComponent("direct", DirectComponent.class).setBlock(false);
         
         try {

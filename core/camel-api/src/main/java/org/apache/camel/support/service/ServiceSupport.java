@@ -268,7 +268,7 @@ public abstract class ServiceSupport implements StatefulService {
 
     @Override
     public boolean isStopped() {
-        return status == STOPPED || status == SHUTTINGDOWN || status == SHUTDOWN || status == FAILED;
+        return status == NEW || status == INITIALIZED || status == STOPPED || status == SHUTTINGDOWN || status == SHUTDOWN || status == FAILED;
     }
 
     @Override

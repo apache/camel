@@ -36,11 +36,6 @@ public class FileSortByExpressionTest extends ContextTestSupport {
         super.setUp();
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     private void prepareFolder(String folder) {
         template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello Paris",
             Exchange.FILE_NAME, "paris.dat");
@@ -62,7 +57,6 @@ public class FileSortByExpressionTest extends ContextTestSupport {
                 from(fileUrl + "a/?initialDelay=0&delay=10&sortBy=file:ext").to("mock:result");
             }
         });
-        context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello Paris", "Hello London", "Hello Copenhagen");
@@ -81,7 +75,6 @@ public class FileSortByExpressionTest extends ContextTestSupport {
                     .convertBodyTo(String.class).to("mock:reverse");
             }
         });
-        context.start();
 
         MockEndpoint reverse = getMockEndpoint("mock:reverse");
         reverse.expectedBodiesReceived("Hello Copenhagen", "Hello London", "Hello Paris");
