@@ -16,10 +16,10 @@
  */
 package org.apache.camel.spi;
 
-import org.apache.camel.StaticService;
-
 import java.lang.annotation.Annotation;
 import java.util.Set;
+
+import org.apache.camel.StaticService;
 
 /**
  * A resolver that can find resources based on package scanning.
