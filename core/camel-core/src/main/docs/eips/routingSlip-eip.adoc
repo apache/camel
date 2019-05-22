@@ -1,0 +1,113 @@
+[[routingSlip-eip]]
+== Routing Slip EIP
+The Routing Slip from the link:https://camel.apache.org/enterprise-integration-patterns.html[EIP patterns] allows you to route a message consecutively through a series of processing steps where the sequence of steps is not known at design time and can vary for each message.
+
+image:http://www.enterpriseintegrationpatterns.com/img/RoutingTableSimple.gif[image]
+
+
+=== Options
+
+// eip options: START
+The Routing Slip EIP supports 3 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *uriDelimiter* | Sets the uri delimiter to use | , | String
+| *ignoreInvalidEndpoints* | Ignore the invalidate endpoint exception when try to create a producer with that endpoint | false | Boolean
+| *cacheSize* | Sets the maximum size used by the org.apache.camel.spi.ProducerCache which is used to cache and reuse producers when using this routing slip, when uris are reused. |  | Integer
+|===
+// eip options: END
+
+=== Example
+The following route will take any messages sent to the Apache ActiveMQ queue SomeQueue and pass them into the Routing Slip pattern.
+
+[source,java]
+---------------------
+from("activemq:SomeQueue")
+  .routingSlip("aRoutingSlipHeader");
+---------------------
+
+Messages will be checked for the existence of the `aRoutingSlipHeader` header.
+The value of this header should be a comma-delimited list of endpoint URIs you wish the message to be routed to.
+The Message will be routed in a pipeline fashion, i.e., one after the other. From *Camel 2.5* the Routing Slip will set a property, `Exchange.SLIP_ENDPOINT`, on the Exchange which contains the current endpoint as it advanced though the slip. This allows you to _know_ how far we have processed in the slip.
+
+The Routing Slip will compute the slip *beforehand* which means, the slip is only computed once. If you need to compute the slip _on-the-fly_ then use the Dynamic Router pattern instead.
+
+=== Configuration Options
+Here we set the header name and the URI delimiter to something different.
+
+#=== Using the Fluent Builders
+[source,java]
+---------------------
+from("direct:c").routingSlip(header("aRoutingSlipHeader"), "#");
+---------------------
+
+#=== Using the Spring XML Extensions
+
+[source,xml]
+---------------------
+<camelContext id="buildRoutingSlip" xmlns="http://activemq.apache.org/camel/schema/spring">
+  <route>
+    <from uri="direct:c"/>
+    <routingSlip uriDelimiter="#">
+       <header>aRoutingSlipHeader</header>
+    </routingSlip>
+  </route>
+</camelContext>
+---------------------
+
+=== Ignore Invalid Endpoints
+*Available as of Camel 2.3*
+
+The Routing Slip now supports ignoreInvalidEndpoints which the Recipient List also supports. You can use it to skip endpoints which are invalid.
+[source,java]
+---------------------
+from("direct:a")
+  .routingSlip("myHeader")
+  .ignoreInvalidEndpoints();
+---------------------
+
+And in Spring XML its an attribute on the recipient list tag:
+
+[source,xml]
+---------------------
+<route>
+  <from uri="direct:a"/>
+  <routingSlip ignoreInvalidEndpoints="true"/>
+    <header>myHeader</header>
+  </routingSlip>
+</route>
+---------------------
+
+Then let's say the myHeader contains the following two endpoints direct:foo,xxx:bar. The first endpoint is valid and works. However the second endpoint is invalid and will just be ignored. Camel logs at INFO level, so you can see why the endpoint was invalid.
+
+=== Expression Support
+*Available as of Camel 2.4*
+
+The Routing Slip now supports to take the expression parameter as the Recipient List does. You can tell Camel the expression that you want to use to get the routing slip.
+
+[source,java]
+---------------------
+from("direct:a")
+  .routingSlip(header("myHeader"))
+  .ignoreInvalidEndpoints();
+---------------------
+
+And in Spring XML its an attribute on the recipient list tag.
+[source,xml]
+---------------------
+<route>
+  <from uri="direct:a"/>
+  <!--NOTE from Camel 2.4.0, you need to specify the expression element inside of the routingSlip element -->
+  <routingSlip ignoreInvalidEndpoints="true">
+    <header>myHeader</header>
+  </routingSlip>
+</route>
+---------------------
+
+=== Further Examples
+For further examples of this pattern in use you could look at the routing slip test cases.
+
+=== Using This Pattern
+If you would like to use this EIP Pattern then please read the Getting Started, you may also find the Architecture useful particularly the description of Endpoint and URIs. Then you could try out some of the Examples first before trying this pattern out.
