@@ -26,15 +26,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Stream;
 
-import javax.xml.transform.Source;
-
-import org.apache.camel.BytesSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.StreamCache;
-import org.apache.camel.StringSource;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -286,9 +283,7 @@ public final class MessageHelper {
         }
 
         if (!allowStreams) {
-            if (obj instanceof Source && !(obj instanceof StringSource || obj instanceof BytesSource)) {
-                // for Source its only StringSource or BytesSource that is okay as they are memory based
-                // all other kinds we should not touch the body
+            if (instanceOf(obj, "java.xml.transform.Source")) {
                 return prepend + "[Body is instance of java.xml.transform.Source]";
             } else if (obj instanceof StreamCache) {
                 return prepend + "[Body is instance of org.apache.camel.StreamCache]";
@@ -362,6 +357,16 @@ public final class MessageHelper {
         }
 
         return prepend + body;
+    }
+
+    private static boolean instanceOf(Object obj, String interfaceName) {
+        return interfaces(obj.getClass()).anyMatch(cl -> cl.getName().equals(interfaceName));
+    }
+
+    private static Stream<Class<?>> interfaces(Class<?> clazz) {
+        return clazz == null ? Stream.empty() : Stream.concat(
+                Stream.concat(Stream.of(clazz), interfaces(clazz.getSuperclass())),
+                Stream.of(clazz.getInterfaces()).flatMap(MessageHelper::interfaces));
     }
 
     /**

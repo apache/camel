@@ -14,18 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter.stream;
+package org.apache.camel.util.xml;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
-import org.apache.camel.StringSource;
 import org.apache.camel.util.IOHelper;
 
 /**
- * {@link org.apache.camel.StreamCache} implementation for {@link org.apache.camel.StringSource}s
+ * {@link org.apache.camel.StreamCache} implementation for {@link StringSource}s
  */
 public final class SourceCache extends StringSource implements StreamCache {
 

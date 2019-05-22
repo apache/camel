@@ -32,9 +32,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.stream.StreamCacheConverter;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.xml.StreamSourceConverter;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -69,7 +69,7 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
     public void testBlobStorePutWithStreamAndGet() throws InterruptedException, TransformerException {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(MESSAGE.getBytes());
         Exchange exchange = new DefaultExchange(context);
-        StreamCache streamCache = StreamCacheConverter.convertToStreamCache(new SAXSource(new InputSource(inputStream)), exchange);
+        StreamCache streamCache = StreamSourceConverter.convertToStreamCache(new SAXSource(new InputSource(inputStream)), exchange);
         template.sendBody("direct:put-and-get", streamCache);
         Object result = template.requestBodyAndHeader("direct:put-and-get", null, JcloudsConstants.OPERATION, JcloudsConstants.GET, String.class);
         assertEquals(MESSAGE, result);

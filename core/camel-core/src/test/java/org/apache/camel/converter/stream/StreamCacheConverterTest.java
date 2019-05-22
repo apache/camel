@@ -31,6 +31,7 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.util.xml.StreamSourceConverter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -55,7 +56,7 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         context.start();
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(MESSAGE.getBytes());
-        StreamCache streamCache = StreamCacheConverter.convertToStreamCache(new SAXSource(new InputSource(inputStream)), exchange);
+        StreamCache streamCache = StreamSourceConverter.convertToStreamCache(new SAXSource(new InputSource(inputStream)), exchange);
         String message = exchange.getContext().getTypeConverter().convertTo(String.class, streamCache);
         assertNotNull(message);
         assertEquals("The converted message is wrong", MESSAGE, message);
@@ -66,7 +67,7 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         context.start();
 
         StreamSource source = new StreamSource(getTestFileStream());
-        StreamCache cache = StreamCacheConverter.convertToStreamCache(source, exchange);
+        StreamCache cache = StreamSourceConverter.convertToStreamCache(source, exchange);
         //assert re-readability of the cached StreamSource
         XmlConverter converter = new XmlConverter();
         assertNotNull(converter.toString((Source)cache, null));
@@ -94,7 +95,7 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         context.start();
 
         InputStream is = getTestFileStream();
-        InputStream cache = (InputStream)StreamCacheConverter.convertToStreamCache(is, exchange);
+        InputStream cache = (InputStream) StreamCacheConverter.convertToStreamCache(is, exchange);
         assertNotNull(IOConverter.toString(cache, null));
         try {
             // since the stream is closed you delete the temp file
@@ -113,7 +114,7 @@ public class StreamCacheConverterTest extends ContextTestSupport {
 
         InputStream is = getTestFileStream();
         StreamCache cache = StreamCacheConverter.convertToStreamCache(is, exchange);
-        Serializable ser = StreamCacheConverter.convertToSerializable(cache, exchange);
+        Serializable ser = StreamSourceConverter.convertToSerializable(cache, exchange);
         assertNotNull(ser);
     }
 

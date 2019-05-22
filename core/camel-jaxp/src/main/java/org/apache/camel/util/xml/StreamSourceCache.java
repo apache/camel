@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter.stream;
+package org.apache.camel.util.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +24,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
+import org.apache.camel.converter.stream.CachedOutputStream;
+import org.apache.camel.converter.stream.ReaderCache;
 import org.apache.camel.util.IOHelper;
 
 /**

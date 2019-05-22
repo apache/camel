@@ -17,7 +17,7 @@
 package org.apache.camel.component.spring.ws.converter;
 
 import org.apache.camel.Converter;
-import org.apache.camel.StringSource;
+import org.apache.camel.util.xml.StringSource;
 
 /**
  * A helper class to transform to and from {@link org.springframework.xml.transform.StringSource} implementations

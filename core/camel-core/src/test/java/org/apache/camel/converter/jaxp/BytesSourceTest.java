@@ -16,7 +16,7 @@
  */
 package org.apache.camel.converter.jaxp;
 
-import org.apache.camel.BytesSource;
+import org.apache.camel.util.xml.BytesSource;
 import org.apache.camel.ContextTestSupport;
 import org.junit.Test;
 
