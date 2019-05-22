@@ -81,10 +81,9 @@ import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
-import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.LifecycleStrategySupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -1261,6 +1260,8 @@ public abstract class MainSupport extends ServiceSupport {
                 Map<String, Object> properties = new LinkedHashMap<>();
                 IntrospectionSupport.getProperties(component, properties, null);
 
+                // TODO: Use PropertyBindingSupport to make it support this kind of use-case too
+
                 // lookup complex types
                 properties.forEach((k, v) -> {
                     // if the property has not been set and its a complex type (not simple or string etc)
@@ -1343,34 +1344,10 @@ public abstract class MainSupport extends ServiceSupport {
             String name = entry.getKey();
             Object value = entry.getValue();
 
-            // if the name has dot's then its an OGNL expressions (so lets use simple language to walk down this ognl path)
-            boolean ognl = name.contains(".");
-            if (ognl) {
-                Language method = context.resolveLanguage("simple");
-                String path = name.substring(0, name.lastIndexOf('.'));
-                Expression exp = method.createExpression("${body." + path + "}");
-                Exchange dummy = new DefaultExchange(context);
-                dummy.getMessage().setBody(target);
-                Object newTarget = exp.evaluate(dummy, Object.class);
-                if (newTarget != null) {
-                    target = newTarget;
-                    name = name.substring(name.lastIndexOf('.') + 1);
-                }
-            }
-
             String stringValue = value != null ? value.toString() : null;
-            boolean hit = false;
 
             LOG.debug("Setting property {} on {} with value {}", name, target, stringValue);
-            if (EndpointHelper.isReferenceParameter(stringValue)) {
-                hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, null, stringValue, true);
-            } else if (value != null) {
-                try {
-                    hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, value);
-                } catch (IllegalArgumentException var12) {
-                    hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, null, stringValue, true);
-                }
-            }
+            boolean hit = PropertyBindingSupport.bindProperty(context, target, name, stringValue);
 
             if (hit) {
                 it.remove();
