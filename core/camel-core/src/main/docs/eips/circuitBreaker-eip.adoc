@@ -1,0 +1,53 @@
+[[circuitBreaker-eip]]
+== Circuit Breaker EIP (deprecated)
+
+The Circuit Breaker load balancer is a stateful pattern that monitors all calls for certain exceptions. Initially the Circuit Breaker is in closed state and passes all messages. If there are failures and the threshold is reached, it moves to open state and rejects all calls until halfOpenAfter timeout is reached. After this timeout is reached, if there is a new call, it will pass and if the result is success the Circuit Breaker will move to closed state, or to open state if there was an error.
+When the circuit breaker is closed, it will throw a `java.util.concurrent.RejectedExecutionException`. This can then be caught to provide an alternate path for processing exchanges.
+
+// eip options: START
+The Circuit Breaker EIP supports 3 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *exception* | A list of class names for specific exceptions to monitor. If no exceptions is configured then all exceptions is monitored |  | List
+| *halfOpenAfter* | The timeout in millis to use as threshold to move state from closed to half-open or open state |  | Long
+| *threshold* | Number of previous failed messages to use as threshold to move state from closed to half-open or open state |  | Integer
+|===
+// eip options: END
+
+
+An example using Java DSL:
+[source,java]
+----
+from("direct:start")
+    .onException(RejectedExecutionException.class)
+        .handled(true)
+        .to("mock:serviceUnavailable")
+    .end()
+    .loadBalance()
+        .circuitBreaker(2, 1000L, MyCustomException.class)
+        .to("mock:service")
+    .end();
+----
+
+And the same example using Spring XML:
+[source,xml]
+----
+<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:start"/>
+        <onException>
+            <exception>java.util.concurrent.RejectedExecutionException</exception>
+            <handled><constant>true</constant></handled>
+            <to uri="mock:serviceUnavailable"/>
+        </onException>
+        <loadBalance>
+            <circuitBreaker threshold="2" halfOpenAfter="1000">
+                <exception>MyCustomException</exception>
+            </circuitBreaker>
+            <to uri="mock:service"/>
+        </loadBalance>
+    </route>
+</camelContext>
+----

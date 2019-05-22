@@ -1,0 +1,135 @@
+[[pollEnrich-eip]]
+== Poll Enrich EIP
+
+Camel comes with flavor `pollEnrich` as a choice of content enricher in the DSL.
+The other one is `enrich`
+
+`pollEnrich` uses a Polling Consumer to obtain the additional data. It is usually used for Event Message messaging, for instance to read a file or download a FTP file.
+
+[NOTE]
+.Good practice to use timeout value
+====
+By default Camel will use the receive. Which may block until there is a message available. It is therefore recommended to always provide a timeout value, to make this clear that we may wait for a message, until the timeout is hit.
+====
+
+If there is no data then the `newExchange` in the aggregation strategy is `null`.
+
+You can pass in a timeout value that determines which method to use
+
+* if timeout is -1 or other negative number then `receive` is selected (*Important:* the `receive` method may block if there is no message)
+* if timeout is 0 then `receiveNoWait` is selected
+* otherwise `receive(timeout)` is selected
+
+The timeout values is in millis.
+
+[IMPORTANT]
+.Camel 2.15 or older - Data from current Exchange not used
+====
+`pollEnrich` does *not* access any data from the current Exchange which means when polling it cannot use any of the existing headers you may have set on the Exchange. For example you cannot set a filename in the `Exchange.FILE_NAME` header and use `pollEnrich` to consume only that file. For that you *must* set the filename in the endpoint URI.
+From *Camel 2.16* onwards both `enrich` and `pollEnrich` supports dynamic endpoints that uses an Expression to compute the uri, which allows to use data from the current Exchange. In other words all what is told above no longer apply and it just works.
+====
+
+=== Content enrichment using pollEnrich
+The `pollEnrich` works just as the `enrich` however as it uses a Polling Consumer we have 3 methods when polling
+
+* `receive`
+* `receiveNoWait`
+* `receive(timeout)`
+
+=== PollEnrich Options
+
+// eip options: START
+The Poll Enrich EIP supports 7 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *timeout* | Timeout in millis when polling from the external service. The timeout has influence about the poll enrich behavior. It basically operations in three different modes: negative value - Waits until a message is available and then returns it. Warning that this method could block indefinitely if no messages are available. 0 - Attempts to receive a message exchange immediately without waiting and returning null if a message exchange is not available yet. positive value - Attempts to receive a message exchange, waiting up to the given timeout to expire if a message is not yet available. Returns null if timed out The default value is -1 and therefore the method could block indefinitely, and therefore its recommended to use a timeout value | -1 | Long
+| *strategyRef* | Refers to an AggregationStrategy to be used to merge the reply from the external service, into a single outgoing message. By default Camel will use the reply from the external service as outgoing message. |  | String
+| *strategyMethodName* | This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy. |  | String
+| *strategyMethodAllowNull* | If this option is false then the aggregate method is not used if there was no data to enrich. If this option is true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the AggregationStrategy. | false | Boolean
+| *aggregateOnException* | If this option is false then the aggregate method is not used if there was an exception thrown while trying to retrieve the data to enrich from the resource. Setting this option to true allows end users to control what to do if there was an exception in the aggregate method. For example to suppress the exception or set a custom message body etc. | false | Boolean
+| *cacheSize* | Sets the maximum size used by the org.apache.camel.spi.ConsumerCache which is used to cache and reuse consumers when uris are reused. |  | Integer
+| *ignoreInvalidEndpoint* | Ignore the invalidate endpoint exception when try to create a producer with that endpoint | false | Boolean
+|===
+// eip options: END
+
+=== PollEnrich Example
+
+In this example we enrich the message by loading the content from the file named inbox/data.txt.
+[source,java]
+----
+from("direct:start")
+  .pollEnrich("file:inbox?fileName=data.txt")
+  .to("direct:result");
+----
+
+And in XML DSL (Camel 2.15 or older) you do:
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <pollEnrich uri="file:inbox?fileName=data.txt"/>
+  <to uri="direct:result"/>
+</route>
+----
+
+And in XML DSL (Camel 2.16 or newer) you do:
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <pollEnrich>
+    <constant>file:inbox?fileName=data.txt</constant>
+  </pollEnrich>
+  <to uri="direct:result"/>
+</route>
+----
+
+If there is no file then the message is empty. We can use a timeout to either wait (potentially forever) until a file exists, or use a timeout to wait a certain period.
+
+For example to wait up to 5 seconds you can do (Camel 2.15 or older):
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <pollEnrich uri="file:inbox?fileName=data.txt" timeout="5000"/>
+  <to uri="direct:result"/>
+</route>
+----
+
+For example to wait up to 5 seconds you can do (Camel 2.16 or newer):
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <pollEnrich timeout="5000">
+    <constant>file:inbox?fileName=data.txt</constant>
+  </pollEnrich>
+  <to uri="direct:result"/>
+</route>
+----
+
+=== Using dynamic uris
+
+*Available as of Camel 2.16*
+
+From Camel 2.16 onwards `enrich` and `pollEnrich` supports using dynamic uris computed based on information from the current Exchange. For example to `pollEnrich` from an endpoint that uses a header to indicate a SEDA queue name:
+[source,java]
+----
+from("direct:start")
+  .pollEnrich().simple("seda:${header.name}")
+  .to("direct:result");
+----
+
+And in XML DSL
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <pollEnrich>
+    <simple>seda:${header.name}</simple>
+  </pollEnrich>
+  <to uri="direct:result"/>
+</route>
+----

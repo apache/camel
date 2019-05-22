@@ -1,0 +1,160 @@
+[[dynamicRouter-eip]]
+== Dynamic Router EIP
+
+The link:http://www.enterpriseintegrationpatterns.com/DynamicRouter.html[Dynamic Router] from the link:../../../../readme-eip.adoc[EIP patterns] allows you to route messages while avoiding the dependency of the router on all possible destinations while maintaining its efficiency.
+
+image:http://www.enterpriseintegrationpatterns.com/img/DynamicRouter.gif[image]
+
+In *Camel 2.5* we introduced a dynamicRouter in the DSL which is like a dynamic Routing Slip which evaluates the slip _on-the-fly_.
+
+[IMPORTANT]
+.Avoid endless looping
+====
+You must ensure the expression used for the `dynamicRouter` such as a bean, will return `null` to indicate the end. Otherwise the `dynamicRouter` will keep repeating endlessly.
+====
+
+== Options
+
+// eip options: START
+The Dynamic Router EIP supports 3 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *uriDelimiter* | Sets the uri delimiter to use | , | String
+| *ignoreInvalidEndpoints* | Ignore the invalidate endpoint exception when try to create a producer with that endpoint | false | Boolean
+| *cacheSize* | Sets the maximum size used by the org.apache.camel.spi.ProducerCache which is used to cache and reuse producers when using this dynamic router, when uris are reused. |  | Integer
+|===
+// eip options: END
+
+The Dynamic Router will set the property `Exchange.SLIP_ENDPOINT` on the Exchange which contains the current endpoint as it advanced though the slip. This allows you to know how far we have processed in the slip.
+(It's a slip because the Dynamic Router implementation is based on top of Routing Slip).
+
+=== Samples
+
+In Java DSL you can use the `dynamicRouter` as shown below:
+
+[source,java]
+----
+from("direct:start")
+    // use a bean as the dynamic router
+    .dynamicRouter(method(DynamicRouterTest.class, "slip"));
+----
+
+Which will leverage a Bean to compute the slip _on-the-fly_, which could be implemented as follows:
+
+[source,java]
+----
+/**
+ * Use this method to compute dynamic where we should route next.
+ *
+ * @param body the message body
+ * @return endpoints to go, or <tt>null</tt> to indicate the end
+ */
+public String slip(String body) {
+    bodies.add(body);
+    invoked++;
+
+    if (invoked == 1) {
+        return "mock:a";
+    } else if (invoked == 2) {
+        return "mock:b,mock:c";
+    } else if (invoked == 3) {
+        return "direct:foo";
+    } else if (invoked == 4) {
+        return "mock:result";
+    }
+
+    // no more so return null
+    return null;
+}
+----
+
+Mind that this example is only for show and tell. The current implementation is not thread safe. You would have to store the state on the Exchange, to ensure thread safety, as shown below:
+
+[source,java]
+----
+/**
+ * Use this method to compute dynamic where we should route next.
+ *
+ * @param body the message body
+ * @param properties the exchange properties where we can store state between invocations
+ * @return endpoints to go, or <tt>null</tt> to indicate the end
+ */
+public String slip(String body, @Properties Map<String, Object> properties) {
+    bodies.add(body);
+
+    // get the state from the exchange properties and keep track how many times
+    // we have been invoked
+    int invoked = 0;
+    Object current = properties.get("invoked");
+    if (current != null) {
+        invoked = Integer.valueOf(current.toString());
+    }
+    invoked++;
+    // and store the state back on the properties
+    properties.put("invoked", invoked);
+
+    if (invoked == 1) {
+        return "mock:a";
+    } else if (invoked == 2) {
+        return "mock:b,mock:c";
+    } else if (invoked == 3) {
+        return "direct:foo";
+    } else if (invoked == 4) {
+        return "mock:result";
+    }
+
+    // no more so return null
+    return null;
+}
+----
+
+You could also store state as message headers, but they are not guaranteed to be preserved during routing, where as properties on the Exchange are. Although there was a bug in the method call expression, see the warning below.
+
+[WARNING]
+.Using beans to store state
+====
+Mind that in Camel 2.9.2 or older, when using a Bean the state is not propagated, so you will have to use a Processor instead. This is fixed in Camel 2.9.3 onwards.
+====
+
+==== Spring XML
+The same example in Spring XML would be:
+
+[source,xml]
+----
+<bean id="mySlip" class="org.apache.camel.processor.DynamicRouterTest"/>
+
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:start"/>
+        <dynamicRouter>
+            <!-- use a method call on a bean as dynamic router -->
+            <method ref="mySlip" method="slip"/>
+        </dynamicRouter>
+    </route>
+
+    <route>
+        <from uri="direct:foo"/>
+        <transform><constant>Bye World</constant></transform>
+    </route>
+
+</camelContext>
+----
+
+=== @DynamicRouter annotation
+You can also use the `@DynamicRouter` annotation, for example the Camel 2.4 example below could be written as follows. The `route` method would then be invoked repeatedly as the message is processed dynamically.
+The idea is to return the next endpoint uri where to go. Return `null` to indicate the end. You can return multiple endpoints if you like, just as the Routing Slip, where each endpoint is separated by a delimiter.
+
+[source,java]
+----
+public class MyDynamicRouter {
+
+    @Consume(uri = "activemq:foo")
+    @DynamicRouter
+    public String route(@XPath("/customer/id") String customerId, @Header("Location") String location, Document body) {
+        // query a database to find the best match of the endpoint based on the input parameteres
+        // return the next endpoint uri, where to go. Return null to indicate the end.
+    }
+}
+----

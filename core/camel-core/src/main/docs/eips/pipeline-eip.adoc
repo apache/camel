@@ -1,0 +1,96 @@
+[[pipeline-eip]]
+== Pipeline EIP
+
+Camel supports the link:http://www.enterpriseintegrationpatterns.com/PipesAndFilters.html[Pipes and Filters] from the link:https://github.com/apache/camel/blob/master/docs/user-manual/en/enterprise-integration-patterns.adoc[EIP patterns] in various ways.
+
+image:http://www.enterpriseintegrationpatterns.com/img/PipesAndFilters.gif[image]
+
+With Camel you can split your processing across multiple independent
+link:https://github.com/apache/camel/blob/master/docs/user-manual/en/endpoint.adoc[Endpoint] instances which can then be chained
+together.
+
+=== Options
+
+// eip options: START
+The Pipeline EIP has no options.
+// eip options: END
+
+[[pipeline-Examples]]
+=== Examples
+
+You can create pipelines of logic using multiple
+link:https://github.com/apache/camel/blob/master/docs/user-manual/en/endpoint.adoc[Endpoint] or link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-translator.adoc[Message
+Translator] instances as follows
+
+Though pipeline is the default mode of operation when you specify
+multiple outputs in Camel. The opposite to pipeline is multicast; which
+fires the same message into each of its outputs. (See the example
+below).
+
+In Java you do:
+[source,java]
+----
+from("activemq:SomeQueue")
+    .pipeline()
+      .bean("foo")
+      .bean("bar")
+      .to("acitvemq:OutputQueueu");
+----
+
+The pipeline is the default mode, which can be omitted, and therefore you almost often write as:
+
+[source,java]
+----
+from("activemq:SomeQueue")
+    .bean("foo")
+    .bean("bar")
+    .to("acitvemq:OutputQueueu");
+----
+
+In XML you can use the `<pipeline>` element
+
+[source,xml]
+----
+<route>
+  <from uri="activemq:SomeQueue"/>
+  <pipeline>
+    <bean ref="foo"/>
+    <bean ref="bar"/>
+    <to uri="activemq:OutputQueue"/>
+  </pipeline>
+</route>
+----
+
+In the above the pipeline element is actually unnecessary, you could use this:
+
+[source,xml]
+----
+<route>
+  <from uri="activemq:SomeQueue"/>
+  <bean ref="foo"/>
+  <bean ref="bar"/>
+  <to uri="activemq:OutputQueue"/>
+</route>
+----
+
+Its just a bit more explicit. However if you wish to use `<multicast/>` to
+avoid a pipeline - to send the same message into multiple pipelines -
+then the `<pipeline>` element comes into its own.
+
+[source,xml]
+----
+<route>
+  <from uri="activemq:SomeQueue"/>
+  <multicast>
+    <pipeline>
+      <bean ref="something"/>
+      <to uri="log:Something"/>
+    </pipeline>
+    <pipeline>
+      <bean ref="foo"/>
+      <bean ref="bar"/>
+      <to uri="activemq:OutputQueue"/>
+    </pipeline>
+  </multicast>
+</route>
+----
