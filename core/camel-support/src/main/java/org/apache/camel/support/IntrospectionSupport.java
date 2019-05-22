@@ -516,64 +516,9 @@ public final class IntrospectionSupport {
      */
     public static boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
                                       boolean allowBuilderPattern) throws Exception {
-        return setProperty(context, typeConverter, target, name, value, refName, allowBuilderPattern, false);
-    }
-    /**
-     * This method supports two modes to set a property:
-     *
-     * 1. Setting a property that has already been resolved, this is the case when {@code context} and {@code refName} are
-     * NULL and {@code value} is non-NULL.
-     *
-     * 2. Setting a property that has not yet been resolved, the property will be resolved based on the suitable methods
-     * found matching the property name on the {@code target} bean. For this mode to be triggered the parameters
-     * {@code context} and {@code refName} must NOT be NULL, and {@code value} MUST be NULL.
-     */
-    public static boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
-                                      boolean allowBuilderPattern, boolean allowNestedProperties) throws Exception {
+
         Class<?> clazz = target.getClass();
         Collection<Method> setters;
-
-        // if name has dot then we need to OGNL walk it
-        if (allowNestedProperties && name.indexOf('.') > 0) {
-            String[] parts = name.split("\\.");
-            Object newTarget = target;
-            Class<?> newClass = clazz;
-            // we should only iterate until until 2nd last so we use -1 in the for loop
-            for (int i = 0; i < parts.length - 1; i++) {
-                String part = parts[i];
-                Object prop = getOrElseProperty(newTarget, part, null);
-                if (prop == null) {
-                    // okay is there a setter so we can create a new instance and set it automatic
-                    Set<Method> newSetters = findSetterMethods(newClass, part, true);
-                    if (newSetters.size() == 1) {
-                        Method method = newSetters.iterator().next();
-                        Class<?> parameterType = method.getParameterTypes()[0];
-                        if (parameterType != null && org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor(parameterType)) {
-                            Object instance = context.getInjector().newInstance(parameterType);
-                            if (instance != null) {
-                                org.apache.camel.support.ObjectHelper.invokeMethod(method, newTarget, instance);
-                                newTarget = instance;
-                                newClass = newTarget.getClass();
-                            }
-                        }
-                    }
-                } else {
-                    newTarget = prop;
-                    newClass = newTarget.getClass();
-                }
-            }
-            // okay we found a nested property, then lets change to use that
-            target = newTarget;
-            clazz = newTarget.getClass();
-            name = parts[parts.length - 1];
-            if (value instanceof String) {
-                if (EndpointHelper.isReferenceParameter(value.toString())) {
-                    // okay its a reference so swap to lookup this
-                    refName = value.toString();
-                    value = null;
-                }
-            }
-        }
 
         // we need to lookup the value from the registry
         if (context != null && refName != null && value == null) {
@@ -676,7 +621,7 @@ public final class IntrospectionSupport {
         }
     }
 
-    private static boolean isPropertyPlaceholder(CamelContext context, Object value) {
+    static boolean isPropertyPlaceholder(CamelContext context, Object value) {
         if (context != null) {
             PropertiesComponent pc = context.getPropertiesComponent(false);
             if (pc != null) {
@@ -711,7 +656,7 @@ public final class IntrospectionSupport {
         return setProperty(target, name, value, true);
     }
 
-    private static Object convert(TypeConverter typeConverter, Class<?> type, Object value)
+    static Object convert(TypeConverter typeConverter, Class<?> type, Object value)
         throws URISyntaxException, NoTypeConversionAvailableException {
         if (typeConverter != null) {
             return typeConverter.mandatoryConvertTo(type, value);
@@ -760,7 +705,7 @@ public final class IntrospectionSupport {
         return candidates;
     }
 
-    private static Set<Method> findSetterMethods(Class<?> clazz, String name, Object value, boolean allowBuilderPattern) {
+    static Set<Method> findSetterMethods(Class<?> clazz, String name, Object value, boolean allowBuilderPattern) {
         Set<Method> candidates = findSetterMethods(clazz, name, allowBuilderPattern);
 
         if (candidates.isEmpty()) {
@@ -786,7 +731,7 @@ public final class IntrospectionSupport {
         }
     }
 
-    protected static List<Method> findSetterMethodsOrderedByParameterType(Class<?> target, String propertyName, boolean allowBuilderPattern) {
+    static List<Method> findSetterMethodsOrderedByParameterType(Class<?> target, String propertyName, boolean allowBuilderPattern) {
         List<Method> answer = new LinkedList<>();
         List<Method> primitives = new LinkedList<>();
         Set<Method> setters = findSetterMethods(target, propertyName, allowBuilderPattern);
