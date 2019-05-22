@@ -19,9 +19,7 @@ package sample.camel;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.NotifyBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringBootRunner;
 import org.apache.camel.test.spring.EnableRouteCoverage;
 import org.apache.camel.test.spring.MockEndpoints;
@@ -43,20 +41,13 @@ public class FooApplicationTest {
     @Autowired
     private CamelContext camelContext;
 
-    @EndpointInject("mock:log:foo")
-    private MockEndpoint mock;
-
     @Test
     public void shouldSayFoo() throws Exception {
-        mock.expectedBodiesReceived("Hello foo");
-
         // we expect that one or more messages is automatic done by the Camel
         // route as it uses a timer to trigger
         NotifyBuilder notify = new NotifyBuilder(camelContext).whenDone(1).create();
 
         assertTrue(notify.matches(10, TimeUnit.SECONDS));
-
-        mock.assertIsSatisfied();
     }
 
 }
