@@ -27,6 +27,7 @@ import org.apache.camel.component.quartz2.QuartzComponent;
 import org.apache.camel.component.quartz2.QuartzConstants;
 import org.apache.camel.component.quartz2.QuartzHelper;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StringHelper;
 import org.quartz.CronScheduleBuilder;
@@ -57,6 +58,7 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
     private String triggerId;
     private String triggerGroup = "QuartzScheduledPollConsumerScheduler";
     private TimeZone timeZone = TimeZone.getDefault();
+    private boolean deleteJob = true;
     private volatile CronTrigger trigger;
     private volatile JobDetail job;
 
@@ -151,6 +153,14 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
 
     public void setTriggerGroup(String triggerGroup) {
         this.triggerGroup = triggerGroup;
+    }
+
+    public boolean isDeleteJob() {
+        return deleteJob;
+    }
+
+    public void setDeleteJob(boolean deleteJob) {
+        this.deleteJob = deleteJob;
     }
 
     @Override
@@ -250,9 +260,12 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
 
     @Override
     protected void doStop() throws Exception {
-        if (trigger != null) {
-            log.debug("Unscheduling trigger: {}", trigger.getKey());
-            quartzScheduler.unscheduleJob(trigger.getKey());
+        if (trigger != null && deleteJob) {
+            boolean isClustered = quartzScheduler.getMetaData().isJobStoreClustered();
+            if (!quartzScheduler.isShutdown() && !isClustered) {
+                log.info("Deleting job {}", trigger.getKey());
+                quartzScheduler.unscheduleJob(trigger.getKey());
+            }
         }
     }
 
