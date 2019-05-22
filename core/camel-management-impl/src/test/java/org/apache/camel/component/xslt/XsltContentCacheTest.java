@@ -15,11 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.xslt;
-import java.util.ArrayList;
-import java.util.Set;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -27,6 +22,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import java.util.ArrayList;
+import java.util.Set;
 
 /**
  *
@@ -44,25 +44,38 @@ public class XsltContentCacheTest extends ContextTestSupport {
             + "</xsl:stylesheet>";
 
     @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
 
+        context.start();
+
         // create file with original XSL transformation
         template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/xslt?fileExist=Override", ORIGINAL_XSL, Exchange.FILE_NAME, "hello.xsl");
 
-        // start the context AFTER we've created the hello.xsl file, otherwise the xslt routes will fail
-        super.startCamelContext();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:a")
+                        .to("xslt://org/apache/camel/component/xslt/hello.xsl?output=string&contentCache=false").to("mock:result");
+
+                from("direct:b")
+                        .to("xslt://org/apache/camel/component/xslt/hello.xsl?output=string&contentCache=true").to("mock:result");
+
+                from("direct:c")
+                        .to("xslt://org/apache/camel/component/xslt/hello.xsl?output=string").to("mock:result");
+            }
+        });
     }
 
     @Override
     public boolean useJmx() {
         return true;
-    }
-
-    @Override
-    protected void startCamelContext() throws Exception {
-        // Override so we can start the context ourself in the setUp
     }
 
     @Test
@@ -155,18 +168,6 @@ public class XsltContentCacheTest extends ContextTestSupport {
 
         template.sendBody("direct:b", "<hello>world!</hello>");
         mock.assertIsSatisfied();
-    }
-
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("direct:a").to("xslt://org/apache/camel/component/xslt/hello.xsl?output=string&contentCache=false").to("mock:result");
-
-                from("direct:b").to("xslt://org/apache/camel/component/xslt/hello.xsl?output=string&contentCache=true").to("mock:result");
-
-                from("direct:c").to("xslt://org/apache/camel/component/xslt/hello.xsl?output=string").to("mock:result");
-            }
-        };
     }
 
 }

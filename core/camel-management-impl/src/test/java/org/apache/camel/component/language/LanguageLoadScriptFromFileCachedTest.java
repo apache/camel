@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.language;
+
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -43,6 +44,9 @@ public class LanguageLoadScriptFromFileCachedTest extends ContextTestSupport {
 
     @Test
     public void testLanguage() throws Exception {
+        // create script to start with
+        template.sendBodyAndHeader("file:target/data/script", "Hello ${body}", Exchange.FILE_NAME, "myscript.txt");
+
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Hello World");
 
         template.sendBody("direct:start", "World");
@@ -56,6 +60,9 @@ public class LanguageLoadScriptFromFileCachedTest extends ContextTestSupport {
     
     @Test
     public void testClearCachedScriptViaJmx() throws Exception {
+        // create script to start with
+        template.sendBodyAndHeader("file:target/data/script", "Hello ${body}", Exchange.FILE_NAME, "myscript.txt");
+
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Hello World", "Bye World");
 
         template.sendBody("direct:start", "World");
@@ -81,9 +88,6 @@ public class LanguageLoadScriptFromFileCachedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // create script to start with
-                template.sendBodyAndHeader("file:target/data/script", "Hello ${body}", Exchange.FILE_NAME, "myscript.txt");
-
                 // START SNIPPET: e1
                 from("direct:start")
                     // use content cache to load the script once and cache it (content cache and script cache both enabled)
