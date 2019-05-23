@@ -44,12 +44,14 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         PropertyBindingSupport.bindProperty(context, foo, "name", "James");
         PropertyBindingSupport.bindProperty(context, foo, "bar.age", "33");
         PropertyBindingSupport.bindProperty(context, foo, "bar.rider", "true");
+        PropertyBindingSupport.bindProperty(context, foo, "bar.gold-customer", "true");
         PropertyBindingSupport.bindProperty(context, foo, "bar.work.id", "123");
         PropertyBindingSupport.bindProperty(context, foo, "bar.work.name", "Acme");
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
         assertTrue(foo.getBar().isRider());
+        assertTrue(foo.getBar().isGoldCustomer());
         assertEquals(123, foo.getBar().getWork().getId());
         assertEquals("Acme", foo.getBar().getWork().getName());
     }
@@ -60,12 +62,14 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
 
         PropertyBindingSupport.bindProperty(context, foo, "name", "James");
         PropertyBindingSupport.bindProperty(context, foo, "bar.age", "33");
+        PropertyBindingSupport.bindProperty(context, foo, "bar.gold-customer", "true");
         PropertyBindingSupport.bindProperty(context, foo, "bar.rider", "true");
         PropertyBindingSupport.bindProperty(context, foo, "bar.work", "#myWork");
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
         assertTrue(foo.getBar().isRider());
+        assertTrue(foo.getBar().isGoldCustomer());
         assertEquals(456, foo.getBar().getWork().getId());
         assertEquals("Acme", foo.getBar().getWork().getName());
     }
@@ -95,6 +99,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         private int age;
         private boolean rider;
         private Company work; // has no default value but Camel can automatic create one if there is a setter
+        private boolean goldCustomer;
 
         public int getAge() {
             return age;
@@ -118,6 +123,14 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
 
         public void setWork(Company work) {
             this.work = work;
+        }
+
+        public boolean isGoldCustomer() {
+            return goldCustomer;
+        }
+
+        public void setGoldCustomer(boolean goldCustomer) {
+            this.goldCustomer = goldCustomer;
         }
     }
 
