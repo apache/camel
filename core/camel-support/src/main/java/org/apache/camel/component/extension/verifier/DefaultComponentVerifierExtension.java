@@ -32,6 +32,7 @@ import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 
 import static org.apache.camel.util.StreamUtils.stream;
 
@@ -188,18 +189,7 @@ public class DefaultComponentVerifierExtension implements ComponentVerifierExten
         }
 
         if (!properties.isEmpty()) {
-            final TypeConverter converter = camelContext.getTypeConverter();
-
-            IntrospectionSupport.setProperties(converter, instance, properties);
-
-            for (Map.Entry<String, Object> entry : properties.entrySet()) {
-                if (entry.getValue() instanceof String) {
-                    String value = (String)entry.getValue();
-                    if (EndpointHelper.isReferenceParameter(value)) {
-                        IntrospectionSupport.setProperty(camelContext, converter, instance, entry.getKey(), null, value, true);
-                    }
-                }
-            }
+            PropertyBindingSupport.bindProperties(camelContext, instance, properties);
         }
 
         return instance;

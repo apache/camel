@@ -39,6 +39,7 @@ import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 
 @Metadata(label = "routing,cloud,service-discovery")
@@ -185,7 +186,7 @@ public class ServiceCallServiceFilterConfiguration extends IdentifiedType implem
 
                 postProcessFactoryParameters(camelContext, parameters);
 
-                IntrospectionSupport.setProperties(factory, parameters);
+                PropertyBindingSupport.bindProperties(camelContext, factory, parameters);
 
                 answer = factory.newInstance(camelContext);
             } catch (Exception e) {

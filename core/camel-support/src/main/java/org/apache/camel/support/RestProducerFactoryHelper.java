@@ -16,7 +16,7 @@
  */
 package org.apache.camel.support;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -74,9 +74,8 @@ public final class RestProducerFactoryHelper {
         // need to make a copy of the component properties as
         // IntrospectionSupport::setProperties will remove any that are set and
         // we might be called multiple times
-        final Map<String, Object> copyOfComponentProperties = new HashMap<>(componentProperties);
-        IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), newlyCreated,
-            copyOfComponentProperties);
+        final Map<String, Object> copyOfComponentProperties = new LinkedHashMap<>(componentProperties);
+        PropertyBindingSupport.bindProperties(camelContext, newlyCreated, copyOfComponentProperties);
         ServiceHelper.startService(newlyCreated);
 
         return newlyCreated;
