@@ -73,7 +73,7 @@ public class SqsProducer extends DefaultProducer {
                 deleteMessage(getClient(), exchange);
                 break;
             case listQueues:
-            	listQueues(getClient(), exchange);
+                listQueues(getClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
