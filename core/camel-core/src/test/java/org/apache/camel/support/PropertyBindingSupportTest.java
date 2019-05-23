@@ -96,7 +96,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         PropertyBindingSupport.bindProperty(context, foo, "bar.age", "33");
         PropertyBindingSupport.bindProperty(context, foo, "bar.gold-customer", "true");
         PropertyBindingSupport.bindProperty(context, foo, "bar.rider", "true");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.work", "#myWork");
+        PropertyBindingSupport.bindProperty(context, foo, "bar.work", "#bean:myWork");
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -114,7 +114,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         PropertyBindingSupport.bindProperty(context, foo, "bar.age", "33");
         PropertyBindingSupport.bindProperty(context, foo, "bar.gold-customer", "true");
         PropertyBindingSupport.bindProperty(context, foo, "bar.rider", "true");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.work", "#id:myWork");
+        PropertyBindingSupport.bindProperty(context, foo, "bar.work", "#bean:myWork");
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());

@@ -34,7 +34,7 @@ import static org.apache.camel.support.IntrospectionSupport.getOrElseProperty;
  * <ul>
  *     <li>property placeholders - Keys and values using Camels property placeholder will be resolved</li>
  *     <li>nested - Properties can be nested using the dot syntax (OGNL and builder pattern using with as prefix), eg foo.bar=123</li>
- *     <li>reference by id - Values can refer to other beans in the registry by prefixing with #id: or # syntax, eg #id:myBean or #myBean</li>
+ *     <li>reference by bean id - Values can refer to other beans in the registry by prefixing with #nean: eg #bean:myBean</li>
  *     <li>reference by type - Values can refer to singleton beans by their type in the registry by prefixing with #type: syntax, eg #type:com.foo.MyClassType</li>
  *     <li>autowire by type - Values can refer to singleton beans by auto wiring by setting the value to #autowire</li>
  *     <li>new class - Values can refer to creating new beans by their class name syntax, eg class:com.foo.MyClassType</li>
@@ -43,6 +43,13 @@ import static org.apache.camel.support.IntrospectionSupport.getOrElseProperty;
  */
 public final class PropertyBindingSupport {
 
+    // TODO: Add support for Map/List
+    // TODO: Add option to turn on|off new class
+    // TODO: Add option to turn this binding on|off on component/endpoint level
+
+    /**
+     * To use a fluent builder style to configure this property binding support.
+     */
     public static class Builder {
 
         private boolean nesting = true;
@@ -92,8 +99,6 @@ public final class PropertyBindingSupport {
         }
 
     }
-
-    // TODO: Add support for Map/List
 
     private PropertyBindingSupport() {
     }
@@ -325,9 +330,11 @@ public final class PropertyBindingSupport {
                         newClass = newTarget.getClass();
                     }
                 }
-                // okay we found a nested property, then lets change to use that
-                target = newTarget;
-                name = parts[parts.length - 1];
+                if (newTarget != target) {
+                    // okay we found a nested property, then lets change to use that
+                    target = newTarget;
+                    name = parts[parts.length - 1];
+                }
             }
         }
 
@@ -361,13 +368,9 @@ public final class PropertyBindingSupport {
                         }
                     }
                 }
-            } else if (value.toString().startsWith("#id:")) {
+            } else if (value.toString().startsWith("#bean:")) {
                 // okay its a reference so swap to lookup this which is already supported in IntrospectionSupport
-                refName = ((String) value).substring(4);
-                value = null;
-            } else if (EndpointHelper.isReferenceParameter(value.toString())) {
-                // okay its a reference so swap to lookup this which is already supported in IntrospectionSupport
-                refName = value.toString();
+                refName = ((String) value).substring(6);
                 value = null;
             }
         }
