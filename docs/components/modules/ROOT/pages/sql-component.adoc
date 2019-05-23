@@ -533,6 +533,9 @@ WARNING: The SQL Server *TIMESTAMP* type is a fixed-length binary-string type. 
 does not map to any of the JDBC time types: *DATE*, *TIME*, or
 *TIMESTAMP*.
 
+When working with concurrent consumers it is crucial to create a unique constraint on the columns processorName and messageId.
+Because the syntax for this constraint differs from database to database, we do not show it here.
+
 ==== Customize the JdbcMessageIdRepository
 
 Starting with *Camel 2.9.1* you have a few options to tune the
