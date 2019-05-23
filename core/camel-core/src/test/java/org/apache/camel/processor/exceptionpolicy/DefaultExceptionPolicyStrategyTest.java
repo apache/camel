@@ -38,17 +38,17 @@ import org.junit.Test;
 public class DefaultExceptionPolicyStrategyTest extends Assert {
 
     private DefaultExceptionPolicyStrategy strategy;
-    private HashMap<ExceptionPolicyKey, OnExceptionDefinition> policies;
-    private OnExceptionDefinition type1;
-    private OnExceptionDefinition type2;
-    private OnExceptionDefinition type3;
+    private HashMap<ExceptionPolicyKey, ExceptionPolicy> policies;
+    private ExceptionPolicy type1;
+    private ExceptionPolicy type2;
+    private ExceptionPolicy type3;
 
     private void setupPolicies() {
         strategy = new DefaultExceptionPolicyStrategy();
         policies = new HashMap<>();
-        type1 = new OnExceptionDefinition(CamelExchangeException.class);
-        type2 = new OnExceptionDefinition(Exception.class);
-        type3 = new OnExceptionDefinition(IOException.class);
+        type1 = new ExceptionPolicy(new OnExceptionDefinition(CamelExchangeException.class));
+        type2 = new ExceptionPolicy(new OnExceptionDefinition(Exception.class));
+        type3 = new ExceptionPolicy(new OnExceptionDefinition(IOException.class));
         policies.put(new ExceptionPolicyKey(null, CamelExchangeException.class, null), type1);
         policies.put(new ExceptionPolicyKey(null, Exception.class, null), type2);
         policies.put(new ExceptionPolicyKey(null, IOException.class, null), type3);
@@ -58,8 +58,8 @@ public class DefaultExceptionPolicyStrategyTest extends Assert {
         // without the top level exception that can be used as fallback
         strategy = new DefaultExceptionPolicyStrategy();
         policies = new HashMap<>();
-        type1 = new OnExceptionDefinition(CamelExchangeException.class);
-        type3 = new OnExceptionDefinition(IOException.class);
+        type1 = new ExceptionPolicy(new OnExceptionDefinition(CamelExchangeException.class));
+        type3 = new ExceptionPolicy(new OnExceptionDefinition(IOException.class));
         policies.put(new ExceptionPolicyKey(null, CamelExchangeException.class, null), type1);
         policies.put(new ExceptionPolicyKey(null, IOException.class, null), type3);
     }
@@ -67,9 +67,9 @@ public class DefaultExceptionPolicyStrategyTest extends Assert {
     private void setupPoliciesCausedBy() {
         strategy = new DefaultExceptionPolicyStrategy();
         policies = new HashMap<>();
-        type1 = new OnExceptionDefinition(FileNotFoundException.class);
-        type2 = new OnExceptionDefinition(ConnectException.class);
-        type3 = new OnExceptionDefinition(IOException.class);
+        type1 = new ExceptionPolicy(new OnExceptionDefinition(FileNotFoundException.class));
+        type2 = new ExceptionPolicy(new OnExceptionDefinition(ConnectException.class));
+        type3 = new ExceptionPolicy(new OnExceptionDefinition(IOException.class));
         policies.put(new ExceptionPolicyKey(null, FileNotFoundException.class, null), type1);
         policies.put(new ExceptionPolicyKey(null, IOException.class, null), type2);
         policies.put(new ExceptionPolicyKey(null, ConnectException.class, null), type3);
@@ -78,28 +78,28 @@ public class DefaultExceptionPolicyStrategyTest extends Assert {
     @Test
     public void testDirectMatch1() {
         setupPolicies();
-        OnExceptionDefinition result = strategy.getExceptionPolicy(policies, null, new CamelExchangeException("", null));
+        ExceptionPolicy result = strategy.getExceptionPolicy(policies, null, new CamelExchangeException("", null));
         assertEquals(type1, result);
     }
 
     @Test
     public void testDirectMatch2() {
         setupPolicies();
-        OnExceptionDefinition result = strategy.getExceptionPolicy(policies, null, new Exception(""));
+        ExceptionPolicy result = strategy.getExceptionPolicy(policies, null, new Exception(""));
         assertEquals(type2, result);
     }
 
     @Test
     public void testDirectMatch3() {
         setupPolicies();
-        OnExceptionDefinition result = strategy.getExceptionPolicy(policies, null, new IOException(""));
+        ExceptionPolicy result = strategy.getExceptionPolicy(policies, null, new IOException(""));
         assertEquals(type3, result);
     }
 
     @Test
     public void testClosetMatch3() {
         setupPolicies();
-        OnExceptionDefinition result = strategy.getExceptionPolicy(policies, null, new ConnectException(""));
+        ExceptionPolicy result = strategy.getExceptionPolicy(policies, null, new ConnectException(""));
         assertEquals(type3, result);
 
         result = strategy.getExceptionPolicy(policies, null, new SocketException(""));
@@ -112,7 +112,7 @@ public class DefaultExceptionPolicyStrategyTest extends Assert {
     @Test
     public void testClosetMatch2() {
         setupPolicies();
-        OnExceptionDefinition result = strategy.getExceptionPolicy(policies, null, new ClassCastException(""));
+        ExceptionPolicy result = strategy.getExceptionPolicy(policies, null, new ClassCastException(""));
         assertEquals(type2, result);
 
         result = strategy.getExceptionPolicy(policies, null, new NumberFormatException(""));
@@ -125,7 +125,7 @@ public class DefaultExceptionPolicyStrategyTest extends Assert {
     @Test
     public void testClosetMatch1() {
         setupPolicies();
-        OnExceptionDefinition result = strategy.getExceptionPolicy(policies, null, new ValidationException(null, ""));
+        ExceptionPolicy result = strategy.getExceptionPolicy(policies, null, new ValidationException(null, ""));
         assertEquals(type1, result);
 
         result = strategy.getExceptionPolicy(policies, null, new ExchangeTimedOutException(null, 0));
@@ -135,14 +135,14 @@ public class DefaultExceptionPolicyStrategyTest extends Assert {
     @Test
     public void testNoMatch1ThenMatchingJustException() {
         setupPolicies();
-        OnExceptionDefinition result = strategy.getExceptionPolicy(policies, null, new AlreadyStoppedException());
+        ExceptionPolicy result = strategy.getExceptionPolicy(policies, null, new AlreadyStoppedException());
         assertEquals(type2, result);
     }
 
     @Test
     public void testNoMatch1ThenNull() {
         setupPoliciesNoTopLevelException();
-        OnExceptionDefinition result = strategy.getExceptionPolicy(policies, null, new AlreadyStoppedException());
+        ExceptionPolicy result = strategy.getExceptionPolicy(policies, null, new AlreadyStoppedException());
         assertNull("Should not find an exception policy to use", result);
     }
 
@@ -152,7 +152,7 @@ public class DefaultExceptionPolicyStrategyTest extends Assert {
 
         IOException ioe = new IOException("Damm");
         ioe.initCause(new FileNotFoundException("Somefile not found"));
-        OnExceptionDefinition result = strategy.getExceptionPolicy(policies, null, ioe);
+        ExceptionPolicy result = strategy.getExceptionPolicy(policies, null, ioe);
         assertEquals(type1, result);
     }
 
@@ -162,7 +162,7 @@ public class DefaultExceptionPolicyStrategyTest extends Assert {
 
         IOException ioe = new IOException("Damm");
         ioe.initCause(new FileNotFoundException("Somefile not found"));
-        OnExceptionDefinition result = strategy.getExceptionPolicy(policies, null, new RuntimeCamelException(ioe));
+        ExceptionPolicy result = strategy.getExceptionPolicy(policies, null, new RuntimeCamelException(ioe));
         assertEquals(type1, result);
     }
 
@@ -172,7 +172,7 @@ public class DefaultExceptionPolicyStrategyTest extends Assert {
 
         IOException ioe = new IOException("Damm");
         ioe.initCause(new ConnectException("Not connected"));
-        OnExceptionDefinition result = strategy.getExceptionPolicy(policies, null, ioe);
+        ExceptionPolicy result = strategy.getExceptionPolicy(policies, null, ioe);
         assertEquals(type3, result);
     }
 
@@ -182,7 +182,7 @@ public class DefaultExceptionPolicyStrategyTest extends Assert {
 
         IOException ioe = new IOException("Damm");
         ioe.initCause(new MalformedURLException("Bad url"));
-        OnExceptionDefinition result = strategy.getExceptionPolicy(policies, null, ioe);
+        ExceptionPolicy result = strategy.getExceptionPolicy(policies, null, ioe);
         assertEquals(type2, result);
     }
 

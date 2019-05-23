@@ -103,6 +103,7 @@ import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.channel.DefaultChannel;
 import org.apache.camel.processor.interceptor.HandleFault;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -367,7 +368,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
     protected Processor wrapInErrorHandler(RouteContext routeContext, Processor output) throws Exception {
         ErrorHandlerFactory builder = routeContext.getErrorHandlerFactory();
         // create error handler
-        Processor errorHandler = builder.createErrorHandler(routeContext, output);
+        Processor errorHandler = ErrorHandlerReifier.reifier(builder).createErrorHandler(routeContext, output);
 
         // invoke lifecycles so we can manage this error handler builder
         for (LifecycleStrategy strategy : routeContext.getCamelContext().getLifecycleStrategies()) {

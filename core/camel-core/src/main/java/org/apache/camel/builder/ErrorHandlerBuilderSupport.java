@@ -21,11 +21,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.Predicate;
+import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
+import org.apache.camel.processor.exceptionpolicy.ExceptionPolicy;
+import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyKey;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -46,8 +54,7 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
 
     protected void cloneBuilder(ErrorHandlerBuilderSupport other) {
         if (!onExceptions.isEmpty()) {
-            Map<RouteContext, List<OnExceptionDefinition>> copy = new HashMap<>(onExceptions);
-            other.onExceptions = copy;
+            other.onExceptions.putAll(onExceptions);
         }
         other.exceptionPolicyStrategy = exceptionPolicyStrategy;
     }
@@ -59,7 +66,7 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
             List<OnExceptionDefinition> list = onExceptions.get(routeContext);
             if (list != null) {
                 for (OnExceptionDefinition exception : list) {
-                    handlerSupport.addExceptionPolicy(routeContext, exception);
+                    addExceptionPolicy(handlerSupport, routeContext, exception);
                 }
             }
         }
@@ -70,6 +77,52 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
                 routeContext.setAllowUseOriginalMessage(true);
             }
         }
+    }
+
+    public static void addExceptionPolicy(ErrorHandlerSupport handlerSupport, RouteContext routeContext, OnExceptionDefinition exceptionType) {
+        if (routeContext != null) {
+            // add error handler as child service so they get lifecycle handled
+            Processor errorHandler = routeContext.getOnException(exceptionType.getId());
+            handlerSupport.addErrorHandler(errorHandler);
+
+            // load exception classes
+            List<Class<? extends Throwable>> list;
+            if (exceptionType.getExceptions() != null && !exceptionType.getExceptions().isEmpty()) {
+                list = createExceptionClasses(exceptionType, routeContext.getCamelContext().getClassResolver());
+                for (Class<? extends Throwable> clazz : list) {
+                    String routeId = null;
+                    // only get the route id, if the exception type is route scoped
+                    if (exceptionType.isRouteScoped()) {
+                        RouteDefinition route = ProcessorDefinitionHelper.getRoute(exceptionType);
+                        if (route != null) {
+                            routeId = route.getId();
+                        }
+                    }
+                    Predicate when = exceptionType.getOnWhen() != null ? exceptionType.getOnWhen().getExpression() : null;
+                    ExceptionPolicyKey key = new ExceptionPolicyKey(routeId, clazz, when);
+                    ExceptionPolicy policy = toExceptionPolicy(exceptionType);
+                    handlerSupport.addExceptionPolicy(key, policy);
+                }
+            }
+        }
+    }
+
+    protected static ExceptionPolicy toExceptionPolicy(OnExceptionDefinition exceptionType) {
+        return new ExceptionPolicy(exceptionType);
+    }
+
+    protected static List<Class<? extends Throwable>> createExceptionClasses(OnExceptionDefinition exceptionType, ClassResolver resolver) {
+        List<String> list = exceptionType.getExceptions();
+        List<Class<? extends Throwable>> answer = new ArrayList<>(list.size());
+        for (String name : list) {
+            try {
+                Class<? extends Throwable> type = resolver.resolveMandatoryClass(name, Throwable.class);
+                answer.add(type);
+            } catch (ClassNotFoundException e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
+        }
+        return answer;
     }
 
     public List<OnExceptionDefinition> getErrorHandlers(RouteContext routeContext) {
@@ -112,4 +165,7 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
         return false;
     }
 
+    public Map<RouteContext, List<OnExceptionDefinition>> getOnExceptions() {
+        return onExceptions;
+    }
 }

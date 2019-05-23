@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.CamelContextHelper;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,6 +143,10 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
     }
 
     private void clearCachedSchema() throws Exception {
+        CamelContext context = this.context;
+        if (context == null) {
+            return;
+        }
         Collection<Endpoint> endpoints = context.getEndpoints();
         for (Endpoint endpoint : endpoints) {
             LOG.info("Endpoint URI: " + endpoint.getEndpointUri());

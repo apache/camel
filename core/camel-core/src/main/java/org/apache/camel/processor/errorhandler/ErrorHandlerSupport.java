@@ -16,23 +16,16 @@
  */
 package org.apache.camel.processor.errorhandler;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.exceptionpolicy.DefaultExceptionPolicyStrategy;
+import org.apache.camel.processor.exceptionpolicy.ExceptionPolicy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyKey;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
-import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ChildServiceSupport;
 
 /**
@@ -40,59 +33,25 @@ import org.apache.camel.support.ChildServiceSupport;
  */
 public abstract class ErrorHandlerSupport extends ChildServiceSupport implements ErrorHandler {
 
-    protected final Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies = new LinkedHashMap<>();
+    protected final Map<ExceptionPolicyKey, ExceptionPolicy> exceptionPolicies = new LinkedHashMap<>();
     protected ExceptionPolicyStrategy exceptionPolicy = createDefaultExceptionPolicyStrategy();
 
-    public void addExceptionPolicy(RouteContext routeContext, OnExceptionDefinition exceptionType) {
-        if (routeContext != null) {
-            // add error handler as child service so they get lifecycle handled
-            Processor errorHandler = routeContext.getOnException(exceptionType.getId());
-            if (errorHandler != null) {
-                addChildService(errorHandler);
-            }
-
-            // load exception classes
-            List<Class<? extends Throwable>> list = null;
-            if (exceptionType.getExceptions() != null && !exceptionType.getExceptions().isEmpty()) {
-                list = createExceptionClasses(exceptionType, routeContext.getCamelContext().getClassResolver());
-                for (Class<? extends Throwable> clazz : list) {
-                    String routeId = null;
-                    // only get the route id, if the exception type is route scoped
-                    if (exceptionType.isRouteScoped()) {
-                        RouteDefinition route = ProcessorDefinitionHelper.getRoute(exceptionType);
-                        if (route != null) {
-                            routeId = route.getId();
-                        }
-                    }
-                    ExceptionPolicyKey key = new ExceptionPolicyKey(routeId, clazz, exceptionType.getOnWhen());
-                    exceptionPolicies.put(key, exceptionType);
-                }
-            }
-        }
+    public void addErrorHandler(Processor errorHandler) {
+        addChildService(errorHandler);
     }
 
-    protected List<Class<? extends Throwable>> createExceptionClasses(OnExceptionDefinition exceptionType, ClassResolver resolver) {
-        List<String> list = exceptionType.getExceptions();
-        List<Class<? extends Throwable>> answer = new ArrayList<>(list.size());
-        for (String name : list) {
-            try {
-                Class<? extends Throwable> type = resolver.resolveMandatoryClass(name, Throwable.class);
-                answer.add(type);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-        return answer;
+    public void addExceptionPolicy(ExceptionPolicyKey key, ExceptionPolicy policy) {
+        exceptionPolicies.put(key, policy);
     }
 
     /**
-     * Attempts to find the best suited {@link OnExceptionDefinition} to be used for handling the given thrown exception.
+     * Attempts to find the best suited {@link ExceptionPolicy} to be used for handling the given thrown exception.
      *
      * @param exchange  the exchange
      * @param exception the exception that was thrown
      * @return the best exception type to handle this exception, <tt>null</tt> if none found.
      */
-    protected OnExceptionDefinition getExceptionPolicy(Exchange exchange, Throwable exception) {
+    protected ExceptionPolicy getExceptionPolicy(Exchange exchange, Throwable exception) {
         if (exceptionPolicy == null) {
             throw new IllegalStateException("The exception policy has not been set");
         }
@@ -101,7 +60,7 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
     }
 
     /**
-     * Sets the strategy to use for resolving the {@link OnExceptionDefinition} to use
+     * Sets the strategy to use for resolving the {@link ExceptionPolicy} to use
      * for handling thrown exceptions.
      */
     public void setExceptionPolicy(ExceptionPolicyStrategy exceptionPolicy) {

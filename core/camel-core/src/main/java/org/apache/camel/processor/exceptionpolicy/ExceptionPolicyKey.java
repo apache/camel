@@ -16,7 +16,7 @@
  */
 package org.apache.camel.processor.exceptionpolicy;
 
-import org.apache.camel.model.WhenDefinition;
+import org.apache.camel.Predicate;
 
 /**
  * Exception policy key is a compound key for storing:
@@ -28,7 +28,7 @@ public final class ExceptionPolicyKey {
 
     private final String routeId;
     private final Class<? extends Throwable> exceptionClass;
-    private final WhenDefinition when;
+    private final Predicate when;
 
     /**
      * Key for exception clause
@@ -37,7 +37,7 @@ public final class ExceptionPolicyKey {
      * @param exceptionClass   the exception class
      * @param when             optional predicate when the exception clause should trigger
      */
-    public ExceptionPolicyKey(String routeId, Class<? extends Throwable> exceptionClass, WhenDefinition when) {
+    public ExceptionPolicyKey(String routeId, Class<? extends Throwable> exceptionClass, Predicate when) {
         this.routeId = routeId;
         this.exceptionClass = exceptionClass;
         this.when = when;
@@ -47,7 +47,7 @@ public final class ExceptionPolicyKey {
         return exceptionClass;
     }
 
-    public WhenDefinition getWhen() {
+    public Predicate getWhen() {
         return when;
     }
 
