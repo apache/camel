@@ -348,6 +348,7 @@ consumers.
 - single message (default)
 - sendBatchMessage (from Camel 3)
 - deleteMessage (from Camel 3)
+- listQueues (from Camel 3)
 
 ### Send Batch Message
 
@@ -373,6 +374,17 @@ from("direct:start")
 ------------------------------------------------------------------------------------------------------
 
 As result you'll get an exchange containing a `DeleteMessageResult` instance, that you can examinate to check if the message was deleted or not.
+
+### List Queues
+
+From Camel 3.x we introduce the listQueues operation. 
+
+------------------------------------------------------------------------------------------------------
+from("direct:start")
+  .setHeader(SqsConstants.SQS_OPERATION, constant("listQueues")).to("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
+------------------------------------------------------------------------------------------------------
+
+As result you'll get an exchange containing a `ListQueuesResult` instance, that you can examinate to check the actual queues.
 
 ### Automatic detection of AmazonSQS client in registry
 
