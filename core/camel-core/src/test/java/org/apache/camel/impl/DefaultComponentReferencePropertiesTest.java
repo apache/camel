@@ -199,8 +199,8 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
         MyComponent component = new MyComponent(context);
         try {
             component.createEndpoint("foo://?special=#dummy");
-            fail("Should have throw a ResolveEndpointFailedException");
-        } catch (ResolveEndpointFailedException e) {
+            fail("Should have throw a Exception");
+        } catch (Exception e) {
             // ok
         }
     }
