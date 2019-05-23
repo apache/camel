@@ -39,6 +39,7 @@ import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.CreateQueueResult;
 import com.amazonaws.services.sqs.model.DeleteMessageRequest;
 import com.amazonaws.services.sqs.model.DeleteMessageResult;
+import com.amazonaws.services.sqs.model.ListQueuesRequest;
 import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
@@ -68,6 +69,16 @@ public class AmazonSQSClientMock extends AbstractAmazonSQS {
     @Override
     public ListQueuesResult listQueues() throws AmazonServiceException, AmazonClientException {
         ListQueuesResult result = new ListQueuesResult();
+        return result;
+    }
+    
+    @Override
+    public ListQueuesResult listQueues(ListQueuesRequest request) {
+        ListQueuesResult result = new ListQueuesResult();
+        List<String> queues = new ArrayList<String>();
+        queues.add("queue1");
+        queues.add("queue2");
+        result.setQueueUrls(queues);
         return result;
     }
 

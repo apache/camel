@@ -29,6 +29,8 @@ import java.util.UUID;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.DeleteMessageRequest;
 import com.amazonaws.services.sqs.model.DeleteMessageResult;
+import com.amazonaws.services.sqs.model.ListQueuesRequest;
+import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.amazonaws.services.sqs.model.MessageAttributeValue;
 import com.amazonaws.services.sqs.model.SendMessageBatchRequest;
 import com.amazonaws.services.sqs.model.SendMessageBatchRequestEntry;
@@ -69,6 +71,9 @@ public class SqsProducer extends DefaultProducer {
                 break;
             case deleteMessage:
                 deleteMessage(getClient(), exchange);
+                break;
+            case listQueues:
+            	listQueues(getClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -131,6 +136,17 @@ public class SqsProducer extends DefaultProducer {
         request.setReceiptHandle(receiptHandle);
         DeleteMessageResult result = new DeleteMessageResult();
         result = amazonSQS.deleteMessage(request);
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void listQueues(AmazonSQS amazonSQS, Exchange exchange) {
+        ListQueuesRequest request = new ListQueuesRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SqsConstants.SQS_QUEUE_PREFIX))) {
+            request.setQueueNamePrefix(exchange.getIn().getHeader(SqsConstants.SQS_QUEUE_PREFIX, String.class));
+        }
+        ListQueuesResult result = new ListQueuesResult();
+        result = amazonSQS.listQueues(request);
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
