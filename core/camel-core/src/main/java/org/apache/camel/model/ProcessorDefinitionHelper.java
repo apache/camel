@@ -647,8 +647,8 @@ public final class ProcessorDefinitionHelper {
                 try {
                     // do not use property placeholders as we want to preserve the text as-is when we restore
                     PropertyBindingSupport.build()
-                            .withPlaceholder(false).withNesting(false).withReference(false).withTarget(target).withProperties(properties)
-                            .bind(context);
+                            .withPlaceholder(false).withNesting(false).withReference(false)
+                            .bind(context, target, properties);
                 } catch (Exception e) {
                     LOG.warn("Cannot restore definition properties. This exception is ignored.", e);
                 }

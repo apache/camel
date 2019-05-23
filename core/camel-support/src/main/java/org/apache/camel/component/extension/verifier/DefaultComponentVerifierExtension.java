@@ -25,12 +25,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.ComponentAware;
-import org.apache.camel.TypeConverter;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.runtimecatalog.EndpointValidationResult;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PropertyBindingSupport;
 
