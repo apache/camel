@@ -23,11 +23,6 @@ import org.junit.Test;
 
 public class FtpProducerSiteCommandTest extends FtpServerTestSupport {
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/site?password=admin&siteCommand=help site";
     }

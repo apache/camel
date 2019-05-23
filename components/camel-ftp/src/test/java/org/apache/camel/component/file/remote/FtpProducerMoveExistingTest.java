@@ -115,9 +115,4 @@ public class FtpProducerMoveExistingTest extends FtpServerTestSupport {
         assertFileExists(FTP_ROOT_DIR + "/move/renamed-hello.txt");
         assertEquals("Old file", context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/renamed-hello.txt")));
     }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
 }

@@ -46,11 +46,6 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
         jndi.bind("myguidgenerator", new MyGuidGenerator());
         return jndi;
     }
-    
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
 
     @Test
     public void testProduceBeanByExpression() throws Exception {

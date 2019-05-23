@@ -66,9 +66,4 @@ public class FtpConsumerTemplateUseListFalseTest extends FtpServerTestSupport {
         producer.stop();
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
 }

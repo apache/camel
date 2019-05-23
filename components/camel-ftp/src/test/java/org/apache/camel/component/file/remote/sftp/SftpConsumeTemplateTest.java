@@ -21,11 +21,6 @@ import org.junit.Test;
 
 public class SftpConsumeTemplateTest extends SftpServerTestSupport {
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testSftpSimpleConsume() throws Exception {
         if (!canTest()) {

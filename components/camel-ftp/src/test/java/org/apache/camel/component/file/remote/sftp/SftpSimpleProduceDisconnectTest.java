@@ -23,11 +23,6 @@ import org.junit.Test;
 
 public class SftpSimpleProduceDisconnectTest extends SftpServerTestSupport {
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testSftpSimpleProduce() throws Exception {
         if (!canTest()) {

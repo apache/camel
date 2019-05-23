@@ -30,11 +30,6 @@ public class FtpBrowsableEndpointTest extends FtpServerTestSupport {
         return "ftp://admin@localhost:" + getPort() + "/browse?password=admin";
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testBrowsableNoFiles() throws Exception {
         // make sure starting directory exists

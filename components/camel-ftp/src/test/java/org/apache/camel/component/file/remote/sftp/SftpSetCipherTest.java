@@ -24,11 +24,6 @@ import org.junit.Test;
 
 public class SftpSetCipherTest extends SftpServerTestSupport {
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testSftpSetCipherName() throws Exception {
         if (!canTest()) {

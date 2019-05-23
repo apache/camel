@@ -49,9 +49,4 @@ public class FtpProducerRootFileExistFailTest extends FtpServerTestSupport {
         // root file should still exist
         assertFileExists(FTP_ROOT_DIR + "/hello.txt");
     }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
 }

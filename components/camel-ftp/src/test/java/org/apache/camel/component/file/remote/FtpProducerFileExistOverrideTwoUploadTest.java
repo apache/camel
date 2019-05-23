@@ -50,9 +50,4 @@ public class FtpProducerFileExistOverrideTwoUploadTest extends FtpServerTestSupp
         body = context.getTypeConverter().convertTo(String.class, file);
         assertEquals("Bye World", body);
     }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
 }

@@ -43,11 +43,6 @@ public class FromFtpConsumerTemplateRollbackTest extends FtpServerTestSupport {
         prepareFtpServer();
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testConsumerTemplateRollback() throws Exception {
         try {

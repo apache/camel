@@ -31,11 +31,6 @@ public class SftpSimpleProduceThroughProxyTest extends SftpServerTestSupport {
 
     private final int proxyPort = AvailablePortFinder.getNextAvailable(25000);
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testSftpSimpleProduceThroughProxy() throws Exception {
         if (!canTest()) {

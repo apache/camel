@@ -31,11 +31,6 @@ public class FtpProducerMultipleSiteCommandTest extends FtpServerTestSupport {
         return jndi;
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/site?password=admin&siteCommand=#site";
     }

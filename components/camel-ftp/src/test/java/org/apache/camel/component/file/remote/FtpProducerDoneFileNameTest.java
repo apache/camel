@@ -94,9 +94,5 @@ public class FtpProducerDoneFileNameTest extends FtpServerTestSupport {
             assertTrue(cause.getMessage(), cause.getMessage().startsWith("doneFileName must be specified and not empty"));
         }
     }
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
 
 }

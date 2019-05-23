@@ -29,11 +29,6 @@ public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
         return "ftp://admin@localhost:" + getPort() + "/tempprefix/?password=admin";
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testIllegalConfiguration() throws Exception {
         try {

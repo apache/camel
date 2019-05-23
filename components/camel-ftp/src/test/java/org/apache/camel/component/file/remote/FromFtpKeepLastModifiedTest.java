@@ -111,9 +111,4 @@ public class FromFtpKeepLastModifiedTest extends FtpServerTestSupport {
 
         assertNotSame("Timestamp should NOT have been kept", t1, t2);
     }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
 }
