@@ -23,15 +23,12 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The default strategy used in Camel to resolve the {@link org.apache.camel.model.OnExceptionDefinition} that should
+ * The default strategy used in Camel to resolve the {@link ExceptionPolicy} that should
  * handle the thrown exception.
  * <p/>
  * <b>Selection strategy:</b>
@@ -41,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * by is selected first, ending with the thrown exception itself. The method {@link #createExceptionIterator(Throwable)}
  * provides the Iterator used for the walking.</li>
  * <li>The exception type must be configured with an Exception that is an instance of the thrown exception, this
- * is tested using the {@link #filter(org.apache.camel.model.OnExceptionDefinition, Class, Throwable)} method.
+ * is tested using the {@link #filter(ExceptionPolicy, Class, Throwable)} method.
  * By default the filter uses <tt>instanceof</tt> test.</li>
  * <li>If the exception type has <b>exactly</b> the thrown exception then its selected as its an exact match</li>
  * <li>Otherwise the type that has an exception that is the closest super of the thrown exception is selected
@@ -49,8 +46,8 @@ import org.slf4j.LoggerFactory;
  * </ul>
  * <p/>
  * <b>Fine grained matching:</b>
- * <br/> If the {@link OnExceptionDefinition} has a when defined with an expression the type is also matches against
- * the current exchange using the {@link #matchesWhen(org.apache.camel.model.OnExceptionDefinition, org.apache.camel.Exchange)}
+ * <br/> If the {@link ExceptionPolicy} has a when defined with an expression the type is also matches against
+ * the current exchange using the {@link #matchesWhen(ExceptionPolicy, org.apache.camel.Exchange)}
  * method. This can be used to for more fine grained matching, so you can e.g. define multiple sets of
  * exception types with the same exception class(es) but have a predicate attached to select which to select at runtime.
  */
@@ -58,12 +55,12 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultExceptionPolicyStrategy.class);
 
-    public OnExceptionDefinition getExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies,
-                                                    Exchange exchange, Throwable exception) {
+    public ExceptionPolicy getExceptionPolicy(Map<ExceptionPolicyKey, ExceptionPolicy> exceptionPolicies,
+                                              Exchange exchange, Throwable exception) {
 
-        Map<Integer, OnExceptionDefinition> candidates = new TreeMap<>();
-        Map<ExceptionPolicyKey, OnExceptionDefinition> routeScoped = new LinkedHashMap<>();
-        Map<ExceptionPolicyKey, OnExceptionDefinition> contextScoped = new LinkedHashMap<>();
+        Map<Integer, ExceptionPolicy> candidates = new TreeMap<>();
+        Map<ExceptionPolicyKey, ExceptionPolicy> routeScoped = new LinkedHashMap<>();
+        Map<ExceptionPolicyKey, ExceptionPolicy> contextScoped = new LinkedHashMap<>();
 
         // split policies into route and context scoped
         initRouteAndContextScopedExceptionPolicies(exceptionPolicies, routeScoped, contextScoped);
@@ -96,13 +93,13 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
         }
     }
 
-    private void initRouteAndContextScopedExceptionPolicies(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies,
-                                                            Map<ExceptionPolicyKey, OnExceptionDefinition> routeScoped,
-                                                            Map<ExceptionPolicyKey, OnExceptionDefinition> contextScoped) {
+    private void initRouteAndContextScopedExceptionPolicies(Map<ExceptionPolicyKey, ExceptionPolicy> exceptionPolicies,
+                                                            Map<ExceptionPolicyKey, ExceptionPolicy> routeScoped,
+                                                            Map<ExceptionPolicyKey, ExceptionPolicy> contextScoped) {
 
         // loop through all the entries and split into route and context scoped
-        Set<Map.Entry<ExceptionPolicyKey, OnExceptionDefinition>> entries = exceptionPolicies.entrySet();
-        for (Map.Entry<ExceptionPolicyKey, OnExceptionDefinition> entry : entries) {
+        Set<Map.Entry<ExceptionPolicyKey, ExceptionPolicy>> entries = exceptionPolicies.entrySet();
+        for (Map.Entry<ExceptionPolicyKey, ExceptionPolicy> entry : entries) {
             if (entry.getKey().getRouteId() != null) {
                 routeScoped.put(entry.getKey(), entry.getValue());
             } else {
@@ -112,9 +109,9 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
     }
 
 
-    private boolean findMatchedExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies,
+    private boolean findMatchedExceptionPolicy(Map<ExceptionPolicyKey, ExceptionPolicy> exceptionPolicies,
                                                Exchange exchange, Throwable exception,
-                                               Map<Integer, OnExceptionDefinition> candidates) {
+                                               Map<Integer, ExceptionPolicy> candidates) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Finding best suited exception policy for thrown exception {}", exception.getClass().getName());
         }
@@ -122,21 +119,21 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
         // the goal is to find the exception with the same/closet inheritance level as the target exception being thrown
         int targetLevel = getInheritanceLevel(exception.getClass());
         // candidate is the best candidate found so far to return
-        OnExceptionDefinition candidate = null;
+        ExceptionPolicy candidate = null;
         // difference in inheritance level between the current candidate and the thrown exception (target level)
         int candidateDiff = Integer.MAX_VALUE;
 
         // loop through all the entries and find the best candidates to use
-        Set<Map.Entry<ExceptionPolicyKey, OnExceptionDefinition>> entries = exceptionPolicies.entrySet();
-        for (Map.Entry<ExceptionPolicyKey, OnExceptionDefinition> entry : entries) {
+        Set<Map.Entry<ExceptionPolicyKey, ExceptionPolicy>> entries = exceptionPolicies.entrySet();
+        for (Map.Entry<ExceptionPolicyKey, ExceptionPolicy> entry : entries) {
             Class<?> clazz = entry.getKey().getExceptionClass();
-            OnExceptionDefinition type = entry.getValue();
+            ExceptionPolicy type = entry.getValue();
 
-            // if OnException is route scoped then the current route (Exchange) must match
-            // so we will not pick an OnException from another route
+            // if ExceptionPolicy is route scoped then the current route (Exchange) must match
+            // so we will not pick an ExceptionPolicy from another route
             if (exchange != null && exchange.getUnitOfWork() != null && type.isRouteScoped()) {
                 String route = exchange.getUnitOfWork().getRouteContext() != null ? exchange.getUnitOfWork().getRouteContext().getRouteId() : null;
-                String typeRoute = ProcessorDefinitionHelper.getRouteId(type);
+                String typeRoute = type.getRouteId();
                 if (route != null && typeRoute != null && !route.equals(typeRoute)) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("The type is scoped for route: {} however Exchange is at route: {}", typeRoute, route);
@@ -203,7 +200,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
      * @param exception      the thrown exception
      * @return <tt>true</tt> if the to current exception class is a candidate, <tt>false</tt> to skip it.
      */
-    protected boolean filter(OnExceptionDefinition type, Class<?> exceptionClass, Throwable exception) {
+    protected boolean filter(ExceptionPolicy type, Class<?> exceptionClass, Throwable exception) {
         // must be instance of check to ensure that the exceptionClass is one type of the thrown exception
         return exceptionClass.isInstance(exception);
     }
@@ -221,17 +218,17 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
      * @param exchange the current {@link Exchange}
      * @return <tt>true</tt> if matched, <tt>false</tt> otherwise.
      */
-    protected boolean matchesWhen(OnExceptionDefinition definition, Exchange exchange) {
-        if (definition.getOnWhen() == null || definition.getOnWhen().getExpression() == null) {
+    protected boolean matchesWhen(ExceptionPolicy definition, Exchange exchange) {
+        if (definition.getOnWhen() == null || definition.getOnWhen() == null) {
             // if no predicate then it's always a match
             return true;
         }
-        return definition.getOnWhen().getExpression().matches(exchange);
+        return definition.getOnWhen().matches(exchange);
     }
 
     /**
      * Strategy method creating the iterator to walk the exception in the order Camel should use
-     * for find the {@link OnExceptionDefinition} should be used.
+     * for find the {@link ExceptionPolicy} should be used.
      * <p/>
      * The default iterator will walk from the bottom upwards
      * (the last caused by going upwards to the exception)

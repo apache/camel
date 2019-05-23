@@ -36,8 +36,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.reifier.ErrorHandlerReifier;
+import org.apache.camel.processor.exceptionpolicy.ExceptionPolicy;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExchangeFormatter;
@@ -664,13 +663,13 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
 
             // find the error handler to use (if any)
-            OnExceptionDefinition exceptionPolicy = getExceptionPolicy(exchange, e);
+            ExceptionPolicy exceptionPolicy = getExceptionPolicy(exchange, e);
             if (exceptionPolicy != null) {
-                currentRedeliveryPolicy = ErrorHandlerReifier.createRedeliveryPolicy(exceptionPolicy, exchange.getContext(), currentRedeliveryPolicy);
+                currentRedeliveryPolicy = exceptionPolicy.createRedeliveryPolicy(exchange.getContext(), currentRedeliveryPolicy);
                 handledPredicate = exceptionPolicy.getHandledPolicy();
                 continuedPredicate = exceptionPolicy.getContinuedPolicy();
                 retryWhilePredicate = exceptionPolicy.getRetryWhilePolicy();
-                useOriginalInMessage = exceptionPolicy.getUseOriginalMessagePolicy() != null && exceptionPolicy.getUseOriginalMessagePolicy();
+                useOriginalInMessage = exceptionPolicy.getUseOriginalInMessage();
 
                 // route specific failure handler?
                 Processor processor = null;
@@ -1245,25 +1244,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // or on the exception policies
         if (!exceptionPolicies.isEmpty()) {
             // walk them to see if any of them have a maximum redeliveries > 0 or retry until set
-            for (OnExceptionDefinition def : exceptionPolicies.values()) {
-
-                String ref = def.getRedeliveryPolicyRef();
-                if (ref != null) {
-                    // lookup in registry if ref provided
-                    RedeliveryPolicy policy = CamelContextHelper.mandatoryLookup(camelContext, ref, RedeliveryPolicy.class);
-                    if (policy.getMaximumRedeliveries() != 0) {
-                        // must check for != 0 as (-1 means redeliver forever)
-                        return true;
-                    }
-                } else if (def.getRedeliveryPolicyType() != null) {
-                    Integer max = CamelContextHelper.parseInteger(camelContext, def.getRedeliveryPolicyType().getMaximumRedeliveries());
-                    if (max != null && max != 0) {
-                        // must check for != 0 as (-1 means redeliver forever)
-                        return true;
-                    }
-                }
-
-                if (def.getRetryWhilePolicy() != null || def.getRetryWhile() != null) {
+            for (ExceptionPolicy def : exceptionPolicies.values()) {
+                if (def.determineIfRedeliveryIsEnabled(camelContext)) {
                     return true;
                 }
             }

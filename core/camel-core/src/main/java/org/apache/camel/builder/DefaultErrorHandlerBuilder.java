@@ -521,6 +521,14 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         this.asyncDelayedRedelivery = asyncDelayedRedelivery;
     }
 
+    public ScheduledExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(ScheduledExecutorService executorService) {
+        this.executorService = executorService;
+    }
+
     public String getExecutorServiceRef() {
         return executorServiceRef;
     }

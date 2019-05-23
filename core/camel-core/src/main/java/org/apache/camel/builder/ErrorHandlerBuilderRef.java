@@ -26,6 +26,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -65,7 +66,7 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         ErrorHandlerFactory handler = handlers.computeIfAbsent(routeContext, this::createErrorHandler);
-        return handler.createErrorHandler(routeContext, processor);
+        return ErrorHandlerReifier.reifier(handler).createErrorHandler(routeContext, processor);
     }
 
     public boolean supportTransacted() {

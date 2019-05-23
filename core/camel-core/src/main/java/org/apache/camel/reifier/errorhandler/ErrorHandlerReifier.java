@@ -14,21 +14,103 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.reifier;
+package org.apache.camel.reifier.errorhandler;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.builder.DeadLetterChannelBuilder;
+import org.apache.camel.builder.DefaultErrorHandlerBuilder;
+import org.apache.camel.builder.ErrorHandlerBuilderRef;
+import org.apache.camel.builder.ErrorHandlerBuilderSupport;
+import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
+import org.apache.camel.processor.ErrorHandler;
+import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
+import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
+import org.apache.camel.processor.exceptionpolicy.ExceptionPolicy;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.CamelContextHelper;
 
-public final class ErrorHandlerReifier {
-    
+public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> {
+
+    private static final Map<Class<?>, Function<ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> ERROR_HANDLERS;
+    static {
+        Map<Class<?>, Function<ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> map = new HashMap<>();
+        map.put(DeadLetterChannelBuilder.class, DeadLetterChannelReifier::new);
+        map.put(DefaultErrorHandlerBuilder.class, DefaultErrorHandlerReifier::new);
+        map.put(ErrorHandlerBuilderRef.class, ErrorHandlerRefReifier::new);
+        map.put(NoErrorHandlerBuilder.class, NoErrorHandlerReifier::new);
+        ERROR_HANDLERS = map;
+    }
+
+    public static void registerReifier(Class<?> errorHandlerClass, Function<ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> creator) {
+        ERROR_HANDLERS.put(errorHandlerClass, creator);
+    }
+
+    protected T definition;
+
     /**
      * Utility classes should not have a public constructor.
      */
-    private ErrorHandlerReifier() {
+    ErrorHandlerReifier(T definition) {
+        this.definition = definition;
+    }
+
+    public static ErrorHandlerReifier<? extends ErrorHandlerFactory> reifier(ErrorHandlerFactory definition) {
+        Function<ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> reifier = ERROR_HANDLERS.get(definition.getClass());
+        if (reifier != null) {
+            return reifier.apply(definition);
+        } else if (definition instanceof ErrorHandlerBuilderSupport) {
+            return new ErrorHandlerReifier<ErrorHandlerBuilderSupport>((ErrorHandlerBuilderSupport) definition) {
+                @Override
+                public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
+                    return definition.createErrorHandler(routeContext, processor);
+                }
+            };
+        } else {
+            throw new IllegalStateException("Unsupported definition: " + definition);
+        }
+    }
+
+    /**
+     * Creates the error handler
+     *
+     * @param routeContext the route context
+     * @param processor the outer processor
+     * @return the error handler
+     * @throws Exception is thrown if the error handler could not be created
+     */
+    public abstract Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception;
+
+    public void configure(RouteContext routeContext, ErrorHandler handler) {
+        if (handler instanceof ErrorHandlerSupport) {
+            ErrorHandlerSupport handlerSupport = (ErrorHandlerSupport) handler;
+
+            List<OnExceptionDefinition> list = definition.getOnExceptions().get(routeContext);
+            if (list != null) {
+                for (OnExceptionDefinition exception : list) {
+                    ErrorHandlerBuilderSupport.addExceptionPolicy(handlerSupport, routeContext, exception);
+                }
+            }
+        }
+        if (handler instanceof RedeliveryErrorHandler) {
+            boolean original = ((RedeliveryErrorHandler) handler).isUseOriginalMessagePolicy();
+            if (original) {
+                // ensure allow original is turned on
+                routeContext.setAllowUseOriginalMessage(true);
+            }
+        }
     }
 
     public static RedeliveryPolicy createRedeliveryPolicy(RedeliveryPolicyDefinition definition, CamelContext context, RedeliveryPolicy parentPolicy) {
@@ -133,12 +215,12 @@ public final class ErrorHandlerReifier {
      * @return a newly created redelivery policy, or return the original policy if no customization is required
      *         for this exception handler.
      */
-    public static RedeliveryPolicy createRedeliveryPolicy(OnExceptionDefinition definition, CamelContext context, RedeliveryPolicy parentPolicy) {
+    public static RedeliveryPolicy createRedeliveryPolicy(ExceptionPolicy definition, CamelContext context, RedeliveryPolicy parentPolicy) {
         if (definition.getRedeliveryPolicyRef() != null) {
             return CamelContextHelper.mandatoryLookup(context, definition.getRedeliveryPolicyRef(), RedeliveryPolicy.class);
         } else if (definition.getRedeliveryPolicyType() != null) {
             return createRedeliveryPolicy(definition.getRedeliveryPolicyType(), context, parentPolicy);
-        } else if (!definition.getOutputs().isEmpty() && parentPolicy.getMaximumRedeliveries() != 0) {
+        } else if (definition.hasOutputs() && parentPolicy.getMaximumRedeliveries() != 0) {
             // if we have outputs, then do not inherit parent maximumRedeliveries
             // as you would have to explicit configure maximumRedeliveries on this onException to use it
             // this is the behavior Camel has always had
@@ -148,5 +230,29 @@ public final class ErrorHandlerReifier {
         } else {
             return parentPolicy;
         }
+    }
+
+    public static boolean determineIfRedeliveryIsEnabled(ExceptionPolicy def, CamelContext camelContext) throws Exception {
+        String ref = def.getRedeliveryPolicyRef();
+        if (ref != null) {
+            // lookup in registry if ref provided
+            RedeliveryPolicy policy = CamelContextHelper.mandatoryLookup(camelContext, ref, RedeliveryPolicy.class);
+            if (policy.getMaximumRedeliveries() != 0) {
+                // must check for != 0 as (-1 means redeliver forever)
+                return true;
+            }
+        } else if (def.getRedeliveryPolicyType() != null) {
+            Integer max = CamelContextHelper.parseInteger(camelContext, def.getRedeliveryPolicyType().getMaximumRedeliveries());
+            if (max != null && max != 0) {
+                // must check for != 0 as (-1 means redeliver forever)
+                return true;
+            }
+        }
+
+        if (def.getRetryWhilePolicy() != null) {
+            return true;
+        }
+
+        return false;
     }
 }

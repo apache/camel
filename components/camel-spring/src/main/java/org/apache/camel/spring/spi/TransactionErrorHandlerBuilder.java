@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
@@ -34,6 +35,10 @@ import org.springframework.transaction.support.TransactionTemplate;
  * A transactional error handler that supports leveraging Spring TransactionManager.
  */
 public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
+
+    static {
+        ErrorHandlerReifier.registerReifier(TransactionErrorHandlerBuilder.class, TransactionErrorHandlerReifier::new);
+    }
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactionErrorHandlerBuilder.class);
     private static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
