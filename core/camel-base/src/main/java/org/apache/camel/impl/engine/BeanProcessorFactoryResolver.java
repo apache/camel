@@ -51,7 +51,7 @@ public class BeanProcessorFactoryResolver {
             }
             if (BeanProcessorFactory.class.isAssignableFrom(type)) {
                 BeanProcessorFactory answer = (BeanProcessorFactory) context.getInjector().newInstance(type);
-                LOG.info("Detected and using custom BeanProcessorFactory: {}", answer);
+                LOG.debug("Detected and using BeanProcessorFactory: {}", answer);
                 return answer;
             } else {
                 throw new IllegalArgumentException("Type is not a BeanProcessorFactory implementation. Found: " + type.getName());
