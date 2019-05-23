@@ -68,9 +68,4 @@ public class FileDisruptorShutdownCompleteAllTasksTest extends CamelTestSupport 
         // should route all 5
         assertEquals("Should complete all messages", 5, bar.getReceivedCounter());
     }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
 }
