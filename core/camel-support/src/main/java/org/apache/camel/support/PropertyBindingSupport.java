@@ -1,13 +1,13 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.PropertyBindingException;
 
 import static org.apache.camel.support.IntrospectionSupport.findSetterMethods;
 import static org.apache.camel.support.IntrospectionSupport.getOrElseProperty;
@@ -41,7 +41,7 @@ import static org.apache.camel.support.IntrospectionSupport.getOrElseProperty;
 public final class PropertyBindingSupport {
 
     // TODO: Add support for auto binding to singleton instance by type from registry (boolean on|off)
-    // TODO: Better exception message if something goes wrong (output target, name of property etc)
+    // TODO: Add support for Map/List
 
     private PropertyBindingSupport() {
     }
@@ -52,12 +52,12 @@ public final class PropertyBindingSupport {
      * @param camelContext  the camel context
      * @param target        the target object
      * @param properties    the properties
-     * @return              true if one or more properties was bound, false otherwise
+     * @return              true if all the properties was bound, false otherwise
      */
-    public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties) throws Exception {
-        boolean answer = false;
+    public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties) {
+        boolean answer = true;
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
-            answer |= bindProperty(camelContext, target, entry.getKey(), entry.getValue());
+            answer &= bindProperty(camelContext, target, entry.getKey(), entry.getValue());
         }
         return answer;
     }
@@ -71,15 +71,40 @@ public final class PropertyBindingSupport {
      * @param value         value of property
      * @return              true if property was bound, false otherwise
      */
-    public static boolean bindProperty(CamelContext camelContext, Object target, String name, Object value) throws Exception {
-        if (target != null && name != null) {
-            return setProperty(camelContext, target, name, value);
-        } else {
-            return false;
+    public static boolean bindProperty(CamelContext camelContext, Object target, String name, Object value) {
+        try {
+            if (target != null && name != null) {
+                return setProperty(camelContext, target, name, value);
+            }
+        } catch (Exception e) {
+            throw new PropertyBindingException(target, name, e);
+        }
+
+        return false;
+    }
+
+    /**
+     * Binds the mandatory property to the target object (will fail if not set/bound).
+     *
+     * @param camelContext  the camel context
+     * @param target        the target object
+     * @param name          name of property
+     * @param value         value of property
+     */
+    public static void bindMandatoryProperty(CamelContext camelContext, Object target, String name, Object value) {
+        try {
+            if (target != null && name != null) {
+                boolean bound = setProperty(camelContext, target, name, value);
+                if (!bound) {
+                    throw new PropertyBindingException(target, name);
+                }
+            }
+        } catch (Exception e) {
+            throw new PropertyBindingException(target, name, e);
         }
     }
 
-    private static boolean setProperty(CamelContext context, Object target, String name, Object value) {
+    private static boolean setProperty(CamelContext context, Object target, String name, Object value) throws Exception {
         Class<?> clazz = target.getClass();
         String refName = null;
 
@@ -120,43 +145,36 @@ public final class PropertyBindingSupport {
                 }
             }
             // okay we found a nested property, then lets change to use that
-            try {
-                target = newTarget;
-                name = parts[parts.length - 1];
-                if (value instanceof String) {
-                    if (value.toString().startsWith("class:")) {
-                        // its a new class to be created
-                        String className = value.toString().substring(6);
-                        Class<?> type = context.getClassResolver().resolveMandatoryClass(className);
-                        if (type != null) {
-                            value = context.getInjector().newInstance(type);
-                        }
-                    } else if (value.toString().startsWith("#type:")) {
-                        // its reference by type, so lookup the actual value and use it if there is only one instance in the registry
-                        String typeName = value.toString().substring(6);
-                        Class<?> type = context.getClassResolver().resolveMandatoryClass(typeName);
-                        if (type != null) {
-                            Set<?> types = context.getRegistry().findByType(type);
-                            if (types.size() == 1) {
-                                value = types.iterator().next();
-                            }
-                        }
-                    } else if (EndpointHelper.isReferenceParameter(value.toString())) {
-                        // okay its a reference so swap to lookup this which is already supported in IntrospectionSupport
-                        refName = value.toString();
-                        value = null;
+            target = newTarget;
+            name = parts[parts.length - 1];
+        }
+
+        if (value instanceof String) {
+            if (value.toString().startsWith("class:")) {
+                // its a new class to be created
+                String className = value.toString().substring(6);
+                Class<?> type = context.getClassResolver().resolveMandatoryClass(className);
+                if (type != null) {
+                    value = context.getInjector().newInstance(type);
+                }
+            } else if (value.toString().startsWith("#type:")) {
+                // its reference by type, so lookup the actual value and use it if there is only one instance in the registry
+                String typeName = value.toString().substring(6);
+                Class<?> type = context.getClassResolver().resolveMandatoryClass(typeName);
+                if (type != null) {
+                    Set<?> types = context.getRegistry().findByType(type);
+                    if (types.size() == 1) {
+                        value = types.iterator().next();
                     }
                 }
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeException(e);
+            } else if (EndpointHelper.isReferenceParameter(value.toString())) {
+                // okay its a reference so swap to lookup this which is already supported in IntrospectionSupport
+                refName = value.toString();
+                value = null;
             }
         }
 
-        try {
-            return IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, value, refName, true);
-        } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeException(e);
-        }
+        return IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, value, refName, true);
     }
 
 }
