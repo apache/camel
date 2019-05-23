@@ -29,11 +29,6 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailUsingOwnComponentTest extends CamelTestSupport {
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
-    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
