@@ -47,7 +47,7 @@ public final class Jetty94ServerFactory extends JettyHttpServerFactory {
             @Override
             protected ServerConnector createHttpsConnector(final String bindAddress, final HttpsSettings httpsSettings,
                 final JettySettings jettySettings, final NetworkTrafficListener listener) {
-                final SslContextFactory sslContextFactory = new SslContextFactory();
+                final SslContextFactory sslContextFactory = new SslContextFactory.Server();
 
                 sslContextFactory.setKeyStorePath(httpsSettings.keyStorePath());
                 sslContextFactory.setKeyManagerPassword(httpsSettings.keyStorePassword());

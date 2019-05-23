@@ -329,7 +329,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
                 .orElseGet(() -> Optional.ofNullable(retrieveGlobalSslContextParameters())
                 .orElseGet(() -> new SSLContextParameters()));
 
-            final SslContextFactory sslContextFactory = new SslContextFactory();
+            final SslContextFactory sslContextFactory = new SslContextFactory.Client();
             sslContextFactory.setSslContext(contextParameters.createSSLContext(getCamelContext()));
 
             httpClient = createHttpClient(sslContextFactory);
@@ -692,7 +692,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         // let's work with a copy for IntrospectionSupport so original properties are intact
         IntrospectionSupport.setProperties(typeConverter, sslContextParameters, new HashMap<>(properties));
 
-        final SslContextFactory sslContextFactory = new SslContextFactory();
+        final SslContextFactory sslContextFactory = new SslContextFactory.Client();
         sslContextFactory.setSslContext(sslContextParameters.createSSLContext(camelContext));
 
         final SalesforceHttpClient httpClient = createHttpClient(sslContextFactory);
