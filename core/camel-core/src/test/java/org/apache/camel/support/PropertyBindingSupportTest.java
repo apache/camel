@@ -228,32 +228,39 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
             return age;
         }
 
-        public void setAge(int age) {
-            this.age = age;
-        }
-
         public boolean isRider() {
             return rider;
-        }
-
-        public void setRider(boolean rider) {
-            this.rider = rider;
         }
 
         public Company getWork() {
             return work;
         }
 
-        public void setWork(Company work) {
-            this.work = work;
-        }
-
         public boolean isGoldCustomer() {
             return goldCustomer;
         }
 
-        public void setGoldCustomer(boolean goldCustomer) {
+        // this has no setter but only builders
+        // and mix the builders with both styles (with as prefix and no prefix at all)
+
+        public Bar withAge(int age) {
+            this.age = age;
+            return this;
+        }
+
+        public Bar withRider(boolean rider) {
+            this.rider = rider;
+            return this;
+        }
+
+        public Bar work(Company work) {
+            this.work = work;
+            return this;
+        }
+
+        public Bar goldCustomer(boolean goldCustomer) {
             this.goldCustomer = goldCustomer;
+            return this;
         }
     }
 
