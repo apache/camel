@@ -419,7 +419,11 @@ public final class IntrospectionSupport {
         }
         return false;
     }
-    
+
+    /**
+     * @deprecated use {@link PropertyBindingSupport}
+     */
+    @Deprecated
     public static boolean setProperties(Object target, Map<String, Object> properties, String optionPrefix, boolean allowBuilderPattern) throws Exception {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");
@@ -441,6 +445,10 @@ public final class IntrospectionSupport {
         return rc;
     }
 
+    /**
+     * @deprecated use {@link PropertyBindingSupport}
+     */
+    @Deprecated
     public static boolean setProperties(Object target, Map<String, Object> properties, String optionPrefix) throws Exception {
         StringHelper.notEmpty(optionPrefix, "optionPrefix");
         return setProperties(target, properties, optionPrefix, false);
@@ -472,6 +480,7 @@ public final class IntrospectionSupport {
         return rc;
     }
 
+    @Deprecated
     public static Map<String, String> extractStringProperties(Map<String, Object> properties) {
         ObjectHelper.notNull(properties, "properties");
 
@@ -486,6 +495,10 @@ public final class IntrospectionSupport {
         return rc;
     }
 
+    /**
+     * @deprecated use {@link PropertyBindingSupport}
+     */
+    @Deprecated
     public static boolean setProperties(CamelContext context, TypeConverter typeConverter, Object target, Map<String, Object> properties) throws Exception {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");
@@ -501,11 +514,19 @@ public final class IntrospectionSupport {
 
         return rc;
     }
-    
+
+    /**
+     * @deprecated use {@link PropertyBindingSupport}
+     */
+    @Deprecated
     public static boolean setProperties(TypeConverter typeConverter, Object target, Map<String, Object> properties) throws Exception {
         return setProperties(null, typeConverter, target, properties);
     }
 
+    /**
+     * @deprecated use {@link PropertyBindingSupport}
+     */
+    @Deprecated
     public static boolean setProperties(Object target, Map<String, Object> properties) throws Exception {
         return setProperties(null, target, properties);
     }
