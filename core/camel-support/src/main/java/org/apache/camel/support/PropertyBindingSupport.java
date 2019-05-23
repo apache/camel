@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import java.lang.reflect.Method;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,6 +47,20 @@ public final class PropertyBindingSupport {
     private PropertyBindingSupport() {
     }
 
+    @FunctionalInterface
+    public interface OnAutowiring {
+
+        /**
+         * Callback when a property was autowired on a bean
+         *
+         * @param target        the targeted bean
+         * @param propertyName  the name of the property
+         * @param propertyType  the type of the property
+         * @param value         the property value
+         */
+        void onAutowire(Object target, String propertyName, Class propertyType, Object value);
+
+    }
     /**
      * This will discover all the properties on the target, and automatic bind the properties that are null by
      * looking up in the registry to see if there is a single instance of the same type as the property.
@@ -57,8 +72,63 @@ public final class PropertyBindingSupport {
      * @return              true if one ore more properties was auto wired
      */
     public static boolean autowireSingletonPropertiesFromRegistry(CamelContext camelContext, Object target) {
-        // TODO: implement me
+        return autowireSingletonPropertiesFromRegistry(camelContext, target, false,null);
+    }
+
+    /**
+     * This will discover all the properties on the target, and automatic bind the properties by
+     * looking up in the registry to see if there is a single instance of the same type as the property.
+     * This is used for convention over configuration to automatic configure resources such as DataSource, Amazon Logins and
+     * so on.
+     *
+     * @param camelContext  the camel context
+     * @param target        the target object
+     * @param bindNullOnly  whether to only autowire if the property has no default value or has not been configured explicit
+     * @param callback      optional callback when a property was auto wired
+     * @return              true if one ore more properties was auto wired
+     */
+    public static boolean autowireSingletonPropertiesFromRegistry(CamelContext camelContext, Object target, boolean bindNullOnly, OnAutowiring callback) {
+        try {
+            if (target != null) {
+                return doAutowireSingletonPropertiesFromRegistry(camelContext, target, bindNullOnly, callback);
+            }
+        } catch (Exception e) {
+            throw new PropertyBindingException(target, e);
+        }
+
         return false;
+    }
+
+    private static boolean doAutowireSingletonPropertiesFromRegistry(CamelContext camelContext, Object target, boolean bindNullOnly, OnAutowiring callback) throws Exception {
+        // when adding a component then support auto-configuring complex types
+        // by looking up from registry, such as DataSource etc
+        Map<String, Object> properties = new LinkedHashMap<>();
+        IntrospectionSupport.getProperties(target, properties, null);
+
+        boolean hit = false;
+
+        for (Map.Entry<String, Object> entry : properties.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            Class<?> type = getGetterType(target, key);
+            if (isComplexUserType(type)) {
+                // if the property has not been set and its a complex type (not simple or string etc)
+                if (!bindNullOnly || value == null) {
+                    Set lookup = camelContext.getRegistry().findByType(type);
+                    if (lookup.size() == 1) {
+                        value = lookup.iterator().next();
+                        if (value != null) {
+                            hit |= IntrospectionSupport.setProperty(camelContext, target, key, value);
+                            if (hit && callback != null) {
+                                callback.onAutowire(target, key, type, value);
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        return hit;
     }
 
     /**
@@ -220,6 +290,23 @@ public final class PropertyBindingSupport {
         }
 
         return null;
+    }
+
+    private static Class getGetterType(Object target, String name) {
+        try {
+            Method getter = IntrospectionSupport.getPropertyGetter(target.getClass(), name);
+            if (getter != null) {
+                return getter.getReturnType();
+            }
+        } catch (NoSuchMethodException e) {
+            // ignore
+        }
+        return null;
+    }
+
+    private static boolean isComplexUserType(Class type) {
+        // lets consider all non java, as complex types
+        return type != null && !type.isPrimitive() && !type.getName().startsWith("java");
     }
 
 }

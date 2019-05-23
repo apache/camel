@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -81,7 +80,6 @@ import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
@@ -1255,61 +1253,9 @@ public abstract class MainSupport extends ServiceSupport {
         camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
             @Override
             public void onComponentAdd(String name, Component component) {
-                // when adding a component then support auto-configuring complex types
-                // by looking up from registry, such as DataSource etc
-                Map<String, Object> properties = new LinkedHashMap<>();
-                IntrospectionSupport.getProperties(component, properties, null);
-
-                // TODO: Use PropertyBindingSupport to make it support this kind of use-case too
-                // TODO: Allow nested properties too
-                // TODO: Allow fluent builders
-
-                // lookup complex types
-                properties.forEach((k, v) -> {
-                    // if the property has not been set and its a complex type (not simple or string etc)
-                    Class type = getGetterType(component, k);
-                    if (isComplexType(type)) {
-                        Set lookup = findExplicitBindingByType(camelContext, type);
-                        if (lookup.size() == 1) {
-                            v = lookup.iterator().next();
-                            try {
-                                LOG.info("Auto configuring option: {} on component: {} as one instance of type: {} registered in the Camel Registry", k, name, type.getName());
-                                IntrospectionSupport.setProperty(camelContext, component, k, v);
-                            } catch (Exception e) {
-                                LOG.warn("Cannot auto configure option: " + k + " on component: " + name + " due to " + e.getMessage());
-                            }
-                        }
-                    }
+                PropertyBindingSupport.autowireSingletonPropertiesFromRegistry(camelContext, component, false, (obj, propertyName, type, value) -> {
+                    LOG.info("Auto configuring option: {} on component: {} as one instance of type: {} registered in the Camel Registry", propertyName, obj, type.getName());
                 });
-            }
-
-            /**
-             * Finds any explicit bean bindings that has been added to the registry.
-             * This means that if there are any, then they have been added by the end user
-             * and we should favour using the bean if there is a single instance bound for the type.
-             */
-            private Set findExplicitBindingByType(CamelContext camelContext, Class type) {
-                if (camelContext.getRegistry() instanceof MainRegistry) {
-                    return ((MainRegistry) camelContext.getRegistry()).findBindingsByType(type);
-                }
-                return Collections.EMPTY_SET;
-            }
-
-            private boolean isComplexType(Class type) {
-                // lets consider all non java as complex types
-                return type != null && !type.isPrimitive() && !type.getName().startsWith("java");
-            }
-
-            private Class getGetterType(Component component, String key) {
-                try {
-                    Method getter = IntrospectionSupport.getPropertyGetter(component.getClass(), key);
-                    if (getter != null) {
-                        return getter.getReturnType();
-                    }
-                } catch (NoSuchMethodException e) {
-                    // ignore
-                }
-                return null;
             }
         });
     }

@@ -36,6 +36,12 @@ public class PropertyBindingException extends RuntimeCamelException {
         this.propertyName = propertyName;
     }
 
+    public PropertyBindingException(Object target, Exception e) {
+        super("Error binding properties on bean: " + target, e);
+        this.target = target;
+        this.propertyName = null;
+    }
+
     public Object getTarget() {
         return target;
     }
