@@ -22,7 +22,6 @@ import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javax.net.ssl.SSLContext;
 import javax.servlet.DispatcherType;
 
 import org.apache.camel.Endpoint;
@@ -130,7 +129,7 @@ public class CometdComponent extends UriEndpointComponent implements SSLContextP
                     LOG.warn("You use localhost interface! It means that no external connections will be available."
                             + " Don't you want to use 0.0.0.0 instead (all network interfaces)?");
                 }
-                
+
                 server.addConnector(connector);
 
                 CometDServlet servlet = createServletForConnector(server, connector, endpoint);
@@ -231,20 +230,19 @@ public class CometdComponent extends UriEndpointComponent implements SSLContextP
         if (sslParams == null) {
             sslParams = retrieveGlobalSslContextParameters();
         }
+
+        SslContextFactory sslContextFactory = new SslContextFactory();
+        sslContextFactory.setEndpointIdentificationAlgorithm(null);
         if (sslParams != null) {
-            SslContextFactory sslContextFactory = new CometdComponentSslContextFactory();
             sslContextFactory.setSslContext(sslParams.createSSLContext(getCamelContext()));
-            sslSocketConnector = new ServerConnector(server, sslContextFactory);
         } else {
-            SslContextFactory sslContextFactory = new SslContextFactory();
             sslContextFactory.setKeyStorePassword(sslKeyPassword);
             sslContextFactory.setKeyManagerPassword(sslPassword);
             if (sslKeystore != null) {
                 sslContextFactory.setKeyStorePath(sslKeystore);
             }
-            sslSocketConnector = new ServerConnector(server, sslContextFactory);
-
         }
+        sslSocketConnector = new ServerConnector(server, sslContextFactory);
         return sslSocketConnector;
     }
 
@@ -309,14 +307,14 @@ public class CometdComponent extends UriEndpointComponent implements SSLContextP
         }
         extensions.add(extension);
     }
-    
+
     public void addServerListener(BayeuxServer.BayeuxServerListener serverListener) {
         if (serverListeners == null) {
             serverListeners = new ArrayList<>();
         }
         serverListeners.add(serverListener);
     }
-    
+
     public SSLContextParameters getSslContextParameters() {
         return sslContextParameters;
     }
@@ -354,7 +352,7 @@ public class CometdComponent extends UriEndpointComponent implements SSLContextP
             connectorRef.connector.stop();
         }
         connectors.clear();
-       
+
         super.doStop();
     }
 
@@ -373,14 +371,4 @@ public class CometdComponent extends UriEndpointComponent implements SSLContextP
         }
     }
 
-    /**
-     * Override the key/trust store check method as it does not account for a factory that has
-     * a pre-configured {@link SSLContext}.
-     */
-    private static final class CometdComponentSslContextFactory extends SslContextFactory {
-        // to support jetty 9.2.
-        // TODO: remove this class when we have upgraded to jetty 9.3
-        public void checkKeyStore() {
-        }
-    }
 }

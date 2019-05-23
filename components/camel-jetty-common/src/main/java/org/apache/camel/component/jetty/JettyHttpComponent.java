@@ -627,12 +627,13 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
         if (endpointSslContextParameters != null) {
             try {
-                sslcf = createSslContextFactory(endpointSslContextParameters);
+                sslcf = createSslContextFactory(endpointSslContextParameters, false);
             } catch (Exception e) {
                 throw new RuntimeCamelException(e);
             }
         } else if ("https".equals(endpoint.getProtocol())) {
             sslcf = new SslContextFactory();
+            sslcf.setEndpointIdentificationAlgorithm(null);
             String keystoreProperty = System.getProperty(JETTY_SSL_KEYSTORE);
             if (keystoreProperty != null) {
                 sslcf.setKeyStorePath(keystoreProperty);
@@ -660,8 +661,11 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
     protected abstract AbstractConnector createConnectorJettyInternal(Server server, JettyHttpEndpoint endpoint, SslContextFactory sslcf);
 
-    private SslContextFactory createSslContextFactory(SSLContextParameters ssl) throws GeneralSecurityException, IOException {
+    private SslContextFactory createSslContextFactory(SSLContextParameters ssl, boolean client) throws GeneralSecurityException, IOException {
         SslContextFactory answer = new SslContextFactory();
+        if (!client) {
+            answer.setEndpointIdentificationAlgorithm(null);
+        }
         if (ssl != null) {
             answer.setSslContext(ssl.createSSLContext(getCamelContext()));
         }
@@ -749,7 +753,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
      * @param ssl        option SSL parameters
      */
     public CamelHttpClient createHttpClient(JettyHttpEndpoint endpoint, Integer minThreads, Integer maxThreads, SSLContextParameters ssl) throws Exception {
-        SslContextFactory sslContextFactory = createSslContextFactory(ssl);
+        SslContextFactory sslContextFactory = createSslContextFactory(ssl, true);
         HttpClientTransport transport = createHttpClientTransport(maxThreads);
         CamelHttpClient httpClient = createCamelHttpClient(transport, sslContextFactory);
 
@@ -1432,7 +1436,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         if (getErrorHandler() != null) {
             s.addBean(getErrorHandler());
         } else if (!Server.getVersion().startsWith("8")) {
-            //need an error handler that won't leak information about the exception 
+            //need an error handler that won't leak information about the exception
             //back to the client.
             ErrorHandler eh = new ErrorHandler() {
                 public void handle(String target, Request baseRequest,

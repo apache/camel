@@ -31,9 +31,9 @@ import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.junit.BeforeClass;
 
 public abstract class BaseAhcTest extends CamelTestSupport {
-    
+
     protected static final String KEY_STORE_PASSWORD = "changeit";
-    
+
     private static volatile int port;
 
     @BeforeClass
@@ -55,14 +55,14 @@ public abstract class BaseAhcTest extends CamelTestSupport {
         Properties prop = new Properties();
         prop.setProperty("port", "" + getPort());
         jndi.bind("prop", prop);
-        
+
         if (isHttps()) {
             addSslContextParametersToRegistry(jndi);
         }
 
         return jndi;
     }
-    
+
     protected void addSslContextParametersToRegistry(JndiRegistry registry) {
         registry.bind("sslContextParameters", createSSLContextParameters());
     }
@@ -88,55 +88,52 @@ public abstract class BaseAhcTest extends CamelTestSupport {
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
         sslContextParameters.setServerParameters(scsp);
-        // use SSLv3 to avoid issue with (eg disable TLS)
-        // Caused by: javax.net.ssl.SSLException: bad record MAC
-        sslContextParameters.setSecureSocketProtocol("SSLv3");
 
         return sslContextParameters;
     }
-    
+
     /**
      * Indicates if the URIs returned from {@link #getTestServerEndpointUri()} and
      * {@link #getAhcEndpointUri()} should use the HTTPS protocol instead of
      * the HTTP protocol.
-     * 
+     *
      * If true, an {@link SSLContextParameters} is also placed in the registry under the
      * key {@code sslContextParameters}.  The parameters are not added to the endpoint URIs
      * as that is test specific.
-     * 
+     *
      * @return false by default
      */
     protected boolean isHttps() {
         return false;
     }
-    
+
     protected String getProtocol() {
         String protocol = "http";
         if (isHttps()) {
             protocol = protocol + "s";
         }
-        
+
         return protocol;
     }
-    
+
     protected String getTestServerEndpointUrl() {
         return getProtocol() + "://localhost:{{port}}/foo";
     }
-    
+
     protected String getTestServerEndpointUri() {
         return "jetty:" + getTestServerEndpointUrl();
     }
-    
+
     protected String getTestServerEndpointTwoUrl() {
         // Don't use the property placeholder here since we use the value outside of a
         // field that supports the placeholders.
         return getProtocol() + "://localhost:" + getPort() + "/bar";
     }
-    
+
     protected String getTestServerEndpointTwoUri() {
         return "jetty:" + getTestServerEndpointTwoUrl();
     }
-    
+
     protected String getAhcEndpointUri() {
         return "ahc:" + getProtocol() + "://localhost:{{port}}/foo";
     }

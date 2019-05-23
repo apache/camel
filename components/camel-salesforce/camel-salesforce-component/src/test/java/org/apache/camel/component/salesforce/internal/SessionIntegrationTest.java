@@ -39,7 +39,7 @@ public class SessionIntegrationTest extends Assert implements SalesforceSession.
     @Test
     public void testLogin() throws Exception {
 
-        final SslContextFactory sslContextFactory = new SslContextFactory();
+        final SslContextFactory sslContextFactory = new SslContextFactory.Client();
         sslContextFactory.setSslContext(new SSLContextParameters().createSSLContext(new DefaultCamelContext()));
         final SalesforceHttpClient httpClient = new SalesforceHttpClient(sslContextFactory);
         httpClient.setConnectTimeout(TIMEOUT);
