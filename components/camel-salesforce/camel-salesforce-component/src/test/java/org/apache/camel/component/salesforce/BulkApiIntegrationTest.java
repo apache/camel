@@ -40,7 +40,7 @@ public class BulkApiIntegrationTest extends AbstractBulkApiTestBase {
         final SalesforceComponent sf = context().getComponent("salesforce", SalesforceComponent.class);
         final String accessToken = sf.getSession().getAccessToken();
 
-        final SslContextFactory sslContextFactory = new SslContextFactory();
+        final SslContextFactory sslContextFactory = new SslContextFactory.Client();
         sslContextFactory.setSslContext(new SSLContextParameters().createSSLContext(context));
         final HttpClient httpClient = new HttpClient(sslContextFactory);
         httpClient.setConnectTimeout(60000);

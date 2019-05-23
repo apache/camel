@@ -164,7 +164,7 @@
         <couchbase-client-version>1.4.13</couchbase-client-version>
         <couchbase-client-bundle-version>1.4.13_1</couchbase-client-bundle-version>
         <curator-version>2.12.0</curator-version>
-        <cxf-version>3.3.1</cxf-version>
+        <cxf-version>3.3.2</cxf-version>
         <cxf-version-range>[3.1,4.0)</cxf-version-range>
         <cxf-codegen-plugin-version>3.3.1</cxf-codegen-plugin-version>
         <cxf-xjc-plugin-version>3.2.0</cxf-xjc-plugin-version>
@@ -373,8 +373,7 @@
         <jedis-client-version>2.9.0</jedis-client-version>
         <jedis-client-bundle-version>2.9.0_1</jedis-client-bundle-version>
         <jersey-version>2.28</jersey-version>
-        <jetty92-version>9.2.22.v20170606</jetty92-version>
-        <jetty9-version>9.4.15.v20190215</jetty9-version>
+        <jetty9-version>9.4.18.v20190429</jetty9-version>
         <jetty-version>${jetty9-version}</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>

@@ -91,6 +91,6 @@ public class HttpBridgeEncodedPathTest extends BaseJettyTest {
                 from("jetty:http://localhost:" + port3 + "?matchOnUriPrefix=true").to("mock:encodedPath");
             }
         };
-    }    
+    }
 
 }
