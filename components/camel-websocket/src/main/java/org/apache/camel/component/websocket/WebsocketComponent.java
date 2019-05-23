@@ -178,7 +178,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
 
                 // Create ServletContextHandler
                 ServletContextHandler context = createContext(server, connector, endpoint.getHandlers());
-                // setup the WebSocketComponentServlet initial parameters 
+                // setup the WebSocketComponentServlet initial parameters
                 setWebSocketComponentServletInitialParameter(context, endpoint);
                 server.setHandler(context);
 
@@ -191,7 +191,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
                 }
 
                 MemoryWebsocketStore memoryStore = new MemoryWebsocketStore();
-                
+
                 // Don't provide a Servlet object as Producer/Consumer will create them later on
                 connectorRef = new ConnectorRef(server, connector, null, memoryStore);
 
@@ -228,7 +228,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
                 WebsocketProducer producer = WebsocketProducer.class.cast(prodcon);
                 producer.setStore(connectorRef.memoryStore);
             }
-            
+
         }
     }
 
@@ -324,7 +324,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         setProperties(endpoint, parameters);
         return endpoint;
     }
-    
+
     protected void setWebSocketComponentServletInitialParameter(ServletContextHandler context, WebsocketEndpoint endpoint) {
         if (endpoint.getBufferSize() != null) {
             context.setInitParameter("bufferSize", endpoint.getBufferSize().toString());
@@ -502,7 +502,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
             sslContextFactory.setSslContext(sslContextParameters.createSSLContext(getCamelContext()));
             sslSocketConnector = new ServerConnector(server, sslContextFactory);
         } else {
-            SslContextFactory sslContextFactory = new SslContextFactory();
+            SslContextFactory sslContextFactory = new SslContextFactory.Server();
             sslContextFactory.setKeyStorePassword(sslKeyPassword);
             sslContextFactory.setKeyManagerPassword(sslPassword);
             if (sslKeystore != null) {
@@ -518,7 +518,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
      * Override the key/trust store check method as it does not account for a factory that has
      * a pre-configured {@link javax.net.ssl.SSLContext}.
      */
-    private static final class WebSocketComponentSslContextFactory extends SslContextFactory {
+    private static final class WebSocketComponentSslContextFactory extends SslContextFactory.Server {
         // This method is for Jetty 7.0.x ~ 7.4.x
         @SuppressWarnings("unused")
         public boolean checkConfig() {
