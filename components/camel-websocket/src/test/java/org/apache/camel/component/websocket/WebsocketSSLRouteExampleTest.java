@@ -17,7 +17,6 @@
 package org.apache.camel.component.websocket;
 
 import java.io.IOException;
-import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +48,6 @@ import org.junit.Test;
 
 public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
 
-    private static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
     private static List<String> received = new ArrayList<>();
     private static CountDownLatch latch = new CountDownLatch(10);
     protected Properties originalValues = new Properties();
@@ -62,14 +60,6 @@ public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
         port = AvailablePortFinder.getNextAvailable(16200);
 
         super.setUp();
-
-        URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
-        setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
-    }
-
-    protected void setSystemProp(String key, String value) {
-        String originalValue = System.setProperty(key, value);
-        originalValues.put(key, originalValue != null ? originalValue : NULL_VALUE_MARKER);
     }
 
     protected AsyncHttpClient createAsyncHttpSSLClient() throws IOException, GeneralSecurityException {
@@ -80,7 +70,17 @@ public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
         DefaultAsyncHttpClientConfig.Builder builder =
                 new DefaultAsyncHttpClientConfig.Builder();
 
-        SSLContext sslContext = new SSLContextParameters().createSSLContext(context());
+        SSLContextParameters sslContextParameters = new SSLContextParameters();
+
+        KeyStoreParameters truststoreParameters = new KeyStoreParameters();
+        truststoreParameters.setResource("jsse/localhost.ks");
+        truststoreParameters.setPassword(pwd);
+
+        TrustManagersParameters clientSSLTrustManagers = new TrustManagersParameters();
+        clientSSLTrustManagers.setKeyStore(truststoreParameters);
+        sslContextParameters.setTrustManagers(clientSSLTrustManagers);
+
+        SSLContext sslContext = sslContextParameters.createSSLContext(context());
         JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.REQUIRE);
         builder.setSslContext(ssl);
         builder.setAcceptAnyCertificate(true);
@@ -130,7 +130,7 @@ public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
                                 latch.countDown();
                             }
 
-                            
+
                             @Override
                             public void onOpen(WebSocket websocket) {
                             }

@@ -178,7 +178,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
 
                 // Create ServletContextHandler
                 ServletContextHandler context = createContext(server, connector, endpoint.getHandlers());
-                // setup the WebSocketComponentServlet initial parameters 
+                // setup the WebSocketComponentServlet initial parameters
                 setWebSocketComponentServletInitialParameter(context, endpoint);
                 server.setHandler(context);
 
@@ -191,7 +191,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
                 }
 
                 MemoryWebsocketStore memoryStore = new MemoryWebsocketStore();
-                
+
                 // Don't provide a Servlet object as Producer/Consumer will create them later on
                 connectorRef = new ConnectorRef(server, connector, null, memoryStore);
 
@@ -228,7 +228,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
                 WebsocketProducer producer = WebsocketProducer.class.cast(prodcon);
                 producer.setStore(connectorRef.memoryStore);
             }
-            
+
         }
     }
 
@@ -324,7 +324,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         setProperties(endpoint, parameters);
         return endpoint;
     }
-    
+
     protected void setWebSocketComponentServletInitialParameter(ServletContextHandler context, WebsocketEndpoint endpoint) {
         if (endpoint.getBufferSize() != null) {
             context.setInitParameter("bufferSize", endpoint.getBufferSize().toString());
@@ -499,10 +499,12 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         ServerConnector sslSocketConnector = null;
         if (sslContextParameters != null) {
             SslContextFactory sslContextFactory = new WebSocketComponentSslContextFactory();
+            sslContextFactory.setEndpointIdentificationAlgorithm(null);
             sslContextFactory.setSslContext(sslContextParameters.createSSLContext(getCamelContext()));
             sslSocketConnector = new ServerConnector(server, sslContextFactory);
         } else {
             SslContextFactory sslContextFactory = new SslContextFactory();
+            sslContextFactory.setEndpointIdentificationAlgorithm(null);
             sslContextFactory.setKeyStorePassword(sslKeyPassword);
             sslContextFactory.setKeyManagerPassword(sslPassword);
             if (sslKeystore != null) {
