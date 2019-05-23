@@ -1,3 +1,6 @@
+// this file is auto generated and changes to it will be overwritten
+// make edits in docs/*nav.adoc.template files instead
+
 * xref:activemq-component.adoc[ActiveMQ Component]
 * xref:ahc-ws-component.adoc[AHC Websocket Component]
 * xref:ahc-component.adoc[AHC Component]

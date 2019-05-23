@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const { dest, series, src, symlink } = require('gulp');
+const { dest, series, parallel, src, symlink } = require('gulp');
 const del = require('del');
 const inject = require('gulp-inject');
 const map = require('map-stream')
@@ -22,11 +22,11 @@ const path = require('path');
 const rename = require('gulp-rename');
 const sort = require('gulp-sort');
 
-function deleteSymlinks() {
+function deleteComponentSymlinks() {
     return del(['components/modules/ROOT/pages/*', '!components/modules/ROOT/pages/index.adoc']);
 }
 
-function createSymlinks() {
+function createComponentSymlinks() {
     return src('../components/*/src/main/docs/*.adoc')
         .pipe(map((file, done) => {
             // this flattens the output to just .../pages/....adoc
@@ -46,25 +46,87 @@ function createSymlinks() {
         .pipe(dest('components/modules/ROOT/pages/'));
 }
 
-function nav() {
-    return src('nav.adoc.template')
+function deleteUserManualSymlinks() {
+    return del(['user-manual/modules/ROOT/pages/*-eip.adoc', 'user-manual/modules/ROOT/pages/*-language.adoc']);
+}
+
+function createUserManualSymlinks() {
+    return src(['../core/camel-base/src/main/docs/*.adoc', '../core/camel-core/src/main/docs/eips/*.adoc'])
+        // Antora disabled symlinks, there is an issue open
+        // https://gitlab.com/antora/antora/issues/188
+        // to reinstate symlink support, until that's resolved
+        // we'll simply copy over instead of creating symlinks
+        // .pipe(symlink('user-manual/modules/ROOT/pages/', {
+        //     relativeSymlinks: true
+        // }));
+        // uncomment above .pipe() and remove the .pipe() below
+        // when antora#188 is resolved
+        .pipe(dest('user-manual/modules/ROOT/pages/'));
+}
+
+function titleFrom(file) {
+    const maybeName = /(?:==|##) (.*)/.exec(file.contents.toString())
+    if (maybeName == null) {
+        throw new Error(`${file.path} doesn't contain Asciidoc heading ('== <Title>') or ('## <Title')`);
+    }
+
+    return maybeName[1];
+}
+
+function insertGeneratedNotice() {
+    return inject(src('./generated.txt'), {
+               name: 'generated',
+               removeTags: true,
+               transform: (filename, file) => {
+                   return file.contents.toString('utf8');
+               }
+           });
+}
+
+function createComponentNav() {
+    return src('component-nav.adoc.template')
+        .pipe(insertGeneratedNotice())
         .pipe(inject(src('../components/*/src/main/docs/*.adoc').pipe(sort()), {
             removeTags: true,
             transform: (filename, file) => {
                 const filepath = path.basename(filename);
-                const maybeName = /(?:==|##) (.*)/.exec(file.contents.toString())
-                if (maybeName == null) {
-                    throw new Error(`${file.path} doesn't contain Asciidoc heading ('== <Title>') or ('## <Title')`);
-                }
-                return `* xref:${filepath}[${maybeName[1]}]`;
+                const title = titleFrom(file);
+                return `* xref:${filepath}[${title}]`;
             }
         }))
         .pipe(rename('nav.adoc'))
         .pipe(dest('components/modules/ROOT/'))
 }
 
-const symlinks = series(deleteSymlinks, createSymlinks);
+function createUserManualNav() {
+    return src('user-manual-nav.adoc.template')
+        .pipe(insertGeneratedNotice())
+        .pipe(inject(src('../core/camel-base/src/main/docs/*-language.adoc').pipe(sort()), {
+            removeTags: true,
+            name: 'languages',
+            transform: (filename, file) => {
+                const filepath = path.basename(filename);
+                const title = titleFrom(file);
+                return ` ** xref:${filepath}[${title}]`;
+            }
+        }))
+        .pipe(inject(src('../core/camel-core/src/main/docs/eips/*.adoc').pipe(sort()), {
+            removeTags: true,
+            name: 'eips',
+            transform: (filename, file) => {
+                const filepath = path.basename(filename);
+                const title = titleFrom(file);
+                return ` ** xref:${filepath}[${title}]`;
+            }
+        }))
+        .pipe(rename('nav.adoc'))
+        .pipe(dest('user-manual/modules/ROOT/'))
+}
+
+const symlinks = parallel(series(deleteComponentSymlinks, createComponentSymlinks), series(deleteUserManualSymlinks, createUserManualSymlinks));
+const nav = parallel(createComponentNav, createUserManualNav);
 
 exports.symlinks = symlinks;
 exports.nav = nav;
 exports.default = series(symlinks, nav);
+
