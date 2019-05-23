@@ -167,6 +167,8 @@ public final class PropertyBindingSupport {
 
         boolean hit = false;
 
+        // TODO: add support for nesting but not for inherited properties from base classes (eg CamelContext etc)
+
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
