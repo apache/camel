@@ -26,11 +26,6 @@ import org.junit.Test;
  */
 public class FtpProducerRawPasswordTest extends FtpServerTestSupport {
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     private String getFtpUrl() {
         // START SNIPPET: e1
         // notice how we use RAW(value) to tell Camel that the password field is a RAW value and should not be

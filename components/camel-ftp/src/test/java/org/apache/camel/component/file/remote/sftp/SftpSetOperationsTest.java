@@ -24,11 +24,6 @@ import org.junit.Test;
 
 public class SftpSetOperationsTest extends SftpServerTestSupport {
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testSftpSetOperations() throws Exception {
         if (!canTest()) {

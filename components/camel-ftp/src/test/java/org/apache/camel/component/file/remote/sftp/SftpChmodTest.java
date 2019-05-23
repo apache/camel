@@ -23,11 +23,6 @@ import org.junit.Test;
 
 public class SftpChmodTest extends SftpServerTestSupport {
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testSftpChmod() throws Exception {
         if (!canTest()) {

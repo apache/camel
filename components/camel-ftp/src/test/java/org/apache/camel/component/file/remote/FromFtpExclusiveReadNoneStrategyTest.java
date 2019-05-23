@@ -40,11 +40,6 @@ public class FromFtpExclusiveReadNoneStrategyTest extends FtpServerTestSupport {
                 + "&readLock=none&consumer.delay=500";
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testPollFileWhileSlowFileIsBeingWrittenUsingNonExclusiveRead() throws Exception {
         // cannot test on windows due file system works differently with file locks

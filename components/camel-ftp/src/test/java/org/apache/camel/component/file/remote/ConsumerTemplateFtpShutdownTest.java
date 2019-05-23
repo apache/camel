@@ -39,9 +39,4 @@ public class ConsumerTemplateFtpShutdownTest extends FtpServerTestSupport {
         consumer.stop();
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
 }

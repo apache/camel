@@ -27,11 +27,6 @@ import org.junit.Test;
  */
 public class FtpPollingConsumerTest extends FtpServerTestSupport {
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/polling?password=admin";
     }

@@ -28,11 +28,6 @@ public class SftpProducerFileWithPathTest extends SftpServerTestSupport {
         return "sftp://admin@localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?password=admin";
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testProducerFileWithPath() throws Exception {
         if (!canTest()) {

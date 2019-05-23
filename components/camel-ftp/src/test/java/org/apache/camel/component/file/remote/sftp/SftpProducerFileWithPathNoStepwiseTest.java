@@ -28,11 +28,6 @@ public class SftpProducerFileWithPathNoStepwiseTest extends SftpServerTestSuppor
         return "sftp://admin@localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?password=admin&stepwise=false";
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testProducerFileWithPathNoStepwise() throws Exception {
         if (!canTest()) {

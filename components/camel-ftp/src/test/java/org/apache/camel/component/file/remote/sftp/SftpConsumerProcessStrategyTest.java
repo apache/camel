@@ -29,11 +29,6 @@ public class SftpConsumerProcessStrategyTest extends SftpServerTestSupport {
     private MyStrategy myStrategy;
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
-    @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         myStrategy = new MyStrategy();

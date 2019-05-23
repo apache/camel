@@ -32,11 +32,6 @@ public class RecipientListErrorHandlingIssueTest extends FtpServerTestSupport {
         return "ftp://admin@localhost:" + getPort() + "/recipientlist?password=denied";
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testUsingInterceptor() throws Exception {
         context.addRoutes(new RouteBuilder() {

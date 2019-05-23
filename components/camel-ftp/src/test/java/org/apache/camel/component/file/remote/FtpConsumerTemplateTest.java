@@ -37,11 +37,6 @@ public class FtpConsumerTemplateTest extends FtpServerTestSupport {
         prepareFtpServer();
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testConsumerTemplate() throws Exception {
         Exchange exchange = consumer.receive(getFtpUrl(), 5000);

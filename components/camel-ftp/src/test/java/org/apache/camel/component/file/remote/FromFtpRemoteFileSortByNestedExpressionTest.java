@@ -37,11 +37,6 @@ public class FromFtpRemoteFileSortByNestedExpressionTest extends FtpServerTestSu
         prepareFtpServer();
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testSortFiles() throws Exception {
         context.addRoutes(new RouteBuilder() {
