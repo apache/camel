@@ -57,9 +57,6 @@ public final class PropertyBindingSupport {
         private boolean placeholder = true;
         private boolean fluentBuilder = true;
 
-        private Object target;
-        private Map<String, Object> properties;
-
         public Builder withNesting(boolean nesting) {
             this.nesting = nesting;
             return this;
@@ -80,17 +77,7 @@ public final class PropertyBindingSupport {
             return this;
         }
 
-        public Builder withTarget(Object target) {
-            this.target = target;
-            return this;
-        }
-
-        public Builder withProperties(Map<String, Object> properties) {
-            this.properties = properties;
-            return this;
-        }
-
-        public boolean bind(CamelContext camelContext) {
+        public boolean bind(CamelContext camelContext, Object target, Map<String, Object> properties) {
             org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
             org.apache.camel.util.ObjectHelper.notNull(target, "target");
             org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
