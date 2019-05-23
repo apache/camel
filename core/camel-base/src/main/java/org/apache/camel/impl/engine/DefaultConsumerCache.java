@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.concurrent.RejectedExecutionException;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -26,8 +28,6 @@ import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
-
-import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Cache containing created {@link org.apache.camel.Consumer}.
