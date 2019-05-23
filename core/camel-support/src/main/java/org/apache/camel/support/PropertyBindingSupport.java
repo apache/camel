@@ -140,10 +140,8 @@ public final class PropertyBindingSupport {
                 Object prop = getOrElseProperty(newTarget, part, null);
                 if (prop == null) {
                     // okay is there a setter so we can create a new instance and set it automatic
-                    Set<Method> newSetters = findSetterMethods(newClass, part, true);
-                    // TODO: you may have setter + fluent builder at the same time, so grab setter first, and fallback to fluent builder afterwards
-                    if (newSetters.size() == 1) {
-                        Method method = newSetters.iterator().next();
+                    Method method = findBestSetterMethod(newClass, part);
+                    if (method != null) {
                         Class<?> parameterType = method.getParameterTypes()[0];
                         if (parameterType != null && org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor(parameterType)) {
                             Object instance = context.getInjector().newInstance(parameterType);
@@ -184,10 +182,8 @@ public final class PropertyBindingSupport {
                 }
             } else if (value.toString().equals("#autowire")) {
                 // we should get the type from the setter
-                // TODO: you may have setter + fluent builder at the same time, so grab setter first, and fallback to fluent builder afterwards
-                Set<Method> newSetters = findSetterMethods(target.getClass(), name, true);
-                if (newSetters.size() == 1) {
-                    Method method = newSetters.iterator().next();
+                Method method = findBestSetterMethod(target.getClass(), name);
+                if (method != null) {
                     Class<?> parameterType = method.getParameterTypes()[0];
                     if (parameterType != null) {
                         Set<?> types = context.getRegistry().findByType(parameterType);
@@ -208,6 +204,22 @@ public final class PropertyBindingSupport {
         }
 
         return IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, value, refName, true);
+    }
+
+    private static Method findBestSetterMethod(Class clazz, String name) {
+        // is there a direct setter?
+        Set<Method> candidates = findSetterMethods(clazz, name, false);
+        if (candidates.size() == 1) {
+            return candidates.iterator().next();
+        }
+
+        // okay now try with builder pattern
+        candidates = findSetterMethods(clazz, name, true);
+        if (candidates.size() == 1) {
+            return candidates.iterator().next();
+        }
+
+        return null;
     }
 
 }
