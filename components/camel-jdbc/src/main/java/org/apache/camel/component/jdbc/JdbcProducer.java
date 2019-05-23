@@ -37,6 +37,7 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.IntrospectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 
 /**
  * @version
@@ -112,7 +113,7 @@ public class JdbcProducer extends DefaultProducer {
             conn = DataSourceUtils.getConnection(dataSource);
             shouldCloseResources = createAndExecuteSqlStatement(exchange, sql, conn);
         } finally {
-            if (shouldCloseResources && !DataSourceUtils.isConnectionTransactional(conn, dataSource) {
+            if (shouldCloseResources && !DataSourceUtils.isConnectionTransactional(conn, dataSource)) {
                 closeQuietly(conn);
             }
         }
