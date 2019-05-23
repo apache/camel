@@ -16,7 +16,7 @@
  */
 package org.apache.camel.support;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -417,13 +417,13 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         scheduler.onInit(this);
 
         // configure scheduler with options from this consumer
-        Map<String, Object> properties = new HashMap<>();
+        Map<String, Object> properties = new LinkedHashMap<>();
         IntrospectionSupport.getProperties(this, properties, null);
-        IntrospectionSupport.setProperties(getEndpoint().getCamelContext().getTypeConverter(), scheduler, properties);
+        PropertyBindingSupport.bindProperties(getEndpoint().getCamelContext(), scheduler, properties);
         if (schedulerProperties != null && !schedulerProperties.isEmpty()) {
             // need to use a copy in case the consumer is restarted so we keep the properties
-            Map<String, Object> copy = new HashMap<>(schedulerProperties);
-            IntrospectionSupport.setProperties(getEndpoint().getCamelContext().getTypeConverter(), scheduler, copy);
+            Map<String, Object> copy = new LinkedHashMap<>(schedulerProperties);
+            PropertyBindingSupport.bindProperties(getEndpoint().getCamelContext(), scheduler, copy);
             if (copy.size() > 0) {
                 throw new FailedToCreateConsumerException(getEndpoint(), "There are " + copy.size()
                         + " scheduler parameters that couldn't be set on the endpoint."

@@ -33,6 +33,7 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -644,9 +645,12 @@ public final class ProcessorDefinitionHelper {
             @Override
             public void run() {
                 try {
-                    IntrospectionSupport.setProperties(context, null, target, properties);
+                    // do not use property placeholders as we want to preserve the text as-is when we restore
+                    PropertyBindingSupport.build()
+                            .withPlaceholder(false).withNesting(false).withReference(false).withTarget(target).withProperties(properties)
+                            .bind(context);
                 } catch (Exception e) {
-                    LOG.warn("Could not restore definition properties", e);
+                    LOG.warn("Cannot restore definition properties. This exception is ignored.", e);
                 }
             }
         });

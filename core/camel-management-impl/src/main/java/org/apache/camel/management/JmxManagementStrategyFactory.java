@@ -23,6 +23,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ManagementStrategyFactory;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 
 /**
  * Factory for creating JMX {@link ManagementStrategy}.
@@ -32,7 +33,7 @@ public class JmxManagementStrategyFactory implements ManagementStrategyFactory {
     public ManagementStrategy create(CamelContext context, Map<String, Object> options) throws Exception {
         DefaultManagementAgent agent = new DefaultManagementAgent(context);
         if (options != null) {
-            IntrospectionSupport.setProperties(agent, options);
+            PropertyBindingSupport.bindProperties(context, agent, options);
         }
 
         return new JmxManagementStrategy(context, agent);

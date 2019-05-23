@@ -43,6 +43,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 
 @Metadata(label = "routing,cloud")
 @XmlRootElement(name = "serviceExpression")
@@ -267,7 +268,7 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
 
                     postProcessFactoryParameters(camelContext, parameters);
 
-                    IntrospectionSupport.setProperties(factory, parameters);
+                    PropertyBindingSupport.bindProperties(camelContext, factory, parameters);
 
                     answer = factory.newInstance(camelContext);
                 } catch (Exception e) {

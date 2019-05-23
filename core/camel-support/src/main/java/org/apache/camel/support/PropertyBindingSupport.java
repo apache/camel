@@ -43,9 +43,63 @@ import static org.apache.camel.support.IntrospectionSupport.getOrElseProperty;
  */
 public final class PropertyBindingSupport {
 
+    public static class Builder {
+
+        private boolean nesting = true;
+        private boolean reference = true;
+        private boolean placeholder = true;
+        private boolean fluentBuilder = true;
+
+        private Object target;
+        private Map<String, Object> properties;
+
+        public Builder withNesting(boolean nesting) {
+            this.nesting = nesting;
+            return this;
+        }
+
+        public Builder withReference(boolean reference) {
+            this.reference = reference;
+            return this;
+        }
+
+        public Builder withPlaceholder(boolean placeholder) {
+            this.placeholder = placeholder;
+            return this;
+        }
+
+        public Builder withFluentBuilder(boolean fluentBuilder) {
+            this.fluentBuilder = fluentBuilder;
+            return this;
+        }
+
+        public Builder withTarget(Object target) {
+            this.target = target;
+            return this;
+        }
+
+        public Builder withProperties(Map<String, Object> properties) {
+            this.properties = properties;
+            return this;
+        }
+
+        public boolean bind(CamelContext camelContext) {
+            org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
+            org.apache.camel.util.ObjectHelper.notNull(target, "target");
+            org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
+
+            return bindProperties(camelContext, target, properties, nesting, fluentBuilder, reference, placeholder);
+        }
+
+    }
+
     // TODO: Add support for Map/List
 
     private PropertyBindingSupport() {
+    }
+
+    public static Builder build() {
+        return new Builder();
     }
 
     @FunctionalInterface
@@ -141,20 +195,38 @@ public final class PropertyBindingSupport {
      * @return              true if one or more properties was bound
      */
     public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties) {
+        return bindProperties(camelContext, target, properties, true, true, true, true);
+   }
+
+    /**
+     * Binds the properties to the target object, and removes the property that was bound from properties.
+     *
+     * @param camelContext  the camel context
+     * @param target        the target object
+     * @param properties    the properties where the bound properties will be removed from
+     * @param nesting       whether nesting is in use
+     * @param fluentBuilder whether fluent builder is allowed as a valid getter/setter
+     * @param reference     whether reference parameter (syntax starts with #) is in use
+     * @param placeholder   whether to use Camels property placeholder to resolve placeholders on keys and values
+     * @return              true if one or more properties was bound
+     */
+    public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties,
+                                         boolean nesting, boolean fluentBuilder, boolean reference, boolean placeholder) {
+        org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
         org.apache.camel.util.ObjectHelper.notNull(target, "target");
         org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
         boolean rc = false;
 
         for (Iterator<Map.Entry<String, Object>> iter = properties.entrySet().iterator(); iter.hasNext();) {
             Map.Entry<String, Object> entry = iter.next();
-            if (bindProperty(camelContext, target, entry.getKey(), entry.getValue())) {
+            if (bindProperty(camelContext, target, entry.getKey(), entry.getValue(), nesting, fluentBuilder, reference, placeholder)) {
                 iter.remove();
                 rc = true;
             }
         }
 
         return rc;
-   }
+    }
 
     /**
      * Binds the property to the target object.
@@ -168,7 +240,20 @@ public final class PropertyBindingSupport {
     public static boolean bindProperty(CamelContext camelContext, Object target, String name, Object value) {
         try {
             if (target != null && name != null) {
-                return setProperty(camelContext, target, name, value);
+                return setProperty(camelContext, target, name, value, true, true, true, true);
+            }
+        } catch (Exception e) {
+            throw new PropertyBindingException(target, name, e);
+        }
+
+        return false;
+    }
+
+    private static boolean bindProperty(CamelContext camelContext, Object target, String name, Object value,
+                                boolean nesting, boolean fluentBuilder, boolean reference, boolean placeholder) {
+        try {
+            if (target != null && name != null) {
+                return setProperty(camelContext, target, name, value, nesting, fluentBuilder, reference, placeholder);
             }
         } catch (Exception e) {
             throw new PropertyBindingException(target, name, e);
@@ -188,7 +273,7 @@ public final class PropertyBindingSupport {
     public static void bindMandatoryProperty(CamelContext camelContext, Object target, String name, Object value) {
         try {
             if (target != null && name != null) {
-                boolean bound = setProperty(camelContext, target, name, value);
+                boolean bound = setProperty(camelContext, target, name, value, true, true, true, true);
                 if (!bound) {
                     throw new PropertyBindingException(target, name);
                 }
@@ -198,50 +283,55 @@ public final class PropertyBindingSupport {
         }
     }
 
-    private static boolean setProperty(CamelContext context, Object target, String name, Object value) throws Exception {
+    private static boolean setProperty(CamelContext context, Object target, String name, Object value,
+                                       boolean nesting, boolean fluentBuilder, boolean reference, boolean placeholder) throws Exception {
         String refName = null;
 
-        // resolve property placeholders
-        name = context.resolvePropertyPlaceholders(name);
-        if (value instanceof String) {
+        if (placeholder) {
             // resolve property placeholders
-            value = context.resolvePropertyPlaceholders(value.toString());
+            name = context.resolvePropertyPlaceholders(name);
+            if (value instanceof String) {
+                // resolve property placeholders
+                value = context.resolvePropertyPlaceholders(value.toString());
+            }
         }
 
         // if name has dot then we need to OGNL walk it
-        if (name.indexOf('.') > 0) {
-            String[] parts = name.split("\\.");
-            Object newTarget = target;
-            Class<?> newClass = target.getClass();
-            // we should only iterate until until 2nd last so we use -1 in the for loop
-            for (int i = 0; i < parts.length - 1; i++) {
-                String part = parts[i];
-                Object prop = getOrElseProperty(newTarget, part, null);
-                if (prop == null) {
-                    // okay is there a setter so we can create a new instance and set it automatic
-                    Method method = findBestSetterMethod(newClass, part);
-                    if (method != null) {
-                        Class<?> parameterType = method.getParameterTypes()[0];
-                        if (parameterType != null && org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor(parameterType)) {
-                            Object instance = context.getInjector().newInstance(parameterType);
-                            if (instance != null) {
-                                org.apache.camel.support.ObjectHelper.invokeMethod(method, newTarget, instance);
-                                newTarget = instance;
-                                newClass = newTarget.getClass();
+        if (nesting) {
+            if (name.indexOf('.') > 0) {
+                String[] parts = name.split("\\.");
+                Object newTarget = target;
+                Class<?> newClass = target.getClass();
+                // we should only iterate until until 2nd last so we use -1 in the for loop
+                for (int i = 0; i < parts.length - 1; i++) {
+                    String part = parts[i];
+                    Object prop = getOrElseProperty(newTarget, part, null);
+                    if (prop == null) {
+                        // okay is there a setter so we can create a new instance and set it automatic
+                        Method method = findBestSetterMethod(newClass, part, fluentBuilder);
+                        if (method != null) {
+                            Class<?> parameterType = method.getParameterTypes()[0];
+                            if (parameterType != null && org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor(parameterType)) {
+                                Object instance = context.getInjector().newInstance(parameterType);
+                                if (instance != null) {
+                                    org.apache.camel.support.ObjectHelper.invokeMethod(method, newTarget, instance);
+                                    newTarget = instance;
+                                    newClass = newTarget.getClass();
+                                }
                             }
                         }
+                    } else {
+                        newTarget = prop;
+                        newClass = newTarget.getClass();
                     }
-                } else {
-                    newTarget = prop;
-                    newClass = newTarget.getClass();
                 }
+                // okay we found a nested property, then lets change to use that
+                target = newTarget;
+                name = parts[parts.length - 1];
             }
-            // okay we found a nested property, then lets change to use that
-            target = newTarget;
-            name = parts[parts.length - 1];
         }
 
-        if (value instanceof String) {
+        if (reference && value instanceof String) {
             if (value.toString().startsWith("#class:")) {
                 // its a new class to be created
                 String className = value.toString().substring(6);
@@ -261,7 +351,7 @@ public final class PropertyBindingSupport {
                 }
             } else if (value.toString().equals("#autowire")) {
                 // we should get the type from the setter
-                Method method = findBestSetterMethod(target.getClass(), name);
+                Method method = findBestSetterMethod(target.getClass(), name, fluentBuilder);
                 if (method != null) {
                     Class<?> parameterType = method.getParameterTypes()[0];
                     if (parameterType != null) {
@@ -282,10 +372,10 @@ public final class PropertyBindingSupport {
             }
         }
 
-        return IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, value, refName, true);
+        return IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, value, refName, fluentBuilder);
     }
 
-    private static Method findBestSetterMethod(Class clazz, String name) {
+    private static Method findBestSetterMethod(Class clazz, String name, boolean fluentBuilder) {
         // is there a direct setter?
         Set<Method> candidates = findSetterMethods(clazz, name, false);
         if (candidates.size() == 1) {
@@ -293,9 +383,11 @@ public final class PropertyBindingSupport {
         }
 
         // okay now try with builder pattern
-        candidates = findSetterMethods(clazz, name, true);
-        if (candidates.size() == 1) {
-            return candidates.iterator().next();
+        if (fluentBuilder) {
+            candidates = findSetterMethods(clazz, name, true);
+            if (candidates.size() == 1) {
+                return candidates.iterator().next();
+            }
         }
 
         return null;
