@@ -91,11 +91,6 @@ public class CMISConsumerTest extends CMISTestSupport {
     }
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
-    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
