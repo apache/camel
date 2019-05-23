@@ -195,9 +195,14 @@ public final class IntrospectionSupport {
         Class<?> type = method.getReturnType();
         int parameterCount = method.getParameterCount();
 
-        // is it a getXXX method
-        if (name.startsWith("set") && name.length() >= 4 && Character.isUpperCase(name.charAt(3))) {
-            return parameterCount == 1 && (type.equals(Void.TYPE) || (allowBuilderPattern && method.getDeclaringClass().isAssignableFrom(type)));
+        // is it a setXXX method
+        boolean validName = name.startsWith("set") && name.length() >= 4 && Character.isUpperCase(name.charAt(3));
+        if (validName) {
+            return parameterCount == 1 && type.equals(Void.TYPE);
+        }
+        // or if its a builder method
+        if (allowBuilderPattern && parameterCount == 1 && method.getDeclaringClass().isAssignableFrom(type)) {
+            return true;
         }
 
         return false;
@@ -680,15 +685,19 @@ public final class IntrospectionSupport {
     public static Set<Method> findSetterMethods(Class<?> clazz, String name, boolean allowBuilderPattern) {
         Set<Method> candidates = new LinkedHashSet<>();
 
-        // Build the method name.
-        name = "set" + StringHelper.capitalize(name, true);
+        // Build the method name
+        String builderName = "with" + StringHelper.capitalize(name, true);
+        String builderName2 = StringHelper.capitalize(name, true);
+        builderName2 = Character.toLowerCase(builderName2.charAt(0)) + builderName2.substring(1);
+        String setName = "set" + StringHelper.capitalize(name, true);
         while (clazz != Object.class) {
             // Since Object.class.isInstance all the objects,
             // here we just make sure it will be add to the bottom of the set.
             Method objectSetMethod = null;
             Method[] methods = clazz.getMethods();
             for (Method method : methods) {
-                if (method.getName().equals(name) && isSetter(method, allowBuilderPattern)) {
+                boolean validName = method.getName().equals(setName) || allowBuilderPattern && method.getName().equals(builderName) || allowBuilderPattern && method.getName().equals(builderName2);
+                if (validName && isSetter(method, allowBuilderPattern)) {
                     Class<?>[] params = method.getParameterTypes();
                     if (params[0].equals(Object.class)) {
                         objectSetMethod = method;

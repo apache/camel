@@ -134,7 +134,95 @@ public class IntrospectionSupportTest extends ContextTestSupport {
             return this;
         }
     }
-    
+
+    @Test
+    public void testBuilderPatternWith() throws Exception {
+        MyBuilderPatternWithBean builderBean = new MyBuilderPatternWithBean();
+        IntrospectionSupport.setProperty(context.getTypeConverter(), builderBean, "name", "Donald");
+        IntrospectionSupport.setProperty(context.getTypeConverter(), builderBean, "age", "33");
+        IntrospectionSupport.setProperty(context.getTypeConverter(), builderBean, "gold-customer", "true");
+        assertEquals("Donald", builderBean.getName());
+        assertEquals(33, builderBean.getAge());
+        assertTrue(builderBean.isGoldCustomer());
+    }
+
+    public class MyBuilderPatternWithBean {
+        private String name;
+        private int age;
+        private boolean goldCustomer;
+
+        public MyBuilderPatternWithBean withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public MyBuilderPatternWithBean withAge(int age) {
+            this.age = age;
+            return this;
+        }
+
+        public MyBuilderPatternWithBean withGoldCustomer(boolean goldCustomer) {
+            this.goldCustomer = goldCustomer;
+            return this;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getAge() {
+            return age;
+        }
+
+        public boolean isGoldCustomer() {
+            return goldCustomer;
+        }
+    }
+
+    @Test
+    public void testBuilderPattern() throws Exception {
+        MyBuilderPatternBean builderBean = new MyBuilderPatternBean();
+        IntrospectionSupport.setProperty(context.getTypeConverter(), builderBean, "name", "Goofy");
+        IntrospectionSupport.setProperty(context.getTypeConverter(), builderBean, "age", "34");
+        IntrospectionSupport.setProperty(context.getTypeConverter(), builderBean, "gold-customer", "true");
+        assertEquals("Goofy", builderBean.getName());
+        assertEquals(34, builderBean.getAge());
+        assertTrue(builderBean.isGoldCustomer());
+    }
+
+    public class MyBuilderPatternBean {
+        private String name;
+        private int age;
+        private boolean goldCustomer;
+
+        public MyBuilderPatternBean name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public MyBuilderPatternBean age(int age) {
+            this.age = age;
+            return this;
+        }
+
+        public MyBuilderPatternBean goldCustomer(boolean goldCustomer) {
+            this.goldCustomer = goldCustomer;
+            return this;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getAge() {
+            return age;
+        }
+
+        public boolean isGoldCustomer() {
+            return goldCustomer;
+        }
+    }
+
     @Test
     public void testIsSetterBuilderPatternSupport() throws Exception {
         Method setter = MyBuilderBean.class.getMethod("setName", String.class);
