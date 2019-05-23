@@ -1246,6 +1246,7 @@
   </feature>
   <feature name='camel-jdbc' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
+    <feature version='${spring-version-range}'>spring-jdbc</feature>
     <bundle>mvn:org.apache.camel/camel-jdbc/${project.version}</bundle>
   </feature>
   <feature name='camel-jetty9' version='${project.version}' resolver='(obr)' start-level='50'>
