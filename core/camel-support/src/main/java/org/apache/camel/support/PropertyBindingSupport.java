@@ -34,16 +34,31 @@ import static org.apache.camel.support.IntrospectionSupport.getOrElseProperty;
  *     <li>nested - Properties can be nested using the dot syntax (OGNL and builder pattern using with as prefix), eg foo.bar=123</li>
  *     <li>reference by id - Values can refer to other beans in the registry by prefixing with #id: or # syntax, eg #id:myBean or #myBean</li>
  *     <li>reference by type - Values can refer to singleton beans by their type in the registry by prefixing with #type: syntax, eg #type:com.foo.MyClassType</li>
+ *     <li>autowire by type - Values can refer to singleton beans by auto wiring by setting the value to #autowire</li>
  *     <li>new class - Values can refer to creating new beans by their class name syntax, eg class:com.foo.MyClassType</li>
  * </ul>
  * This implementations reuses parts of {@link IntrospectionSupport}.
  */
 public final class PropertyBindingSupport {
 
-    // TODO: Add support for auto binding to singleton instance by type from registry (boolean on|off)
     // TODO: Add support for Map/List
 
     private PropertyBindingSupport() {
+    }
+
+    /**
+     * This will discover all the properties on the target, and automatic bind the properties that are null by
+     * looking up in the registry to see if there is a single instance of the same type as the property.
+     * This is used for convention over configuration to automatic configure resources such as DataSource, Amazon Logins and
+     * so on.
+     *
+     * @param camelContext  the camel context
+     * @param target        the target object
+     * @return              true if one ore more properties was auto wired
+     */
+    public static boolean autowireSingletonPropertiesFromRegistry(CamelContext camelContext, Object target) {
+        // TODO: implement me
+        return false;
     }
 
     /**
@@ -105,7 +120,6 @@ public final class PropertyBindingSupport {
     }
 
     private static boolean setProperty(CamelContext context, Object target, String name, Object value) throws Exception {
-        Class<?> clazz = target.getClass();
         String refName = null;
 
         // resolve property placeholders
@@ -119,7 +133,7 @@ public final class PropertyBindingSupport {
         if (name.indexOf('.') > 0) {
             String[] parts = name.split("\\.");
             Object newTarget = target;
-            Class<?> newClass = clazz;
+            Class<?> newClass = target.getClass();
             // we should only iterate until until 2nd last so we use -1 in the for loop
             for (int i = 0; i < parts.length - 1; i++) {
                 String part = parts[i];
@@ -127,6 +141,7 @@ public final class PropertyBindingSupport {
                 if (prop == null) {
                     // okay is there a setter so we can create a new instance and set it automatic
                     Set<Method> newSetters = findSetterMethods(newClass, part, true);
+                    // TODO: you may have setter + fluent builder at the same time, so grab setter first, and fallback to fluent builder afterwards
                     if (newSetters.size() == 1) {
                         Method method = newSetters.iterator().next();
                         Class<?> parameterType = method.getParameterTypes()[0];
@@ -165,6 +180,20 @@ public final class PropertyBindingSupport {
                     Set<?> types = context.getRegistry().findByType(type);
                     if (types.size() == 1) {
                         value = types.iterator().next();
+                    }
+                }
+            } else if (value.toString().equals("#autowire")) {
+                // we should get the type from the setter
+                // TODO: you may have setter + fluent builder at the same time, so grab setter first, and fallback to fluent builder afterwards
+                Set<Method> newSetters = findSetterMethods(target.getClass(), name, true);
+                if (newSetters.size() == 1) {
+                    Method method = newSetters.iterator().next();
+                    Class<?> parameterType = method.getParameterTypes()[0];
+                    if (parameterType != null) {
+                        Set<?> types = context.getRegistry().findByType(parameterType);
+                        if (types.size() == 1) {
+                            value = types.iterator().next();
+                        }
                     }
                 }
             } else if (value.toString().startsWith("#id:")) {
