@@ -22,6 +22,7 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.PropertyBindingException;
 import org.junit.Test;
 
 /**
@@ -140,6 +141,24 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         // a new class was created so its empty
         assertEquals(0, foo.getBar().getWork().getId());
         assertEquals(null, foo.getBar().getWork().getName());
+    }
+
+    @Test
+    public void testMandatory() throws Exception {
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.bindMandatoryProperty(context, foo, "name", "James");
+
+        boolean bound = PropertyBindingSupport.bindProperty(context, foo, "bar.myAge", "33");
+        assertFalse(bound);
+
+        try {
+            PropertyBindingSupport.bindMandatoryProperty(context, foo, "bar.myAge", "33");
+            fail("Should have thrown exception");
+        } catch (PropertyBindingException e) {
+            assertEquals("bar.myAge", e.getPropertyName());
+            assertSame(foo, e.getTarget());
+        }
     }
 
     public static class Foo {
