@@ -16,17 +16,17 @@
  */
 package org.apache.camel.component.xslt;
 
+import java.util.ArrayList;
+import java.util.Set;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import java.util.ArrayList;
-import java.util.Set;
 
 /**
  *
