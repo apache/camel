@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import java.lang.reflect.Method;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -132,20 +133,28 @@ public final class PropertyBindingSupport {
     }
 
     /**
-     * Binds the properties to the target object.
+     * Binds the properties to the target object, and removes the property that was bound from properties.
      *
      * @param camelContext  the camel context
      * @param target        the target object
-     * @param properties    the properties
-     * @return              true if all the properties was bound, false otherwise
+     * @param properties    the properties where the bound properties will be removed from
+     * @return              true if one or more properties was bound
      */
     public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties) {
-        boolean answer = true;
-        for (Map.Entry<String, Object> entry : properties.entrySet()) {
-            answer &= bindProperty(camelContext, target, entry.getKey(), entry.getValue());
+        org.apache.camel.util.ObjectHelper.notNull(target, "target");
+        org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
+        boolean rc = false;
+
+        for (Iterator<Map.Entry<String, Object>> iter = properties.entrySet().iterator(); iter.hasNext();) {
+            Map.Entry<String, Object> entry = iter.next();
+            if (bindProperty(camelContext, target, entry.getKey(), entry.getValue())) {
+                iter.remove();
+                rc = true;
+            }
         }
-        return answer;
-    }
+
+        return rc;
+   }
 
     /**
      * Binds the property to the target object.

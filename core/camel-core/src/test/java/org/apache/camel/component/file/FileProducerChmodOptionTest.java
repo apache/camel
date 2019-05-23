@@ -26,6 +26,8 @@ import java.util.Set;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.PropertyBindingException;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
@@ -99,9 +101,10 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
                 }
             });
             fail("Expected FailedToCreateRouteException");
-        } catch (Exception e) {
-            assertTrue("Expected FailedToCreateRouteException, was " + e.getClass().getCanonicalName(), e instanceof FailedToCreateRouteException);
-            assertTrue("Message was [" + e.getMessage() + "]", e.getMessage().endsWith("conversion possible: chmod option [abc] is not valid"));
+        } catch (FailedToCreateRouteException e) {
+            assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
+            PropertyBindingException pbe = assertIsInstanceOf(PropertyBindingException.class, e.getCause().getCause());
+            assertEquals("chmod", pbe.getPropertyName());
         }
     }
 

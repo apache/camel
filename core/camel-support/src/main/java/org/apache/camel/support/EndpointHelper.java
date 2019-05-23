@@ -157,7 +157,9 @@ public final class EndpointHelper {
      * @throws Exception is thrown if setting property fails
      */
     public static void setProperties(CamelContext context, Object bean, Map<String, Object> parameters) throws Exception {
-        IntrospectionSupport.setProperties(context.getTypeConverter(), bean, parameters);
+         // TODO: Use more advanced bindingDefaultComponentReferencePropertiesTes
+         PropertyBindingSupport.bindProperties(context, bean, parameters);
+         //IntrospectionSupport.setProperties(context.getTypeConverter(), bean, parameters);
     }
 
     /**

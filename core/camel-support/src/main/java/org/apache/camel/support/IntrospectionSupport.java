@@ -539,8 +539,14 @@ public final class IntrospectionSupport {
 
         // loop and execute the best setter method
         Exception typeConversionFailed = null;
-        for (Method setter : setters) {
+        Method stringSetterMethod = null;
+        Iterator<Method> it = setters.iterator();
+        while (it.hasNext()) {
+            Method setter = it.next();
             Class<?> parameterType = setter.getParameterTypes()[0];
+            if (parameterType.getName().equals("java.lang.String")) {
+                stringSetterMethod = setter;
+            }
             Object ref = value;
             // try and lookup the reference based on the method
             if (context != null && refName != null && ref == null) {
@@ -548,7 +554,13 @@ public final class IntrospectionSupport {
                 ref = CamelContextHelper.lookup(context, s);
                 if (ref == null) {
                     // try the next method if nothing was found
-                    continue;
+                    // if we did not found a good candidate then fallback to use the string setter (if possible) with the actual ref name value as-is
+                    if (!it.hasNext() && stringSetterMethod != null) {
+                        setter = stringSetterMethod;
+                        ref = refName;
+                    } else {
+                        continue;
+                    }
                 } else {
                     // setter method has not the correct type
                     // (must use ObjectHelper.isAssignableFrom which takes primitive types into account)
