@@ -16,12 +16,16 @@
  */
 package org.apache.camel.support;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.junit.Test;
 
 /**
- * Unit test for PropertyBindingSupport with nested properties
+ * Unit test for PropertyBindingSupport
  */
 public class PropertyBindingSupportTest extends ContextTestSupport {
 
@@ -34,7 +38,34 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         work.setName("Acme");
         context.getRegistry().bind("myWork", work);
 
+        Properties placeholders = new Properties();
+        placeholders.put("companyName", "Acme");
+        placeholders.put("committer", "rider");
+        context.getPropertiesComponent().setInitialProperties(placeholders);
+
         return context;
+    }
+
+    @Test
+    public void testProperties() throws Exception {
+        Foo foo = new Foo();
+
+        Map<String, Object> prop = new HashMap<>();
+        prop.put("name", "James");
+        prop.put("bar.age", "33");
+        prop.put("bar.{{committer}}", "true");
+        prop.put("bar.gold-customer", "true");
+        prop.put("bar.work.id", "123");
+        prop.put("bar.work.name", "{{companyName}}");
+
+        PropertyBindingSupport.bindProperties(context, foo, prop);
+
+        assertEquals("James", foo.getName());
+        assertEquals(33, foo.getBar().getAge());
+        assertTrue(foo.getBar().isRider());
+        assertTrue(foo.getBar().isGoldCustomer());
+        assertEquals(123, foo.getBar().getWork().getId());
+        assertEquals("Acme", foo.getBar().getWork().getName());
     }
 
     @Test
@@ -43,10 +74,10 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
 
         PropertyBindingSupport.bindProperty(context, foo, "name", "James");
         PropertyBindingSupport.bindProperty(context, foo, "bar.age", "33");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.rider", "true");
+        PropertyBindingSupport.bindProperty(context, foo, "bar.{{committer}}", "true");
         PropertyBindingSupport.bindProperty(context, foo, "bar.gold-customer", "true");
         PropertyBindingSupport.bindProperty(context, foo, "bar.work.id", "123");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.work.name", "Acme");
+        PropertyBindingSupport.bindProperty(context, foo, "bar.work.name", "{{companyName}}");
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());

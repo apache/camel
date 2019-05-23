@@ -1261,6 +1261,8 @@ public abstract class MainSupport extends ServiceSupport {
                 IntrospectionSupport.getProperties(component, properties, null);
 
                 // TODO: Use PropertyBindingSupport to make it support this kind of use-case too
+                // TODO: Allow nested properties too
+                // TODO: Allow fluent builders
 
                 // lookup complex types
                 properties.forEach((k, v) -> {
