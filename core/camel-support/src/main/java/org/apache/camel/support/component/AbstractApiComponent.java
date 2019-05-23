@@ -26,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 
 /**
  * Abstract base class for API Component Camel {@link org.apache.camel.Component} classes.
@@ -111,7 +112,7 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
 
         // create endpoint configuration with component properties
         final T endpointConfiguration = collection.getEndpointConfiguration(name);
-        IntrospectionSupport.setProperties(endpointConfiguration, componentProperties);
+        PropertyBindingSupport.bindProperties(getCamelContext(), endpointConfiguration, componentProperties);
         return endpointConfiguration;
     }
 
