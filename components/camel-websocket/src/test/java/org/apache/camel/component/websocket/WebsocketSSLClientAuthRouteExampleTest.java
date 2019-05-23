@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -28,7 +29,6 @@ import javax.net.ssl.SSLContext;
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.JdkSslContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -46,50 +46,20 @@ import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.Before;
 import org.junit.Test;
 
-public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
+public class WebsocketSSLClientAuthRouteExampleTest extends CamelTestSupport {
 
     private static List<String> received = new ArrayList<>();
     private static CountDownLatch latch = new CountDownLatch(10);
-    private String pwd = "changeit";
-    private String uri;
-    private String server = "127.0.0.1";
-    private int port;
+    protected Properties originalValues = new Properties();
+    protected String pwd = "changeit";
+    protected int port;
 
     @Override
     @Before
     public void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(16300);
-
-        uri = "websocket://" + server + ":" + port + "/test?sslContextParameters=#sslContextParameters";
+        port = AvailablePortFinder.getNextAvailable(16200);
 
         super.setUp();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource("jsse/localhost.ks");
-        ksp.setPassword(pwd);
-
-        KeyManagersParameters kmp = new KeyManagersParameters();
-        kmp.setKeyPassword(pwd);
-        kmp.setKeyStore(ksp);
-
-        TrustManagersParameters tmp = new TrustManagersParameters();
-        tmp.setKeyStore(ksp);
-
-        // NOTE: Needed since the client uses a loose trust configuration when no ssl context
-        // is provided.  We turn on WANT client-auth to prefer using authentication
-        SSLContextServerParameters scsp = new SSLContextServerParameters();
-
-        SSLContextParameters sslContextParameters = new SSLContextParameters();
-        sslContextParameters.setKeyManagers(kmp);
-        sslContextParameters.setTrustManagers(tmp);
-        sslContextParameters.setServerParameters(scsp);
-
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("sslContextParameters", sslContextParameters);
-        return registry;
     }
 
     protected AsyncHttpClient createAsyncHttpSSLClient() throws IOException, GeneralSecurityException {
@@ -110,6 +80,14 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
         clientSSLTrustManagers.setKeyStore(truststoreParameters);
         sslContextParameters.setTrustManagers(clientSSLTrustManagers);
 
+        KeyStoreParameters keystoreParameters = new KeyStoreParameters();
+        keystoreParameters.setResource("jsse/localhost.ks");
+        keystoreParameters.setPassword(pwd);
+        KeyManagersParameters clientAuthClientSSLKeyManagers = new KeyManagersParameters();
+        clientAuthClientSSLKeyManagers.setKeyPassword(pwd);
+        clientAuthClientSSLKeyManagers.setKeyStore(keystoreParameters);
+        sslContextParameters.setKeyManagers(clientAuthClientSSLKeyManagers);
+
         SSLContext sslContext = sslContextParameters.createSSLContext(context());
         JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.REQUIRE);
         builder.setSslContext(ssl);
@@ -118,6 +96,30 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
         c = new DefaultAsyncHttpClient(config);
 
         return c;
+    }
+
+    protected SSLContextParameters defineSSLContextParameters() {
+
+        KeyStoreParameters ksp = new KeyStoreParameters();
+        ksp.setResource("jsse/localhost.ks");
+        ksp.setPassword(pwd);
+
+        KeyManagersParameters kmp = new KeyManagersParameters();
+        kmp.setKeyPassword(pwd);
+        kmp.setKeyStore(ksp);
+
+        TrustManagersParameters tmp = new TrustManagersParameters();
+        tmp.setKeyStore(ksp);
+
+        SSLContextServerParameters scsp = new SSLContextServerParameters();
+        scsp.setClientAuthentication("REQUIRE");
+
+        SSLContextParameters sslContextParameters = new SSLContextParameters();
+        sslContextParameters.setKeyManagers(kmp);
+        sslContextParameters.setTrustManagers(tmp);
+        sslContextParameters.setServerParameters(scsp);
+
+        return sslContextParameters;
     }
 
     @Test
@@ -133,7 +135,6 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
                                 log.info("received --> " + message);
                                 latch.countDown();
                             }
-
 
 
                             @Override
@@ -170,15 +171,19 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+
                 WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
+                websocketComponent.setSslContextParameters(defineSSLContextParameters());
+                websocketComponent.setPort(port);
                 websocketComponent.setMinThreads(1);
                 websocketComponent.setMaxThreads(25);
-                from(uri)
-                     .log(">>> Message received from WebSocket Client : ${body}")
-                     .to("mock:client")
-                     .loop(10)
-                         .setBody().constant(">> Welcome on board!")
-                         .to(uri);
+
+                from("websocket://test")
+                        .log(">>> Message received from WebSocket Client : ${body}")
+                        .to("mock:client")
+                        .loop(10)
+                            .setBody().constant(">> Welcome on board!")
+                            .to("websocket://test");
             }
         };
     }
