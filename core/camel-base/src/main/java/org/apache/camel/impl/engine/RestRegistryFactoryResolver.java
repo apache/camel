@@ -53,14 +53,14 @@ public class RestRegistryFactoryResolver {
             }
             if (RestRegistryFactory.class.isAssignableFrom(type)) {
                 RestRegistryFactory answer = (RestRegistryFactory) context.getInjector().newInstance(type);
-                LOG.info("Detected and using RestRegistryFactory: {}", answer);
+                LOG.debug("Detected and using RestRegistryFactory: {}", answer);
                 return answer;
             } else {
                 throw new IllegalArgumentException("Type is not a RestRegistryFactory implementation. Found: " + type.getName());
             }
         }
 
-        LOG.debug("No RestRegistryFactory implementation found.  You need to add camel-rest to the classpath.");
+        LOG.debug("Cannot find RestRegistryFactory. Make sure camel-rest is on the classpath.");
         return null;
     }
 

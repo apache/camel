@@ -51,7 +51,7 @@ public class BeanProxyFactoryResolver {
             }
             if (BeanProxyFactory.class.isAssignableFrom(type)) {
                 BeanProxyFactory answer = (BeanProxyFactory) context.getInjector().newInstance(type);
-                LOG.info("Detected and using custom BeanProxyFactory: {}", answer);
+                LOG.debug("Detected and using BeanProxyFactory: {}", answer);
                 return answer;
             } else {
                 throw new IllegalArgumentException("Type is not a BeanProxyFactory implementation. Found: " + type.getName());
