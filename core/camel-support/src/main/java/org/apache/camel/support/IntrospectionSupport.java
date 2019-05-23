@@ -197,8 +197,9 @@ public final class IntrospectionSupport {
 
         // is it a setXXX method
         boolean validName = name.startsWith("set") && name.length() >= 4 && Character.isUpperCase(name.charAt(3));
-        if (validName) {
-            return parameterCount == 1 && type.equals(Void.TYPE);
+        if (validName && parameterCount == 1) {
+            // a setXXX can also be a builder pattern so check for its return type is itself
+            return type.equals(Void.TYPE) || allowBuilderPattern && method.getDeclaringClass().isAssignableFrom(type);
         }
         // or if its a builder method
         if (allowBuilderPattern && parameterCount == 1 && method.getDeclaringClass().isAssignableFrom(type)) {
