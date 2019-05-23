@@ -41,6 +41,9 @@ import static org.apache.camel.support.IntrospectionSupport.getOrElseProperty;
  */
 public final class PropertyBindingSupport {
 
+    // TODO: Add support for auto binding to singleton instance by type from registry (boolean on|off)
+    // TODO: builder pattern with naming prefix: withXXX
+
     private static final Pattern SECRETS = Pattern.compile(".*(passphrase|password|secretKey).*", Pattern.CASE_INSENSITIVE);
     private static final Logger LOG = LoggerFactory.getLogger(PropertyBindingSupport.class);
 
