@@ -33,12 +33,15 @@ import static org.apache.camel.support.IntrospectionSupport.getOrElseProperty;
  *     <li>property placeholders - Keys and values using Camels property placeholder will be resolved</li>
  *     <li>nested - Properties can be nested using the dot syntax (OGNL and builder pattern using with as prefix), eg foo.bar=123</li>
  *     <li>reference by id - Values can refer to other beans in the registry by prefixing with # syntax, eg #myBean</li>
+ *     <li>reference by type - Values can refer to singleton beans by their type in the registry by prefixing with #type: syntax, eg #type:com.foo.MyClassType</li>
+ *     <li>new class - Values can refer to creating new beans by their class name syntax, eg class:com.foo.MyClassType</li>
  * </ul>
  * This implementations reuses parts of {@link IntrospectionSupport}.
  */
 public final class PropertyBindingSupport {
 
     // TODO: Add support for auto binding to singleton instance by type from registry (boolean on|off)
+    // TODO: Better exception message if something goes wrong (output target, name of property etc)
 
     private PropertyBindingSupport() {
     }
@@ -117,14 +120,35 @@ public final class PropertyBindingSupport {
                 }
             }
             // okay we found a nested property, then lets change to use that
-            target = newTarget;
-            name = parts[parts.length - 1];
-            if (value instanceof String) {
-                if (EndpointHelper.isReferenceParameter(value.toString())) {
-                    // okay its a reference so swap to lookup this
-                    refName = value.toString();
-                    value = null;
+            try {
+                target = newTarget;
+                name = parts[parts.length - 1];
+                if (value instanceof String) {
+                    if (value.toString().startsWith("class:")) {
+                        // its a new class to be created
+                        String className = value.toString().substring(6);
+                        Class<?> type = context.getClassResolver().resolveMandatoryClass(className);
+                        if (type != null) {
+                            value = context.getInjector().newInstance(type);
+                        }
+                    } else if (value.toString().startsWith("#type:")) {
+                        // its reference by type, so lookup the actual value and use it if there is only one instance in the registry
+                        String typeName = value.toString().substring(6);
+                        Class<?> type = context.getClassResolver().resolveMandatoryClass(typeName);
+                        if (type != null) {
+                            Set<?> types = context.getRegistry().findByType(type);
+                            if (types.size() == 1) {
+                                value = types.iterator().next();
+                            }
+                        }
+                    } else if (EndpointHelper.isReferenceParameter(value.toString())) {
+                        // okay its a reference so swap to lookup this which is already supported in IntrospectionSupport
+                        refName = value.toString();
+                        value = null;
+                    }
                 }
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
 

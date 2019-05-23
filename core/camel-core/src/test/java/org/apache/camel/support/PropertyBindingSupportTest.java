@@ -105,6 +105,43 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         assertEquals("Acme", foo.getBar().getWork().getName());
     }
 
+    @Test
+    public void testNestedType() throws Exception {
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.bindProperty(context, foo, "name", "James");
+        PropertyBindingSupport.bindProperty(context, foo, "bar.age", "33");
+        PropertyBindingSupport.bindProperty(context, foo, "bar.{{committer}}", "true");
+        PropertyBindingSupport.bindProperty(context, foo, "bar.gold-customer", "true");
+        PropertyBindingSupport.bindProperty(context, foo, "bar.work", "#type:org.apache.camel.support.Company");
+
+        assertEquals("James", foo.getName());
+        assertEquals(33, foo.getBar().getAge());
+        assertTrue(foo.getBar().isRider());
+        assertTrue(foo.getBar().isGoldCustomer());
+        assertEquals(456, foo.getBar().getWork().getId());
+        assertEquals("Acme", foo.getBar().getWork().getName());
+    }
+
+    @Test
+    public void testNestedClass() throws Exception {
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.bindProperty(context, foo, "name", "James");
+        PropertyBindingSupport.bindProperty(context, foo, "bar.age", "33");
+        PropertyBindingSupport.bindProperty(context, foo, "bar.{{committer}}", "true");
+        PropertyBindingSupport.bindProperty(context, foo, "bar.gold-customer", "true");
+        PropertyBindingSupport.bindProperty(context, foo, "bar.work", "class:org.apache.camel.support.Company");
+
+        assertEquals("James", foo.getName());
+        assertEquals(33, foo.getBar().getAge());
+        assertTrue(foo.getBar().isRider());
+        assertTrue(foo.getBar().isGoldCustomer());
+        // a new class was created so its empty
+        assertEquals(0, foo.getBar().getWork().getId());
+        assertEquals(null, foo.getBar().getWork().getName());
+    }
+
     public static class Foo {
         private String name;
         private Bar bar = new Bar();
@@ -162,27 +199,6 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
 
         public void setGoldCustomer(boolean goldCustomer) {
             this.goldCustomer = goldCustomer;
-        }
-    }
-
-    public static class Company {
-        private int id;
-        private String name;
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
         }
     }
 
