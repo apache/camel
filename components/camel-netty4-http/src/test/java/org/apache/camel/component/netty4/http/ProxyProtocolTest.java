@@ -22,6 +22,7 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -47,7 +48,8 @@ public class ProxyProtocolTest {
                 // proxy from http://localhost:port to
                 // http://localhost:originPort/path
                 from("netty-http:proxy://localhost:" + port)
-                    .to("netty-http:http://localhost:" + originPort);
+                    .to("netty-http:http://localhost:" + originPort)
+                    .process(e -> e.getMessage().setBody(e.getMessage().getBody(String.class).toUpperCase(Locale.US)));
 
                 // origin service that serves `"origin server"` on
                 // http://localhost:originPort/path
@@ -74,7 +76,7 @@ public class ProxyProtocolTest {
         final HttpURLConnection connection = (HttpURLConnection) new URL("http://test/path").openConnection(proxy);
 
         try (InputStream stream = connection.getInputStream()) {
-            assertThat(IOUtils.readLines(stream, StandardCharsets.UTF_8)).containsOnly("origin server");
+            assertThat(IOUtils.readLines(stream, StandardCharsets.UTF_8)).containsOnly("ORIGIN SERVER");
         }
     }
 
