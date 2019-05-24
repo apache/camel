@@ -155,7 +155,9 @@ public final class EndpointHelper {
      * @param bean       the bean
      * @param parameters parameters
      * @throws Exception is thrown if setting property fails
+     * @deprecated use PropertyBindingSupport
      */
+    @Deprecated
     public static void setProperties(CamelContext context, Object bean, Map<String, Object> parameters) throws Exception {
         // use the property binding which can do more advanced configuration
         PropertyBindingSupport.bindProperties(context, bean, parameters);
@@ -171,7 +173,9 @@ public final class EndpointHelper {
      * @param bean       the bean
      * @param parameters parameters
      * @throws Exception is thrown if setting property fails
+     * @deprecated use PropertyBindingSupport
      */
+    @Deprecated
     public static void setReferenceProperties(CamelContext context, Object bean, Map<String, Object> parameters) throws Exception {
         Iterator<Map.Entry<String, Object>> it = parameters.entrySet().iterator();
         while (it.hasNext()) {
@@ -179,7 +183,7 @@ public final class EndpointHelper {
             String name = entry.getKey();
             Object v = entry.getValue();
             String value = v != null ? v.toString() : null;
-            if (value != null && isReferenceParameter(value)) {
+            if (isReferenceParameter(value)) {
                 boolean hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), bean, name, null, value, true);
                 if (hit) {
                     // must remove as its a valid option and we could configure it

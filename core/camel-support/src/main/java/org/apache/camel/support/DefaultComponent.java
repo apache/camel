@@ -40,7 +40,6 @@ import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.function.Suppliers;
 
-
 /**
  * Default component to use for base for components implementations.
  */
@@ -58,6 +57,9 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     @Metadata(label = "advanced", defaultValue = "true",
         description = "Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.")
     private boolean resolvePropertyPlaceholders = true;
+    @Metadata(label = "advanced",
+        description = "Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities")
+    private boolean basicPropertyBinding;
 
     public DefaultComponent() {
     }
@@ -124,6 +126,12 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             return null;
         }
 
+        // setup whether to use basic property binding or not which must be done before we set properties 
+        boolean basic = getAndRemoveParameter(parameters, "basicPropertyBinding", boolean.class, basicPropertyBinding);
+        if (endpoint instanceof DefaultEndpoint) {
+            ((DefaultEndpoint) endpoint).setBasicPropertyBinding(basic);
+        }
+
         endpoint.configureProperties(parameters);
         if (useIntrospectionOnEndpoint()) {
             setProperties(endpoint, parameters);
@@ -159,6 +167,20 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      */
     public boolean isResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;
+    }
+
+    /**
+     * Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities.
+     */
+    public boolean isBasicPropertyBinding() {
+        return basicPropertyBinding;
+    }
+
+    /**
+     * Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities.
+     */
+    public void setBasicPropertyBinding(boolean basicPropertyBinding) {
+        this.basicPropertyBinding = basicPropertyBinding;
     }
 
     /**
@@ -274,7 +296,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     /**
      * Sets the bean properties on the given bean
      *
-     * @param bean  the bean
+     * @param bean        the bean
      * @param parameters  properties to set
      */
     protected void setProperties(Object bean, Map<String, Object> parameters) throws Exception {
@@ -282,15 +304,26 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     /**
-     * Sets the bean properties on the given bean using the given {@link CamelContext}
+     * Sets the bean properties on the given bean using the given {@link CamelContext}.
+     *
      * @param camelContext  the {@link CamelContext} to use
-     * @param bean  the bean
-     * @param parameters  properties to set
+     * @param bean          the bean
+     * @param parameters    properties to set
      */
     protected void setProperties(CamelContext camelContext, Object bean, Map<String, Object> parameters) throws Exception {
         // set reference properties first as they use # syntax that fools the regular properties setter
+        // TODO: We should find out the weird camel-cxf error where we need to do this, as we can put this logic into PropertyBindingSupport
         EndpointHelper.setReferenceProperties(camelContext, bean, parameters);
-        EndpointHelper.setProperties(camelContext, bean, parameters);
+
+        if (basicPropertyBinding) {
+            // use basic binding
+            PropertyBindingSupport.build()
+                    .withPlaceholder(false).withNesting(false).withNestingDeep(false).withReference(false)
+                    .bind(camelContext, bean, parameters);
+        } else {
+            // use advanced binding
+            PropertyBindingSupport.bindProperties(camelContext, bean, parameters);
+        }
     }
 
     /**
