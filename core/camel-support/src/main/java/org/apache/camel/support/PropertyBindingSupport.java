@@ -17,13 +17,17 @@
 package org.apache.camel.support;
 
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyBindingException;
+import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 
 import static org.apache.camel.support.IntrospectionSupport.findSetterMethods;
 import static org.apache.camel.support.IntrospectionSupport.getOrElseProperty;
@@ -165,7 +169,8 @@ public final class PropertyBindingSupport {
     public static boolean autowireSingletonPropertiesFromRegistry(CamelContext camelContext, Object target, boolean bindNullOnly, OnAutowiring callback) {
         try {
             if (target != null) {
-                return doAutowireSingletonPropertiesFromRegistry(camelContext, target, bindNullOnly, callback);
+                Set<Object> parents = new HashSet<>();
+                return doAutowireSingletonPropertiesFromRegistry(camelContext, target, parents, bindNullOnly, callback);
             }
         } catch (Exception e) {
             throw new PropertyBindingException(target, e);
@@ -174,7 +179,8 @@ public final class PropertyBindingSupport {
         return false;
     }
 
-    private static boolean doAutowireSingletonPropertiesFromRegistry(CamelContext camelContext, Object target, boolean bindNullOnly, OnAutowiring callback) throws Exception {
+    private static boolean doAutowireSingletonPropertiesFromRegistry(CamelContext camelContext, Object target, Set<Object> parents,
+                                                                     boolean bindNullOnly, OnAutowiring callback) throws Exception {
         // when adding a component then support auto-configuring complex types
         // by looking up from registry, such as DataSource etc
         Map<String, Object> properties = new LinkedHashMap<>();
@@ -182,12 +188,18 @@ public final class PropertyBindingSupport {
 
         boolean hit = false;
 
-        // TODO: add support for nesting but not for inherited properties from base classes (eg CamelContext etc)
-
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
             Class<?> type = getGetterType(target, key);
+
+            boolean skip = parents.contains(value) || value instanceof CamelContext;
+            if (skip) {
+                // we have already covered this as parent of parents so dont walk down this as we want to avoid
+                // circular dependencies when walking the OGNL graph, also we dont want to walk down CamelContext
+                continue;
+            }
+
             if (isComplexUserType(type)) {
                 // if the property has not been set and its a complex type (not simple or string etc)
                 if (!bindNullOnly || value == null) {
@@ -201,6 +213,15 @@ public final class PropertyBindingSupport {
                             }
                         }
                     }
+                }
+
+                // TODO: Support creating new instances to walk down the tree if its null
+
+                // remember this as parent and also autowire nested properties
+                // do not walk down if it point to our-selves (circular reference)
+                if (value != null) {
+                    parents.add(target);
+                    hit |= doAutowireSingletonPropertiesFromRegistry(camelContext, value, parents, bindNullOnly, callback);
                 }
             }
         };

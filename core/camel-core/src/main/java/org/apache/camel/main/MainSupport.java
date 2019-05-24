@@ -852,8 +852,10 @@ public abstract class MainSupport extends ServiceSupport {
 
         // conventional configuration via properties to allow configuring options on
         // component, dataformat, and languages (like spring-boot auto-configuration)
-        if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
+        if (mainConfigurationProperties.isAutowireComponentProperties()) {
             autoConfigurationFromRegistry(camelContext);
+        }
+        if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
             autoConfigurationFromProperties(camelContext);
         }
 
@@ -1270,7 +1272,7 @@ public abstract class MainSupport extends ServiceSupport {
             @Override
             public void onComponentAdd(String name, Component component) {
                 PropertyBindingSupport.autowireSingletonPropertiesFromRegistry(camelContext, component, false, (obj, propertyName, type, value) -> {
-                    LOG.info("Auto configuring option: {} on component: {} as one instance of type: {} registered in the Camel Registry", propertyName, obj, type.getName());
+                    LOG.info("Auto configuring option: {} on component: {} as one instance of type: {} registered in the Camel Registry", propertyName, component.getClass().getSimpleName(), type.getName());
                 });
             }
         });
