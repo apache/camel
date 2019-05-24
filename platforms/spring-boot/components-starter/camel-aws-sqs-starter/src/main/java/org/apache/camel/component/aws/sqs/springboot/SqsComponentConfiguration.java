@@ -277,7 +277,7 @@ public class SqsComponentConfiguration
         /**
          * Setting the autocreation of the queue
          */
-        private Boolean autoCreateQueue = false;
+        private Boolean autoCreateQueue = true;
 
         public String getAmazonAWSHost() {
             return amazonAWSHost;
