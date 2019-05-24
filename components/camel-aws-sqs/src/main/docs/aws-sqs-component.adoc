@@ -27,7 +27,7 @@ The queue will be created if they don't already exists. +
 
 
 // component options: START
-The AWS Simple Queue Service component supports 5 options, which are listed below.
+The AWS Simple Queue Service component supports 6 options, which are listed below.
 
 
 
@@ -39,6 +39,7 @@ The AWS Simple Queue Service component supports 5 options, which are listed belo
 | *secretKey* (common) | Amazon AWS Secret Key |  | String
 | *region* (common) | Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL. |  | String
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -68,7 +69,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (53 parameters):
+==== Query Parameters (54 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -102,6 +103,7 @@ with the following path and query parameters:
 | *messageDeduplicationId Strategy* (producer) | Only for FIFO queues. Strategy for setting the messageDeduplicationId on the message. Can be one of the following options: useExchangeId, useContentBasedDeduplication. For the useContentBasedDeduplication option, no messageDeduplicationId will be set on the message. | useExchangeId | MessageDeduplicationId Strategy
 | *messageGroupIdStrategy* (producer) | Only for FIFO queues. Strategy for setting the messageGroupId on the message. Can be one of the following options: useConstant, useExchangeId, usePropertyValue. For the usePropertyValue option, the value of property CamelAwsMessageGroupId will be used. |  | MessageGroupIdStrategy
 | *operation* (producer) | The operation to do in case the user don't want to send only a message |  | SqsOperations
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *delayQueue* (advanced) | Define if you want to apply delaySeconds option to the queue or on single messages | false | boolean
 | *queueUrl* (advanced) | To define the queueUrl explicitly. All other parameters, which would influence the queueUrl, are ignored. This parameter is intended to be used, to connect to a mock implementation of SQS, for testing purposes. |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
@@ -145,7 +147,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 38 options, which are listed below.
+The component supports 39 options, which are listed below.
 
 
 
@@ -158,6 +160,7 @@ The component supports 38 options, which are listed below.
 | *camel.component.aws-sqs.configuration.amazon-a-w-s-host* | The hostname of the Amazon AWS cloud. | amazonaws.com | String
 | *camel.component.aws-sqs.configuration.amazon-s-q-s-client* | To use the AmazonSQS as client |  | AmazonSQS
 | *camel.component.aws-sqs.configuration.attribute-names* | A list of attribute names to receive when consuming. Multiple names can be separated by comma. |  | String
+| *camel.component.aws-sqs.configuration.auto-create-queue* | Setting the autocreation of the queue | true | Boolean
 | *camel.component.aws-sqs.configuration.concurrent-consumers* | Allows you to use multiple threads to poll the sqs queue to increase throughput | 1 | Integer
 | *camel.component.aws-sqs.configuration.default-visibility-timeout* | The default visibility timeout (in seconds) |  | Integer
 | *camel.component.aws-sqs.configuration.delay-queue* | Define if you want to apply delaySeconds option to the queue or on single messages | false | Boolean

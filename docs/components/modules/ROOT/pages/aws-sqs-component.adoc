@@ -69,7 +69,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (53 parameters):
+==== Query Parameters (54 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -77,6 +77,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *amazonAWSHost* (common) | The hostname of the Amazon AWS cloud. | amazonaws.com | String
 | *amazonSQSClient* (common) | To use the AmazonSQS as client |  | AmazonSQS
+| *autoCreateQueue* (common) | Setting the autocreation of the queue | true | boolean
 | *headerFilterStrategy* (common) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
 | *queueOwnerAWSAccountId* (common) | Specify the queue owner aws account id when you need to connect the queue with different account owner. |  | String
 | *region* (common) | Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL. |  | String
@@ -146,7 +147,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 38 options, which are listed below.
+The component supports 39 options, which are listed below.
 
 
 
@@ -159,6 +160,7 @@ The component supports 38 options, which are listed below.
 | *camel.component.aws-sqs.configuration.amazon-a-w-s-host* | The hostname of the Amazon AWS cloud. | amazonaws.com | String
 | *camel.component.aws-sqs.configuration.amazon-s-q-s-client* | To use the AmazonSQS as client |  | AmazonSQS
 | *camel.component.aws-sqs.configuration.attribute-names* | A list of attribute names to receive when consuming. Multiple names can be separated by comma. |  | String
+| *camel.component.aws-sqs.configuration.auto-create-queue* | Setting the autocreation of the queue | true | Boolean
 | *camel.component.aws-sqs.configuration.concurrent-consumers* | Allows you to use multiple threads to poll the sqs queue to increase throughput | 1 | Integer
 | *camel.component.aws-sqs.configuration.default-visibility-timeout* | The default visibility timeout (in seconds) |  | Integer
 | *camel.component.aws-sqs.configuration.delay-queue* | Define if you want to apply delaySeconds option to the queue or on single messages | false | Boolean
@@ -388,6 +390,11 @@ from("direct:start")
 ------------------------------------------------------------------------------------------------------
 
 As result you'll get an exchange containing a `ListQueuesResult` instance, that you can examinate to check the actual queues.
+
+### Queue Autocreation
+
+With the option `autoCreateQueue` users are able to avoid the autocreation of an SQS Queue in case it doesn't exist. The default for this option is `true`.
+If set to false any operation on a not-existent queue in AWS won't be successful and an error will be returned.
 
 ### Automatic detection of AmazonSQS client in registry
 
