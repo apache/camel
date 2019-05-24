@@ -26,7 +26,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS Simple Email Service component supports 5 options, which are listed below.
+The AWS Simple Email Service component supports 6 options, which are listed below.
 
 
 
@@ -38,6 +38,7 @@ The AWS Simple Email Service component supports 5 options, which are listed belo
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *region* (producer) | The region in which SES client needs to work |  | String
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -63,7 +64,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (11 parameters):
+==== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -77,6 +78,7 @@ with the following path and query parameters:
 | *returnPath* (producer) | The email address to which bounce notifications are to be forwarded, override it using 'CamelAwsSesReturnPath' header. |  | String
 | *subject* (producer) | The subject which is used if the message header 'CamelAwsSesSubject' is not present. |  | String
 | *to* (producer) | List of destination email address. Can be overriden with 'CamelAwsSesTo' header. |  | List
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
@@ -98,7 +100,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 16 options, which are listed below.
+The component supports 17 options, which are listed below.
 
 
 
@@ -106,6 +108,7 @@ The component supports 16 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.aws-ses.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-ses.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.aws-ses.configuration.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-ses.configuration.amazon-s-e-s-client* | To use the AmazonSimpleEmailService as the client |  | AmazonSimpleEmail Service
 | *camel.component.aws-ses.configuration.from* | The sender's email address. |  | String

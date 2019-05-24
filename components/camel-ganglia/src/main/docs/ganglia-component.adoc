@@ -51,7 +51,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Ganglia component supports 2 options, which are listed below.
+The Ganglia component supports 3 options, which are listed below.
 
 
 
@@ -60,6 +60,7 @@ The Ganglia component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (advanced) | To use the shared configuration |  | GangliaConfiguration
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -88,7 +89,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (13 parameters):
+==== Query Parameters (14 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -106,6 +107,7 @@ with the following path and query parameters:
 | *type* (producer) | The type of value | STRING | GMetricType
 | *units* (producer) | Any unit of measurement that qualifies the metric, e.g. widgets, litres, bytes. Do not include a prefix such as k (kilo) or m (milli), other tools may scale the units later. The value should be unscaled. |  | String
 | *wireFormat31x* (producer) | Use the wire format of Ganglia 3.1.0 and later versions. Set this to false to use Ganglia 3.0.x or earlier. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
@@ -125,13 +127,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 16 options, which are listed below.
+The component supports 17 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.ganglia.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.ganglia.configuration.dmax* | Minumum time in seconds before Ganglia will purge the metric value if it expires. Set to 0 and the value will remain in Ganglia indefinitely until a gmond agent restart. | 0 | Integer
 | *camel.component.ganglia.configuration.group-name* | The group that the metric belongs to. | java | String
 | *camel.component.ganglia.configuration.host* | Host name for Ganglia server | 239.2.11.71 | String

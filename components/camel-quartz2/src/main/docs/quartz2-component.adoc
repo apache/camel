@@ -44,7 +44,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Quartz2 component supports 11 options, which are listed below.
+The Quartz2 component supports 12 options, which are listed below.
 
 
 
@@ -62,6 +62,7 @@ The Quartz2 component supports 11 options, which are listed below.
 | *schedulerFactory* (advanced) | To use the custom SchedulerFactory which is used to create the Scheduler. |  | SchedulerFactory
 | *scheduler* (advanced) | To use the custom configured Quartz scheduler, instead of creating a new Scheduler. |  | Scheduler
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -88,7 +89,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (19 parameters):
+==== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -103,6 +104,7 @@ with the following path and query parameters:
 | *stateful* (consumer) | Uses a Quartz PersistJobDataAfterExecution and DisallowConcurrentExecution instead of the default job. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *customCalendar* (advanced) | Specifies a custom calendar to avoid specific range of date |  | Calendar
 | *jobParameters* (advanced) | To configure additional options on the job. |  | Map
 | *prefixJobNameWithEndpoint Id* (advanced) | Whether the job name should be prefixed with endpoint id | false | boolean
@@ -131,7 +133,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 12 options, which are listed below.
+The component supports 13 options, which are listed below.
 
 
 
@@ -139,6 +141,7 @@ The component supports 12 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.quartz2.auto-start-scheduler* | Whether or not the scheduler should be auto started. This options is default true | true | Boolean
+| *camel.component.quartz2.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.quartz2.enable-jmx* | Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX. This options is default true | true | Boolean
 | *camel.component.quartz2.enabled* | Enable quartz2 component | true | Boolean
 | *camel.component.quartz2.interrupt-jobs-on-shutdown* | Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs. If this is enabled then any running jobs can fail due to being interrupted. | false | Boolean

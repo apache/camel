@@ -62,6 +62,11 @@ public class AtomixQueueComponentConfiguration
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+    /**
+     * Whether the component should use basic property binding (Camel 2.x) or
+     * the newer property binding with additional capabilities
+     */
+    private Boolean basicPropertyBinding = false;
 
     public AtomixQueueConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -103,6 +108,14 @@ public class AtomixQueueComponentConfiguration
     public void setResolvePropertyPlaceholders(
             Boolean resolvePropertyPlaceholders) {
         this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    }
+
+    public Boolean getBasicPropertyBinding() {
+        return basicPropertyBinding;
+    }
+
+    public void setBasicPropertyBinding(Boolean basicPropertyBinding) {
+        this.basicPropertyBinding = basicPropertyBinding;
     }
 
     public static class AtomixQueueConfigurationNestedConfiguration {

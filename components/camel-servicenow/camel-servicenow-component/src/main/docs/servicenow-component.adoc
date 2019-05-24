@@ -31,7 +31,7 @@ for this component:
 
 
 // component options: START
-The ServiceNow component supports 14 options, which are listed below.
+The ServiceNow component supports 15 options, which are listed below.
 
 
 
@@ -52,6 +52,7 @@ The ServiceNow component supports 14 options, which are listed below.
 | *proxyPassword* (security) | Password for proxy authentication |  | String
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -75,7 +76,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (44 parameters):
+==== Query Parameters (45 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -106,6 +107,7 @@ with the following path and query parameters:
 | *target* (producer) | Set this parameter to true to return only scorecards that have a target. |  | Boolean
 | *topLevelOnly* (producer) | Gets only those categories whose parent is a catalog. |  | Boolean
 | *apiVersion* (advanced) | The ServiceNow REST API version, default latest |  | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *dateFormat* (advanced) | The date format used for Json serialization/deserialization | yyyy-MM-dd | String
 | *dateTimeFormat* (advanced) | The date-time format used for Json serialization/deserialization | yyyy-MM-dd HH:mm:ss | String
 | *httpClientPolicy* (advanced) | To configure http-client |  | HTTPClientPolicy
@@ -143,7 +145,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 57 options, which are listed below.
+The component supports 58 options, which are listed below.
 
 
 
@@ -151,6 +153,7 @@ The component supports 57 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.servicenow.api-url* | The ServiceNow REST API url |  | String
+| *camel.component.servicenow.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.servicenow.configuration.api-url* | The ServiceNow REST API url |  | String
 | *camel.component.servicenow.configuration.api-version* | The ServiceNow REST API version, default latest |  | String
 | *camel.component.servicenow.configuration.date-format* | The date format used for Json serialization/deserialization | yyyy-MM-dd | String

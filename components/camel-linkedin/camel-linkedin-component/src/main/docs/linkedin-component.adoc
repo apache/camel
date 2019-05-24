@@ -53,7 +53,7 @@ Endpoint prefix can be one of:
 
 
 // component options: START
-The Linkedin component supports 2 options, which are listed below.
+The Linkedin component supports 3 options, which are listed below.
 
 
 
@@ -62,6 +62,7 @@ The Linkedin component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (common) | To use the shared configuration |  | LinkedInConfiguration
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -89,7 +90,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (16 parameters):
+==== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -110,6 +111,7 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
@@ -129,13 +131,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 15 options, which are listed below.
+The component supports 16 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.linkedin.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.linkedin.configuration.access-token* | LinkedIn access token to avoid username and password login procedure. LinkedIn responds to login forms by using a CAPTCHA. This makes it impossible for a standalone, headless process to log in to LinkedIn by specifying a username and password. To work around this, obtain a LinkedIn access token and provide the token as the setting of the accessToken parameter. Obtaining a LinkedIn access token is a multi-step procedure. You must configure your LinkedIn application, obtain a LinkedIn authorization code, and exchange that code for the LinkedIn access token. For details, see: https://developer.linkedin.com/docs/oauth2 The default behavior is that the access token expires after 60 days. To change this, specify a value for the expiryTime paramter. If the access token expires, the LinkedIn component tries to log in to LinkedIn by providing a username and password, which results in a CAPTCHA so the login fails. The LinkedIn component cannot refresh the access token. You must manually obtain a new access token each time an access token expires. When you update the access token you must restart the application so that it uses the new token. |  | String
 | *camel.component.linkedin.configuration.api-name* | What kind of operation to perform |  | LinkedInApiName
 | *camel.component.linkedin.configuration.client-id* | LinkedIn application client ID |  | String

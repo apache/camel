@@ -103,7 +103,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The JClouds component supports 3 options, which are listed below.
+The JClouds component supports 4 options, which are listed below.
 
 
 
@@ -113,6 +113,7 @@ The JClouds component supports 3 options, which are listed below.
 | *blobStores* (common) | To use the given BlobStore which must be configured when using blobstore. |  | List
 | *computeServices* (common) | To use the given ComputeService which must be configured when use compute. |  | List
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -141,7 +142,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (15 parameters):
+==== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -150,6 +151,7 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *blobName* (blobstore) | The name of the blob. |  | String
 | *container* (blobstore) | The name of the blob container. |  | String
@@ -194,13 +196,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 4 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.jclouds.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.jclouds.blob-stores* | To use the given BlobStore which must be configured when using blobstore. |  | List
 | *camel.component.jclouds.compute-services* | To use the given ComputeService which must be configured when use compute. |  | List
 | *camel.component.jclouds.enabled* | Whether to enable auto configuration of the jclouds component. This is enabled by default. |  | Boolean

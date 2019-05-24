@@ -61,7 +61,7 @@ option.
 
 
 // component options: START
-The Restlet component supports 23 options, which are listed below.
+The Restlet component supports 24 options, which are listed below.
 
 
 
@@ -91,6 +91,7 @@ The Restlet component supports 23 options, which are listed below.
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -119,7 +120,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (17 parameters):
+==== Query Parameters (18 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -137,6 +138,7 @@ with the following path and query parameters:
 | *throwExceptionOnFailure* (producer) | Whether to throw exception on a producer failure. If this option is false then the http status code is set as a message header which can be checked if it has an error value. | true | boolean
 | *autoCloseStream* (producer) | Whether to auto close the stream representation as response from calling a REST service using the restlet producer. If the response is streaming and the option streamRepresentation is enabled then you may want to auto close the InputStream from the streaming response to ensure the input stream is closed when the Camel Exchange is done being routed. However if you need to read the stream outside a Camel route, you may need to not auto close the stream. | false | boolean
 | *streamRepresentation* (producer) | Whether to support stream representation as response from calling a REST service using the restlet producer. If the response is streaming then this option can be enabled to use an java.io.InputStream as the message body on the Camel Message body. If using this option you may want to enable the autoCloseStream option as well to ensure the input stream is closed when the Camel Exchange is done being routed. However if you need to read the stream outside a Camel route, you may need to not auto close the stream. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *headerFilterStrategy* (advanced) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *restletBinding* (advanced) | To use a custom RestletBinding to bind between Restlet and Camel message. |  | RestletBinding
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
@@ -160,13 +162,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 24 options, which are listed below.
+The component supports 25 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.restlet.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.restlet.controller-daemon* | Indicates if the controller thread should be a daemon (not blocking JVM exit). |  | Boolean
 | *camel.component.restlet.controller-sleep-time-ms* | Time for the controller thread to sleep between each control. |  | Integer
 | *camel.component.restlet.disable-stream-cache* | Determines whether or not the raw input stream from Restlet is cached or not (Camel will read the stream into a in memory/overflow to file, Stream caching) cache. By default Camel will cache the Restlet input stream to support reading it multiple times to ensure Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream, such as streaming it directly to a file or other persistent store. DefaultRestletBinding will copy the request input stream into a stream cache and put it into message body if this option is false to support reading the stream multiple times. | false | Boolean
