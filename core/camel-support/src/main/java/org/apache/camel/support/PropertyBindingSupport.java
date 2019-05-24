@@ -24,10 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyBindingException;
-import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 
 import static org.apache.camel.support.IntrospectionSupport.findSetterMethods;
 import static org.apache.camel.support.IntrospectionSupport.getOrElseProperty;
@@ -55,7 +52,7 @@ public final class PropertyBindingSupport {
     public static class Builder {
 
         private boolean nesting = true;
-        private boolean nestingDeep = true;
+        private boolean deepNesting = true;
         private boolean reference = true;
         private boolean placeholder = true;
         private boolean fluentBuilder = true;
@@ -72,8 +69,8 @@ public final class PropertyBindingSupport {
          * Whether deep nesting is in use, where Camel will attempt to walk as deep as possible by creating new objects in the OGNL graph if
          * a property has a setter and the object can be created from a default no-arg constructor.
          */
-        public Builder withNestingDeep(boolean nestingDeep) {
-            this.nestingDeep = nestingDeep;
+        public Builder withDeepNesting(boolean deepNesting) {
+            this.deepNesting = deepNesting;
             return this;
         }
 
@@ -114,7 +111,7 @@ public final class PropertyBindingSupport {
             org.apache.camel.util.ObjectHelper.notNull(target, "target");
             org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
 
-            return bindProperties(camelContext, target, properties, nesting, nestingDeep, fluentBuilder, reference, placeholder);
+            return bindProperties(camelContext, target, properties, nesting, deepNesting, fluentBuilder, reference, placeholder);
         }
 
     }
@@ -215,7 +212,7 @@ public final class PropertyBindingSupport {
                     }
                 }
 
-                // TODO: Support creating new instances to walk down the tree if its null
+                // TODO: Support creating new instances to walk down the tree if its null (deepNesting option)
 
                 // remember this as parent and also autowire nested properties
                 // do not walk down if it point to our-selves (circular reference)
@@ -248,7 +245,7 @@ public final class PropertyBindingSupport {
      * @param target        the target object
      * @param properties    the properties where the bound properties will be removed from
      * @param nesting       whether nesting is in use
-     * @param nestingDeep   whether deep nesting is in use, where Camel will attempt to walk as deep as possible by creating new objects in the OGNL graph if
+     * @param deepNesting   whether deep nesting is in use, where Camel will attempt to walk as deep as possible by creating new objects in the OGNL graph if
      *                      a property has a setter and the object can be created from a default no-arg constructor.
      * @param fluentBuilder whether fluent builder is allowed as a valid getter/setter
      * @param reference     whether reference parameter (syntax starts with #) is in use
@@ -256,7 +253,7 @@ public final class PropertyBindingSupport {
      * @return              true if one or more properties was bound
      */
     public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties,
-                                         boolean nesting, boolean nestingDeep, boolean fluentBuilder, boolean reference, boolean placeholder) {
+                                         boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean reference, boolean placeholder) {
         org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
         org.apache.camel.util.ObjectHelper.notNull(target, "target");
         org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
@@ -264,7 +261,7 @@ public final class PropertyBindingSupport {
 
         for (Iterator<Map.Entry<String, Object>> iter = properties.entrySet().iterator(); iter.hasNext();) {
             Map.Entry<String, Object> entry = iter.next();
-            if (bindProperty(camelContext, target, entry.getKey(), entry.getValue(), nesting, nestingDeep, fluentBuilder, reference, placeholder)) {
+            if (bindProperty(camelContext, target, entry.getKey(), entry.getValue(), nesting, deepNesting, fluentBuilder, reference, placeholder)) {
                 iter.remove();
                 rc = true;
             }
@@ -295,10 +292,10 @@ public final class PropertyBindingSupport {
     }
 
     private static boolean bindProperty(CamelContext camelContext, Object target, String name, Object value,
-                                boolean nesting, boolean nestingDeep, boolean fluentBuilder, boolean reference, boolean placeholder) {
+                                boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean reference, boolean placeholder) {
         try {
             if (target != null && name != null) {
-                return setProperty(camelContext, target, name, value, nesting, nestingDeep, fluentBuilder, reference, placeholder);
+                return setProperty(camelContext, target, name, value, nesting, deepNesting, fluentBuilder, reference, placeholder);
             }
         } catch (Exception e) {
             throw new PropertyBindingException(target, name, e);
@@ -329,7 +326,7 @@ public final class PropertyBindingSupport {
     }
 
     private static boolean setProperty(CamelContext context, Object target, String name, Object value,
-                                       boolean nesting, boolean nestingDeep, boolean fluentBuilder, boolean reference, boolean placeholder) throws Exception {
+                                       boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean reference, boolean placeholder) throws Exception {
         String refName = null;
 
         if (placeholder) {
@@ -352,7 +349,7 @@ public final class PropertyBindingSupport {
                     String part = parts[i];
                     Object prop = getOrElseProperty(newTarget, part, null);
                     if (prop == null) {
-                        if (!nestingDeep) {
+                        if (!deepNesting) {
                             // okay we cannot go further down
                             break;
                         }
