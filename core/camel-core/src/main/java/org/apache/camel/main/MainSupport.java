@@ -976,6 +976,22 @@ public abstract class MainSupport extends ServiceSupport {
 
         // additional advanced configuration which is not configured using CamelConfigurationProperties
         afterPropertiesSet(camelContext.getRegistry(), camelContext);
+
+        // now configure context with additional properties
+        Properties prop = camelContext.getPropertiesComponent().loadProperties();
+        Map<String, Object> properties = new LinkedHashMap<>();
+        for (String key : prop.stringPropertyNames()) {
+            if (key.startsWith("camel.context.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(14);
+                properties.put(option, value);
+            }
+        }
+        if (!properties.isEmpty()) {
+            LOG.info("Auto configuring CamelContext from loaded properties: {}", properties.size());
+        }
+        setCamelProperties(camelContext, camelContext, properties, true);
     }
 
     /**
