@@ -325,7 +325,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             final NettyHttpMessage nettyHttpMessage = (NettyHttpMessage) message;
             final FullHttpResponse response = nettyHttpMessage.getHttpResponse();
 
-            if (response != null) {
+            if (response != null && nettyHttpMessage.getBody() == null) {
                 return response.retain();
             }
         }
