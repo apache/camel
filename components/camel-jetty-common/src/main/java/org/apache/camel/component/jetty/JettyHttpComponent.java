@@ -626,8 +626,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                 throw new RuntimeCamelException(e);
             }
         } else if ("https".equals(endpoint.getProtocol())) {
-            sslcf = new SslContextFactory();
-            sslcf.setEndpointIdentificationAlgorithm(null);
+            sslcf = new SslContextFactory.Server();
             String keystoreProperty = System.getProperty(JETTY_SSL_KEYSTORE);
             if (keystoreProperty != null) {
                 sslcf.setKeyStorePath(keystoreProperty);
@@ -656,10 +655,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     protected abstract AbstractConnector createConnectorJettyInternal(Server server, JettyHttpEndpoint endpoint, SslContextFactory sslcf);
 
     private SslContextFactory createSslContextFactory(SSLContextParameters ssl, boolean client) throws GeneralSecurityException, IOException {
-        SslContextFactory answer = new SslContextFactory();
-        if (!client) {
-            answer.setEndpointIdentificationAlgorithm(null);
-        }
+        SslContextFactory answer = client ? new SslContextFactory.Client() : new SslContextFactory.Server();
         if (ssl != null) {
             answer.setSslContext(ssl.createSSLContext(getCamelContext()));
         }
