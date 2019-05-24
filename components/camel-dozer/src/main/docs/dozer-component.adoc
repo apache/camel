@@ -57,7 +57,16 @@ from("direct:orderInput").
 ### Options
 
 // component options: START
-The Dozer component has no options.
+The Dozer component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
 // component options: END
 
 // endpoint options: START
@@ -79,7 +88,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (7 parameters):
+==== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,6 +100,7 @@ with the following path and query parameters:
 | *sourceModel* (producer) | Fully-qualified class name for the source type used in the mapping. If specified, the input to the mapping is converted to the specified type before being mapped with Dozer. |  | String
 | *targetModel* (producer) | *Required* Fully-qualified class name for the target type used in the mapping. |  | String
 | *unmarshalId* (producer) | The id of a dataFormat defined within the Camel Context to use for unmarshalling the mapping input from a non-Java type. |  | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
@@ -110,13 +120,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 2 options, which are listed below.
+The component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.dozer.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.dozer.enabled* | Enable dozer component | true | Boolean
 | *camel.component.dozer.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===

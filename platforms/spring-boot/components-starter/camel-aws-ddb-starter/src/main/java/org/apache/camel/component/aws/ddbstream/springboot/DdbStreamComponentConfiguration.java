@@ -61,6 +61,11 @@ public class DdbStreamComponentConfiguration
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+    /**
+     * Whether the component should use basic property binding (Camel 2.x) or
+     * the newer property binding with additional capabilities
+     */
+    private Boolean basicPropertyBinding = false;
 
     public DdbStreamConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -102,6 +107,14 @@ public class DdbStreamComponentConfiguration
     public void setResolvePropertyPlaceholders(
             Boolean resolvePropertyPlaceholders) {
         this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    }
+
+    public Boolean getBasicPropertyBinding() {
+        return basicPropertyBinding;
+    }
+
+    public void setBasicPropertyBinding(Boolean basicPropertyBinding) {
+        this.basicPropertyBinding = basicPropertyBinding;
     }
 
     public static class DdbStreamConfigurationNestedConfiguration {

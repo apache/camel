@@ -79,6 +79,11 @@ public class DisruptorComponentConfiguration
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+    /**
+     * Whether the component should use basic property binding (Camel 2.x) or
+     * the newer property binding with additional capabilities
+     */
+    private Boolean basicPropertyBinding = false;
 
     public Integer getDefaultConcurrentConsumers() {
         return defaultConcurrentConsumers;
@@ -146,5 +151,13 @@ public class DisruptorComponentConfiguration
     public void setResolvePropertyPlaceholders(
             Boolean resolvePropertyPlaceholders) {
         this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    }
+
+    public Boolean getBasicPropertyBinding() {
+        return basicPropertyBinding;
+    }
+
+    public void setBasicPropertyBinding(Boolean basicPropertyBinding) {
+        this.basicPropertyBinding = basicPropertyBinding;
     }
 }

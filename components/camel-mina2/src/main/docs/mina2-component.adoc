@@ -64,7 +64,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Mina2 component supports 3 options, which are listed below.
+The Mina2 component supports 4 options, which are listed below.
 
 
 
@@ -74,6 +74,7 @@ The Mina2 component supports 3 options, which are listed below.
 | *configuration* (advanced) | To use the shared mina configuration. |  | Mina2Configuration
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -105,7 +106,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (27 parameters):
+==== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -124,6 +125,7 @@ with the following path and query parameters:
 | *noReplyLogLevel* (consumer) | If sync is enabled this option dictates MinaConsumer which logging level to use when logging a there is no reply to send back. | WARN | LoggingLevel
 | *cachedAddress* (producer) | Whether to create the InetAddress once and reuse. Setting this to false allows to pickup DNS changes in the network. | true | boolean
 | *lazySessionCreation* (producer) | Sessions can be lazily created to avoid exceptions, if the remote server is not up and running when the Camel producer is started. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *maximumPoolSize* (advanced) | Number of worker threads in the worker pool for TCP and UDP | 16 | int
 | *orderedThreadPoolExecutor* (advanced) | Whether to use ordered thread pool, to ensure events are processed orderly on the same channel. | true | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
@@ -156,13 +158,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 29 options, which are listed below.
+The component supports 30 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.mina2.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.mina2.configuration.allow-default-codec* | The mina component installs a default codec if both, codec is null and textline is false. Setting allowDefaultCodec to false prevents the mina component from installing a default codec as the first element in the filter chain. This is useful in scenarios where another filter must be the first in the filter chain, like the SSL filter. | true | Boolean
 | *camel.component.mina2.configuration.auto-start-tls* | Whether to auto start SSL handshake. | true | Boolean
 | *camel.component.mina2.configuration.cached-address* | Whether to create the InetAddress once and reuse. Setting this to false allows to pickup DNS changes in the network. | true | Boolean

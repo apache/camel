@@ -40,7 +40,7 @@ You can append query options to the URI in the following format,
 === Options
 
 // component options: START
-The JDBC component supports 2 options, which are listed below.
+The JDBC component supports 3 options, which are listed below.
 
 
 
@@ -49,6 +49,7 @@ The JDBC component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *dataSource* (producer) | To use the DataSource instance instead of looking up the data source by name from the registry. |  | DataSource
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -76,7 +77,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (13 parameters):
+==== Query Parameters (14 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -92,6 +93,7 @@ with the following path and query parameters:
 | *useGetBytesForBlob* (producer) | To read BLOB columns as bytes instead of string data. This may be needed for certain databases such as Oracle where you must read BLOB columns as bytes. | false | boolean
 | *useHeadersAsParameters* (producer) | Set this option to true to use the prepareStatementStrategy with named parameters. This allows to define queries with named placeholders, and use headers with the dynamic values for the query placeholders. | false | boolean
 | *useJDBC4ColumnNameAnd LabelSemantics* (producer) | Sets whether to use JDBC 4 or JDBC 3.0 or older semantic when retrieving column name. JDBC 4.0 uses columnLabel to get the column name where as JDBC 3.0 uses both columnName or columnLabel. Unfortunately JDBC drivers behave differently so you can use this option to work out issues around your JDBC driver if you get problem using this component This option is default true. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *beanRowMapper* (advanced) | To use a custom org.apache.camel.component.jdbc.BeanRowMapper when using outputClass. The default implementation will lower case the row names and skip underscores, and dashes. For example CUST_ID is mapped as custId. |  | BeanRowMapper
 | *prepareStatementStrategy* (advanced) | Allows to plugin to use a custom org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy to control preparation of the query and prepared statement. |  | JdbcPrepareStatement Strategy
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
@@ -114,13 +116,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.jdbc.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.jdbc.data-source* | To use the DataSource instance instead of looking up the data source by name from the registry. The option is a javax.sql.DataSource type. |  | String
 | *camel.component.jdbc.enabled* | Enable jdbc component | true | Boolean
 | *camel.component.jdbc.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean

@@ -40,7 +40,16 @@ grpc://service[?options]
 ### Endpoint Options
 
 // component options: START
-The gRPC component has no options.
+The gRPC component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
 // component options: END
 
 // endpoint options: START
@@ -64,7 +73,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (25 parameters):
+==== Query Parameters (26 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -83,6 +92,7 @@ with the following path and query parameters:
 | *producerStrategy* (producer) | The mode used to communicate with a remote gRPC server. In SIMPLE mode a single exchange is translated into a remote procedure call. In STREAMING mode all exchanges will be sent within the same request (input and output of the recipient gRPC service must be of type 'stream'). | SIMPLE | GrpcProducerStrategy
 | *streamRepliesTo* (producer) | When using STREAMING client mode, it indicates the endpoint where responses should be forwarded. |  | String
 | *userAgent* (producer) | The user agent header passed to the server |  | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *authenticationType* (security) | Authentication method type in advance to the SSL/TLS negotiation | NONE | GrpcAuthType
 | *jwtAlgorithm* (security) | JSON Web Token sign algorithm | HMAC256 | JwtAlgorithm
@@ -113,13 +123,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 2 options, which are listed below.
+The component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.grpc.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.grpc.enabled* | Enable grpc component | true | Boolean
 | *camel.component.grpc.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===

@@ -23,7 +23,16 @@ monitor Camel using JMX.
 === Options
 
 // component options: START
-The JMX component has no options.
+The JMX component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
 // component options: END
 
 // endpoint options: START
@@ -45,7 +54,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (30 parameters):
+==== Query Parameters (31 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -60,6 +69,7 @@ with the following path and query parameters:
 | *observedAttribute* (consumer) | The attribute to observe for the monitor bean or consumer. |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *executorService* (advanced) | To use a custom shared thread pool for the consumers. By default each consume has their own thread-pool to process and route notifications. |  | ExecutorService
 | *handback* (advanced) | Value to handback to the listener when a notification is received. This value will be put in the message header with the key jmx.handback |  | Object
 | *notificationFilter* (advanced) | Reference to a bean that implements the NotificationFilter. |  | NotificationFilter
@@ -99,13 +109,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 2 options, which are listed below.
+The component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.jmx.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.jmx.enabled* | Enable jmx component | true | Boolean
 | *camel.component.jmx.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===

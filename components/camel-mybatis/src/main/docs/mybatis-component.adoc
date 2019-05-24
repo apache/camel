@@ -42,7 +42,7 @@ the `configurationUri` option on the `MyBatisComponent` component.
 === Options
 
 // component options: START
-The MyBatis component supports 3 options, which are listed below.
+The MyBatis component supports 4 options, which are listed below.
 
 
 
@@ -52,6 +52,7 @@ The MyBatis component supports 3 options, which are listed below.
 | *sqlSessionFactory* (advanced) | To use the SqlSessionFactory |  | SqlSessionFactory
 | *configurationUri* (common) | Location of MyBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath | SqlMapConfig.xml | String
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -75,7 +76,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (29 parameters):
+==== Query Parameters (30 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -96,6 +97,7 @@ with the following path and query parameters:
 | *inputHeader* (producer) | User the header value for input parameters instead of the message body. By default, inputHeader == null and the input parameters are taken from the message body. If outputHeader is set, the value is used and query parameters will be taken from the header instead of the body. |  | String
 | *outputHeader* (producer) | Store the query result in a header instead of the message body. By default, outputHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If outputHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. Setting outputHeader will also omit populating the default CamelMyBatisResult header since it would be the same as outputHeader all the time. |  | String
 | *statementType* (producer) | Mandatory to specify for the producer to control which kind of operation to invoke. |  | StatementType
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
@@ -128,13 +130,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 4 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.mybatis.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.mybatis.configuration-uri* | Location of MyBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath | SqlMapConfig.xml | String
 | *camel.component.mybatis.enabled* | Enable mybatis component | true | Boolean
 | *camel.component.mybatis.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean

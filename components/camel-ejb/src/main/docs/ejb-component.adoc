@@ -33,7 +33,7 @@ the Application Server JNDI Registry
 
 
 // component options: START
-The EJB component supports 4 options, which are listed below.
+The EJB component supports 5 options, which are listed below.
 
 
 
@@ -44,6 +44,7 @@ The EJB component supports 4 options, which are listed below.
 | *properties* (producer) | Properties for creating javax.naming.Context if a context has not been configured. |  | Properties
 | *cache* (advanced) | If enabled, Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope. |  | Boolean
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -69,13 +70,14 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (4 parameters):
+==== Query Parameters (5 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *method* (producer) | Sets the name of the method to invoke on the bean |  | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *cache* (advanced) | If enabled, Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope. |  | Boolean
 | *parameters* (advanced) | Used for configuring additional properties on the bean |  | Map
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean

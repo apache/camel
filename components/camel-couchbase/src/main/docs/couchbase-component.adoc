@@ -30,7 +30,16 @@ couchbase:url
 ### Options
 
 // component options: START
-The Couchbase component has no options.
+The Couchbase component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
 // component options: END
 
 // endpoint options: START
@@ -54,7 +63,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (47 parameters):
+==== Query Parameters (48 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -83,6 +92,7 @@ with the following path and query parameters:
 | *replicateTo* (producer) | Where to replicate the data | 0 | int
 | *startingIdForInsertsFrom* (producer) | Define the starting Id where we are doing an insert operation |  | long
 | *additionalHosts* (advanced) | The additional hosts |  | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *maxReconnectDelay* (advanced) | Define the max delay during a reconnection | 30000 | long
 | *obsPollInterval* (advanced) | Define the observation polling interval | 400 | long
 | *obsTimeout* (advanced) | Define the observation timeout | -1 | long
@@ -125,13 +135,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 2 options, which are listed below.
+The component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.couchbase.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.couchbase.enabled* | Enable couchbase component | true | Boolean
 | *camel.component.couchbase.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===

@@ -65,7 +65,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The SQL Stored Procedure component supports 2 options, which are listed below.
+The SQL Stored Procedure component supports 3 options, which are listed below.
 
 
 
@@ -74,6 +74,7 @@ The SQL Stored Procedure component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *dataSource* (producer) | Sets the DataSource to use to communicate with the database. |  | DataSource
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -99,7 +100,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (7 parameters):
+==== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -111,6 +112,7 @@ with the following path and query parameters:
 | *noop* (producer) | If set, will ignore the results of the template and use the existing IN message as the OUT message for the continuation of processing | false | boolean
 | *outputHeader* (producer) | Store the template result in a header instead of the message body. By default, outputHeader == null and the template result is stored in the message body, any existing content in the message body is discarded. If outputHeader is set, the value is used as the name of the header to store the template result and the original message body is preserved. |  | String
 | *useMessageBodyForTemplate* (producer) | Whether to use the message body as the template and then headers for parameters. If this option is enabled then the template in the uri is not used. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
@@ -130,13 +132,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.sql-stored.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.sql-stored.data-source* | Sets the DataSource to use to communicate with the database. The option is a javax.sql.DataSource type. |  | String
 | *camel.component.sql-stored.enabled* | Enable sql-stored component | true | Boolean
 | *camel.component.sql-stored.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
