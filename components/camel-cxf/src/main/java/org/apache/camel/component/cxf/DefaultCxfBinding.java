@@ -526,7 +526,6 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             cxfContext.putAll(camelExchange.getProperties());
         }
         
-        camelExchange.setProperty(contextKey, cxfContext);
     }
 
     /**
