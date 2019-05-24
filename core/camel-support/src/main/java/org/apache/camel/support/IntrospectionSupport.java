@@ -602,7 +602,7 @@ public final class IntrospectionSupport {
                         return true;
                     } else {
                         // We need to convert it
-                        Object convertedValue = typeConverter.convertTo(parameterType, ref);
+                        Object convertedValue = typeConverter != null ? typeConverter.convertTo(parameterType, ref) : ref;
                         // we may want to set options on classes that has package view visibility, so override the accessible
                         setter.setAccessible(true);
                         setter.invoke(target, convertedValue);

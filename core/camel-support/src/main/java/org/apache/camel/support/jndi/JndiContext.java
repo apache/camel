@@ -96,28 +96,7 @@ public class JndiContext implements Context, Serializable {
      * properties set on the injected bean
      */
     public static Map<String, Object> createBindingsMapFromEnvironment(Hashtable<String, Object> env) throws Exception {
-        Map<String, Object> answer = new HashMap<>(env);
-
-        for (Map.Entry<String, Object> entry : env.entrySet()) {
-            String key = entry.getKey();
-            Object value = entry.getValue();
-
-            if (key != null && value instanceof String) {
-                String valueText = (String)value;
-                if (key.endsWith(".class")) {
-                    Class<?> type = org.apache.camel.util.ObjectHelper.loadClass(valueText);
-                    if (type != null) {
-                        String newEntry = key.substring(0, key.length() - ".class".length());
-                        Object bean = createBean(type, answer, newEntry + ".");
-                        if (bean != null) {
-                            answer.put(newEntry, bean);
-                        }
-                    }
-                }
-            }
-        }
-
-        return answer;
+        return new HashMap<>();
     }
 
     public void freeze() {
