@@ -40,7 +40,7 @@ If you do not wish to delete the entity bean when it has been processed, you can
 === Options
 
 // component options: START
-The JOOQ component supports 2 options, which are listed below.
+The JOOQ component supports 3 options, which are listed below.
 
 
 
@@ -49,6 +49,7 @@ The JOOQ component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (common) | Component configuration (database connection, database entity type, etc.) |  | JooqConfiguration
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -72,7 +73,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (22 parameters):
+==== Query Parameters (23 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -86,6 +87,7 @@ with the following path and query parameters:
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
 | *operation* (producer) | Type of operation to execute on query | NONE | JooqOperation
 | *query* (producer) | To execute plain SQL query |  | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
@@ -119,13 +121,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 7 options, which are listed below.
+The component supports 8 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.jooq.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.jooq.configuration.consume-delete* | Delete entity after it is consumed | true | Boolean
 | *camel.component.jooq.configuration.database-configuration* |  |  | Configuration
 | *camel.component.jooq.configuration.entity-type* | JOOQ entity class |  | Class

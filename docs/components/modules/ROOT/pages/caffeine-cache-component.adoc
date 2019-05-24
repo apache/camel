@@ -33,7 +33,7 @@ format, `?option=value&option=#beanRef&...`
 
 
 // component options: START
-The Caffeine Cache component supports 2 options, which are listed below.
+The Caffeine Cache component supports 3 options, which are listed below.
 
 
 
@@ -42,6 +42,7 @@ The Caffeine Cache component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (advanced) | Sets the global component configuration |  | CaffeineConfiguration
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -66,7 +67,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (19 parameters):
+==== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -88,6 +89,7 @@ with the following path and query parameters:
 | *removalListener* (producer) | Set a specific removal Listener for the cache |  | RemovalListener
 | *statsCounter* (producer) | Set a specific Stats Counter for the cache stats |  | StatsCounter
 | *statsEnabled* (producer) | To enable stats on the cache | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *keyType* (advanced) | The cache key type, default java.lang.Object | java.lang.Object | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *valueType* (advanced) | The cache value type, default java.lang.Object | java.lang.Object | String
@@ -109,13 +111,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 17 options, which are listed below.
+The component supports 18 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.caffeine-cache.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.caffeine-cache.configuration.action* | To configure the default cache action. If an action is set in the message header, then the operation from the header takes precedence. |  | String
 | *camel.component.caffeine-cache.configuration.cache* | To configure an already instantiated cache to be used |  | Cache
 | *camel.component.caffeine-cache.configuration.cache-loader* | To configure a CacheLoader in case of a LoadCache use |  | CacheLoader

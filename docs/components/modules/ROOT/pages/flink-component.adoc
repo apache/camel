@@ -58,7 +58,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (6 parameters):
+==== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -69,6 +69,7 @@ with the following path and query parameters:
 | *dataSetCallback* (producer) | Function performing action against a DataSet. |  | DataSetCallback
 | *dataStream* (producer) | DataStream to compute against. |  | DataStream
 | *dataStreamCallback* (producer) | Function performing action against a DataStream. |  | DataStreamCallback
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
@@ -88,13 +89,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 6 options, which are listed below.
+The component supports 7 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.flink.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.flink.data-set* | DataSet to compute against. The option is a org.apache.flink.api.java.DataSet type. |  | String
 | *camel.component.flink.data-set-callback* | Function performing action against a DataSet. The option is a org.apache.camel.component.flink.DataSetCallback type. |  | String
 | *camel.component.flink.data-stream* | DataStream to compute against. The option is a org.apache.flink.streaming.api.datastream.DataStream type. |  | String
@@ -113,7 +115,7 @@ The component supports 6 options, which are listed below.
 
 
 // component options: START
-The Apache Flink component supports 5 options, which are listed below.
+The Apache Flink component supports 6 options, which are listed below.
 
 
 
@@ -125,6 +127,7 @@ The Apache Flink component supports 5 options, which are listed below.
 | *dataSetCallback* (producer) | Function performing action against a DataSet. |  | DataSetCallback
 | *dataStreamCallback* (producer) | Function performing action against a DataStream. |  | DataStreamCallback
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 

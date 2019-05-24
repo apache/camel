@@ -39,7 +39,7 @@ link:../../../../camel-jms/src/main/docs/readme.html[JMS] component after the de
 
 
 // component options: START
-The AMQP component supports 80 options, which are listed below.
+The AMQP component supports 81 options, which are listed below.
 
 
 
@@ -126,6 +126,7 @@ The AMQP component supports 80 options, which are listed below.
 | *formatDateHeadersTo Iso8601* (producer) | Sets whether date headers should be formatted according to the ISO 8601 standard. | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -155,7 +156,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (91 parameters):
+==== Query Parameters (92 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -217,6 +218,7 @@ with the following path and query parameters:
 | *allowSerializedHeaders* (advanced) | Controls whether or not to include serialized headers. Applies only when isTransferExchange() is true. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level. | false | boolean
 | *asyncStartListener* (advanced) | Whether to startup the JmsConsumer message listener asynchronously, when starting a route. For example if a JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying and/or failover. This will cause Camel to block while starting routes. By setting this option to true, you will let routes startup, while the JmsConsumer connects to the JMS broker using a dedicated thread in asynchronous mode. If this option is used, then beware that if the connection could not be established, then an exception is logged at WARN level, and the consumer will not be able to receive messages; You can then restart the route to retry. | false | boolean
 | *asyncStopListener* (advanced) | Whether to stop the JmsConsumer message listener asynchronously, when stopping a route. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *destinationResolver* (advanced) | A pluggable org.springframework.jms.support.destination.DestinationResolver that allows you to use your own resolver (for example, to lookup the real destination in a JNDI registry). |  | DestinationResolver
 | *errorHandler* (advanced) | Specifies a org.springframework.util.ErrorHandler to be invoked in case of any uncaught exceptions thrown while processing a Message. By default these exceptions will be logged at the WARN level, if no errorHandler has been configured. You can configure logging level and whether stack traces should be logged using errorHandlerLoggingLevel and errorHandlerLogStackTrace options. This makes it much easier to configure, than having to code a custom errorHandler. |  | ErrorHandler
 | *exceptionListener* (advanced) | Specifies the JMS Exception Listener that is to be notified of any underlying JMS exceptions. |  | ExceptionListener
@@ -270,7 +272,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 81 options, which are listed below.
+The component supports 82 options, which are listed below.
 
 
 
@@ -288,6 +290,7 @@ The component supports 81 options, which are listed below.
 | *camel.component.amqp.async-start-listener* | Whether to startup the JmsConsumer message listener asynchronously, when starting a route. For example if a JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying and/or failover. This will cause Camel to block while starting routes. By setting this option to true, you will let routes startup, while the JmsConsumer connects to the JMS broker using a dedicated thread in asynchronous mode. If this option is used, then beware that if the connection could not be established, then an exception is logged at WARN level, and the consumer will not be able to receive messages; You can then restart the route to retry. | false | Boolean
 | *camel.component.amqp.async-stop-listener* | Whether to stop the JmsConsumer message listener asynchronously, when stopping a route. | false | Boolean
 | *camel.component.amqp.auto-startup* | Specifies whether the consumer container should auto-startup. | true | Boolean
+| *camel.component.amqp.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.amqp.cache-level* | Sets the cache level by ID for the underlying JMS resources. See cacheLevelName option for more details. |  | Integer
 | *camel.component.amqp.cache-level-name* | Sets the cache level by name for the underlying JMS resources. Possible values are: CACHE_AUTO, CACHE_CONNECTION, CACHE_CONSUMER, CACHE_NONE, and CACHE_SESSION. The default setting is CACHE_AUTO. See the Spring documentation and Transactions Cache Levels for more information. | CACHE_AUTO | String
 | *camel.component.amqp.client-id* | Sets the JMS client ID to use. Note that this value, if specified, must be unique and can only be used by a single JMS connection instance. It is typically only required for durable topic subscriptions. If using Apache ActiveMQ you may prefer to use Virtual Topics instead. |  | String

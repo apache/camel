@@ -33,7 +33,7 @@ kafka:topic[?options]
 
 
 // component options: START
-The Kafka component supports 8 options, which are listed below.
+The Kafka component supports 9 options, which are listed below.
 
 
 
@@ -48,6 +48,7 @@ The Kafka component supports 8 options, which are listed below.
 | *allowManualCommit* (consumer) | Whether to allow doing manual commits via KafkaManualCommit. If this option is enabled then an instance of KafkaManualCommit is stored on the Exchange message header, which allows end users to access this API and perform manual offset commits via the Kafka consumer. | false | boolean
 | *kafkaManualCommit Factory* (consumer) | Factory to use for creating KafkaManualCommit instances. This allows to plugin a custom factory to create custom KafkaManualCommit instances in case special logic is needed when doing manual commits that deviates from the default implementation that comes out of the box. |  | KafkaManualCommit Factory
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -72,7 +73,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (95 parameters):
+==== Query Parameters (96 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -146,6 +147,7 @@ with the following path and query parameters:
 | *workerPool* (producer) | To use a custom worker pool for continue routing Exchange after kafka server has acknowledge the message that was sent to it from KafkaProducer using asynchronous non-blocking processing. |  | ExecutorService
 | *workerPoolCoreSize* (producer) | Number of core threads for the worker pool for continue routing Exchange after kafka server has acknowledge the message that was sent to it from KafkaProducer using asynchronous non-blocking processing. | 10 | Integer
 | *workerPoolMaxSize* (producer) | Maximum number of threads for the worker pool for continue routing Exchange after kafka server has acknowledge the message that was sent to it from KafkaProducer using asynchronous non-blocking processing. | 20 | Integer
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *interceptorClasses* (monitoring) | Sets interceptors for producer or consumers. Producer interceptors have to be classes implementing org.apache.kafka.clients.producer.ProducerInterceptor Consumer interceptors have to be classes implementing org.apache.kafka.clients.consumer.ConsumerInterceptor Note that if you use Producer interceptor on a consumer it will throw a class cast exception in runtime |  | String
 | *kerberosBeforeReloginMin Time* (security) | Login thread sleep time between refresh attempts. | 60000 | Integer
@@ -191,7 +193,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 100 options, which are listed below.
+The component supports 101 options, which are listed below.
 
 
 
@@ -199,6 +201,7 @@ The component supports 100 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.kafka.allow-manual-commit* | Whether to allow doing manual commits via KafkaManualCommit. If this option is enabled then an instance of KafkaManualCommit is stored on the Exchange message header, which allows end users to access this API and perform manual offset commits via the Kafka consumer. | false | Boolean
+| *camel.component.kafka.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.kafka.break-on-first-error* | This options controls what happens when a consumer is processing an exchange and it fails. If the option is false then the consumer continues to the next message and processes it. If the option is true then the consumer breaks out, and will seek back to offset of the message that caused a failure, and then re-attempt to process this message. However this can lead to endless processing of the same message if its bound to fail every time, eg a poison message. Therefore its recommended to deal with that for example by using Camel's error handler. | false | Boolean
 | *camel.component.kafka.brokers* | URL of the Kafka brokers to use. The format is host1:port1,host2:port2, and the list can be a subset of brokers or a VIP pointing to a subset of brokers. This option is known as bootstrap.servers in the Kafka documentation. |  | String
 | *camel.component.kafka.configuration.allow-manual-commit* | Whether to allow doing manual commits via {@link KafkaManualCommit}. <p/> If this option is enabled then an instance of {@link KafkaManualCommit} is stored on the {@link Exchange} message header, which allows end users to access this API and perform manual offset commits via the Kafka consumer. | false | Boolean

@@ -81,7 +81,7 @@ both signing and verifying should be configured identically.
 ### Options
 
 // component options: START
-The Crypto (JCE) component supports 2 options, which are listed below.
+The Crypto (JCE) component supports 3 options, which are listed below.
 
 
 
@@ -90,6 +90,7 @@ The Crypto (JCE) component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (advanced) | To use the shared DigitalSignatureConfiguration as configuration |  | DigitalSignature Configuration
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -113,7 +114,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (19 parameters):
+==== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -130,6 +131,7 @@ with the following path and query parameters:
 | *publicKeyName* (producer) | references that should be resolved when the context changes |  | String
 | *secureRandomName* (producer) | Sets the reference name for a SecureRandom that can be found in the registry. |  | String
 | *signatureHeaderName* (producer) | Set the name of the message header that should be used to store the base64 encoded signature. This defaults to 'CamelDigitalSignature' |  | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *bufferSize* (advanced) | Set the size of the buffer used to read in the Exchange payload data. | 2048 | Integer
 | *certificate* (advanced) | Set the Certificate that should be used to verify the signature in the exchange based on its payload. |  | Certificate
 | *clearHeaders* (advanced) | Determines if the Signature specific headers be cleared after signing and verification. Defaults to true, and should only be made otherwise at your extreme peril as vital private information such as Keys and passwords may escape if unset. | true | boolean
@@ -156,13 +158,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 33 options, which are listed below.
+The component supports 34 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.crypto.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.crypto.configuration.algorithm* | Sets the JCE name of the Algorithm that should be used for the signer. | SHA1WithDSA | String
 | *camel.component.crypto.configuration.alias* | Sets the alias used to query the KeyStore for keys and {@link java.security.cert.Certificate Certificates} to be used in signing and verifying exchanges. This value can be provided at runtime via the message header {@link org.apache.camel.component.crypto.DigitalSignatureConstants#KEYSTORE_ALIAS} |  | String
 | *camel.component.crypto.configuration.buffer-size* | Set the size of the buffer used to read in the Exchange payload data. | 2048 | Integer

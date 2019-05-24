@@ -26,7 +26,7 @@ For more information you can look at <<ftp-component,FTP component>>
 The options below are exclusive for the FTPS component.
 
 // component options: START
-The FTPS component supports 2 options, which are listed below.
+The FTPS component supports 3 options, which are listed below.
 
 
 
@@ -35,6 +35,7 @@ The FTPS component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -60,7 +61,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (122 parameters):
+==== Query Parameters (123 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -116,6 +117,7 @@ with the following path and query parameters:
 | *sendNoop* (producer) | Whether to send a noop command as a pre-write check before uploading files to the FTP server. This is enabled by default as a validation of the connection is still valid, which allows to silently re-connect to be able to upload the file. However if this causes problems, you can turn this option off. | true | boolean
 | *activePortRange* (advanced) | Set the client side port range in active mode. The syntax is: minPort-maxPort Both port numbers are inclusive, eg 10000-19999 to include all 1xxxx ports. |  | String
 | *autoCreate* (advanced) | Automatically create missing directories in the file's pathname. For the file consumer, that means creating the starting directory. For the file producer, it means the directory the files should be written to. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *bufferSize* (advanced) | Write buffer sized in bytes. | 131072 | int
 | *connectTimeout* (advanced) | Sets the connect timeout for waiting for a connection to be established Used by both FTPClient and JSCH | 10000 | int
 | *ftpClient* (advanced) | To use a custom instance of FTPClient |  | FTPClient
@@ -206,13 +208,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.ftps.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.ftps.enabled* | Enable ftps component | true | Boolean
 | *camel.component.ftps.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.ftps.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
