@@ -52,7 +52,7 @@ import org.apache.camel.util.URISupport;
  * <a href="http://aws.amazon.com/sqs/">AWS SQS</a>
  */
 public class SqsConsumer extends ScheduledBatchPollingConsumer {
-    
+
     private ScheduledExecutorService scheduledExecutor;
     private transient String sqsConsumerToString;
     private Collection<String> attributeNames;
@@ -76,7 +76,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
         // must reset for each poll
         shutdownRunningTask = null;
         pendingExchanges = 0;
-        
+
         ReceiveMessageRequest request = new ReceiveMessageRequest(getQueueUrl());
         request.setMaxNumberOfMessages(getMaxMessagesPerPoll() > 0 ? getMaxMessagesPerPoll() : null);
         request.setVisibilityTimeout(getConfiguration().getVisibilityTimeout() != null ? getConfiguration().getVisibilityTimeout() : null);
@@ -90,7 +90,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
         }
 
         log.trace("Receiving messages with request [{}]...", request);
-        
+
         ReceiveMessageResult messageResult = null;
         try {
             messageResult = getClient().receiveMessage(request);
@@ -103,16 +103,16 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
         if (log.isTraceEnabled()) {
             log.trace("Received {} messages", messageResult.getMessages().size());
         }
-        
+
         Queue<Exchange> exchanges = createExchanges(messageResult.getMessages());
         return processBatch(CastUtils.cast(exchanges));
     }
 
     public void reConnectToQueue() {
         try {
-        	if (getEndpoint().getConfiguration().isAutoCreateQueue()) {
+            if (getEndpoint().getConfiguration().isAutoCreateQueue()) {
                 getEndpoint().createQueue(getClient());
-        	}
+            }
         } catch (QueueDeletedRecentlyException qdr) {
             log.debug("Queue recently deleted, will retry in 30 seconds.");
             try {
@@ -125,12 +125,12 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
             log.warn("Could not connect to queue in amazon.", e);
         }
     }
-    
+
     protected Queue<Exchange> createExchanges(List<Message> messages) {
         if (log.isTraceEnabled()) {
             log.trace("Received {} messages in this poll", messages.size());
         }
-        
+
         Queue<Exchange> answer = new LinkedList<>();
         for (Message message : messages) {
             Exchange exchange = getEndpoint().createExchange(message);
@@ -139,7 +139,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
 
         return answer;
     }
-    
+
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
 
@@ -162,10 +162,10 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
                 int repeatSeconds = Double.valueOf(visibilityTimeout.doubleValue() * 1.5).intValue();
                 if (log.isDebugEnabled()) {
                     log.debug("Scheduled TimeoutExtender task to start after {} delay, and run with {}/{} period/repeat (seconds), to extend exchangeId: {}",
-                            new Object[]{delay, period, repeatSeconds, exchange.getExchangeId()});
+                              new Object[] {delay, period, repeatSeconds, exchange.getExchangeId()});
                 }
-                final ScheduledFuture<?> scheduledFuture = this.scheduledExecutor.scheduleAtFixedRate(
-                        new TimeoutExtender(exchange, repeatSeconds), delay, period, TimeUnit.SECONDS);
+                final ScheduledFuture<?> scheduledFuture = this.scheduledExecutor.scheduleAtFixedRate(new TimeoutExtender(exchange, repeatSeconds), delay, period,
+                                                                                                      TimeUnit.SECONDS);
                 exchange.addOnCompletion(new Synchronization() {
                     @Override
                     public void onComplete(Exchange exchange) {
@@ -212,7 +212,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
 
         return total;
     }
-    
+
     /**
      * Strategy to delete the message after being processed.
      *
@@ -237,12 +237,9 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
     }
 
     private boolean shouldDelete(Exchange exchange) {
-        boolean shouldDeleteByFilter = exchange.getProperty(Exchange.FILTER_MATCHED) != null
-                && getConfiguration().isDeleteIfFiltered()
-                && passedThroughFilter(exchange);
+        boolean shouldDeleteByFilter = exchange.getProperty(Exchange.FILTER_MATCHED) != null && getConfiguration().isDeleteIfFiltered() && passedThroughFilter(exchange);
 
-        return getConfiguration().isDeleteAfterRead()
-                || shouldDeleteByFilter;
+        return getConfiguration().isDeleteAfterRead() || shouldDeleteByFilter;
     }
 
     private boolean passedThroughFilter(Exchange exchange) {
@@ -264,18 +261,18 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
     protected SqsConfiguration getConfiguration() {
         return getEndpoint().getConfiguration();
     }
-    
+
     protected AmazonSQS getClient() {
         return getEndpoint().getClient();
     }
-    
+
     protected String getQueueUrl() {
         return getEndpoint().getQueueUrl();
     }
-    
+
     @Override
     public SqsEndpoint getEndpoint() {
-        return (SqsEndpoint) super.getEndpoint();
+        return (SqsEndpoint)super.getEndpoint();
     }
 
     @Override
@@ -318,8 +315,8 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
 
         @Override
         public void run() {
-            ChangeMessageVisibilityRequest request = new ChangeMessageVisibilityRequest(getQueueUrl(),
-                    exchange.getIn().getHeader(SqsConstants.RECEIPT_HANDLE, String.class), repeatSeconds);
+            ChangeMessageVisibilityRequest request = new ChangeMessageVisibilityRequest(getQueueUrl(), exchange.getIn().getHeader(SqsConstants.RECEIPT_HANDLE, String.class),
+                                                                                        repeatSeconds);
 
             try {
                 log.trace("Extending visibility window by {} seconds for exchange {}", this.repeatSeconds, this.exchange);
@@ -330,8 +327,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
             } catch (MessageNotInflightException e) {
                 // Ignore.
             } catch (Exception e) {
-                log.warn("Extending visibility window failed for exchange " + exchange
-                        + ". Will not attempt to extend visibility further. This exception will be ignored.", e);
+                log.warn("Extending visibility window failed for exchange " + exchange + ". Will not attempt to extend visibility further. This exception will be ignored.", e);
             }
         }
     }
