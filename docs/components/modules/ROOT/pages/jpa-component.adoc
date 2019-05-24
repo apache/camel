@@ -95,7 +95,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The JPA component supports 5 options, which are listed below.
+The JPA component supports 6 options, which are listed below.
 
 
 
@@ -107,6 +107,7 @@ The JPA component supports 5 options, which are listed below.
 | *joinTransaction* (common) | The camel-jpa component will join transaction by default. You can use this option to turn this off, for example if you use LOCAL_RESOURCE and join transaction doesn't work with your JPA provider. This option can also be set globally on the JpaComponent, instead of having to set it on all endpoints. | true | boolean
 | *sharedEntityManager* (common) | Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases joinTransaction should be set to false as this is not an EXTENDED EntityManager. | false | boolean
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -136,7 +137,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (42 parameters):
+==== Query Parameters (43 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -169,6 +170,7 @@ with the following path and query parameters:
 | *useExecuteUpdate* (producer) | To configure whether to use executeUpdate() when producer executes a query. When you use INSERT, UPDATE or DELETE statement as a named query, you need to specify this option to 'true'. |  | Boolean
 | *usePassedInEntityManager* (producer) | If set to true, then Camel will use the EntityManager from the header JpaConstants.ENTITY_MANAGER instead of the configured entity manager on the component/endpoint. This allows end users to control which entity manager will be in use. | false | boolean
 | *usePersist* (producer) | Indicates to use entityManager.persist(entity) instead of entityManager.merge(entity). Note: entityManager.persist(entity) doesn't work for detached entities (where the EntityManager has to execute an UPDATE instead of an INSERT query)! | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *entityManagerProperties* (advanced) | Additional properties for the entity manager to use. |  | Map
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
@@ -202,13 +204,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 6 options, which are listed below.
+The component supports 7 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.jpa.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.jpa.enabled* | Enable jpa component | true | Boolean
 | *camel.component.jpa.entity-manager-factory* | To use the EntityManagerFactory. This is strongly recommended to configure. The option is a javax.persistence.EntityManagerFactory type. |  | String
 | *camel.component.jpa.join-transaction* | The camel-jpa component will join transaction by default. You can use this option to turn this off, for example if you use LOCAL_RESOURCE and join transaction doesn't work with your JPA provider. This option can also be set globally on the JpaComponent, instead of having to set it on all endpoints. | true | Boolean

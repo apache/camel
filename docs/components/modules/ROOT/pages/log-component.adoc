@@ -59,7 +59,7 @@ LogEIP.
 
 
 // component options: START
-The Log component supports 2 options, which are listed below.
+The Log component supports 3 options, which are listed below.
 
 
 
@@ -68,6 +68,7 @@ The Log component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *exchangeFormatter* (advanced) | Sets a custom ExchangeFormatter to convert the Exchange to a String suitable for logging. If not specified, we default to DefaultExchangeFormatter. |  | ExchangeFormatter
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -93,7 +94,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (26 parameters):
+==== Query Parameters (27 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -106,6 +107,7 @@ with the following path and query parameters:
 | *level* (producer) | Logging level to use. The default value is INFO. | INFO | String
 | *logMask* (producer) | If true, mask sensitive information like password or passphrase in the log. |  | Boolean
 | *marker* (producer) | An optional Marker name to use. |  | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *maxChars* (formatting) | Limits the number of characters logged per line. | 10000 | int
 | *multiline* (formatting) | If enabled then each information is outputted on a newline. | false | boolean
@@ -144,13 +146,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.log.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.log.enabled* | Whether to enable auto configuration of the log component. This is enabled by default. |  | Boolean
 | *camel.component.log.exchange-formatter* | Sets a custom ExchangeFormatter to convert the Exchange to a String suitable for logging. If not specified, we default to DefaultExchangeFormatter. The option is a org.apache.camel.spi.ExchangeFormatter type. |  | String
 | *camel.component.log.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
