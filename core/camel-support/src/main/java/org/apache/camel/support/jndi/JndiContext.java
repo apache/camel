@@ -96,7 +96,7 @@ public class JndiContext implements Context, Serializable {
      * properties set on the injected bean
      */
     public static Map<String, Object> createBindingsMapFromEnvironment(Hashtable<String, Object> env) throws Exception {
-        return new HashMap<>();
+        return new HashMap<>(env);
     }
 
     public void freeze() {
