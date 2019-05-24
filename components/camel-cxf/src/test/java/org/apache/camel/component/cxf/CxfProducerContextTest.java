@@ -47,9 +47,7 @@ public class CxfProducerContextTest extends CxfProducerTest {
         // No direct access to native CXF Message but we can verify the 
         // request context from the Camel exchange
         assertNotNull(exchange);
-        Map<String, Object> requestContext = CastUtils.cast((Map<?, ?>)exchange.getProperty(Client.REQUEST_CONTEXT));
-        assertNotNull(requestContext);
-        String actualValue = (String)requestContext.get(TEST_KEY);
+        String actualValue = (String)exchange.getProperties().get(TEST_KEY);
         assertEquals("exchange property should get propagated to the request context", TEST_VALUE, actualValue);
     }
 
