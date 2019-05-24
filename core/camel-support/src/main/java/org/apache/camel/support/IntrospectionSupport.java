@@ -602,7 +602,7 @@ public final class IntrospectionSupport {
                         return true;
                     } else {
                         // We need to convert it
-                        Object convertedValue = typeConverter != null ? typeConverter.convertTo(parameterType, ref) : ref;
+                        Object convertedValue = typeConverter != null ? typeConverter.mandatoryConvertTo(parameterType, ref) : ref;
                         // we may want to set options on classes that has package view visibility, so override the accessible
                         setter.setAccessible(true);
                         setter.invoke(target, convertedValue);
@@ -677,11 +677,13 @@ public final class IntrospectionSupport {
         // allow build pattern as a setter as well
         return setProperty(null, typeConverter, target, name, value, null, true);
     }
-    
+
+    @Deprecated
     public static boolean setProperty(Object target, String name, Object value, boolean allowBuilderPattern) throws Exception {
         return setProperty(null, null, target, name, value, null, allowBuilderPattern);
     }
 
+    @Deprecated
     public static boolean setProperty(Object target, String name, Object value) throws Exception {
         // allow build pattern as a setter as well
         return setProperty(target, name, value, true);

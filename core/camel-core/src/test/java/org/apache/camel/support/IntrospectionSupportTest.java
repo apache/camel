@@ -357,7 +357,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         bean.setName("Claus");
         bean.setPrice(10.0);
 
-        IntrospectionSupport.setProperty(bean, "name", "James");
+        IntrospectionSupport.setProperty(context, bean, "name", "James");
         assertEquals("James", bean.getName());
     }
 
@@ -371,8 +371,8 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         bean.setGoldCustomer(true);
         bean.setLittle(true);
 
-        IntrospectionSupport.setProperty(bean, "name", "James");
-        IntrospectionSupport.setProperty(bean, "gold-customer", "false");
+        IntrospectionSupport.setProperty(context, bean, "name", "James");
+        IntrospectionSupport.setProperty(context, bean, "gold-customer", "false");
         assertEquals("James", bean.getName());
         assertEquals(false, bean.isGoldCustomer());
     }
