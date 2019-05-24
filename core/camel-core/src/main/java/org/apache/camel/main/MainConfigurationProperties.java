@@ -25,6 +25,7 @@ import org.apache.camel.spi.ReloadStrategy;
 public class MainConfigurationProperties {
 
     private boolean autoConfigurationEnabled = true;
+    private boolean autowireComponentProperties = true;
     private String name;
     private int shutdownTimeout = 300;
     private boolean shutdownSuppressLoggingOnTimeout;
@@ -100,6 +101,20 @@ public class MainConfigurationProperties {
      */
     public void setAutoConfigurationEnabled(boolean autoConfigurationEnabled) {
         this.autoConfigurationEnabled = autoConfigurationEnabled;
+    }
+
+    public boolean isAutowireComponentProperties() {
+        return autowireComponentProperties;
+    }
+
+    /**
+     * Whether autowiring components with properties that are of same type, which has been added to the Camel registry, as a singleton instance.
+     * This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components.
+     * <p/>
+     * This option is default enabled.
+     */
+    public void setAutowireComponentProperties(boolean autowireComponentProperties) {
+        this.autowireComponentProperties = autowireComponentProperties;
     }
 
     public String getName() {
