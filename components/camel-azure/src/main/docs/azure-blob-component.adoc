@@ -35,7 +35,7 @@ to("file://blobdirectory");
 
 
 // component options: START
-The Azure Storage Blob Service component supports 2 options, which are listed below.
+The Azure Storage Blob Service component supports 3 options, which are listed below.
 
 
 
@@ -44,6 +44,7 @@ The Azure Storage Blob Service component supports 2 options, which are listed be
 | Name | Description | Default | Type
 | *configuration* (advanced) | The Blob Service configuration |  | BlobService Configuration
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -76,7 +77,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (19 parameters):
+==== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -100,6 +101,7 @@ with the following path and query parameters:
 | *operation* (producer) | Blob service operation hint to the producer | listBlobs | BlobServiceOperations
 | *streamWriteSize* (producer) | Set the size of the buffer for writing block and page blocks |  | int
 | *useFlatListing* (producer) | Specify if the flat or hierarchical blob listing should be used | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
@@ -119,13 +121,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 20 options, which are listed below.
+The component supports 21 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.azure-blob.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.azure-blob.configuration.account-name* | Set the Azure account name |  | String
 | *camel.component.azure-blob.configuration.azure-blob-client* | The blob service client |  | CloudBlob
 | *camel.component.azure-blob.configuration.blob-metadata* | Set the blob meta-data |  | Map

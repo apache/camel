@@ -36,7 +36,7 @@ from("aws-s3:helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix=
 
 
 // component options: START
-The AWS S3 Storage Service component supports 5 options, which are listed below.
+The AWS S3 Storage Service component supports 6 options, which are listed below.
 
 
 
@@ -48,6 +48,7 @@ The AWS S3 Storage Service component supports 5 options, which are listed below.
 | *secretKey* (common) | Amazon AWS Secret Key |  | String
 | *region* (common) | The region where the bucket is located. This option is used in the com.amazonaws.services.s3.model.CreateBucketRequest. |  | String
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -80,7 +81,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (51 parameters):
+==== Query Parameters (52 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -116,6 +117,7 @@ with the following path and query parameters:
 | *storageClass* (producer) | The storage class to set in the com.amazonaws.services.s3.model.PutObjectRequest request. |  | String
 | *awsKMSKeyId* (producer) | Define the id of KMS key to use in case KMS is enabled |  | String
 | *useAwsKMS* (producer) | Define if KMS must be used or not | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *accelerateModeEnabled* ( advanced) | Define if Accelerate Mode enabled is true or false | false | boolean
 | *chunkedEncodingDisabled* ( advanced) | Define if disabled Chunked Encoding is true or false | false | boolean
@@ -155,7 +157,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 36 options, which are listed below.
+The component supports 37 options, which are listed below.
 
 
 
@@ -163,6 +165,7 @@ The component supports 36 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.aws-s3.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-s3.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.aws-s3.configuration.accelerate-mode-enabled* | Define if Accelerate Mode enabled is true or false | false | Boolean
 | *camel.component.aws-s3.configuration.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-s3.configuration.amazon-s3-client* | Reference to a `com.amazonaws.services.s3.AmazonS3` in the link:registry.html[Registry]. |  | AmazonS3

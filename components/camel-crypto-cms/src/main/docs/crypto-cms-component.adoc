@@ -34,7 +34,7 @@ If the Bouncy Castle security provider is not registered then the Crypto CMS com
 ### Options
 
 // component options: START
-The Crypto CMS component supports 3 options, which are listed below.
+The Crypto CMS component supports 4 options, which are listed below.
 
 
 
@@ -44,6 +44,7 @@ The Crypto CMS component supports 3 options, which are listed below.
 | *signedDataVerifier Configuration* (advanced) | To configure the shared SignedDataVerifierConfiguration, which determines the uri parameters for the verify operation. |  | SignedDataVerifier Configuration
 | *envelopedDataDecryptor Configuration* (advanced) | To configure the shared EnvelopedDataDecryptorConfiguration, which determines the uri parameters for the decrypt operation. |  | EnvelopedDataDecryptor Configuration
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -67,7 +68,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (15 parameters):
+==== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -75,6 +76,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *keyStore* (common) | Keystore which contains signer private keys, verifier public keys, encryptor public keys, decryptor private keys depending on the operation. Use either this parameter or the parameter 'keyStoreParameters'. |  | KeyStore
 | *keyStoreParameters* (common) | Keystore containing signer private keys, verifier public keys, encryptor public keys, decryptor private keys depending on the operation. Use either this parameter or the parameter 'keystore'. |  | KeyStoreParameters
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *password* (decrypt) | Sets the password of the private keys. It is assumed that all private keys in the keystore have the same password. If not set then it is assumed that the password of the private keys is given by the keystore password given in the KeyStoreParameters. |  | Char[]
 | *fromBase64* (decrypt_verify) | If true then the CMS message is base 64 encoded and must be decoded during the processing. Default value is false. | false | Boolean
@@ -106,13 +108,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 4 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.crypto-cms.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.crypto-cms.enabled* | Whether to enable auto configuration of the crypto-cms component. This is enabled by default. |  | Boolean
 | *camel.component.crypto-cms.enveloped-data-decryptor-configuration* | To configure the shared EnvelopedDataDecryptorConfiguration, which determines the uri parameters for the decrypt operation. The option is a org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration type. |  | String
 | *camel.component.crypto-cms.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean

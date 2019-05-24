@@ -42,13 +42,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 8 options, which are listed below.
+The component supports 9 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.xquery.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.xquery.configuration* | To use a custom Saxon configuration. The option is a net.sf.saxon.Configuration type. |  | String
 | *camel.component.xquery.configuration-properties* | To set custom Saxon configuration properties. The option is a java.util.Map<java.lang.String,java.lang.Object> type. |  | String
 | *camel.component.xquery.enabled* | Enable xquery component | true | Boolean

@@ -52,7 +52,7 @@ spark:{rdd|dataframe|hive}
 
 
 // component options: START
-The Apache Spark component supports 3 options, which are listed below.
+The Apache Spark component supports 4 options, which are listed below.
 
 
 
@@ -62,6 +62,7 @@ The Apache Spark component supports 3 options, which are listed below.
 | *rdd* (producer) | RDD to compute against. |  | JavaRDDLike
 | *rddCallback* (producer) | Function performing action against an RDD. |  | RddCallback
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -87,7 +88,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (6 parameters):
+==== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -98,6 +99,7 @@ with the following path and query parameters:
 | *dataFrameCallback* (producer) | Function performing action against an DataFrame. |  | DataFrameCallback
 | *rdd* (producer) | RDD to compute against. |  | JavaRDDLike
 | *rddCallback* (producer) | Function performing action against an RDD. |  | RddCallback
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
@@ -117,13 +119,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 4 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.spark.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.spark.enabled* | Enable spark component | true | Boolean
 | *camel.component.spark.rdd* | RDD to compute against. The option is a org.apache.spark.api.java.JavaRDDLike type. |  | String
 | *camel.component.spark.rdd-callback* | Function performing action against an RDD. The option is a org.apache.camel.component.spark.RddCallback type. |  | String

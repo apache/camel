@@ -74,7 +74,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
             description = "Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported).")
     private boolean synchronous;
     @UriParam(label = "advanced",
-            description = "Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities")
+            description = "Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities")
     private boolean basicPropertyBinding;
     // these options are not really in use any option related to the consumer has a specific option on the endpoint
     // and consumerProperties was added from the very start of Camel.

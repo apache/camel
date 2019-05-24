@@ -42,7 +42,7 @@ format, `?option=value&option=value&...`
 
 
 // component options: START
-The JOLT component supports 2 options, which are listed below.
+The JOLT component supports 3 options, which are listed below.
 
 
 
@@ -51,6 +51,7 @@ The JOLT component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *transform* (advanced) | Explicitly sets the Transform to use. If not set a Transform specified by the transformDsl will be created |  | Transform
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -78,7 +79,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (5 parameters):
+==== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -88,6 +89,7 @@ with the following path and query parameters:
 | *inputType* (producer) | Specifies if the input is hydrated JSON or a JSON String. | Hydrated | JoltInputOutputType
 | *outputType* (producer) | Specifies if the output should be hydrated JSON or a JSON String. | Hydrated | JoltInputOutputType
 | *transformDsl* (producer) | Specifies the Transform DSL of the endpoint resource. If none is specified Chainr will be used. | Chainr | JoltTransformType
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
@@ -107,13 +109,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.jolt.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.jolt.enabled* | Enable jolt component | true | Boolean
 | *camel.component.jolt.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.jolt.transform* | Explicitly sets the Transform to use. If not set a Transform specified by the transformDsl will be created. The option is a com.bazaarvoice.jolt.Transform type. |  | String

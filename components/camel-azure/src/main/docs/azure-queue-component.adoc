@@ -35,7 +35,7 @@ to("file://queuedirectory");
 
 
 // component options: START
-The Azure Storage Queue Service component supports 2 options, which are listed below.
+The Azure Storage Queue Service component supports 3 options, which are listed below.
 
 
 
@@ -44,6 +44,7 @@ The Azure Storage Queue Service component supports 2 options, which are listed b
 | Name | Description | Default | Type
 | *configuration* (advanced) | The Queue Service configuration |  | QueueService Configuration
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -76,7 +77,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (10 parameters):
+==== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,6 +92,7 @@ with the following path and query parameters:
 | *messageVisibilityDelay* (producer) | Message Visibility Delay in seconds |  | int
 | *operation* (producer) | Queue service operation hint to the producer | listQueues | QueueServiceOperations
 | *queuePrefix* (producer) | Set a prefix which can be used for listing the queues |  | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
@@ -110,13 +112,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 10 options, which are listed below.
+The component supports 11 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.azure-queue.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.azure-queue.configuration.account-name* | Set the Azure account name |  | String
 | *camel.component.azure-queue.configuration.azure-queue-client* | The queue service client |  | CloudQueue
 | *camel.component.azure-queue.configuration.credentials* | Set the storage credentials, required in most cases |  | StorageCredentials

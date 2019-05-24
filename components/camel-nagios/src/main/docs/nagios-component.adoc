@@ -39,7 +39,7 @@ you to send notifications to Nagios.
 
 
 // component options: START
-The Nagios component supports 2 options, which are listed below.
+The Nagios component supports 3 options, which are listed below.
 
 
 
@@ -48,6 +48,7 @@ The Nagios component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (advanced) | To use a shared NagiosConfiguration |  | NagiosConfiguration
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -77,7 +78,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (7 parameters):
+==== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -86,6 +87,7 @@ with the following path and query parameters:
 | *connectionTimeout* (producer) | Connection timeout in millis. | 5000 | int
 | *sendSync* (producer) | Whether or not to use synchronous when sending a passive check. Setting it to false will allow Camel to continue routing the message and the passive check message will be send asynchronously. | true | boolean
 | *timeout* (producer) | Sending timeout in millis. | 5000 | int
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *encryption* (security) | To specify an encryption method. |  | Encryption
 | *encryptionMethod* (security) | *Deprecated* To specify an encryption method. |  | NagiosEncryptionMethod
@@ -108,13 +110,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 10 options, which are listed below.
+The component supports 11 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.nagios.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.nagios.configuration.connection-timeout* | Connection timeout in millis. | 5000 | Integer
 | *camel.component.nagios.configuration.encryption* | To specify an encryption method. |  | Encryption
 | *camel.component.nagios.configuration.host* | This is the address of the Nagios host where checks should be send. |  | String
