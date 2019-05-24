@@ -1,21 +1,15 @@
 package org.apache.camel.reifier.errorhandler;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
-import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ThreadPoolProfile;
-import org.apache.camel.util.StringHelper;
 
 public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerBuilder> extends ErrorHandlerReifier<T> {
 

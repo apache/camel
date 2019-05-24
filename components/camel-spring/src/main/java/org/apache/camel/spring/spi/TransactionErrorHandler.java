@@ -27,7 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
-import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
+import org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;

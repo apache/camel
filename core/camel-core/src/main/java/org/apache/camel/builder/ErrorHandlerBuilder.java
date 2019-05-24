@@ -21,7 +21,7 @@ import java.util.List;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.processor.ErrorHandler;
-import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
+import org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy;
 import org.apache.camel.spi.RouteContext;
 
 /**
