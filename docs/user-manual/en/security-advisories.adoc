@@ -2,8 +2,8 @@
 
 ### 2019
 
-link:security-advisories/CVE-2019-0194.txt.asc[CVE-2019-0188] - Apache 
-Camel vulnerable to XML external entity injection (XXE)
+link:security-advisories/CVE-2019-0194.txt.asc[CVE-2019-0188] - Apache Camel-XMLJson 
+vulnerable to XML external entity injection (XXE)
 
 link:security-advisories/CVE-2019-0194.txt.asc[CVE-2019-0194] - Apache 
 Camel's File is vulnerable to directory traversal
