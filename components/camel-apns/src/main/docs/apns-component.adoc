@@ -168,7 +168,7 @@ In order to use secure connection, an instance of `org.apache.camel.support.jsse
 
 When Camel will fetch feedback data corresponding to inactive devices,
 it will retrieve a List of InactiveDevice objects. Each InactiveDevice
-object of the retrieved list will be setted as the In body, and then
+object of the retrieved list will be set as the In body, and then
 processed by the consumer endpoint.
 
 ### Message Headers
@@ -181,8 +181,7 @@ Camel Apns uses these headers.
 |`CamelApnsTokens` | |Empty by default.
 |`CamelApnsMessageType` |`STRING, PAYLOAD, APNS_NOTIFICATION`  |In case you choose PAYLOAD for the message type, then the message will
 be considered as a APNS payload and sent as is. In case you choose
-STRING, message will be converted as a APNS payload. From *Camel 2.16*
-onwards APNS_NOTIFICATION is used for sending message body as
+STRING, message will be converted as a APNS payload. APNS_NOTIFICATION is used for sending message body as
 com.notnoop.apns.ApnsNotification types.
 |=======================================================================
 
@@ -236,7 +235,7 @@ ApnsServiceFactory proxiedApnsServiceFactory = new ApnsServiceFactory(){
         <!-- <property name="gatewayPort" value="7654" /> -->
 
         <!-- Declaration of certificate used -->
-                <!-- from Camel 2.11 onwards you can use prefix: classpath:, file: to refer to load the certificate from classpath or file. Default it classpath -->
+                <!-- you can use prefix: classpath:, file: to refer to load the certificate from classpath or file. Default it classpath -->
         <property name="certificatePath" value="certificate.p12" />
         <property name="certificatePassword" value="MyCertPassword" />
 

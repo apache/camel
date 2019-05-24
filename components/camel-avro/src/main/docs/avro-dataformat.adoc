@@ -64,7 +64,7 @@ More details can be found at the
 http://avro.apache.org/docs/current/[Apache Avro documentation].
 
 However, it doesn't enforce a schema first approach and you can create
-schema for your existing classes. *Since 2.12* you can use existing
+schema for your existing classes. Υou can use existing
 protocol interfaces to make RCP calls. You should use interface for the
 protocol itself and POJO beans or primitive/String classes for parameter
 and result types. Here is an example of the class that corresponds to
