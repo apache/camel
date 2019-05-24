@@ -111,6 +111,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     @UriParam(label = "consumer,advanced")
     protected boolean startingDirectoryMustExist;
     @UriParam(label = "consumer,advanced")
+    protected boolean startingDirectoryMustHaveAccess;
+    @UriParam(label = "consumer,advanced")
     protected boolean directoryMustExist;
     @UriParam(label = "consumer")
     protected boolean noop;
@@ -1120,6 +1122,20 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setStartingDirectoryMustExist(boolean startingDirectoryMustExist) {
         this.startingDirectoryMustExist = startingDirectoryMustExist;
+    }
+
+    public boolean isStartingDirectoryMustHaveAccess() {
+      return startingDirectoryMustHaveAccess;
+    }
+
+  /**
+   * Whether the starting directory has access permissions. Mind that the
+   * startingDirectoryMustExist parameter must be set to true in order to verify that the
+   * directory exists. Will thrown an exception if the directory doesn't have
+   * read and write permissions.
+   */
+    public void setStartingDirectoryMustHaveAccess(boolean startingDirectoryMustHaveAccess) {
+      this.startingDirectoryMustHaveAccess = startingDirectoryMustHaveAccess;
     }
 
     public boolean isDirectoryMustExist() {
