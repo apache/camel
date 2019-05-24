@@ -44,7 +44,6 @@ import static org.apache.camel.support.IntrospectionSupport.getOrElseProperty;
 public final class PropertyBindingSupport {
 
     // TODO: Add support for Map/List
-    // TODO: Add option to turn this binding on|off on component/endpoint level
 
     /**
      * To use a fluent builder style to configure this property binding support.

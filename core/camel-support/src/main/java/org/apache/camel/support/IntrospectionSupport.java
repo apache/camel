@@ -16,13 +16,9 @@
  */
 package org.apache.camel.support;
 
-import java.beans.PropertyEditor;
-import java.beans.PropertyEditorManager;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -68,7 +64,6 @@ public final class IntrospectionSupport {
     // which could prevent classloader to unload classes if being referenced from this cache
     @SuppressWarnings("unchecked")
     private static final Map<Class<?>, ClassInfo> CACHE = LRUCacheFactory.newLRUWeakCache(1000);
-    private static final Object LOCK = new Object();
     private static final Pattern SECRETS = Pattern.compile(".*(passphrase|password|secretKey).*", Pattern.CASE_INSENSITIVE);
 
     static {
@@ -136,9 +131,6 @@ public final class IntrospectionSupport {
             LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", localCache.size(), localCache.getHits(), localCache.getMisses(), localCache.getEvicted());
         }
         CACHE.clear();
-
-        // flush java beans introspector as it may be in use by the PropertyEditor
-        java.beans.Introspector.flushCaches();
     }
 
     public static boolean isGetter(Method method) {
@@ -610,13 +602,13 @@ public final class IntrospectionSupport {
                         return true;
                     } else {
                         // We need to convert it
-                        Object convertedValue = convert(typeConverter, parameterType, ref);
+                        Object convertedValue = typeConverter.convertTo(parameterType, ref);
                         // we may want to set options on classes that has package view visibility, so override the accessible
                         setter.setAccessible(true);
                         setter.invoke(target, convertedValue);
                         if (LOG.isTraceEnabled()) {
                             // hide sensitive data
-                            String val = ref != null ? ref.toString() : "";
+                            String val = ref.toString();
                             if (SECRETS.matcher(name).find()) {
                                 val = "xxxxxx";
                             }
@@ -693,27 +685,6 @@ public final class IntrospectionSupport {
     public static boolean setProperty(Object target, String name, Object value) throws Exception {
         // allow build pattern as a setter as well
         return setProperty(target, name, value, true);
-    }
-
-    static Object convert(TypeConverter typeConverter, Class<?> type, Object value)
-        throws URISyntaxException, NoTypeConversionAvailableException {
-        if (typeConverter != null) {
-            return typeConverter.mandatoryConvertTo(type, value);
-        }
-        if (type == URI.class) {
-            return new URI(value.toString());
-        }
-        PropertyEditor editor = PropertyEditorManager.findEditor(type);
-        if (editor != null) {
-            // property editor is not thread safe, so we need to lock
-            Object answer;
-            synchronized (LOCK) {
-                editor.setAsText(value.toString());
-                answer = editor.getValue();
-            }
-            return answer;
-        }
-        return null;
     }
 
     public static Set<Method> findSetterMethods(Class<?> clazz, String name, boolean allowBuilderPattern) {
