@@ -21,9 +21,10 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.junit.Test;
@@ -32,7 +33,7 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
     
     protected static final int PORT = AvailablePortFinder.getNextAvailable();
 
-    @Produce("direct:start")
+    @Produce(uri = "direct:start")
     protected ProducerTemplate sender;
     
     @Test
@@ -47,7 +48,9 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+
         KeyStoreParameters keystoreParameters = new KeyStoreParameters();
         keystoreParameters.setResource("service.jks");
         keystoreParameters.setPassword("security");
@@ -56,8 +59,14 @@ public class CoAPComponentTLSTest extends CamelTestSupport {
         truststoreParameters.setResource("truststore.jks");
         truststoreParameters.setPassword("storepass");
         
-        context.getRegistry().bind("keyParams", keystoreParameters);
-        context.getRegistry().bind("trustParams", truststoreParameters);
+        registry.bind("keyParams", keystoreParameters);
+        registry.bind("trustParams", truststoreParameters);
+
+        return registry;
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
         
         return new RouteBuilder() {
             @Override
