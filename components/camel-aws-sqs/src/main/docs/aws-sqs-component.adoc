@@ -76,7 +76,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *amazonAWSHost* (common) | The hostname of the Amazon AWS cloud. | amazonaws.com | String
 | *amazonSQSClient* (common) | To use the AmazonSQS as client |  | AmazonSQS
-| *autoCreateQueue* (common) | Setting the autocreation of the queue | false | boolean
+| *autoCreateQueue* (common) | Setting the autocreation of the queue | true | boolean
 | *headerFilterStrategy* (common) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
 | *queueOwnerAWSAccountId* (common) | Specify the queue owner aws account id when you need to connect the queue with different account owner. |  | String
 | *region* (common) | Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL. |  | String
