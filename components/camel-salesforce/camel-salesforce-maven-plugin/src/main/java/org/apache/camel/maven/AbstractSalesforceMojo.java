@@ -224,7 +224,7 @@ abstract class AbstractSalesforceMojo extends AbstractMojo {
 
         // set ssl context parameters
         try {
-            final SslContextFactory sslContextFactory = new SslContextFactory.Client();
+            final SslContextFactory sslContextFactory = new SslContextFactory();
             sslContextFactory.setSslContext(sslContextParameters.createSSLContext(new DefaultCamelContext()));
 
             httpClient = new SalesforceHttpClient(sslContextFactory);
