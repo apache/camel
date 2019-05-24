@@ -30,9 +30,10 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
-import org.apache.camel.processor.exceptionpolicy.ExceptionPolicy;
-import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyKey;
-import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
+import org.apache.camel.processor.errorhandler.ExceptionPolicy;
+import org.apache.camel.processor.errorhandler.ExceptionPolicyKey;
+import org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
@@ -87,7 +88,7 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
 
             // load exception classes
             List<Class<? extends Throwable>> list;
-            if (exceptionType.getExceptions() != null && !exceptionType.getExceptions().isEmpty()) {
+            if (ObjectHelper.isNotEmpty(exceptionType.getExceptions())) {
                 list = createExceptionClasses(exceptionType, routeContext.getCamelContext().getClassResolver());
                 for (Class<? extends Throwable> clazz : list) {
                     String routeId = null;
@@ -100,15 +101,15 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
                     }
                     Predicate when = exceptionType.getOnWhen() != null ? exceptionType.getOnWhen().getExpression() : null;
                     ExceptionPolicyKey key = new ExceptionPolicyKey(routeId, clazz, when);
-                    ExceptionPolicy policy = toExceptionPolicy(exceptionType);
+                    ExceptionPolicy policy = toExceptionPolicy(exceptionType, routeContext);
                     handlerSupport.addExceptionPolicy(key, policy);
                 }
             }
         }
     }
 
-    protected static ExceptionPolicy toExceptionPolicy(OnExceptionDefinition exceptionType) {
-        return new ExceptionPolicy(exceptionType);
+    protected static ExceptionPolicy toExceptionPolicy(OnExceptionDefinition exceptionType, RouteContext routeContext) {
+        return ErrorHandlerReifier.createExceptionPolicy(exceptionType, routeContext);
     }
 
     protected static List<Class<? extends Throwable>> createExceptionClasses(OnExceptionDefinition exceptionType, ClassResolver resolver) {

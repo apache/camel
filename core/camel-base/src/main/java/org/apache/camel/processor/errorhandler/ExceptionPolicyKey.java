@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.exceptionpolicy;
+package org.apache.camel.processor.errorhandler;
 
 import org.apache.camel.Predicate;
 
 /**
  * Exception policy key is a compound key for storing:
- * <b>route id </b> + <b>exception class</b> + <b>when</b> => <b>exception type</b>.
+ * <b>route id</b> + <b>exception class</b> + <b>when</b> => <b>exception type</b>.
  * <p/>
  * This is used by Camel to store the onException types configured that has or has not predicates attached (when).
  */

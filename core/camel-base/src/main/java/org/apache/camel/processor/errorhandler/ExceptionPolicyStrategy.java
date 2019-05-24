@@ -14,29 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.exceptionpolicy;
+package org.apache.camel.processor.errorhandler;
 
-import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
 
 /**
- * A strategy to determine which {@link ExceptionPolicy} should handle the thrown
+ * A strategy to determine which {@link ExceptionPolicyKey} should handle the thrown
  * exception.
  *
- * @see org.apache.camel.processor.exceptionpolicy.DefaultExceptionPolicyStrategy DefaultExceptionPolicy
+ * @see DefaultExceptionPolicyStrategy DefaultExceptionPolicy
  */
 public interface ExceptionPolicyStrategy {
 
     /**
-     * Resolves the {@link ExceptionPolicy} that should handle the thrown exception.
+     * Resolves the {@link ExceptionPolicyKey} that should handle the thrown exception.
      *
      * @param exceptionPolicies the configured exception policies to resolve from
      * @param exchange           the exchange
      * @param exception          the exception that was thrown
      * @return the resolved exception type to handle this exception, <tt>null</tt> if none found.
      */
-    ExceptionPolicy getExceptionPolicy(Map<ExceptionPolicyKey, ExceptionPolicy> exceptionPolicies,
-                                       Exchange exchange, Throwable exception);
+    ExceptionPolicyKey getExceptionPolicy(Set<ExceptionPolicyKey> exceptionPolicies, Exchange exchange, Throwable exception);
 
 }

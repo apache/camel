@@ -22,10 +22,6 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.ErrorHandler;
-import org.apache.camel.processor.exceptionpolicy.DefaultExceptionPolicyStrategy;
-import org.apache.camel.processor.exceptionpolicy.ExceptionPolicy;
-import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyKey;
-import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.support.ChildServiceSupport;
 
 /**
@@ -44,7 +40,7 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
         exceptionPolicies.put(key, policy);
     }
 
-    /**
+    /**CamelContextHelper
      * Attempts to find the best suited {@link ExceptionPolicy} to be used for handling the given thrown exception.
      *
      * @param exchange  the exchange
@@ -56,7 +52,8 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
             throw new IllegalStateException("The exception policy has not been set");
         }
 
-        return exceptionPolicy.getExceptionPolicy(exceptionPolicies, exchange, exception);
+        ExceptionPolicyKey key = exceptionPolicy.getExceptionPolicy(exceptionPolicies.keySet(), exchange, exception);
+        return key != null ? exceptionPolicies.get(key) : null;
     }
 
     /**

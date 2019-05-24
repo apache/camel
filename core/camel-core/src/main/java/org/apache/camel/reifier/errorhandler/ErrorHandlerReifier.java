@@ -19,8 +19,6 @@ package org.apache.camel.reifier.errorhandler;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
@@ -35,12 +33,14 @@ import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
 import org.apache.camel.processor.ErrorHandler;
+import org.apache.camel.processor.errorhandler.ExceptionPolicy;
+import org.apache.camel.processor.errorhandler.ExceptionPolicy.RedeliveryOption;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
-import org.apache.camel.processor.exceptionpolicy.ExceptionPolicy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.util.ObjectHelper;
 
 public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> {
 
@@ -80,6 +80,60 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
             };
         } else {
             throw new IllegalStateException("Unsupported definition: " + definition);
+        }
+    }
+
+    public static ExceptionPolicy createExceptionPolicy(OnExceptionDefinition def, RouteContext routeContext) {
+        return new ExceptionPolicy(
+                def.getId(),
+                CamelContextHelper.getRouteId(def),
+                def.getUseOriginalMessagePolicy() != null && def.getUseOriginalMessagePolicy(),
+                ObjectHelper.isNotEmpty(def.getOutputs()),
+                def.getHandledPolicy(),
+                def.getContinuedPolicy(),
+                def.getRetryWhilePolicy(),
+                def.getOnRedelivery(),
+                def.getOnExceptionOccurred(),
+                def.getRedeliveryPolicyRef(),
+                getRedeliveryPolicy(def.getRedeliveryPolicyType()),
+                def.getExceptions());
+    }
+
+    private static Map<RedeliveryOption, String> getRedeliveryPolicy(RedeliveryPolicyDefinition definition) {
+        if (definition == null) {
+            return null;
+        }
+        Map<RedeliveryOption, String> policy = new HashMap<>();
+        setoption(policy, RedeliveryOption.maximumRedeliveries, definition.getMaximumRedeliveries());
+        setoption(policy, RedeliveryOption.redeliveryDelay, definition.getRedeliveryDelay());
+        setoption(policy, RedeliveryOption.asyncDelayedRedelivery, definition.getAsyncDelayedRedelivery());
+        setoption(policy, RedeliveryOption.backOffMultiplier, definition.getBackOffMultiplier());
+        setoption(policy, RedeliveryOption.useExponentialBackOff, definition.getUseExponentialBackOff());
+        setoption(policy, RedeliveryOption.collisionAvoidanceFactor, definition.getCollisionAvoidanceFactor());
+        setoption(policy, RedeliveryOption.useCollisionAvoidance, definition.getUseCollisionAvoidance());
+        setoption(policy, RedeliveryOption.maximumRedeliveryDelay, definition.getMaximumRedeliveryDelay());
+        setoption(policy, RedeliveryOption.retriesExhaustedLogLevel, definition.getRetriesExhaustedLogLevel());
+        setoption(policy, RedeliveryOption.retryAttemptedLogLevel, definition.getRetryAttemptedLogLevel());
+        setoption(policy, RedeliveryOption.retryAttemptedLogInterval, definition.getRetryAttemptedLogInterval());
+        setoption(policy, RedeliveryOption.logRetryAttempted, definition.getLogRetryAttempted());
+        setoption(policy, RedeliveryOption.logStackTrace, definition.getLogStackTrace());
+        setoption(policy, RedeliveryOption.logRetryStackTrace, definition.getLogRetryStackTrace());
+        setoption(policy, RedeliveryOption.logHandled, definition.getLogHandled());
+        setoption(policy, RedeliveryOption.logNewException, definition.getLogNewException());
+        setoption(policy, RedeliveryOption.logContinued, definition.getLogContinued());
+        setoption(policy, RedeliveryOption.logExhausted, definition.getLogExhausted());
+        setoption(policy, RedeliveryOption.logExhaustedMessageHistory, definition.getLogExhaustedMessageHistory());
+        setoption(policy, RedeliveryOption.logExhaustedMessageBody, definition.getLogExhaustedMessageBody());
+        setoption(policy, RedeliveryOption.disableRedelivery, definition.getDisableRedelivery());
+        setoption(policy, RedeliveryOption.delayPattern, definition.getDelayPattern());
+        setoption(policy, RedeliveryOption.allowRedeliveryWhileStopping, definition.getAllowRedeliveryWhileStopping());
+        setoption(policy, RedeliveryOption.exchangeFormatterRef, definition.getExchangeFormatterRef());
+        return policy;
+    }
+
+    private static void setoption(Map<RedeliveryOption, String> policy, RedeliveryOption option, Object value) {
+        if (value != null) {
+            policy.put(option, value.toString());
         }
     }
 
@@ -206,53 +260,4 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         return answer;
     }
 
-    /**
-     * Allows an exception handler to create a new redelivery policy for this exception type
-     *
-     * @param definition
-     * @param context      the camel context
-     * @param parentPolicy the current redelivery policy, is newer <tt>null</tt>
-     * @return a newly created redelivery policy, or return the original policy if no customization is required
-     *         for this exception handler.
-     */
-    public static RedeliveryPolicy createRedeliveryPolicy(ExceptionPolicy definition, CamelContext context, RedeliveryPolicy parentPolicy) {
-        if (definition.getRedeliveryPolicyRef() != null) {
-            return CamelContextHelper.mandatoryLookup(context, definition.getRedeliveryPolicyRef(), RedeliveryPolicy.class);
-        } else if (definition.getRedeliveryPolicyType() != null) {
-            return createRedeliveryPolicy(definition.getRedeliveryPolicyType(), context, parentPolicy);
-        } else if (definition.hasOutputs() && parentPolicy.getMaximumRedeliveries() != 0) {
-            // if we have outputs, then do not inherit parent maximumRedeliveries
-            // as you would have to explicit configure maximumRedeliveries on this onException to use it
-            // this is the behavior Camel has always had
-            RedeliveryPolicy answer = parentPolicy.copy();
-            answer.setMaximumRedeliveries(0);
-            return answer;
-        } else {
-            return parentPolicy;
-        }
-    }
-
-    public static boolean determineIfRedeliveryIsEnabled(ExceptionPolicy def, CamelContext camelContext) throws Exception {
-        String ref = def.getRedeliveryPolicyRef();
-        if (ref != null) {
-            // lookup in registry if ref provided
-            RedeliveryPolicy policy = CamelContextHelper.mandatoryLookup(camelContext, ref, RedeliveryPolicy.class);
-            if (policy.getMaximumRedeliveries() != 0) {
-                // must check for != 0 as (-1 means redeliver forever)
-                return true;
-            }
-        } else if (def.getRedeliveryPolicyType() != null) {
-            Integer max = CamelContextHelper.parseInteger(camelContext, def.getRedeliveryPolicyType().getMaximumRedeliveries());
-            if (max != null && max != 0) {
-                // must check for != 0 as (-1 means redeliver forever)
-                return true;
-            }
-        }
-
-        if (def.getRetryWhilePolicy() != null) {
-            return true;
-        }
-
-        return false;
-    }
 }
