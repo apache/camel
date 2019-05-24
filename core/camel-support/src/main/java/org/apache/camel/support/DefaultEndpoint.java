@@ -31,7 +31,6 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HasId;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -386,7 +385,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         if (basicPropertyBinding) {
             // use basic binding
             PropertyBindingSupport.build()
-                    .withPlaceholder(false).withNesting(false).withNestingDeep(false).withReference(false)
+                    .withPlaceholder(false).withNesting(false).withDeepNesting(false).withReference(false)
                     .bind(camelContext, bean, parameters);
         } else {
             // use advanced binding

@@ -318,7 +318,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         if (basicPropertyBinding) {
             // use basic binding
             PropertyBindingSupport.build()
-                    .withPlaceholder(false).withNesting(false).withNestingDeep(false).withReference(false)
+                    .withPlaceholder(false).withNesting(false).withDeepNesting(false).withReference(false)
                     .bind(camelContext, bean, parameters);
         } else {
             // use advanced binding
