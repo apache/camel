@@ -18,6 +18,7 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Arrays;
@@ -91,7 +92,13 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
                 throw new FileNotFoundException("Starting directory does not exist: " + file);
             }
         }
-
+        if (!isStartingDirectoryMustExist() && isStartingDirectoryMustHaveAccess()) {
+          throw new IllegalArgumentException("You cannot set startingDirectoryMustHaveAccess=true without setting startingDirectoryMustExist=true");
+        } else if (isStartingDirectoryMustExist() && isStartingDirectoryMustHaveAccess()) {
+          if (!file.canRead() || !file.canWrite()) {
+            throw new IOException("Starting directory permission denied: " + file);
+          }
+        }
         FileConsumer result = newFileConsumer(processor, operations);
 
         if (isDelete() && getMove() != null) {
