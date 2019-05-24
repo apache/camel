@@ -496,7 +496,7 @@
         <mimepull-version>1.9.11</mimepull-version>
         <mina2-version>2.0.20</mina2-version>
         <minidns-version>0.3.4</minidns-version>
-        <minimal-json-version>0.9.4</minimal-json-version>
+        <minimal-json-version>0.9.5</minimal-json-version>
         <mock-javamail-version>1.9</mock-javamail-version>
         <mockwebserver-version>0.0.17</mockwebserver-version>
         <mockito-version>2.27.0</mockito-version>
