@@ -146,9 +146,8 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         // as these options are not supported on the polling consumer
         configureScheduledPollConsumerProperties(copy, throwaway);
 
-        // set reference properties first as they use # syntax that fools the regular properties setter
-        EndpointHelper.setReferenceProperties(getCamelContext(), consumer, copy);
-        EndpointHelper.setProperties(getCamelContext(), consumer, copy);
+        // configure consumer
+        setProperties(consumer, copy);
 
         if (!isLenientProperties() && copy.size() > 0) {
             throw new ResolveEndpointFailedException(this.getEndpointUri(), "There are " + copy.size()
