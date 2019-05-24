@@ -102,8 +102,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
         // set configuration properties first
         try {
             T configuration = getConfiguration();
-            EndpointHelper.setReferenceProperties(getCamelContext(), configuration, options);
-            EndpointHelper.setProperties(getCamelContext(), configuration, options);
+            setProperties(configuration, options);
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }

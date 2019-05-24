@@ -31,6 +31,7 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HasId;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -72,6 +73,9 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     @UriParam(defaultValue = "false", label = "advanced",
             description = "Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported).")
     private boolean synchronous;
+    @UriParam(label = "advanced",
+            description = "Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities")
+    private boolean basicPropertyBinding;
     // these options are not really in use any option related to the consumer has a specific option on the endpoint
     // and consumerProperties was added from the very start of Camel.
     private Map<String, Object> consumerProperties;
@@ -247,6 +251,20 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         this.synchronous = synchronous;
     }
 
+    /**
+     * Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities.
+     */
+    public boolean isBasicPropertyBinding() {
+        return basicPropertyBinding;
+    }
+
+    /**
+     * Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities.
+     */
+    public void setBasicPropertyBinding(boolean basicPropertyBinding) {
+        this.basicPropertyBinding = basicPropertyBinding;
+    }
+
     public boolean isBridgeErrorHandler() {
         return bridgeErrorHandler;
     }
@@ -358,13 +376,22 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * <p/>
      * This is the same logical implementation as {@link DefaultComponent#setProperties(Object, java.util.Map)}
      *
-     * @param bean  the bean
+     * @param bean        the bean
      * @param parameters  properties to set
      */
     protected void setProperties(Object bean, Map<String, Object> parameters) throws Exception {
         // set reference properties first as they use # syntax that fools the regular properties setter
-        EndpointHelper.setReferenceProperties(getCamelContext(), bean, parameters);
-        EndpointHelper.setProperties(getCamelContext(), bean, parameters);
+        EndpointHelper.setReferenceProperties(camelContext, bean, parameters);
+
+        if (basicPropertyBinding) {
+            // use basic binding
+            PropertyBindingSupport.build()
+                    .withPlaceholder(false).withNesting(false).withNestingDeep(false).withReference(false)
+                    .bind(camelContext, bean, parameters);
+        } else {
+            // use advanced binding
+            PropertyBindingSupport.bindProperties(camelContext, bean, parameters);
+        }
     }
 
     /**
@@ -439,13 +466,12 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
             // and in case we restart routes, we need access to the original consumer properties again
             Map<String, Object> copy = new HashMap<>(consumerProperties);
 
-            // set reference properties first as they use # syntax that fools the regular properties setter
-            EndpointHelper.setReferenceProperties(getCamelContext(), consumer, copy);
-            EndpointHelper.setProperties(getCamelContext(), consumer, copy);
+            // configure consumer
+            setProperties(consumer, copy);
 
             // special consumer.bridgeErrorHandler option
             Object bridge = copy.remove("bridgeErrorHandler");
-            if (bridge != null && "true".equals(bridge)) {
+            if ("true".equals(bridge)) {
                 if (consumer instanceof DefaultConsumer) {
                     DefaultConsumer defaultConsumer = (DefaultConsumer) consumer;
                     defaultConsumer.setExceptionHandler(new BridgeExceptionHandlerToErrorHandler(defaultConsumer));
