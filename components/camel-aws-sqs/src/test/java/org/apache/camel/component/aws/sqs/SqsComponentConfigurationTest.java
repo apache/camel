@@ -264,4 +264,19 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
     }
+    
+    @Test
+    public void createEndpointWithoutAutoCreation() throws Exception {
+        SqsComponent component = new SqsComponent(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        component.setRegion(Regions.US_WEST_1.toString());
+        SqsEndpoint endpoint = (SqsEndpoint)component.createEndpoint("aws-sqs://MyQueue?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&autoCreateQueue=false");
+        
+        assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
+        assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
+        assertEquals(false, endpoint.getConfiguration().isAutoCreateQueue());
+    }
 }

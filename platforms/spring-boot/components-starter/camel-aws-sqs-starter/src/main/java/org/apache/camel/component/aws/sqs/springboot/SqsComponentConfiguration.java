@@ -62,11 +62,6 @@ public class SqsComponentConfiguration
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
-    /**
-     * Whether the component should use basic property binding (Camel 2.x) or
-     * the newer property binding with additional capabilities
-     */
-    private Boolean basicPropertyBinding = false;
 
     public SqsConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -108,14 +103,6 @@ public class SqsComponentConfiguration
     public void setResolvePropertyPlaceholders(
             Boolean resolvePropertyPlaceholders) {
         this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
-    }
-
-    public Boolean getBasicPropertyBinding() {
-        return basicPropertyBinding;
-    }
-
-    public void setBasicPropertyBinding(Boolean basicPropertyBinding) {
-        this.basicPropertyBinding = basicPropertyBinding;
     }
 
     public static class SqsConfigurationNestedConfiguration {
@@ -287,6 +274,10 @@ public class SqsComponentConfiguration
          * message
          */
         private SqsOperations operation;
+        /**
+         * Setting the autocreation of the queue
+         */
+        private Boolean autoCreateQueue = false;
 
         public String getAmazonAWSHost() {
             return amazonAWSHost;
@@ -546,6 +537,14 @@ public class SqsComponentConfiguration
 
         public void setOperation(SqsOperations operation) {
             this.operation = operation;
+        }
+
+        public Boolean getAutoCreateQueue() {
+            return autoCreateQueue;
+        }
+
+        public void setAutoCreateQueue(Boolean autoCreateQueue) {
+            this.autoCreateQueue = autoCreateQueue;
         }
     }
 }
