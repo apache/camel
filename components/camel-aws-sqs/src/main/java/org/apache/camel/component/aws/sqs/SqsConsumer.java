@@ -110,7 +110,9 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
 
     public void reConnectToQueue() {
         try {
-            getEndpoint().createQueue(getClient());
+        	if (getEndpoint().getConfiguration().isAutoCreateQueue()) {
+                getEndpoint().createQueue(getClient());
+        	}
         } catch (QueueDeletedRecentlyException qdr) {
             log.debug("Queue recently deleted, will retry in 30 seconds.");
             try {
