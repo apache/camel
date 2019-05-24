@@ -64,7 +64,7 @@ More details can be found at the
 http://avro.apache.org/docs/current/[Apache Avro documentation].
 
 However, it doesn't enforce a schema first approach and you can create
-schema for your existing classes. *Since 2.12* you can use existing
+schema for your existing classes. You can use existing
 protocol interfaces to make RCP calls. You should use interface for the
 protocol itself and POJO beans or primitive/String classes for parameter
 and result types. Here is an example of the class that corresponds to
@@ -139,7 +139,7 @@ avro:[transport]:[host]:[port][?options]
 
 The supported transport values are currently http or netty.
 
-*Since 2.12* you can specify message name right in the URI:
+You can specify message name right in the URI:
 
 [source,java]
 ------------------------------------------------------
@@ -161,7 +161,7 @@ created exchange and once the exchange is processed the body of the
 "out" message will be send as a response.
 
 *Note:* By default consumer parameters are wrapped into array. If you've
-got only one parameter, *since 2.12* you can use `singleParameter` URI
+got only one parameter, you can use `singleParameter` URI
 option to receive it direcly in the "in" message body without array
 wrapping.
 
@@ -299,7 +299,7 @@ An example of using camel avro producers via http:
 ---------------------------------------------------------------------------------------------------------------------------
 
 In the example above you need to fill `CamelAvroMessageName` header.
-*Since 2.12* you can use following syntax to call constant messages:
+You can use following syntax to call constant messages:
 
 [source,xml]
 -------------------------------------------------------------------------------------------------------------------------------
@@ -329,7 +329,7 @@ An example of consuming messages using camel avro consumers via netty:
         </route>
 ------------------------------------------------------------------------------------------------------------------------------
 
-*Since 2.12* you can set up two distinct routes to perform the same
+You can set up two distinct routes to perform the same
 task:
 
 [source,xml]
