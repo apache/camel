@@ -1,6 +1,8 @@
 [[ahc-component]]
 == AHC Component
 
+*Available as of Camel version 2.8
+
 The *ahc:* component provides HTTP based endpoints
 for consuming external HTTP resources (as a client to call external
 servers using HTTP). +
@@ -180,7 +182,7 @@ with the HTTP_URI. If the path is start with "/", http producer will try
 to find the relative path based on the Exchange.HTTP_BASE_URI header or
 the `exchange.getFromEndpoint().getEndpointUri();`
 
-|`Exchange.HTTP_QUERY` |`String` |URI parameters. Will override existing URI
+|`Exchange.HTTP_QUERY` |`String` |*Camel 2.11 onwards:* URI parameters. Will override existing URI
 parameters set directly on the endpoint.
 
 |`Exchange.HTTP_RESPONSE_CODE` |`int` |The HTTP response code from the external server. Is 200 for OK.
