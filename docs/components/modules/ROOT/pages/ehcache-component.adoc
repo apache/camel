@@ -38,7 +38,7 @@ format, `?option=value&option=#beanRef&...`
 
 
 // component options: START
-The Ehcache component supports 7 options, which are listed below.
+The Ehcache component supports 8 options, which are listed below.
 
 
 
@@ -52,6 +52,7 @@ The Ehcache component supports 7 options, which are listed below.
 | *cachesConfigurations* (common) | A map of caches configurations to be used to create caches. |  | Map
 | *cacheConfigurationUri* (common) | URI pointing to the Ehcache XML configuration file's location |  | String
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -76,7 +77,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (17 parameters):
+==== Query Parameters (18 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -94,6 +95,7 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *action* (producer) | To configure the default cache action. If an action is set in the message header, then the operation from the header takes precedence. |  | String
 | *key* (producer) | To configure the default action key. If a key is set in the message header, then the key from the header takes precedence. |  | Object
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *configuration* (advanced) | The default cache configuration to be used to create caches. |  | CacheConfiguration
 | *configurations* (advanced) | A map of cache configuration to be used to create caches. |  | Map
 | *keyType* (advanced) | The cache key type, default java.lang.Object | java.lang.Object | String
@@ -117,13 +119,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 25 options, which are listed below.
+The component supports 26 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.ehcache.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.ehcache.cache-configuration* | The default cache configuration to be used to create caches. The option is a org.ehcache.config.CacheConfiguration<?,?> type. |  | String
 | *camel.component.ehcache.cache-configuration-uri* | URI pointing to the Ehcache XML configuration file's location |  | String
 | *camel.component.ehcache.cache-manager* | The cache manager. The option is a org.ehcache.CacheManager type. |  | String

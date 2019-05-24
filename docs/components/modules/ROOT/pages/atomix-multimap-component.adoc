@@ -25,7 +25,7 @@ for this component:
 ----
 
 // component options: START
-The Atomix MultiMap component supports 5 options, which are listed below.
+The Atomix MultiMap component supports 6 options, which are listed below.
 
 
 
@@ -37,6 +37,7 @@ The Atomix MultiMap component supports 5 options, which are listed below.
 | *nodes* (consumer) | The nodes the AtomixClient should connect to |  | List
 | *configurationUri* (consumer) | The path to the AtomixClient configuration |  | String
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -59,7 +60,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (18 parameters):
+==== Query Parameters (19 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -76,6 +77,7 @@ with the following path and query parameters:
 | *ttl* (consumer) | The resource ttl. |  | long
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *defaultResourceConfig* (advanced) | The cluster wide default resource configuration. |  | Properties
 | *defaultResourceOptions* (advanced) | The local default resource options. |  | Properties
 | *ephemeral* (advanced) | Sets if the local member should join groups as PersistentMember or not. If set to ephemeral the local member will receive an auto generated ID thus the local one is ignored. | false | boolean
@@ -101,7 +103,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 9 options, which are listed below.
+The component supports 10 options, which are listed below.
 
 
 
@@ -109,6 +111,7 @@ The component supports 9 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.atomix-multimap.atomix* | The shared AtomixClient instance. The option is a io.atomix.AtomixClient type. |  | String
+| *camel.component.atomix-multimap.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.atomix-multimap.configuration-uri* | The path to the AtomixClient configuration |  | String
 | *camel.component.atomix-multimap.configuration.default-action* | The default action. |  | AtomixMultiMap$Action
 | *camel.component.atomix-multimap.configuration.key* | The key to use if none is set in the header or to listen for events for a specific key. |  | Object

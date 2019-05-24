@@ -53,7 +53,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Jetty component supports 33 options, which are listed below.
+The Jetty component supports 34 options, which are listed below.
 
 
 
@@ -93,6 +93,7 @@ The Jetty component supports 33 options, which are listed below.
 | *allowJavaSerialized Object* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -123,7 +124,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (54 parameters):
+==== Query Parameters (55 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -174,6 +175,7 @@ with the following path and query parameters:
 | *jettyBindingRef* (producer) | *Deprecated* To use a custom JettyHttpBinding which be used to customize how a response should be written for the producer. |  | String
 | *okStatusCodeRange* (producer) | The status codes which are considered a success response. The values are inclusive. Multiple ranges can be defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included. | 200-299 | String
 | *urlRewrite* (producer) | *Deprecated* Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints. See more details at http://camel.apache.org/urlrewrite.html |  | UrlRewrite
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *mapHttpMessageBody* (advanced) | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping. | true | boolean
 | *mapHttpMessageFormUrl EncodedBody* (advanced) | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping. | true | boolean
 | *mapHttpMessageHeaders* (advanced) | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping. | true | boolean
@@ -201,7 +203,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 34 options, which are listed below.
+The component supports 35 options, which are listed below.
 
 
 
@@ -209,6 +211,7 @@ The component supports 34 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.jetty.allow-java-serialized-object* | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | Boolean
+| *camel.component.jetty.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.jetty.continuation-timeout* | Allows to set a timeout in millis when using Jetty as consumer (server). By default Jetty uses 30000. You can use a value of = 0 to never expire. If a timeout occurs then the request will be expired and Jetty will return back a http error 503 to the client. This option is only in use when using Jetty with the Asynchronous Routing Engine. | 30000 | Long
 | *camel.component.jetty.enable-jmx* | If this option is true, Jetty JMX support will be enabled for this endpoint. | false | Boolean
 | *camel.component.jetty.enabled* | Whether to enable auto configuration of the jetty component. This is enabled by default. |  | Boolean

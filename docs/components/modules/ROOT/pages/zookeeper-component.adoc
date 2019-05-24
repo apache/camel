@@ -42,7 +42,7 @@ _znode_) that will be the target of the endpoint:
 ### Options
 
 // component options: START
-The ZooKeeper component supports 2 options, which are listed below.
+The ZooKeeper component supports 3 options, which are listed below.
 
 
 
@@ -51,6 +51,7 @@ The ZooKeeper component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (advanced) | To use a shared ZooKeeperConfiguration |  | ZooKeeperConfiguration
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -74,7 +75,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+==== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,6 +92,7 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *create* (producer) | Should the endpoint create the node if it does not currently exist. | false | boolean
 | *createMode* (producer) | The create mode that should be used for the newly created node | EPHEMERAL | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
@@ -110,13 +112,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 57 options, which are listed below.
+The component supports 58 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.zookeeper.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.zookeeper.cluster.service.attributes* | Custom service attributes. |  | Map
 | *camel.component.zookeeper.cluster.service.auth-info-list* |  |  | List
 | *camel.component.zookeeper.cluster.service.base-path* |  |  | String

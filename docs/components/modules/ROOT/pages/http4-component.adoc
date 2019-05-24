@@ -52,7 +52,7 @@ route, use the <<jetty-component,Jetty Component>> instead.
 
 
 // component options: START
-The HTTP4 component supports 18 options, which are listed below.
+The HTTP4 component supports 19 options, which are listed below.
 
 
 
@@ -77,6 +77,7 @@ The HTTP4 component supports 18 options, which are listed below.
 | *allowJavaSerialized Object* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -108,7 +109,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (49 parameters):
+==== Query Parameters (50 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -133,6 +134,7 @@ with the following path and query parameters:
 | *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
 | *okStatusCodeRange* (producer) | The status codes which are considered a success response. The values are inclusive. Multiple ranges can be defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included. | 200-299 | String
 | *urlRewrite* (producer) | *Deprecated* Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints. See more details at http://camel.apache.org/urlrewrite.html |  | UrlRewrite
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientBuilder* (advanced) | Provide access to the http client request parameters used on new RequestConfig instances used by producers or consumers of this endpoint. |  | HttpClientBuilder
 | *clientConnectionManager* (advanced) | To use a custom HttpClientConnectionManager to manage connections |  | HttpClientConnection Manager
 | *connectionsPerRoute* (advanced) | The maximum number of connections per route. | 20 | int
@@ -181,7 +183,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 19 options, which are listed below.
+The component supports 20 options, which are listed below.
 
 
 
@@ -189,6 +191,7 @@ The component supports 19 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.http4.allow-java-serialized-object* | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | Boolean
+| *camel.component.http4.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.http4.client-connection-manager* | To use a custom and shared HttpClientConnectionManager to manage connections. If this has been configured then this is always used for all endpoints created by this component. The option is a org.apache.http.conn.HttpClientConnectionManager type. |  | String
 | *camel.component.http4.connect-timeout* | Determines the timeout in milliseconds until a connection is established. A timeout value of zero is interpreted as an infinite timeout. A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined (system default). Default: -1 | -1 | Integer
 | *camel.component.http4.connection-request-timeout* | The timeout in milliseconds used when requesting a connection from the connection manager. A timeout value of zero is interpreted as an infinite timeout. A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined (system default). Default: -1 | -1 | Integer

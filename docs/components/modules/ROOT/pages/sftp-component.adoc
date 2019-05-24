@@ -26,7 +26,16 @@ For more information you can look at <<ftp-component,FTP component>>
 The options below are exclusive for the FTPS component.
 
 // component options: START
-The SFTP component has no options.
+The SFTP component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
 // component options: END
 
 
@@ -51,7 +60,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (118 parameters):
+==== Query Parameters (119 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -99,6 +108,7 @@ with the following path and query parameters:
 | *moveExistingFileStrategy* (producer) | Strategy (Custom Strategy) used to move file with special naming token to use when fileExist=Move is configured. By default, there is an implementation used if no custom strategy is provided |  | FileMoveExisting Strategy
 | *sendNoop* (producer) | Whether to send a noop command as a pre-write check before uploading files to the FTP server. This is enabled by default as a validation of the connection is still valid, which allows to silently re-connect to be able to upload the file. However if this causes problems, you can turn this option off. | true | boolean
 | *autoCreate* (advanced) | Automatically create missing directories in the file's pathname. For the file consumer, that means creating the starting directory. For the file producer, it means the directory the files should be written to. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *bindAddress* (advanced) | Specifies the address of the local interface against which the connection should bind. |  | String
 | *bufferSize* (advanced) | Write buffer sized in bytes. | 131072 | int
 | *bulkRequests* (advanced) | Specifies how many requests may be outstanding at any one time. Increasing this value may slightly improve file transfer speed but will increase memory usage. |  | Integer

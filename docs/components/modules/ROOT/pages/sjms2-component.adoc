@@ -84,7 +84,7 @@ You append query options to the URI using the following format,
 
 
 // component options: START
-The Simple JMS2 component supports 15 options, which are listed below.
+The Simple JMS2 component supports 16 options, which are listed below.
 
 
 
@@ -106,6 +106,7 @@ The Simple JMS2 component supports 15 options, which are listed below.
 | *connectionMaxWait* (advanced) | The max wait time in millis to block and wait on free connection when the pool is exhausted when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource. | 5000 | long
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -136,7 +137,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (37 parameters):
+==== Query Parameters (38 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -162,6 +163,7 @@ with the following path and query parameters:
 | *responseTimeOut* (producer) | Sets the amount of time we should wait before timing out a InOut response. | 5000 | long
 | *asyncStartListener* (advanced) | Whether to startup the consumer message listener asynchronously, when starting a route. For example if a JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying and/or failover. This will cause Camel to block while starting routes. By setting this option to true, you will let routes startup, while the JmsConsumer connects to the JMS broker using a dedicated thread in asynchronous mode. If this option is used, then beware that if the connection could not be established, then an exception is logged at WARN level, and the consumer will not be able to receive messages; You can then restart the route to retry. | false | boolean
 | *asyncStopListener* (advanced) | Whether to stop the consumer message listener asynchronously, when stopping a route. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *connectionCount* (advanced) | The maximum number of connections available to this endpoint |  | Integer
 | *connectionFactory* (advanced) | Initializes the connectionFactory for the endpoint, which takes precedence over the component's connectionFactory, if any |  | ConnectionFactory
 | *connectionResource* (advanced) | Initializes the connectionResource for the endpoint, which takes precedence over the component's connectionResource, if any |  | ConnectionResource
@@ -197,13 +199,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 16 options, which are listed below.
+The component supports 17 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.sjms2.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.sjms2.connection-client-id* | The client ID to use when creating javax.jms.Connection when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource. |  | String
 | *camel.component.sjms2.connection-count* | The maximum number of connections available to endpoints started under this component | 1 | Integer
 | *camel.component.sjms2.connection-factory* | A ConnectionFactory is required to enable the SjmsComponent. It can be set directly or set set as part of a ConnectionResource. The option is a javax.jms.ConnectionFactory type. |  | String

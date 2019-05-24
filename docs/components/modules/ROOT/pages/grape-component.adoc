@@ -13,7 +13,7 @@ without the restart of the router.
 ### Grape options
 
 // component options: START
-The Grape component supports 2 options, which are listed below.
+The Grape component supports 3 options, which are listed below.
 
 
 
@@ -22,6 +22,7 @@ The Grape component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *patchesRepository* (advanced) | Implementation of org.apache.camel.component.grape.PatchesRepository, by default: FilePatchesRepository |  | PatchesRepository
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -45,12 +46,13 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (1 parameters):
+==== Query Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END

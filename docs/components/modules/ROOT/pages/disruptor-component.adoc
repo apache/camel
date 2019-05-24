@@ -95,7 +95,7 @@ All the following options are valid for both the **disruptor:** and
 
 
 // component options: START
-The Disruptor component supports 8 options, which are listed below.
+The Disruptor component supports 9 options, which are listed below.
 
 
 
@@ -110,6 +110,7 @@ The Disruptor component supports 8 options, which are listed below.
 | *queueSize* (common) | *Deprecated* To configure the ring buffer size |  | int
 | *bufferSize* (common) | To configure the ring buffer size | 1024 | int
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -135,7 +136,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+==== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -152,6 +153,7 @@ with the following path and query parameters:
 | *producerType* (producer) | Defines the producers allowed on the Disruptor. The options allowed are: Multi to allow multiple producers and Single to enable certain optimizations only allowed when one concurrent producer (on one thread or otherwise synchronized) is active. | Multi | DisruptorProducerType
 | *timeout* (producer) | Timeout (in milliseconds) before a producer will stop waiting for an asynchronous task to complete. You can disable timeout by using 0 or a negative value. | 30000 | long
 | *waitForTaskToComplete* (producer) | Option to specify whether the caller should wait for the async task to complete or not before continuing. The following three options are supported: Always, Never or IfReplyExpected. The first two values are self-explanatory. The last value, IfReplyExpected, will only wait if the message is Request Reply based. | IfReplyExpected | WaitForTaskToComplete
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
@@ -171,13 +173,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 18 options, which are listed below.
+The component supports 20 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.disruptor-vm.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.disruptor-vm.buffer-size* | To configure the ring buffer size | 1024 | Integer
 | *camel.component.disruptor-vm.default-block-when-full* | To configure the default value for block when full The default value is true. | true | Boolean
 | *camel.component.disruptor-vm.default-concurrent-consumers* | To configure the default number of concurrent consumers | 1 | Integer
@@ -186,6 +189,7 @@ The component supports 18 options, which are listed below.
 | *camel.component.disruptor-vm.default-wait-strategy* | To configure the default value for DisruptorWaitStrategy The default value is Blocking. |  | DisruptorWaitStrategy
 | *camel.component.disruptor-vm.enabled* | Enable disruptor-vm component | true | Boolean
 | *camel.component.disruptor-vm.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.disruptor.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.disruptor.buffer-size* | To configure the ring buffer size | 1024 | Integer
 | *camel.component.disruptor.default-block-when-full* | To configure the default value for block when full The default value is true. | true | Boolean
 | *camel.component.disruptor.default-concurrent-consumers* | To configure the default number of concurrent consumers | 1 | Integer

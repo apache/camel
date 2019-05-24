@@ -84,7 +84,7 @@ in path such as `/api/{version}/users/{id}`.
 ### Options
 
 // component options: START
-The REST Swagger component supports 9 options, which are listed below.
+The REST Swagger component supports 10 options, which are listed below.
 
 
 
@@ -100,6 +100,7 @@ The REST Swagger component supports 9 options, which are listed below.
 | *sslContextParameters* (security) | Customize TLS parameters used by the component. If not set defaults to the TLS parameters set in the Camel context |  | SSLContextParameters
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -123,7 +124,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (6 parameters):
+==== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -134,6 +135,7 @@ with the following path and query parameters:
 | *consumes* (producer) | What payload type this component capable of consuming. Could be one type, like application/json or multiple types as application/json, application/xml; q=0.5 according to the RFC7231. This equates to the value of Accept HTTP header. If set overrides any value found in the Swagger specification and. in the component configuration |  | String
 | *host* (producer) | Scheme hostname and port to direct the HTTP requests to in the form of https://hostname:port. Can be configured at the endpoint, component or in the correspoding REST configuration in the Camel Context. If you give this component a name (e.g. petstore) that REST configuration is consulted first, rest-swagger next, and global configuration last. If set overrides any value found in the Swagger specification, RestConfiguration. Overrides all other configuration. |  | String
 | *produces* (producer) | What payload type this component is producing. For example application/json according to the RFC7231. This equates to the value of Content-Type HTTP header. If set overrides any value present in the Swagger specification. Overrides all other configuration. |  | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
@@ -153,7 +155,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 10 options, which are listed below.
+The component supports 11 options, which are listed below.
 
 
 
@@ -161,6 +163,7 @@ The component supports 10 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.rest-swagger.base-path* | API basePath, for example /v2. Default is unset, if set overrides the value present in Swagger specification. |  | String
+| *camel.component.rest-swagger.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.rest-swagger.component-name* | Name of the Camel component that will perform the requests. The component must be present in Camel registry and it must implement RestProducerFactory service provider interface. If not set CLASSPATH is searched for single component that implements RestProducerFactory SPI. Can be overridden in endpoint configuration. |  | String
 | *camel.component.rest-swagger.consumes* | What payload type this component capable of consuming. Could be one type, like application/json or multiple types as application/json, application/xml; q=0.5 according to the RFC7231. This equates to the value of Accept HTTP header. If set overrides any value found in the Swagger specification. Can be overridden in endpoint configuration |  | String
 | *camel.component.rest-swagger.enabled* | Enable rest-swagger component | true | Boolean

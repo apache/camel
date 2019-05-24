@@ -168,7 +168,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The SMPP component supports 2 options, which are listed below.
+The SMPP component supports 3 options, which are listed below.
 
 
 
@@ -177,6 +177,7 @@ The SMPP component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (advanced) | To use the shared SmppConfiguration as configuration. |  | SmppConfiguration
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -205,7 +206,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (38 parameters):
+==== Query Parameters (39 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -234,6 +235,7 @@ with the following path and query parameters:
 | *sourceAddrNpi* (producer) | Defines the numeric plan indicator (NPI) to be used in the SME originator address parameters. The following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined by WAP Forum) |  | byte
 | *sourceAddrTon* (producer) | Defines the type of number (TON) to be used in the SME originator address parameters. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated |  | byte
 | *typeOfNumber* (producer) | Defines the type of number (TON) to be used in the SME. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated |  | byte
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *enquireLinkTimer* (advanced) | Defines the interval in milliseconds between the confidence checks. The confidence check is used to test the communication path between an ESME and an SMSC. | 5000 | Integer
 | *sessionStateListener* (advanced) | You can refer to a org.jsmpp.session.SessionStateListener in the Registry to receive callbacks when the session state changed. |  | SessionStateListener
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
@@ -267,13 +269,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 38 options, which are listed below.
+The component supports 39 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.smpp.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.smpp.configuration.address-range* | You can specify the address range for the SmppConsumer as defined in section 5.2.7 of the SMPP 3.4 specification. The SmppConsumer will receive messages only from SMSC's which target an address (MSISDN or IP address) within this range. |  | String
 | *camel.component.smpp.configuration.alphabet* | Defines encoding of data according the SMPP 3.4 specification, section 5.2.19. <ul> <li>0: SMSC Default Alphabet <li>4: 8 bit Alphabet</li> <li>8: UCS2 Alphabet</li></li> </ul> |  | Byte
 | *camel.component.smpp.configuration.data-coding* | Defines the data coding according the SMPP 3.4 specification, section 5.2.19. Example data encodings are: <ul> <li>0: SMSC Default Alphabet</li> <li>3: Latin 1 (ISO-8859-1)</li> <li>4: Octet unspecified (8-bit binary)</li> <li>8: UCS2 (ISO/IEC-10646)</li> <li>13: Extended Kanji JIS(X 0212-1990)</li> </ul> |  | Byte
