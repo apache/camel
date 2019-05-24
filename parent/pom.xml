@@ -356,7 +356,7 @@
         <jax-maven-plugin-version>0.1.6</jax-maven-plugin-version>
         <jaxb2-maven-plugin-version>2.4</jaxb2-maven-plugin-version>
         <jaxen-version>1.1.6</jaxen-version>
-        <jbpm-version>7.21.0.Final</jbpm-version>
+        <jbpm-version>7.22.0.Final</jbpm-version>
         <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
         <jboss-logging-version>3.3.2.Final</jboss-logging-version>
         <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
