@@ -43,7 +43,7 @@ public class SqsConfiguration implements Cloneable {
     private String proxyHost;
     @UriParam(label = "proxy")
     private Integer proxyPort;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean autoCreateQueue = true;
 
     // consumer properties
