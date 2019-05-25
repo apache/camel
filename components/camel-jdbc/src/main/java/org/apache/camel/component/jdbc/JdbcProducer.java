@@ -34,7 +34,7 @@ import javax.sql.DataSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
@@ -193,7 +193,7 @@ public class JdbcProducer extends DefaultProducer {
 
             if (parameters != null && !parameters.isEmpty()) {
                 Map<String, Object> copy = new HashMap<>(parameters);
-                IntrospectionSupport.setProperties(stmt, copy);
+                PropertyBindingSupport.bindProperties(exchange.getContext(), stmt, copy);
             }
 
             log.debug("Executing JDBC Statement: {}", sql);
@@ -383,7 +383,7 @@ public class JdbcProducer extends DefaultProducer {
             properties.put(name, value);
         }
         try {
-            IntrospectionSupport.setProperties(answer, properties);
+            PropertyBindingSupport.bindProperties(getEndpoint().getCamelContext(), answer, properties);
         } catch (Exception e) {
             throw new SQLException("Error setting properties on output class " + outputClass, e);
         }

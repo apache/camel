@@ -26,7 +26,7 @@ import com.google.api.services.calendar.model.Calendar;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
@@ -82,7 +82,7 @@ public class AbstractGoogleCalendarTestSupport extends CamelTestSupport {
         }
 
         final GoogleCalendarConfiguration configuration = new GoogleCalendarConfiguration();
-        IntrospectionSupport.setProperties(configuration, options);
+        PropertyBindingSupport.bindProperties(context, configuration, options);
 
         // add GoogleCalendarComponent to Camel context
         final GoogleCalendarComponent component = new GoogleCalendarComponent(context);

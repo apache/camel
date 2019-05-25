@@ -32,6 +32,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -103,7 +104,7 @@ public class FopProducer extends DefaultProducer {
             .extractProperties(headers, FopConstants.CAMEL_FOP_ENCRYPT);
         if (!encryptionParameters.isEmpty()) {
             PDFEncryptionParams encryptionParams = new PDFEncryptionParams();
-            IntrospectionSupport.setProperties(encryptionParams, encryptionParameters);
+            PropertyBindingSupport.bindProperties(getEndpoint().getCamelContext(), encryptionParams, encryptionParameters);
             userAgent.getRendererOptions().put("encryption-params", encryptionParams);
         }
     }
@@ -118,7 +119,7 @@ public class FopProducer extends DefaultProducer {
     private void setRenderParameters(FOUserAgent userAgent, Map<String, Object> headers) throws Exception {
         Map<String, Object> parameters = IntrospectionSupport.extractProperties(headers, FopConstants.CAMEL_FOP_RENDER);
         if (!parameters.isEmpty()) {
-            IntrospectionSupport.setProperties(userAgent, parameters);
+            PropertyBindingSupport.bindProperties(getEndpoint().getCamelContext(), userAgent, parameters);
         }
     }
     

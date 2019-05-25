@@ -23,7 +23,7 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 /**
@@ -53,7 +53,7 @@ public class AbstractAS2TestSupport extends CamelTestSupport {
         }
 
         final AS2Configuration configuration = new AS2Configuration();
-        IntrospectionSupport.setProperties(configuration, options);
+        PropertyBindingSupport.bindProperties(context, configuration, options);
 
         // add AS2Component to Camel context
         final AS2Component component = new AS2Component(context);

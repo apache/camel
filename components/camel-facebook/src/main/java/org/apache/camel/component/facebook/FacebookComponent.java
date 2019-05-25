@@ -27,6 +27,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 
 /**
  * Represents the component that manages {@link FacebookEndpoint}.
@@ -76,7 +77,7 @@ public class FacebookComponent extends DefaultComponent {
 
         // create endpoint configuration with component properties
         FacebookEndpointConfiguration config = new FacebookEndpointConfiguration();
-        IntrospectionSupport.setProperties(config, componentProperties);
+        PropertyBindingSupport.bindProperties(getCamelContext(), config, componentProperties);
         return config;
     }
 
