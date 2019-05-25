@@ -99,11 +99,6 @@ public class MailComponent extends HeaderFilterStrategyComponent implements SSLC
             endpoint.setSortTerm(st);
         }
 
-        endpoint.setContentTypeResolver(contentTypeResolver);
-        setEndpointHeaderFilterStrategy(endpoint);
-        setProperties(endpoint.getConfiguration(), parameters);
-        setProperties(endpoint, parameters);
-
         // special for searchTerm.xxx options
         Map<String, Object> sstParams = IntrospectionSupport.extractProperties(parameters, "searchTerm.");
         if (!sstParams.isEmpty()) {
@@ -113,6 +108,11 @@ public class MailComponent extends HeaderFilterStrategyComponent implements SSLC
             SearchTerm st = MailConverters.toSearchTerm(sst, getCamelContext().getTypeConverter());
             endpoint.setSearchTerm(st);
         }
+
+        endpoint.setContentTypeResolver(contentTypeResolver);
+        setEndpointHeaderFilterStrategy(endpoint);
+        setProperties(endpoint.getConfiguration(), parameters);
+        setProperties(endpoint, parameters);
 
         // sanity check that we know the mail server
         StringHelper.notEmpty(config.getHost(), "host");
