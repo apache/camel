@@ -41,6 +41,8 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -80,6 +82,7 @@ public class RestSwaggerEndpointTest {
         when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
         final Endpoint endpointDelegate = mock(Endpoint.class);
         when(camelContext.getEndpoint("rest:GET:/v2:/pet/{petId}")).thenReturn(endpointDelegate);
+        when(camelContext.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
         final Producer delegateProducer = mock(Producer.class);
         when(endpointDelegate.createProducer()).thenReturn(delegateProducer);
 
