@@ -30,6 +30,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 
@@ -84,7 +85,7 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
         if (bootstrapConfiguration != null) {
             Map<String, Object> options = new HashMap<>();
             if (IntrospectionSupport.getProperties(bootstrapConfiguration, options, null, false)) {
-                IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), config, options);
+                PropertyBindingSupport.bindProperties(getCamelContext(), config, options);
             }
         }
 

@@ -27,7 +27,7 @@ import org.apache.camel.component.jetty.CamelHttpClient;
 import org.apache.camel.component.jetty.JettyHttpComponent;
 import org.apache.camel.component.jetty.JettyHttpEndpoint;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.eclipse.jetty.client.HttpClientTransport;
 import org.eclipse.jetty.server.AbstractConnector;
 import org.eclipse.jetty.server.ConnectionFactory;
@@ -102,7 +102,7 @@ public class JettyHttpComponent9 extends JettyHttpComponent {
                 if (getSslSocketConnectorProperties() != null && "https".equals(endpoint.getProtocol())) {
                     // must copy the map otherwise it will be deleted
                     Map<String, Object> properties = new HashMap<>(getSslSocketConnectorProperties());
-                    IntrospectionSupport.setProperties(sslcf, properties);
+                    PropertyBindingSupport.bindProperties(getCamelContext(), sslcf, properties);
                     if (properties.size() > 0) {
                         throw new IllegalArgumentException("There are " + properties.size()
                             + " parameters that couldn't be set on the SocketConnector."

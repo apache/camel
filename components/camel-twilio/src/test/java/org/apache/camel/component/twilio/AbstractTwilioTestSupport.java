@@ -23,7 +23,7 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 /**
@@ -54,7 +54,7 @@ public class AbstractTwilioTestSupport extends CamelTestSupport {
 
         // add TwilioComponent to Camel context
         final TwilioComponent component = new TwilioComponent(context);
-        IntrospectionSupport.setProperties(component, options);
+        PropertyBindingSupport.bindProperties(context, component, options);
         context.addComponent("twilio", component);
 
         return context;

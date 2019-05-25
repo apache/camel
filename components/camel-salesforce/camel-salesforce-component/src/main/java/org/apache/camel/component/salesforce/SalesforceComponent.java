@@ -41,7 +41,7 @@ import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelp
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
@@ -668,29 +668,27 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         final SalesforceEndpointConfig modifiedConfig = Optional.ofNullable(config).map(SalesforceEndpointConfig::copy)
             .orElseGet(() -> new SalesforceEndpointConfig());
         final CamelContext camelContext = getCamelContext();
-        final TypeConverter typeConverter = camelContext.getTypeConverter();
 
-        IntrospectionSupport.setProperties(typeConverter, modifiedConfig, properties);
+        PropertyBindingSupport.bindProperties(camelContext, modifiedConfig, properties);
 
         return createRestClientFor(modifiedConfig);
     }
 
     static RestClient createRestClient(final CamelContext camelContext, final Map<String, Object> properties)
         throws Exception {
-        final TypeConverter typeConverter = camelContext.getTypeConverter();
 
         final SalesforceEndpointConfig config = new SalesforceEndpointConfig();
         // let's work with a copy for IntrospectionSupport so original properties are intact
-        IntrospectionSupport.setProperties(typeConverter, config, new HashMap<>(properties));
+        PropertyBindingSupport.bindProperties(camelContext, config, new HashMap<>(properties));
 
         final SalesforceLoginConfig loginConfig = new SalesforceLoginConfig();
         // let's work with a copy for IntrospectionSupport so original properties are intact
-        IntrospectionSupport.setProperties(typeConverter, loginConfig, new HashMap<>(properties));
+        PropertyBindingSupport.bindProperties(camelContext, loginConfig, new HashMap<>(properties));
 
         final SSLContextParameters sslContextParameters = Optional.ofNullable(camelContext.getSSLContextParameters())
             .orElseGet(() -> new SSLContextParameters());
         // let's work with a copy for IntrospectionSupport so original properties are intact
-        IntrospectionSupport.setProperties(typeConverter, sslContextParameters, new HashMap<>(properties));
+        PropertyBindingSupport.bindProperties(camelContext, sslContextParameters, new HashMap<>(properties));
 
         final SslContextFactory sslContextFactory = new SslContextFactory();
         sslContextFactory.setSslContext(sslContextParameters.createSSLContext(camelContext));
@@ -724,7 +722,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
         // set HTTP client parameters
         final TypeConverter typeConverter = camelContext.getTypeConverter();
-        IntrospectionSupport.setProperties(typeConverter, httpClient,
+        PropertyBindingSupport.bindProperties(camelContext, httpClient,
             new HashMap<>(httpClientProperties));
 
         final String httpProxyHost = typeConverter.convertTo(String.class, httpClientProperties.get(HTTP_PROXY_HOST));

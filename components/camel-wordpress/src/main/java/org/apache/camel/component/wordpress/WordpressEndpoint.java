@@ -39,6 +39,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -130,7 +131,7 @@ public class WordpressEndpoint extends DefaultEndpoint {
                     }
                     return e.getValue();
                 }));
-                IntrospectionSupport.setProperties(searchCriteria, criteriaOptions);
+                PropertyBindingSupport.bindProperties(getCamelContext(), searchCriteria, criteriaOptions);
                 config.setSearchCriteria(searchCriteria);
             }
         } catch (Exception e) {

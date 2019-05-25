@@ -31,6 +31,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -209,7 +210,7 @@ public class RestComponent extends DefaultComponent {
             }
 
             // Copy common options, will override those in conf
-            IntrospectionSupport.setProperties(getCamelContext(), getCamelContext().getTypeConverter(), conf, map);
+            PropertyBindingSupport.bindProperties(getCamelContext(), conf, map);
 
             // Merge properties
             mergeProperties(conf::getComponentProperties, from::getComponentProperties, conf::setComponentProperties);
