@@ -34,6 +34,7 @@ import org.apache.camel.model.Model;
 import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.function.Suppliers;
 
 import static org.apache.camel.support.CamelContextHelper.lookup;
@@ -239,7 +240,7 @@ public class HystrixReifier extends ProcessorReifier<HystrixDefinition> {
         HystrixConfigurationDefinition config = new HystrixConfigurationDefinition();
 
         // Apply properties to a new configuration
-        IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), config, properties);
+        PropertyBindingSupport.bindProperties(camelContext, config, properties);
 
         return config;
     }

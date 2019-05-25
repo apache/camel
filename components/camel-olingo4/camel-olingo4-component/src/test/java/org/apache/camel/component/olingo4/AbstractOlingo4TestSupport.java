@@ -22,7 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.HttpHost;
 import org.apache.http.client.ClientProtocolException;
@@ -56,7 +56,7 @@ public class AbstractOlingo4TestSupport extends CamelTestSupport {
         options.put("contentType", "application/json;charset=utf-8");
 
         final Olingo4Configuration configuration = new Olingo4Configuration();
-        IntrospectionSupport.setProperties(configuration, options);
+        PropertyBindingSupport.bindProperties(context, configuration, options);
 
         // add OlingoComponent to Camel context
         final Olingo4Component component = new Olingo4Component(context);

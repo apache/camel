@@ -25,6 +25,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 
 /**
  * Represents the component that manages {@link WordpressEndpoint}.
@@ -84,7 +85,7 @@ public class WordpressComponent extends DefaultComponent {
 
         // create endpoint configuration with component properties
         WordpressComponentConfiguration config = new WordpressComponentConfiguration();
-        IntrospectionSupport.setProperties(config, componentProperties);
+        PropertyBindingSupport.bindProperties(getCamelContext(), config, componentProperties);
         return config;
     }
 }

@@ -40,6 +40,7 @@ import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.RestProducerFactoryHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
@@ -91,7 +92,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         if (bootstrapConfiguration != null) {
             Map<String, Object> options = new HashMap<>();
             if (IntrospectionSupport.getProperties(bootstrapConfiguration, options, null, false)) {
-                IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), config, options);
+                PropertyBindingSupport.bindProperties(getCamelContext(), config, options);
             }
         }
 

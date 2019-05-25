@@ -43,6 +43,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.RestProducerFactoryHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
@@ -354,10 +355,10 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         HttpClientBuilder clientBuilder = HttpClientBuilder.create();
         // allow the builder pattern
         httpClientOptions.putAll(IntrospectionSupport.extractProperties(parameters, "httpClient."));
-        IntrospectionSupport.setProperties(clientBuilder, httpClientOptions);
+        PropertyBindingSupport.bindProperties(getCamelContext(), clientBuilder, httpClientOptions);
         // set the Request configure this way and allow the builder pattern
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
-        IntrospectionSupport.setProperties(requestConfigBuilder, httpClientOptions);
+        PropertyBindingSupport.bindProperties(getCamelContext(), requestConfigBuilder, httpClientOptions);
         clientBuilder.setDefaultRequestConfig(requestConfigBuilder.build());
 
         // validate that we could resolve all httpClient. parameters as this component is lenient

@@ -30,7 +30,7 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpClient;
@@ -168,7 +168,7 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
             Map<String, Object> params = new HashMap<>(httpClientParameters);
             // Can not be set on httpClient for jetty 9
             params.remove("timeout");
-            IntrospectionSupport.setProperties(httpClient, params);
+            PropertyBindingSupport.bindProperties(getCamelContext(), httpClient, params);
             // validate we could set all parameters
             if (params.size() > 0) {
                 throw new ResolveEndpointFailedException(getEndpointUri(), "There are " + params.size()

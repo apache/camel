@@ -23,7 +23,7 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 /**
@@ -57,7 +57,7 @@ public class AbstractOlingo2TestSupport extends CamelTestSupport {
         }
 
         final Olingo2Configuration configuration = new Olingo2Configuration();
-        IntrospectionSupport.setProperties(configuration, options);
+        PropertyBindingSupport.bindProperties(context, configuration, options);
 
         // add OlingoComponent to Camel context
         final Olingo2Component component = new Olingo2Component(context);
