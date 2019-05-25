@@ -31,7 +31,7 @@ import com.google.api.services.sheets.v4.model.SpreadsheetProperties;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 
@@ -95,7 +95,7 @@ public class AbstractGoogleSheetsTestSupport extends CamelTestSupport {
         final CamelContext context = super.createCamelContext();
 
         final GoogleSheetsConfiguration configuration = new GoogleSheetsConfiguration();
-        IntrospectionSupport.setProperties(configuration, getTestOptions());
+        PropertyBindingSupport.bindProperties(context, configuration, getTestOptions());
 
         // add GoogleSheetsComponent to Camel context
         final GoogleSheetsComponent component = new GoogleSheetsComponent(context);

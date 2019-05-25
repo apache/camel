@@ -29,7 +29,7 @@ import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.model.File;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
@@ -112,7 +112,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
         }
 
         final GoogleDriveConfiguration configuration = new GoogleDriveConfiguration();
-        IntrospectionSupport.setProperties(configuration, options);
+        PropertyBindingSupport.bindProperties(context, configuration, options);
 
         // add GoogleDriveComponent  to Camel context
         final CamelContext context = super.createCamelContext();
