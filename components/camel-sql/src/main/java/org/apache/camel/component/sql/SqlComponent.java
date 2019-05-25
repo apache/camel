@@ -27,6 +27,7 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -89,7 +90,7 @@ public class SqlComponent extends DefaultComponent {
 
         JdbcTemplate jdbcTemplate = new JdbcTemplate(target);
         Map<String, Object> templateOptions = IntrospectionSupport.extractProperties(parameters, "template.");
-        IntrospectionSupport.setProperties(jdbcTemplate, templateOptions);
+        PropertyBindingSupport.bindProperties(getCamelContext(), jdbcTemplate, templateOptions);
 
         String query = remaining;
         if (usePlaceholder) {

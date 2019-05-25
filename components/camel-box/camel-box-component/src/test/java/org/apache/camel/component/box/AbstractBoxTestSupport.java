@@ -25,7 +25,7 @@ import com.box.sdk.BoxFile;
 import com.box.sdk.BoxFolder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 /**
@@ -60,7 +60,7 @@ public class AbstractBoxTestSupport extends CamelTestSupport {
         }
 
         final BoxConfiguration configuration = new BoxConfiguration();
-        IntrospectionSupport.setProperties(configuration, options);
+        PropertyBindingSupport.bindProperties(context, configuration, options);
 
         // add BoxComponent to Camel context
         final BoxComponent component = new BoxComponent(context);

@@ -26,7 +26,7 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.server.exceptions.ResourceGoneException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.HumanName;
@@ -97,7 +97,7 @@ public abstract class AbstractFhirTestSupport extends CamelTestSupport {
         this.fhirClient = this.fhirContext.newRestfulGenericClient((String) options.get("serverUrl"));
         GENERIC_CLIENT_THREAD_LOCAL.set(this.fhirClient);
         final FhirConfiguration configuration = new FhirConfiguration();
-        IntrospectionSupport.setProperties(configuration, options);
+        PropertyBindingSupport.bindProperties(context, configuration, options);
         configuration.setFhirContext(this.fhirContext);
 
         // add FhirComponent to Camel context

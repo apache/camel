@@ -23,7 +23,7 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.docker.DockerComponent;
 import org.apache.camel.component.docker.DockerConfiguration;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class DockerITTestSupport extends CamelTestSupport {
@@ -42,7 +42,7 @@ public class DockerITTestSupport extends CamelTestSupport {
         properties.entrySet().forEach((e) -> options.put(e.getKey().toString(), e.getValue()));
 
         DockerConfiguration configuration = new DockerConfiguration();
-        IntrospectionSupport.setProperties(configuration, options);
+        PropertyBindingSupport.bindProperties(context, configuration, options);
 
         DockerComponent component = new DockerComponent();
         component.setConfiguration(configuration);
