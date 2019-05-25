@@ -39,7 +39,6 @@ import java.util.function.Predicate;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TypeConverters;
@@ -1272,7 +1271,8 @@ public abstract class MainSupport extends ServiceSupport {
             @Override
             public void onComponentAdd(String name, Component component) {
                 PropertyBindingSupport.autowireSingletonPropertiesFromRegistry(camelContext, component, false, (obj, propertyName, type, value) -> {
-                    LOG.info("Auto configuring option: {} on component: {} as one instance of type: {} registered in the Camel Registry", propertyName, component.getClass().getSimpleName(), type.getName());
+                    LOG.info("Auto configuring option: {} on component: {} as one instance of type: {} registered in the Camel Registry",
+                            propertyName, component.getClass().getSimpleName(), type.getName());
                 });
             }
         });

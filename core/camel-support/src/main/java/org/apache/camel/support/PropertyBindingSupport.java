@@ -16,15 +16,15 @@
  */
 package org.apache.camel.support;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.PropertyBindingException;
+
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.PropertyBindingException;
 
 import static org.apache.camel.support.IntrospectionSupport.findSetterMethods;
 import static org.apache.camel.support.IntrospectionSupport.getOrElseProperty;
@@ -148,7 +148,7 @@ public final class PropertyBindingSupport {
      * @return              true if one ore more properties was auto wired
      */
     public static boolean autowireSingletonPropertiesFromRegistry(CamelContext camelContext, Object target) {
-        return autowireSingletonPropertiesFromRegistry(camelContext, target, false,null);
+        return autowireSingletonPropertiesFromRegistry(camelContext, target, false, null);
     }
 
     /**
@@ -221,7 +221,7 @@ public final class PropertyBindingSupport {
                     hit |= doAutowireSingletonPropertiesFromRegistry(camelContext, value, parents, bindNullOnly, callback);
                 }
             }
-        };
+        }
 
         return hit;
     }
@@ -236,7 +236,7 @@ public final class PropertyBindingSupport {
      */
     public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties) {
         return bindProperties(camelContext, target, properties, true, true, true, true, true);
-   }
+    }
 
     /**
      * Binds the properties to the target object, and removes the property that was bound from properties.
