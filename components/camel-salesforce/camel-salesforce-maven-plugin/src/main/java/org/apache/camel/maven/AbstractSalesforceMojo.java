@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
@@ -32,7 +33,7 @@ import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
@@ -222,10 +223,12 @@ abstract class AbstractSalesforceMojo extends AbstractMojo {
     private SalesforceHttpClient createHttpClient() throws MojoExecutionException {
         final SalesforceHttpClient httpClient;
 
+        CamelContext camelContext = new DefaultCamelContext();
+
         // set ssl context parameters
         try {
             final SslContextFactory sslContextFactory = new SslContextFactory();
-            sslContextFactory.setSslContext(sslContextParameters.createSSLContext(new DefaultCamelContext()));
+            sslContextFactory.setSslContext(sslContextParameters.createSSLContext(camelContext));
 
             httpClient = new SalesforceHttpClient(sslContextFactory);
         } catch (final GeneralSecurityException e) {
@@ -244,7 +247,7 @@ abstract class AbstractSalesforceMojo extends AbstractMojo {
         // set HTTP client parameters
         if (httpClientProperties != null && !httpClientProperties.isEmpty()) {
             try {
-                IntrospectionSupport.setProperties(httpClient, new HashMap<>(httpClientProperties));
+                PropertyBindingSupport.bindProperties(camelContext, httpClient, new HashMap<>(httpClientProperties));
             } catch (final Exception e) {
                 throw new MojoExecutionException("Error setting HTTP client properties: " + e.getMessage(), e);
             }
