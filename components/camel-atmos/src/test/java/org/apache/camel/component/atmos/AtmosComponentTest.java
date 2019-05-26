@@ -26,6 +26,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AtmosComponentTest {
@@ -40,6 +43,8 @@ public class AtmosComponentTest {
 
     @Test
     public void testComponentOptions() throws Exception {
+        when(context.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
+
         AtmosComponent component = new AtmosComponent(context);
         component.setFullTokenId(FAKE_TOKEN);
         component.setSecretKey(FAKE_SECRET);
@@ -60,6 +65,8 @@ public class AtmosComponentTest {
 
     @Test
     public void testUriParamsOverrideComponentOptions() throws Exception {
+        when(context.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
+
         AtmosComponent component = new AtmosComponent(context);
         component.setFullTokenId("fakeTokenToBeOverridden");
         component.setSecretKey("fakeSecretToBeOverridden");

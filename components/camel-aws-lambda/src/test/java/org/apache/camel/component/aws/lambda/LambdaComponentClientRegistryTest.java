@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.lambda;
 
 import com.amazonaws.services.lambda.AWSLambdaClient;
 
+import org.apache.camel.PropertyBindingException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -37,7 +38,7 @@ public class LambdaComponentClientRegistryTest extends CamelTestSupport {
         assertNotNull(endpoint.getConfiguration().getAwsLambdaClient());
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = PropertyBindingException.class)
     public void createEndpointWithMinimalKMSClientMisconfiguration() throws Exception {
 
         LambdaComponent component = new LambdaComponent(context);
