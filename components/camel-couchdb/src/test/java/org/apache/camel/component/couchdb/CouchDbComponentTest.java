@@ -30,6 +30,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CouchDbComponentTest {
@@ -50,6 +53,8 @@ public class CouchDbComponentTest {
 
     @Test
     public void testPropertiesSet() throws Exception {
+        when(context.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
+
         Map<String, Object> params = new HashMap<>();
         params.put("createDatabase", true);
         params.put("username", "coldplay");
