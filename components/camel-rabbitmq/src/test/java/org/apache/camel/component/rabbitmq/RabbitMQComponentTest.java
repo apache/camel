@@ -29,6 +29,9 @@ import org.mockito.Mockito;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 public class RabbitMQComponentTest {
 
@@ -98,6 +101,7 @@ public class RabbitMQComponentTest {
         String remaining = "special.host:14/queuey";
 
         RabbitMQComponent comp = new RabbitMQComponent(context);
+        when(context.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
         comp.setAutoDetectConnectionFactory(false);
         return comp.createEndpoint(uri, remaining, params);
     }

@@ -87,7 +87,6 @@ public class MicrometerComponentTest {
         inOrder.verify(camelRegistry, times(1)).lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME, MeterRegistry.class);
         inOrder.verify(camelContext, times(1)).getTypeConverter();
         inOrder.verify(typeConverter, times(1)).convertTo(String.class, "key=value");
-        inOrder.verify(camelContext, times(1)).getTypeConverter();
         inOrder.verifyNoMoreInteractions();
     }
 
