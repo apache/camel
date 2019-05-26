@@ -78,6 +78,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
     
     @Override
     protected CamelContext createCamelContext() throws Exception {
+        final CamelContext context = super.createCamelContext();
 
         final InputStream in = getClass().getResourceAsStream(TEST_OPTIONS_PROPERTIES);
         if (in == null) {
@@ -115,9 +116,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
         PropertyBindingSupport.bindProperties(context, configuration, options);
 
         // add GoogleDriveComponent  to Camel context
-        final CamelContext context = super.createCamelContext();
         final GoogleDriveComponent component = new GoogleDriveComponent(context);
-
         component.setConfiguration(configuration);
         context.addComponent("google-drive", component);
 
