@@ -411,11 +411,12 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         context.start();
 
         output.setExpectedMessageCount(0);
+
         Exchange out = sendFailExchange(EXIT_WITH_VALUE_0, NO_TIMEOUT);
 
         //test if exitValue and stderr are accessible through thrown ExecException
         ExecException ee = (ExecException) out.getException();
-        assertNotNull(ee.getExitValue());
+        assertTrue(ee.getExitValue() > 0);
         assertNotNull(ee.getStderr());
 
         output.assertIsSatisfied();
