@@ -39,6 +39,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
@@ -68,7 +70,9 @@ public class MetricsComponentTest {
     public void testCreateEndpoint() throws Exception {
         component.setCamelContext(camelContext);
         when(camelContext.getRegistry()).thenReturn(camelRegistry);
+        when(camelContext.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
         when(camelRegistry.lookupByNameAndType(MetricsComponent.METRIC_REGISTRY_NAME, MetricRegistry.class)).thenReturn(metricRegistry);
+
         Map<String, Object> params = new HashMap<>();
         Long value = System.currentTimeMillis();
         params.put("mark", value);
@@ -89,6 +93,7 @@ public class MetricsComponentTest {
     public void testCreateEndpoints() throws Exception {
         component.setCamelContext(camelContext);
         when(camelContext.getRegistry()).thenReturn(camelRegistry);
+        when(camelContext.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
         when(camelRegistry.lookupByNameAndType(MetricsComponent.METRIC_REGISTRY_NAME, MetricRegistry.class)).thenReturn(metricRegistry);
         Map<String, Object> params = new HashMap<>();
         Long value = System.currentTimeMillis();
@@ -116,7 +121,7 @@ public class MetricsComponentTest {
 
         inOrder.verify(camelContext, times(1)).getRegistry();
         inOrder.verify(camelRegistry, times(1)).lookupByNameAndType(MetricsComponent.METRIC_REGISTRY_NAME, MetricRegistry.class);
-        inOrder.verify(camelContext, times(2)).getTypeConverter();
+        inOrder.verify(camelContext, times(3)).getTypeConverter();
         inOrder.verifyNoMoreInteractions();
     }
 
