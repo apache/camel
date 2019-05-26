@@ -755,9 +755,10 @@ public final class ProcessorDefinitionHelper {
      * This implementation will check all the getter/setter pairs on this instance and for all the values
      * (which is a String type) will check if it refers to a known field (such as on Exchange).
      *
-     * @param definition the definition
+     * @param camelContext the camel context
+     * @param definition   the definition
      */
-    public static void resolveKnownConstantFields(Object definition) throws Exception {
+    public static void resolveKnownConstantFields(CamelContext camelContext, Object definition) throws Exception {
         LOG.trace("Resolving known fields for: {}", definition);
 
         // find all String getter/setter
@@ -782,7 +783,7 @@ public final class ProcessorDefinitionHelper {
                         String constant = ObjectHelper.lookupConstantFieldValue(Exchange.class, field);
                         if (constant != null) {
                             // invoke setter as the text has changed
-                            IntrospectionSupport.setProperty(definition, name, constant);
+                            IntrospectionSupport.setProperty(camelContext, definition, name, constant);
                             changedProperties.put(name, value);
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("Changed property [{}] from: {} to: {}", name, value, constant);

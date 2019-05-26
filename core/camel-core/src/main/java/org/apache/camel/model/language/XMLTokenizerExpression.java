@@ -96,13 +96,13 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
     @Override
     protected void configureExpression(CamelContext camelContext, Expression expression) {
         if (headerName != null) {
-            setProperty(expression, "headerName", headerName);
+            setProperty(camelContext, expression, "headerName", headerName);
         }
         if (mode != null) {
-            setProperty(expression, "mode", mode);
+            setProperty(camelContext, expression, "mode", mode);
         }
         if (group != null) {
-            setProperty(expression, "group", group);
+            setProperty(camelContext, expression, "group", group);
         }
         super.configureExpression(camelContext, expression);
     }
@@ -110,13 +110,13 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
     @Override
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
         if (headerName != null) {
-            setProperty(predicate, "headerName", headerName);
+            setProperty(camelContext, predicate, "headerName", headerName);
         }
         if (mode != null) {
-            setProperty(predicate, "mode", mode);
+            setProperty(camelContext, predicate, "mode", mode);
         }
         if (group != null) {
-            setProperty(predicate, "group", group);
+            setProperty(camelContext, predicate, "group", group);
         }
         super.configurePredicate(camelContext, predicate);
     }

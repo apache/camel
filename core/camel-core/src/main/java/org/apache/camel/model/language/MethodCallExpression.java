@@ -173,16 +173,16 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     protected void configureLanguage(CamelContext camelContext, Language language) {
         if (instance != null) {
-            setProperty(language, "bean", instance);
+            setProperty(camelContext, language, "bean", instance);
         }
         if (beanType != null) {
-            setProperty(language, "beanType", beanType);
+            setProperty(camelContext, language, "beanType", beanType);
         }
         if (ref != null) {
-            setProperty(language, "ref", ref);
+            setProperty(camelContext, language, "ref", ref);
         }
         if (method != null) {
-            setProperty(language, "method", method);
+            setProperty(camelContext, language, "method", method);
         }
     }
 

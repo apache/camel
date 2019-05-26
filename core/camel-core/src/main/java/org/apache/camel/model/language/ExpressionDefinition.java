@@ -323,9 +323,9 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
     /**
      * Sets a named property on the object instance using introspection
      */
-    protected void setProperty(Object bean, String name, Object value) {
+    protected void setProperty(CamelContext camelContext, Object bean, String name, Object value) {
         try {
-            IntrospectionSupport.setProperty(bean, name, value);
+            IntrospectionSupport.setProperty(camelContext, bean, name, value);
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to set property " + name + " on " + bean
                                                + ". Reason: " + e, e);

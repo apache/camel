@@ -154,22 +154,22 @@ public class JsonPathExpression extends ExpressionDefinition {
     @Override
     protected void configureExpression(CamelContext camelContext, Expression expression) {
         if (resultType != null) {
-            setProperty(expression, "resultType", resultType);
+            setProperty(camelContext, expression, "resultType", resultType);
         }
         if (suppressExceptions != null) {
-            setProperty(expression, "suppressExceptions", suppressExceptions);
+            setProperty(camelContext, expression, "suppressExceptions", suppressExceptions);
         }
         if (allowSimple != null) {
-            setProperty(expression, "allowSimple", allowSimple);
+            setProperty(camelContext, expression, "allowSimple", allowSimple);
         }
         if (allowEasyPredicate != null) {
-            setProperty(expression, "allowEasyPredicate", allowEasyPredicate);
+            setProperty(camelContext, expression, "allowEasyPredicate", allowEasyPredicate);
         }
         if (writeAsString != null) {
-            setProperty(expression, "writeAsString", writeAsString);
+            setProperty(camelContext, expression, "writeAsString", writeAsString);
         }
         if (headerName != null) {
-            setProperty(expression, "headerName", headerName);
+            setProperty(camelContext, expression, "headerName", headerName);
         }
         super.configureExpression(camelContext, expression);
     }
@@ -177,22 +177,22 @@ public class JsonPathExpression extends ExpressionDefinition {
     @Override
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
         if (resultType != null) {
-            setProperty(predicate, "resultType", resultType);
+            setProperty(camelContext, predicate, "resultType", resultType);
         }
         if (suppressExceptions != null) {
-            setProperty(predicate, "suppressExceptions", suppressExceptions);
+            setProperty(camelContext, predicate, "suppressExceptions", suppressExceptions);
         }
         if (allowSimple != null) {
-            setProperty(predicate, "allowSimple", allowSimple);
+            setProperty(camelContext, predicate, "allowSimple", allowSimple);
         }
         if (allowEasyPredicate != null) {
-            setProperty(predicate, "allowEasyPredicate", allowEasyPredicate);
+            setProperty(camelContext, predicate, "allowEasyPredicate", allowEasyPredicate);
         }
         if (writeAsString != null) {
-            setProperty(predicate, "writeAsString", writeAsString);
+            setProperty(camelContext, predicate, "writeAsString", writeAsString);
         }
         if (headerName != null) {
-            setProperty(predicate, "headerName", headerName);
+            setProperty(camelContext, predicate, "headerName", headerName);
         }
         super.configurePredicate(camelContext, predicate);
     }

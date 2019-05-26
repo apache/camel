@@ -56,17 +56,6 @@ public class LoadBalancerDefinition extends IdentifiedType implements OtherAttri
     }
 
     /**
-     * Sets a named property on the data format instance using introspection
-     */
-    protected void setProperty(Object bean, String name, Object value) {
-        try {
-            IntrospectionSupport.setProperty(bean, name, value);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to set property " + name + " on " + bean + ". Reason: " + e, e);
-        }
-    }
-
-    /**
      * Maximum number of outputs, as some load balancers only support 1 processor
      */
     public int getMaximumNumberOfOutputs() {

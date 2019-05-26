@@ -240,28 +240,28 @@ public class XPathExpression extends NamespaceAwareExpression {
         boolean isLogNamespaces = getLogNamespaces() != null && getLogNamespaces();
 
         if (documentType != null) {
-            setProperty(expression, "documentType", documentType);
+            setProperty(camelContext, expression, "documentType", documentType);
         }
         if (resultType != null) {
-            setProperty(expression, "resultType", resultType);
+            setProperty(camelContext, expression, "resultType", resultType);
         }
         if (isSaxon) {
-            setProperty(expression, "useSaxon", true);
+            setProperty(camelContext, expression, "useSaxon", true);
         }
         if (xpathFactory != null) {
-            setProperty(expression, "xPathFactory", xpathFactory);
+            setProperty(camelContext, expression, "xPathFactory", xpathFactory);
         }
         if (objectModel != null) {
-            setProperty(expression, "objectModelUri", objectModel);
+            setProperty(camelContext, expression, "objectModelUri", objectModel);
         }
         if (threadSafety != null) {
-            setProperty(expression, "threadSafety", threadSafety);
+            setProperty(camelContext, expression, "threadSafety", threadSafety);
         }
         if (isLogNamespaces) {
-            setProperty(expression, "logNamespaces", true);
+            setProperty(camelContext, expression, "logNamespaces", true);
         }
         if (ObjectHelper.isNotEmpty(getHeaderName())) {
-            setProperty(expression, "headerName", getHeaderName());
+            setProperty(camelContext, expression, "headerName", getHeaderName());
         }
         // moved the super configuration to the bottom so that the namespace init picks up the newly set XPath Factory
         super.configureExpression(camelContext, expression);
@@ -273,28 +273,28 @@ public class XPathExpression extends NamespaceAwareExpression {
         boolean isLogNamespaces = getLogNamespaces() != null && getLogNamespaces();
 
         if (documentType != null) {
-            setProperty(predicate, "documentType", documentType);
+            setProperty(camelContext, predicate, "documentType", documentType);
         }
         if (resultType != null) {
-            setProperty(predicate, "resultType", resultType);
+            setProperty(camelContext, predicate, "resultType", resultType);
         }
         if (isSaxon) {
-            setProperty(predicate, "useSaxon", true);
+            setProperty(camelContext, predicate, "useSaxon", true);
         }
         if (xpathFactory != null) {
-            setProperty(predicate, "xPathFactory", xpathFactory);
+            setProperty(camelContext, predicate, "xPathFactory", xpathFactory);
         }
         if (objectModel != null) {
-            setProperty(predicate, "objectModelUri", objectModel);
+            setProperty(camelContext, predicate, "objectModelUri", objectModel);
         }
         if (threadSafety != null) {
-            setProperty(predicate, "threadSafety", threadSafety);
+            setProperty(camelContext, predicate, "threadSafety", threadSafety);
         }
         if (isLogNamespaces) {
-            setProperty(predicate, "logNamespaces", true);
+            setProperty(camelContext, predicate, "logNamespaces", true);
         }
         if (ObjectHelper.isNotEmpty(getHeaderName())) {
-            setProperty(predicate, "headerName", getHeaderName());
+            setProperty(camelContext, predicate, "headerName", getHeaderName());
         }
         // moved the super configuration to the bottom so that the namespace init picks up the newly set XPath Factory
         super.configurePredicate(camelContext, predicate);
