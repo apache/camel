@@ -1255,10 +1255,13 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 }
                 // do not add endpoints as they have their own list
                 if (singleton && !(service instanceof Endpoint)) {
-                    // only add to list of services to stop if its not already
-                    // there
+                    // only add to list of services to stop if its not already there
                     if (stopOnShutdown && !hasService(service)) {
-                        servicesToStop.add(service);
+                        // special for type converter / type converter registry which is stopped manual later
+                        boolean tc = service instanceof TypeConverter || service instanceof TypeConverterRegistry;
+                        if (!tc) {
+                            servicesToStop.add(service);
+                        }
                     }
                 }
                 ServiceHelper.startService(service);
@@ -2574,12 +2577,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             log.warn("Error occurred while stopping lifecycle strategies. This exception will be ignored.", e);
         }
 
-        // shutdown services as late as possible
+        // shutdown services as late as possible (except type converters as they may be needed during the remainder of the stopping)
         shutdownServices(servicesToStop);
         servicesToStop.clear();
 
-        // must notify that we are stopped before stopping the management
-        // strategy
+        // must notify that we are stopped before stopping the management strategy
         EventHelper.notifyCamelContextStopped(this);
 
         // stop the notifier service
@@ -2594,6 +2596,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         shutdownServices(lifecycleStrategies);
         // do not clear lifecycleStrategies as we can start Camel again and get
         // the route back as before
+
+        // shutdown type converter as late as possible
+        ServiceHelper.stopService(typeConverter);
+        ServiceHelper.stopService(typeConverterRegistry);
 
         // stop the lazy created so they can be re-created on restart
         forceStopLazyInitialization();
