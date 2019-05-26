@@ -16,25 +16,16 @@
  */
 package org.apache.camel.component.google.drive;
 
-
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
-import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Files APIs.
  */
 public class CustomClientFactoryTest extends AbstractGoogleDriveTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CustomClientFactoryTest.class);
-    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName();
-    
     @Test
     public void testClientFactoryUpdated() throws Exception {
         Endpoint endpoint = context.getEndpoint("google-drive://drive-files/list?clientFactory=#myAuth");
