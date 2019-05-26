@@ -228,7 +228,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
             if (isReferenceParameter(ref) && camelContext != null) {
                 IntrospectionSupport.setProperty(camelContext, camelContext.getTypeConverter(), bean, name, null, ref, true);
             } else {
-                IntrospectionSupport.setProperty(bean, name, value);
+                IntrospectionSupport.setProperty(camelContext, bean, name, value);
             }
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to set property: " + name + " on: " + bean + ". Reason: " + e, e);

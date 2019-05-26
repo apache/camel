@@ -1525,8 +1525,8 @@ public class ExpressionBuilder {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 Language language = exchange.getContext().resolveLanguage("bean");
-                setProperty(language, "bean", bean);
-                setProperty(language, "method", expression);
+                setProperty(exchange.getContext(), language, "bean", bean);
+                setProperty(exchange.getContext(), language, "method", expression);
                 return language.createExpression(null).evaluate(exchange, Object.class);
             }
 
@@ -1618,18 +1618,18 @@ public class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 Language language = exchange.getContext().resolveLanguage("xtokenize");
                 if (headerName != null) {
-                    setProperty(language, "headerName", headerName);
+                    setProperty(exchange.getContext(), language, "headerName", headerName);
                 }
                 if (mode != 'i') {
-                    setProperty(language, "mode", mode);
+                    setProperty(exchange.getContext(), language, "mode", mode);
                 }
                 if (group > 1) {
-                    setProperty(language, "group", group);
+                    setProperty(exchange.getContext(), language, "group", group);
                 }
                 if (namespaces != null) {
-                    setProperty(language, "namespaces", namespaces);
+                    setProperty(exchange.getContext(), language, "namespaces", namespaces);
                 }
-                setProperty(language, "path", path);
+                setProperty(exchange.getContext(), language, "path", path);
                 return language.createExpression(null).evaluate(exchange, Object.class);
             }
 
@@ -1640,9 +1640,9 @@ public class ExpressionBuilder {
         };
     }
 
-    protected static void setProperty(Object bean, String name, Object value) {
+    protected static void setProperty(CamelContext camelContext, Object bean, String name, Object value) {
         try {
-            IntrospectionSupport.setProperty(bean, name, value);
+            IntrospectionSupport.setProperty(camelContext, bean, name, value);
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to set property " + name + " on " + bean + ". Reason: " + e, e);
         }

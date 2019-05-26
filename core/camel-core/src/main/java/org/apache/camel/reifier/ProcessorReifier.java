@@ -432,7 +432,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
             ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), output);
 
             // resolve constant fields (eg Exchange.FILE_NAME)
-            ProcessorDefinitionHelper.resolveKnownConstantFields(output);
+            ProcessorDefinitionHelper.resolveKnownConstantFields(routeContext.getCamelContext(), output);
 
             // also resolve properties and constant fields on embedded expressions
             ProcessorDefinition<?> me = (ProcessorDefinition<?>) output;
@@ -444,7 +444,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
                     ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), expressionDefinition);
 
                     // resolve constant fields (eg Exchange.FILE_NAME)
-                    ProcessorDefinitionHelper.resolveKnownConstantFields(expressionDefinition);
+                    ProcessorDefinitionHelper.resolveKnownConstantFields(routeContext.getCamelContext(), expressionDefinition);
                 }
             }
 
@@ -515,7 +515,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
         ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), definition);
 
         // resolve constant fields (eg Exchange.FILE_NAME)
-        ProcessorDefinitionHelper.resolveKnownConstantFields(definition);
+        ProcessorDefinitionHelper.resolveKnownConstantFields(routeContext.getCamelContext(), definition);
 
         // also resolve properties and constant fields on embedded expressions
         ProcessorDefinition<?> me = definition;
@@ -527,7 +527,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
                 ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), expressionDefinition);
 
                 // resolve constant fields (eg Exchange.FILE_NAME)
-                ProcessorDefinitionHelper.resolveKnownConstantFields(expressionDefinition);
+                ProcessorDefinitionHelper.resolveKnownConstantFields(routeContext.getCamelContext(), expressionDefinition);
             }
         }
 

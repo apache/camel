@@ -107,10 +107,10 @@ public class XQueryExpression extends NamespaceAwareExpression {
     @Override
     protected void configureExpression(CamelContext camelContext, Expression expression) {
         if (resultType != null) {
-            setProperty(expression, "resultType", resultType);
+            setProperty(camelContext, expression, "resultType", resultType);
         }
         if (ObjectHelper.isNotEmpty(getHeaderName())) {
-            setProperty(expression, "headerName", getHeaderName());
+            setProperty(camelContext, expression, "headerName", getHeaderName());
         }
         super.configureExpression(camelContext, expression);
     }
@@ -118,10 +118,10 @@ public class XQueryExpression extends NamespaceAwareExpression {
     @Override
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
         if (resultType != null) {
-            setProperty(predicate, "resultType", resultType);
+            setProperty(camelContext, predicate, "resultType", resultType);
         }
         if (ObjectHelper.isNotEmpty(getHeaderName())) {
-            setProperty(predicate, "headerName", getHeaderName());
+            setProperty(camelContext, predicate, "headerName", getHeaderName());
         }
         super.configurePredicate(camelContext, predicate);
     }
