@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
@@ -33,13 +34,21 @@ import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 public class KafkaComponentTest {
 
     private CamelContext context = Mockito.mock(CamelContext.class);
+    private TypeConverter tc = Mockito.mock(TypeConverter.class);
 
     @Test
     public void testPropertiesSet() throws Exception {
+        when(context.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
+        when(context.getTypeConverter()).thenReturn(tc);
+        when(tc.convertTo(boolean.class, Boolean.FALSE)).thenReturn(false);
+
         String uri = "kafka:mytopic?brokers=broker1:12345,broker2:12566&partitioner=com.class.Party";
 
         KafkaEndpoint endpoint = (KafkaEndpoint) new KafkaComponent(context).createEndpoint(uri);
@@ -50,6 +59,10 @@ public class KafkaComponentTest {
 
     @Test
     public void testBrokersOnComponent() throws Exception {
+        when(context.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
+        when(context.getTypeConverter()).thenReturn(tc);
+        when(tc.convertTo(boolean.class, Boolean.FALSE)).thenReturn(false);
+
         KafkaComponent kafka = new KafkaComponent(context);
         kafka.setBrokers("broker1:12345,broker2:12566");
 
@@ -64,6 +77,10 @@ public class KafkaComponentTest {
 
     @Test
     public void testAllProducerConfigProperty() throws Exception {
+        when(context.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
+        when(context.getTypeConverter()).thenReturn(tc);
+        when(tc.convertTo(boolean.class, Boolean.FALSE)).thenReturn(false);
+
         Map<String, Object> params = new HashMap<>();
         setProducerProperty(params);
 
