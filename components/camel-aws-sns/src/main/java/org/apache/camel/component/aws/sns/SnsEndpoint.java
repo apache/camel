@@ -121,7 +121,7 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             }
         }
 
-        if (configuration.getTopicArn() == null) {
+        if (configuration.getTopicArn() == null && configuration.isAutoCreateTopic()) {
             // creates a new topic, or returns the URL of an existing one
             CreateTopicRequest request = new CreateTopicRequest(configuration.getTopicName());
             

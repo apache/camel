@@ -50,6 +50,8 @@ public class SnsConfiguration implements Cloneable {
     private String kmsMasterKeyId;
     @UriParam
     private boolean serverSideEncryptionEnabled;
+    @UriParam(defaultValue = "true")
+    private boolean autoCreateTopic = true;
 
     // Producer only properties
     @UriParam
@@ -237,11 +239,23 @@ public class SnsConfiguration implements Cloneable {
         this.serverSideEncryptionEnabled = serverSideEncryptionEnabled;
     }
     
+
+    public boolean isAutoCreateTopic() {
+		return autoCreateTopic;
+	}
+
+    /**
+     * Setting the autocreation of the topic
+     */
+	public void setAutoCreateTopic(boolean autoCreateTopic) {
+		this.autoCreateTopic = autoCreateTopic;
+	}
+    
     // *************************************************
     //
     // *************************************************
 
-    public SnsConfiguration copy() {
+	public SnsConfiguration copy() {
         try {
             return (SnsConfiguration)super.clone();
         } catch (CloneNotSupportedException e) {

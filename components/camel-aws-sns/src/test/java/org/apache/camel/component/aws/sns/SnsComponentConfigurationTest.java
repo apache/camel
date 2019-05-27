@@ -198,6 +198,21 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
     }
     
     @Test
+    public void createEndpointWithoutAutocreation() throws Exception {
+        SnsComponent component = new SnsComponent(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        component.setRegion(Regions.US_WEST_1.toString());
+        SnsEndpoint endpoint = (SnsEndpoint)component.createEndpoint("aws-sns://MyTopic?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&autoCreateTopic=false");
+        
+        assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
+        assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
+        assertEquals(false, endpoint.getConfiguration().isAutoCreateTopic());
+    }
+    
+    @Test
     public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
         AmazonSNSClientMock mock = new AmazonSNSClientMock();
         
