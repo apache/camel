@@ -247,6 +247,32 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         // sort methods on shortest number of parameters as we want to process the most simplest first
         methods.sort(Comparator.comparingInt(Method::getParameterCount));
 
+        // then do a more complex sorting where we check inter-dependency among the methods
+        methods.sort((m1, m2) -> {
+            Class[] types1 = m1.getParameterTypes();
+            Class[] types2 = m2.getParameterTypes();
+
+            // favour methods that has no parameters
+            if (types1.length == 0 && types2.length == 0) {
+                return 0;
+            } else if (types1.length == 0) {
+                return -1;
+            } else if (types2.length == 0) {
+                return 1;
+            }
+
+            // okay then compare so we favour methods that does not use parameter types that are returned from other methods
+            boolean usedByOthers1 = false;
+            for (Class clazz : types1) {
+                usedByOthers1 |= methods.stream().anyMatch(m -> m.getParameterCount() > 0 && clazz.isAssignableFrom(m.getReturnType()));
+            }
+            boolean usedByOthers2 = false;
+            for (Class clazz : types2) {
+                usedByOthers2 |= methods.stream().anyMatch(m -> m.getParameterCount() > 0 && clazz.isAssignableFrom(m.getReturnType()));
+            }
+            return Boolean.compare(usedByOthers1, usedByOthers2);
+        });
+
         LOG.trace("Discovered {} @BindToRegistry methods", methods.size());
 
         // bind each method
@@ -442,7 +468,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                     Set<?> instances = camelContext.getRegistry().findByType(type);
                     if (instances.size() == 1) {
                         parameters[i] = instances.iterator().next();
-                    } else {
+                    } else if (instances.size() > 1) {
                         // there are multiple instances of the same type, so barf
                         throw new IllegalArgumentException("Multiple beans of the same type: " + type
                                 + " exists in the Camel registry. Specify the bean name on @BeanInject to bind to a single bean, at the method: " + method);
