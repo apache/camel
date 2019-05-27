@@ -26,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.BlockingQueueFactory;
 import org.apache.camel.component.seda.PriorityBlockingQueueFactory;
 import org.apache.camel.component.seda.SedaComponent;
+import org.apache.camel.model.ModelCamelContext;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -41,6 +42,20 @@ public class MainIoCTest extends Assert {
         main.addRouteBuilder(MyRouteBuilder.class);
         // manually bind
         main.bind("myBar", new MyBar());
+
+        // should be null before init
+        assertNull(main.getCamelContext());
+        // for testing that we can init camel and it has loaded configuration and routes and whatnot
+        main.init();
+        // and now its created
+        assertNotNull(main.getCamelContext());
+        // should be 1 route model
+        assertEquals(1, main.getCamelContext().adapt(ModelCamelContext.class).getRouteDefinitions().size());
+        // and the configuration should have registered beans
+        assertNotNull(main.getCamelContext().getRegistry().lookupByName("MyCoolBean"));
+        assertEquals("Tiger", main.getCamelContext().getRegistry().lookupByName("coolStuff"));
+
+        // start it
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
