@@ -51,9 +51,13 @@ public class TypeConverterProcessor extends AbstractCamelAnnotationProcessor {
                 }
             }
         }
+        // skip all converter classes from core as we just want to use the optimized TypeConverterLoader files
         if (!converterClasses.isEmpty()
                 && !converterClasses.containsKey("org.apache.camel.converter.IOConverter")
-                && !converterClasses.containsKey("org.apache.camel.converter.jaxp.DomConverter")) {
+                && !converterClasses.containsKey("org.apache.camel.converter.jaxp.DomConverter")
+                && !converterClasses.containsKey("org.apache.camel.converter.jaxp.XmlConverter")
+                && !converterClasses.containsKey("org.apache.camel.util.xml.StreamSourceConverter")
+                && !converterClasses.containsKey("org.apache.camel.converter.stream.StreamCacheConverter")) {
             Filer filer = processingEnv.getFiler();
             FileObject resource = filer.createResource(StandardLocation.CLASS_OUTPUT,
                     "", "META-INF/services/org/apache/camel/TypeConverter",
