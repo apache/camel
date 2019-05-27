@@ -26,6 +26,7 @@ public class MainConfigurationProperties {
 
     private boolean autoConfigurationEnabled = true;
     private boolean autowireComponentProperties = true;
+    private boolean autowireComponentPropertiesDeep;
     private String name;
     private int shutdownTimeout = 300;
     private boolean shutdownSuppressLoggingOnTimeout;
@@ -115,6 +116,21 @@ public class MainConfigurationProperties {
      */
     public void setAutowireComponentProperties(boolean autowireComponentProperties) {
         this.autowireComponentProperties = autowireComponentProperties;
+    }
+
+    public boolean isAutowireComponentPropertiesDeep() {
+        return autowireComponentPropertiesDeep;
+    }
+
+    /**
+     * Whether autowiring components (with deep nesting by attempting to walk as deep down the object graph by creating new empty objects on the way if needed)
+     * with properties that are of same type, which has been added to the Camel registry, as a singleton instance.
+     * This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components.
+     * <p/>
+     * This option is default disabled.
+     */
+    public void setAutowireComponentPropertiesDeep(boolean autowireComponentPropertiesDeep) {
+        this.autowireComponentPropertiesDeep = autowireComponentPropertiesDeep;
     }
 
     public String getName() {

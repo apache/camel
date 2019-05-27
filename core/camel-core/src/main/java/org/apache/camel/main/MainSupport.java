@@ -851,8 +851,8 @@ public abstract class MainSupport extends ServiceSupport {
 
         // conventional configuration via properties to allow configuring options on
         // component, dataformat, and languages (like spring-boot auto-configuration)
-        if (mainConfigurationProperties.isAutowireComponentProperties()) {
-            autoConfigurationFromRegistry(camelContext);
+        if (mainConfigurationProperties.isAutowireComponentProperties() || mainConfigurationProperties.isAutowireComponentPropertiesDeep()) {
+            autoConfigurationFromRegistry(camelContext, mainConfigurationProperties.isAutowireComponentPropertiesDeep());
         }
         if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
             autoConfigurationFromProperties(camelContext);
@@ -1266,11 +1266,11 @@ public abstract class MainSupport extends ServiceSupport {
         }
     }
 
-    protected void autoConfigurationFromRegistry(CamelContext camelContext) throws Exception {
+    protected void autoConfigurationFromRegistry(CamelContext camelContext, boolean deepNesting) throws Exception {
         camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
             @Override
             public void onComponentAdd(String name, Component component) {
-                PropertyBindingSupport.autowireSingletonPropertiesFromRegistry(camelContext, component, false, (obj, propertyName, type, value) -> {
+                PropertyBindingSupport.autowireSingletonPropertiesFromRegistry(camelContext, component, false, deepNesting, (obj, propertyName, type, value) -> {
                     LOG.info("Auto configuring option: {} on component: {} as one instance of type: {} registered in the Camel Registry",
                             propertyName, component.getClass().getSimpleName(), type.getName());
                 });
