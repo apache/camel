@@ -287,7 +287,7 @@ from("aws-sqs://MyQueue?amazonSQSClient=#client&delay=5000&maxMessagesPerPoll=5"
 .to("mock:result");
 ---------------------------------------------------------------------------------
 
-In this example if the MyQueue queue is not already created on AWS, it will be created with default parameters from the 
+In this example if the MyQueue queue is not already created on AWS (and the autoCreateQueue option is set to true), it will be created with default parameters from the 
 SQS configuration. If it's already up on AWS, the SQS configuration options will be used to override the existent AWS configuration.
 
 #### DelayQueue VS Delay for Single message
