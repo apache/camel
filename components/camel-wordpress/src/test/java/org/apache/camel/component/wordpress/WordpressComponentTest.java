@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.wordpress;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.component.wordpress.api.model.PostOrderBy;
 import org.apache.camel.component.wordpress.api.model.PostSearchCriteria;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,16 +28,15 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.emptyCollectionOf;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 
-public class WordpressComponentTest {
+public class WordpressComponentTest extends CamelTestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WordpressComponentTest.class);
 
     @Test
     public void testParseUriPropertiesCriteria() throws Exception {
-        final WordpressComponent component = new WordpressComponent(Mockito.mock(CamelContext.class));
+        final WordpressComponent component = new WordpressComponent(context);
+
         final WordpressEndpoint endpoint = (WordpressEndpoint)component
             .createEndpoint("wordpress:post?apiVersion=2&url=http://mysite.com/&criteria.search=test&criteria.page=1&criteria.perPage=10&criteria.orderBy=author&criteria.categories=camel,dozer,json");
 

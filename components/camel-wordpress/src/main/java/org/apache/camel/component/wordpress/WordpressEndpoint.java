@@ -126,7 +126,7 @@ public class WordpressEndpoint extends DefaultEndpoint {
                 Map<String, Object> criteriaOptions = IntrospectionSupport.extractProperties(options, "criteria.");
                 // any property that has a "," should be a List
                 criteriaOptions = criteriaOptions.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
-                    if (e != null && e.toString().indexOf(",") > -1) {
+                    if (e.toString().contains(",")) {
                         return Arrays.asList(e.toString().split(","));
                     }
                     return e.getValue();
