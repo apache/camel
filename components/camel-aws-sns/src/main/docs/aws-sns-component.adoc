@@ -68,7 +68,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (17 parameters):
+==== Query Parameters (18 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -76,6 +76,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *amazonSNSClient* (producer) | To use the AmazonSNS as the client |  | AmazonSNS
 | *amazonSQSClient* (producer) | An SQS Client to use as bridge between SNS and SQS |  | AmazonSQS
+| *autoCreateTopic* (producer) | Setting the autocreation of the topic | true | boolean
 | *headerFilterStrategy* (producer) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
 | *kmsMasterKeyId* (producer) | The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a custom CMK. |  | String
 | *messageStructure* (producer) | The message structure to use such as json |  | String

@@ -186,6 +186,10 @@ public class SnsComponentConfiguration
          * Define if Server Side Encryption is enabled or not on the topic
          */
         private Boolean serverSideEncryptionEnabled = false;
+        /**
+         * Setting the autocreation of the topic
+         */
+        private Boolean autoCreateTopic = true;
 
         public String getSubject() {
             return subject;
@@ -314,6 +318,14 @@ public class SnsComponentConfiguration
         public void setServerSideEncryptionEnabled(
                 Boolean serverSideEncryptionEnabled) {
             this.serverSideEncryptionEnabled = serverSideEncryptionEnabled;
+        }
+
+        public Boolean getAutoCreateTopic() {
+            return autoCreateTopic;
+        }
+
+        public void setAutoCreateTopic(Boolean autoCreateTopic) {
+            this.autoCreateTopic = autoCreateTopic;
         }
     }
 }
