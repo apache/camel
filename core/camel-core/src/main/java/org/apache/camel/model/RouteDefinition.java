@@ -36,6 +36,7 @@ import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.model.rest.RestBindingDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RoutePolicy;
@@ -909,7 +910,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         }
 
         // return a reference to the default error handler
-        return new ErrorHandlerBuilderRef(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER);
+        return new ErrorHandlerBuilderRef(ErrorHandlerReifier.DEFAULT_ERROR_HANDLER_BUILDER);
     }
 
     @XmlTransient

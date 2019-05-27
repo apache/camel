@@ -87,9 +87,9 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
             // only lookup if there was explicit an error handler builder configured
             // otherwise its just the "default" that has not explicit been configured
             // and if so then we can safely replace that with our transacted error handler
-            if (ErrorHandlerBuilderRef.isErrorHandlerFactoryConfigured(ref)) {
+            if (ErrorHandlerReifier.isErrorHandlerFactoryConfigured(ref)) {
                 LOG.debug("Looking up ErrorHandlerBuilder with ref: {}", ref);
-                builder = (ErrorHandlerBuilder) ErrorHandlerBuilderRef.lookupErrorHandlerFactory(routeContext, ref);
+                builder = (ErrorHandlerBuilder) ErrorHandlerReifier.lookupErrorHandlerFactory(routeContext, ref);
             }
         }
 
