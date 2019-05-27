@@ -43,8 +43,10 @@ import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.support.SimpleTypeConverter;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.osgi.framework.BundleContext;
@@ -218,7 +220,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
 
     protected DefaultTypeConverter createRegistry() {
         // base the osgi type converter on the default type converter
-        DefaultTypeConverter answer = new DefaultTypeConverter(new DefaultPackageScanClassResolver() {
+        DefaultTypeConverter answer = new OsgiDefaultTypeConverter(new DefaultPackageScanClassResolver() {
             @Override
             public Set<ClassLoader> getClassLoaders() {
                 // we only need classloaders for loading core TypeConverterLoaders
@@ -278,6 +280,29 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
                             }
                         },
                         Spliterator.ORDERED), false);
+    }
+
+    private class OsgiDefaultTypeConverter extends DefaultTypeConverter {
+
+        public OsgiDefaultTypeConverter(PackageScanClassResolver resolver, Injector injector, FactoryFinder factoryFinder, boolean loadTypeConverters) {
+            super(resolver, injector, factoryFinder, loadTypeConverters);
+        }
+
+        @Override
+        public void addTypeConverter(Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
+            // favour keeping the converter that was loaded via TypeConverterLoader META-INF file
+            // as OSGi loads these first and then gets triggered again later when there is both a META-INF/TypeConverter and META-INF/TypeConverterLoaded file
+            // for the same set of type converters and we get duplicates (so this is a way of filtering out duplicates)
+            TypeConverter converter = typeMappings.get(toType, fromType);
+            if (converter != null && converter != typeConverter) {
+                // the converter is already there which we want to keep (optimized via SimpleTypeConverter)
+                if (converter instanceof SimpleTypeConverter) {
+                    // okay keep this one
+                    return;
+                }
+            }
+            super.addTypeConverter(toType, fromType, typeConverter);
+        }
     }
 
 }
