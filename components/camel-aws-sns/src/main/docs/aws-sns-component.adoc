@@ -223,6 +223,11 @@ from("aws-sqs://test-camel?amazonSQSClient=#amazonSQSClient&delay=50&maxMessages
     .to(...);
 -------------------------------------------------
 
+### Topic Autocreation
+
+With the option `autoCreateTopic` users are able to avoid the autocreation of an SNS Topic in case it doesn't exist. The default for this option is `true`.
+If set to false any operation on a not-existent topic in AWS won't be successful and an error will be returned.
+
 ### Automatic detection of AmazonSNS client in registry
 
 From Camel 3.0.0-M3 the component will be able to detect the presence of an AmazonSNS bean into the registry.
