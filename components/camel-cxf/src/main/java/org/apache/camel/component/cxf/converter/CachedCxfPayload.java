@@ -100,6 +100,7 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
                 li.set(document);
             }
         }
+        orig.setBodySources(getBodySources());
     }
 
     private CachedCxfPayload(CachedCxfPayload<T> orig, Exchange exchange) throws IOException {
