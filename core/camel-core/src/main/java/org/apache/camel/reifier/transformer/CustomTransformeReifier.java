@@ -46,7 +46,7 @@ class CustomTransformeReifier extends TransformerReifier<CustomTransformerDefini
             if (transformerClass == null) {
                 throw new IllegalArgumentException("Cannot find transformer class: " + definition.getClassName());
             }
-            transformer = context.getInjector().newInstance(transformerClass);
+            transformer = context.getInjector().newInstance(transformerClass, false);
 
         }
         transformer.setCamelContext(context);

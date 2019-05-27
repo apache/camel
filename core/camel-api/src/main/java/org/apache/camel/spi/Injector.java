@@ -24,13 +24,23 @@ package org.apache.camel.spi;
 public interface Injector {
 
     /**
-     * Instantiates a new instance of the given type possibly injecting values
-     * into the object in the process
+     * Instantiates a new instance of the given type; possibly injecting values
+     * into the object in the process (bean post processing)
      * 
      * @param type the type of object to create
      * @return a newly created instance
      */
     <T> T newInstance(Class<T> type);
+
+    /**
+     * Instantiates a new instance of the given type; possibly injecting values
+     * into the object in the process (bean post processing if enabled)
+     *
+     * @param type the type of object to create
+     * @param postProcessBean whether to post process the bean
+     * @return a newly created instance
+     */
+    <T> T newInstance(Class<T> type, boolean postProcessBean);
 
     /**
      * Whether the injector supports creating new instances using auto-wiring.

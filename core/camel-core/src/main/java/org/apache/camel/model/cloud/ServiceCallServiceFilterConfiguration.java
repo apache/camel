@@ -153,7 +153,7 @@ public class ServiceCallServiceFilterConfiguration extends IdentifiedType implem
 
             if (type != null) {
                 if (ServiceFilterFactory.class.isAssignableFrom(type)) {
-                    factory = (ServiceFilterFactory) camelContext.getInjector().newInstance(type);
+                    factory = (ServiceFilterFactory) camelContext.getInjector().newInstance(type, false);
                 } else {
                     throw new NoFactoryAvailableException(
                         "Resolving ServiceFilter: " + factoryKey + " detected type conflict: Not a ServiceFilterFactory implementation. Found: " + type.getName());

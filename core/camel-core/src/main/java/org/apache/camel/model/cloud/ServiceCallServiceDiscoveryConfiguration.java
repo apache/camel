@@ -160,7 +160,7 @@ public class ServiceCallServiceDiscoveryConfiguration extends IdentifiedType imp
 
             if (type != null) {
                 if (ServiceDiscoveryFactory.class.isAssignableFrom(type)) {
-                    factory = (ServiceDiscoveryFactory) camelContext.getInjector().newInstance(type);
+                    factory = (ServiceDiscoveryFactory) camelContext.getInjector().newInstance(type, false);
                 } else {
                     throw new IllegalArgumentException(
                         "Resolving ServiceDiscovery: " + factoryKey + " detected type conflict: Not a ServiceDiscoveryFactory implementation. Found: " + type.getName());

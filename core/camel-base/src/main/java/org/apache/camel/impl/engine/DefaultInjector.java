@@ -41,13 +41,18 @@ public class DefaultInjector implements Injector  {
 
     @Override
     public <T> T newInstance(Class<T> type) {
+        return newInstance(type, true);
+    }
+
+    @Override
+    public <T> T newInstance(Class<T> type, boolean postProcessBean) {
         T answer = ObjectHelper.newInstance(type);
-        if (answer != null) {
+        if (answer != null && postProcessBean) {
             try {
                 postProcessor.postProcessBeforeInitialization(answer, answer.getClass().getName());
                 postProcessor.postProcessAfterInitialization(answer, answer.getClass().getName());
             } catch (Exception e) {
-                throw new RuntimeCamelException("Error during post processing of bean " + answer, e);
+                throw new RuntimeCamelException("Error during post processing of bean: " + answer, e);
             }
         }
         return answer;

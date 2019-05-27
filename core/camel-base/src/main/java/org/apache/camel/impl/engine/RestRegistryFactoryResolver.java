@@ -52,7 +52,7 @@ public class RestRegistryFactoryResolver {
                 LOG.debug("Found RestRegistryFactory: {} via: {}{}", type.getName(), factoryFinder.getResourcePath(), "rest-registry-factory");
             }
             if (RestRegistryFactory.class.isAssignableFrom(type)) {
-                RestRegistryFactory answer = (RestRegistryFactory) context.getInjector().newInstance(type);
+                RestRegistryFactory answer = (RestRegistryFactory) context.getInjector().newInstance(type, false);
                 LOG.debug("Detected and using RestRegistryFactory: {}", answer);
                 return answer;
             } else {

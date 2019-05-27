@@ -46,7 +46,7 @@ class CustomValidatorReifier extends ValidatorReifier<CustomValidatorDefinition>
             if (validatorClass == null) {
                 throw new IllegalArgumentException("Cannot find validator class: " + definition.getClassName());
             }
-            validator = context.getInjector().newInstance(validatorClass);
+            validator = context.getInjector().newInstance(validatorClass, false);
 
         }
         validator.setCamelContext(context);

@@ -49,7 +49,7 @@ public class SendDynamicAwareResolver {
                 LOG.debug("Found SendDynamicAware: {} via: {}{}", type.getName(), factoryFinder.getResourcePath(), name);
             }
             if (SendDynamicAware.class.isAssignableFrom(type)) {
-                SendDynamicAware answer = (SendDynamicAware) context.getInjector().newInstance(type);
+                SendDynamicAware answer = (SendDynamicAware) context.getInjector().newInstance(type, false);
                 answer.setScheme(scheme);
                 return answer;
             } else {

@@ -536,7 +536,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
                     .map(cl -> ObjectHelper.loadClass(name, cl))
                     .filter(Objects::nonNull)
                     .findAny().orElseThrow(() -> new ClassNotFoundException(name));
-            Object obj = getInjector().newInstance(clazz);
+            Object obj = getInjector().newInstance(clazz, false);
             if (obj instanceof TypeConverterLoader) {
                 TypeConverterLoader loader = (TypeConverterLoader) obj;
                 log.debug("TypeConverterLoader: {} loading converters", name);
