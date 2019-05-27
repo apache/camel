@@ -62,13 +62,14 @@ public class SnsConfiguration implements Cloneable {
     private String messageStructure;
     @UriParam
     private String region;
-    
+
     public String getSubject() {
         return subject;
     }
 
     /**
-     * The subject which is used if the message header 'CamelAwsSnsSubject' is not present.
+     * The subject which is used if the message header 'CamelAwsSnsSubject' is
+     * not present.
      */
     public void setSubject(String subject) {
         this.subject = subject;
@@ -128,7 +129,7 @@ public class SnsConfiguration implements Cloneable {
     public void setTopicName(String topicName) {
         this.topicName = topicName;
     }
-    
+
     public String getPolicy() {
         return policy;
     }
@@ -150,7 +151,7 @@ public class SnsConfiguration implements Cloneable {
     public void setMessageStructure(String messageStructure) {
         this.messageStructure = messageStructure;
     }
-    
+
     public String getProxyHost() {
         return proxyHost;
     }
@@ -172,7 +173,7 @@ public class SnsConfiguration implements Cloneable {
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
-    
+
     public String getRegion() {
         return region;
     }
@@ -216,13 +217,14 @@ public class SnsConfiguration implements Cloneable {
     public void setSubscribeSNStoSQS(boolean subscribeSNStoSQS) {
         this.subscribeSNStoSQS = subscribeSNStoSQS;
     }
-    
+
     public String getKmsMasterKeyId() {
         return kmsMasterKeyId;
     }
 
     /**
-     * The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a custom CMK.
+     * The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a
+     * custom CMK.
      */
     public void setKmsMasterKeyId(String kmsMasterKeyId) {
         this.kmsMasterKeyId = kmsMasterKeyId;
@@ -238,24 +240,23 @@ public class SnsConfiguration implements Cloneable {
     public void setServerSideEncryptionEnabled(boolean serverSideEncryptionEnabled) {
         this.serverSideEncryptionEnabled = serverSideEncryptionEnabled;
     }
-    
 
     public boolean isAutoCreateTopic() {
-		return autoCreateTopic;
-	}
+        return autoCreateTopic;
+    }
 
     /**
      * Setting the autocreation of the topic
      */
-	public void setAutoCreateTopic(boolean autoCreateTopic) {
-		this.autoCreateTopic = autoCreateTopic;
-	}
-    
+    public void setAutoCreateTopic(boolean autoCreateTopic) {
+        this.autoCreateTopic = autoCreateTopic;
+    }
+
     // *************************************************
     //
     // *************************************************
 
-	public SnsConfiguration copy() {
+    public SnsConfiguration copy() {
         try {
             return (SnsConfiguration)super.clone();
         } catch (CloneNotSupportedException e) {
