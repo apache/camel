@@ -16,15 +16,15 @@
  */
 package org.apache.camel.support;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.PropertyBindingException;
-
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.PropertyBindingException;
 
 import static org.apache.camel.support.IntrospectionSupport.findSetterMethods;
 import static org.apache.camel.support.IntrospectionSupport.getOrElseProperty;
