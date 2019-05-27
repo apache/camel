@@ -37,7 +37,7 @@ import static org.apache.camel.support.IntrospectionSupport.getOrElseProperty;
  *     <li>nested - Properties can be nested using the dot syntax (OGNL and builder pattern using with as prefix), eg foo.bar=123</li>
  *     <li>reference by bean id - Values can refer to other beans in the registry by prefixing with #nean: eg #bean:myBean</li>
  *     <li>reference by type - Values can refer to singleton beans by their type in the registry by prefixing with #type: syntax, eg #type:com.foo.MyClassType</li>
- *     <li>autowire by type - Values can refer to singleton beans by auto wiring by setting the value to #autowire</li>
+ *     <li>autowire by type - Values can refer to singleton beans by auto wiring by setting the value to #autowired</li>
  *     <li>reference new class - Values can refer to creating new beans by their class name by prefixing with #class, eg #class:com.foo.MyClassType</li>
  * </ul>
  * This implementations reuses parts of {@link IntrospectionSupport}.
@@ -397,7 +397,7 @@ public final class PropertyBindingSupport {
                         value = types.iterator().next();
                     }
                 }
-            } else if (value.toString().equals("#autowire")) {
+            } else if (value.toString().equals("#autowired")) {
                 // we should get the type from the setter
                 Method method = findBestSetterMethod(target.getClass(), name, fluentBuilder);
                 if (method != null) {

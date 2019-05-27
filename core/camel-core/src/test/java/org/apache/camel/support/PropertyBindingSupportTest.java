@@ -162,14 +162,14 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testAutowire() throws Exception {
+    public void testAutowired() throws Exception {
         Foo foo = new Foo();
 
         PropertyBindingSupport.bindProperty(context, foo, "name", "James");
         PropertyBindingSupport.bindProperty(context, foo, "bar.age", "33");
         PropertyBindingSupport.bindProperty(context, foo, "bar.{{committer}}", "true");
         PropertyBindingSupport.bindProperty(context, foo, "bar.gold-customer", "true");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.work", "#autowire");
+        PropertyBindingSupport.bindProperty(context, foo, "bar.work", "#autowired");
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
