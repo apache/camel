@@ -52,7 +52,7 @@ public class HeadersMapFactoryResolver {
                 LOG.debug("Found HeadersMapFactory: {} via: {}{}", type.getName(), factoryFinder.getResourcePath(), "headers-map-factory");
             }
             if (HeadersMapFactory.class.isAssignableFrom(type)) {
-                HeadersMapFactory answer = (HeadersMapFactory) context.getInjector().newInstance(type);
+                HeadersMapFactory answer = (HeadersMapFactory) context.getInjector().newInstance(type, false);
                 LOG.info("Detected and using custom HeadersMapFactory: {}", answer);
                 return answer;
             } else {

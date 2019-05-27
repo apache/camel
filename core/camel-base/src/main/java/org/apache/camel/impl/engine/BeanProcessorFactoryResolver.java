@@ -50,7 +50,7 @@ public class BeanProcessorFactoryResolver {
                 LOG.debug("Found BeanProxyFactory: {} via: {}{}", type.getName(), factoryFinder.getResourcePath(), "bean-processor-factory");
             }
             if (BeanProcessorFactory.class.isAssignableFrom(type)) {
-                BeanProcessorFactory answer = (BeanProcessorFactory) context.getInjector().newInstance(type);
+                BeanProcessorFactory answer = (BeanProcessorFactory) context.getInjector().newInstance(type, false);
                 LOG.debug("Detected and using BeanProcessorFactory: {}", answer);
                 return answer;
             } else {

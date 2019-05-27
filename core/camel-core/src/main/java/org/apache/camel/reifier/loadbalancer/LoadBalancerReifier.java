@@ -75,7 +75,7 @@ public class LoadBalancerReifier<T extends LoadBalancerDefinition> {
             if (type == null) {
                 throw new IllegalArgumentException("Cannot find class: " + loadBalancerTypeName + " in the classpath");
             }
-            answer = (LoadBalancer) routeContext.getCamelContext().getInjector().newInstance(type);
+            answer = (LoadBalancer) routeContext.getCamelContext().getInjector().newInstance(type, false);
             definition.configureLoadBalancer(answer);
         }
 

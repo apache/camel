@@ -78,7 +78,7 @@ public class DefaultFactoryFinderTest {
         final Injector injector = mock(Injector.class);
 
         final TestImplA expected = new TestImplA();
-        when(injector.newInstance(TestImplA.class)).thenReturn(expected);
+        when(injector.newInstance(TestImplA.class, false)).thenReturn(expected);
 
         try {
             factoryFinder.newInstances("TestImplA", injector, TestImplB.class);
@@ -123,7 +123,7 @@ public class DefaultFactoryFinderTest {
         final Injector injector = mock(Injector.class);
 
         final TestImplA expected = new TestImplA();
-        when(injector.newInstance(TestImplA.class)).thenReturn(expected);
+        when(injector.newInstance(TestImplA.class, false)).thenReturn(expected);
 
         final List<TestType> instances = factoryFinder.newInstances("TestImplA", injector, TestType.class);
 

@@ -50,7 +50,7 @@ public class BeanProxyFactoryResolver {
                 LOG.debug("Found BeanProxyFactory: {} via: {}{}", type.getName(), factoryFinder.getResourcePath(), "bean-proxy-factory");
             }
             if (BeanProxyFactory.class.isAssignableFrom(type)) {
-                BeanProxyFactory answer = (BeanProxyFactory) context.getInjector().newInstance(type);
+                BeanProxyFactory answer = (BeanProxyFactory) context.getInjector().newInstance(type, false);
                 LOG.debug("Detected and using BeanProxyFactory: {}", answer);
                 return answer;
             } else {

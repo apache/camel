@@ -544,11 +544,11 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
             try {
                 Properties properties = loadProperties(url);
                 String classname = (String) properties.get("class");
-                Class<?> type = bundle.loadClass(classname);
+                Class type = bundle.loadClass(classname);
                 if (!this.type.isAssignableFrom(type)) {
                     throw new IllegalArgumentException("Type is not a " + this.type.getName() + " implementation. Found: " + type.getName());
                 }
-                return injector.newInstance((Class<T>) type);
+                return (T) injector.newInstance(type, false);
             } catch (ClassNotFoundException e) {
                 throw new IllegalArgumentException("Invalid URI, no " + this.type.getName() + " registered for scheme : " + name, e);
             }

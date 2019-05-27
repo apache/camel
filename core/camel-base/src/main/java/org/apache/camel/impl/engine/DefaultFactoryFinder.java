@@ -108,7 +108,7 @@ public class DefaultFactoryFinder implements FactoryFinder {
     private <T> T newInstance(String key, Injector injector, String propertyPrefix, Class<T> expectedType)
         throws IOException, ClassNotFoundException {
         Class<?> type = findClass(key, propertyPrefix);
-        Object value = injector.newInstance(type);
+        Object value = injector.newInstance(type, false);
         if (expectedType.isInstance(value)) {
             return expectedType.cast(value);
         } else {

@@ -153,7 +153,7 @@ public class ServiceCallServiceChooserConfiguration extends IdentifiedType imple
 
             if (type != null) {
                 if (ServiceChooserFactory.class.isAssignableFrom(type)) {
-                    factory = (ServiceChooserFactory) camelContext.getInjector().newInstance(type);
+                    factory = (ServiceChooserFactory) camelContext.getInjector().newInstance(type, false);
                 } else {
                     throw new NoFactoryAvailableException(
                         "Resolving ServiceChooser: " + factoryKey + " detected type conflict: Not a ServiceChooserFactory implementation. Found: " + type.getName());

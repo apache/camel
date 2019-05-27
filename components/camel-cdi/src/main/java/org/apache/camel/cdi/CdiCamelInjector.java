@@ -35,8 +35,13 @@ final class CdiCamelInjector implements Injector {
 
     @Override
     public <T> T newInstance(Class<T> type) {
+        return newInstance(type, true);
+    }
+
+    @Override
+    public <T> T newInstance(Class<T> type, boolean postProcessBean) {
         return getReferenceByType(manager, type)
-            .orElseGet(() -> injector.newInstance(type));
+                .orElseGet(() -> injector.newInstance(type, postProcessBean));
     }
 
     @Override

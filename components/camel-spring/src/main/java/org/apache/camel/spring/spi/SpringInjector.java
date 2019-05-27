@@ -33,7 +33,17 @@ public class SpringInjector implements Injector {
     }
 
     public <T> T newInstance(Class<T> type) {
-        Object value = applicationContext.getBeanFactory().createBean(type, autowireMode, dependencyCheck);
+        return newInstance(type, true);
+    }
+
+    @Override
+    public <T> T newInstance(Class<T> type, boolean postProcessBean) {
+        Object value;
+        if (postProcessBean) {
+            value = applicationContext.getBeanFactory().createBean(type, autowireMode, dependencyCheck);
+        } else {
+            value = applicationContext.getBeanFactory().createBean(type, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
+        }
         return type.cast(value);
     }
 

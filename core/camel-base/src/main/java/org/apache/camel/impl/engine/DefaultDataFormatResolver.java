@@ -85,7 +85,7 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
 
         if (type != null) {
             if (DataFormat.class.isAssignableFrom(type)) {
-                dataFormat = (DataFormat) context.getInjector().newInstance(type);
+                dataFormat = (DataFormat) context.getInjector().newInstance(type, false);
             } else {
                 throw new IllegalArgumentException("Resolving dataformat: " + name + " detected type conflict: Not a DataFormat implementation. Found: " + type.getName());
             }

@@ -390,7 +390,7 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
 
                 if (ObjectHelper.isNotEmpty(type)) {
                     if (ServiceExpressionFactory.class.isAssignableFrom(type)) {
-                        factory = (ServiceExpressionFactory)camelContext.getInjector().newInstance(type);
+                        factory = (ServiceExpressionFactory)camelContext.getInjector().newInstance(type, false);
                     } else {
                         throw new IllegalArgumentException("Resolving Expression: " + lookupName + " detected type conflict: Not a ServiceExpressionFactory implementation. Found: "
                                                            + type.getName());

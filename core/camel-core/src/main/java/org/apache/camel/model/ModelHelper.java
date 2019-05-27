@@ -425,7 +425,7 @@ public final class ModelHelper {
         XmlConverter xmlConverter;
         if (context != null) {
             TypeConverterRegistry registry = context.getTypeConverterRegistry();
-            xmlConverter = registry.getInjector().newInstance(XmlConverter.class);
+            xmlConverter = registry.getInjector().newInstance(XmlConverter.class, false);
         } else {
             xmlConverter = new XmlConverter();
         }

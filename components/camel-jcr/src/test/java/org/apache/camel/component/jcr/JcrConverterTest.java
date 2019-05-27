@@ -50,6 +50,11 @@ public class JcrConverterTest extends Assert {
                 new Injector() {
                     @Override
                     public <T> T newInstance(Class<T> type) {
+                        return newInstance(type, true);
+                    }
+
+                    @Override
+                    public <T> T newInstance(Class<T> type, boolean postProcessBean) {
                         return ObjectHelper.newInstance(type);
                     }
 

@@ -65,8 +65,14 @@ public class AbstractCamelContextFactoryBeanTest {
         new Injector() {
             @Override
             public <T> T newInstance(Class<T> type) {
+                return newInstance(type, false);
+            }
+
+            @Override
+            public <T> T newInstance(Class<T> type, boolean postProcessBean) {
                 return ObjectHelper.newInstance(type);
             }
+
             @Override
             public boolean supportsAutoWiring() {
                 return false;

@@ -58,7 +58,7 @@ public class DefaultLanguageResolver implements LanguageResolver {
 
         if (type != null) {
             if (Language.class.isAssignableFrom(type)) {
-                return (Language) context.getInjector().newInstance(type);
+                return (Language) context.getInjector().newInstance(type, false);
             } else {
                 throw new IllegalArgumentException("Resolving language: " + name + " detected type conflict: Not a Language implementation. Found: " + type.getName());
             }
@@ -82,7 +82,7 @@ public class DefaultLanguageResolver implements LanguageResolver {
         }
         if (type != null) {
             if (LanguageResolver.class.isAssignableFrom(type)) {
-                LanguageResolver resolver = (LanguageResolver) context.getInjector().newInstance(type);
+                LanguageResolver resolver = (LanguageResolver) context.getInjector().newInstance(type, false);
                 return resolver.resolveLanguage(name, context);
             } else {
                 throw new IllegalArgumentException("Resolving language: " + name + " detected type conflict: Not a LanguageResolver implementation. Found: " + type.getName());

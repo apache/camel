@@ -22,12 +22,19 @@ import org.apache.camel.support.ObjectHelper;
 /**
  * A simple implementation of {@link Injector} which just uses reflection to
  * instantiate new objects using their zero argument constructor. For more
- * complex implementations try the Spring or Guice implementations.
+ * complex implementations try the Spring or CDI implementations.
  */
 public class ReflectionInjector implements Injector {
 
+    @Override
     public <T> T newInstance(Class<T> type) {
+        return newInstance(type, true);
+    }
+
+    @Override
+    public <T> T newInstance(Class<T> type, boolean postProcessBean) {
         return ObjectHelper.newInstance(type);
+        // does not support post processing
     }
 
     @Override

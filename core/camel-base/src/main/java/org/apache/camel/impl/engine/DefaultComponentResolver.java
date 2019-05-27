@@ -69,7 +69,7 @@ public class DefaultComponentResolver implements ComponentResolver {
 
         // create the component
         if (Component.class.isAssignableFrom(type)) {
-            return (Component) context.getInjector().newInstance(type);
+            return (Component) context.getInjector().newInstance(type, false);
         } else {
             throw new IllegalArgumentException("Type is not a Component implementation. Found: " + type.getName());
         }

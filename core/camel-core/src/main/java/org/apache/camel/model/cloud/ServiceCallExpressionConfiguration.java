@@ -235,7 +235,7 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
 
                 if (type != null) {
                     if (ServiceExpressionFactory.class.isAssignableFrom(type)) {
-                        factory = (ServiceExpressionFactory) camelContext.getInjector().newInstance(type);
+                        factory = (ServiceExpressionFactory) camelContext.getInjector().newInstance(type, false);
                     } else {
                         throw new IllegalArgumentException(
                             "Resolving Expression: " + factoryKey + " detected type conflict: Not a ExpressionFactory implementation. Found: " + type.getName());

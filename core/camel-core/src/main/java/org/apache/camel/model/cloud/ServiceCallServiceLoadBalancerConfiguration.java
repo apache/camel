@@ -153,7 +153,7 @@ public class ServiceCallServiceLoadBalancerConfiguration extends IdentifiedType 
 
             if (type != null) {
                 if (ServiceLoadBalancerFactory.class.isAssignableFrom(type)) {
-                    factory = (ServiceLoadBalancerFactory) camelContext.getInjector().newInstance(type);
+                    factory = (ServiceLoadBalancerFactory) camelContext.getInjector().newInstance(type, false);
                 } else {
                     throw new IllegalArgumentException(
                         "Resolving LoadBalancer: " + factoryKey + " detected type conflict: Not a LoadBalancerFactory implementation. Found: " + type.getName());
