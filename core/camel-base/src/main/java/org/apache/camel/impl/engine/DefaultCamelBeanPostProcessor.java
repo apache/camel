@@ -19,6 +19,9 @@ package org.apache.camel.impl.engine;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.BeanInject;
@@ -81,6 +84,8 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
 
         injectClass(bean, beanName);
         injectNestedClasses(bean, beanName);
+        injectBindToRegistryFields(bean, beanName);
+        injectBindToRegistryMethods(bean, beanName);
         injectFields(bean, beanName);
         injectMethods(bean, beanName);
 
@@ -181,7 +186,13 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                     String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
                     injectField(field, uri, produce.property(), bean, beanName, produce.binding());
                 }
+            }
+        });
+    }
 
+    protected void injectBindToRegistryFields(final Object bean, final String beanName) {
+        ReflectionHelper.doWithFields(bean.getClass(), new ReflectionHelper.FieldCallback() {
+            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
                 BindToRegistry bind = field.getAnnotation(BindToRegistry.class);
                 if (bind != null && getPostProcessorHelper().matchContext(bind.context())) {
                     bindToRegistry(field, bind.value(), bean, beanName);
@@ -219,6 +230,29 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                 setterInjection(method, bean, beanName);
                 getPostProcessorHelper().consumerInjection(method, bean, beanName);
             }
+        });
+    }
+
+    protected void injectBindToRegistryMethods(final Object bean, final String beanName) {
+        // sort the methods so the simplest are used first
+
+        final List<Method> methods = new ArrayList<Method>();
+        ReflectionHelper.doWithMethods(bean.getClass(), method -> {
+            BindToRegistry bind = method.getAnnotation(BindToRegistry.class);
+            if (bind != null && getPostProcessorHelper().matchContext(bind.context())) {
+                methods.add(method);
+            }
+        });
+
+        // sort methods on shortest number of parameters as we want to process the most simplest first
+        methods.sort(Comparator.comparingInt(Method::getParameterCount));
+
+        LOG.trace("Discovered {} @BindToRegistry methods", methods.size());
+
+        // bind each method
+        methods.forEach(method -> {
+            BindToRegistry bind = method.getAnnotation(BindToRegistry.class);
+            bindToRegistry(method, bind.value(), bean, beanName);
         });
     }
 
@@ -263,11 +297,6 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         if (produce != null && getPostProcessorHelper().matchContext(produce.context())) {
             String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
             setterInjection(method, bean, beanName, uri, produce.property());
-        }
-
-        BindToRegistry bind = method.getAnnotation(BindToRegistry.class);
-        if (bind != null && getPostProcessorHelper().matchContext(bind.context())) {
-            bindToRegistry(method, bind.value(), bean, beanName);
         }
     }
 
@@ -407,6 +436,16 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                             }
                             parameters[i] = camelContext.getTypeConverter().convertTo(type, value);
                         }
+                    }
+                } else {
+                    // okay attempt to default to singleton instances from the registry
+                    Set<?> instances = camelContext.getRegistry().findByType(type);
+                    if (instances.size() == 1) {
+                        parameters[i] = instances.iterator().next();
+                    } else {
+                        // there are multiple instances of the same type, so barf
+                        throw new IllegalArgumentException("Multiple beans of the same type: " + type
+                                + " exists in the Camel registry. Specify the bean name on @BeanInject to bind to a single bean, at the method: " + method);
                     }
                 }
             }
