@@ -235,7 +235,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
             URL url3 = bundle.getEntry(META_INF_FALLBACK_TYPE_CONVERTER);
             if (url1 != null || url2 != null || url3 != null) {
                 LOG.debug("Found TypeConverter in bundle {}", bundle.getSymbolicName());
-                resolvers.add(new BundleTypeConverterLoader(bundle, url2 != null));
+                resolvers.add(new BundleTypeConverterLoader(bundle, url3 != null));
             }
         }
     }
