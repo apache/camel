@@ -101,10 +101,16 @@ public class Main extends MainSupport {
     // Implementation methods
     // -------------------------------------------------------------------------
 
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        initCamelContext();
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        initCamelContext();
         if (getCamelContext() != null) {
             try {
                 // if we were veto started then mark as completed
