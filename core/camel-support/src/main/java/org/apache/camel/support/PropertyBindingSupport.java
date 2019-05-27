@@ -148,7 +148,7 @@ public final class PropertyBindingSupport {
      * @return              true if one ore more properties was auto wired
      */
     public static boolean autowireSingletonPropertiesFromRegistry(CamelContext camelContext, Object target) {
-        return autowireSingletonPropertiesFromRegistry(camelContext, target, false, null);
+        return autowireSingletonPropertiesFromRegistry(camelContext, target, false, false, null);
     }
 
     /**
@@ -160,14 +160,18 @@ public final class PropertyBindingSupport {
      * @param camelContext  the camel context
      * @param target        the target object
      * @param bindNullOnly  whether to only autowire if the property has no default value or has not been configured explicit
+     * @param deepNesting   whether to attempt to walk as deep down the object graph by creating new empty objects on the way if needed (Camel can only create
+     *                      new empty objects if they have a default no-arg constructor, also mind that this may lead to creating many empty objects, even
+     *                      if they will not have any objects autowired from the registry, so use this with caution)
      * @param callback      optional callback when a property was auto wired
      * @return              true if one ore more properties was auto wired
      */
-    public static boolean autowireSingletonPropertiesFromRegistry(CamelContext camelContext, Object target, boolean bindNullOnly, OnAutowiring callback) {
+    public static boolean autowireSingletonPropertiesFromRegistry(CamelContext camelContext, Object target,
+                                                                  boolean bindNullOnly, boolean deepNesting, OnAutowiring callback) {
         try {
             if (target != null) {
                 Set<Object> parents = new HashSet<>();
-                return doAutowireSingletonPropertiesFromRegistry(camelContext, target, parents, bindNullOnly, callback);
+                return doAutowireSingletonPropertiesFromRegistry(camelContext, target, parents, bindNullOnly, deepNesting, callback);
             }
         } catch (Exception e) {
             throw new PropertyBindingException(target, e);
@@ -177,7 +181,7 @@ public final class PropertyBindingSupport {
     }
 
     private static boolean doAutowireSingletonPropertiesFromRegistry(CamelContext camelContext, Object target, Set<Object> parents,
-                                                                     boolean bindNullOnly, OnAutowiring callback) throws Exception {
+                                                                     boolean bindNullOnly, boolean deepNesting, OnAutowiring callback) throws Exception {
         // when adding a component then support auto-configuring complex types
         // by looking up from registry, such as DataSource etc
         Map<String, Object> properties = new LinkedHashMap<>();
@@ -212,13 +216,30 @@ public final class PropertyBindingSupport {
                     }
                 }
 
-                // TODO: Support creating new instances to walk down the tree if its null (deepNesting option)
-
-                // remember this as parent and also autowire nested properties
-                // do not walk down if it point to our-selves (circular reference)
-                if (value != null) {
+                // attempt to create new instances to walk down the tree if its null (deepNesting option)
+                if (value == null && deepNesting) {
+                    // okay is there a setter so we can create a new instance and set it automatic
+                    Method method = findBestSetterMethod(target.getClass(), key, true);
+                    if (method != null) {
+                        Class<?> parameterType = method.getParameterTypes()[0];
+                        if (parameterType != null && org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor(parameterType)) {
+                            Object instance = camelContext.getInjector().newInstance(parameterType);
+                            if (instance != null) {
+                                org.apache.camel.support.ObjectHelper.invokeMethod(method, target, instance);
+                                target = instance;
+                                // remember this as parent and also autowire nested properties
+                                // do not walk down if it point to our-selves (circular reference)
+                                parents.add(target);
+                                value = instance;
+                                hit |= doAutowireSingletonPropertiesFromRegistry(camelContext, value, parents, bindNullOnly, deepNesting, callback);
+                            }
+                        }
+                    }
+                } else if (value != null) {
+                    // remember this as parent and also autowire nested properties
+                    // do not walk down if it point to our-selves (circular reference)
                     parents.add(target);
-                    hit |= doAutowireSingletonPropertiesFromRegistry(camelContext, value, parents, bindNullOnly, callback);
+                    hit |= doAutowireSingletonPropertiesFromRegistry(camelContext, value, parents, bindNullOnly, deepNesting, callback);
                 }
             }
         }
