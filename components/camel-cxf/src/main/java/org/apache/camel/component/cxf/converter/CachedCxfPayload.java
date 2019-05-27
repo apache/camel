@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.converter;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.Map;
@@ -91,6 +92,14 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
             if (document != null) {
                 li.set(document);
             }
+        }
+        try {
+            Field bodyField = getClass().getSuperclass().getDeclaredField("body");
+            bodyField.setAccessible(true);
+            bodyField.set(orig, getBodySources());
+            
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            LOG.debug("can't use reflection way to set body in CxfPayload", e);
         }
     }
 
