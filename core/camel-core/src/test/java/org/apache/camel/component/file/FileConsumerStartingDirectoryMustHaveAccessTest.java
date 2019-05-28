@@ -18,6 +18,7 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.io.IOException;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -26,39 +27,39 @@ import org.junit.Test;
 
 public class FileConsumerStartingDirectoryMustHaveAccessTest extends ContextTestSupport {
 
-  @Override
-  public void setUp() throws Exception {
-    File file1 = new File("./target/noAccess");
-    if (file1.exists()) {
-      file1.setReadable(true);
-    }
-    deleteDirectory("target/noAccess");
-    file1.mkdirs();
-    file1.setReadable(false);
-    super.setUp();
-  }
-
-  @Override
-  public void tearDown() throws Exception {
-    File file1 = new File("./target/noAccess");
-    if (file1.exists()) {
-      file1.setReadable(true);
-    }
-    super.tearDown();
-  }
-
-  @Test
-  public void testStartingDirectoryMustHaveAccess() throws Exception {
-    Endpoint endpoint = context.getEndpoint("file://target/noAccess?autoCreate=false&startingDirectoryMustExist=true&startingDirectoryMustHaveAccess=true");
-    try {
-      endpoint.createConsumer(new Processor() {
-        public void process(Exchange exchange) throws Exception {
-          // noop
+    @Override
+    public void setUp() throws Exception {
+        File file1 = new File("./target/noAccess");
+        if (file1.exists()) {
+            file1.setReadable(true);
         }
-      });
-      fail("Should have thrown an exception");
-    } catch (IOException e) {
-      assertTrue(e.getMessage().startsWith("Starting directory permission denied"));
+        deleteDirectory("target/noAccess");
+        file1.mkdirs();
+        file1.setReadable(false);
+        super.setUp();
     }
-  }
+
+    @Override
+    public void tearDown() throws Exception {
+        File file1 = new File("./target/noAccess");
+        if (file1.exists()) {
+            file1.setReadable(true);
+        }
+        super.tearDown();
+    }
+
+    @Test
+    public void testStartingDirectoryMustHaveAccess() throws Exception {
+        Endpoint endpoint = context.getEndpoint("file://target/noAccess?autoCreate=false&startingDirectoryMustExist=true&startingDirectoryMustHaveAccess=true");
+        try {
+            endpoint.createConsumer(new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                    // noop
+                }
+            });
+            fail("Should have thrown an exception");
+        } catch (IOException e) {
+            assertTrue(e.getMessage().startsWith("Starting directory permission denied"));
+        }
+    }
 }
