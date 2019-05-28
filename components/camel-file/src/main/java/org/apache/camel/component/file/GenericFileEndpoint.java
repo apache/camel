@@ -108,12 +108,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected IdempotentRepository inProgressRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IN_PROGRESS_CACHE_SIZE);
     @UriParam(label = "consumer,advanced")
     protected String localWorkDirectory;
-    @UriParam(label = "consumer,advanced")
-    protected boolean startingDirectoryMustExist;
-    @UriParam(label = "consumer,advanced")
-    protected boolean startingDirectoryMustHaveAccess;
-    @UriParam(label = "consumer,advanced")
-    protected boolean directoryMustExist;
     @UriParam(label = "consumer")
     protected boolean noop;
     @UriParam(label = "consumer")
@@ -1109,44 +1103,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setAutoCreate(boolean autoCreate) {
         this.autoCreate = autoCreate;
-    }
-
-    public boolean isStartingDirectoryMustExist() {
-        return startingDirectoryMustExist;
-    }
-
-    /**
-     * Whether the starting directory must exist. Mind that the autoCreate option is default enabled,
-     * which means the starting directory is normally auto created if it doesn't exist.
-     * You can disable autoCreate and enable this to ensure the starting directory must exist. Will thrown an exception if the directory doesn't exist.
-     */
-    public void setStartingDirectoryMustExist(boolean startingDirectoryMustExist) {
-        this.startingDirectoryMustExist = startingDirectoryMustExist;
-    }
-
-    public boolean isStartingDirectoryMustHaveAccess() {
-        return startingDirectoryMustHaveAccess;
-    }
-
-    /**
-     * Whether the starting directory has access permissions. Mind that the
-     * startingDirectoryMustExist parameter must be set to true in order to verify that the
-     * directory exists. Will thrown an exception if the directory doesn't have
-     * read and write permissions.
-     */
-    public void setStartingDirectoryMustHaveAccess(boolean startingDirectoryMustHaveAccess) {
-        this.startingDirectoryMustHaveAccess = startingDirectoryMustHaveAccess;
-    }
-
-    public boolean isDirectoryMustExist() {
-        return directoryMustExist;
-    }
-
-    /**
-     * Similar to the startingDirectoryMustExist option but this applies during polling (after starting the consumer).
-     */
-    public void setDirectoryMustExist(boolean directoryMustExist) {
-        this.directoryMustExist = directoryMustExist;
     }
 
     public GenericFileProcessStrategy<T> getProcessStrategy() {
