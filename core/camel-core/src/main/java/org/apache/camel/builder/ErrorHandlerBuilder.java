@@ -20,8 +20,6 @@ import java.util.List;
 
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.processor.ErrorHandler;
-import org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -53,30 +51,9 @@ public interface ErrorHandlerBuilder extends ErrorHandlerFactory {
     List<OnExceptionDefinition> getErrorHandlers(RouteContext routeContext);
 
     /**
-     * Gets the exception policy strategy
-     */
-    ExceptionPolicyStrategy getExceptionPolicyStrategy();
-
-    /**
-     * Sets the exception policy strategy to use for resolving the {@link org.apache.camel.model.OnExceptionDefinition}
-     * to use for a given thrown exception
-     *
-     * @param exceptionPolicyStrategy  the exception policy strategy
-     */
-    void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy);
-
-    /**
      * Whether this error handler supports transacted exchanges.
      */
     boolean supportTransacted();
-
-    /**
-     * Configures the other error handler based on this error handler.
-     *
-     * @param routeContext the route context
-     * @param handler the other error handler
-     */
-    void configure(RouteContext routeContext, ErrorHandler handler);
 
     /**
      * Clones this builder so each {@link RouteBuilder} has its private builder

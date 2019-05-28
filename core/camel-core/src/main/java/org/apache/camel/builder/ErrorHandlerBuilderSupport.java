@@ -60,6 +60,12 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
         other.exceptionPolicyStrategy = exceptionPolicyStrategy;
     }
 
+    /**
+     * Configures the other error handler based on this error handler.
+     *
+     * @param routeContext the route context
+     * @param handler the other error handler
+     */
     public void configure(RouteContext routeContext, ErrorHandler handler) {
         if (handler instanceof ErrorHandlerSupport) {
             ErrorHandlerSupport handlerSupport = (ErrorHandlerSupport) handler;
@@ -142,10 +148,19 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
         return this;
     }
 
+    /**
+     * Gets the exception policy strategy
+     */
     public ExceptionPolicyStrategy getExceptionPolicyStrategy() {
         return exceptionPolicyStrategy;
     }
 
+    /**
+     * Sets the exception policy strategy to use for resolving the {@link org.apache.camel.model.OnExceptionDefinition}
+     * to use for a given thrown exception
+     *
+     * @param exceptionPolicyStrategy  the exception policy strategy
+     */
     public void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
         ObjectHelper.notNull(exceptionPolicyStrategy, "ExceptionPolicyStrategy");
         this.exceptionPolicyStrategy = exceptionPolicyStrategy;
