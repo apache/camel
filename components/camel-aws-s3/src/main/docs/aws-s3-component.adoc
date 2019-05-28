@@ -506,6 +506,11 @@ This operation will list the objects in the mycamelbucket bucket
 
 This operation will return an S3Object instance related to the camelKey object in mycamelbucket bucket.
 
+### Bucket Autocreation
+
+With the option `autoCreateBucket` users are able to avoid the autocreation of an S3 Bucket in case it doesn't exist. The default for this option is `true`.
+If set to false any operation on a not-existent bucket in AWS won't be successful and an error will be returned.
+
 ### Automatic detection of AmazonS3 client in registry
 
 From Camel 3.0.0-M3 the component will be able to detect the presence of an AmazonS3 bean into the registry.
