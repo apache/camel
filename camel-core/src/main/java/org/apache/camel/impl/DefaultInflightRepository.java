@@ -223,7 +223,12 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
             // get latest entry
             MessageHistory history = list.getLast();
             if (history != null) {
-                return history.getElapsed();
+                long elapsed = history.getElapsed();
+                if (elapsed == 0 && history.getTime() > 0) {
+                    // still in progress, so lets compute it via the start time
+                    elapsed = System.currentTimeMillis() - history.getTime();
+                }
+                return elapsed;
             } else {
                 return 0;
             }
