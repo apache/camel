@@ -58,11 +58,11 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     @UriParam(label = "advanced")
     private boolean renameUsingCopy;
     @UriParam(label = "consumer,advanced")
-    protected boolean startingDirectoryMustExist;
+    private boolean startingDirectoryMustExist;
     @UriParam(label = "consumer,advanced")
-    protected boolean startingDirectoryMustHaveAccess;
+    private boolean startingDirectoryMustHaveAccess;
     @UriParam(label = "consumer,advanced")
-    protected boolean directoryMustExist;
+    private boolean directoryMustExist;
     @UriParam(label = "consumer,advanced")
     private boolean probeContentType;
     @UriParam(label = "consumer,advanced")
