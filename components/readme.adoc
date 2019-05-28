@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 293 in 230 JAR artifacts (0 deprecated)
+Number of Components: 296 in 233 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -111,6 +111,12 @@ Number of Components: 293 in 230 JAR artifacts (0 deprecated)
 
 | link:camel-aws-ses/src/main/docs/aws-ses-component.adoc[AWS Simple Email Service] (camel-aws-ses) +
 `aws-ses:from` | 2.9 | The aws-ses component is used for sending emails with Amazon's SES service.
+
+| link:camel-aws-sns/src/main/docs/aws-sns-component.adoc[AWS Simple Notification System] (camel-aws-sns) +
+`aws-sns:topicNameOrArn` | 2.8 | The aws-sns component is used for sending messages to an Amazon Simple Notification Topic.
+
+| link:camel-aws-sqs/src/main/docs/aws-sqs-component.adoc[AWS Simple Queue Service] (camel-aws-sqs) +
+`aws-sqs:queueNameOrArn` | 2.6 | The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.
 
 | link:camel-aws-swf/src/main/docs/aws-swf-component.adoc[AWS Simple Workflow] (camel-aws-swf) +
 `aws-swf:type` | 2.13 | The aws-swf component is used for managing workflows from Amazon Simple Workflow.
@@ -480,6 +486,9 @@ Number of Components: 293 in 230 JAR artifacts (0 deprecated)
 
 | link:camel-jt400/src/main/docs/jt400-component.adoc[JT400] (camel-jt400) +
 `jt400:userID:password/systemName/objectPath.type` | 1.5 | The jt400 component allows you to exchanges messages with an AS/400 system using data queues or program call.
+
+| link:camel-kafka/src/main/docs/kafka-component.adoc[Kafka] (camel-kafka) +
+`kafka:topic` | 2.13 | The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.
 
 | link:camel-kubernetes/src/main/docs/kubernetes-config-maps-component.adoc[Kubernetes ConfigMap] (camel-kubernetes) +
 `kubernetes-config-maps:masterUrl` | 2.17 | The Kubernetes Configmaps component provides a producer to execute kubernetes configmap operations.
