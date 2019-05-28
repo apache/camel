@@ -287,11 +287,6 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
     }
 
     protected synchronized void shutdownRouteService(BaseRouteService routeService) throws Exception {
-        // remove the route from ErrorHandlerBuilder if possible
-        if (getErrorHandlerFactory() instanceof ErrorHandlerBuilderSupport) {
-            ErrorHandlerBuilderSupport builder = (ErrorHandlerBuilderSupport) getErrorHandlerFactory();
-            builder.removeOnExceptionList(routeService.getId());
-        }
         if (routeService instanceof RouteService) {
             model.getRouteDefinitions().remove(((RouteService) routeService).getRouteDefinition());
         }

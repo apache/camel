@@ -19,11 +19,13 @@ package org.apache.camel.reifier.errorhandler;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
@@ -193,7 +195,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
                 }
                 // inherit the error handlers from the other as they are to be shared
                 // this is needed by camel-spring when none error handler has been explicit configured
-                ((ErrorHandlerBuilderSupport) answer).setErrorHandlers(routeContext, other.getErrorHandlers(routeContext));
+                routeContext.addErrorHandlerFactoryReference(other, answer);
             }
         } else {
             // use specific configured error handler
@@ -250,11 +252,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         if (handler instanceof ErrorHandlerSupport) {
             ErrorHandlerSupport handlerSupport = (ErrorHandlerSupport) handler;
 
-            List<OnExceptionDefinition> list = definition.getOnExceptions().get(routeContext);
-            if (list != null) {
-                for (OnExceptionDefinition exception : list) {
-                    ErrorHandlerBuilderSupport.addExceptionPolicy(handlerSupport, routeContext, exception);
-                }
+            for (NamedNode exception : routeContext.getErrorHandlers(definition)) {
+                ErrorHandlerBuilderSupport.addExceptionPolicy(handlerSupport, routeContext, (OnExceptionDefinition) exception);
             }
         }
         if (handler instanceof RedeliveryErrorHandler) {
