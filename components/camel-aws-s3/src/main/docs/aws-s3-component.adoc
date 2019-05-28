@@ -81,13 +81,14 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (52 parameters):
+==== Query Parameters (53 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *amazonS3Client* (common) | Reference to a com.amazonaws.services.s3.AmazonS3 in the link:registry.htmlRegistry. |  | AmazonS3
+| *autoCreateBucket* (common) | Setting the autocreation of the bucket | true | boolean
 | *pathStyleAccess* (common) | Whether or not the S3 client should use path style access | false | boolean
 | *policy* (common) | The policy for this queue to set in the com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method. |  | String
 | *proxyHost* (common) | To define a proxy host when instantiating the SQS client |  | String
