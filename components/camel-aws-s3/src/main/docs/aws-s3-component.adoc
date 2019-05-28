@@ -239,40 +239,40 @@ aggregate this number of messages.
 
 |`CamelAwsS3BucketName` |`String` |The bucket Name which this object will be stored or which will be used for the current operation
 
-|`CamelAwsS3BucketDestinationName` |`String` |*Camel 2.18*: The bucket Destination Name which will be used for the current operation
+|`CamelAwsS3BucketDestinationName` |`String` |The bucket Destination Name which will be used for the current operation
 
 |`CamelAwsS3ContentLength` |`Long` |The content length of this object.
 
 |`CamelAwsS3ContentType` |`String` |The content type of this object.
 
-|`CamelAwsS3ContentControl` |`String` |*Camel 2.8.2:* The content control of this object.
+|`CamelAwsS3ContentControl` |`String` |The content control of this object.
 
-|`CamelAwsS3ContentDisposition` |`String` |*Camel 2.8.2:* The content disposition of this object.
+|`CamelAwsS3ContentDisposition` |`String` |The content disposition of this object.
 
-|`CamelAwsS3ContentEncoding` |`String` |*Camel 2.8.2:* The content encoding of this object.
+|`CamelAwsS3ContentEncoding` |`String` |The content encoding of this object.
 
-|`CamelAwsS3ContentMD5` |`String` |*Camel 2.8.2:* The md5 checksum of this object.
+|`CamelAwsS3ContentMD5` |`String` |The md5 checksum of this object.
 
-|`CamelAwsS3DestinationKey` |`String` |*Camel 2.18*:The Destination key which will be used for the current operation
+|`CamelAwsS3DestinationKey` |`String` |The Destination key which will be used for the current operation
 
 |`CamelAwsS3Key` |`String` |The key under which this object will be stored or which will be used for the current operation
 
-|`CamelAwsS3LastModified` |`java.util.Date` |*Camel 2.8.2:* The last modified timestamp of this object.
+|`CamelAwsS3LastModified` |`java.util.Date` |The last modified timestamp of this object.
 
-|`CamelAwsS3Operation` |`String` |*Camel 2.18*: The operation to perform. Permitted values are copyObject, deleteObject, listBuckets, deleteBucket, downloadLink, listObjects
+|`CamelAwsS3Operation` |`String` |The operation to perform. Permitted values are copyObject, deleteObject, listBuckets, deleteBucket, downloadLink, listObjects
 
-|`CamelAwsS3StorageClass` |`String` |*Camel 2.8.4:* The storage class of this object.
+|`CamelAwsS3StorageClass` |`String` |The storage class of this object.
 
-|`CamelAwsS3CannedAcl` |`String` |*Camel 2.11.0:* The canned acl that will be applied to the object. see
+|`CamelAwsS3CannedAcl` |`String` |The canned acl that will be applied to the object. see
 `com.amazonaws.services.s3.model.CannedAccessControlList` for allowed
 values.
 
-|`CamelAwsS3Acl` |`com.amazonaws.services.s3.model.AccessControlList` |*Camel 2.11.0:* a well constructed Amazon S3 Access Control List object.
+|`CamelAwsS3Acl` |`com.amazonaws.services.s3.model.AccessControlList` |A well constructed Amazon S3 Access Control List object.
 see `com.amazonaws.services.s3.model.AccessControlList` for more details
 
-|`CamelAwsS3Headers` |`Map<String,String>` |*Camel 2.15.0*: support to get or set custom objectMetadata headers.
+|`CamelAwsS3Headers` |`Map<String,String>` |Support to get or set custom objectMetadata headers.
 
-|`CamelAwsS3ServerSideEncryption` |String |*Camel 2.16:* Sets the server-side encryption algorithm when encrypting
+|`CamelAwsS3ServerSideEncryption` |String |Sets the server-side encryption algorithm when encrypting
 the object using AWS-managed keys. For example use AES256.
 
 |`CamelAwsS3VersionId` |`String` |The version Id of the object to be stored or returned from the current operation
@@ -336,7 +336,7 @@ object to be saved as.
 |`CamelAwsS3ContentControl` |`String` |The *optional* Cache-Control HTTP header which allows the user to
 specify caching behavior along the HTTP request/reply chain.
 
-|`CamelAwsS3ServerSideEncryption` |String |*Camel 2.16:* The server-side encryption algorithm when encrypting the
+|`CamelAwsS3ServerSideEncryption` |String |The server-side encryption algorithm when encrypting the
 object using AWS-managed keys.
 |=======================================================================
 
@@ -514,7 +514,7 @@ If set to false any operation on a not-existent bucket in AWS won't be successfu
 
 ### Automatic detection of AmazonS3 client in registry
 
-From Camel 3.0.0-M3 the component will be able to detect the presence of an AmazonS3 bean into the registry.
+The component is capable of detecting the presence of an AmazonS3 bean into the registry.
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter, like the example above.
 This may be really useful for smarter configuration of the endpoint.
 
@@ -533,8 +533,7 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `${camel-version}` must be replaced by the actual version of Camel
-(2.8 or higher).
+where `${camel-version}` must be replaced by the actual version of Camel.
 
 ### See Also
 

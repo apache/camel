@@ -152,8 +152,7 @@ the https://aws.amazon.com/dynamodb[Amazon's DynamoDB].
 
 |`CamelAwsDdbTableName` |`String` |Table Name for this operation.
 
-|`CamelAwsDdbKey` |`Key` |The primary key that uniquely identifies each item in a table. *From Camel 2.16.0 the type of this header is Map<String,
-AttributeValue> and not Key*
+|`CamelAwsDdbKey` |`Key` |The primary key that uniquely identifies each item in a table.
 
 |`CamelAwsDdbReturnValues` |`String` |Use this parameter if you want to get the attribute name-value pairs
 before or after they are modified(NONE, ALL_OLD, UPDATED_OLD, ALL_NEW,
@@ -174,21 +173,20 @@ values that define the item.
 
 |`CamelAwsDdbExactCount` |`Boolean` |If set to true, Amazon DynamoDB returns a total number of items that
 match the query parameters, instead of a list of the matching items and
-their attributes. *From Camel 2.16.0 this header doesn't exist anymore.*
+their attributes.
 
-|`CamelAwsDdbKeyConditions` |`Map<String, Condition>` |*From Camel 2.16.0*. This header specify the selection criteria for the
+|`CamelAwsDdbKeyConditions` |`Map<String, Condition>` |This header specify the selection criteria for the
 query, and merge together the two old headers *CamelAwsDdbHashKeyValue*
 and *CamelAwsDdbScanRangeKeyCondition*
 
 |`CamelAwsDdbStartKey` |`Key` |Primary key of the item from which to continue an earlier query.
 
 |`CamelAwsDdbHashKeyValue` |`AttributeValue` |Value of the hash component of the composite primary key.
-*From Camel 2.16.0 this header doesn't exist anymore.*
 
 |`CamelAwsDdbLimit` |`Integer` |The maximum number of items to return.
 
 |`CamelAwsDdbScanRangeKeyCondition` |`Condition` |A container for the attribute values and comparison operators to use for
-the query.*From Camel 2.16.0 this header doesn't exist anymore.*
+the query.
 
 |`CamelAwsDdbScanIndexForward` |`Boolean` |Specifies forward or backward traversal of the index.
 
@@ -255,8 +253,7 @@ processed with the current response.
 |`CamelAwsDdbTableItemCount` |`Long` |Item count for this table.
 
 |`CamelAwsDdbKeySchema` |{{KeySchema}} |The KeySchema that identifies the primary key for this table.
-*From Camel 2.16.0 the type of this header is List<KeySchemaElement> and
-not KeySchema*
+
 
 |`CamelAwsDdbTableName` |`String` |The table name.
 
@@ -366,7 +363,7 @@ registry.bind("client", client);
 
 ### Automatic detection of AmazonDynamoDB client in registry
 
-From Camel 3.0.0-M3 the component will be able to detect the presence of an AmazonDynamoDB bean into the registry.
+The component is capable of detecting the presence of an AmazonDynamoDB bean into the registry.
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
 This may be really useful for smarter configuration of the endpoint.
 
@@ -385,8 +382,7 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `${camel-version}` must be replaced by the actual version of Camel
-(2.10 or higher).
+where `${camel-version}` must be replaced by the actual version of Camel.
 
 ### See Also
 
