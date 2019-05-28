@@ -219,6 +219,19 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
         assertTrue(endpoint.getConfiguration().isForceGlobalBucketAccessEnabled());
     }
+    
+    @Test
+    public void createEndpointWithAutocreateOption() throws Exception {
+
+        S3Component component = new S3Component(context);
+        S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket?forceGlobalBucketAccessEnabled=true&accessKey=xxx&secretKey=yyy&region=US_WEST_1&autoCreateBucket=false");
+
+        assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertTrue(endpoint.getConfiguration().isForceGlobalBucketAccessEnabled());
+        assertFalse(endpoint.getConfiguration().isAutoCreateBucket());
+    }
 
     @Test
     public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {

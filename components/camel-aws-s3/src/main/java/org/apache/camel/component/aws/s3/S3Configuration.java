@@ -82,6 +82,8 @@ public class S3Configuration implements Cloneable {
     private boolean payloadSigningEnabled;
     @UriParam(label = "common, advanced", defaultValue = "false")
     private boolean forceGlobalBucketAccessEnabled;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoCreateBucket = true;
     @UriParam(label = "producer,advanced", defaultValue = "false")
     private boolean useAwsKMS;
     @UriParam(label = "producer,advanced")
@@ -462,7 +464,18 @@ public class S3Configuration implements Cloneable {
         return useIAMCredentials;
     }
 
-    public boolean hasProxyConfiguration() {
+    public boolean isAutoCreateBucket() {
+		return autoCreateBucket;
+	}
+
+    /**
+     * Setting the autocreation of the bucket
+     */
+	public void setAutoCreateBucket(boolean autoCreateBucket) {
+		this.autoCreateBucket = autoCreateBucket;
+	}
+
+	public boolean hasProxyConfiguration() {
         return ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort());
     }
     

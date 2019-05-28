@@ -110,6 +110,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
 
         LOG.trace("Bucket [{}] doesn't exist yet", bucketName);
 
+        if (getConfiguration().isAutoCreateBucket()) {
         // creates the new bucket because it doesn't exist yet
         CreateBucketRequest createBucketRequest = new CreateBucketRequest(getConfiguration().getBucketName());
 
@@ -118,6 +119,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         s3Client.createBucket(createBucketRequest);
 
         LOG.trace("Bucket created");
+        }
 
         if (configuration.getPolicy() != null) {
             LOG.trace("Updating bucket [{}] with policy [{}]", bucketName, configuration.getPolicy());
