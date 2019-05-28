@@ -90,9 +90,6 @@ public class SpringTransactionPolicy implements TransactedPolicy {
             // already a TX error handler then we are good to go
             LOG.debug("The ErrorHandlerBuilder configured is already a TransactionErrorHandlerBuilder: {}", builder);
             answer = createTransactionErrorHandler(routeContext, processor, builder);
-            answer.setExceptionPolicy(builder.getExceptionPolicyStrategy());
-            // configure our answer based on the existing error handler
-            builder.configure(routeContext, answer);
         } else {
             // no transaction error handler builder configure so create a temporary one as we got all
             // the needed information form the configured builder anyway this allow us to use transacted
@@ -110,9 +107,6 @@ public class SpringTransactionPolicy implements TransactedPolicy {
                 txBuilder.setErrorHandlers(routeContext, builder.getErrorHandlers(routeContext));
             }
             answer = createTransactionErrorHandler(routeContext, processor, txBuilder);
-            answer.setExceptionPolicy(txBuilder.getExceptionPolicyStrategy());
-            // configure our answer based on the existing error handler
-            txBuilder.configure(routeContext, answer);
 
             // set the route to use our transacted error handler builder
             route.setErrorHandlerFactory(txBuilder);
