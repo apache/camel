@@ -32,36 +32,14 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
     private final String ref;
-    private final Map<RouteContext, ErrorHandlerBuilder> handlers = new HashMap<>();
     private boolean supportTransacted;
 
     public ErrorHandlerBuilderRef(String ref) {
         this.ref = ref;
     }
 
-    @Override
-    public void addErrorHandlers(RouteContext routeContext, OnExceptionDefinition exception) {
-        ErrorHandlerBuilder handler = handlers.get(routeContext);
-        if (handler != null) {
-            handler.addErrorHandlers(routeContext, exception);
-        }
-        super.addErrorHandlers(routeContext, exception);
-    }
-    
-    @Override
-    public boolean removeOnExceptionList(String id) {
-        for (RouteContext routeContext : handlers.keySet()) {
-            if (routeContext.getRouteId().equals(id)) {
-                handlers.remove(routeContext);
-                break;
-            }
-        }
-        return super.removeOnExceptionList(id);
-    }
-    
-
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        ErrorHandlerFactory handler = handlers.computeIfAbsent(routeContext, this::createErrorHandler);
+        ErrorHandlerFactory handler = lookupErrorHandler(routeContext);
         return ErrorHandlerReifier.reifier(handler).createErrorHandler(routeContext, processor);
     }
 
@@ -88,19 +66,15 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
         return ref;
     }
 
-    private ErrorHandlerBuilder createErrorHandler(RouteContext routeContext) {
+    private ErrorHandlerBuilder lookupErrorHandler(RouteContext routeContext) {
         ErrorHandlerBuilder handler = (ErrorHandlerBuilder) ErrorHandlerReifier.lookupErrorHandlerFactory(routeContext, getRef());
         ObjectHelper.notNull(handler, "error handler '" + ref + "'");
 
         // configure if the handler support transacted
         supportTransacted = handler.supportTransacted();
 
-        List<OnExceptionDefinition> list = getErrorHandlers(routeContext);
-        if (list != null) {
-            for (OnExceptionDefinition exceptionType : list) {
-                handler.addErrorHandlers(routeContext, exceptionType);
-            }
-        }
+        routeContext.addErrorHandlerFactoryReference(this, handler);
+
         return handler;
     }
 

@@ -28,29 +28,6 @@ import org.apache.camel.spi.RouteContext;
 public interface ErrorHandlerBuilder extends ErrorHandlerFactory {
 
     /**
-     * Adds error handler for the given exception type
-     *
-     * @param routeContext  the route context
-     * @param exception     the exception to handle
-     */
-    void addErrorHandlers(RouteContext routeContext, OnExceptionDefinition exception);
-
-    /**
-     * Adds the error handlers for the given list of exception types
-     *
-     * @param routeContext  the route context
-     * @param exceptions    the list of exceptions to handle
-     */
-    void setErrorHandlers(RouteContext routeContext, List<OnExceptionDefinition> exceptions);
-
-    /**
-     * Gets the error handlers
-     *
-     * @param routeContext  the route context
-     */
-    List<OnExceptionDefinition> getErrorHandlers(RouteContext routeContext);
-
-    /**
      * Whether this error handler supports transacted exchanges.
      */
     boolean supportTransacted();

@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -252,5 +253,28 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
     Processor getOnException(String onExceptionId);
 
     void setOnException(String onExceptionId, Processor processor);
+
+    /**
+     * Adds error handler for the given exception type
+     *
+     * @param factory       the error handler factory
+     * @param exception     the exception to handle
+     */
+    void addErrorHandler(ErrorHandlerFactory factory, NamedNode exception);
+
+    /**
+     * Gets the error handlers
+     *
+     * @param factory       the error handler factory
+     */
+    Set<NamedNode> getErrorHandlers(ErrorHandlerFactory factory);
+
+    /**
+     * Link the error handlers from a factory to another
+     *
+     * @param source        the source factory
+     * @param target        the target factory
+     */
+    void addErrorHandlerFactoryReference(ErrorHandlerFactory source, ErrorHandlerFactory target);
 
 }

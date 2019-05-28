@@ -112,7 +112,7 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
 
         // use error handlers from the configured builder
         if (builder != null) {
-            txBuilder.setErrorHandlers(routeContext, builder.getErrorHandlers(routeContext));
+            routeContext.addErrorHandlerFactoryReference(builder, txBuilder);
         }
 
         answer = createTransactionErrorHandler(routeContext, processor, txBuilder);

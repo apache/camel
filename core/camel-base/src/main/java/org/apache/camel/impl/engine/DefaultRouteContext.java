@@ -18,8 +18,10 @@ package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -465,4 +467,24 @@ public class DefaultRouteContext implements RouteContext {
         properties.put(key, value);
     }
 
+    private Map<ErrorHandlerFactory, Set<NamedNode>> errorHandlers = new HashMap<>();
+
+    @Override
+    public void addErrorHandler(ErrorHandlerFactory factory, NamedNode onException) {
+        getErrorHandlers(factory).add(onException);
+    }
+
+    @Override
+    public Set<NamedNode> getErrorHandlers(ErrorHandlerFactory factory) {
+        return errorHandlers.computeIfAbsent(factory, f -> new LinkedHashSet<>());
+    }
+
+    @Override
+    public void addErrorHandlerFactoryReference(ErrorHandlerFactory source, ErrorHandlerFactory target) {
+        Set<NamedNode> list = getErrorHandlers(source);
+        Set<NamedNode> previous = errorHandlers.put(target, list);
+        if (previous != null && previous != list) {
+            throw new IllegalStateException("multiple references with different handlers");
+        }
+    }
 }

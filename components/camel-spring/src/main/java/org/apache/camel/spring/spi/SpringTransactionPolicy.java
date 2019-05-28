@@ -104,7 +104,7 @@ public class SpringTransactionPolicy implements TransactedPolicy {
             txBuilder.setSpringTransactionPolicy(this);
             if (builder != null) {
                 // use error handlers from the configured builder
-                txBuilder.setErrorHandlers(routeContext, builder.getErrorHandlers(routeContext));
+                routeContext.addErrorHandlerFactoryReference(builder, txBuilder);
             }
             answer = createTransactionErrorHandler(routeContext, processor, txBuilder);
 

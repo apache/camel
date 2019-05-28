@@ -17,10 +17,10 @@
 package org.apache.camel.builder;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
+import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -42,21 +42,9 @@ import org.apache.camel.util.ObjectHelper;
  * Base class for builders of error handling.
  */
 public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder {
-    private Map<RouteContext, List<OnExceptionDefinition>> onExceptions = new HashMap<>();
     private ExceptionPolicyStrategy exceptionPolicyStrategy;
 
-    public void addErrorHandlers(RouteContext routeContext, OnExceptionDefinition exception) {
-        // only add if we not already have it
-        List<OnExceptionDefinition> list = onExceptions.computeIfAbsent(routeContext, rc -> new ArrayList<>());
-        if (!list.contains(exception)) {
-            list.add(exception);
-        }
-    }
-
     protected void cloneBuilder(ErrorHandlerBuilderSupport other) {
-        if (!onExceptions.isEmpty()) {
-            other.onExceptions.putAll(onExceptions);
-        }
         other.exceptionPolicyStrategy = exceptionPolicyStrategy;
     }
 
@@ -70,11 +58,9 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
         if (handler instanceof ErrorHandlerSupport) {
             ErrorHandlerSupport handlerSupport = (ErrorHandlerSupport) handler;
 
-            List<OnExceptionDefinition> list = onExceptions.get(routeContext);
-            if (list != null) {
-                for (OnExceptionDefinition exception : list) {
-                    addExceptionPolicy(handlerSupport, routeContext, exception);
-                }
+            Set<NamedNode> list = routeContext.getErrorHandlers(this);
+            for (NamedNode exception : list) {
+                addExceptionPolicy(handlerSupport, routeContext, (OnExceptionDefinition) exception);
             }
         }
         if (handler instanceof RedeliveryErrorHandler) {
@@ -132,14 +118,6 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
         return answer;
     }
 
-    public List<OnExceptionDefinition> getErrorHandlers(RouteContext routeContext) {
-        return onExceptions.get(routeContext);
-    }
-
-    public void setErrorHandlers(RouteContext routeContext, List<OnExceptionDefinition> exceptions) {
-        this.onExceptions.put(routeContext, exceptions);
-    }
-
     /**
      * Sets the exception policy to use
      */
@@ -166,22 +144,4 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
         this.exceptionPolicyStrategy = exceptionPolicyStrategy;
     }
     
-    /**
-     * Remove the OnExceptionList by look up the route id from the ErrorHandlerBuilder internal map
-     * @param id the route id
-     * @return true if the route context is found and removed
-     */
-    public boolean removeOnExceptionList(String id) {
-        for (RouteContext routeContext : onExceptions.keySet()) {
-            if (routeContext.getRouteId().equals(id)) {
-                onExceptions.remove(routeContext);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public Map<RouteContext, List<OnExceptionDefinition>> getOnExceptions() {
-        return onExceptions;
-    }
 }
