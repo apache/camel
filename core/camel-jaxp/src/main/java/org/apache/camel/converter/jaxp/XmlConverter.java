@@ -66,15 +66,15 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
-import org.apache.camel.util.xml.BytesSource;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.xml.StringSource;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.builder.xml.StAX2SAXSource;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.xml.BytesSource;
+import org.apache.camel.util.xml.StringSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
