@@ -29,48 +29,11 @@ import org.apache.camel.spi.RouteContext;
 public interface Channel extends AsyncProcessor, Navigate<Processor> {
 
     /**
-     * Sets the processor that the channel should route the {@link Exchange} to.
-     *
-     * @param next  the next processor
-     */
-    void setNextProcessor(Processor next);
-
-    /**
-     * Sets the {@link org.apache.camel.processor.ErrorHandler} this Channel uses.
-     *
-     * @param errorHandler the error handler
-     */
-    void setErrorHandler(Processor errorHandler);
-
-    /**
      * Gets the {@link org.apache.camel.processor.ErrorHandler} this Channel uses.
      *
      * @return the error handler, or <tt>null</tt> if no error handler is used.
      */
     Processor getErrorHandler();
-
-    /**
-     * Adds a {@link org.apache.camel.spi.InterceptStrategy} to apply each {@link Exchange} before
-     * its routed to the next {@link Processor}.
-     *
-     * @param strategy  the intercept strategy
-     */
-    void addInterceptStrategy(InterceptStrategy strategy);
-
-    /**
-     * Adds a list of {@link org.apache.camel.spi.InterceptStrategy} to apply each {@link Exchange} before
-     * its routed to the next {@link Processor}.
-     *
-     * @param strategy  list of strategies
-     */
-    void addInterceptStrategies(List<InterceptStrategy> strategy);
-
-    /**
-     * Gets the list of {@link org.apache.camel.spi.InterceptStrategy} registered to this Channel.
-     *
-     * @return list of strategies, returns an empty list if no strategies is registered.
-     */
-    List<InterceptStrategy> getInterceptStrategies();
 
     /**
      * Gets the wrapped output that at runtime should be delegated to.
@@ -99,4 +62,12 @@ public interface Channel extends AsyncProcessor, Navigate<Processor> {
      * @return the route context
      */
     RouteContext getRouteContext();
+
+    /**
+     * Gets the definition of the next processor
+     *
+     * @return the processor definition
+     */
+    NamedNode getProcessorDefinition();
+
 }

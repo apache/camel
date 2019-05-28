@@ -26,20 +26,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
-import org.apache.camel.model.ModelChannel;
-import org.apache.camel.model.OnCompletionDefinition;
-import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
-import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
@@ -57,23 +50,18 @@ import org.apache.camel.support.service.ServiceHelper;
  * {@link Exchange} in the route graph, as we have a {@link Channel} between each and every node
  * in the graph.
  */
-public class DefaultChannel extends CamelInternalProcessor implements ModelChannel {
+public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
-    private final List<InterceptStrategy> interceptors = new ArrayList<>();
     private Processor errorHandler;
     // the next processor (non wrapped)
     private Processor nextProcessor;
     // the real output to invoke that has been wrapped
     private Processor output;
-    private ProcessorDefinition<?> definition;
-    private ProcessorDefinition<?> childDefinition;
+    private NamedNode definition;
     private ManagementInterceptStrategy.InstrumentationProcessor<?> instrumentationProcessor;
     private CamelContext camelContext;
     private RouteContext routeContext;
-
-    public void setNextProcessor(Processor next) {
-        this.nextProcessor = next;
-    }
+    private boolean routeScoped = true;
 
     public Processor getOutput() {
         // the errorHandler is already decorated with interceptors
@@ -107,15 +95,11 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
         return nextProcessor;
     }
 
-    public boolean hasInterceptorStrategy(Class<?> type) {
-        for (InterceptStrategy strategy : interceptors) {
-            if (type.isInstance(strategy)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
+    /**
+     * Sets the {@link org.apache.camel.processor.ErrorHandler} this Channel uses.
+     *
+     * @param errorHandler the error handler
+     */
     public void setErrorHandler(Processor errorHandler) {
         this.errorHandler = errorHandler;
     }
@@ -124,24 +108,8 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
         return errorHandler;
     }
 
-    public void addInterceptStrategy(InterceptStrategy strategy) {
-        interceptors.add(strategy);
-    }
-
-    public void addInterceptStrategies(List<InterceptStrategy> strategies) {
-        interceptors.addAll(strategies);
-    }
-
-    public List<InterceptStrategy> getInterceptStrategies() {
-        return interceptors;
-    }
-
-    public ProcessorDefinition<?> getProcessorDefinition() {
+    public NamedNode getProcessorDefinition() {
         return definition;
-    }
-
-    public void setChildDefinition(ProcessorDefinition<?> childDefinition) {
-        this.childDefinition = childDefinition;
     }
 
     public RouteContext getRouteContext() {
@@ -157,7 +125,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
 
     @Override
     protected void doStop() throws Exception {
-        if (!isContextScoped()) {
+        if (isRouteScoped()) {
             // only stop services if not context scoped (as context scoped is reused by others)
             ServiceHelper.stopService(output, errorHandler);
         }
@@ -168,68 +136,61 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
         ServiceHelper.stopAndShutdownServices(output, errorHandler);
     }
 
-    private boolean isContextScoped() {
-        if (definition instanceof OnExceptionDefinition) {
-            return !((OnExceptionDefinition) definition).isRouteScoped();
-        } else if (definition instanceof OnCompletionDefinition) {
-            return !((OnCompletionDefinition) definition).isRouteScoped();
-        }
-
-        return false;
+    public boolean isRouteScoped() {
+        return routeScoped;
     }
 
-    public void initChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception {
+    /**
+     * Initializes the channel.
+     * If the initialized output definition contained outputs (children) then
+     * the childDefinition will be set so we can leverage fine grained tracing
+     *
+     * @param routeContext      the route context
+     * @param definition        the route definition the {@link Channel} represents
+     * @param childDefinition   the child definition
+     * @throws Exception is thrown if some error occurred
+     */
+    public void initChannel(RouteContext routeContext,
+                            NamedNode definition,
+                            NamedNode childDefinition,
+                            List<InterceptStrategy> interceptors,
+                            Processor nextProcessor,
+                            NamedNode route,
+                            boolean first,
+                            boolean routeScoped) throws Exception {
         this.routeContext = routeContext;
-        this.definition = outputDefinition;
+        this.definition = definition;
         this.camelContext = routeContext.getCamelContext();
+        this.nextProcessor = nextProcessor;
+        this.routeScoped = routeScoped;
 
-        Processor target = nextProcessor;
-        Processor next;
-
-        // init CamelContextAware as early as possible on target
-        if (target instanceof CamelContextAware) {
-            ((CamelContextAware) target).setCamelContext(camelContext);
+        // init CamelContextAware as early as possible on nextProcessor
+        if (nextProcessor instanceof CamelContextAware) {
+            ((CamelContextAware) nextProcessor).setCamelContext(camelContext);
         }
 
         // the definition to wrap should be the fine grained,
         // so if a child is set then use it, if not then its the original output used
-        ProcessorDefinition<?> targetOutputDef = childDefinition != null ? childDefinition : outputDefinition;
+        NamedNode targetOutputDef = childDefinition != null ? childDefinition : definition;
         log.debug("Initialize channel for target: '{}'", targetOutputDef);
-
-        // fix parent/child relationship. This will be the case of the routes has been
-        // defined using XML DSL or end user may have manually assembled a route from the model.
-        // Background note: parent/child relationship is assembled on-the-fly when using Java DSL (fluent builders)
-        // where as when using XML DSL (JAXB) then it fixed after, but if people are using custom interceptors
-        // then we need to fix the parent/child relationship beforehand, and thus we can do it here
-        // ideally we need the design time route -> runtime route to be a 2-phase pass (scheduled work for Camel 3.0)
-        if (childDefinition != null && outputDefinition != childDefinition) {
-            childDefinition.setParent(outputDefinition);
-        }
-
-        // force the creation of an id
-        RouteDefinitionHelper.forceAssignIds(routeContext.getCamelContext(), definition);
 
         // setup instrumentation processor for management (jmx)
         // this is later used in postInitChannel as we need to setup the error handler later as well
         ManagementInterceptStrategy managed = routeContext.getManagementInterceptStrategy();
         if (managed != null) {
-            instrumentationProcessor = managed.createProcessor(targetOutputDef, target);
+            instrumentationProcessor = managed.createProcessor(targetOutputDef, nextProcessor);
         }
 
-        // then wrap the output with the backlog and tracer (backlog first, as we do not want regular tracer to trace the backlog)
+        // then wrap the output with the backlog and tracer (backlog first,
+        // as we do not want regular tracer to trace the backlog)
         BacklogTracer tracer = getOrCreateBacklogTracer();
         camelContext.setExtension(BacklogTracer.class, tracer);
-        RouteDefinition route = ProcessorDefinitionHelper.getRoute(definition);
-        boolean first = false;
-        if (route != null && !route.getOutputs().isEmpty()) {
-            first = route.getOutputs().get(0) == definition;
-        }
         addAdvice(new BacklogTracerAdvice(tracer, targetOutputDef, route, first));
 
         // add debugger as well so we have both tracing and debugging out of the box
         BacklogDebugger debugger = getOrCreateBacklogDebugger();
         camelContext.addService(debugger);
-        addAdvice(new BacklogDebuggerAdvice(debugger, target, targetOutputDef));
+        addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, targetOutputDef));
 
         if (routeContext.isMessageHistory()) {
             // add message history advice
@@ -242,12 +203,13 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
         // reverse list so the first will be wrapped last, as it would then be first being invoked
         Collections.reverse(interceptors);
         // wrap the output with the configured interceptors
+        Processor target = nextProcessor;
         for (InterceptStrategy strategy : interceptors) {
-            next = target == nextProcessor ? null : nextProcessor;
+            Processor next = target == nextProcessor ? null : nextProcessor;
             // use the fine grained definition (eg the child if available). Its always possible to get back to the parent
             Processor wrapped = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, next);
             if (!(wrapped instanceof AsyncProcessor)) {
-                log.warn("Interceptor: " + strategy + " at: " + outputDefinition + " does not return an AsyncProcessor instance."
+                log.warn("Interceptor: " + strategy + " at: " + definition + " does not return an AsyncProcessor instance."
                         + " This causes the asynchronous routing engine to not work as optimal as possible."
                         + " See more details at the InterceptStrategy javadoc."
                         + " Camel will use a bridge to adapt the interceptor to the asynchronous routing engine,"
@@ -272,8 +234,12 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
         output = target;
     }
 
-    @Override
-    public void postInitChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception {
+    /**
+     * Post initializes the channel.
+     *
+     * @throws Exception is thrown if some error occurred
+     */
+    public void postInitChannel() throws Exception {
         // if jmx was enabled for the processor then either add as advice or wrap and change the processor
         // on the error handler. See more details in the class javadoc of InstrumentationProcessor
         if (instrumentationProcessor != null) {
