@@ -48,7 +48,7 @@ attachments if provided in the message  (`SoroushMessage.file`, `SoroushMessage.
 and store the urls in the message (`SoroushMessage.fileUrl`, `SoroushMessage.thumbnailUrl`).
 |===
 
-
+### Options
 
 // component options: START
 The Soroush component supports 3 options, which are listed below.
