@@ -18,7 +18,6 @@ package org.apache.camel.builder;
 
 import java.nio.charset.Charset;
 import java.util.Map;
-import java.util.zip.Deflater;
 
 import org.w3c.dom.Node;
 
