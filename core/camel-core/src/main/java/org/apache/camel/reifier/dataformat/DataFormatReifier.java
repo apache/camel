@@ -31,6 +31,7 @@ import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BoonDataFormat;
+import org.apache.camel.model.dataformat.CBORDataFormat;
 import org.apache.camel.model.dataformat.CryptoDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
@@ -82,6 +83,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
         map.put(BeanioDataFormat.class, BeanioDataFormatReifier::new);
         map.put(BindyDataFormat.class, BindyDataFormatReifier::new);
         map.put(BoonDataFormat.class, BoonDataFormatReifier::new);
+        map.put(CBORDataFormat.class, CBORDataFormatReifier::new);
         map.put(CryptoDataFormat.class, CryptoDataFormatReifier::new);
         map.put(CsvDataFormat.class, CsvDataFormatReifier::new);
         map.put(CustomDataFormat.class, CustomDataFormatReifier::new);

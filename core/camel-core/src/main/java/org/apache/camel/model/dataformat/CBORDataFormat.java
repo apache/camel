@@ -38,8 +38,12 @@ public class CBORDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "true")
     private Boolean useDefaultObjectMapper;
+    @XmlAttribute
+    private String unmarshalTypeName;
     @XmlTransient
     private Class<?> unmarshalType;
+    @XmlAttribute
+    private String collectionTypeName;
     @XmlTransient
     private Class<?> collectionType;
     @XmlAttribute
@@ -73,6 +77,17 @@ public class CBORDataFormat extends DataFormatDefinition {
     public void setUseDefaultObjectMapper(Boolean useDefaultObjectMapper) {
         this.useDefaultObjectMapper = useDefaultObjectMapper;
     }
+    
+    public String getUnmarshalTypeName() {
+        return unmarshalTypeName;
+    }
+
+    /**
+     * Class name of the java type to use when unarmshalling
+     */
+    public void setUnmarshalTypeName(String unmarshalTypeName) {
+        this.unmarshalTypeName = unmarshalTypeName;
+    }
 
     public Class<?> getUnmarshalType() {
         return unmarshalType;
@@ -83,6 +98,19 @@ public class CBORDataFormat extends DataFormatDefinition {
      */
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
+    }
+    
+    public String getCollectionTypeName() {
+        return collectionTypeName;
+    }
+
+    /**
+     * Refers to a custom collection type to lookup in the registry to use. This
+     * option should rarely be used, but allows to use different collection
+     * types than java.util.Collection based as default.
+     */
+    public void setCollectionTypeName(String collectionTypeName) {
+        this.collectionTypeName = collectionTypeName;
     }
 
     public Class<?> getCollectionType() {

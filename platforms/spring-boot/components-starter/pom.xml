@@ -147,6 +147,7 @@
     <module>camel-browse-starter</module>
     <module>camel-caffeine-starter</module>
     <module>camel-cassandraql-starter</module>
+    <module>camel-cbor-starter</module>
     <module>camel-chatscript-starter</module>
     <module>camel-chunk-starter</module>
     <module>camel-cm-sms-starter</module>
