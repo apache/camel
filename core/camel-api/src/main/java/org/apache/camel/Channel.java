@@ -43,13 +43,6 @@ public interface Channel extends AsyncProcessor, Navigate<Processor> {
     Processor getOutput();
 
     /**
-     * Sets the wrapped output that at runtime should be delegated to.
-     *
-     * @param output the output to route the {@link Exchange} to
-     */
-    void setOutput(Processor output);
-
-    /**
      * Gets the next {@link Processor} to route to (not wrapped)
      *
      * @return  the next processor

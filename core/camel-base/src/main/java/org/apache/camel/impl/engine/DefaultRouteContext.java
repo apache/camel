@@ -48,8 +48,8 @@ import org.apache.camel.support.CamelContextHelper;
  * The context used to activate new routing rules
  */
 public class DefaultRouteContext implements RouteContext {
-    private final NamedNode route;
-    private final String routeId;
+    private NamedNode route;
+    private String routeId;
     private Route runtimeRoute;
     private Endpoint endpoint;
     private final List<Processor> eventDrivenProcessors = new ArrayList<>();
@@ -58,6 +58,7 @@ public class DefaultRouteContext implements RouteContext {
     private ManagementInterceptStrategy managementInterceptStrategy;
     private boolean routeAdded;
     private Boolean trace;
+    private Boolean debug;
     private Boolean messageHistory;
     private Boolean logMask;
     private Boolean logExhaustedMessageBody;
@@ -265,6 +266,19 @@ public class DefaultRouteContext implements RouteContext {
         } else {
             // fallback to the option from camel context
             return getCamelContext().isTracing();
+        }
+    }
+
+    public void setDebugging(Boolean debugging) {
+        this.debug = debugging;
+    }
+
+    public Boolean isDebugging() {
+        if (debug != null) {
+            return debug;
+        } else {
+            // fallback to the option from camel context
+            return getCamelContext().isDebugging();
         }
     }
 

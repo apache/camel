@@ -65,6 +65,10 @@ public class DefaultModel implements Model {
         this.camelContext = camelContext;
     }
 
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
     public void addRouteDefinitions(InputStream is) throws Exception {
         RoutesDefinition def = ModelHelper.loadRoutesDefinition(camelContext, is);
         if (def != null) {
