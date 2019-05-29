@@ -33,6 +33,7 @@ import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
+import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
@@ -112,6 +113,10 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         return definition;
     }
 
+    public void setDefinition(NamedNode definition) {
+        this.definition = definition;
+    }
+
     public RouteContext getRouteContext() {
         return routeContext;
     }
@@ -181,16 +186,20 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             instrumentationProcessor = managed.createProcessor(targetOutputDef, nextProcessor);
         }
 
-        // then wrap the output with the backlog and tracer (backlog first,
-        // as we do not want regular tracer to trace the backlog)
-        BacklogTracer tracer = getOrCreateBacklogTracer();
-        camelContext.setExtension(BacklogTracer.class, tracer);
-        addAdvice(new BacklogTracerAdvice(tracer, targetOutputDef, route, first));
+        // then wrap the output with the tracer and debugger (debugger first,
+        // as we do not want regular tracer to trace the debugger)
+        if (routeContext.isTracing()) {
+            BacklogTracer tracer = getOrCreateBacklogTracer();
+            camelContext.setExtension(BacklogTracer.class, tracer);
+            addAdvice(new BacklogTracerAdvice(tracer, targetOutputDef, route, first));
+        }
 
         // add debugger as well so we have both tracing and debugging out of the box
-        BacklogDebugger debugger = getOrCreateBacklogDebugger();
-        camelContext.addService(debugger);
-        addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, targetOutputDef));
+        if (routeContext.isDebugging()) {
+            BacklogDebugger debugger = getOrCreateBacklogDebugger();
+            camelContext.addService(debugger);
+            addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, targetOutputDef));
+        }
 
         if (routeContext.isMessageHistory()) {
             // add message history advice

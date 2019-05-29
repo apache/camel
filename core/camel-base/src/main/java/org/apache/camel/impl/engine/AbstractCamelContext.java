@@ -193,7 +193,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
     private Initialization initialization = Initialization.Default;
     private Boolean autoStartup = Boolean.TRUE;
-    private Boolean trace = Boolean.FALSE;
+    private Boolean trace = Boolean.TRUE;
+    private Boolean debug = Boolean.TRUE;
     private Boolean messageHistory = Boolean.TRUE;
     private Boolean logMask = Boolean.FALSE;
     private Boolean logExhaustedMessageBody = Boolean.FALSE;
@@ -1832,12 +1833,20 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         return trace;
     }
 
-    public Boolean isMessageHistory() {
-        return messageHistory;
+    public void setDebugging(Boolean debug) {
+        this.debug = debug;
+    }
+
+    public Boolean isDebugging() {
+        return debug;
     }
 
     public void setMessageHistory(Boolean messageHistory) {
         this.messageHistory = messageHistory;
+    }
+
+    public Boolean isMessageHistory() {
+        return messageHistory;
     }
 
     public void setLogMask(Boolean logMask) {
