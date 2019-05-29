@@ -31,6 +31,7 @@ import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.model.dataformat.BoonDataFormat;
+import org.apache.camel.model.dataformat.CBORDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.dataformat.FhirJsonDataFormat;
@@ -203,6 +204,25 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         BoonDataFormat boon = new BoonDataFormat();
         boon.setUnmarshalType(classType);
         return dataFormat(boon);
+    }
+    
+    /**
+     * Uses the CBOR data format
+     */
+    public T cbor() {
+        return dataFormat(new CBORDataFormat());
+    }
+
+    /**
+     * Uses the CBOR data format
+     *
+     * @param unmarshalType
+     *            unmarshal type for cbor type
+     */
+    public T cbor(Class<?> unmarshalType) {
+    	CBORDataFormat cborDataFormat = new CBORDataFormat();
+    	cborDataFormat.setUnmarshalType(unmarshalType);
+        return dataFormat(cborDataFormat);
     }
 
     /**
