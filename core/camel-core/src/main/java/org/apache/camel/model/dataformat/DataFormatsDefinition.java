@@ -46,6 +46,7 @@ public class DataFormatsDefinition {
         @XmlElement(required = false, name = "beanio", type = BeanioDataFormat.class),
         @XmlElement(required = false, name = "bindy", type = BindyDataFormat.class),
         @XmlElement(required = false, name = "boon", type = BoonDataFormat.class),
+        @XmlElement(required = false, name = "cbor", type = CBORDataFormat.class),
         @XmlElement(required = false, name = "crypto", type = CryptoDataFormat.class),
         @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
         @XmlElement(required = false, name = "custom", type = CustomDataFormat.class),
