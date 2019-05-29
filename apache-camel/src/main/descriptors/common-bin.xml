@@ -89,6 +89,7 @@
         <include>org.apache.camel:camel-browse</include>
         <include>org.apache.camel:camel-caffeine</include>
         <include>org.apache.camel:camel-cassandraql</include>
+        <include>org.apache.camel:camel-cbor</include>
         <include>org.apache.camel:camel-cdi</include>
         <include>org.apache.camel:camel-chatscript</include>
         <include>org.apache.camel:camel-chunk</include>
@@ -427,6 +428,7 @@
         <include>org.apache.camel:camel-browse-starter</include>
         <include>org.apache.camel:camel-caffeine-starter</include>
         <include>org.apache.camel:camel-cassandraql-starter</include>
+        <include>org.apache.camel:camel-cbor-starter</include>
         <include>org.apache.camel:camel-chatscript-starter</include>
         <include>org.apache.camel:camel-chunk-starter</include>
         <include>org.apache.camel:camel-cm-sms-starter</include>
