@@ -137,8 +137,8 @@ public class CBORDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * If enabled then Jackson is allowed to attempt to use the
-     * CamelJacksonUnmarshalType header during the unmarshalling.
+     * If enabled then Jackson CBOR is allowed to attempt to use the
+     * CamelCBORUnmarshalType header during the unmarshalling.
      * <p/>
      * This should only be enabled when desired to be used.
      */
