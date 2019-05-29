@@ -130,6 +130,7 @@
         <module>camel-braintree</module>
         <module>camel-caffeine</module>
         <module>camel-cassandraql</module>
+        <module>camel-cbor</module>
         <module>camel-cdi</module>
         <module>camel-chatscript</module>
         <module>camel-chunk</module>
