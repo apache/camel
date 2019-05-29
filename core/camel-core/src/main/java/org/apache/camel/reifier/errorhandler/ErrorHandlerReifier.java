@@ -38,9 +38,9 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.ErrorHandler;
+import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.processor.errorhandler.ExceptionPolicy;
 import org.apache.camel.processor.errorhandler.ExceptionPolicy.RedeliveryOption;
-import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.RouteContext;
@@ -60,10 +60,6 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         ERROR_HANDLERS = map;
     }
 
-    public static void registerReifier(Class<?> errorHandlerClass, Function<ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> creator) {
-        ERROR_HANDLERS.put(errorHandlerClass, creator);
-    }
-
     protected T definition;
 
     /**
@@ -71,6 +67,10 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
      */
     ErrorHandlerReifier(T definition) {
         this.definition = definition;
+    }
+
+    public static void registerReifier(Class<?> errorHandlerClass, Function<ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> creator) {
+        ERROR_HANDLERS.put(errorHandlerClass, creator);
     }
 
     public static ErrorHandlerReifier<? extends ErrorHandlerFactory> reifier(ErrorHandlerFactory definition) {
