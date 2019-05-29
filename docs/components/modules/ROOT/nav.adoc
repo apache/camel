@@ -58,7 +58,7 @@
 * xref:caffeine-cache-component.adoc[Caffeine Cache Component]
 * xref:caffeine-loadcache-component.adoc[Caffeine LoadCache Component]
 * xref:cql-component.adoc[Cassandra CQL Component]
-* xref:jolt-component.adoc[JOLT Component]
+* xref:cbor-dataformat.adoc[CBOR DataFormat]
 * xref:cdi.adoc[Camel CDI]
 * xref:chatscript-component.adoc[ChatScript Component]
 * xref:chunk-component.adoc[Chunk Component]
