@@ -76,6 +76,7 @@ public class DefaultRouteContext implements RouteContext {
     private final Map<String, Object> properties = new HashMap<>();
     private ErrorHandlerFactory errorHandlerFactory;
     private Integer startupOrder;
+    private Map<ErrorHandlerFactory, Set<NamedNode>> errorHandlers = new HashMap<>();
 
     public DefaultRouteContext(CamelContext camelContext, NamedNode route, String routeId) {
         this.camelContext = camelContext;
@@ -466,8 +467,6 @@ public class DefaultRouteContext implements RouteContext {
     public void addProperty(String key, Object value) {
         properties.put(key, value);
     }
-
-    private Map<ErrorHandlerFactory, Set<NamedNode>> errorHandlers = new HashMap<>();
 
     @Override
     public void addErrorHandler(ErrorHandlerFactory factory, NamedNode onException) {
