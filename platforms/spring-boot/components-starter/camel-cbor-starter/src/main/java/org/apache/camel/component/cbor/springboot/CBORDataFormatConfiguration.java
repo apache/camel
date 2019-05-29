@@ -62,9 +62,9 @@ public class CBORDataFormatConfiguration
      */
     private Boolean useList = false;
     /**
-     * If enabled then Jackson is allowed to attempt to use the
-     * CamelJacksonUnmarshalType header during the unmarshalling. This should
-     * only be enabled when desired to be used.
+     * If enabled then Jackson CBOR is allowed to attempt to use the
+     * CamelCBORUnmarshalType header during the unmarshalling. This should only
+     * be enabled when desired to be used.
      */
     private Boolean allowUnmarshallType = false;
     /**
