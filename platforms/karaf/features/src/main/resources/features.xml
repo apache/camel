@@ -633,6 +633,14 @@
     <bundle dependency='true'>mvn:com.datastax.cassandra/cassandra-driver-core/${cassandra-driver-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cassandraql/${project.version}</bundle>
   </feature>
+  <feature name='camel-cbor' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-cbor/${jackson2-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-cbor/${project.version}</bundle>
+  </feature>
   <feature name='camel-cdi' version='${project.version}' start-level='50'>
     <details>camel-cdi in OSGi is deprecated. Use blueprint instead. camel-cdi requires that either pax-cdi-weld or pax-cdi-openwebbeans has been installed</details>
     <feature version='${project.version}'>camel-core</feature>
