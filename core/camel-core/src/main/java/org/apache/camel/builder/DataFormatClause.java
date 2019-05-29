@@ -220,8 +220,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      *            unmarshal type for cbor type
      */
     public T cbor(Class<?> unmarshalType) {
-    	CBORDataFormat cborDataFormat = new CBORDataFormat();
-    	cborDataFormat.setUnmarshalType(unmarshalType);
+        CBORDataFormat cborDataFormat = new CBORDataFormat();
+        cborDataFormat.setUnmarshalType(unmarshalType);
         return dataFormat(cborDataFormat);
     }
 
