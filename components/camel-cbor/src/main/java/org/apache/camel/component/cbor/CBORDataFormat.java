@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.cbor;
 
 import java.io.InputStream;
@@ -7,6 +23,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
@@ -14,30 +34,26 @@ import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.service.ServiceSupport;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
-
 @Dataformat("cbor")
 public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private CamelContext camelContext;
-	private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
     private Class<?> unmarshalType;
     private boolean useDefaultObjectMapper = true;
     private boolean allowUnmarshallType;
     private Class<? extends Collection> collectionType;
     private boolean useList;
-    
+
     /**
      * Use the default CBOR Jackson {@link ObjectMapper} and {@link Object}
      */
     public CBORDataFormat() {
     }
-    
+
     /**
-     * Use the default CBOR Jackson {@link ObjectMapper} and with a custom unmarshal
-     * type
+     * Use the default CBOR Jackson {@link ObjectMapper} and with a custom
+     * unmarshal type
      *
      * @param unmarshalType the custom unmarshal type
      */
@@ -45,15 +61,15 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
         this.unmarshalType = unmarshalType;
         this.objectMapper = objectMapper;
     }
-	
-	@Override
-	public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-		stream.write(this.objectMapper.writeValueAsBytes(graph));
-	}
 
-	@Override
-	public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-		Class<?> clazz = unmarshalType;
+    @Override
+    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+        stream.write(this.objectMapper.writeValueAsBytes(graph));
+    }
+
+    @Override
+    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        Class<?> clazz = unmarshalType;
         String type = null;
         if (allowUnmarshallType) {
             type = exchange.getIn().getHeader(CBORConstants.UNMARSHAL_TYPE, String.class);
@@ -67,62 +83,62 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
         } else {
             return this.objectMapper.readValue(stream, clazz);
         }
-	}
+    }
 
-	@Override
-	public String getDataFormatName() {
-		return "cbor";
-	}
+    @Override
+    public String getDataFormatName() {
+        return "cbor";
+    }
 
-	public ObjectMapper getObjectMapper() {
-		return objectMapper;
-	}
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
 
-	public void setObjectMapper(ObjectMapper objectMapper) {
-		this.objectMapper = objectMapper;
-	}
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
-	public Class<?> getUnmarshalType() {
-		return unmarshalType;
-	}
+    public Class<?> getUnmarshalType() {
+        return unmarshalType;
+    }
 
-	public void setUnmarshalType(Class<?> unmarshalType) {
-		this.unmarshalType = unmarshalType;
-	}
+    public void setUnmarshalType(Class<?> unmarshalType) {
+        this.unmarshalType = unmarshalType;
+    }
 
-	public boolean isAllowUnmarshallType() {
-		return allowUnmarshallType;
-	}
+    public boolean isAllowUnmarshallType() {
+        return allowUnmarshallType;
+    }
 
-	public void setAllowUnmarshallType(boolean allowUnmarshallType) {
-		this.allowUnmarshallType = allowUnmarshallType;
-	}
+    public void setAllowUnmarshallType(boolean allowUnmarshallType) {
+        this.allowUnmarshallType = allowUnmarshallType;
+    }
 
-	public Class<? extends Collection> getCollectionType() {
-		return collectionType;
-	}
+    public Class<? extends Collection> getCollectionType() {
+        return collectionType;
+    }
 
-	public void setCollectionType(Class<? extends Collection> collectionType) {
-		this.collectionType = collectionType;
-	}
+    public void setCollectionType(Class<? extends Collection> collectionType) {
+        this.collectionType = collectionType;
+    }
 
-	public boolean isUseList() {
-		return useList;
-	}
+    public boolean isUseList() {
+        return useList;
+    }
 
-	public void setUseList(boolean useList) {
-		this.useList = useList;
-	}
-	
+    public void setUseList(boolean useList) {
+        this.useList = useList;
+    }
+
     public boolean isUseDefaultObjectMapper() {
-		return useDefaultObjectMapper;
-	}
+        return useDefaultObjectMapper;
+    }
 
-	public void setUseDefaultObjectMapper(boolean useDefaultObjectMapper) {
-		this.useDefaultObjectMapper = useDefaultObjectMapper;
-	}
+    public void setUseDefaultObjectMapper(boolean useDefaultObjectMapper) {
+        this.useDefaultObjectMapper = useDefaultObjectMapper;
+    }
 
-	/**
+    /**
      * Uses {@link java.util.ArrayList} when unmarshalling.
      */
     public void useList() {
@@ -151,7 +167,7 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
                 }
             }
             if (objectMapper == null) {
-            	CBORFactory factory = new CBORFactory();
+                CBORFactory factory = new CBORFactory();
                 objectMapper = new ObjectMapper(factory);
                 log.debug("Creating new ObjectMapper to use: {}", objectMapper);
             }
@@ -162,9 +178,9 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
         }
     }
 
-	@Override
-	protected void doStop() throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    protected void doStop() throws Exception {
+        // TODO Auto-generated method stub
+
+    }
 }
