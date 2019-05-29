@@ -277,6 +277,29 @@ For example, in the simplest form to consume one event:
 PlatformEvent event = consumer.receiveBody("salesforce:event/Order_Event__e", PlatformEvent.class);
 ----
 
+==== Change data capture events
+
+On the one hand, Salesforce could be configured to emit notifications for record changes of select objects.
+On the other hand, the Camel Salesforce component could react to such notifications, allowing for instance to
+https://trailhead.salesforce.com/en/content/learn/modules/change-data-capture/understand-change-data-capture[synchronize those changes into an external system].
+
+The notifications of interest could be specified in the `from("salesforce:XXX")` clause of a Camel route via the subscription channel, e.g:
+
+[source,java]
+----
+from("salesforce:data/ChangeEvents?replayId=-1").log("being notified of all change events")
+from("salesforce:data/AccountChangeEvent?replayId=-1").log("being notified of change events for Account records")
+from("salesforce:data/Employee__ChangeEvent?replayId=-1").log("being notified of change events for Employee__c custom object")
+----
+
+The received message contains either `java.util.Map<String,Object>` or `org.cometd.bayeux.Message` in the body depending on the `rawPayload` being `false` or `true` respectively. The `CamelSalesforceChangeType` header could be valued to one of `CREATE`, `UPDATE`,  `DELETE` or `UNDELETE`.
+
+More details about how to use the Camel Salesforce component change data capture capabilities could be found in the https://github.com/apache/camel/tree/master/components/camel-salesforce/camel-salesforce-component/src/test/java/org/apache/camel/component/salesforce/ChangeEventsConsumerIntegrationTest.java[ChangeEventsConsumerIntegrationTest].
+
+The https://developer.salesforce.com/docs/atlas.en-us.change_data_capture.meta/change_data_capture/cdc_intro.htm[Salesforce developer guide]
+is a good fit to better know the subtleties of implementing a change data capture integration application.
+The dynamic nature of change event body fields, high level replication steps as well as security considerations could be of interest.
+
 === Examples
 
 ==== Uploading a document to a ContentWorkspace
@@ -585,7 +608,7 @@ generated Java Enumerations.
 
 Please refer to
 https://github.com/apache/camel/tree/master/components/camel-salesforce/camel-salesforce-maven-plugin[README.md]
-for details on how to generated the DTO.
+for details on how to generate the DTO.
 
 === Options
 
@@ -661,7 +684,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *operationName* | The operation to use |  | OperationName
-| *topicName* | The name of the topic to use |  | String
+| *topicName* | The name of the topic/channel to use |  | String
 |===
 
 

@@ -43,11 +43,13 @@ import org.cometd.bayeux.client.ClientSessionChannel;
 public class SalesforceConsumer extends DefaultConsumer {
 
     private enum MessageKind {
-        PLATFORM_EVENT, PUSH_TOPIC;
+        CHANGE_EVENT, PLATFORM_EVENT, PUSH_TOPIC;
 
         public static MessageKind fromTopicName(final String topicName) {
             if (topicName.startsWith("event/") || topicName.startsWith("/event/")) {
                 return MessageKind.PLATFORM_EVENT;
+            } else if (topicName.startsWith("data/") || topicName.startsWith("/data/")) {
+                return MessageKind.CHANGE_EVENT;
             }
 
             return PUSH_TOPIC;
@@ -58,7 +60,9 @@ public class SalesforceConsumer extends DefaultConsumer {
     private static final String EVENT_PROPERTY = "event";
     private static final double MINIMUM_VERSION = 24.0;
     private static final ObjectMapper OBJECT_MAPPER = JsonUtils.createObjectMapper();
+    private static final String PAYLOAD_PROPERTY = "payload";
     private static final String REPLAY_ID_PROPERTY = "replayId";
+    private static final String SCHEMA_PROPERTY = "schema";
     private static final String SOBJECT_PROPERTY = "sobject";
     private static final String TYPE_PROPERTY = "type";
 
@@ -140,6 +144,9 @@ public class SalesforceConsumer extends DefaultConsumer {
         case PLATFORM_EVENT:
             createPlatformEventMessage(message, in);
             break;
+        case CHANGE_EVENT:
+            createChangeEventMessage(message, in);
+            break;
         default:
             throw new IllegalStateException("Unknown message kind: " + messageKind);
         }
@@ -167,23 +174,59 @@ public class SalesforceConsumer extends DefaultConsumer {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    void createChangeEventMessage(final Message message, final org.apache.camel.Message in) {
+        setHeaders(in, message);
+
+        final Map<String, Object> data = message.getDataAsMap();
+
+        final Map<String, Object> event = (Map<String, Object>)data.get(EVENT_PROPERTY);
+        final Object replayId = event.get(REPLAY_ID_PROPERTY);
+        if (replayId != null) {
+            in.setHeader("CamelSalesforceReplayId", replayId);
+        }
+
+        in.setHeader("CamelSalesforceChangeEventSchema", data.get(SCHEMA_PROPERTY));
+        in.setHeader("CamelSalesforceEventType", topicName.substring(topicName.lastIndexOf('/') + 1));
+
+        final Map<String, Object> payload = (Map<String, Object>)data.get(PAYLOAD_PROPERTY);
+        final Map<String, Object> changeEventHeader = (Map<String, Object>)payload.get("ChangeEventHeader");
+        in.setHeader("CamelSalesforceChangeType", changeEventHeader.get("changeType"));
+        in.setHeader("CamelSalesforceChangeOrigin", changeEventHeader.get("changeOrigin"));
+        in.setHeader("CamelSalesforceTransactionKey", changeEventHeader.get("transactionKey"));
+        in.setHeader("CamelSalesforceSequenceNumber", changeEventHeader.get("sequenceNumber"));
+        in.setHeader("CamelSalesforceIsTransactionEnd", changeEventHeader.get("isTransactionEnd"));
+        in.setHeader("CamelSalesforceCommitTimestamp", changeEventHeader.get("commitTimestamp"));
+        in.setHeader("CamelSalesforceCommitUser", changeEventHeader.get("commitUser"));
+        in.setHeader("CamelSalesforceCommitNumber", changeEventHeader.get("commitNumber"));
+        in.setHeader("CamelSalesforceEntityName", changeEventHeader.get("entityName"));
+        in.setHeader("CamelSalesforceRecordIds", changeEventHeader.get("recordIds"));
+
+        if (rawPayload) {
+            in.setBody(message);
+        } else {
+            payload.remove("ChangeEventHeader");
+            in.setBody(payload);
+        }
+    }
+
     void createPlatformEventMessage(final Message message, final org.apache.camel.Message in) {
         setHeaders(in, message);
 
         final Map<String, Object> data = message.getDataAsMap();
 
         @SuppressWarnings("unchecked")
-        final Map<String, Object> event = (Map<String, Object>) data.get("event");
+        final Map<String, Object> event = (Map<String, Object>) data.get(EVENT_PROPERTY);
 
         final Object replayId = event.get(REPLAY_ID_PROPERTY);
         if (replayId != null) {
             in.setHeader("CamelSalesforceReplayId", replayId);
         }
 
-        in.setHeader("CamelSalesforcePlatformEventSchema", data.get("schema"));
+        in.setHeader("CamelSalesforcePlatformEventSchema", data.get(SCHEMA_PROPERTY));
         in.setHeader("CamelSalesforceEventType", topicName.substring(topicName.lastIndexOf('/') + 1));
 
-        final Object payload = data.get("payload");
+        final Object payload = data.get(PAYLOAD_PROPERTY);
 
         final PlatformEvent platformEvent = objectMapper.convertValue(payload, PlatformEvent.class);
         in.setHeader("CamelSalesforceCreatedDate", platformEvent.getCreated());

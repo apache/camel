@@ -15,13 +15,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
-    <defaultLandingTab>Merchandise__c</defaultLandingTab>
-    <label>Warehouse</label>
-    <tabs>standard-Chatter</tabs>
-    <tabs>standard-File</tabs>
-    <tabs>standard-report</tabs>
-    <tabs>standard-Dashboard</tabs>
-    <tabs>Invoice__c</tabs>
-    <tabs>Merchandise__c</tabs>
-</CustomApplication>
+<PlatformEventChannel xmlns="http://soap.sforce.com/2006/04/metadata">
+    <channelMembers>
+        <selectedEntity>AccountChangeEvent</selectedEntity>
+    </channelMembers>
+    <channelType>data</channelType>
+    <label>ChangeEvents</label>
+</PlatformEventChannel>
