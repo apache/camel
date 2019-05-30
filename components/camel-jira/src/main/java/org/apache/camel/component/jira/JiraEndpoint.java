@@ -111,7 +111,9 @@ public class JiraEndpoint extends DefaultEndpoint {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        client.close();
+        if (client != null) {
+            client.close();
+        }
     }
 
     @Override

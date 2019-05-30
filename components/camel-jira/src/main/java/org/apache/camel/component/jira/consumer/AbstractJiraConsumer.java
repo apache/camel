@@ -47,7 +47,7 @@ public abstract class AbstractJiraConsumer extends ScheduledPollConsumer {
 
     // Ignore maxResults if it's <= 0.
     protected List<Issue> getIssues(String jql, int start, int maxPerQuery, int maxResults) {
-        LOG.info("Indexing current JIRA issues...");
+        LOG.debug("Start indexing current JIRA issues...");
 
         List<Issue> issues = new ArrayList<>();
         while (true) {
@@ -66,7 +66,7 @@ public abstract class AbstractJiraConsumer extends ScheduledPollConsumer {
 
             start += maxPerQuery;
         }
-
+        LOG.debug("End indexing current JIRA issues. {} issues indexed.", issues.size());
         return issues;
     }
 
