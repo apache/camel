@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.jira.consumer;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 import com.atlassian.jira.rest.client.api.domain.Comment;
 import com.atlassian.jira.rest.client.api.domain.Issue;
@@ -43,15 +43,15 @@ public class NewCommentsConsumer extends AbstractJiraConsumer {
 
     public NewCommentsConsumer(JiraEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        LOG.info("JIRA NewCommentsConsumer: Indexing current issue comments...");
-        getComments(false);
     }
 
     @Override
     protected int poll() throws Exception {
-        Stack<Comment> newComments = getComments(true);
-        while (!newComments.empty()) {
-            Comment newComment = newComments.pop();
+        List<Comment> newComments = getComments();
+        int max = newComments.size() - 1;
+        // retrieve from last to first item LIFO
+        for (int i = max; i > -1; i--) {
+            Comment newComment = newComments.get(i);
             Exchange e = getEndpoint().createExchange();
             e.getIn().setBody(newComment);
             getProcessor().process(e);
@@ -59,22 +59,33 @@ public class NewCommentsConsumer extends AbstractJiraConsumer {
         return newComments.size();
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        // read the actual comments, the next poll outputs only the new comments added after the route start
+        getComments();
+    }
+
     // In the end, we want *new* comments oldest to newest.
-    private Stack<Comment> getComments(boolean loadComments) {
-        Stack<Comment> newComments = new Stack<>();
+    @SuppressWarnings("ConstantConditions")
+    private List<Comment> getComments() {
+        LOG.debug("Start: Jira NewCommentsConsumer: retrieving issue comments. Last comment id: {}", lastCommentId);
+        List<Comment> newComments = new ArrayList<>();
         List<Issue> issues = getIssues();
         for (Issue issue : issues) {
             Issue fullIssue = client().getIssueClient().getIssue(issue.getKey()).claim();
             for (Comment comment : fullIssue.getComments()) {
-                //noinspection ConstantConditions
                 if (comment.getId() > lastCommentId) {
-                    lastCommentId = comment.getId();
-                    if (loadComments) {
-                        newComments.push(comment);
-                    }
+                    newComments.add(comment);
                 }
             }
         }
+        for (Comment c: newComments) {
+            if (c.getId() > lastCommentId) {
+                lastCommentId = c.getId();
+            }
+        }
+        LOG.debug("End: Jira NewCommentsConsumer: retrieving issue comments. {} new comments since last run.", newComments.size());
         return newComments;
     }
 }
