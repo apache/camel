@@ -311,10 +311,6 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param parameters    properties to set
      */
     protected void setProperties(CamelContext camelContext, Object bean, Map<String, Object> parameters) throws Exception {
-        // set reference properties first as they use # syntax that fools the regular properties setter
-        // TODO: We should find out the weird camel-cxf error where we need to do this, as we can put this logic into PropertyBindingSupport
-        EndpointHelper.setReferenceProperties(camelContext, bean, parameters);
-
         if (basicPropertyBinding) {
             // use basic binding
             PropertyBindingSupport.build()
