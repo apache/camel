@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -29,6 +30,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.PropertyBindingException;
 
 import static org.apache.camel.support.IntrospectionSupport.findSetterMethods;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+import static org.apache.camel.util.StringHelper.notEmpty;
 
 /**
  * A convenient support class for binding String valued properties to an instance which
@@ -36,7 +39,9 @@ import static org.apache.camel.support.IntrospectionSupport.findSetterMethods;
  * <ul>
  *     <li>property placeholders - Keys and values using Camels property placeholder will be resolved</li>
  *     <li>nested - Properties can be nested using the dot syntax (OGNL and builder pattern using with as prefix), eg foo.bar=123</li>
- *     <li>keys with map</li> - Properties can lookup in Map's using map syntax, eg foo[bar] where foo is the name of the property that is a Map instance, and bar is the name of the key.</li>
+ *     <li>map</li> - Properties can lookup in Map's using map syntax, eg foo[bar] where foo is the name of the property that is a Map instance, and bar is the name of the key.</li>
+ *     <li>list</li> - Properties can refer or add to in List's using list syntax, eg foo[0] where foo is the name of the property that is a
+ *                     List instance, and 0 is the index. To refer to the last element, then use last as key.</li>
  *     <li>reference by bean id - Values can refer to other beans in the registry by prefixing with #nean: eg #bean:myBean</li>
  *     <li>reference by type - Values can refer to singleton beans by their type in the registry by prefixing with #type: syntax, eg #type:com.foo.MyClassType</li>
  *     <li>autowire by type - Values can refer to singleton beans by auto wiring by setting the value to #autowired</li>
@@ -444,22 +449,34 @@ public final class PropertyBindingSupport {
 
     private static Object getOrElseProperty(Object target, String property, Object defaultValue) {
         String key = property;
-        String mapKey = null;
+        String lookupKey = null;
 
         // support maps in keys
         if (property.contains("[") && property.endsWith("]")) {
             int pos = property.indexOf('[');
-            mapKey = property.substring(pos + 1, property.length() - 1);
+            lookupKey = property.substring(pos + 1, property.length() - 1);
             key = property.substring(0, pos);
         }
 
         Object answer = IntrospectionSupport.getOrElseProperty(target, key, defaultValue);
-        if (answer instanceof Map && mapKey != null) {
+        if (answer instanceof Map && lookupKey != null) {
             Map map = (Map) answer;
-            answer = map.getOrDefault(mapKey, defaultValue);
+            answer = map.getOrDefault(lookupKey, defaultValue);
+        } else if (answer instanceof List) {
+            List list = (List) answer;
+            if (isNotEmpty(lookupKey)) {
+                int idx = Integer.valueOf(lookupKey);
+                answer = list.get(idx);
+            } else {
+                if (list.isEmpty()) {
+                    answer = null;
+                } else {
+                    answer = list.get(list.size() - 1);
+                }
+            }
         }
 
-        return answer;
+        return answer != null ? answer : defaultValue;
     }
 
     private static Method findBestSetterMethod(Class clazz, String name, boolean fluentBuilder) {

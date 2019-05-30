@@ -44,6 +44,8 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+
 /**
  * Helper for introspections of beans.
  * <p/>
@@ -538,16 +540,28 @@ public final class IntrospectionSupport {
     public static boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
                                       boolean allowBuilderPattern) throws Exception {
 
-        // does the property name include a mapped key, then we need to set the property as a map
+        // does the property name include a lookup key, then we need to set the property as a map or list
         if (name.contains("[") && name.endsWith("]")) {
             int pos = name.indexOf('[');
-            String mapKey = name.substring(pos + 1, name.length() - 1);
+            String lookupKey = name.substring(pos + 1, name.length() - 1);
             String key = name.substring(0, pos);
 
             Object obj = IntrospectionSupport.getOrElseProperty(target, key, null);
             if (obj == null) {
-                // it was supposed to be a map, but its null, so lets create a new map and set it automatically
-                obj = new LinkedHashMap<>();
+                // it was supposed to be a list or map, but its null, so lets create a new list or map and set it automatically
+                Method getter = IntrospectionSupport.getPropertyGetter(target.getClass(), key);
+                if (getter != null) {
+                    // what type does it have
+                    Class<?> returnType = getter.getReturnType();
+                    if (Map.class.isAssignableFrom(returnType)) {
+                        obj = new LinkedHashMap<>();
+                    } else if (Collection.class.isAssignableFrom(returnType)) {
+                        obj = new ArrayList<>();
+                    }
+                } else {
+                    // fallback as map type
+                    obj = new LinkedHashMap<>();
+                }
                 boolean hit = IntrospectionSupport.setProperty(context, target, key, obj);
                 if (!hit) {
                     throw new IllegalArgumentException("Cannot set property: " + name + " as a Map because target bean has no setter method for the Map");
@@ -558,11 +572,23 @@ public final class IntrospectionSupport {
                 if (context != null && refName != null && value == null) {
                     value = CamelContextHelper.lookup(context, refName);
                 }
-                map.put(mapKey, value);
+                map.put(lookupKey, value);
+                return true;
+            } else if (obj instanceof List) {
+                List list = (List) obj;
+                if (context != null && refName != null && value == null) {
+                    value = CamelContextHelper.lookup(context, refName);
+                }
+                if (isNotEmpty(lookupKey)) {
+                    int idx = Integer.valueOf(lookupKey);
+                    list.add(idx, value);
+                } else {
+                    list.add(value);
+                }
                 return true;
             } else {
-                // not a map
-                throw new IllegalArgumentException("Cannot set property: " + name + " as a Map because target bean is not a Map: " + target);
+                // not a map or list
+                throw new IllegalArgumentException("Cannot set property: " + name + " as either a Map/List because target bean is not a Map or List type: " + target);
             }
         }
 
