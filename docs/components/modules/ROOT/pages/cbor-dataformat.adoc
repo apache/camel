@@ -69,6 +69,32 @@ The component supports 8 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
+#### Using CBOR in Spring DSL
+
+When using Data Format in Spring DSL you need to
+declare the data formats first. This is done in the *DataFormats* XML
+tag.
+
+[source,xml]
+-----------------------------------------------------------------------------------------------------------------------------
+        <dataFormats>
+            <!-- here we define a CBOR data format with the id test and that it should use the TestPojo as the class type when
+                 doing unmarshal. -->
+            <cbor id="test" unmarshalTypeName="org.apache.camel.component.cbor.TestPojo"/>
+        </dataFormats>
+-----------------------------------------------------------------------------------------------------------------------------
+
+And then you can refer to this id in the route:
+
+[source,xml]
+-------------------------------------
+       <route>
+            <from uri="direct:back"/>
+            <unmarshal><custom ref="test"/></unmarshal>
+            <to uri="mock:reverse"/>
+        </route>
+-------------------------------------
+
 ### Dependencies
 
 [source,java]
