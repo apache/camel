@@ -21,11 +21,13 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.impl.engine.DefaultClaimCheckRepository;
 import org.apache.camel.spi.ClaimCheckRepository;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -44,6 +46,7 @@ public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAwar
     private String operation;
     private AggregationStrategy aggregationStrategy;
     private String key;
+    private Expression keyExpression;
     private String filter;
 
     @Override
@@ -108,18 +111,20 @@ public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAwar
         }
 
         try {
+            String claimKey = keyExpression.evaluate(exchange, String.class);
+
             if ("Set".equals(operation)) {
                 // copy exchange, and do not share the unit of work
                 Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
-                boolean addedNew = repo.add(key, copy);
+                boolean addedNew = repo.add(claimKey, copy);
                 if (addedNew) {
-                    log.debug("Add: {} -> {}", key, copy);
+                    log.debug("Add: {} -> {}", claimKey, copy);
                 } else {
-                    log.debug("Override: {} -> {}", key, copy);
+                    log.debug("Override: {} -> {}", claimKey, copy);
                 }
             } else if ("Get".equals(operation)) {
-                Exchange copy = repo.get(key);
-                log.debug("Get: {} -> {}", key, exchange);
+                Exchange copy = repo.get(claimKey);
+                log.debug("Get: {} -> {}", claimKey, exchange);
                 if (copy != null) {
                     Exchange result = aggregationStrategy.aggregate(exchange, copy);
                     if (result != null) {
@@ -127,8 +132,8 @@ public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAwar
                     }
                 }
             } else if ("GetAndRemove".equals(operation)) {
-                Exchange copy = repo.getAndRemove(key);
-                log.debug("GetAndRemove: {} -> {}", key, exchange);
+                Exchange copy = repo.getAndRemove(claimKey);
+                log.debug("GetAndRemove: {} -> {}", claimKey, exchange);
                 if (copy != null) {
                     // prepare the exchanges for aggregation
                     ExchangeHelper.prepareAggregation(exchange, copy);
@@ -140,11 +145,11 @@ public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAwar
             } else if ("Push".equals(operation)) {
                 // copy exchange, and do not share the unit of work
                 Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
-                log.debug("Push: {} -> {}", key, copy);
+                log.debug("Push: {} -> {}", claimKey, copy);
                 repo.push(copy);
             } else if ("Pop".equals(operation)) {
                 Exchange copy = repo.pop();
-                log.debug("Pop: {} -> {}", key, exchange);
+                log.debug("Pop: {} -> {}", claimKey, exchange);
                 if (copy != null) {
                     // prepare the exchanges for aggregation
                     ExchangeHelper.prepareAggregation(exchange, copy);
@@ -171,6 +176,12 @@ public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAwar
         }
         if (aggregationStrategy instanceof CamelContextAware) {
             ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
+        }
+
+        if (LanguageSupport.hasSimpleFunction(key)) {
+            keyExpression = camelContext.resolveLanguage("simple").createExpression(key);
+        } else {
+            keyExpression = camelContext.resolveLanguage("constant").createExpression(key);
         }
 
         ServiceHelper.startService(aggregationStrategy);
