@@ -668,6 +668,19 @@ public class ExpressionClause<T> implements Expression, Predicate {
      * Evaluates a token expression on the message body
      *
      * @param token the token
+     * @param regex whether the token is a regular expression or not
+     * @param group to group by the given number
+     * @param skipFirst whether to skip the first element
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token, boolean regex, int group, String groupDelimiter, boolean skipFirst) {
+        return delegate.tokenize(token, null, regex, "" + group, groupDelimiter, skipFirst);
+    }
+
+    /**
+     * Evaluates a token expression on the message body
+     *
+     * @param token the token
      * @param group to group by the given number
      * @return the builder to continue processing the DSL
      */
