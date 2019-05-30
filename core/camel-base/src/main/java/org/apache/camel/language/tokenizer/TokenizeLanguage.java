@@ -48,6 +48,7 @@ public class TokenizeLanguage implements Language, IsSingleton {
     private boolean xml;
     private boolean includeTokens;
     private String group;
+    private String groupDelimiter;
     private boolean skipFirst;
 
     public static Expression tokenize(String token) {
@@ -133,7 +134,8 @@ public class TokenizeLanguage implements Language, IsSingleton {
             if (isXml()) {
                 answer = ExpressionBuilder.groupXmlIteratorExpression(answer, group);
             } else {
-                answer = ExpressionBuilder.groupIteratorExpression(answer, token, group, skipFirst);
+                String delim = groupDelimiter != null ? groupDelimiter : token;
+                answer = ExpressionBuilder.groupIteratorExpression(answer, delim, group, skipFirst);
             }
         }
 
@@ -209,6 +211,14 @@ public class TokenizeLanguage implements Language, IsSingleton {
 
     public void setGroup(String group) {
         this.group = group;
+    }
+
+    public String getGroupDelimiter() {
+        return groupDelimiter;
+    }
+
+    public void setGroupDelimiter(String groupDelimiter) {
+        this.groupDelimiter = groupDelimiter;
     }
 
     public boolean isSkipFirst() {

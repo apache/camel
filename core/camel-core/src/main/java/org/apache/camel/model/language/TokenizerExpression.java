@@ -54,6 +54,8 @@ public class TokenizerExpression extends ExpressionDefinition {
     @XmlAttribute
     private String group;
     @XmlAttribute
+    private String groupDelimiter;
+    @XmlAttribute
     private Boolean skipFirst;
 
     public TokenizerExpression() {
@@ -161,6 +163,17 @@ public class TokenizerExpression extends ExpressionDefinition {
         this.group = group;
     }
 
+    public String getGroupDelimiter() {
+        return groupDelimiter;
+    }
+
+    /**
+     * Sets the delimiter to use when grouping. If this has not been set then token will be used as the delimiter.
+     */
+    public void setGroupDelimiter(String groupDelimiter) {
+        this.groupDelimiter = groupDelimiter;
+    }
+
     public Boolean getSkipFirst() {
         return skipFirst;
     }
@@ -184,6 +197,7 @@ public class TokenizerExpression extends ExpressionDefinition {
         language.setEndToken(endToken);
         language.setInheritNamespaceTagName(inheritNamespaceTagName);
         language.setHeaderName(headerName);
+        language.setGroupDelimiter(groupDelimiter);
         if (regex != null) {
             language.setRegex(regex);
         }
@@ -196,6 +210,7 @@ public class TokenizerExpression extends ExpressionDefinition {
         if (group != null && !"0".equals(group)) {
             language.setGroup(group);
         }
+
         if (skipFirst != null) {
             language.setSkipFirst(skipFirst);
         }

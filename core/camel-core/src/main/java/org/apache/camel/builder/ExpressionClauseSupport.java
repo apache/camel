@@ -690,11 +690,27 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T tokenize(String token, String headerName, boolean regex, String group, boolean skipFirst) {
+        return tokenize(token, headerName, regex, group, null, skipFirst);
+    }
+
+    /**
+     * Evaluates a token expression on the given header
+     *
+     * @param token the token
+     * @param headerName name of header to tokenize
+     * @param regex whether the token is a regular expression or not
+     * @param group to group by number of parts
+     * @param groupDelimiter delimiter to use when grouping
+     * @param skipFirst whether to skip the very first element
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token, String headerName, boolean regex, String group, String groupDelimiter, boolean skipFirst) {
         TokenizerExpression expression = new TokenizerExpression();
         expression.setToken(token);
         expression.setHeaderName(headerName);
         expression.setRegex(regex);
         expression.setGroup(group);
+        expression.setGroupDelimiter(groupDelimiter);
         expression.setSkipFirst(skipFirst);
         setExpressionType(expression);
         return result;
