@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -28,7 +29,7 @@ import org.junit.Test;
 /**
  * Unit test for PropertyBindingSupport
  */
-public class PropertyBindingSupportMapTest extends ContextTestSupport {
+public class PropertyBindingSupportListTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -52,7 +53,7 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesMap() throws Exception {
+    public void testPropertiesList() throws Exception {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new LinkedHashMap<>();
@@ -60,8 +61,8 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
         prop.put("bar.age", "33");
         prop.put("bar.{{committer}}", "true");
         prop.put("bar.gold-customer", "true");
-        prop.put("bar.works[acme]", "#bean:company1");
-        prop.put("bar.works[burger]", "#bean:company2");
+        prop.put("bar.works[0]", "#bean:company1");
+        prop.put("bar.works[1]", "#bean:company2");
 
         PropertyBindingSupport.bindProperties(context, foo, prop);
 
@@ -70,14 +71,14 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
         assertTrue(foo.getBar().isRider());
         assertTrue(foo.getBar().isGoldCustomer());
         assertEquals(2, foo.getBar().getWorks().size());
-        assertEquals(123, foo.getBar().getWorks().get("acme").getId());
-        assertEquals("Acme", foo.getBar().getWorks().get("acme").getName());
-        assertEquals(456, foo.getBar().getWorks().get("burger").getId());
-        assertEquals("Acme 2", foo.getBar().getWorks().get("burger").getName());
+        assertEquals(123, foo.getBar().getWorks().get(0).getId());
+        assertEquals("Acme", foo.getBar().getWorks().get(0).getName());
+        assertEquals(456, foo.getBar().getWorks().get(1).getId());
+        assertEquals("Acme 2", foo.getBar().getWorks().get(1).getName());
     }
 
     @Test
-    public void testPropertiesMapNested() throws Exception {
+    public void testPropertiesListNested() throws Exception {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new LinkedHashMap<>();
@@ -85,10 +86,10 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
         prop.put("bar.age", "33");
         prop.put("bar.{{committer}}", "true");
         prop.put("bar.gold-customer", "true");
-        prop.put("bar.works[acme]", "#bean:company1");
-        prop.put("bar.works[acme].id", "666");
-        prop.put("bar.works[burger]", "#bean:company2");
-        prop.put("bar.works[burger].name", "I changed this");
+        prop.put("bar.works[0]", "#bean:company1");
+        prop.put("bar.works[0].id", "666");
+        prop.put("bar.works[1]", "#bean:company2");
+        prop.put("bar.works[1].name", "I changed this");
 
         PropertyBindingSupport.bindProperties(context, foo, prop);
 
@@ -97,47 +98,47 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
         assertTrue(foo.getBar().isRider());
         assertTrue(foo.getBar().isGoldCustomer());
         assertEquals(2, foo.getBar().getWorks().size());
-        assertEquals(666, foo.getBar().getWorks().get("acme").getId());
-        assertEquals("Acme", foo.getBar().getWorks().get("acme").getName());
-        assertEquals(456, foo.getBar().getWorks().get("burger").getId());
-        assertEquals("I changed this", foo.getBar().getWorks().get("burger").getName());
+        assertEquals(666, foo.getBar().getWorks().get(0).getId());
+        assertEquals("Acme", foo.getBar().getWorks().get(0).getName());
+        assertEquals(456, foo.getBar().getWorks().get(1).getId());
+        assertEquals("I changed this", foo.getBar().getWorks().get(1).getName());
     }
 
     @Test
-    public void testPropertiesMapFirst() throws Exception {
+    public void testPropertiesListFirst() throws Exception {
         Bar bar = new Bar();
 
         Map<String, Object> prop = new LinkedHashMap<>();
-        prop.put("works[acme]", "#bean:company1");
-        prop.put("works[acme].id", "666");
-        prop.put("works[burger]", "#bean:company2");
-        prop.put("works[burger].name", "I changed this");
+        prop.put("works[0]", "#bean:company1");
+        prop.put("works[0].id", "666");
+        prop.put("works[1]", "#bean:company2");
+        prop.put("works[1].name", "I changed this");
 
         PropertyBindingSupport.bindProperties(context, bar, prop);
 
         assertEquals(2, bar.getWorks().size());
-        assertEquals(666, bar.getWorks().get("acme").getId());
-        assertEquals("Acme", bar.getWorks().get("acme").getName());
-        assertEquals(456, bar.getWorks().get("burger").getId());
-        assertEquals("I changed this", bar.getWorks().get("burger").getName());
+        assertEquals(666, bar.getWorks().get(0).getId());
+        assertEquals("Acme", bar.getWorks().get(0).getName());
+        assertEquals(456, bar.getWorks().get(1).getId());
+        assertEquals("I changed this", bar.getWorks().get(1).getName());
     }
 
     @Test
-    public void testPropertiesNotMap() throws Exception {
+    public void testPropertiesNotList() throws Exception {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new LinkedHashMap<>();
         prop.put("name", "James");
         prop.put("bar.age", "33");
-        prop.put("bar.gold-customer[foo]", "true");
+        prop.put("bar.gold-customer[]", "true");
 
         try {
             PropertyBindingSupport.bindProperties(context, foo, prop);
             fail("Should have thrown exception");
         } catch (PropertyBindingException e) {
-            assertEquals("bar.gold-customer[foo]", e.getPropertyName());
+            assertEquals("bar.gold-customer[]", e.getPropertyName());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertTrue(iae.getMessage().startsWith("Cannot set property: gold-customer[foo] as either a Map/List because target bean is not a Map or List type"));
+            assertTrue(iae.getMessage().startsWith("Cannot set property: gold-customer[] as either a Map/List because target bean is not a Map or List type"));
         }
     }
 
@@ -165,7 +166,7 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
     public static class Bar {
         private int age;
         private boolean rider;
-        private Map<String, Company> works; // should auto-create this via the setter
+        private List<Company> works; // should auto-create this via the setter
         private boolean goldCustomer;
 
         public int getAge() {
@@ -184,11 +185,11 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
             this.rider = rider;
         }
 
-        public Map<String, Company> getWorks() {
+        public List<Company> getWorks() {
             return works;
         }
 
-        public void setWorks(Map<String, Company> works) {
+        public void setWorks(List<Company> works) {
             this.works = works;
         }
 
