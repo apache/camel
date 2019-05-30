@@ -22,12 +22,13 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.PropertyBindingException;
 
 import static org.apache.camel.support.IntrospectionSupport.findSetterMethods;
-import static org.apache.camel.support.IntrospectionSupport.getOrElseProperty;
 
 /**
  * A convenient support class for binding String valued properties to an instance which
@@ -44,7 +45,7 @@ import static org.apache.camel.support.IntrospectionSupport.getOrElseProperty;
  */
 public final class PropertyBindingSupport {
 
-    // TODO: Add support for Map/List
+    // TODO: Add support for Map/List in keys
 
     /**
      * To use a fluent builder style to configure this property binding support.
@@ -359,6 +360,8 @@ public final class PropertyBindingSupport {
             }
         }
 
+        // TODO: support key without nested dots
+
         // if name has dot then we need to OGNL walk it
         if (nesting) {
             if (name.indexOf('.') > 0) {
@@ -438,6 +441,26 @@ public final class PropertyBindingSupport {
         }
 
         return IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, value, refName, fluentBuilder);
+    }
+
+    private static Object getOrElseProperty(Object target, String property, Object defaultValue) {
+        String key = property;
+        String mapKey = null;
+
+        // support maps in keys
+        if (property.contains("[") && property.endsWith("]")) {
+            int pos = property.indexOf('[');
+            mapKey = property.substring(pos + 1, property.length() - 1);
+            key = property.substring(0, pos);
+        }
+
+        Object answer = IntrospectionSupport.getOrElseProperty(target, key, defaultValue);
+        if (answer instanceof Map && mapKey != null) {
+            Map map = (Map) answer;
+            answer = map.getOrDefault(mapKey, defaultValue);
+        }
+
+        return answer;
     }
 
     private static Method findBestSetterMethod(Class clazz, String name, boolean fluentBuilder) {
