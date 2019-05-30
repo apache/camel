@@ -4,7 +4,7 @@
 *Available as of Camel version 2.19*
 
 The gRPC component allows you to call or expose Remote Procedure Call (RPC) services
-using https://developers.google.com/protocol-buffers/docs/overview[Protocol Buffers (protobuf)] 
+using https://developers.google.com/protocol-buffers/docs/overview[Protocol Buffers (protobuf)]
 exchange format over HTTP/2 transport.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -168,6 +168,9 @@ To enable these features the following component properties combinations must be
 TLS with OpenSSL is currently the recommended approach for using gRPC over TLS component.
 Using the JDK for ALPN is generally much slower and may not support the necessary ciphers for HTTP2. This function is not implemented in the component.
 
+There might be a need to install additional libraries according to the Operating System of choice.
+For more information consult https://github.com/grpc/grpc-java/blob/master/SECURITY.md[the Security page of gRPC].
+
 ### gRPC producer resource type mapping
 
 The table below shows the types of objects in the message body, depending on the types (simple or stream) of incoming and outgoing parameters, as well as the invocation style (synchronous or asynchronous). Please note, that invocation of the procedures with incoming stream parameter in asynchronous style are not allowed.
@@ -267,7 +270,7 @@ It's it is recommended to use Maven Protocol Buffers Plugin which calls Protocol
 
 Following steps are required:
 
-Insert operating system and CPU architecture detection extension inside **<build>** tag of the project pom.xml or set ${os.detected.classifier} parameter manually 
+Insert operating system and CPU architecture detection extension inside **<build>** tag of the project pom.xml or set ${os.detected.classifier} parameter manually
 [source,xml]
 -------------------------------------------------------------------------
 <extensions>
