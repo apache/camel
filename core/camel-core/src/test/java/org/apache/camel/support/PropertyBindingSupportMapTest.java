@@ -104,6 +104,25 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
     }
 
     @Test
+    public void testPropertiesMapFirst() throws Exception {
+        Bar bar = new Bar();
+
+        Map<String, Object> prop = new LinkedHashMap<>();
+        prop.put("works[acme]", "#bean:company1");
+        prop.put("works[acme].id", "666");
+        prop.put("works[burger]", "#bean:company2");
+        prop.put("works[burger].name", "I changed this");
+
+        PropertyBindingSupport.bindProperties(context, bar, prop);
+
+        assertEquals(2, bar.getWorks().size());
+        assertEquals(666, bar.getWorks().get("acme").getId());
+        assertEquals("Acme", bar.getWorks().get("acme").getName());
+        assertEquals(456, bar.getWorks().get("burger").getId());
+        assertEquals("I changed this", bar.getWorks().get("burger").getName());
+    }
+
+    @Test
     public void testPropertiesNotMap() throws Exception {
         Foo foo = new Foo();
 
