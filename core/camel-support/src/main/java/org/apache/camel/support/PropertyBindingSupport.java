@@ -36,6 +36,7 @@ import static org.apache.camel.support.IntrospectionSupport.findSetterMethods;
  * <ul>
  *     <li>property placeholders - Keys and values using Camels property placeholder will be resolved</li>
  *     <li>nested - Properties can be nested using the dot syntax (OGNL and builder pattern using with as prefix), eg foo.bar=123</li>
+ *     <li>keys with map</li> - Properties can lookup in Map's using map syntax, eg foo[bar] where foo is the name of the property that is a Map instance, and bar is the name of the key.</li>
  *     <li>reference by bean id - Values can refer to other beans in the registry by prefixing with #nean: eg #bean:myBean</li>
  *     <li>reference by type - Values can refer to singleton beans by their type in the registry by prefixing with #type: syntax, eg #type:com.foo.MyClassType</li>
  *     <li>autowire by type - Values can refer to singleton beans by auto wiring by setting the value to #autowired</li>
@@ -45,7 +46,7 @@ import static org.apache.camel.support.IntrospectionSupport.findSetterMethods;
  */
 public final class PropertyBindingSupport {
 
-    // TODO: Add support for Map/List in keys
+    // TODO: Add support for List in keys
 
     /**
      * To use a fluent builder style to configure this property binding support.
@@ -359,8 +360,6 @@ public final class PropertyBindingSupport {
                 value = context.resolvePropertyPlaceholders(value.toString());
             }
         }
-
-        // TODO: support key without nested dots
 
         // if name has dot then we need to OGNL walk it
         if (nesting) {
