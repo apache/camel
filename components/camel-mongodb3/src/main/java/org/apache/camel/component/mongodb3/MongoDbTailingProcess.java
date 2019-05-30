@@ -178,6 +178,15 @@ public class MongoDbTailingProcess implements Runnable {
             if (keepRunning) {
                 LOG.debug("Cursor not found exception from MongoDB, will regenerate cursor. This is normal behaviour with tailable cursors.", e);
             }
+        } catch (IllegalStateException e) {
+            // cursor.hasNext() opens socket and waiting for data
+            // it throws exception when cursor is closed in another thread
+            // there is no way to stop hasNext() before closing cursor
+            if (keepRunning) {
+                throw e;
+            } else {
+                LOG.debug("Cursor closed exception from MongoDB, will regenerate cursor. This is normal behaviour with tailable cursors.", e);
+            }
         }
 
         // the loop finished, persist the lastValue just in case we are shutting
