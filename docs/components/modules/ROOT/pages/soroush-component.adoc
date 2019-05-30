@@ -3,9 +3,6 @@
 
 *Available as of Camel version 3.0*
 
-*Available as of Camel version 3.0*
-
-
 The *Soroush* component provides access to the https://soroush-app.ir/developer.html[Soroush Bot API].
 It allows a Camel-based application to send and receive messages by acting as a Bot, i.e. participating in direct conversation with normal users and send and receive message and files
 
@@ -51,7 +48,7 @@ attachments if provided in the message  (`SoroushMessage.file`, `SoroushMessage.
 and store the urls in the message (`SoroushMessage.fileUrl`, `SoroushMessage.thumbnailUrl`).
 |===
 
-
+### Options
 
 // component options: START
 The Soroush component supports 3 options, which are listed below.
@@ -222,7 +219,7 @@ from("soroush:getMessage/YourAuthorizationToken")
     .to("soroush:sendMessage/YourAuthorizationToken");
 -------------
 
-====== Auto Upload Attachments
+#### Auto Upload Attachments
 This endpoint can help you to automatically upload files and thumbnails of a message to the server
 and set `fileUrl` and `thumbnailUrl` of that message to proper values taken from Soroush Upload File Api.
 The only thing you need to do is setting `SoroushMessage.file` and `SoroushMessage.thumbnail` properties.
