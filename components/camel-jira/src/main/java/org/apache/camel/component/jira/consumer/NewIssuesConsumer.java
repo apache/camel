@@ -32,14 +32,17 @@ import org.apache.camel.component.jira.JiraEndpoint;
 public class NewIssuesConsumer extends AbstractJiraConsumer {
 
     private final String jql;
-
     private long latestIssueId = -1;
 
     public NewIssuesConsumer(JiraEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-
         jql = endpoint.getJql() + " ORDER BY key desc";
+    }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        // read the actual issues, the next poll outputs only the new issues added after the route start
         // grab only the top
         List<Issue> issues = getIssues(jql, 0, 1, 1);
         // in case there aren't any issues...
