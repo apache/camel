@@ -18,7 +18,7 @@ package org.apache.camel.component.mongodb3;
 
 public enum MongoDbConsumerType {
 
-    tailable
+    tailable,
+    changeStreams
     // more consumer types to be included in future versions
-
 }

@@ -32,8 +32,12 @@ import org.apache.camel.support.DefaultComponent;
 @Component("mongodb,mongodb3")
 public class MongoDbComponent extends DefaultComponent {
 
-    public static final Set<MongoDbOperation> WRITE_OPERATIONS = new HashSet<>(Arrays.asList(MongoDbOperation.insert, MongoDbOperation.save, MongoDbOperation.update,
-                                                                                             MongoDbOperation.remove));
+    public static final Set<MongoDbOperation> WRITE_OPERATIONS = new HashSet<>(Arrays.asList(
+            MongoDbOperation.insert,
+            MongoDbOperation.save,
+            MongoDbOperation.update,
+            MongoDbOperation.remove));
+
     public MongoDbComponent() {
         this(null);
     }
@@ -53,16 +57,14 @@ public class MongoDbComponent extends DefaultComponent {
 
     @Override
     protected void doShutdown() throws Exception {
-
         super.doShutdown();
     }
 
     public static CamelMongoDbException wrapInCamelMongoDbException(Throwable t) {
         if (t instanceof CamelMongoDbException) {
-            return (CamelMongoDbException)t;
+            return (CamelMongoDbException) t;
         } else {
             return new CamelMongoDbException(t);
         }
     }
-
 }
