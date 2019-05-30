@@ -23,15 +23,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.PropertyBindingException;
 
 import static org.apache.camel.support.IntrospectionSupport.findSetterMethods;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
-import static org.apache.camel.util.StringHelper.notEmpty;
 
 /**
  * A convenient support class for binding String valued properties to an instance which
@@ -42,7 +39,7 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  *     <li>map</li> - Properties can lookup in Map's using map syntax, eg foo[bar] where foo is the name of the property that is a Map instance, and bar is the name of the key.</li>
  *     <li>list</li> - Properties can refer or add to in List's using list syntax, eg foo[0] where foo is the name of the property that is a
  *                     List instance, and 0 is the index. To refer to the last element, then use last as key.</li>
- *     <li>reference by bean id - Values can refer to other beans in the registry by prefixing with #nean: eg #bean:myBean</li>
+ *     <li>reference by bean id - Values can refer to other beans in the registry by prefixing with with # or #bean: eg #myBean or #bean:myBean</li>
  *     <li>reference by type - Values can refer to singleton beans by their type in the registry by prefixing with #type: syntax, eg #type:com.foo.MyClassType</li>
  *     <li>autowire by type - Values can refer to singleton beans by auto wiring by setting the value to #autowired</li>
  *     <li>reference new class - Values can refer to creating new beans by their class name by prefixing with #class, eg #class:com.foo.MyClassType</li>
@@ -50,8 +47,6 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  * This implementations reuses parts of {@link IntrospectionSupport}.
  */
 public final class PropertyBindingSupport {
-
-    // TODO: Add support for List in keys
 
     /**
      * To use a fluent builder style to configure this property binding support.
@@ -287,6 +282,9 @@ public final class PropertyBindingSupport {
         org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
         boolean rc = false;
 
+        // must set reference parameters first before the other bindings
+        setReferenceProperties(camelContext, target, properties);
+
         for (Iterator<Map.Entry<String, Object>> iter = properties.entrySet().iterator(); iter.hasNext();) {
             Map.Entry<String, Object> entry = iter.next();
             if (bindProperty(camelContext, target, entry.getKey(), entry.getValue(), nesting, deepNesting, fluentBuilder, reference, placeholder)) {
@@ -439,7 +437,7 @@ public final class PropertyBindingSupport {
                 }
             } else if (value.toString().startsWith("#bean:")) {
                 // okay its a reference so swap to lookup this which is already supported in IntrospectionSupport
-                refName = ((String) value).substring(6);
+                refName = "#" + ((String) value).substring(6);
                 value = null;
             }
         }
@@ -512,6 +510,43 @@ public final class PropertyBindingSupport {
     private static boolean isComplexUserType(Class type) {
         // lets consider all non java, as complex types
         return type != null && !type.isPrimitive() && !type.getName().startsWith("java");
+    }
+
+    private static void setReferenceProperties(CamelContext context, Object target, Map<String, Object> parameters) {
+        Iterator<Map.Entry<String, Object>> it = parameters.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Object> entry = it.next();
+            String name = entry.getKey();
+
+            // we only support basic keys
+            if (name.contains(".") || name.contains("[") || name.contains("]")) {
+                continue;
+            }
+
+            Object v = entry.getValue();
+            String value = v != null ? v.toString() : null;
+            if (isReferenceParameter(value)) {
+                try {
+                    boolean hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, null, value, true);
+                    if (hit) {
+                        // must remove as its a valid option and we could configure it
+                        it.remove();
+                    }
+                } catch (Exception e) {
+                    throw new PropertyBindingException(target, e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Is the given parameter a reference parameter (starting with a # char)
+     *
+     * @param parameter the parameter
+     * @return <tt>true</tt> if its a reference parameter
+     */
+    private static boolean isReferenceParameter(String parameter) {
+        return parameter != null && parameter.trim().startsWith("#");
     }
 
 }

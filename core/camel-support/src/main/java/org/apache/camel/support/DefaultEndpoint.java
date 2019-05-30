@@ -379,9 +379,6 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * @param parameters  properties to set
      */
     protected void setProperties(Object bean, Map<String, Object> parameters) throws Exception {
-        // set reference properties first as they use # syntax that fools the regular properties setter
-        EndpointHelper.setReferenceProperties(camelContext, bean, parameters);
-
         if (basicPropertyBinding) {
             // use basic binding
             PropertyBindingSupport.build()

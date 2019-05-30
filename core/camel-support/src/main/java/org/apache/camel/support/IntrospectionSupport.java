@@ -570,14 +570,16 @@ public final class IntrospectionSupport {
             if (obj instanceof Map) {
                 Map map = (Map) obj;
                 if (context != null && refName != null && value == null) {
-                    value = CamelContextHelper.lookup(context, refName);
+                    String s = StringHelper.replaceAll(refName, "#", "");
+                    value = CamelContextHelper.lookup(context, s);
                 }
                 map.put(lookupKey, value);
                 return true;
             } else if (obj instanceof List) {
                 List list = (List) obj;
                 if (context != null && refName != null && value == null) {
-                    value = CamelContextHelper.lookup(context, refName);
+                    String s = StringHelper.replaceAll(refName, "#", "");
+                    value = CamelContextHelper.lookup(context, s);
                 }
                 if (isNotEmpty(lookupKey)) {
                     int idx = Integer.valueOf(lookupKey);
