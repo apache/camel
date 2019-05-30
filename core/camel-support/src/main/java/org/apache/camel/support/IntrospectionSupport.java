@@ -524,17 +524,47 @@ public final class IntrospectionSupport {
     }
 
     /**
-     * This method supports two modes to set a property:
+     * This method supports three modes to set a property:
      *
-     * 1. Setting a property that has already been resolved, this is the case when {@code context} and {@code refName} are
+     * 1. Setting a Map property where the property name refers to a map via name[aKey] where aKey is the map key to use.
+     *
+     * 2. Setting a property that has already been resolved, this is the case when {@code context} and {@code refName} are
      * NULL and {@code value} is non-NULL.
      *
-     * 2. Setting a property that has not yet been resolved, the property will be resolved based on the suitable methods
+     * 3. Setting a property that has not yet been resolved, the property will be resolved based on the suitable methods
      * found matching the property name on the {@code target} bean. For this mode to be triggered the parameters
      * {@code context} and {@code refName} must NOT be NULL, and {@code value} MUST be NULL.
      */
     public static boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
                                       boolean allowBuilderPattern) throws Exception {
+
+        // does the property name include a mapped key, then we need to set the property as a map
+        if (name.contains("[") && name.endsWith("]")) {
+            int pos = name.indexOf('[');
+            String mapKey = name.substring(pos + 1, name.length() - 1);
+            String key = name.substring(0, pos);
+
+            Object obj = IntrospectionSupport.getOrElseProperty(target, key, null);
+            if (obj == null) {
+                // it was supposed to be a map, but its null, so lets create a new map and set it automatically
+                obj = new LinkedHashMap<>();
+                boolean hit = IntrospectionSupport.setProperty(context, target, key, obj);
+                if (!hit) {
+                    throw new IllegalArgumentException("Cannot set property: " + name + " as a Map because target bean has no setter method for the Map");
+                }
+            }
+            if (obj instanceof Map) {
+                Map map = (Map) obj;
+                if (context != null && refName != null && value == null) {
+                    value = CamelContextHelper.lookup(context, refName);
+                }
+                map.put(mapKey, value);
+                return true;
+            } else {
+                // not a map
+                throw new IllegalArgumentException("Cannot set property: " + name + " as a Map because target bean is not a Map: " + target);
+            }
+        }
 
         Class<?> clazz = target.getClass();
         Collection<Method> setters;
