@@ -101,10 +101,10 @@ public class DefaultHealthCheckRegistry implements HealthCheckRegistry {
 
     @Override
     public void setRepositories(Collection<HealthCheckRepository> repositories) {
-        repositories.clear();
-        repositories.addAll(repositories);
+        this.repositories.clear();
+        this.repositories.addAll(repositories);
     }
-    
+
     @Override
     public Collection<HealthCheckRepository> getRepositories() {
         return Collections.unmodifiableCollection(repositories);
