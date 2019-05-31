@@ -35,8 +35,8 @@ The Apache Pulsar component supports 4 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *autoConfiguration* (common) | The pulsar autoconfiguration |  | AutoConfiguration
-| *pulsarClient* (common) | The pulsar client |  | PulsarClient
+| *autoConfiguration* (advanced) | The pulsar auto configuration |  | AutoConfiguration
+| *pulsarClient* (advanced) | The pulsar client |  | PulsarClient
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
@@ -76,7 +76,7 @@ with the following path and query parameters:
 | *consumerNamePrefix* (consumer) | Prefix to add to consumer names when a SHARED or FAILOVER subscription is used | cons | String
 | *consumerQueueSize* (consumer) | Size of the consumer queue - defaults to 10 | 10 | int
 | *numberOfConsumers* (consumer) | Number of consumers - defaults to 1 | 1 | int
-| *subscriptionName* (consumer) | Name of the subscription to use | subscription | String
+| *subscriptionName* (consumer) | Name of the subscription to use | subs | String
 | *subscriptionType* (consumer) | Type of the subscription EXCLUSIVESHAREDFAILOVER, defaults to EXCLUSIVE | EXCLUSIVE | SubscriptionType
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
@@ -108,7 +108,7 @@ The component supports 5 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.pulsar.auto-configuration* | The pulsar autoconfiguration. The option is a org.apache.camel.component.pulsar.utils.AutoConfiguration type. |  | String
+| *camel.component.pulsar.auto-configuration* | The pulsar auto configuration. The option is a org.apache.camel.component.pulsar.utils.AutoConfiguration type. |  | String
 | *camel.component.pulsar.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.pulsar.enabled* | Whether to enable auto configuration of the pulsar component. This is enabled by default. |  | Boolean
 | *camel.component.pulsar.pulsar-client* | The pulsar client. The option is a org.apache.pulsar.client.api.PulsarClient type. |  | String

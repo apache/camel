@@ -108,7 +108,7 @@ The component supports 5 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.pulsar.auto-configuration* | The pulsar autoconfiguration. The option is a org.apache.camel.component.pulsar.utils.AutoConfiguration type. |  | String
+| *camel.component.pulsar.auto-configuration* | The pulsar auto configuration. The option is a org.apache.camel.component.pulsar.utils.AutoConfiguration type. |  | String
 | *camel.component.pulsar.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.pulsar.enabled* | Whether to enable auto configuration of the pulsar component. This is enabled by default. |  | Boolean
 | *camel.component.pulsar.pulsar-client* | The pulsar client. The option is a org.apache.pulsar.client.api.PulsarClient type. |  | String
