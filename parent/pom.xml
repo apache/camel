@@ -704,8 +704,8 @@
         <xbean-asm4-bundle-version>3.14</xbean-asm4-bundle-version>
         <xbean-asm5-shaded-version>4.5</xbean-asm5-shaded-version>
         <xchange-version>4.3.18</xchange-version>
-        <xerces-bundle-version>2.11.0_1</xerces-bundle-version>
-        <xerces-version>2.11.0</xerces-version>
+        <xerces-bundle-version>2.12.0_1</xerces-bundle-version>
+        <xerces-version>2.12.0</xerces-version>
         <!-- needed to manage the xml-apis version in camel-xmljson -->
         <xml-apis-version>1.4.01</xml-apis-version>
         <xml-apis-ext-version>1.3.04</xml-apis-ext-version>
