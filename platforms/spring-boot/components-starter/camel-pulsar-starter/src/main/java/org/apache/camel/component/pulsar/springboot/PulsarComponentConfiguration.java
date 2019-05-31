@@ -37,7 +37,7 @@ public class PulsarComponentConfiguration
      */
     private Boolean enabled;
     /**
-     * The pulsar autoconfiguration. The option is a
+     * The pulsar auto configuration. The option is a
      * org.apache.camel.component.pulsar.utils.AutoConfiguration type.
      */
     private String autoConfiguration;
