@@ -135,7 +135,7 @@ public final class DefaultHealthCheckService extends ServiceSupport implements H
 
     @Override
     public void setHealthCheckOptions(String id, Map<String, Object> options) {
-        options.put(id, options);
+        this.options.put(id, options);
     }
 
     @Override
