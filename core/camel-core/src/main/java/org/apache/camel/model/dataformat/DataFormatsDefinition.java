@@ -53,6 +53,7 @@ public class DataFormatsDefinition {
         @XmlElement(required = false, name = "fhirJson", type = FhirJsonDataFormat.class),
         @XmlElement(required = false, name = "fhirXml", type = FhirXmlDataFormat.class),
         @XmlElement(required = false, name = "flatpack", type = FlatpackDataFormat.class),
+        @XmlElement(required = false, name = "grok", type = GrokDataFormat.class),
         @XmlElement(required = false, name = "gzip", type = GzipDataFormat.class),
         @XmlElement(required = false, name = "hl7", type = HL7DataFormat.class),
         @XmlElement(required = false, name = "ical", type = IcalDataFormat.class),

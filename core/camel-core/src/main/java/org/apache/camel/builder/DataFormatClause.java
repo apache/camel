@@ -35,6 +35,7 @@ import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
+import org.apache.camel.model.dataformat.GrokDataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
@@ -244,6 +245,15 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T custom(String ref) {
         return dataFormat(new CustomDataFormat(ref));
+    }
+
+    /**
+     * Uses the Grok data format
+     */
+    public T grok(String pattern) {
+        GrokDataFormat grokDataFormat = new GrokDataFormat();
+        grokDataFormat.setPattern(pattern);
+        return dataFormat(grokDataFormat);
     }
 
     /**

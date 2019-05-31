@@ -902,7 +902,7 @@ Number of Components: 296 in 233 JAR artifacts (0 deprecated)
 ==== Data Formats
 
 // dataformats: START
-Number of Data Formats: 44 in 36 JAR artifacts (0 deprecated)
+Number of Data Formats: 45 in 37 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -937,6 +937,8 @@ Number of Data Formats: 44 in 36 JAR artifacts (0 deprecated)
 | link:camel-fhir/camel-fhir-component/src/main/docs/fhirXml-dataformat.adoc[FHIR XML] (camel-fhir) | 2.21 | The FHIR XML data format is used to marshall/unmarshall from/to FHIR objects to/from XML.
 
 | link:camel-flatpack/src/main/docs/flatpack-dataformat.adoc[Flatpack] (camel-flatpack) | 2.1 | The Flatpack data format is used for working with flat payloads (such as CSV, delimited, or fixed length formats).
+
+| link:camel-grok/src/main/docs/grok-dataformat.adoc[Grok] (camel-grok) | 3.0 | The Grok data format is used for unmarshalling unstructured data to objects using Logstash based Grok patterns.
 
 | link:camel-zip-deflater/src/main/docs/gzipdeflater-dataformat.adoc[GZip Deflater] (camel-zip-deflater) | 2.0 | The GZip data format is a message compression and de-compression format (which works with the popular gzip/gunzip tools).
 
