@@ -81,6 +81,14 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
     }
 
     @Test
+    public void testInsertJsonInputStreamWithSpaces() throws Exception {
+        assertEquals(0, testCollection.count());
+        template.requestBody("direct:insertJsonString", IOConverter.toInputStream("    {\"test\": [\"test\"], \"_id\": \"testInsertJsonStringWithSpaces\"}\n", null));
+        Document b = testCollection.find(eq(MONGO_ID, "testInsertJsonStringWithSpaces")).first();
+        assertNotNull("No record with 'testInsertJsonStringWithSpaces' _id", b);
+    }
+
+    @Test
     public void testInsertBsonInputStream() {
         assertEquals(0, testCollection.count());
 
