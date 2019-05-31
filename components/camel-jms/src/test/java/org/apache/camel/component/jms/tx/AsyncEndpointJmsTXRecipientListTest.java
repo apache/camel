@@ -44,8 +44,8 @@ public class AsyncEndpointJmsTXRecipientListTest extends CamelSpringTestSupport 
 
         assertMockEndpointsSatisfied();
 
-        // we are asynchronous due to recipientlist so that we are NOT using same threads during the routing
-        assertFalse("Should not use same threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        // we are asynchronous due to multicast so we should ideally use same thread during processing
+        assertTrue("Should use same threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
     }
 
     @Override
@@ -72,7 +72,7 @@ public class AsyncEndpointJmsTXRecipientListTest extends CamelSpringTestSupport 
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 afterThreadName = Thread.currentThread().getName();
-                                assertFalse("Exchange should NO longer be transacted", exchange.isTransacted());
+                                assertTrue("Exchange should be transacted", exchange.isTransacted());
                             }
                         })
                         .to("log:after")
