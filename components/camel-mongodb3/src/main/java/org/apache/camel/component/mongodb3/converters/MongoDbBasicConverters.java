@@ -106,6 +106,8 @@ public final class MongoDbBasicConverters {
             } else if (!Character.isWhitespace(input[i])) {
                 return true;
             }
+
+            i++;
         }
         return true;
     }
