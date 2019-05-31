@@ -35,6 +35,13 @@ public class PulsarComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private PulsarClient pulsarClient;
 
+    public PulsarComponent() {
+    }
+
+    public PulsarComponent(CamelContext context) {
+        super(context);
+    }
+
     @Override
     protected Endpoint createEndpoint(final String uri, final String path, final Map<String, Object> parameters) throws Exception {
         final PulsarConfiguration configuration = new PulsarConfiguration();
