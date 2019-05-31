@@ -39,6 +39,7 @@ import org.apache.camel.model.dataformat.FhirDataformat;
 import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
+import org.apache.camel.model.dataformat.GrokDataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
@@ -91,6 +92,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
         map.put(FhirJsonDataFormat.class, FhirJsonDataFormatReifier::new);
         map.put(FhirXmlDataFormat.class, FhirXmlDataFormatReifier::new);
         map.put(FlatpackDataFormat.class, FlatpackDataFormatReifier::new);
+        map.put(GrokDataFormat.class, GrokDataFormatReifier::new);
         map.put(GzipDataFormat.class, GzipDataFormatReifier::new);
         map.put(HL7DataFormat.class, HL7DataFormatReifier::new);
         map.put(IcalDataFormat.class, IcalDataFormatReifier::new);
