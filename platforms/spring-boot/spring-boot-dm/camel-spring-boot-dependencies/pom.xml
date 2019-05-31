@@ -167,6 +167,11 @@
         <version>1.7</version>
       </dependency>
       <dependency>
+        <groupId>io.krakens</groupId>
+        <artifactId>java-grok</artifactId>
+        <version>0.1.9</version>
+      </dependency>
+      <dependency>
         <groupId>io.nessus</groupId>
         <artifactId>nessus-ipfs-client</artifactId>
         <version>1.0.0.Beta4</version>
@@ -1350,6 +1355,16 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-grape-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-grok</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-grok-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
