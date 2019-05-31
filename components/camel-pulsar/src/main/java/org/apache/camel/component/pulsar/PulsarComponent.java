@@ -30,18 +30,10 @@ import org.apache.pulsar.client.api.PulsarClient;
 @Component("pulsar")
 public class PulsarComponent extends DefaultComponent {
 
-    @Metadata
+    @Metadata(label = "advanced")
     private AutoConfiguration autoConfiguration;
-    @Metadata
+    @Metadata(label = "advanced")
     private PulsarClient pulsarClient;
-
-    public PulsarComponent() {
-        this(null);
-    }
-
-    public PulsarComponent(CamelContext context) {
-        super(context);
-    }
 
     @Override
     protected Endpoint createEndpoint(final String uri, final String path, final Map<String, Object> parameters) throws Exception {
@@ -64,7 +56,7 @@ public class PulsarComponent extends DefaultComponent {
     }
 
     /**
-     * The pulsar autoconfiguration
+     * The pulsar auto configuration
      */
     public void setAutoConfiguration(AutoConfiguration autoConfiguration) {
         this.autoConfiguration = autoConfiguration;

@@ -25,9 +25,9 @@ import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionType
 @UriParams
 public class PulsarConfiguration {
 
-    @UriParam(label = "consumer", defaultValue = "subscription")
+    @UriParam(label = "consumer", defaultValue = "subs")
     private String subscriptionName = "subs";
-    @UriParam(label = "consumer", enums = "EXCLUSIVE, SHARED, FAILOVER", defaultValue = "EXCLUSIVE")
+    @UriParam(label = "consumer", defaultValue = "EXCLUSIVE")
     private SubscriptionType subscriptionType = EXCLUSIVE;
     @UriParam(label = "consumer", defaultValue = "1")
     private int numberOfConsumers = 1;
