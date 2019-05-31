@@ -562,8 +562,8 @@
         <protobuf-maven-plugin-version>0.5.1</protobuf-maven-plugin-version>
         <protonpack-version>1.8</protonpack-version>
         <pubnub-version>4.21.0</pubnub-version>
-        <pulsar-version>2.2.1</pulsar-version>
-        <pulsar-bundle-version>2.2.1_1</pulsar-bundle-version>
+        <pulsar-version>2.3.1</pulsar-version>
+        <pulsar-bundle-version>2.3.1_1</pulsar-bundle-version>
         <qpid-broker-version>7.1.3</qpid-broker-version>
         <qpid-proton-j-version>0.33.0</qpid-proton-j-version>
         <qpid-jms-client-version>0.42.0</qpid-jms-client-version>

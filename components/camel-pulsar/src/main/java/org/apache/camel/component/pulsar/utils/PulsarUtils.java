@@ -18,11 +18,16 @@ package org.apache.camel.component.pulsar.utils;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.PulsarClientException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class PulsarUtils {
-    
+
+    private static final Logger LOG = LoggerFactory.getLogger(PulsarUtils.class);
+
     private PulsarUtils() {
     }
 
@@ -30,8 +35,17 @@ public final class PulsarUtils {
         while (!consumers.isEmpty()) {
             Consumer<byte[]> consumer = consumers.poll();
             if (consumer != null) {
-                consumer.unsubscribe();
-                consumer.close();
+                try {
+                    consumer.unsubscribe();
+                    consumer.close();
+                } catch (Exception e) {
+                    // ignore during stopping
+                    if (e instanceof PulsarClientException.AlreadyClosedException) {
+                        // ignore
+                    } else {
+                        LOG.debug("Error stopping consumer: " + consumer + " due to " + e.getMessage() + ". This exception is ignored", e);
+                    }
+                }
             }
         }
 
