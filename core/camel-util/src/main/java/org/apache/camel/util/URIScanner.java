@@ -191,9 +191,15 @@ class URIScanner {
                 // create a new list to hold the multiple values
                 list = new ArrayList<>();
                 String s = existing != null ? existing.toString() : null;
+                if(s.equals(value)) {
+                	return;
+                }
                 if (s != null) {
                     list.add(s);
                 }
+            }
+            if(list.contains(value)) {
+            	return;
             }
             list.add(value);
             answer.put(name, list);

@@ -339,6 +339,23 @@ public class URISupportTest {
         assertEquals("secret", map.get("password"));
         assertEquals("somechat", map.get("serviceName"));
 
+        map = URISupport.parseQuery("password=secret&password=secret&serviceName=somechat");
+        assertEquals(2, map.size());
+        assertEquals("secret", map.get("password"));
+        assertEquals("somechat", map.get("serviceName"));
+        
+        map = URISupport.parseQuery("batch=true&consumer.delay=100&batch=true");
+        assertEquals(2, map.size());
+        assertEquals("100", map.get("consumer.delay"));
+        assertEquals("true", map.get("batch"));
+        
+        map = URISupport.parseQuery("batch=1&batch=2&batch=1");
+        assertEquals(1, map.size());
+        List<?> list = (List<?>) map.get("batch");
+        assertEquals(2, list.size());
+        assertTrue(list.contains("1"));
+        assertTrue(list.contains("2"));
+        
         map = URISupport.parseQuery("password=RAW(++?w0rd)&serviceName=somechat");
         assertEquals(2, map.size());
         assertEquals("RAW(++?w0rd)", map.get("password"));
