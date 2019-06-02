@@ -188,12 +188,12 @@ class URIScanner {
             if (existing instanceof List) {
                 list = CastUtils.cast((List<?>) existing);
             } else {
-                // create a new list to hold the multiple values
-                list = new ArrayList<>();
                 String s = existing != null ? existing.toString() : null;
-                if(s.equals(value)) {
+                if(s != null && s.equals(value)) {
                 	return;
                 }
+                // create a new list to hold the multiple values
+                list = new ArrayList<>();
                 if (s != null) {
                     list.add(s);
                 }
