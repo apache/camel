@@ -81,6 +81,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         try {
             LOG.debug("loading type converter from bundle: {}", serviceReference.getBundle().getSymbolicName());
             if (delegate != null) {
+                ServiceHelper.startService(this.delegate);
                 loader.load(delegate);
             }
         } catch (Throwable t) {
@@ -233,7 +234,10 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         // inject CamelContext
         answer.setCamelContext(camelContext);
 
+
         try {
+            // init before loading core converters
+            answer.init();
             // only load the core type converters, as OSGi activator will keep track on bundles
             // being installed/uninstalled and load type converters as part of that process
             answer.loadCoreTypeConverters();
