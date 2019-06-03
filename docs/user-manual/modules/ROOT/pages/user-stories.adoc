@@ -248,6 +248,8 @@ Camel
 |http://www.openhub.cz/[OpenHub] |OpenHub is an integration platform
 that is built on top of Apache Camel.
 
+|https://www.platform6.io/[Platform6] | Decentralised application framework for blockchains, called Platform 6 which heavily uses Apache Camel and Web3j. 
+
 |https://abi-laboratory.pro/java/tracker/timeline/camel-core/[API
 Tracker 4j of camel-core] |The review of API changes for the Camel Core
 library since Camel 2.16 which is updated several times per week.
