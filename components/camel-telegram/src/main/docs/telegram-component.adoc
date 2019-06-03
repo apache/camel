@@ -79,12 +79,14 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (23 parameters):
+==== Query Parameters (25 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *proxyHost* (common) | The proxyHost which could be used when sending out the message. |  | String
+| *proxyPort* (common) | The proxyPort which could be used when sending out the message. |  | Integer
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *limit* (consumer) | Limit on the number of updates that can be received in a single polling request. | 100 | Integer
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
@@ -358,16 +360,16 @@ from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
 
         OutgoingTextMessage msg = new OutgoingTextMessage();
         msg.setText("Choose one option!");
-        
+
         InlineKeyboardButton buttonOptionOneI = InlineKeyboardButton.builder()
                 .text("Option One - I").build();
-        
+
         InlineKeyboardButton buttonOptionOneII = InlineKeyboardButton.builder()
                 .text("Option One - II").build();
-        
+
         InlineKeyboardButton buttonOptionTwoI = InlineKeyboardButton.builder()
                 .text("Option Two - I").build();
-        
+
         ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
                 .keyboard()
                     .addRow(Arrays.asList(buttonOptionOneI, buttonOptionOneII))
@@ -375,7 +377,7 @@ from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
                     .close()
                 .oneTimeKeyboard(true)
                 .build();
-        
+
         msg.setReplyKeyboardMarkup(replyMarkup);
 
         exchange.getIn().setBody(msg);
@@ -392,11 +394,11 @@ from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
 
         OutgoingTextMessage msg = new OutgoingTextMessage();
         msg.setText("Your answer was accepted!");
-        
+
         ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
                 .removeKeyboard(true)
                 .build();
-        
+
         msg.setReplyKeyboardMarkup(replyMarkup);
 
         exchange.getIn().setBody(msg);
