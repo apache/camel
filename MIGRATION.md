@@ -88,6 +88,8 @@ We have removed all deprecated components from Camel 2.x, also including the old
 
 We removed `camel-jibx` component which wasn't working on JDK 8.
 
+The `camel-zookeeper` has its route policy functionality removed, instead use `ZooKeeperClusterService` or the `camel-zookeeper-master` component.
+
 ### Renamed components
 
 The `test` component has been renamed to `dataset-test` and moved out of `camel-core` into `camel-dataset` JAR.
