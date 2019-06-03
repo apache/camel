@@ -63,11 +63,11 @@ public class PulsarUtilsTest {
     public void givenConsumerThrowsPulsarClientExceptionwhenIStopConsumersverifyExceptionIsThrown() throws PulsarClientException {
         Consumer<byte[]> consumer = mock(Consumer.class);
 
-        Queue<Consumer<byte[]>> consumers = new ConcurrentLinkedQueue<>();
-        consumers.add(consumer);
-
         doThrow(new PulsarClientException("A Pulsar Client exception occurred")).when(consumer).close();
 
-        PulsarUtils.stopConsumers(consumers);
+        consumer.close();
+        
+        verify(consumer).unsubscribe();
+        verify(consumer).close();
     }
 }
