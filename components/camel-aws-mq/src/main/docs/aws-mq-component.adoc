@@ -160,7 +160,7 @@ the https://aws.amazon.com/mq/[Amazon MQ] service.
 
 ### Automatic detection of AmazonMQ client in registry
 
-From Camel 3.0.0-M3 the component will be able to detect the presence of an AmazonMQ bean into the registry.
+The component is capable of detecting the presence of an AmazonMQ bean into the registry.
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
 This may be really useful for smarter configuration of the endpoint.
 
@@ -179,8 +179,7 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `${camel-version}` must be replaced by the actual version of Camel
-(2.16 or higher).
+where `${camel-version}` must be replaced by the actual version of Camel.
 
 ### See Also
 
