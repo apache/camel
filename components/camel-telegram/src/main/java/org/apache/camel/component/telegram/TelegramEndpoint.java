@@ -31,7 +31,9 @@ import org.apache.camel.component.webhook.WebhookConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
-
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.telegram.util.TelegramMessageHelper.populateExchange;
 
 /**
@@ -39,6 +41,7 @@ import static org.apache.camel.component.telegram.util.TelegramMessageHelper.pop
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "telegram", title = "Telegram", syntax = "telegram:type/authorizationToken", label = "chat")
 public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCapableEndpoint {
+    private static final Logger LOG = LoggerFactory.getLogger(TelegramEndpoint.class);
 
     @UriParam
     private TelegramConfiguration configuration;
@@ -48,6 +51,11 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
     public TelegramEndpoint(String endpointUri, Component component, TelegramConfiguration configuration) {
         super(endpointUri, component);
         this.configuration = configuration;
+        // setup the proxy setting here
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+            LOG.debug("Setup http proxy host:{} port:{} for TelegramService", configuration.getProxyHost(), configuration.getProxyPort());
+            TelegramServiceProvider.get().getService().setHttpProxy(configuration.getProxyHost(), configuration.getProxyPort());
+        }
     }
 
     @Override
