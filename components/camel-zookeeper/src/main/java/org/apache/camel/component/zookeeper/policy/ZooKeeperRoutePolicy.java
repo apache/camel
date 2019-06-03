@@ -49,6 +49,7 @@ import org.apache.camel.support.RoutePolicySupport;
  * See <a href="http://hadoop.apache.org/zookeeper/docs/current/recipes.html#sc_leaderElection">
  *     for more on how Leader election</a> is archived with ZooKeeper.
  */
+@Deprecated
 public class ZooKeeperRoutePolicy extends RoutePolicySupport implements ElectionWatcher, NonManagedService {
 
     private final String uri;
