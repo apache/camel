@@ -37,6 +37,12 @@ public class TelegramConfiguration {
     @Metadata(required = "true")
     private String authorizationToken;
 
+    @UriParam(description = "The proxyHost which could be used when sending out the message.")
+    private String proxyHost;
+
+    @UriParam(description = "The proxyPort which could be used when sending out the message.")
+    private Integer proxyPort;
+
     @UriParam(description = "The identifier of the chat that will receive the produced messages. Chat ids can be first obtained from incoming messages "
             + "(eg. when a telegram user starts a conversation with a bot, its client sends automatically a '/start' message containing the chat id). "
             + "It is an optional parameter, as the chat id can be set dynamically for each outgoing message (using body or headers).", label = "producer")
@@ -98,7 +104,24 @@ public class TelegramConfiguration {
         this.authorizationToken = authorizationToken;
     }
 
-    public String getChatId() {
+    public String getProxyHost() {
+      return proxyHost;
+    }
+
+    public void setProxyHost(String proxyHost) {
+      this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+      return proxyPort;
+    }
+
+    public void setProxyPort(Integer proxyPort) {
+      this.proxyPort = proxyPort;
+    }
+
+
+  public String getChatId() {
         return chatId;
     }
 

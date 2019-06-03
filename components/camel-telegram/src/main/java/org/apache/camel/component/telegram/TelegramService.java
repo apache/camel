@@ -24,7 +24,8 @@ import org.apache.camel.component.telegram.model.UpdateResult;
  */
 public interface TelegramService {
 
-
+    void setHttpProxy(String host, Integer port);
+  
     UpdateResult getUpdates(String authorizationToken, Long offset, Integer limit, Integer timeoutSeconds);
 
     void sendMessage(String authorizationToken, OutgoingMessage message);

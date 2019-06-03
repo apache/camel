@@ -40,6 +40,7 @@ import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
+import org.apache.cxf.transport.http.HTTPConduit;
 
 /**
  * Adapts the {@code RestBotAPI} to the {@code TelegramService} interface.
@@ -50,7 +51,15 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
 
     public TelegramServiceRestBotAPIAdapter() {
         this.api = JAXRSClientFactory.create(RestBotAPI.BOT_API_DEFAULT_URL, RestBotAPI.class, Collections.singletonList(providerByCustomObjectMapper()));
-        WebClient.getConfig(this.api).getHttpConduit().getClient().setAllowChunking(false);
+        HTTPConduit httpConduit = WebClient.getConfig(this.api).getHttpConduit();
+        httpConduit.getClient().setAllowChunking(false);
+    }
+
+    @Override
+    public void setHttpProxy(String host, Integer port) {
+        HTTPConduit httpConduit = WebClient.getConfig(this.api).getHttpConduit();
+        httpConduit.getClient().setProxyServer(host);
+        httpConduit.getClient().setProxyServerPort(port);
     }
 
     @Override

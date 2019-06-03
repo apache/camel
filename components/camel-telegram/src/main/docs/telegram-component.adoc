@@ -78,12 +78,14 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (22 parameters):
+==== Query Parameters (24 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *proxyHost* (common) | The proxyHost which could be used when sending out the message. |  | String
+| *proxyPort* (common) | The proxyPort which could be used when sending out the message. |  | Integer
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *limit* (consumer) | Limit on the number of updates that can be received in a single polling request. | 100 | Integer
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean

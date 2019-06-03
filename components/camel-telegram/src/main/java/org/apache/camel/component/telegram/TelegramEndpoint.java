@@ -25,12 +25,16 @@ import org.apache.camel.component.telegram.model.Update;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The telegram component provides access to the <a href="https://core.telegram.org/bots/api">Telegram Bot API</a>.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "telegram", title = "Telegram", syntax = "telegram:type/authorizationToken", consumerClass = TelegramConsumer.class, label = "chat")
 public class TelegramEndpoint extends ScheduledPollEndpoint {
+    private static final Logger LOG = LoggerFactory.getLogger(TelegramEndpoint.class);
 
     @UriParam
     private TelegramConfiguration configuration;
@@ -38,6 +42,11 @@ public class TelegramEndpoint extends ScheduledPollEndpoint {
     public TelegramEndpoint(String endpointUri, Component component, TelegramConfiguration configuration) {
         super(endpointUri, component);
         this.configuration = configuration;
+        // setup the proxy setting here
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+            LOG.debug("Setup http proxy host:{} port:{} for TelegramService", configuration.getProxyHost(), configuration.getProxyPort());
+            TelegramServiceProvider.get().getService().setHttpProxy(configuration.getProxyHost(), configuration.getProxyPort());
+        }
     }
 
     @Override
