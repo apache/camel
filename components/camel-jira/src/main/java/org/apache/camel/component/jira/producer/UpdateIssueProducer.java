@@ -71,15 +71,22 @@ public class UpdateIssueProducer extends DefaultProducer {
         if (issueTypeId != null) {
             builder.setIssueTypeId(issueTypeId);
         }
-        builder.setSummary(summary);
-        builder.setDescription(exchange.getIn().getBody(String.class));
+        if (summary != null) {
+            builder.setSummary(summary);
+        }
+        String description = exchange.getIn().getBody(String.class);
+        if (description != null) {
+            builder.setDescription(description);
+        }
         if (components != null && components.size() > 0) {
             builder.setComponentsNames(components);
         }
         if (priorityId != null) {
             builder.setPriorityId(priorityId);
         }
-        builder.setAssigneeName(assigneeName);
+        if (assigneeName != null) {
+            builder.setAssigneeName(assigneeName);
+        }
         IssueRestClient issueClient = client.getIssueClient();
         issueClient.updateIssue(issueKey, builder.build()).claim();
     }
