@@ -24,24 +24,33 @@ import java.util.Set;
 
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
+import org.apache.olingo.client.core.domain.ClientEntitySetImpl;
 
 public class Olingo4Index {
 
     private Set<Integer> resultIndex = new HashSet<>();
 
     private Object filter(Object o) {
-        if (resultIndex.contains(o.hashCode())) {
+        if (o == null || resultIndex.contains(o.hashCode())) {
             return null;
         }
         return o;
     }
 
     private void indexDefault(Object o) {
+        if (o == null) {
+            return;
+        }
+
         resultIndex.add(o.hashCode());
     }
 
     private Iterable<?> filter(Iterable<?> iterable) {
         List<Object> filtered = new ArrayList<>();
+        if (iterable == null) {
+            return filtered;
+        }
+
         for (Object o : iterable) {
             if (resultIndex.contains(o.hashCode())) {
                 continue;
@@ -53,12 +62,20 @@ public class Olingo4Index {
     }
 
     private void index(Iterable<?> iterable) {
+        if (iterable == null) {
+            return;
+        }
+
         for (Object o : iterable) {
             resultIndex.add(o.hashCode());
         }
     }
 
     private ClientEntitySet filter(ClientEntitySet entitySet) {
+        if (entitySet == null) {
+            return new ClientEntitySetImpl();
+        }
+
         List<ClientEntity> entities = entitySet.getEntities();
 
         if (entities.isEmpty()) {
@@ -78,6 +95,10 @@ public class Olingo4Index {
     }
 
     private void index(ClientEntitySet entitySet) {
+        if (entitySet == null) {
+            return;
+        }
+
         for (ClientEntity entity : entitySet.getEntities()) {
             resultIndex.add(entity.hashCode());
         }
