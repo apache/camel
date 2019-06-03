@@ -39,7 +39,7 @@ public class PulsarComponentTest extends CamelTestSupport {
 
     @Test
     public void testPulsarEndpointConfiguration() throws Exception {
-        PulsarComponent component = new PulsarComponent();
+        PulsarComponent component = new PulsarComponent(context);
         component.setAutoConfiguration(autoConfiguration);
 
         PulsarEndpoint endpoint = (PulsarEndpoint)component
