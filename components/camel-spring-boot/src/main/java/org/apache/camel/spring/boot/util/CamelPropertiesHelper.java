@@ -20,10 +20,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.PropertyBindingException;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.support.EndpointHelper.isReferenceParameter;
 
 /**
  * To help configuring Camel properties that have been defined in Spring Boot configuration files.
@@ -36,11 +35,21 @@ public final class CamelPropertiesHelper {
     /**
      * Sets the properties on the target bean.
      * <p/>
-     * This implementation sets the properties using the following algorithm:
+     * This method uses {@link PropertyBindingSupport} and therefore offers its capabilities such as:
      * <ul>
-     *     <li>Value as reference lookup - If the value uses Camel reference syntax, eg #beanId then the bean is looked up from Registry and set on the target</li>
-     *     <li>Value as-is - The value is attempted to be converted to the class type of the bean setter method; this is for regular types like String, numbers etc</li>
-     *     <li>Value as lookup - the bean is looked up from Registry and if there is a bean then its set on the target</li>
+     *     <li>property placeholders - Keys and values using Camels property placeholder will be resolved</li>
+     *     <li>nested - Properties can be nested using the dot syntax (OGNL and builder pattern using with as prefix), eg foo.bar=123</li>
+     *     <li>map</li> - Properties can lookup in Map's using map syntax, eg foo[bar] where foo is the name of the property that is a Map instance, and bar is the name of the key.</li>
+     *     <li>list</li> - Properties can refer or add to in List's using list syntax, eg foo[0] where foo is the name of the property that is a
+     *                     List instance, and 0 is the index. To refer to the last element, then use last as key.</li>
+     * </ul>
+     * This implementation sets the properties using the following algorithm in the given order:
+     * <ul>
+     *     <li>reference by bean id - Values can refer to other beans in the registry by prefixing with with # or #bean: eg #myBean or #bean:myBean</li>
+     *     <li>reference by type - Values can refer to singleton beans by their type in the registry by prefixing with #type: syntax, eg #type:com.foo.MyClassType</li>
+     *     <li>autowire by type - Values can refer to singleton beans by auto wiring by setting the value to #autowired</li>
+     *     <li>reference new class - Values can refer to creating new beans by their class name by prefixing with #class, eg #class:com.foo.MyClassType</li>
+     *     <li>value as lookup - The value is used as-is (eg like #value) to lookup in the Registry if there is a bean then its set on the target</li>
      * </ul>
      * When an option has been set on the target bean, then its removed from the given properties map. If all the options has been set, then the map will be empty.
      *
@@ -58,8 +67,6 @@ public final class CamelPropertiesHelper {
         ObjectHelper.notNull(properties, "properties");
         boolean rc = false;
 
-        // TODO: Use BindingPropertySupport instead of IntrospectionSupport
-
         Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, Object> entry = it.next();
@@ -67,17 +74,18 @@ public final class CamelPropertiesHelper {
             Object value = entry.getValue();
             String stringValue = value != null ? value.toString() : null;
             boolean hit = false;
-            if (stringValue != null && isReferenceParameter(stringValue)) {
-                // its a #beanId reference lookup
-                hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, null, stringValue, true);
-            } else if (value != null) {
-                // its a value to be used as-is (or type converted)
-                try {
-                    hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, value);
-                } catch (IllegalArgumentException e) {
-                    // no we could not and this would be thrown if we attempted to set a value on a property which we cannot do type conversion as
-                    // then maybe the value refers to a spring bean in the registry so try this
-                    hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, null, stringValue, true);
+            try {
+                hit = PropertyBindingSupport.bindProperty(context, target, name, value);
+            } catch (PropertyBindingException e) {
+                // no we could not and this would be thrown if we attempted to set a value on a property which we cannot do type conversion as
+                // then maybe the value refers to a spring bean in the registry so try this
+                if (stringValue != null) {
+                    if (stringValue.startsWith("#")) {
+                        stringValue = stringValue.substring(1);
+                    }
+                    // use #bean: to lookup
+                    stringValue = "#bean:" + stringValue;
+                    hit = PropertyBindingSupport.bindProperty(context, target, name, stringValue);
                 }
             }
 
