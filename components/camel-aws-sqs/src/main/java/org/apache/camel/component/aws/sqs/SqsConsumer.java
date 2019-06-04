@@ -202,12 +202,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
             });
 
             log.trace("Processing exchange [{}]...", exchange);
-            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                @Override
-                public void done(boolean doneSync) {
-                    log.trace("Processing exchange [{}] done.", exchange);
-                }
-            });
+            getAsyncProcessor().process(exchange, doneSync -> log.trace("Processing exchange [{}] done.", exchange));
         }
 
         return total;
