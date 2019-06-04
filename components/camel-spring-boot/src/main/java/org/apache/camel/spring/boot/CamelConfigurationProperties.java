@@ -238,14 +238,6 @@ public class CamelConfigurationProperties {
     private int logDebugMaxChars;
 
     /**
-     * Sets whether stream caching is enabled or not (deprecated use stream-caching-enabled instead).
-     *
-     * Default is false.
-     */
-    @Deprecated
-    private boolean streamCaching;
-
-    /**
      * Sets whether stream caching is enabled or not.
      *
      * Default is false.
@@ -481,12 +473,6 @@ public class CamelConfigurationProperties {
     private Integer tracerFormatterMaxChars = 10000;
     
     /**
-     * To turn on MDC logging (deprecated use use-mdc-logging instead)
-     */
-    @Deprecated
-    private boolean useMDCLogging;
-
-    /**
      * To turn on MDC logging
      */
     private boolean useMdcLogging;
@@ -672,16 +658,6 @@ public class CamelConfigurationProperties {
 
     public void setLogDebugMaxChars(int logDebugMaxChars) {
         this.logDebugMaxChars = logDebugMaxChars;
-    }
-
-    @Deprecated
-    public boolean isStreamCaching() {
-        return streamCachingEnabled;
-    }
-
-    @Deprecated
-    public void setStreamCaching(boolean streamCaching) {
-        this.streamCachingEnabled = streamCaching;
     }
 
     public boolean isStreamCachingEnabled() {
@@ -1010,16 +986,6 @@ public class CamelConfigurationProperties {
 
     public void setIncludeNonSingletons(boolean includeNonSingletons) {
         this.includeNonSingletons = includeNonSingletons;
-    }
-
-    @Deprecated
-    public boolean isUseMDCLogging() {
-        return isUseMdcLogging();
-    }
-
-    @Deprecated
-    public void setUseMDCLogging(boolean useMDCLogging) {
-        setUseMdcLogging(useMDCLogging);
     }
 
     public boolean isUseMdcLogging() {
