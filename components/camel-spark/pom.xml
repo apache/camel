@@ -97,12 +97,12 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson-spark-version}</version>
+            <version>${jackson-spark-version}.1</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-scala_2.11</artifactId>
-            <version>${jackson-spark-version}</version>
+            <version>${jackson-spark-version}.1</version>
         </dependency>
 
         <!-- hadoop -->
