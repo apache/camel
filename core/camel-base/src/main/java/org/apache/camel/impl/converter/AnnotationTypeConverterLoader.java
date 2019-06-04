@@ -82,7 +82,8 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         try {
             packageNames = findPackageNames();
             if (packageNames == null || packageNames.length == 0) {
-                throw new TypeConverterLoaderException("Cannot find package names to be used for classpath scanning for annotated type converters.");
+                LOG.debug("No package names found to be used for classpath scanning for annotated type converters.");
+                return;
             }
         } catch (Exception e) {
             throw new TypeConverterLoaderException("Cannot find package names to be used for classpath scanning for annotated type converters.", e);
