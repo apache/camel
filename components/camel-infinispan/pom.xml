@@ -119,6 +119,10 @@
                     <groupId>org.infinispan</groupId>
                     <artifactId>infinispan-remote-query-client</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.apache.karaf</groupId>
+                    <artifactId>apache-karaf</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -151,6 +155,23 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemProperties>
+                        <property>
+                            <name>infinispan.test.jgroups.protocol</name>
+                            <value>tcp</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <profiles>
         <profile>
@@ -290,6 +311,14 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <systemProperties>
+                                <property>
+                                    <name>infinispan.test.jgroups.protocol</name>
+                                    <value>tcp</value>
+                                </property>
+                            </systemProperties>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
