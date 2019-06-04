@@ -24,7 +24,7 @@ public class DrinkRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("direct:start")
+        from("direct:start").routeId("drink")
             .to("mock:foo");
     }
 }

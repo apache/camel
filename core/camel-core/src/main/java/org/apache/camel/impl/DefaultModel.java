@@ -293,8 +293,8 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public void setRouteFilterPattern(String pattern) {
-        setRouteFilter(RouteFilters.filterByPattern(pattern));
+    public void setRouteFilterPattern(String include, String exclude) {
+        setRouteFilter(RouteFilters.filterByPattern(include, exclude));
     }
 
     @Override

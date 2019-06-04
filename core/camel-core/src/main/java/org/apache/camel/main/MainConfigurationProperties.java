@@ -18,6 +18,7 @@ package org.apache.camel.main;
 
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.spi.ReloadStrategy;
+import org.apache.camel.support.PatternHelper;
 
 /**
  * Global configuration for Camel Main to setup context name, stream caching and other global configurations.
@@ -72,7 +73,8 @@ public class MainConfigurationProperties {
     private String fileWatchDirectory;
     private boolean fileWatchDirectoryRecursively;
     private ReloadStrategy reloadStrategy;
-    private String routeFilterPattern;
+    private String routeFilterIncludePattern;
+    private String routeFilterExcludePattern;
 
     // getter and setters
     // --------------------------------------------------------------
@@ -715,25 +717,55 @@ public class MainConfigurationProperties {
         this.reloadStrategy = reloadStrategy;
     }
 
-    public String getRouteFilterPattern() {
-        return routeFilterPattern;
+    public String getRouteFilterIncludePattern() {
+        return routeFilterIncludePattern;
     }
 
     /**
-     * Used for filtering routes to only include routes matching the given pattern, which follows the following rules:
+     * Used for filtering routes routes matching the given pattern, which follows the following rules:
      *
      * - Match by route id
      * - Match by route input endpoint uri
      *
-     * The matching is using exact match, by wildcard and regular expression.
+     * The matching is using exact match, by wildcard and regular expression as documented by {@link PatternHelper#matchPattern(String, String)}.
      *
-     * For example to only include routes which starts with foo in their route id's, use: foo&#42;
-     * And to only include routes which starts from JMS endpoints, use: jms:&#42;
+     * For example to only include routes which starts with foo in their route id's, use: include=foo&#42;
+     * And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
+     *
+     * Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42;
+     *
+     * Exclude takes precedence over include.
+     *
+     * @param include  the include pattern
      */
-    public void setRouteFilterPattern(String routeFilterPattern) {
-        this.routeFilterPattern = routeFilterPattern;
+    public void setRouteFilterIncludePattern(String include) {
+        this.routeFilterIncludePattern = include;
     }
 
+    public String getRouteFilterExcludePattern() {
+        return routeFilterExcludePattern;
+    }
+
+    /**
+     * Used for filtering routes routes matching the given pattern, which follows the following rules:
+     *
+     * - Match by route id
+     * - Match by route input endpoint uri
+     *
+     * The matching is using exact match, by wildcard and regular expression as documented by {@link PatternHelper#matchPattern(String, String)}.
+     *
+     * For example to only include routes which starts with foo in their route id's, use: include=foo&#42;
+     * And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
+     *
+     * Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42;
+     *
+     * Exclude takes precedence over include.
+     *
+     * @param exclude  the exclude pattern
+     */
+    public void setRouteFilterExcludePattern(String exclude) {
+        this.routeFilterExcludePattern = exclude;
+    }
 
     // fluent builders
     // --------------------------------------------------------------
@@ -1232,19 +1264,44 @@ public class MainConfigurationProperties {
         return this;
     }
 
+
     /**
-     * Used for filtering routes to only include routes matching the given pattern, which follows the following rules:
+     * Used for filtering routes routes matching the given pattern, which follows the following rules:
      *
      * - Match by route id
      * - Match by route input endpoint uri
      *
-     * The matching is using exact match, by wildcard and regular expression.
+     * The matching is using exact match, by wildcard and regular expression as documented by {@link PatternHelper#matchPattern(String, String)}.
      *
-     * For example to only include routes which starts with foo in their route id's, use: foo&#42;
-     * And to only include routes which starts from JMS endpoints, use: jms:&#42;
+     * For example to only include routes which starts with foo in their route id's, use: include=foo&#42;
+     * And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
+     *
+     * Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42;
+     *
+     * Exclude takes precedence over include.
      */
-    public MainConfigurationProperties withRouteFilterPattern(String routeFilterPattern) {
-        this.routeFilterPattern = routeFilterPattern;
+    public MainConfigurationProperties withRouteFilterIncludePattern(String routeFilterIncludePattern) {
+        this.routeFilterIncludePattern = routeFilterIncludePattern;
+        return this;
+    }
+
+    /**
+     * Used for filtering routes routes matching the given pattern, which follows the following rules:
+     *
+     * - Match by route id
+     * - Match by route input endpoint uri
+     *
+     * The matching is using exact match, by wildcard and regular expression as documented by {@link PatternHelper#matchPattern(String, String)}.
+     *
+     * For example to only include routes which starts with foo in their route id's, use: include=foo&#42;
+     * And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
+     *
+     * Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42;
+     *
+     * Exclude takes precedence over include.
+     */
+    public MainConfigurationProperties withRouteFilterExcludePattern(String routeFilterExcludePattern) {
+        this.routeFilterExcludePattern = routeFilterExcludePattern;
         return this;
     }
 }

@@ -232,8 +232,9 @@ public class CamelAutoConfiguration {
             camelContext.getExecutorServiceManager().setThreadNamePattern(config.getThreadNamePattern());
         }
 
-        if (config.getRouteFilterPattern() != null) {
-            camelContext.getExtension(Model.class).setRouteFilterPattern(config.getRouteFilterPattern());
+        if (config.getRouteFilterIncludePattern() != null || config.getRouteFilterExcludePattern() != null) {
+            LOG.info("Route filtering pattern: include={}, exclude={}", config.getRouteFilterIncludePattern(), config.getRouteFilterExcludePattern());
+            camelContext.getExtension(Model.class).setRouteFilterPattern(config.getRouteFilterIncludePattern(), config.getRouteFilterExcludePattern());
         }
 
         // additional advanced configuration which is not configured using CamelConfigurationProperties
