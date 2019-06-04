@@ -526,9 +526,10 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     }
 
     /**
-     * Loads the core type converters which is mandatory to use Camel
+     * Loads the core type converters which is mandatory to use Camel,
+     * and also loads the fast type converters (generated via @Converter(loader = true).
      */
-    public void loadCoreTypeConverters() throws Exception {
+    public void loadCoreAndFastTypeConverters() throws Exception {
         Collection<String> names = findTypeConverterLoaderClasses();
         for (String name : names) {
             log.debug("Resolving TypeConverterLoader: {}", name);

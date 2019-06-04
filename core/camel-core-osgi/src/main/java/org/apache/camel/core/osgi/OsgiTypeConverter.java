@@ -240,7 +240,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
             answer.init();
             // only load the core type converters, as OSGi activator will keep track on bundles
             // being installed/uninstalled and load type converters as part of that process
-            answer.loadCoreTypeConverters();
+            answer.loadCoreAndFastTypeConverters();
         } catch (Exception e) {
             throw new RuntimeCamelException("Error loading CoreTypeConverter due: " + e.getMessage(), e);
         }
