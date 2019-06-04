@@ -148,3 +148,10 @@ The component supports 3 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
+=== Couchbase SDK compatibility
+This component is currently using a "Legacy SDK" version of couchbase-client.
+
+In order to authenticate with newer versions of Couchbase Server 5.0 and beyond, as per instructions on the  https://docs.couchbase.com/java-sdk/2.7/sdk-authentication-overview.html/[CouchBase Java SDK Authentication]:
+
+ * The value formerly interpreted as a bucket-name is now interpreted as a username. The username must correspond to a user defined on the cluster that is being accessed.
+ * The value formerly interpreted as a bucket-password is now interpreted as the password of the defined user.
