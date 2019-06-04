@@ -24,7 +24,7 @@ public class BarRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("direct:start")
+        from("direct:start").routeId("bar")
             .to("mock:bar");
     }
 }
