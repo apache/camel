@@ -116,8 +116,6 @@ public abstract class CamelTestSupport extends TestSupport {
     protected volatile ConsumerTemplate consumer;
     protected volatile Service camelContextService;
     protected boolean dumpRouteStats;
-    private String routeFilterIncludePattern;
-    private String routeFilterExcludePattern;
     private boolean useRouteBuilder = true;
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
     private final StopWatch watch = new StopWatch();
@@ -227,9 +225,27 @@ public abstract class CamelTestSupport extends TestSupport {
      *
      * Exclude takes precedence over include.
      */
-    public void setRouteFilterPattern(String include, String exclude) {
-        this.routeFilterIncludePattern = include;
-        this.routeFilterExcludePattern = exclude;
+    public String getRouteFilterIncludePattern() {
+        return null;
+    }
+
+    /**
+     * Used for filtering routes routes matching the given pattern, which follows the following rules:
+     *
+     * - Match by route id
+     * - Match by route input endpoint uri
+     *
+     * The matching is using exact match, by wildcard and regular expression.
+     *
+     * For example to only include routes which starts with foo in their route id's, use: include=foo&#42;
+     * And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
+     *
+     * Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42;
+     *
+     * Exclude takes precedence over include.
+     */
+    public String getRouteFilterExcludePattern() {
+        return null;
     }
 
     /**
@@ -405,9 +421,11 @@ public abstract class CamelTestSupport extends TestSupport {
             pc.setIgnoreMissingLocation(ignore);
         }
 
-        if (routeFilterIncludePattern != null || routeFilterExcludePattern != null) {
-            log.info("Route filtering pattern: include={}, exclude={}", routeFilterIncludePattern, routeFilterExcludePattern);
-            context.getExtension(Model.class).setRouteFilterPattern(routeFilterIncludePattern, routeFilterExcludePattern);
+        String include = getRouteFilterIncludePattern();
+        String exclude = getRouteFilterExcludePattern();
+        if (include != null || exclude != null) {
+            log.info("Route filtering pattern: include={}, exclude={}", include, exclude);
+            context.getExtension(Model.class).setRouteFilterPattern(include, exclude);
         }
 
         // prepare for in-between tests
