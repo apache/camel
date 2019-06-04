@@ -227,7 +227,7 @@
     <google-findbugs-jsr305-version>3.0.2</google-findbugs-jsr305-version>
     <google-findbugs-annotations2-version>2.0.3</google-findbugs-annotations2-version>
     <google-maps-services-version>0.2.9</google-maps-services-version>
-    <flatpack-version>3.4.3</flatpack-version>
+    <flatpack-version>4.0.4</flatpack-version>
     <flink-version>1.7.0</flink-version>
     <fop-bundle-version>2.3_1</fop-bundle-version>
     <fop-version>2.3</fop-version>
@@ -783,7 +783,7 @@
       org.ccil.cowan.tagsoup.*;version="[1.2,2)",
       org.mortbay.cometd.*;version="[6.1,7)",
       org.slf4j.*;version="[1.7,2)",
-      net.sf.flatpack.*;version="[3.1.1,4)",
+      net.sf.flatpack.*;version="[4,5)",
       net.sf.saxon.*;version="[9.9.0,10)",
       freemarker.*;version="[2.3.15,3)",
       javax.persistence.*;version="[1.1,3)",

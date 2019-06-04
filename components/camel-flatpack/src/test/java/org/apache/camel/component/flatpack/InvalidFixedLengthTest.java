@@ -46,7 +46,7 @@ public class InvalidFixedLengthTest extends AbstractJUnit4SpringContextTests {
 
         Exchange e = error.getReceivedExchanges().get(0);
         FlatpackException cause = e.getProperty(Exchange.EXCEPTION_CAUGHT, FlatpackException.class);
-        Assert.notNull(cause);
+        Assert.notNull(cause, "Exception should not be null");
 
         Assert.hasText("Flatpack has found 4 errors while parsing. Exchange[PEOPLE-FixedLength.txt]", cause.getMessage());
         Assert.hasText("Line:4 Level:2 Desc:LINE TOO LONG. LINE IS 278 LONG. SHOULD BE 277", cause.getMessage());

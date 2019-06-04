@@ -53,12 +53,6 @@
       <artifactId>flatpack</artifactId>
       <version>${flatpack-version}</version>
     </dependency>
-    <dependency> 
-      <groupId>org.jdom</groupId>
-	  <artifactId>jdom</artifactId>
-	  <version>${jdom-version}</version>
-    </dependency>
-
 	  <!-- logging -->   
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
