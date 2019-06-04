@@ -169,6 +169,8 @@ The component supports 140 options, which are listed below.
 | *camel.springboot.message-history* | Sets whether message history is enabled or not. Default is true. | true | Boolean
 | *camel.springboot.name* | Sets the name of the CamelContext. |  | String
 | *camel.springboot.producer-template-cache-size* | Producer template endpoints cache size. | 1000 | Integer
+| *camel.springboot.route-filter-exclude-pattern* | Used for filtering routes routes matching the given pattern, which follows the following rules: - Match by route id - Match by route input endpoint uri The matching is using exact match, by wildcard and regular expression. For example to only include routes which starts with foo in their route id's, use: include=foo&#42; And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42; Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42; Exclude takes precedence over include. |  | String
+| *camel.springboot.route-filter-include-pattern* | Used for filtering routes routes matching the given pattern, which follows the following rules: - Match by route id - Match by route input endpoint uri The matching is using exact match, by wildcard and regular expression. For example to only include routes which starts with foo in their route id's, use: include=foo&#42; And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42; Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42; Exclude takes precedence over include. |  | String
 | *camel.springboot.shutdown-log-inflight-exchanges-on-timeout* | Sets whether to log information about the inflight Exchanges which are still running during a shutdown which didn't complete without the given timeout. | true | Boolean
 | *camel.springboot.shutdown-now-on-timeout* | Sets whether to force shutdown of all consumers when a timeout occurred and thus not all consumers was shutdown within that period. You should have good reasons to set this option to false as it means that the routes keep running and is halted abruptly when CamelContext has been shutdown. | true | Boolean
 | *camel.springboot.shutdown-routes-in-reverse-order* | Sets whether routes should be shutdown in reverse or the same order as they where started. | true | Boolean
@@ -236,8 +238,6 @@ The component supports 140 options, which are listed below.
 | *management.endpoint.camelroutes.read-only* | Whether Camel Routes actuator is in read-only mode. If not in read-only mode then operations to start/stop routes would be enabled. | true | Boolean
 | *management.info.camel.enabled* | Whether to enable Camel info. | true | Boolean
 | *management.info.camel.verbose* | Global option to enable/disable  health bean camel version info, default is true. | true | Boolean
-| *camel.springboot.stream-caching* | Sets whether stream caching is enabled or not (deprecated use stream-caching-enabled instead). Default is false. | false | Boolean
-| *camel.springboot.use-m-d-c-logging* | To turn on MDC logging (deprecated use use-mdc-logging instead) | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
