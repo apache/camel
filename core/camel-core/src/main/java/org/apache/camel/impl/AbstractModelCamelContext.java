@@ -21,11 +21,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.function.Function;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.engine.AbstractCamelContext;
 import org.apache.camel.impl.engine.BaseRouteService;
@@ -231,6 +231,17 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
         model.addServiceCallConfiguration(serviceName, configuration);
     }
 
+    @Override
+    public void setRouteFilter(Function<RouteDefinition, Boolean> filter) {
+        model.setRouteFilter(filter);
+    }
+
+    @Override
+    public Function<RouteDefinition, Boolean> getRouteFilter() {
+        return model.getRouteFilter();
+    }
+
+    @Override
     protected ValidatorRegistry<ValidatorKey> createValidatorRegistry() throws Exception {
         DefaultValidatorRegistry registry = new DefaultValidatorRegistry(this);
         for (ValidatorDefinition def : getValidators()) {
@@ -244,6 +255,7 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
         return new ValidatorKey(new DataType(def.getType()));
     }
 
+    @Override
     protected TransformerRegistry<TransformerKey> createTransformerRegistry() throws Exception {
         DefaultTransformerRegistry registry = new DefaultTransformerRegistry(this);
         for (TransformerDefinition def : getTransformers()) {

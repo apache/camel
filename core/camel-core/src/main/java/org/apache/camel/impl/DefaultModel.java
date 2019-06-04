@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
@@ -60,6 +61,7 @@ public class DefaultModel implements Model {
     private List<ValidatorDefinition> validators = new ArrayList<>();
     private Map<String, ServiceCallConfigurationDefinition> serviceCallConfigurations = new ConcurrentHashMap<>();
     private Map<String, HystrixConfigurationDefinition> hystrixConfigurations = new ConcurrentHashMap<>();
+    private Function<RouteDefinition, Boolean> routeFilter;
 
     public DefaultModel(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -69,6 +71,7 @@ public class DefaultModel implements Model {
         return camelContext;
     }
 
+    @Override
     public void addRouteDefinitions(InputStream is) throws Exception {
         RoutesDefinition def = ModelHelper.loadRoutesDefinition(camelContext, is);
         if (def != null) {
@@ -76,27 +79,38 @@ public class DefaultModel implements Model {
         }
     }
 
+    @Override
     public synchronized void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
         if (routeDefinitions == null || routeDefinitions.isEmpty()) {
             return;
         }
-        removeRouteDefinitions(routeDefinitions);
-        this.routeDefinitions.addAll(routeDefinitions);
+        List<RouteDefinition> list = new ArrayList<>();
+        routeDefinitions.forEach(r -> {
+            if (routeFilter == null || routeFilter.apply(r)) {
+                list.add(r);
+            }
+        });
+
+        removeRouteDefinitions(list);
+        this.routeDefinitions.addAll(list);
         if (shouldStartRoutes()) {
-            startRouteDefinitions(routeDefinitions);
+            startRouteDefinitions(list);
         }
     }
 
+    @Override
     public void addRouteDefinition(RouteDefinition routeDefinition) throws Exception {
         addRouteDefinitions(Collections.singletonList(routeDefinition));
     }
 
+    @Override
     public synchronized void removeRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
         for (RouteDefinition routeDefinition : routeDefinitions) {
             removeRouteDefinition(routeDefinition);
         }
     }
 
+    @Override
     public synchronized void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception {
         RouteDefinition toBeRemoved = routeDefinition;
         String id = routeDefinition.getId();
@@ -109,10 +123,12 @@ public class DefaultModel implements Model {
         this.routeDefinitions.remove(toBeRemoved);
     }
 
+    @Override
     public synchronized List<RouteDefinition> getRouteDefinitions() {
         return routeDefinitions;
     }
 
+    @Override
     public synchronized RouteDefinition getRouteDefinition(String id) {
         for (RouteDefinition route : routeDefinitions) {
             if (route.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory()).equals(id)) {
@@ -122,10 +138,12 @@ public class DefaultModel implements Model {
         return null;
     }
 
+    @Override
     public synchronized List<RestDefinition> getRestDefinitions() {
         return restDefinitions;
     }
 
+    @Override
     public void addRestDefinitions(InputStream is, boolean addToRoutes) throws Exception {
         RestsDefinition rests = ModelHelper.loadRestsDefinition(camelContext, is);
         if (rests != null) {
@@ -133,6 +151,7 @@ public class DefaultModel implements Model {
         }
     }
 
+    @Override
     public synchronized void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes) throws Exception {
         if (restDefinitions == null || restDefinitions.isEmpty()) {
             return;
@@ -267,8 +286,19 @@ public class DefaultModel implements Model {
         return validators;
     }
 
+    @Override
     public void startRouteDefinitions() throws Exception {
         startRouteDefinitions(routeDefinitions);
+    }
+
+    @Override
+    public Function<RouteDefinition, Boolean> getRouteFilter() {
+        return routeFilter;
+    }
+
+    @Override
+    public void setRouteFilter(Function<RouteDefinition, Boolean> routeFilter) {
+        this.routeFilter = routeFilter;
     }
 
     protected void startRouteDefinitions(Collection<RouteDefinition> list) throws Exception {
