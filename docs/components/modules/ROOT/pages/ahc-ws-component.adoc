@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.14*
 
-The *ahc-ws* component provides Websocket
+The AHC-WS component provides Websocket
 based endpoints for a client communicating with
 external servers over Websocket (as a client opening a websocket
 connection to an external server). +

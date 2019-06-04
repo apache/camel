@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.14*
 
-The *atmosphere-websocket:* component provides Websocket
+The Atmosphere-Websocket component provides Websocket
 based endpoints for a servlet communicating with
 external clients over Websocket (as a servlet accepting websocket
 connections from external clients). +
