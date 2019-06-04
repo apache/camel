@@ -107,10 +107,7 @@ public class SqsConfiguration implements Cloneable {
     boolean isFifoQueue() {
         // AWS docs suggest this is valid derivation.
         // FIFO queue names must end with .fifo, and standard queues cannot
-        if (queueName.endsWith(".fifo")) {
-            return true;
-        }
-        return false;
+        return queueName.endsWith(".fifo");
     }
 
     public String getAmazonAWSHost() {
