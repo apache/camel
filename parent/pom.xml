@@ -6016,16 +6016,16 @@
             </activation>
 
 
-<build>
-  <plugins>
-    <plugin>
-      <groupId>com.lesfurets</groupId>
-      <artifactId>partial-build-plugin</artifactId>
-      <version>2.7</version>
-      <extensions>true</extensions>
-    </plugin>
-  </plugins>
-</build>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.lesfurets</groupId>
+                        <artifactId>partial-build-plugin</artifactId>
+                        <version>2.7</version>
+                        <extensions>true</extensions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
 
         <profile>
