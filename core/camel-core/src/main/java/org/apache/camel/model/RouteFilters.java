@@ -18,6 +18,8 @@ package org.apache.camel.model;
 
 import java.util.function.Function;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.apache.camel.support.PatternHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +27,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Used for filtering routes to only include routes matching a function.
  */
-public class RouteFilters implements Function<RouteDefinition, Boolean> {
+@XmlTransient
+public final class RouteFilters implements Function<RouteDefinition, Boolean> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RouteFilters.class);
 
@@ -52,7 +55,7 @@ public class RouteFilters implements Function<RouteDefinition, Boolean> {
      * @param include  the include pattern
      * @param exclude  the exclude pattern
      */
-    public static RouteFilters filterByPattern(String include, String exclude) {
+    public static Function<RouteDefinition, Boolean> filterByPattern(String include, String exclude) {
         return new RouteFilters(include, exclude);
     }
 
