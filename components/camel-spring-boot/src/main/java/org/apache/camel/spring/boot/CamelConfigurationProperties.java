@@ -165,6 +165,19 @@ public class CamelConfigurationProperties {
     private String fileConfigurations;
 
     /**
+     * Used for filtering routes to only include routes matching the given pattern, which follows the following rules:
+     *
+     * - Match by route id
+     * - Match by route input endpoint uri
+     *
+     * The matching is using exact match, by wildcard and regular expression.
+     *
+     * For example to only include routes which starts with foo in their route id's, use: foo&#42;
+     * And to only include routes which starts from JMS endpoints, use: jms:&#42;
+     */
+    private String routeFilterPattern;
+
+    /**
      * Whether to use the main run controller to ensure the Spring-Boot application
      * keeps running until being stopped or the JVM terminated.
      * You typically only need this if you run Spring-Boot standalone.
@@ -840,6 +853,14 @@ public class CamelConfigurationProperties {
 
     public void setFileConfigurations(String fileConfigurations) {
         this.fileConfigurations = fileConfigurations;
+    }
+
+    public String getRouteFilterPattern() {
+        return routeFilterPattern;
+    }
+
+    public void setRouteFilterPattern(String routeFilterPattern) {
+        this.routeFilterPattern = routeFilterPattern;
     }
 
     public boolean isTraceFormatterShowBody() {

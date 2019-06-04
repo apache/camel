@@ -72,6 +72,7 @@ public class MainConfigurationProperties {
     private String fileWatchDirectory;
     private boolean fileWatchDirectoryRecursively;
     private ReloadStrategy reloadStrategy;
+    private String routeFilterPattern;
 
     // getter and setters
     // --------------------------------------------------------------
@@ -714,6 +715,26 @@ public class MainConfigurationProperties {
         this.reloadStrategy = reloadStrategy;
     }
 
+    public String getRouteFilterPattern() {
+        return routeFilterPattern;
+    }
+
+    /**
+     * Used for filtering routes to only include routes matching the given pattern, which follows the following rules:
+     *
+     * - Match by route id
+     * - Match by route input endpoint uri
+     *
+     * The matching is using exact match, by wildcard and regular expression.
+     *
+     * For example to only include routes which starts with foo in their route id's, use: foo&#42;
+     * And to only include routes which starts from JMS endpoints, use: jms:&#42;
+     */
+    public void setRouteFilterPattern(String routeFilterPattern) {
+        this.routeFilterPattern = routeFilterPattern;
+    }
+
+
     // fluent builders
     // --------------------------------------------------------------
 
@@ -739,6 +760,29 @@ public class MainConfigurationProperties {
      */
     public MainConfigurationProperties withAutoConfigurationEnabled(boolean autoConfigurationEnabled) {
         this.autoConfigurationEnabled = autoConfigurationEnabled;
+        return this;
+    }
+
+    /**
+     * Whether autowiring components with properties that are of same type, which has been added to the Camel registry, as a singleton instance.
+     * This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components.
+     * <p/>
+     * This option is default enabled.
+     */
+    public MainConfigurationProperties withAutowireComponentProperties(boolean autowireComponentProperties) {
+        this.autowireComponentProperties = autowireComponentProperties;
+        return this;
+    }
+
+    /**
+     * Whether autowiring components (with deep nesting by attempting to walk as deep down the object graph by creating new empty objects on the way if needed)
+     * with properties that are of same type, which has been added to the Camel registry, as a singleton instance.
+     * This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components.
+     * <p/>
+     * This option is default disabled.
+     */
+    public MainConfigurationProperties withAutowireComponentPropertiesDeep(boolean autowireComponentPropertiesDeep) {
+        this.autowireComponentPropertiesDeep = autowireComponentPropertiesDeep;
         return this;
     }
 
@@ -1188,4 +1232,19 @@ public class MainConfigurationProperties {
         return this;
     }
 
+    /**
+     * Used for filtering routes to only include routes matching the given pattern, which follows the following rules:
+     *
+     * - Match by route id
+     * - Match by route input endpoint uri
+     *
+     * The matching is using exact match, by wildcard and regular expression.
+     *
+     * For example to only include routes which starts with foo in their route id's, use: foo&#42;
+     * And to only include routes which starts from JMS endpoints, use: jms:&#42;
+     */
+    public MainConfigurationProperties withRouteFilterPattern(String routeFilterPattern) {
+        this.routeFilterPattern = routeFilterPattern;
+        return this;
+    }
 }
