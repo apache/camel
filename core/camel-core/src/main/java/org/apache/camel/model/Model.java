@@ -27,6 +27,7 @@ import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.support.PatternHelper;
 
 /**
  * Model interface
@@ -261,6 +262,21 @@ public interface Model {
      * Start all routes from this model.
      */
     void startRouteDefinitions() throws Exception;
+
+    /**
+     * Used for filtering routes to only include routes matching the given pattern, which follows the following rules:
+     *
+     * - Match by route id
+     * - Match by route input endpoint uri
+     *
+     * The matching is using exact match, by wildcard and regular expression as documented by {@link PatternHelper#matchPattern(String, String)}.
+     *
+     * For example to only include routes which starts with foo in their route id's, use: foo&#42;
+     * And to only include routes which starts from JMS endpoints, use: jms:&#42;
+     *
+     * @param pattern  the pattern
+     */
+    void setRouteFilterPattern(String pattern);
 
     /**
      * Sets a custom route filter to use for filtering unwanted routes when routes are added.

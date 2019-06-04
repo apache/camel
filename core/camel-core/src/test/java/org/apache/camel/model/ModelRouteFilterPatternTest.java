@@ -21,13 +21,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class ModelRouteFilterTest extends ContextTestSupport {
+public class ModelRouteFilterPatternTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         // filter to only include foo route
-        context.getExtension(ModelCamelContext.class).setRouteFilter((r) -> r.getId().equals("foo") );
+        context.getExtension(Model.class).setRouteFilterPattern("foo*");
         return context;
     }
 

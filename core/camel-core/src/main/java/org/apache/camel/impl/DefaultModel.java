@@ -41,6 +41,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
+import org.apache.camel.model.RouteFilters;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -289,6 +290,11 @@ public class DefaultModel implements Model {
     @Override
     public void startRouteDefinitions() throws Exception {
         startRouteDefinitions(routeDefinitions);
+    }
+
+    @Override
+    public void setRouteFilterPattern(String pattern) {
+        setRouteFilter(RouteFilters.filterByPattern(pattern));
     }
 
     @Override

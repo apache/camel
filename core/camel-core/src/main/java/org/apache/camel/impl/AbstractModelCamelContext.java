@@ -39,6 +39,7 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteFilters;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
@@ -229,6 +230,11 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
     @Override
     public void addServiceCallConfiguration(String serviceName, ServiceCallConfigurationDefinition configuration) {
         model.addServiceCallConfiguration(serviceName, configuration);
+    }
+
+    @Override
+    public void setRouteFilterPattern(String pattern) {
+        model.setRouteFilterPattern(pattern);
     }
 
     @Override
