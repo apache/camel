@@ -42,7 +42,6 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.jdom.JDOMException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -238,7 +237,7 @@ public class FlatpackDataFormat extends ServiceSupport implements DataFormat, Da
         }
     }
 
-    private Writer createWriter(Exchange exchange, Map<String, Object> firstRow, OutputStream stream) throws JDOMException, IOException {
+    private Writer createWriter(Exchange exchange, Map<String, Object> firstRow, OutputStream stream) throws IOException {
         if (isFixed()) {
             InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), getDefinition());
             InputStreamReader reader = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));

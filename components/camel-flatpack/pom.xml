@@ -34,7 +34,7 @@
 
     <properties>
         <camel.osgi.import.additional>
-            net.sf.flatpack.*;version="[3.1.1,4)"
+            net.sf.flatpack.*;version="[4,5)"
         </camel.osgi.import.additional>
     </properties>
 
@@ -49,11 +49,6 @@
             <groupId>net.sf.flatpack</groupId>
             <artifactId>flatpack</artifactId>
             <version>${flatpack-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jdom</artifactId>
-            <version>${jdom-version}</version>
         </dependency>
 
         <!-- logging -->

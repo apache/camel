@@ -962,7 +962,6 @@
   </feature>
   <feature name='camel-flatpack' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
     <bundle dependency='true'>mvn:net.sf.flatpack/flatpack/${flatpack-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-flatpack/${project.version}</bundle>
   </feature>
