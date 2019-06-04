@@ -332,7 +332,7 @@
 * xref:test-cdi.adoc[CDI Testing]
 * xref:test-karaf.adoc[Test Karaf]
 * xref:test-spring.adoc[Test Spring]
-* xref:test.adoc[Test Component]
+* xref:test.adoc[Test Module]
 * xref:testcontainers-spring.adoc[Testcontainers Spring]
 * xref:testcontainers.adoc[Testcontainers]
 * xref:thrift-component.adoc[Thrift Component]
