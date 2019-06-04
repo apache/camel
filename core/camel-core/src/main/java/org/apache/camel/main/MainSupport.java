@@ -51,9 +51,7 @@ import org.apache.camel.health.HealthCheckService;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.FileWatcherReloadStrategy;
 import org.apache.camel.model.Model;
-import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RouteFilters;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -977,8 +975,8 @@ public abstract class MainSupport extends ServiceSupport {
             camelContext.getExecutorServiceManager().setThreadNamePattern(config.getThreadNamePattern());
         }
 
-        if (config.getRouteFilterPattern() != null) {
-            camelContext.getExtension(Model.class).setRouteFilterPattern(config.getRouteFilterPattern());
+        if (config.getRouteFilterIncludePattern() != null || config.getRouteFilterExcludePattern() != null) {
+            camelContext.getExtension(Model.class).setRouteFilterPattern(config.getRouteFilterIncludePattern(), config.getRouteFilterExcludePattern());
         }
 
         // additional advanced configuration which is not configured using CamelConfigurationProperties

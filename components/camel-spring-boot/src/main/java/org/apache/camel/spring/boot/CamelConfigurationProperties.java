@@ -165,17 +165,38 @@ public class CamelConfigurationProperties {
     private String fileConfigurations;
 
     /**
-     * Used for filtering routes to only include routes matching the given pattern, which follows the following rules:
+     * Used for filtering routes routes matching the given pattern, which follows the following rules:
      *
      * - Match by route id
      * - Match by route input endpoint uri
      *
      * The matching is using exact match, by wildcard and regular expression.
      *
-     * For example to only include routes which starts with foo in their route id's, use: foo&#42;
-     * And to only include routes which starts from JMS endpoints, use: jms:&#42;
+     * For example to only include routes which starts with foo in their route id's, use: include=foo&#42;
+     * And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
+     *
+     * Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42;
+     *
+     * Exclude takes precedence over include.
      */
-    private String routeFilterPattern;
+    private String routeFilterIncludePattern;
+
+    /**
+     * Used for filtering routes routes matching the given pattern, which follows the following rules:
+     *
+     * - Match by route id
+     * - Match by route input endpoint uri
+     *
+     * The matching is using exact match, by wildcard and regular expression.
+     *
+     * For example to only include routes which starts with foo in their route id's, use: include=foo&#42;
+     * And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
+     *
+     * Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42;
+     *
+     * Exclude takes precedence over include.
+     */
+    private String routeFilterExcludePattern;
 
     /**
      * Whether to use the main run controller to ensure the Spring-Boot application
@@ -855,12 +876,20 @@ public class CamelConfigurationProperties {
         this.fileConfigurations = fileConfigurations;
     }
 
-    public String getRouteFilterPattern() {
-        return routeFilterPattern;
+    public String getRouteFilterIncludePattern() {
+        return routeFilterIncludePattern;
     }
 
-    public void setRouteFilterPattern(String routeFilterPattern) {
-        this.routeFilterPattern = routeFilterPattern;
+    public void setRouteFilterIncludePattern(String routeFilterIncludePattern) {
+        this.routeFilterIncludePattern = routeFilterIncludePattern;
+    }
+
+    public String getRouteFilterExcludePattern() {
+        return routeFilterExcludePattern;
+    }
+
+    public void setRouteFilterExcludePattern(String routeFilterExcludePattern) {
+        this.routeFilterExcludePattern = routeFilterExcludePattern;
     }
 
     public boolean isTraceFormatterShowBody() {

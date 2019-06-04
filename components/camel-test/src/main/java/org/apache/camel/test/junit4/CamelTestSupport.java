@@ -34,7 +34,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
@@ -75,6 +74,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.engine.DefaultCamelBeanPostProcessor;
 import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
+import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.interceptor.BreakpointSupport;
@@ -116,6 +116,8 @@ public abstract class CamelTestSupport extends TestSupport {
     protected volatile ConsumerTemplate consumer;
     protected volatile Service camelContextService;
     protected boolean dumpRouteStats;
+    private String routeFilterIncludePattern;
+    private String routeFilterExcludePattern;
     private boolean useRouteBuilder = true;
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
     private final StopWatch watch = new StopWatch();
@@ -208,6 +210,26 @@ public abstract class CamelTestSupport extends TestSupport {
 
     public void replaceRouteFromWith(String routeId, String fromEndpoint) {
         fromEndpoints.put(routeId, fromEndpoint);
+    }
+
+    /**
+     * Used for filtering routes routes matching the given pattern, which follows the following rules:
+     *
+     * - Match by route id
+     * - Match by route input endpoint uri
+     *
+     * The matching is using exact match, by wildcard and regular expression.
+     *
+     * For example to only include routes which starts with foo in their route id's, use: include=foo&#42;
+     * And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
+     *
+     * Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42;
+     *
+     * Exclude takes precedence over include.
+     */
+    public void setRouteFilterPattern(String include, String exclude) {
+        this.routeFilterIncludePattern = include;
+        this.routeFilterExcludePattern = exclude;
     }
 
     /**
@@ -381,6 +403,11 @@ public abstract class CamelTestSupport extends TestSupport {
         Boolean ignore = ignoreMissingLocationWithPropertiesComponent();
         if (ignore != null) {
             pc.setIgnoreMissingLocation(ignore);
+        }
+
+        if (routeFilterIncludePattern != null || routeFilterExcludePattern != null) {
+            log.info("Route filtering pattern: include={}, exclude={}", routeFilterIncludePattern, routeFilterExcludePattern);
+            context.getExtension(Model.class).setRouteFilterPattern(routeFilterIncludePattern, routeFilterExcludePattern);
         }
 
         // prepare for in-between tests

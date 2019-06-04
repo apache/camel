@@ -264,19 +264,22 @@ public interface Model {
     void startRouteDefinitions() throws Exception;
 
     /**
-     * Used for filtering routes to only include routes matching the given pattern, which follows the following rules:
+     * Used for filtering routes routes matching the given pattern, which follows the following rules:
      *
      * - Match by route id
      * - Match by route input endpoint uri
      *
      * The matching is using exact match, by wildcard and regular expression as documented by {@link PatternHelper#matchPattern(String, String)}.
      *
-     * For example to only include routes which starts with foo in their route id's, use: foo&#42;
-     * And to only include routes which starts from JMS endpoints, use: jms:&#42;
+     * For example to only include routes which starts with foo in their route id's, use: include=foo&#42;
+     * And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
      *
-     * @param pattern  the pattern
+     * Exclude takes precedence over include.
+     *
+     * @param include  the include pattern
+     * @param exclude  the exclude pattern
      */
-    void setRouteFilterPattern(String pattern);
+    void setRouteFilterPattern(String include, String exclude);
 
     /**
      * Sets a custom route filter to use for filtering unwanted routes when routes are added.

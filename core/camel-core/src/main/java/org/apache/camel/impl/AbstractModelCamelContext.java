@@ -233,8 +233,8 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
     }
 
     @Override
-    public void setRouteFilterPattern(String pattern) {
-        model.setRouteFilterPattern(pattern);
+    public void setRouteFilterPattern(String include, String exclude) {
+        model.setRouteFilterPattern(include, exclude);
     }
 
     @Override
