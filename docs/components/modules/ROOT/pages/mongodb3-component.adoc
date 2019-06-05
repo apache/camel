@@ -3,7 +3,8 @@
 
 *Available as of Camel version 2.19*
 
-Note: Camel MongoDB3 component Use the Mongo Driver for Java 3.4. If your are looking for previews versions look the Camel MongoDB component
+Note: Camel MongoDB3 component Use the Mongo Driver for Java 3.x.
+If your are looking for previews versions look the Camel MongoDB component.
 
 According to Wikipedia: "NoSQL is a movement promoting a loosely defined
 class of non-relational data stores that break with a long history of
@@ -90,7 +91,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (20 parameters):
+==== Query Parameters (22 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -103,6 +104,7 @@ with the following path and query parameters:
 | *operation* (common) | Sets the operation this endpoint will execute against MongoDB. For possible values, see MongoDbOperation. |  | MongoDbOperation
 | *outputType* (common) | Convert the output of the producer to the selected type : DocumentList Document or MongoIterable. DocumentList or MongoIterable applies to findAll and aggregate. Document applies to all other operations. |  | MongoDbOutputType
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *consumerType* (consumer) | Consumer type. |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
@@ -110,6 +112,7 @@ with the following path and query parameters:
 | *dynamicity* (advanced) | Sets whether this endpoint will attempt to dynamically resolve the target database and collection from the incoming Exchange properties. Can be used to override at runtime the database and collection specified on the otherwise static endpoint URI. It is disabled by default to boost performance. Enabling it will take a minimal performance hit. | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *writeResultAsHeader* (advanced) | In write operations, it determines whether instead of returning WriteResult as the body of the OUT message, we transfer the IN message to the OUT and attach the WriteResult as a header. | false | boolean
+| *streamFilter* (changeStream) | Filter condition for change streams consumer. |  | String
 | *persistentId* (tail) | One tail tracking collection can host many trackers for several tailable consumers. To keep them separate, each tracker should have its own unique persistentId. |  | String
 | *persistentTailTracking* (tail) | Enable persistent tail tracking, which is a mechanism to keep track of the last consumed message across system restarts. The next time the system is up, the endpoint will recover the cursor from the point where it last stopped slurping records. | false | boolean
 | *tailTrackCollection* (tail) | Collection where tail tracking information will be persisted. If not specified, MongoDbTailTrackingConfig#DEFAULT_COLLECTION will be used by default. |  | String
@@ -148,7 +151,7 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-Note on options of MoongoDB component 
+Note on options of MongoDB component
 
 writeConcern *Remove in camel 2.19.* See Mongo client options <<MongoDB-ConfigurationofdatabaseinSpringXML>>. Set the WriteConcern for write operations on MongoDB using the standard ones. Resolved from the fields of the WriteConcern class by calling the link WriteConcernvalueOf(String) method.
 
@@ -431,8 +434,7 @@ to a single field, based on the `documentTimestamp` field:
 .setHeader(MongoDbConstants.FIELDS_PROJECTION).constant(Projection.include("documentTimestamp"))
 .setBody().constant("{}")
 .to("mongodb3:myDb?database=local&collection=myDemoCollection&operation=findOneByQuery")
-.to("direct:aMyBatisParameterizedSelect")
-;
+.to("direct:aMyBatisParameterizedSelect");
 ----------------------------------------------------------------------------------------------------------------------------
 
 ==== Create/update operations
@@ -783,8 +785,8 @@ in the shell, in the form of a `Document` in the OUT message body.
 
 ===== command
 
-Run the body as a command on database. Usefull for admin operation as
-getting host informations, replication or sharding status.
+Run the body as a command on database. Useful for admin operation as
+getting host information, replication or sharding status.
 
 Collection parameter is not use for this operation.
 
@@ -813,7 +815,13 @@ Object result = template.requestBodyAndHeader("direct:insert", "irrelevantBody",
 assertTrue("Result is not of type Long", result instanceof Long);
 -----------------------------------------------------------------------------------------------------------------------------
 
-=== Tailable Cursor Consumer
+=== Consumers
+There are several types of consumers:
+
+. Tailable Cursor Consumer
+. Change Streams Consumer
+
+==== Tailable Cursor Consumer
 
 MongoDB offers a mechanism to instantaneously consume ongoing data from
 a collection, by keeping the cursor open just like the `tail -f` command
@@ -835,7 +843,7 @@ new objects are inserted, MongoDB will push them as `Document` in natural
 order to your tailable cursor consumer, who will transform them to an
 Exchange and will trigger your route logic.
 
-=== How the tailable cursor consumer works
+===== How the tailable cursor consumer works
 
 To turn a cursor into a tailable cursor, a few special flags are to be
 signalled to MongoDB when first generating the cursor. Once created, the
@@ -886,7 +894,7 @@ The above route will consume from the "flights.cancellations" capped
 collection, using "departureTime" as the increasing field, with a
 default regeneration cursor delay of 1000ms.
 
-=== Persistent tail tracking
+===== Persistent tail tracking
 
 Standard tail tracking is volatile and the last value is only kept in
 memory. However, in practice you will need to restart your Camel
@@ -906,7 +914,7 @@ persisting at regular intervals too in the future (flush every 5
 seconds) for added robustness if the demand is there. To request this
 feature, please open a ticket in the Camel JIRA.
 
-=== Enabling persistent tail tracking
+===== Enabling persistent tail tracking
 
 To enable this function, set at least the following options on the
 endpoint URI:
@@ -952,6 +960,35 @@ from("mongodb3:myDb?database=flights&collection=cancellations&tailTrackIncreasin
     .to("mock:test");
 -----------------------------------------------------------------------------------------------------------------------------------
 
+==== Change Streams Consumer
+
+Change Streams allow applications to access real-time data changes without the complexity and risk of tailing the MongoDB oplog.
+Applications can use change streams to subscribe to all data changes on a collection and immediately react to them.
+Because change streams use the aggregation framework, applications can also filter for specific changes or transform the notifications at will.
+
+To configure Change Streams Consumer you need to specify `consumerType`, `database`, `collection`
+and optional JSON property `streamFilter` to filter events.
+That JSON property is standart MongoDB `$match` aggregation.
+It could be easily specified using XML DSL configuration:
+
+[source,xml]
+-------------
+<route id="filterConsumer">
+    <from uri="mongodb3:myDb?consumerType=changeStreams&amp;database=flights&amp;collection=tickets"/>
+    <to uri="mock:test"/>
+
+    <routeProperty key="streamFilter" value="{'$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]}}"/>
+</route>
+-------------
+
+Java configuration:
+[source,java]
+-------------
+from("mongodb3:myDb?consumerType=changeStreams&database=flights&collection=tickets")
+    .routeProperty("streamFilter", "{'$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]}}")
+    .to("mock:test");
+-------------
+
 === Type conversions
 
 The `MongoDbBasicConverters` type converter included with the
@@ -970,8 +1007,7 @@ object to a `Map`, which is in turn used to initialise a new
 |fromStringToList |`String` |`List<Bson>` |uses `org.bson.codecs.configuration.CodecRegistries` to convert to BsonArray then to List<Bson>.
 |=======================================================================
 
-This type converter is auto-discovered, so you don't need to configure
-anything manually.
+This type converter is auto-discovered, so you don't need to configure anything manually.
 
 === See also
 
