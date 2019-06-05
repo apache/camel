@@ -90,6 +90,8 @@ We removed `camel-jibx` component which wasn't working on JDK 8.
 
 The `camel-zookeeper` has its route policy functionality removed, instead use `ZooKeeperClusterService` or the `camel-zookeeper-master` component.
 
+The `camel-jetty` component no longer supports producer (eg to) which has been removed, instead use `camel-http4` component instead.
+
 ### Renamed components
 
 The `test` component has been renamed to `dataset-test` and moved out of `camel-core` into `camel-dataset` JAR.
