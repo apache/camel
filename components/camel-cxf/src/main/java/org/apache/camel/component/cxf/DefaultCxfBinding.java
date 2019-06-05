@@ -684,8 +684,10 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             
             // We need to copy the content-type if the dataformat is RAW
             if (Message.CONTENT_TYPE.equalsIgnoreCase(entry.getKey()) && dataFormat.equals(DataFormat.RAW)) {
-                LOG.debug("Propagate to CXF header: {} value: {}", Message.CONTENT_TYPE, entry.getValue());
-                cxfContext.put(Message.CONTENT_TYPE, entry.getValue().toString());
+                if (entry.getValue() != null) {
+                    LOG.debug("Propagate to CXF header: {} value: {}", Message.CONTENT_TYPE, entry.getValue());
+                    cxfContext.put(Message.CONTENT_TYPE, entry.getValue().toString());
+                }
                 continue;
             }
             
