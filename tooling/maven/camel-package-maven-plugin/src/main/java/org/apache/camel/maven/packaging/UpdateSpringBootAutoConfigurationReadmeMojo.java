@@ -305,6 +305,20 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
                 String desc = row.getStringOrDefault("description", "");
                 String defaultValue = row.getStringOrDefault("defaultValue", "");
 
+                // is the option deprecated then include that as well in the description
+                String deprecated = row.getStringOrDefault("deprecated", "");
+                String deprecationNote = row.getStringOrDefault("deprecationNote", "");
+                if ("true".equals(deprecated)) {
+                    desc = "*Deprecated* " + desc;
+                    if (!StringHelper.isEmpty(deprecationNote)) {
+                        if (!desc.endsWith(".")) {
+                            desc = desc + ". Deprecation note: " + deprecationNote;
+                        } else {
+                            desc = desc + " Deprecation note: " + deprecationNote;
+                        }
+                    }
+                }
+
                 // skip this special option and also if not matching the filter
                 boolean skip = name.endsWith("customizer.enabled") || include != null && !name.contains("." + include + ".");
                 if (!skip) {
