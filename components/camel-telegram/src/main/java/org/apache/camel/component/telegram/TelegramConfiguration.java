@@ -33,14 +33,14 @@ public class TelegramConfiguration {
     @Metadata(required = true)
     private String type;
 
-    @UriPath(label = "security", description = "The authorization token for using the bot (ask the BotFather), eg. 654321531:HGF_dTra456323dHuOedsE343211fqr3t-H.")
+    @UriPath(description = "The authorization token for using the bot (ask the BotFather)", label = "security")
     @Metadata(required = true)
     private String authorizationToken;
 
-    @UriParam(description = "The proxyHost which could be used when sending out the message.")
+    @UriParam(description = "HTTP proxy host which could be used when sending out the message.", label = "proxy")
     private String proxyHost;
 
-    @UriParam(description = "The proxyPort which could be used when sending out the message.")
+    @UriParam(description = "HTTP proxy port which could be used when sending out the message.", label = "proxy")
     private Integer proxyPort;
 
     @UriParam(description = "The identifier of the chat that will receive the produced messages. Chat ids can be first obtained from incoming messages "
@@ -52,7 +52,8 @@ public class TelegramConfiguration {
             "consumer.", defaultValue = "30", label = "consumer")
     private Integer timeout = 30;
 
-    @UriParam(description = "Limit on the number of updates that can be received in a single polling request.", optionalPrefix = "consumer.", defaultValue = "100", label = "consumer")
+    @UriParam(description = "Limit on the number of updates that can be received in a single polling request.",
+            optionalPrefix = "consumer.", defaultValue = "100", label = "consumer")
     private Integer limit = 100;
 
     public TelegramConfiguration() {
@@ -105,23 +106,22 @@ public class TelegramConfiguration {
     }
 
     public String getProxyHost() {
-      return proxyHost;
+        return proxyHost;
     }
 
     public void setProxyHost(String proxyHost) {
-      this.proxyHost = proxyHost;
+        this.proxyHost = proxyHost;
     }
 
     public Integer getProxyPort() {
-      return proxyPort;
+        return proxyPort;
     }
 
     public void setProxyPort(Integer proxyPort) {
-      this.proxyPort = proxyPort;
+        this.proxyPort = proxyPort;
     }
 
-
-  public String getChatId() {
+    public String getChatId() {
         return chatId;
     }
 

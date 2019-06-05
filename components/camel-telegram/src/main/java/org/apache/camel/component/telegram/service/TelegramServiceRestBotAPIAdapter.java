@@ -60,15 +60,15 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         httpConduit.getClient().setAllowChunking(false);
     }
 
+    public TelegramServiceRestBotAPIAdapter(RestBotAPI api) {
+        this.api = api;
+    }
+
     @Override
     public void setHttpProxy(String host, Integer port) {
         HTTPConduit httpConduit = WebClient.getConfig(this.api).getHttpConduit();
         httpConduit.getClient().setProxyServer(host);
         httpConduit.getClient().setProxyServerPort(port);
-    }
-
-    public TelegramServiceRestBotAPIAdapter(RestBotAPI api) {
-        this.api = api;
     }
 
     @Override
