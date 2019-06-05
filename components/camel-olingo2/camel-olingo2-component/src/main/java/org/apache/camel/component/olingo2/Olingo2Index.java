@@ -18,16 +18,46 @@ package org.apache.camel.component.olingo2;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.apache.olingo.odata2.api.ep.entry.EntryMetadata;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
+import org.apache.olingo.odata2.api.ep.feed.FeedMetadata;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 
 public class Olingo2Index {
 
     private Set<Integer> resultIndex = new HashSet<>();
+
+    private class EmptyODataFeed implements ODataFeed {
+
+        @Override
+        public List<ODataEntry> getEntries() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public FeedMetadata getFeedMetadata() {
+            return new FeedMetadata() {
+                @Override
+                public String getDeltaLink() {
+                    return null;
+                }
+
+                @Override
+                public Integer getInlineCount() {
+                    return 0;
+                }
+
+                @Override
+                public String getNextLink() {
+                    return null;
+                }
+            };
+        }
+    }
 
     /**
      * Hash only certain data since other parts change between message
@@ -64,18 +94,41 @@ public class Olingo2Index {
     }
 
     private Object filter(Object o) {
-        if (resultIndex.contains(o.hashCode())) {
+        if (o == null || resultIndex.contains(o.hashCode())) {
             return null;
         }
         return o;
     }
 
     private void indexDefault(Object o) {
+        if (o == null) {
+            return;
+        }
+
         resultIndex.add(o.hashCode());
+    }
+
+    private Object filter(ODataEntry entry) {
+        if (entry == null || resultIndex.contains(hash(entry))) {
+            return null;
+        }
+        return entry;
+    }
+
+    private void index(ODataEntry entry) {
+        if (entry == null) {
+            return;
+        }
+
+        resultIndex.add(hash(entry));
     }
 
     private Iterable<?> filter(Iterable<?> iterable) {
         List<Object> filtered = new ArrayList<>();
+        if (iterable == null) {
+            return filtered;
+        }
+
         for (Object o : iterable) {
             if (resultIndex.contains(o.hashCode())) {
                 continue;
@@ -87,12 +140,20 @@ public class Olingo2Index {
     }
 
     private void index(Iterable<?> iterable) {
+        if (iterable == null) {
+            return;
+        }
+
         for (Object o : iterable) {
             resultIndex.add(o.hashCode());
         }
     }
 
     private ODataFeed filter(ODataFeed odataFeed) {
+        if (odataFeed == null) {
+            return new EmptyODataFeed();
+        }
+
         List<ODataEntry> entries = odataFeed.getEntries();
 
         if (entries.isEmpty()) {
@@ -111,6 +172,10 @@ public class Olingo2Index {
     }
 
     private void index(ODataFeed odataFeed) {
+        if (odataFeed == null) {
+            return;
+        }
+
         for (ODataEntry entry : odataFeed.getEntries()) {
             resultIndex.add(hash(entry));
         }
@@ -124,6 +189,8 @@ public class Olingo2Index {
             index((ODataFeed) result);
         } else if (result instanceof Iterable) {
             index((Iterable<?>) result);
+        } else if (result instanceof ODataEntry) {
+            index((ODataEntry) result);
         } else {
             indexDefault(result);
         }
@@ -142,6 +209,8 @@ public class Olingo2Index {
                 result.add(Array.get(response, i));
             }
             response = filter(result);
+        } else if (response instanceof ODataEntry) {
+            response = filter((ODataEntry) response);
         } else {
             response = filter(response);
         }
