@@ -29,7 +29,7 @@ public class Contact {
     private Boolean hasFakeEmail;
     private Im im;
     @JsonProperty("phone_numbers")
-    private List<String> phoneNumbers;
+    private List<PhoneNumber> phoneNumbers;
 
     public List<EmailAddress> getEmailAddresses() {
         return emailAddresses;
@@ -55,11 +55,11 @@ public class Contact {
         this.im = im;
     }
 
-    public List<String> getPhoneNumbers() {
+    public List<PhoneNumber> getPhoneNumbers() {
         return phoneNumbers;
     }
 
-    public void setPhoneNumbers(List<String> phoneNumbers) {
+    public void setPhoneNumbers(List<PhoneNumber> phoneNumbers) {
         this.phoneNumbers = phoneNumbers;
     }
 
