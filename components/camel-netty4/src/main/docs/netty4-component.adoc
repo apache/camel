@@ -266,12 +266,12 @@ The component supports 79 options, which are listed below.
 | *camel.component.netty4.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.netty4.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.netty4.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
-| *camel.component.netty4.configuration.client-pipeline-factory* |  |  | ClientInitializer Factory
-| *camel.component.netty4.configuration.decoder* | A custom ChannelHandler class that can be used to perform special marshalling of inbound payloads. |  | ChannelHandler
-| *camel.component.netty4.configuration.encoder* | A custom ChannelHandler class that can be used to perform special marshalling of outbound payloads. |  | ChannelHandler
-| *camel.component.netty4.configuration.key-store-file* | Client side certificate keystore to be used for encryption |  | File
-| *camel.component.netty4.configuration.server-pipeline-factory* |  |  | ServerInitializer Factory
-| *camel.component.netty4.configuration.trust-store-file* | Server side certificate keystore to be used for encryption |  | File
+| *camel.component.netty4.configuration.client-pipeline-factory* | *Deprecated*  |  | ClientInitializer Factory
+| *camel.component.netty4.configuration.decoder* | *Deprecated* A custom ChannelHandler class that can be used to perform special marshalling of inbound payloads. |  | ChannelHandler
+| *camel.component.netty4.configuration.encoder* | *Deprecated* A custom ChannelHandler class that can be used to perform special marshalling of outbound payloads. |  | ChannelHandler
+| *camel.component.netty4.configuration.key-store-file* | *Deprecated* Client side certificate keystore to be used for encryption |  | File
+| *camel.component.netty4.configuration.server-pipeline-factory* | *Deprecated*  |  | ServerInitializer Factory
+| *camel.component.netty4.configuration.trust-store-file* | *Deprecated* Server side certificate keystore to be used for encryption |  | File
 |===
 // spring-boot-auto-configure options: END
 

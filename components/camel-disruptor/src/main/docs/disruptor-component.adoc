@@ -198,8 +198,8 @@ The component supports 20 options, which are listed below.
 | *camel.component.disruptor.default-wait-strategy* | To configure the default value for DisruptorWaitStrategy The default value is Blocking. |  | DisruptorWaitStrategy
 | *camel.component.disruptor.enabled* | Enable disruptor component | true | Boolean
 | *camel.component.disruptor.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.disruptor-vm.queue-size* | To configure the ring buffer size |  | Integer
-| *camel.component.disruptor.queue-size* | To configure the ring buffer size |  | Integer
+| *camel.component.disruptor-vm.queue-size* | *Deprecated* To configure the ring buffer size |  | Integer
+| *camel.component.disruptor.queue-size* | *Deprecated* To configure the ring buffer size |  | Integer
 |===
 // spring-boot-auto-configure options: END
 
