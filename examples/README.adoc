@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 109 (0 deprecated)
+Number of Examples: 110 (0 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
@@ -20,6 +20,8 @@ Number of Examples: 109 (0 deprecated)
 | link:camel-example-as2/README.md[As2] (camel-example-as2) |  | An example which demonstrates the use of the Camel AS2 component
 
 | link:camel-example-bigxml-split/README.md[Bigxml Split] (camel-example-bigxml-split) |  | How to deal with big XML files in Camel
+
+| link:camel-example-jira/README.adoc[Jira] (camel-example-jira) |  | An example that uses Jira Camel API
 
 | link:camel-example-telegram/README.adoc[Telegram] (camel-example-telegram) |  | An example that uses Telegram API
 
