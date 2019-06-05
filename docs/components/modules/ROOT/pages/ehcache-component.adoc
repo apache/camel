@@ -151,7 +151,7 @@ The component supports 26 options, which are listed below.
 | *camel.component.ehcache.customizer.cache-manager.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
 | *camel.component.ehcache.enabled* | Enable ehcache component | true | Boolean
 | *camel.component.ehcache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.ehcache.configuration.config-uri* | URI pointing to the Ehcache XML configuration file's location |  | String
+| *camel.component.ehcache.configuration.config-uri* | *Deprecated* URI pointing to the Ehcache XML configuration file's location |  | String
 |===
 // spring-boot-auto-configure options: END
 
