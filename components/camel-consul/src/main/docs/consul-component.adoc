@@ -204,9 +204,9 @@ The component supports 91 options, which are listed below.
 | *camel.component.consul.url* | The Consul agent URL |  | String
 | *camel.component.consul.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 | *camel.component.consul.user-name* | Sets the username to be used for basic authentication |  | String
-| *camel.component.consul.cluster.service.dc* |  |  | String
-| *camel.component.consul.configuration.dc* | The data center |  | String
-| *camel.component.consul.service-registry.dc* |  |  | String
+| *camel.component.consul.cluster.service.dc* | *Deprecated*  |  | String
+| *camel.component.consul.configuration.dc* | *Deprecated* The data center |  | String
+| *camel.component.consul.service-registry.dc* | *Deprecated*  |  | String
 |===
 // spring-boot-auto-configure options: END
 

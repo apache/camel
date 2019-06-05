@@ -148,7 +148,7 @@ The component supports 23 options, which are listed below.
 | *camel.component.infinispan.customizer.remote-cache-manager.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
 | *camel.component.infinispan.enabled* | Enable infinispan component | true | Boolean
 | *camel.component.infinispan.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.infinispan.configuration.command* | The operation to perform. | PUT | String
+| *camel.component.infinispan.configuration.command* | *Deprecated* The operation to perform. | PUT | String
 |===
 // spring-boot-auto-configure options: END
 
