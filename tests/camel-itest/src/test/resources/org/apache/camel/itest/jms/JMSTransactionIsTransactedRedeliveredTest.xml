@@ -60,7 +60,7 @@
       <transacted/>
       <to uri="mock:before"/>
       <process ref="myBeforeProcessor"/>
-      <to uri="jetty:http://localhost:{{Jetty.port}}/test"/>
+      <to uri="http://localhost:{{Jetty.port}}/test"/>
       <process ref="myAfterProcessor"/>
       <to uri="mock:result"/>
     </route>

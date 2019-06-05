@@ -54,7 +54,7 @@ public class JettyRecipientListCxfIssueTest extends CamelSpringTestSupport {
         assertNotNull(request);
 
         // send a message to jetty
-        Exchange out = template.request("jetty:http://0.0.0.0:{{RecipientListCxfTest.port3}}/myapp", new Processor() {
+        Exchange out = template.request("http://0.0.0.0:{{RecipientListCxfTest.port3}}/myapp", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader("operationName", "greetMe");
