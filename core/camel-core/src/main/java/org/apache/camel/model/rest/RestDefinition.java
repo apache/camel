@@ -680,28 +680,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             }
         }
         for (RestConfiguration config : camelContext.getRestConfigurations()) {
-            addRouteDefinition(camelContext, answer, config.getComponent());
+            addRouteDefinition(camelContext, answer, config.getComponent(), config.getProducerComponent());
         }
-        return answer;
-    }
-
-    /**
-     * Transforms this REST definition into a list of {@link org.apache.camel.model.RouteDefinition} which
-     * Camel routing engine can add and run. This allows us to define REST services using this
-     * REST DSL and turn those into regular Camel routes.
-     *
-     * @param camelContext        The Camel context
-     * @param restConfiguration   The rest configuration to use
-     */
-    public List<RouteDefinition> asRouteDefinition(CamelContext camelContext, RestConfiguration restConfiguration) {
-        ObjectHelper.notNull(camelContext, "CamelContext");
-        ObjectHelper.notNull(restConfiguration, "RestConfiguration");
-
-        // sanity check this rest definition do not have duplicates
-        validateUniquePaths();
-
-        List<RouteDefinition> answer = new ArrayList<>();
-        addRouteDefinition(camelContext, answer, restConfiguration.getComponent());
         return answer;
     }
 
@@ -737,7 +717,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
         options.put("routeId", routeId);
         if (configuration.getComponent() != null && !configuration.getComponent().isEmpty()) {
-            options.put("componentName", configuration.getComponent());
+            options.put("consumerComponentName", configuration.getComponent());
+        }
+        if (configuration.getComponent() != null && !configuration.getComponent().isEmpty()) {
+            options.put("producerComponentName", configuration.getProducerComponent());
         }
         if (configuration.getApiContextIdPattern() != null) {
             options.put("contextIdPattern", configuration.getApiContextIdPattern());
@@ -763,7 +746,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     @SuppressWarnings("rawtypes")
-    private void addRouteDefinition(CamelContext camelContext, List<RouteDefinition> answer, String component) {
+    private void addRouteDefinition(CamelContext camelContext, List<RouteDefinition> answer, String component, String producerComponent) {
         for (VerbDefinition verb : getVerbs()) {
             // either the verb has a singular to or a embedded route
             RouteDefinition route = verb.getRoute();
@@ -868,7 +851,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             }
 
             if (component != null && !component.isEmpty()) {
-                options.put("componentName", component);
+                options.put("consumerComponentName", component);
+            }
+            if (producerComponent != null && !producerComponent.isEmpty()) {
+                options.put("producerComponentName", producerComponent);
             }
 
             // include optional description, which we favor from 1) to/route description 2) verb description 3) rest description

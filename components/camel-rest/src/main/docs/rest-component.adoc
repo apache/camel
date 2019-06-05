@@ -19,14 +19,16 @@ rest://method:path[:uriTemplate]?[options]
 === URI Options
 
 // component options: START
-The REST component supports 5 options, which are listed below.
+The REST component supports 7 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *componentName* (common) | The Camel Rest component to use for the REST transport, such as restlet, spark-rest. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory (consumer) or org.apache.camel.spi.RestProducerFactory (producer) is registered in the registry. If either one is found, then that is being used. |  | String
+| *consumerComponentName* (consumer) | The Camel Rest component to use for (consumer) the REST transport, such as jetty, servlet, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found, then that is being used. |  | String
+| *producerComponentName* (producer) | The Camel Rest component to use for (producer) the REST transport, such as http, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that is being used. |  | String
+| *componentName* (producer) | *Deprecated* The Camel Rest component to use for (producer) the REST transport, such as http, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that is being used. |  | String
 | *apiDoc* (producer) | The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSon format. |  | String
 | *host* (producer) | Host and port of HTTP service to use (override host in swagger schema) |  | String
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
@@ -55,25 +57,26 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (16 parameters):
+==== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *componentName* (common) | The Camel Rest component to use for the REST transport, such as restlet, spark-rest. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found, then that is being used. |  | String
 | *consumes* (common) | Media type such as: 'text/xml', or 'application/json' this REST service accepts. By default we accept all kinds of types. |  | String
 | *inType* (common) | To declare the incoming POJO binding type as a FQN class name |  | String
 | *outType* (common) | To declare the outgoing POJO binding type as a FQN class name |  | String
 | *produces* (common) | Media type such as: 'text/xml', or 'application/json' this REST service returns. |  | String
 | *routeId* (common) | Name of the route this REST services creates |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *consumerComponentName* (consumer) | The Camel Rest component to use for (consumer) the REST transport, such as jetty, servlet, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found, then that is being used. |  | String
 | *description* (consumer) | Human description to document this REST service |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *apiDoc* (producer) | The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSon format. |  | String
 | *bindingMode* (producer) | Configures the binding mode for the producer. If set to anything other than 'off' the producer will try to convert the body of the incoming message from inType to the json or xml, and the response from json or xml to outType. |  | RestBindingMode
 | *host* (producer) | Host and port of HTTP service to use (override host in swagger schema) |  | String
+| *producerComponentName* (producer) | The Camel Rest component to use for (producer) the REST transport, such as http, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that is being used. |  | String
 | *queryParameters* (producer) | Query parameters for the HTTP service to call |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean

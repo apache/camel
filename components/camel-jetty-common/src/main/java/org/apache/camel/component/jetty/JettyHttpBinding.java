@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
- * Jetty specific binding to parse the response when using {@link org.apache.camel.component.jetty.JettyHttpProducer}
+ * Jetty specific binding to parse the request/response from Jetty and Camel.
  */
 public interface JettyHttpBinding {
 

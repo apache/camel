@@ -37,7 +37,7 @@ public class JettyHttpContentTypeTest extends BaseJettyTest {
         getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, CHARSET);
 
         byte[] data = "Hello World".getBytes(Charset.forName(CHARSET));
-        String out = template.requestBodyAndHeader("jetty:http://127.0.0.1:{{port}}/foo", data,
+        String out = template.requestBodyAndHeader("http://127.0.0.1:{{port}}/foo", data,
                 "content-type", "text/plain; charset=\"" + CHARSET + "\"", String.class);
         assertEquals("Bye World", out);
 
@@ -54,7 +54,7 @@ public class JettyHttpContentTypeTest extends BaseJettyTest {
         getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, CHARSET);
 
         byte[] data = "Hello World".getBytes(Charset.forName(CHARSET));
-        String out = template.requestBodyAndHeader("jetty:http://127.0.0.1:{{port}}/foo", data,
+        String out = template.requestBodyAndHeader("http://127.0.0.1:{{port}}/foo", data,
                 "content-type", "text/plain;charset=\"" + CHARSET + "\";action=\"http://somewhere.com/foo\"", String.class);
         assertEquals("Bye World", out);
 

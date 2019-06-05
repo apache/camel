@@ -51,7 +51,7 @@ public class JettyStreamCacheIssueTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:input").to("jetty:http://localhost:" + getPort() + "/input");
+                from("direct:input").to("http://localhost:" + getPort() + "/input");
 
                 from("jetty:http://localhost:" + getPort() + "/input").process(new Processor() {
                     @Override

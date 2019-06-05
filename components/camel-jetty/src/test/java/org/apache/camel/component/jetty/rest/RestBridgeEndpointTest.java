@@ -40,7 +40,7 @@ public class RestBridgeEndpointTest extends BaseJettyTest {
                 // configure to use jetty on localhost with the given port
                 restConfiguration().component("jetty").host("localhost").port(getPort());
 
-                rest("/api/").get("/{id}/").to("jetty:http://localhost:" + getPort2() + "?bridgeEndpoint=true");
+                rest("/api/").get("/{id}/").to("http://localhost:" + getPort2() + "?bridgeEndpoint=true");
 
                 from("jetty:http://localhost:" + getPort2() + "?matchOnUriPrefix=true")
                     .to("mock:result")
