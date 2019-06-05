@@ -30,11 +30,11 @@ public class JettyAsyncThrottleTest extends BaseJettyTest {
     public void testJettyAsync() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
 
-        template.asyncRequestBody("jetty:http://localhost:{{port}}/myservice", null);
-        template.asyncRequestBody("jetty:http://localhost:{{port}}/myservice", null);
-        template.asyncRequestBody("jetty:http://localhost:{{port}}/myservice", null);
-        template.asyncRequestBody("jetty:http://localhost:{{port}}/myservice", null);
-        template.asyncRequestBody("jetty:http://localhost:{{port}}/myservice", null);
+        template.asyncRequestBody("http://localhost:{{port}}/myservice", null);
+        template.asyncRequestBody("http://localhost:{{port}}/myservice", null);
+        template.asyncRequestBody("http://localhost:{{port}}/myservice", null);
+        template.asyncRequestBody("http://localhost:{{port}}/myservice", null);
+        template.asyncRequestBody("http://localhost:{{port}}/myservice", null);
 
         assertMockEndpointsSatisfied();
         int size = getMockEndpoint("mock:result").getReceivedExchanges().size();
@@ -57,8 +57,8 @@ public class JettyAsyncThrottleTest extends BaseJettyTest {
                     .removeHeaders("*")
                     .throttle(2).asyncDelayed()
                         .loadBalance().failover()
-                            .to("jetty:http://localhost:" + port2 + "/foo")
-                            .to("jetty:http://localhost:" + port3 + "/bar")
+                            .to("http://localhost:" + port2 + "/foo")
+                            .to("http://localhost:" + port3 + "/bar")
                         .end()
                     .to("mock:result");
 

@@ -63,7 +63,7 @@ public class RestEndpointTest {
     @Test
     public void shouldConfigureBindingMode() throws Exception {
         final RestEndpoint restEndpoint = new RestEndpoint("rest:GET:/path", restComponent);
-        restEndpoint.setComponentName("mock-rest");
+        restEndpoint.setConsumerComponentName("mock-rest");
         restEndpoint.setParameters(new HashMap<>());
         restEndpoint.setHost("http://localhost");
 

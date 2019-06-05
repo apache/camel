@@ -23,9 +23,11 @@ import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.http.common.HttpMessage;
 
 public class JettyRestHttpBinding extends DefaultHttpBinding {
+
     @Deprecated
     public JettyRestHttpBinding() {
     }
+
     public JettyRestHttpBinding(HttpCommonEndpoint ep) {
         super(ep);
         setHeaderFilterStrategy(ep.getHeaderFilterStrategy());

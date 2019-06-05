@@ -3,13 +3,9 @@
 
 *Available as of Camel version 1.2*
 
-WARNING: The producer is deprecated - do not use. We only recommend using jetty as consumer (eg from jetty)
-
 The *jetty* component provides HTTP-based endpoints
 for consuming and producing HTTP requests. That is, the Jetty component
-behaves as a simple Web server. +
- Jetty can also be used as a http client which mean you can also use it
-with Camel as a producer.
+behaves as a simple Web server.
 
 *Stream*
 
@@ -269,34 +265,7 @@ message header not only from Get Method, but also other HTTP method.
 
 === Usage
 
-The Jetty component supports both consumer and producer endpoints.
-Another option for producing to other HTTP endpoints, is to use the
-<<http-component,HTTP Component>>
-
-=== Producer Example
-
-WARNING: The producer is deprecated - do not use. We only recommend using jetty as consumer (eg from jetty)
-
-The following is a basic example of how to send an HTTP request to an
-existing HTTP endpoint.
-
-in Java DSL
-
-[source,java]
-----
-from("direct:start")
-  .to("jetty://http://www.google.com");
-----
-
-or in Spring XML
-
-[source,xml]
-----
-<route>
-    <from uri="direct:start"/>
-    <to uri="jetty://http://www.google.com"/>
-<route>
-----
+The Jetty component supports consumer endpoints.
 
 === Consumer Example
 
@@ -351,7 +320,7 @@ exchange. For example, the following route enables sessions:
 <route>
     <from uri="jetty:http://0.0.0.0/myapp/myservice/?sessionSupport=true"/>
     <processRef ref="myCode"/>
-<route>
+</route>
 ----
 
 The `myCode` Processor can be instantiated by a
@@ -359,7 +328,7 @@ Spring `bean` element:
 
 [source,xml]
 ----
-<bean id="myCode"class="com.mycompany.MyCodeProcessor"/>
+<bean id="myCode" class="com.mycompany.MyCodeProcessor"/>
 ----
 
 Where the processor implementation can access the `HttpSession` as
@@ -410,7 +379,6 @@ Spring DSL based configuration of endpoint
 
 [source,xml]
 ----
-...
   <camel:sslContextParameters
       id="sslContextParameters">
     <camel:keyManagers
@@ -419,10 +387,10 @@ Spring DSL based configuration of endpoint
           resource="/users/home/server/keystore.jks"
           password="keystorePassword"/>
     </camel:keyManagers>
-  </camel:sslContextParameters>...
-...
+  </camel:sslContextParameters>
+
   <to uri="jetty:https://127.0.0.1/mail/?sslContextParameters=#sslContextParameters"/>
-...
+
 ----
 
 [[Jetty-ConfiguringJettyDirectly]]
@@ -439,21 +407,6 @@ mode, simply format the URI with the `https://` prefix---for example:
 Jetty also needs to know where to load your keystore from and what
 passwords to use in order to load the correct SSL certificate. Set the
 following JVM System Properties:
-
-*until Camel 2.2*
-
-* `jetty.ssl.keystore` specifies the location of the Java keystore file,
-which contains the Jetty server's own X.509 certificate in a _key
-entry_. A key entry stores the X.509 certificate (effectively, the
-_public key_) and also its associated private key.
-* `jetty.ssl.password` the store password, which is required to access
-the keystore file (this is the same password that is supplied to the
-`keystore` command's `-storepass` option).
-* `jetty.ssl.keypassword` the key password, which is used to access the
-certificate's key entry in the keystore (this is the same password that
-is supplied to the `keystore` command's `-keypass` option).
-
-*from Camel 2.3 onwards*
 
 * `org.eclipse.jetty.ssl.keystore` specifies the location of the Java
 keystore file, which contains the Jetty server's own X.509 certificate
@@ -475,52 +428,7 @@ Some SSL properties aren't exposed directly by Camel, however Camel does
 expose the underlying SslSocketConnector, which will allow you to set
 properties like needClientAuth for mutual authentication requiring a
 client certificate or wantClientAuth for mutual authentication where a
-client doesn't need a certificate but can have one. There's a slight
-difference between the various Camel versions:
-
-*Up to Camel 2.2*
-
-[source,xml]
-----
-<bean id="jetty" class="org.apache.camel.component.jetty.JettyHttpComponent">
-    <property name="sslSocketConnectors">
-        <map>
-            <entry key="8043">
-                <bean class="org.mortbay.jetty.security.SslSocketConnector">
-                    <property name="password"value="..."/>
-                    <property name="keyPassword"value="..."/>
-                    <property name="keystore"value="..."/>
-                    <property name="needClientAuth"value="..."/>
-                    <property name="truststore"value="..."/>
-                </bean>
-            </entry>
-        </map>
-    </property>
-</bean>
-----
-
-*Camel 2.3, 2.4*
-
-[source,xml]
-----
-<bean id="jetty" class="org.apache.camel.component.jetty.JettyHttpComponent">
-    <property name="sslSocketConnectors">
-        <map>
-            <entry key="8043">
-                <bean class="org.eclipse.jetty.server.ssl.SslSocketConnector">
-                    <property name="password"value="..."/>
-                    <property name="keyPassword"value="..."/>
-                    <property name="keystore"value="..."/>
-                    <property name="needClientAuth"value="..."/>
-                    <property name="truststore"value="..."/>
-                </bean>
-            </entry>
-        </map>
-    </property>
-</bean>
-----
-
-*From Camel 2.5 we switch to use SslSelectChannelConnector *
+client doesn't need a certificate but can have one.
 
 [source,xml]
 ----
@@ -529,11 +437,11 @@ difference between the various Camel versions:
         <map>
             <entry key="8043">
                 <bean class="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">
-                    <property name="password"value="..."/>
-                    <property name="keyPassword"value="..."/>
-                    <property name="keystore"value="..."/>
-                    <property name="needClientAuth"value="..."/>
-                    <property name="truststore"value="..."/>
+                    <property name="password" value="..."/>
+                    <property name="keyPassword" value="..."/>
+                    <property name="keystore" value="..."/>
+                    <property name="needClientAuth" value="..."/>
+                    <property name="truststore" value="..."/>
                 </bean>
             </entry>
         </map>
@@ -546,8 +454,6 @@ Jetty to listen on.
 
 ==== Configuring general SSL properties
 
-*Available as of Camel 2.5*
-
 Instead of a per port number specific SSL socket connector (as shown
 above) you can now configure general properties which applies for all
 SSL socket connectors (which is not explicit configured as above with
@@ -558,11 +464,11 @@ the port number as entry).
 <bean id="jetty" class="org.apache.camel.component.jetty.JettyHttpComponent">
     <property name="sslSocketConnectorProperties">
         <map>
-            <entry key="password"value="..."/>
-            <entry key="keyPassword"value="..."/>
-            <entry key="keystore"value="..."/>
-            <entry key="needClientAuth"value="..."/>
-            <entry key="truststore"value="..."/>
+            <entry key="password" value="..."/>
+            <entry key="keyPassword" value="..."/>
+            <entry key="keystore" value="..."/>
+            <entry key="needClientAuth" value="..."/>
+            <entry key="truststore" value="..."/>
         </map>
     </property>
 </bean>
@@ -580,8 +486,6 @@ X509Certificate cert = (X509Certificate) req.getAttribute("javax.servlet.request
 ----
 
 ==== Configuring general HTTP properties
-
-*Available as of Camel 2.5*
 
 Instead of a per port number specific HTTP socket connector (as shown
 above) you can now configure general properties which applies for all
@@ -661,7 +565,7 @@ Spring registry as follows:
 
 [source,xml]
 ----
-<bean id="mybinding"class="com.mycompany.MyHttpBinding"/>
+<bean id="mybinding" class="com.mycompany.MyHttpBinding"/>
 ----
 
 And then we can reference this binding when we define the route:
@@ -682,7 +586,6 @@ configured in Spring XML as follows:
 
 [source,xml]
 ----
-<-- Jetty Security handling -->
 <bean id="userRealm" class="org.mortbay.jetty.plus.jaas.JAASUserRealm">
     <property name="name" value="tracker-users"/>
     <property name="loginModuleName" value="ldaploginmodule"/>
@@ -705,12 +608,10 @@ configured in Spring XML as follows:
 </bean>
 ----
 
-*And from Camel 2.3 onwards* you can configure a list of Jetty handlers
-as follows:
+You can configure a list of Jetty handlers as follows:
 
 [source,xml]
 ----
-<-- Jetty Security handling -->
 <bean id="constraint" class="org.eclipse.jetty.http.security.Constraint">
     <property name="name" value="BASIC"/>
     <property name="roles" value="tracker-users"/>
@@ -757,19 +658,15 @@ reply message. For example as show here, where we return
 
 === Multi-part Form support
 
-From Camel 2.3.0, camel-jetty support to multipart form post out of box.
+The camel-jetty component supports multipart form post out of box.
 The submitted form-data are mapped into the message header. Camel-jetty
 creates an attachment for each uploaded file. The file name is mapped to
 the name of the attachment. The content type is set as the content type
 of the attachment file name. You can find the example here.
 
-*Note: getName() functions as shown below in versions 2.5 and higher. In
-earlier versions you receive the temporary file name for the attachment
-instead*
-
 === Jetty JMX support
 
-From Camel 2.3.0, camel-jetty supports the enabling of Jetty's JMX
+The camel-jetty component supports the enabling of Jetty's JMX
 capabilities at the component and endpoint level with the endpoint
 configuration taking priority. Note that JMX must be enabled within the
 Camel context in order to enable JMX support in this component as the

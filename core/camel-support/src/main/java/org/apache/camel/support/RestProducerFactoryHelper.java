@@ -51,7 +51,11 @@ public final class RestProducerFactoryHelper {
     }
 
     public static Component setupComponent(final String componentName, final CamelContext camelContext,
-        final Map<String, Object> componentProperties) throws Exception {
+                                           final Map<String, Object> componentProperties) throws Exception {
+        if (componentName == null) {
+            return null;
+        }
+
         if (componentProperties == null || componentProperties.isEmpty()) {
             return camelContext.getComponent(componentName);
         }

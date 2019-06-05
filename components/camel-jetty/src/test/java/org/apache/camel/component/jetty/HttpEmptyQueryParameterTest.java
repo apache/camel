@@ -24,14 +24,14 @@ public class HttpEmptyQueryParameterTest extends BaseJettyTest {
     @Test
     public void testEmpty() throws Exception {
         getMockEndpoint("mock:input").expectedHeaderReceived("id", 123);
-        String out = fluentTemplate.to("jetty:http://localhost:{{port}}/foo?id=123").request(String.class);
+        String out = fluentTemplate.to("http://localhost:{{port}}/foo?id=123").request(String.class);
         assertEquals("Header: 123", out);
         assertMockEndpointsSatisfied();
 
         resetMocks();
 
         getMockEndpoint("mock:input").expectedHeaderReceived("id", "");
-        out = fluentTemplate.to("jetty:http://localhost:{{port}}/foo?id=").request(String.class);
+        out = fluentTemplate.to("http://localhost:{{port}}/foo?id=").request(String.class);
         assertEquals("Header: ", out);
         assertMockEndpointsSatisfied();
     }

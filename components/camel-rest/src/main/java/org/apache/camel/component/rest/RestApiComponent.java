@@ -39,8 +39,8 @@ public class RestApiComponent extends DefaultComponent {
         answer.setParameters(parameters);
 
         // if no explicit component name was given, then fallback and use default configured component name
-        if (answer.getComponentName() == null && getCamelContext().getRestConfiguration() != null) {
-            answer.setComponentName(getCamelContext().getRestConfiguration().getComponent());
+        if (answer.getConsumerComponentName() == null && getCamelContext().getRestConfiguration() != null) {
+            answer.setConsumerComponentName(getCamelContext().getRestConfiguration().getComponent());
         }
 
         return answer;

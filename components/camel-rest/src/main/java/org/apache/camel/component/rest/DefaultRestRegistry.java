@@ -84,7 +84,7 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
             if (restApiEndpoint == null && restEndpoint != null) {
                 // no rest-api has been explicit enabled, then we need to create it first
                 RestEndpoint rest = (RestEndpoint) restEndpoint;
-                String componentName = rest.getComponentName();
+                String componentName = rest.getProducerComponentName();
 
                 if (componentName != null) {
                     RestConfiguration config = camelContext.getRestConfiguration(componentName, true);
