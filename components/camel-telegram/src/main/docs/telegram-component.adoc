@@ -75,7 +75,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *type* | *Required* The endpoint type. Currently, only the 'bots' type is supported. |  | String
-| *authorizationToken* | *Required* The authorization token for using the bot (ask the BotFather), eg. 654321531:HGF_dTra456323dHuOedsE343211fqr3t-H. |  | String
+| *authorizationToken* | *Required* The authorization token for using the bot (ask the BotFather) |  | String
 |===
 
 
@@ -85,8 +85,6 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *proxyHost* (common) | The proxyHost which could be used when sending out the message. |  | String
-| *proxyPort* (common) | The proxyPort which could be used when sending out the message. |  | Integer
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *limit* (consumer) | Limit on the number of updates that can be received in a single polling request. | 100 | Integer
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
@@ -110,6 +108,8 @@ with the following path and query parameters:
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| *proxyHost* (proxy) | HTTP proxy host which could be used when sending out the message. |  | String
+| *proxyPort* (proxy) | HTTP proxy port which could be used when sending out the message. |  | Integer
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
