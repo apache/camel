@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriEndpoint;
  * The jetty component provides HTTP-based endpoints for consuming and producing HTTP requests.
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "jetty", extendsScheme = "http", title = "Jetty",
-        syntax = "jetty:httpUri", label = "http", lenientProperties = true,
+        syntax = "jetty:httpUri", label = "http", consumerOnly = true, lenientProperties = true,
         excludeProperties = "authMethod,authMethodPriority,authUsername,authPassword,authDomain,authHost"
             + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain")
 public class JettyHttpEndpoint9 extends JettyHttpEndpoint implements AsyncEndpoint {
