@@ -120,7 +120,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (35 parameters):
+==== Query Parameters (33 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -150,9 +150,7 @@ with the following path and query parameters:
 | *filterInitParameters* (consumer) | Configuration of the filter init parameters. These parameters will be applied to the filter list before starting the jetty server. |  | Map
 | *filtersRef* (consumer) | Allows using a custom filters which is putted into a list and can be find in the Registry. Multiple values can be separated by comma. |  | String
 | *handlers* (consumer) | Specifies a comma-delimited set of Handler instances to lookup in your Registry. These handlers are added to the Jetty servlet context (for example, to add security). Important: You can not use different handlers with different Jetty endpoints using the same port number. The handlers is associated to the port number. If you need different handlers, then use different port numbers. |  | String
-| *httpBindingRef* (consumer) | *Deprecated* Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code. |  | String
 | *multipartFilter* (consumer) | Allows using a custom multipart filter. Note: setting multipartFilterRef forces the value of enableMultipartFilter to true. |  | Filter
-| *multipartFilterRef* (consumer) | *Deprecated* Allows using a custom multipart filter. Note: setting multipartFilterRef forces the value of enableMultipartFilter to true. |  | String
 | *optionsEnabled* (consumer) | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off. | false | boolean
 | *traceEnabled* (consumer) | Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
