@@ -43,7 +43,7 @@ do
 
   if [ $found -eq 0 ]
   then
-    if [ $testname == "$1" ]
+    if [ $testname = "$1" ]
     then
      found=1
     fi 
