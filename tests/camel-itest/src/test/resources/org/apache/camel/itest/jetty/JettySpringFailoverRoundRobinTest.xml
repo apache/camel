@@ -31,6 +31,10 @@
         <endpoint id="bad2" uri="jetty:http://localhost:{{JettySpringFailoverRoundRobinTest.port2}}/bad2"/>
         <endpoint id="good" uri="jetty:http://localhost:{{JettySpringFailoverRoundRobinTest.port3}}/good"/>
         <endpoint id="good2" uri="jetty:http://localhost:{{JettySpringFailoverRoundRobinTest.port4}}/good2"/>
+        <endpoint id="hbad" uri="http://localhost:{{JettySpringFailoverRoundRobinTest.port1}}/bar"/>
+        <endpoint id="hbad2" uri="http://localhost:{{JettySpringFailoverRoundRobinTest.port2}}/bad2"/>
+        <endpoint id="hgood" uri="http://localhost:{{JettySpringFailoverRoundRobinTest.port3}}/good"/>
+        <endpoint id="hgood2" uri="http://localhost:{{JettySpringFailoverRoundRobinTest.port4}}/good2"/>
 
         <!-- START SNIPPET: e1 -->
         <route>
@@ -41,10 +45,10 @@
             <loadBalance inheritErrorHandler="false">
                 <failover roundRobin="true"/>
                 <!-- and this is the four endpoints we will load balance with failover -->
-                <to uri="ref:bad"/>
-                <to uri="ref:bad2"/>
-                <to uri="ref:good"/>
-                <to uri="ref:good2"/>
+                <to uri="ref:hbad"/>
+                <to uri="ref:hbad2"/>
+                <to uri="ref:hgood"/>
+                <to uri="ref:hgood2"/>
             </loadBalance>
         </route>
         <!-- END SNIPPET: e1 -->
