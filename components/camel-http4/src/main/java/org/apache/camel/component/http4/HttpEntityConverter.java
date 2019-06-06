@@ -67,7 +67,13 @@ public final class HttpEntityConverter {
             entity = new InputStreamEntity(stream, stream instanceof ByteArrayInputStream
                 ? stream.available() != 0 ? stream.available() : -1 : -1);
         } else {
-            entity = new InputStreamEntity(in, -1);
+            long length = -1;
+            try {
+                length = exchange.getProperty(Exchange.CONTENT_LENGTH) == null
+                        ? length
+                        : Long.parseLong(String.valueOf(exchange.getProperty(Exchange.CONTENT_LENGTH)));
+            } catch (NumberFormatException ignore) {}
+            entity = new InputStreamEntity(in, length);
         }
         if (exchange != null) {
             String contentEncoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
