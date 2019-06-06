@@ -47,8 +47,8 @@ public class RibbonServiceCallRegistryRouteTest extends RibbonServiceCallRouteTe
                 from("direct:start")
                     .serviceCall()
                         .name("myService")
-                        .component("jetty")
-                        .end()
+                        .component("http")
+                    .end()
                     .to("mock:result");
                 from("jetty:http://localhost:9090")
                     .to("mock:9090")

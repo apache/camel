@@ -47,7 +47,7 @@
 
     <route id="scall">
       <from uri="direct:start"/>
-      <serviceCall name="myService" component="jetty"/>
+      <serviceCall name="myService" component="http"/>
       <to uri="mock:result"/>
     </route>
 
