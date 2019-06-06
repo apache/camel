@@ -129,9 +129,8 @@ The component supports 3 options, which are listed below.
 To use Hibernate Validator in the OSGi environment use dedicated
 `ValidationProviderResolver` implementation, just as
 `org.apache.camel.component.bean.validator.HibernateValidationProviderResolver`.
-The snippet below demonstrates this approach. Keep in mind that you can
-use `HibernateValidationProviderResolver` starting from the Camel
-2.13.0.
+The snippet below demonstrates this approach. You can also
+use `HibernateValidationProviderResolver`.
 
 *Using HibernateValidationProviderResolver*
 

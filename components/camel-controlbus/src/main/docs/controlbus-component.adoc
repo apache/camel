@@ -1,7 +1,7 @@
 [[controlbus-component]]
 == Control Bus Component
 
-*Available as of Camel version 2.11*
+*Available as of Camel 2.11*
 
 The http://www.eaipatterns.com/ControlBus.html[Control Bus] from the
 EIP patterns allows for the
@@ -21,16 +21,7 @@ by using a Java API from the `CamelContext`, or from the
  or use the event notifier which has an example
 here.
 
-From Camel 2.11 onwards we have introduced a new
-<<controlbus-component,ControlBus Component>> that allows you to
-send messages to a control bus Endpoint that reacts
-accordingly.
-
-=== ControlBus Component
-
-*Available as of Camel 2.11*
-
-The *controlbus:* component provides easy management of Camel
+The ControlBus component provides easy management of Camel
 applications based on the <<controlbus-component,Control Bus>> EIP
 pattern. 
 For example, by sending a message to an Endpoint
