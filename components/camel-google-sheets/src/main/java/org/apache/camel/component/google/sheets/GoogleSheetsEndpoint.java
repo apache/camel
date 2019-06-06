@@ -35,12 +35,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 /**
  * The google-sheets component provides access to Google Sheets.
  */
-@UriEndpoint(firstVersion = "2.23.0",
-        scheme = "google-sheets",
-        title = "Google Sheets",
-        syntax = "google-sheets:apiName/methodName",
-        consumerPrefix = "consumer",
-        label = "api,cloud,sheets")
+@UriEndpoint(firstVersion = "2.23.0", scheme = "google-sheets", title = "Google Sheets", syntax = "google-sheets:apiName/methodName", consumerPrefix = "consumer", label = "api,cloud,sheets")
 public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiName, GoogleSheetsConfiguration> {
 
     @UriParam(name = "configuration")
@@ -48,11 +43,7 @@ public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiNam
 
     private Object apiProxy;
 
-    public GoogleSheetsEndpoint(String uri,
-                                GoogleSheetsComponent component,
-                                GoogleSheetsApiName apiName,
-                                String methodName,
-                                GoogleSheetsConfiguration endpointConfiguration) {
+    public GoogleSheetsEndpoint(String uri, GoogleSheetsComponent component, GoogleSheetsApiName apiName, String methodName, GoogleSheetsConfiguration endpointConfiguration) {
         super(uri, component, apiName, methodName, GoogleSheetsApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
         this.endpointConfiguration = endpointConfiguration;
     }
@@ -87,14 +78,14 @@ public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiNam
     @Override
     protected void afterConfigureProperties() {
         switch (apiName) {
-            case SPREADSHEETS:
-                apiProxy = getClient().spreadsheets();
-                break;
-            case DATA:
-                apiProxy = getClient().spreadsheets().values();
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid API name " + apiName);
+        case SPREADSHEETS:
+            apiProxy = getClient().spreadsheets();
+            break;
+        case DATA:
+            apiProxy = getClient().spreadsheets().values();
+            break;
+        default:
+            throw new IllegalArgumentException("Invalid API name " + apiName);
         }
     }
 
