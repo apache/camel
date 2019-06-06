@@ -85,17 +85,30 @@ public class GoogleSheetsStreamConsumer extends ScheduledBatchPollingConsumer {
                     for (ValueRange valueRange : response.getValueRanges()) {
                         AtomicInteger rangeIndex = new AtomicInteger(1);
                         AtomicInteger valueIndex = new AtomicInteger();
-                        valueRange.getValues().stream()
-                            .limit(getConfiguration().getMaxResults())
-                            .map(values -> getEndpoint().createExchange(rangeIndex.get(), valueIndex.incrementAndGet(), valueRange.getRange(), valueRange.getMajorDimension(), values))
-                            .forEach(answer::add);
+                        if (getConfiguration().getMaxResults() > 0) {
+                            valueRange.getValues().stream()
+                                    .limit(getConfiguration().getMaxResults())
+                                    .map(values -> getEndpoint().createExchange(rangeIndex.get(), valueIndex.incrementAndGet(), valueRange.getRange(), valueRange.getMajorDimension(), values))
+                                    .forEach(answer::add);
+                        } else {
+                            valueRange.getValues().stream()
+                                    .map(values -> getEndpoint().createExchange(rangeIndex.get(), valueIndex.incrementAndGet(), valueRange.getRange(), valueRange.getMajorDimension(), values))
+                                    .forEach(answer::add);
+                        }
                         rangeIndex.incrementAndGet();
                     }
                 } else {
                     AtomicInteger rangeIndex = new AtomicInteger();
                     response.getValueRanges()
                             .stream()
-                            .limit(getConfiguration().getMaxResults())
+                            .peek(valueRange -> {
+                                if (getConfiguration().getMaxResults() > 0) {
+                                    valueRange.setValues(valueRange.getValues()
+                                            .stream()
+                                            .limit(getConfiguration().getMaxResults())
+                                            .collect(Collectors.toList()));
+                                }
+                            })
                             .map(valueRange -> getEndpoint().createExchange(rangeIndex.incrementAndGet(), valueRange))
                             .forEach(answer::add);
                 }

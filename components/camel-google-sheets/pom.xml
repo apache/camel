@@ -29,8 +29,8 @@
 
   <artifactId>camel-google-sheets</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: GoogleSheets</name>
-  <description>Camel Component for GoogleSheets</description>
+  <name>Camel :: Google Sheets</name>
+  <description>Camel Component for Google Sheets</description>
 
   <properties>
     <schemeName>google-sheets</schemeName>
@@ -40,7 +40,52 @@
     <camel.osgi.private.pkg>org.apache.camel.component.google.sheets.internal</camel.osgi.private.pkg>
     <camel.osgi.export.pkg>org.apache.camel.component.google.sheets</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=google-sheets</camel.osgi.export.service>
+    <spring-security-oauth2-version>2.3.6.RELEASE</spring-security-oauth2-version>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+        <!-- Test dependencies -->
+        <dependency>
+          <groupId>org.assertj</groupId>
+          <artifactId>assertj-core</artifactId>
+          <version>${assertj-version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-webmvc</artifactId>
+          <version>${spring-version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework.security</groupId>
+          <artifactId>spring-security-web</artifactId>
+          <version>${spring-security-version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework.security.oauth</groupId>
+          <artifactId>spring-security-oauth2</artifactId>
+          <version>${spring-security-oauth2-version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.consol.citrus</groupId>
+          <artifactId>citrus-core</artifactId>
+          <version>${citrus.version}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>com.consol.citrus</groupId>
+          <artifactId>citrus-java-dsl</artifactId>
+          <version>${citrus.version}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>com.consol.citrus</groupId>
+          <artifactId>citrus-http</artifactId>
+          <version>${citrus.version}</version>
+          <scope>test</scope>
+        </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <dependency>
@@ -78,9 +123,9 @@
 
     <!-- Component API javadoc in provided scope to read API signatures -->
     <dependency>
-        <groupId>com.google.apis</groupId>
-        <artifactId>google-api-services-sheets</artifactId>
-        <version>${google-api-services-sheets-version}</version>
+      <groupId>com.google.apis</groupId>
+      <artifactId>google-api-services-sheets</artifactId>
+      <version>${google-api-services-sheets-version}</version>
       <type>javadoc</type>
       <scope>provided</scope>
     </dependency>
@@ -106,6 +151,41 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security.oauth</groupId>
+      <artifactId>spring-security-oauth2</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.consol.citrus</groupId>
+      <artifactId>citrus-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.consol.citrus</groupId>
+      <artifactId>citrus-java-dsl</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.consol.citrus</groupId>
+      <artifactId>citrus-http</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

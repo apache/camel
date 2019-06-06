@@ -127,7 +127,7 @@ public class GoogleSheetsStreamComponentConfiguration
          * number of rows in a returned value range data set or the number of
          * returned value ranges in a batch request.
          */
-        private Integer maxResults = 10;
+        private Integer maxResults = 0;
         /**
          * Specifies the range of rows and columns in a sheet to get data from.
          */

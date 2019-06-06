@@ -61,9 +61,12 @@ public class GoogleSheetsVerifierExtension extends DefaultComponentVerifierExten
         try {
             GoogleSheetsConfiguration configuration = setProperties(new GoogleSheetsConfiguration(), parameters);
             GoogleSheetsClientFactory clientFactory = new BatchGoogleSheetsClientFactory();
-            Sheets client = clientFactory.makeClient(configuration.getClientId(), configuration.getClientSecret(), configuration.getApplicationName(),
-                                                     configuration.getRefreshToken(), configuration.getAccessToken());
-            client.spreadsheets().get(Optional.ofNullable(parameters.get("spreadsheetId")).map(Object::toString).orElse(UUID.randomUUID().toString())).execute();
+            Sheets client = clientFactory.makeClient(configuration.getClientId(), configuration.getClientSecret(),
+                    configuration.getApplicationName(),
+                    configuration.getRefreshToken(), configuration.getAccessToken());
+            client.spreadsheets().get(Optional.ofNullable(parameters.get("spreadsheetId"))
+                                              .map(Object::toString)
+                                              .orElse(UUID.randomUUID().toString())).execute();
         } catch (Exception e) {
             ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
                 .detail("google_sheets_exception_message", e.getMessage()).detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())

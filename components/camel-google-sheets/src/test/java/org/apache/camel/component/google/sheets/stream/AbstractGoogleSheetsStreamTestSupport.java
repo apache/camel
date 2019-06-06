@@ -16,8 +16,13 @@
  */
 package org.apache.camel.component.google.sheets.stream;
 
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.sheets.v4.Sheets;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.google.sheets.AbstractGoogleSheetsTestSupport;
+import org.apache.camel.component.google.sheets.BatchGoogleSheetsClientFactory;
+import org.apache.camel.component.google.sheets.server.GoogleSheetsApiTestServerRule;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
@@ -36,6 +41,18 @@ public class AbstractGoogleSheetsStreamTestSupport extends AbstractGoogleSheetsT
 
         // add GoogleSheetsComponent to Camel context
         final GoogleSheetsStreamComponent component = new GoogleSheetsStreamComponent(context);
+        component.setClientFactory(new BatchGoogleSheetsClientFactory(
+                new NetHttpTransport.Builder()
+                        .trustCertificatesFromJavaKeyStore(
+                                getClass().getResourceAsStream("/" + GoogleSheetsApiTestServerRule.SERVER_KEYSTORE),
+                                GoogleSheetsApiTestServerRule.SERVER_KEYSTORE_PASSWORD)
+                        .build(),
+                new JacksonFactory()) {
+            @Override
+            protected void configure(Sheets.Builder clientBuilder) {
+                clientBuilder.setRootUrl(String.format("https://localhost:%s/", googleSheetsApiTestServerRule.getServerPort()));
+            }
+        });
         component.setConfiguration(configuration);
         context.addComponent("google-sheets-stream", component);
 
