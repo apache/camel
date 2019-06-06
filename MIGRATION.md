@@ -255,6 +255,8 @@ The annotation `org.apache.camel.language.SpEL` has been moved to `org.apache.ca
 
 Rename various APIs in camel-core to fix the typo `chiper` to `cipher`.
 
+The classes `ReloadStrategySupport` and `FileWatcherReloadStrategy` has been moved from package `org.apache.camel.impl` to `org.apache.camel.reload`.
+
 #### camel-test
 
 If you are using camel-test and override the `createRegistry` method, for example to register beans from the `JndiRegisty` class, then this is no longer necessary, and instead
