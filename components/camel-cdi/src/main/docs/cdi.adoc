@@ -280,10 +280,7 @@ user-defined `@MyOtherQualifier` qualifier does not get added to any
 Camel contexts. That may be useful, for example, for Camel routes that
 may be required to be added later during the application execution.
 
-NOTE: Since Camel version 2.17.0, Camel CDI is capable of managing any kind of
-`CamelContext` beans (e.g. `DefaultCamelContext`). In previous versions,
-it is only capable of managing beans of type `CdiCamelContext` so it is
-required to extend it.
+Camel CDI is capable of managing any kind of `CamelContext` beans (e.g. `DefaultCamelContext`).
 
 The CDI qualifiers declared on the `CamelContext` beans are also used to
 bind the corresponding Camel primitives, e.g.:

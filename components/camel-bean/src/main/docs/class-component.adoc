@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.4*
 
-The *class:* component binds beans to Camel message exchanges. It works
+The Class component binds beans to Camel message exchanges. It works
 in the same way as the <<bean-component,Bean>> component but instead of
 looking up beans from a Registry it creates the bean
 based on the class name.
@@ -97,14 +97,8 @@ instance, for example if it has a `setPrefix` method:
 
 [source,java]
 ---------------------------------------------------------------------------------
-   // Camel 2.17 onwards
    from("direct:start")
         .to("class:org.apache.camel.component.bean.MyPrefixBean?bean.prefix=Bye")
-        .to("mock:result");
- 
-   // Camel 2.16 and older 
-   from("direct:start")
-        .to("class:org.apache.camel.component.bean.MyPrefixBean?prefix=Bye")
         .to("mock:result");
 ---------------------------------------------------------------------------------
 
@@ -113,14 +107,8 @@ up in the Registry.
 
 [source,java]
 --------------------------------------------------------------------------------
-    // Camel 2.17 onwards
     from("direct:start")
         .to("class:org.apache.camel.component.bean.MyPrefixBean?bean.cool=#foo")
-        .to("mock:result");
-
-    // Camel 2.16 and older
-    from("direct:start")
-        .to("class:org.apache.camel.component.bean.MyPrefixBean?cool=#foo")
         .to("mock:result");
 --------------------------------------------------------------------------------
 

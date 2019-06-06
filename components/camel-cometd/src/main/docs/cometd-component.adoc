@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.0*
 
-The *cometd:* component is a transport for working with the
+The Cometd component is a transport for working with the
 http://www.mortbay.org/jetty[jetty] implementation of the
 http://docs.codehaus.org/display/JETTY/Cometd+%28aka+Bayeux%29[cometd/bayeux
 protocol]. +
@@ -181,7 +181,7 @@ http://cometd.org/documentation/howtos/authentication[documented here]
 
 #### Using the JSSE Configuration Utility
 
-As of Camel 2.9, the Cometd component supports SSL/TLS configuration
+The Cometd component supports SSL/TLS configuration
 through the link:camel-configuration-utilities.html[Camel JSSE
 Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
