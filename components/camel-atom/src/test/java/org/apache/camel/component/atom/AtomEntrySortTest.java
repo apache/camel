@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.atom;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.abdera.model.Entry;
@@ -50,7 +49,6 @@ public class AtomEntrySortTest extends CamelTestSupport {
 
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
         registry.bind("myBean", new MyBean());
     }
 
