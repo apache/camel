@@ -113,7 +113,7 @@ public class CamelAutoConfiguration {
     @ConditionalOnMissingBean(CamelContext.class)
     CamelContext camelContext(ApplicationContext applicationContext,
                               CamelConfigurationProperties config) throws Exception {
-        CamelContext camelContext = new SpringBootCamelContext(applicationContext);
+        CamelContext camelContext = new SpringBootCamelContext(applicationContext, config.isWarnOnEarlyShutdown());
         return doConfigureCamelContext(applicationContext, camelContext, config);
     }
 

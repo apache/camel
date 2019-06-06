@@ -35,6 +35,12 @@ public class CamelConfigurationProperties {
     private int shutdownTimeout = 300;
 
     /**
+     * Whether to log a WARN if Camel on Spring Boot was immediately shutdown after starting which
+     * very likely is because there is no JVM thread to keep the application running.
+     */
+    private boolean warnOnEarlyShutdown = true;
+
+    /**
      * Whether Camel should try to suppress logging during shutdown and timeout was triggered,
      * meaning forced shutdown is happening. And during forced shutdown we want to avoid logging
      * errors/warnings et all in the logs as a side-effect of the forced timeout.
@@ -506,6 +512,14 @@ public class CamelConfigurationProperties {
 
     public void setShutdownTimeout(int shutdownTimeout) {
         this.shutdownTimeout = shutdownTimeout;
+    }
+
+    public boolean isWarnOnEarlyShutdown() {
+        return warnOnEarlyShutdown;
+    }
+
+    public void setWarnOnEarlyShutdown(boolean warnOnEarlyShutdown) {
+        this.warnOnEarlyShutdown = warnOnEarlyShutdown;
     }
 
     public boolean isShutdownSuppressLoggingOnTimeout() {
