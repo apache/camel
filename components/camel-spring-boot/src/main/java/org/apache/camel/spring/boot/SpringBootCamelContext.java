@@ -26,9 +26,11 @@ import org.springframework.context.ApplicationContext;
 public class SpringBootCamelContext extends SpringCamelContext {
 
     private final StopWatch stopWatch = new StopWatch();
+    private final boolean warnOnEarlyShutdown;
 
-    public SpringBootCamelContext(ApplicationContext applicationContext) {
+    public SpringBootCamelContext(ApplicationContext applicationContext, boolean warnOnEarlyShutdown) {
         super(applicationContext);
+        this.warnOnEarlyShutdown = warnOnEarlyShutdown;
     }
 
     @Override
@@ -42,10 +44,10 @@ public class SpringBootCamelContext extends SpringCamelContext {
         // if we are stopping very quickly then its likely because the user may not have either spring-boot-web
         // or enabled Camel's main controller, so lets log a WARN about this.
         long taken = stopWatch.taken();
-        if (taken < 1200) { // give it a bit of slack
+        if (warnOnEarlyShutdown && taken < 1200) { // give it a bit of slack
             String cp = System.getProperty("java.class.path");
-            boolean starterWeb = cp != null && cp.contains("spring-boot-starter-web");
             boolean junit = cp != null && cp.contains("junit-");
+            boolean starterWeb = cp != null && cp.contains("spring-boot-starter-web");
             if (!junit && !starterWeb) {
                 log.warn("CamelContext has only been running for less than a second. If you intend to run Camel for a longer time "
                         + "then you can set the property camel.springboot.main-run-controller=true in application.properties"
