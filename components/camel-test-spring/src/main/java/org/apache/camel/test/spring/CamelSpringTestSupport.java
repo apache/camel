@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spring.CamelBeanPostProcessor;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.ExcludingPackageScanClassResolver;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -44,23 +44,12 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
     protected AbstractApplicationContext applicationContext;
     protected abstract AbstractApplicationContext createApplicationContext();
 
-    /**
-     * Lets post process this test instance to process any Camel annotations.
-     * Note that using Spring Test or Guice is a more powerful approach.
-     */
     @Override
     public void postProcessTest() throws Exception {
-        super.postProcessTest();
         if (isCreateCamelContextPerClass()) {
             applicationContext = threadAppContext.get();
         }
-
-        // use the bean post processor from camel-spring
-        CamelBeanPostProcessor processor = new CamelBeanPostProcessor();
-        processor.setApplicationContext(applicationContext);
-        processor.setCamelContext(context);
-        processor.postProcessBeforeInitialization(this, getClass().getName());
-        processor.postProcessAfterInitialization(this, getClass().getName());
+        super.postProcessTest();
     }
 
     @Override
