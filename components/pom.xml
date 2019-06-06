@@ -92,6 +92,7 @@
         <module>camel-ahc</module>
         <module>camel-ahc-ws</module>
         <module>camel-amqp</module>
+        <module>camel-any23</module>
         <module>camel-apns</module>
         <module>camel-as2</module>
         <module>camel-asn1</module>

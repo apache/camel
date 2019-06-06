@@ -1,0 +1,111 @@
+== Any23 DataFormat
+== TidyMarkup DataFormat
+
+*Available as of Camel version 1.0*
+
+TidyMarkup is a Data Format that uses the
+http://www.ccil.org/~cowan/XML/tagsoup/[TagSoup] to tidy up HTML. It can
+be used to parse ugly HTML and return it as pretty wellformed HTML.
+
+*Camel eats our own -dog food- soap*
+
+We had some issues in our pdf Manual where we had some
+strange symbols. So http://janstey.blogspot.com/[Jonathan] used this
+data format to tidy up the wiki html pages that are used as base for
+rendering the pdf manuals. And then the mysterious symbols vanished.
+
+TidyMarkup only supports the *unmarshal* operation
+as we really don't want to turn well formed HTML into ugly HTML.
+
+### TidyMarkup Options
+
+
+
+// dataformat options: START
+The Any23 dataformat supports 1 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+|===
+// dataformat options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-tagsoup-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.tidymarkup.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.tidymarkup.data-object-type* | What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String. Is by default org.w3c.dom.Node | org.w3c.dom.Node | String
+| *camel.dataformat.tidymarkup.enabled* | Enable tidymarkup dataformat | true | Boolean
+| *camel.dataformat.tidymarkup.omit-xml-declaration* | When returning a String, do we omit the XML declaration in the top. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+### Java DSL Example
+
+An example where the consumer provides some HTML
+
+[source,java]
+---------------------------------------------------------------------------
+from("file://site/inbox").unmarshal().tidyMarkup().to("file://site/blogs");
+---------------------------------------------------------------------------
+
+### Spring XML Example
+
+The following example shows how to use TidyMarkup
+to unmarshal using Spring
+
+[source,java]
+-----------------------------------------------------------------------
+<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="file://site/inbox"/>
+    <unmarshal>
+      <tidyMarkup/>
+    </unmarshal>
+    <to uri="file://site/blogs"/>
+  </route>
+</camelContext>
+-----------------------------------------------------------------------
+
+### Dependencies
+
+To use TidyMarkup in your camel routes you need to add the a dependency
+on *camel-tagsoup* which implements this data format.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,java]
+----------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-tagsoup</artifactId>
+  <version>x.x.x</version>
+</dependency>
+----------------------------------------
