@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.20*
 
-The *caffeine-loadcache* component enables you to perform caching operations using
+The Caffeine Loadcache component enables you to perform caching operations using
 The Load cache from Caffeine.
 
 Maven users will need to add the following dependency to

@@ -4,7 +4,7 @@
 *Available as of Camel version 2.23*
 
 
-The *Corda* blockchain component uses the https://www.corda.net/[corda] rpc client
+The Corda blockchain component uses the https://www.corda.net/[corda] rpc client
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:

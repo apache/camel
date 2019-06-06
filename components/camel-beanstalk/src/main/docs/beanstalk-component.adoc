@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.15*
 
-camel-beanstalk project provides a Camel component for job retrieval and
+Camel Beanstalk project provides a Camel component for job retrieval and
 post-processing of Beanstalk jobs.
 
 You can find the detailed explanation of Beanstalk job lifecycle
@@ -23,8 +23,7 @@ Maven users need to add the following dependency to their `pom.xml`
 </dependency>
 ------------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel
-(2.15.0 or higher).
+where `${camel-version`} must be replaced by the actual version of Camel.
 
 ### URI format
 

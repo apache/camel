@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.15*
 
-The *chunk:* component allows for processing a message using a
+The Chunk component allows for processing a message using a
 http://www.x5software.com/chunk/examples/ChunkExample?loc=en_US[Chunk] template.
 This can be ideal when using Templating to
 generate responses for requests.

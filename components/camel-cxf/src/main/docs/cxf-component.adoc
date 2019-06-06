@@ -13,7 +13,7 @@ fastest method to implement web services using Camel and CXF.
 TIP: When using CXF in streaming modes (see DataFormat option), then also
 read about Stream caching.
 
-The *cxf:* component provides integration with
+The CXF component provides integration with
 http://cxf.apache.org[Apache CXF] for connecting to http://cxf.apache.org/docs/jax-ws.html[JAX-WS] services
 hosted in CXF.
 
@@ -254,7 +254,7 @@ interceptors will be removed if you are using this kind of DataFormat so
 you can't see any soap headers after the camel-cxf consumer and JAX-WS
 handler is not supported.
 
-|`CXF_MESSAGE` |New in *Camel 2.8.2*, `CXF_MESSAGE` allows for invoking the full
+|`CXF_MESSAGE` |`CXF_MESSAGE` allows for invoking the full
 capabilities of CXF interceptors by converting the message from the
 transport layer into a raw SOAP message
 |=======================================================================
@@ -354,9 +354,6 @@ Take a look at the tests that show how you'd be able to relay/drop
 headers here:
 
 https://github.com/apache/camel/blob/master/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/soap/headers/CxfMessageHeadersRelayTest.java[https://github.com/apache/camel/blob/master/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/soap/headers/CxfMessageHeadersRelayTest.java]
-
-
-#### Changes since Camel Release  2.0
 
 * `POJO` and `PAYLOAD` modes are supported. In `POJO` mode, only
 out-of-band message headers are available for filtering as the in-band
@@ -566,7 +563,7 @@ and setDefaultBus properties from spring configuration file.
 
 ### Configuring the CXF Endpoints with Apache Aries Blueprint
 
-Since Camel 2.8 there is support for utilizing aries blueprint
+The component is capable of utilizing aries blueprint
 dependency injection for your CXF endpoints.
  The schema utilized is very similar to the spring schema so the
 transition is fairly transparent.
@@ -664,10 +661,7 @@ To resolved this issue, you just need to tell StaxOutInterceptor to
 write the XML start document for you.
 
 You can add a customer interceptor like this and configure it into you
-camel-cxf endpont
-
-Or adding a message header for it like this if you are using *Camel
-2.4*.
+camel-cxf endpont or add a message header for it like
 
 [source,java]
 -------------------------------------------------------------------
@@ -764,7 +758,7 @@ Once you obtain a CxfPayload object, you can invoke the
 CxfPayload.getHeaders() method that returns a List of DOM Elements (SOAP
 headers).
 
-Since Camel 2.16.0, you can also use the same way as described in
+You can also use the same way as described in
 sub-chapter "How to get and set SOAP headers in POJO mode" to set or get
 the SOAP headers. So, you can use now the
 header "org.apache.cxf.headers.Header.list" to get and set a list of
@@ -837,7 +831,7 @@ example in Payload Mode for enabling MTOM).  However, SOAP with
 Attachment is not tested.  Since attachments are marshalled and
 unmarshalled into POJOs, users typically do not need to deal with the
 attachment themself.  Attachments are propagated to Camel message's
-attachments if the MTOM is not enabled, since Camel 2.12.3.  So, it is
+attachments if the MTOM is not enabled.  So, it is
 possible to retrieve attachments by Camel Message API
 
 [source,java]
@@ -845,9 +839,9 @@ possible to retrieve attachments by Camel Message API
 DataHandler Message.getAttachment(String id)
 --------------------------------------------
 
-*Payload Mode:* MTOM is supported since Camel 2.1. Attachments can be
+*Payload Mode:* MTOM is supported by the component. Attachments can be
 retrieved by Camel Message APIs mentioned above. SOAP with Attachment
-(SwA) is supported and attachments can be retrieved since Camel  2.5. SwA is
+(SwA) is supported and attachments can be retrieved. SwA is
 the default (same as setting the CXF endpoint property "mtom-enabled" to
 false). 
 
@@ -873,11 +867,10 @@ for you.
 
 ### Streaming Support in PAYLOAD mode
 
-In Camel 2.8.2, the camel-cxf component now supports streaming of incoming
+The camel-cxf component now supports streaming of incoming
 messages when using PAYLOAD mode. Previously, the incoming messages
 would have been completely DOM parsed. For large messages, this is time
-consuming and uses a significant amount of memory. Starting in Camel 2.8.2,
-the incoming messages can remain as a javax.xml.transform.Source while
+consuming and uses a significant amount of memory. The incoming messages can remain as a javax.xml.transform.Source while
 being routed and, if nothing modifies the payload, can then be directly
 streamed out to the target destination. For common "simple proxy" use
 cases (example: from("cxf:...").to("cxf:...")), this can provide very
@@ -905,7 +898,7 @@ will override this value for that endpoint.
 
 ### Using the generic CXF Dispatch mode
 
-From Camel 2.8.0, the camel-cxf component supports the generic
+The camel-cxf component supports the generic
 https://cxf.apache.org/docs/jax-ws-dispatch-api.html[CXF dispatch
 mode] that can transport messages of arbitrary structures (i.e., not
 bound to a specific XML schema). To use this mode, you simply omit
