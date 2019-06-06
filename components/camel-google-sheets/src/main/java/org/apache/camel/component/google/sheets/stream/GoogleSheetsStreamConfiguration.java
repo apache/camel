@@ -57,8 +57,8 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
     @UriParam
     private String spreadsheetId;
 
-    @UriParam(defaultValue = "10")
-    private int maxResults = 10;
+    @UriParam(defaultValue = "0")
+    private int maxResults;
 
     @UriParam
     private String range;

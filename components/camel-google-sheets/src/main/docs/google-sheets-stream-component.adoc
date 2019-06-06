@@ -91,7 +91,7 @@ with the following path and query parameters:
 | *clientSecret* (consumer) | Client secret of the sheets application |  | String
 | *includeGridData* (consumer) | True if grid data should be returned. | false | boolean
 | *majorDimension* (consumer) | Specifies the major dimension that results should use.. | ROWS | String
-| *maxResults* (consumer) | Specify the maximum number of returned results. This will limit the number of rows in a returned value range data set or the number of returned value ranges in a batch request. | 10 | int
+| *maxResults* (consumer) | Specify the maximum number of returned results. This will limit the number of rows in a returned value range data set or the number of returned value ranges in a batch request. | 0 | int
 | *range* (consumer) | Specifies the range of rows and columns in a sheet to get data from. |  | String
 | *refreshToken* (consumer) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 | *scopes* (consumer) | Specifies the level of permissions you want a sheets application to have to a user account. See https://developers.google.com/identity/protocols/googlescopes for more info. |  | List
