@@ -16,15 +16,9 @@
  */
 package org.apache.camel.component.zookeeper.operations;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
 import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.ZooDefs.Ids;
-import org.apache.zookeeper.ZooDefs.Perms;
 import org.apache.zookeeper.ZooKeeper;
-import org.apache.zookeeper.data.ACL;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -92,16 +86,4 @@ public class CreateOperationTest extends ZooKeeperTestSupport {
         verifyNodeContainsData(out, testPayloadBytes);
     }
 
-    @Test
-    public void createNodeWithSpecificAccess() throws Exception {
-        CreateOperation create = new CreateOperation(connection, "/four");
-        create.setData(testPayload.getBytes());
-        List<ACL> perms = Collections.singletonList(new ACL(Perms.CREATE, Ids.ANYONE_ID_UNSAFE));
-        create.setPermissions(perms);
-
-        OperationResult<String> result = create.get();
-        assertEquals("/four", result.getResult());
-
-        verifyAccessControlList("/four", perms);
-    }
 }
