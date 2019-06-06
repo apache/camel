@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -43,20 +43,10 @@ public class GoogleSheetsApiTestServerRule implements TestRule {
         try {
             Map<String, Object> testOptions = getTestOptions(optionFile);
 
-            googleApiTestServer = new GoogleSheetsApiTestServer.Builder(CitrusEndpoints.http()
-                    .server()
-                    .port(serverPort)
-                    .timeout(15000)
-                    .defaultStatus(HttpStatus.REQUEST_TIMEOUT)
-                    .autoStart(true))
-                    .keyStorePath(new ClassPathResource(SERVER_KEYSTORE).getFile().toPath())
-                    .keyStorePassword(SERVER_KEYSTORE_PASSWORD)
-                    .securePort(serverPort)
-                    .clientId(testOptions.get("clientId").toString())
-                    .clientSecret(testOptions.get("clientSecret").toString())
-                    .accessToken(testOptions.get("accessToken").toString())
-                    .refreshToken(testOptions.get("refreshToken").toString())
-                    .build();
+            googleApiTestServer = new GoogleSheetsApiTestServer.Builder(CitrusEndpoints.http().server().port(serverPort).timeout(15000).defaultStatus(HttpStatus.REQUEST_TIMEOUT)
+                .autoStart(true)).keyStorePath(new ClassPathResource(SERVER_KEYSTORE).getFile().toPath()).keyStorePassword(SERVER_KEYSTORE_PASSWORD).securePort(serverPort)
+                    .clientId(testOptions.get("clientId").toString()).clientSecret(testOptions.get("clientSecret").toString())
+                    .accessToken(testOptions.get("accessToken").toString()).refreshToken(testOptions.get("refreshToken").toString()).build();
 
             assertThatGoogleApi(googleApiTestServer).isRunning();
         } catch (Exception e) {
@@ -71,6 +61,7 @@ public class GoogleSheetsApiTestServerRule implements TestRule {
 
     /**
      * Read component configuration from TEST_OPTIONS_PROPERTIES.
+     * 
      * @return Map of component options.
      */
     private Map<String, Object> getTestOptions(String optionFile) throws IOException {
@@ -91,7 +82,7 @@ public class GoogleSheetsApiTestServerRule implements TestRule {
     private class GoogleSheetsApiTestServerStatement extends Statement {
         private final Statement base;
 
-        GoogleSheetsApiTestServerStatement( Statement base ) {
+        GoogleSheetsApiTestServerStatement(Statement base) {
             this.base = base;
         }
 

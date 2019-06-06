@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,15 +16,6 @@
  */
 package org.apache.camel.component.google.sheets.server;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.ReadListener;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -35,6 +26,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.ReadListener;
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
+
 import com.consol.citrus.Citrus;
 import com.consol.citrus.dsl.runner.DefaultTestRunner;
 import com.consol.citrus.dsl.runner.TestRunner;
@@ -43,6 +44,7 @@ import com.consol.citrus.http.server.HttpServer;
 import com.consol.citrus.http.server.HttpServerBuilder;
 import com.consol.citrus.http.servlet.GzipHttpServletResponseWrapper;
 import com.consol.citrus.http.servlet.RequestCachingServletFilter;
+
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
@@ -64,7 +66,7 @@ import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-public class GoogleSheetsApiTestServer {
+public final class GoogleSheetsApiTestServer {
 
     private static Citrus citrus = Citrus.newInstance();
 
@@ -98,6 +100,7 @@ public class GoogleSheetsApiTestServer {
 
     /**
      * Obtains the httpServer.
+     * 
      * @return
      */
     public HttpServer getHttpServer() {
@@ -113,8 +116,8 @@ public class GoogleSheetsApiTestServer {
     }
 
     /**
-     * Builder builds server instance from given http server builder adding more setting options in fluent
-     * builder pattern style.
+     * Builder builds server instance from given http server builder adding more
+     * setting options in fluent builder pattern style.
      */
     public static class Builder {
         private final HttpServerBuilder serverBuilder;
@@ -186,9 +189,8 @@ public class GoogleSheetsApiTestServer {
             HttpConfiguration httpConfiguration = new HttpConfiguration(parent);
             httpConfiguration.setCustomizers(Collections.singletonList(new SecureRequestCustomizer()));
 
-            ServerConnector sslConnector = new ServerConnector(new org.eclipse.jetty.server.Server(),
-                    new SslConnectionFactory(sslContextFactory, "http/1.1"),
-                    new HttpConnectionFactory(httpConfiguration));
+            ServerConnector sslConnector = new ServerConnector(new org.eclipse.jetty.server.Server(), new SslConnectionFactory(sslContextFactory, "http/1.1"),
+                                                               new HttpConnectionFactory(httpConfiguration));
             sslConnector.setPort(securePort);
 
             serverBuilder.connector(sslConnector);
@@ -218,10 +220,8 @@ public class GoogleSheetsApiTestServer {
             clientDetails.setAccessTokenValiditySeconds(3000);
             clientDetails.setAutoApproveScopes(Arrays.asList("read", "write"));
             clientDetails.setScope(Arrays.asList("read", "write"));
-            clientDetails.setAuthorities(Arrays.asList(new SimpleGrantedAuthority("client_credentials"),
-                                                        new SimpleGrantedAuthority("authorization_code"),
-                                                        new SimpleGrantedAuthority("password"),
-                                                        new SimpleGrantedAuthority("refresh_token")));
+            clientDetails.setAuthorities(Arrays.asList(new SimpleGrantedAuthority("client_credentials"), new SimpleGrantedAuthority("authorization_code"),
+                                                       new SimpleGrantedAuthority("password"), new SimpleGrantedAuthority("refresh_token")));
 
             OAuth2AuthenticationProcessingFilter filter = new OAuth2AuthenticationProcessingFilter();
             OAuth2AuthenticationManager oauth2AuthenticationManager = new OAuth2AuthenticationManager();
@@ -256,8 +256,7 @@ public class GoogleSheetsApiTestServer {
 
     private static class GzipServletFilter extends OncePerRequestFilter {
         @Override
-        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                        FilterChain filterChain) throws ServletException, IOException {
+        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
             HttpServletRequest filteredRequest = request;
             HttpServletResponse filteredResponse = response;
 
@@ -274,7 +273,7 @@ public class GoogleSheetsApiTestServer {
             filterChain.doFilter(filteredRequest, filteredResponse);
 
             if (filteredResponse instanceof GzipHttpServletResponseWrapper) {
-                ((GzipHttpServletResponseWrapper) filteredResponse).finish();
+                ((GzipHttpServletResponseWrapper)filteredResponse).finish();
             }
         }
     }
