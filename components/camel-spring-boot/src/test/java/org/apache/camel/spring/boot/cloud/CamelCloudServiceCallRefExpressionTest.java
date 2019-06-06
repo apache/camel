@@ -68,7 +68,7 @@ public class CamelCloudServiceCallRefExpressionTest {
         @Bean
         Expression myExpression() {
             return new SimpleExpression(
-                "jetty:http://${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}/hello"
+                "http://${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}/hello"
             );
         }
 
@@ -121,7 +121,7 @@ public class CamelCloudServiceCallRefExpressionTest {
         prop.put("service.name", "custom-svc-list");
         prop.put("camel.cloud.service-call.expression", "myExpression");
         prop.put("camel.cloud.load-balancer.enabled", false);
-        prop.put("camel.cloud.service-call.component", "jetty");
+        prop.put("camel.cloud.service-call.component", "http");
         prop.put("camel.cloud.service-discovery.services[custom-svc-list]", SpringBootPropertyUtil.getDiscoveryServices());
         prop.put("camel.cloud.service-filter.blacklist[custom-svc-list]", SpringBootPropertyUtil.getServiceFilterBlacklist());
         prop.put("ribbon.enabled", false);

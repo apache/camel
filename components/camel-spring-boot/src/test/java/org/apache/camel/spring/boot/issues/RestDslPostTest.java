@@ -76,8 +76,8 @@ public class RestDslPostTest extends Assert {
         Exchange outExchangeUser = builder.withBody("{\"id\": 1, \"name\": \"My Name\"}").build();
         Exchange outExchangeCountry = builder.withBody("{\"iso\": \"EN\", \"country\": \"England\"}").build();
 
-        template.send("jetty:http://localhost:" + PORT + "/user", outExchangeUser);
-        template.send("jetty:http://localhost:" + PORT + "/country", outExchangeCountry);
+        template.send("http://localhost:" + PORT + "/user", outExchangeUser);
+        template.send("http://localhost:" + PORT + "/country", outExchangeCountry);
 
         resultEndpointCountry.assertIsSatisfied();
         resultEndpointUser.assertIsSatisfied();
