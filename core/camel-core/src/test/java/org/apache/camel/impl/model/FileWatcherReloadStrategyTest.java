@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.FileWatcherReloadStrategy;
+import org.apache.camel.reload.FileWatcherReloadStrategy;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.RouteAddedEvent;
 import org.apache.camel.support.EventNotifierSupport;

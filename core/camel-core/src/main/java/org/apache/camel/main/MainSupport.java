@@ -49,7 +49,7 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.health.HealthCheckService;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.FileWatcherReloadStrategy;
+import org.apache.camel.reload.FileWatcherReloadStrategy;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.interceptor.BacklogTracer;
