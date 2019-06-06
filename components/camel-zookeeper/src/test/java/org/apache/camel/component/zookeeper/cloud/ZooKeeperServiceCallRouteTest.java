@@ -133,7 +133,7 @@ public class ZooKeeperServiceCallRouteTest extends CamelTestSupport {
                 from("direct:start")
                     .serviceCall()
                         .name(SERVICE_NAME)
-                        .component("jetty")
+                        .component("http")
                         .defaultLoadBalancer()
                         .zookeeperServiceDiscovery("127.0.0.1:" + SERVER_PORT, SERVICE_PATH)
                         .end()

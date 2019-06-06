@@ -33,7 +33,7 @@
 
     <route id="scall">
       <from uri="direct:start"/>
-      <serviceCall name="http-service" component="jetty">
+      <serviceCall name="http-service" component="http">
         <zookeeperServiceDiscovery nodes="localhost:9001" basePath="/camel"/>
       </serviceCall>
       <to uri="mock:result"/>
