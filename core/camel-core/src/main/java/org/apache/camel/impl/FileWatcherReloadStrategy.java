@@ -18,14 +18,17 @@ package org.apache.camel.impl;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
@@ -97,11 +100,22 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
         if (dir.exists() && dir.isDirectory()) {
             log.info("Starting ReloadStrategy to watch directory: {}", dir);
 
+            // must have camel-file on classpath
+            Component file = getCamelContext().getComponent("file", true);
+            if (file == null) {
+                throw new IllegalArgumentException("FileWatcherReloadStrategy requires camel-file JAR to be on the classpath");
+            }
+
             // only include xml files
             endpoint = getCamelContext().getEndpoint("file:" + dir + "?delay=" + delay + "&recursive=" + isRecursive
                 + "&include=.*xml$&readLock=none&noop=true&idempotentKey=${file:name}-${file:modified}");
-            // must wrap in unit of work
-            task = new UnitOfWorkProducer(new UpdatedFileProcessor(endpoint));
+
+            // must wrap in unit of work producer
+            Map<String, Object> args = new HashMap<>(1);
+            args.put("producer", new UpdatedFileProcessor(endpoint));
+            task = getCamelContext().adapt(ExtendedCamelContext.class).getProcessorFactory()
+                    .createProcessor(getCamelContext(), "UnitOfWorkProducer", args);
+
             consumer = endpoint.createConsumer(task);
 
             ServiceHelper.startService(endpoint);
