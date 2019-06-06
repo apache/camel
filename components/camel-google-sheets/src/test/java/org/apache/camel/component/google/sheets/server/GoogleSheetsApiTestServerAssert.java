@@ -43,14 +43,11 @@ import org.assertj.core.api.AbstractAssert;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-public class GoogleSheetsApiTestServerAssert extends AbstractAssert<GoogleSheetsApiTestServerAssert, GoogleSheetsApiTestServer> {
+public final class GoogleSheetsApiTestServerAssert extends AbstractAssert<GoogleSheetsApiTestServerAssert, GoogleSheetsApiTestServer> {
 
-    private ObjectMapper mapper = new ObjectMapper()
-                .setDefaultPropertyInclusion(JsonInclude.Value.construct(JsonInclude.Include.NON_EMPTY, JsonInclude.Include.NON_EMPTY))
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
-                .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
-                .disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
+    private ObjectMapper mapper = new ObjectMapper().setDefaultPropertyInclusion(JsonInclude.Value.construct(JsonInclude.Include.NON_EMPTY, JsonInclude.Include.NON_EMPTY))
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
+        .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING).disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
 
     private GoogleSheetsApiTestServerAssert(GoogleSheetsApiTestServer server) {
         super(server, GoogleSheetsApiTestServerAssert.class);
@@ -58,6 +55,7 @@ public class GoogleSheetsApiTestServerAssert extends AbstractAssert<GoogleSheets
 
     /**
      * A fluent entry point to the assertion class.
+     * 
      * @param server the target server to perform assertions to.
      * @return
      */
@@ -87,8 +85,7 @@ public class GoogleSheetsApiTestServerAssert extends AbstractAssert<GoogleSheets
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             throw new IllegalStateException(e);
         } finally {
-            Optional.ofNullable(schedule)
-                .ifPresent(future -> future.cancel(true));
+            Optional.ofNullable(schedule).ifPresent(future -> future.cancel(true));
         }
     }
 
@@ -99,16 +96,9 @@ public class GoogleSheetsApiTestServerAssert extends AbstractAssert<GoogleSheets
 
         public void andReturnSpreadsheet(Spreadsheet spreadsheet) throws IOException {
             String spreadsheetJson = spreadsheet.toPrettyString();
-            actual.getRunner().async().actions(
-                actual.getRunner().http(action -> action.server(actual.getHttpServer())
-                    .receive()
-                    .get("/v4/spreadsheets/${spreadsheetId}")),
-                actual.getRunner().http(action -> action.server(actual.getHttpServer())
-                    .send()
-                    .response(HttpStatus.OK)
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .payload(spreadsheetJson))
-            );
+            actual.getRunner().async()
+                .actions(actual.getRunner().http(action -> action.server(actual.getHttpServer()).receive().get("/v4/spreadsheets/${spreadsheetId}")), actual.getRunner()
+                    .http(action -> action.server(actual.getHttpServer()).send().response(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_VALUE).payload(spreadsheetJson)));
         }
     }
 
@@ -123,19 +113,10 @@ public class GoogleSheetsApiTestServerAssert extends AbstractAssert<GoogleSheets
         }
 
         public void andReturnClearResponse(String clearedRange) throws IOException {
-            actual.getRunner().async().actions(
-                actual.getRunner().http(action -> action.server(actual.getHttpServer())
-                    .receive()
-                    .post("/v4/spreadsheets/${spreadsheetId}/values/${range}:clear")),
-                actual.getRunner().http(action -> action.server(actual.getHttpServer())
-                    .send()
-                    .response(HttpStatus.OK)
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .payload("{" +
-                            "\"spreadsheetId\": \"${spreadsheetId}\"," +
-                            "\"clearedRange\": \"" + clearedRange + "\"" +
-                        "}"))
-            );
+            actual.getRunner().async()
+                .actions(actual.getRunner().http(action -> action.server(actual.getHttpServer()).receive().post("/v4/spreadsheets/${spreadsheetId}/values/${range}:clear")),
+                         actual.getRunner().http(action -> action.server(actual.getHttpServer()).send().response(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_VALUE)
+                             .payload("{" + "\"spreadsheetId\": \"${spreadsheetId}\"," + "\"clearedRange\": \"" + clearedRange + "\"" + "}")));
         }
     }
 
@@ -155,23 +136,16 @@ public class GoogleSheetsApiTestServerAssert extends AbstractAssert<GoogleSheets
         public void andReturnUpdateResponse() throws IOException {
             String valuesJson = mapper.writer().writeValueAsString(data);
 
-            actual.getRunner().async().actions(
-                actual.getRunner().http(action -> action.server(actual.getHttpServer())
-                    .receive()
-                    .put("/v4/spreadsheets/${spreadsheetId}/values/${range}")
-                    .validate("$.values.toString()", valuesJson)),
-                actual.getRunner().http(action -> action.server(actual.getHttpServer())
-                    .send()
-                    .response(HttpStatus.OK)
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .payload("{" +
-                            "\"spreadsheetId\": \"${spreadsheetId}\"," +
-                            "\"updatedRange\": \"${range}\"," +
-                            "\"updatedRows\": " + data.size() + "," +
-                            "\"updatedColumns\": " + Optional.ofNullable(data.get(0)).map(Collection::size).orElse(0) + "," +
-                            "\"updatedCells\": " + data.size() * Optional.ofNullable(data.get(0)).map(Collection::size).orElse(0) +
-                        "}"))
-            );
+            actual
+                .getRunner().async().actions(
+                                             actual.getRunner()
+                                                 .http(action -> action.server(actual.getHttpServer()).receive().put("/v4/spreadsheets/${spreadsheetId}/values/${range}")
+                                                     .validate("$.values.toString()", valuesJson)),
+                                             actual.getRunner()
+                                                 .http(action -> action.server(actual.getHttpServer()).send().response(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                     .payload("{" + "\"spreadsheetId\": \"${spreadsheetId}\"," + "\"updatedRange\": \"${range}\"," + "\"updatedRows\": "
+                                                              + data.size() + "," + "\"updatedColumns\": " + Optional.ofNullable(data.get(0)).map(Collection::size).orElse(0) + ","
+                                                              + "\"updatedCells\": " + data.size() * Optional.ofNullable(data.get(0)).map(Collection::size).orElse(0) + "}")));
         }
     }
 
@@ -191,27 +165,17 @@ public class GoogleSheetsApiTestServerAssert extends AbstractAssert<GoogleSheets
         public void andReturnAppendResponse(String updatedRange) throws IOException {
             String valuesJson = mapper.writer().writeValueAsString(data);
 
-            actual.getRunner().async().actions(
-                actual.getRunner().http(action -> action.server(actual.getHttpServer())
-                    .receive()
-                    .post("/v4/spreadsheets/${spreadsheetId}/values/${range}:append")
-                    .validate("$.values.toString()", valuesJson)),
-                actual.getRunner().http(action -> action.server(actual.getHttpServer())
-                    .send()
-                    .response(HttpStatus.OK)
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .payload("{" +
-                        "\"spreadsheetId\": \"${spreadsheetId}\"," +
-                        "\"updates\":" +
-                            "{" +
-                                "\"spreadsheetId\": \"${spreadsheetId}\"," +
-                                "\"updatedRange\": \"" + updatedRange + "\"," +
-                                "\"updatedRows\": " + data.size() + "," +
-                                "\"updatedColumns\": " + Optional.ofNullable(data.get(0)).map(Collection::size).orElse(0) + "," +
-                                "\"updatedCells\": " + data.size() * Optional.ofNullable(data.get(0)).map(Collection::size).orElse(0) +
-                            "}" +
-                        "}"))
-            );
+            actual
+                .getRunner().async().actions(
+                                             actual.getRunner()
+                                                 .http(action -> action.server(actual.getHttpServer()).receive().post("/v4/spreadsheets/${spreadsheetId}/values/${range}:append")
+                                                     .validate("$.values.toString()", valuesJson)),
+                                             actual.getRunner()
+                                                 .http(action -> action.server(actual.getHttpServer()).send().response(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                     .payload("{" + "\"spreadsheetId\": \"${spreadsheetId}\"," + "\"updates\":" + "{" + "\"spreadsheetId\": \"${spreadsheetId}\","
+                                                              + "\"updatedRange\": \"" + updatedRange + "\"," + "\"updatedRows\": " + data.size() + "," + "\"updatedColumns\": "
+                                                              + Optional.ofNullable(data.get(0)).map(Collection::size).orElse(0) + "," + "\"updatedCells\": "
+                                                              + data.size() * Optional.ofNullable(data.get(0)).map(Collection::size).orElse(0) + "}" + "}")));
         }
     }
 
@@ -227,43 +191,24 @@ public class GoogleSheetsApiTestServerAssert extends AbstractAssert<GoogleSheets
 
         public void andReturnValueRange(ValueRange valueRange) throws IOException {
             String valueJson = valueRange.toPrettyString();
-            actual.getRunner().async().actions(
-                actual.getRunner().http(action -> action.server(actual.getHttpServer())
-                    .receive()
-                    .get("/v4/spreadsheets/${spreadsheetId}/values/${range}")),
-                actual.getRunner().http(action -> action.server(actual.getHttpServer())
-                    .send()
-                    .response(HttpStatus.OK)
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .payload(valueJson))
-            );
+            actual.getRunner().async()
+                .actions(actual.getRunner().http(action -> action.server(actual.getHttpServer()).receive().get("/v4/spreadsheets/${spreadsheetId}/values/${range}")), actual
+                    .getRunner()
+                    .http(action -> action.server(actual.getHttpServer()).send().response(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_VALUE).payload(valueJson)));
         }
 
         public void andReturnValues(List<List<Object>> data) throws JsonProcessingException {
             String valueRangeJson;
             if (ObjectHelper.isEmpty(data)) {
-                valueRangeJson = "{" +
-                        "\"range\": \"${range}\"," +
-                        "\"majorDimension\": \"ROWS\"" +
-                    "}";
+                valueRangeJson = "{" + "\"range\": \"${range}\"," + "\"majorDimension\": \"ROWS\"" + "}";
             } else {
-                valueRangeJson = "{" +
-                        "\"range\": \"${range}\"," +
-                        "\"majorDimension\": \"ROWS\"," +
-                        "\"values\":" + mapper.writer().writeValueAsString(data) +
-                    "}";
+                valueRangeJson = "{" + "\"range\": \"${range}\"," + "\"majorDimension\": \"ROWS\"," + "\"values\":" + mapper.writer().writeValueAsString(data) + "}";
             }
 
-            actual.getRunner().async().actions(
-                actual.getRunner().http(action -> action.server(actual.getHttpServer())
-                    .receive()
-                    .get("/v4/spreadsheets/${spreadsheetId}/values/${range}")),
-                actual.getRunner().http(action -> action.server(actual.getHttpServer())
-                    .send()
-                    .response(HttpStatus.OK)
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .payload(valueRangeJson))
-            );
+            actual.getRunner().async()
+                .actions(actual.getRunner().http(action -> action.server(actual.getHttpServer()).receive().get("/v4/spreadsheets/${spreadsheetId}/values/${range}")), actual
+                    .getRunner()
+                    .http(action -> action.server(actual.getHttpServer()).send().response(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_VALUE).payload(valueRangeJson)));
         }
     }
 
@@ -280,34 +225,17 @@ public class GoogleSheetsApiTestServerAssert extends AbstractAssert<GoogleSheets
         public void andReturnValues(List<List<Object>> data) throws JsonProcessingException {
             String valueRangeJson;
             if (ObjectHelper.isEmpty(data)) {
-                valueRangeJson = "{\"spreadsheetId\": \"${spreadsheetId}\"," +
-                    "\"valueRanges\": [" +
-                        "{" +
-                            "\"range\": \"${range}\"," +
-                            "\"majorDimension\": \"ROWS\"" +
-                        "}" +
-                    "]}";
+                valueRangeJson = "{\"spreadsheetId\": \"${spreadsheetId}\"," + "\"valueRanges\": [" + "{" + "\"range\": \"${range}\"," + "\"majorDimension\": \"ROWS\"" + "}"
+                                 + "]}";
             } else {
-                valueRangeJson = "{\"spreadsheetId\": \"${spreadsheetId}\"," +
-                    "\"valueRanges\": [" +
-                        "{" +
-                            "\"range\": \"${range}\"," +
-                            "\"majorDimension\": \"ROWS\"," +
-                            "\"values\":" + mapper.writer().writeValueAsString(data) +
-                        "}" +
-                    "]}";
+                valueRangeJson = "{\"spreadsheetId\": \"${spreadsheetId}\"," + "\"valueRanges\": [" + "{" + "\"range\": \"${range}\"," + "\"majorDimension\": \"ROWS\","
+                                 + "\"values\":" + mapper.writer().writeValueAsString(data) + "}" + "]}";
             }
 
-            actual.getRunner().async().actions(
-                actual.getRunner().http(action -> action.server(actual.getHttpServer())
-                    .receive()
-                    .get("/v4/spreadsheets/${spreadsheetId}/values:batchGet")),
-                actual.getRunner().http(action -> action.server(actual.getHttpServer())
-                    .send()
-                    .response(HttpStatus.OK)
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .payload(valueRangeJson))
-            );
+            actual.getRunner().async()
+                .actions(actual.getRunner().http(action -> action.server(actual.getHttpServer()).receive().get("/v4/spreadsheets/${spreadsheetId}/values:batchGet")), actual
+                    .getRunner()
+                    .http(action -> action.server(actual.getHttpServer()).send().response(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_VALUE).payload(valueRangeJson)));
         }
     }
 
@@ -345,19 +273,10 @@ public class GoogleSheetsApiTestServerAssert extends AbstractAssert<GoogleSheets
                 spreadsheetJson = "{\"properties\":{\"title\":\"${title}\"}}";
             }
 
-            actual.getRunner().async().actions(
-                actual.getRunner().http(action -> action.server(actual.getHttpServer())
-                    .receive()
-                    .post("/v4/spreadsheets")
-                    .name("create.request")
-                    .messageType(MessageType.JSON)
-                    .payload(spreadsheetJson)),
-                actual.getRunner().http(action -> action.server(actual.getHttpServer())
-                    .send()
-                    .response(HttpStatus.OK)
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .payload("{\"spreadsheetId\":\"${spreadsheetId}\",\"properties\":{\"title\":\"citrus:jsonPath(citrus:message(create.request.payload()), '$.properties.title')\"}}"))
-            );
+            actual.getRunner().async().actions(actual.getRunner().http(action -> action.server(actual.getHttpServer()).receive().post("/v4/spreadsheets").name("create.request")
+                .messageType(MessageType.JSON).payload(spreadsheetJson)), actual.getRunner()
+                    .http(action -> action.server(actual.getHttpServer()).send().response(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .payload("{\"spreadsheetId\":\"${spreadsheetId}\",\"properties\":{\"title\":\"citrus:jsonPath(citrus:message(create.request.payload()), '$.properties.title')\"}}")));
         }
     }
 
@@ -379,27 +298,14 @@ public class GoogleSheetsApiTestServerAssert extends AbstractAssert<GoogleSheets
         }
 
         public void andReturnUpdated() {
-            actual.getRunner().async().actions(
-                actual.getRunner().http(action -> action.server(actual.getHttpServer())
-                    .receive()
-                    .post("/v4/spreadsheets/${spreadsheetId}:batchUpdate")
-                    .messageType(MessageType.JSON)
-                    .payload("{" +
-                        "\"includeSpreadsheetInResponse\":true," +
-                        "\"requests\":[" +
-                                "{" +
-                                    "\"updateSpreadsheetProperties\": {" +
-                                    "\"fields\":\"" + String.join(",", fields) + "\"," +
-                                    "\"properties\":{" + fields.stream().map(field -> String.format("\"%s\":\"${%s}\"", field, field)).collect(Collectors.joining(",")) + "}" +
-                                "}" +
-                            "}" +
-                        "]}")),
-                actual.getRunner().http(action -> action.server(actual.getHttpServer())
-                    .send()
-                    .response(HttpStatus.OK)
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .payload("{\"spreadsheetId\":\"${spreadsheetId}\",\"updatedSpreadsheet\":{\"properties\":{\"title\":\"${title}\"},\"spreadsheetId\":\"${spreadsheetId}\"}}"))
-            );
+            actual.getRunner().async()
+                .actions(actual.getRunner()
+                    .http(action -> action.server(actual.getHttpServer()).receive().post("/v4/spreadsheets/${spreadsheetId}:batchUpdate").messageType(MessageType.JSON)
+                        .payload("{" + "\"includeSpreadsheetInResponse\":true," + "\"requests\":[" + "{" + "\"updateSpreadsheetProperties\": {" + "\"fields\":\""
+                                 + String.join(",", fields) + "\"," + "\"properties\":{"
+                                 + fields.stream().map(field -> String.format("\"%s\":\"${%s}\"", field, field)).collect(Collectors.joining(",")) + "}" + "}" + "}" + "]}")),
+                         actual.getRunner().http(action -> action.server(actual.getHttpServer()).send().response(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_VALUE)
+                             .payload("{\"spreadsheetId\":\"${spreadsheetId}\",\"updatedSpreadsheet\":{\"properties\":{\"title\":\"${title}\"},\"spreadsheetId\":\"${spreadsheetId}\"}}")));
         }
     }
 }
