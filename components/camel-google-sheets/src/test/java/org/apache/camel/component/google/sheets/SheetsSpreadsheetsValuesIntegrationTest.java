@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.google.api.services.sheets.v4.model.AppendValuesResponse;
 import com.google.api.services.sheets.v4.model.ClearValuesRequest;
@@ -28,13 +29,16 @@ import com.google.api.services.sheets.v4.model.ClearValuesResponse;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.UpdateValuesResponse;
 import com.google.api.services.sheets.v4.model.ValueRange;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiCollection;
+import org.apache.camel.component.google.sheets.internal.GoogleSheetsConstants;
 import org.apache.camel.component.google.sheets.internal.SheetsSpreadsheetsValuesApiMethod;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.google.sheets.server.GoogleSheetsApiTestServerAssert.assertThatGoogleApi;
 
 /**
  * Test class for {@link com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values} APIs.
@@ -46,44 +50,63 @@ public class SheetsSpreadsheetsValuesIntegrationTest extends AbstractGoogleSheet
 
     @Test
     public void testGet() throws Exception {
+        assertThatGoogleApi(getGoogleApiTestServer())
+                .createSpreadsheetRequest()
+                .hasSheetTitle("TestData")
+                .andReturnRandomSpreadsheet();
+
         Spreadsheet testSheet = getSpreadsheet();
+
+        assertThatGoogleApi(getGoogleApiTestServer())
+                .getValuesRequest(testSheet.getSpreadsheetId(), TEST_SHEET + "!A1:B2")
+                .andReturnValues(Collections.emptyList());
 
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
-        headers.put("CamelGoogleSheets.spreadsheetId", testSheet.getSpreadsheetId());
+        headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", testSheet.getSpreadsheetId());
         // parameter type is String
-        headers.put("CamelGoogleSheets.range", TEST_SHEET + "!A1:B2");
+        headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "range", TEST_SHEET + "!A1:B2");
 
         final ValueRange result = requestBodyAndHeaders("direct://GET", null, headers);
 
         assertNotNull("get result is null", result);
         assertEquals(TEST_SHEET + "!A1:B2", result.getRange());
-        assertNull("expected empty value range but found entries", result.getValues());
+        assertTrue("expected empty value range but found entries", ObjectHelper.isEmpty(result.getValues()));
 
         LOG.debug("get: " + result);
     }
 
     @Test
     public void testUpdate() throws Exception {
+        assertThatGoogleApi(getGoogleApiTestServer())
+                .createSpreadsheetRequest()
+                .hasSheetTitle("TestData")
+                .andReturnRandomSpreadsheet();
+
         Spreadsheet testSheet = getSpreadsheet();
 
         List<List<Object>> data = Arrays.asList(
                 Arrays.asList("A1", "B1"),
                 Arrays.asList("A2", "B2")
         );
+
+        assertThatGoogleApi(getGoogleApiTestServer())
+                .updateValuesRequest(testSheet.getSpreadsheetId(), TEST_SHEET + "!A1:B2", data)
+                .andReturnUpdateResponse();
+
         ValueRange values = new ValueRange();
         values.setValues(data);
 
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
-        headers.put("CamelGoogleSheets.spreadsheetId", testSheet.getSpreadsheetId());
+        headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", testSheet.getSpreadsheetId());
         // parameter type is String
-        headers.put("CamelGoogleSheets.range", TEST_SHEET + "!A1:B2");
+        headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "range", TEST_SHEET + "!A1:B2");
         // parameter type is com.google.api.services.sheets.v4.model.ValueRange
-        headers.put("CamelGoogleSheets.values", values);
+        headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "values", values);
 
         // parameter type is String
-        headers.put("CamelGoogleSheets.valueInputOption", "USER_ENTERED");
+        headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "valueInputOption", "USER_ENTERED");
 
         final UpdateValuesResponse result = requestBodyAndHeaders("direct://UPDATE", null, headers);
 
@@ -98,18 +121,29 @@ public class SheetsSpreadsheetsValuesIntegrationTest extends AbstractGoogleSheet
 
     @Test
     public void testAppend() throws Exception {
+        assertThatGoogleApi(getGoogleApiTestServer())
+                .createSpreadsheetRequest()
+                .hasSheetTitle("TestData")
+                .andReturnRandomSpreadsheet();
+
         Spreadsheet testSheet = getSpreadsheet();
+
+        List<List<Object>> data = Collections.singletonList(Arrays.asList("A10", "B10", "C10"));
+
+        assertThatGoogleApi(getGoogleApiTestServer())
+                .appendValuesRequest(testSheet.getSpreadsheetId(), TEST_SHEET + "!A10", data)
+                .andReturnAppendResponse(TEST_SHEET + "!A10:C10");
 
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
-        headers.put("CamelGoogleSheets.spreadsheetId", testSheet.getSpreadsheetId());
+        headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", testSheet.getSpreadsheetId());
         // parameter type is String
-        headers.put("CamelGoogleSheets.range", TEST_SHEET + "!A10");
+        headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "range", TEST_SHEET + "!A10");
         // parameter type is com.google.api.services.sheets.v4.model.ValueRange
-        headers.put("CamelGoogleSheets.values", new ValueRange().setValues(Collections.singletonList(Arrays.asList("A10", "B10", "C10"))));
+        headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "values", new ValueRange().setValues(data));
 
         // parameter type is String
-        headers.put("CamelGoogleSheets.valueInputOption", "USER_ENTERED");
+        headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "valueInputOption", "USER_ENTERED");
 
         final AppendValuesResponse result = requestBodyAndHeaders("direct://APPEND", null, headers);
 
@@ -124,15 +158,32 @@ public class SheetsSpreadsheetsValuesIntegrationTest extends AbstractGoogleSheet
 
     @Test
     public void testClear() throws Exception {
-        Spreadsheet testSheet = getSpreadsheetWithTestData();
+        String spreadsheetId = UUID.randomUUID().toString();
+
+        assertThatGoogleApi(getGoogleApiTestServer())
+                .createSpreadsheetRequest()
+                .hasSheetTitle("TestData")
+                .andReturnSpreadsheet(spreadsheetId);
+
+        Spreadsheet testSheet = getSpreadsheet();
+
+        assertThatGoogleApi(getGoogleApiTestServer())
+                .updateValuesRequest(spreadsheetId, TEST_SHEET + "!A1:B2", Arrays.asList(Arrays.asList("a1", "b1"), Arrays.asList("a2", "b2")))
+                .andReturnUpdateResponse();
+
+        applyTestData(testSheet);
+
+        assertThatGoogleApi(getGoogleApiTestServer())
+                .clearValuesRequest(testSheet.getSpreadsheetId(), TEST_SHEET + "!A1:B2")
+                .andReturnClearResponse(TEST_SHEET + "!A1:B2");
 
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
-        headers.put("CamelGoogleSheets.spreadsheetId", testSheet.getSpreadsheetId());
+        headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", testSheet.getSpreadsheetId());
         // parameter type is String
-        headers.put("CamelGoogleSheets.range", TEST_SHEET + "!A1:B2");
+        headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "range", TEST_SHEET + "!A1:B2");
         // parameter type is com.google.api.services.sheets.v4.model.ClearValuesRequest
-        headers.put("CamelGoogleSheets.clearValuesRequest", new ClearValuesRequest());
+        headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "clearValuesRequest", new ClearValuesRequest());
 
         final ClearValuesResponse result = requestBodyAndHeaders("direct://CLEAR", null, headers);
 
