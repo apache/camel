@@ -90,7 +90,7 @@ public class CamelCloudServiceCallTest {
         Properties prop = new Properties();
         prop.put("service.name", "custom-svc-list");
         prop.put("camel.cloud.load-balancer.enabled", false);
-        prop.put("camel.cloud.service-call.component", "jetty");
+        prop.put("camel.cloud.service-call.component", "http");
         prop.put("camel.cloud.service-discovery.services[custom-svc-list]", SpringBootPropertyUtil.getDiscoveryServices());
         prop.put("camel.cloud.service-filter.blacklist[custom-svc-list]", SpringBootPropertyUtil.getServiceFilterBlacklist());
         prop.put("ribbon.enabled", false);
