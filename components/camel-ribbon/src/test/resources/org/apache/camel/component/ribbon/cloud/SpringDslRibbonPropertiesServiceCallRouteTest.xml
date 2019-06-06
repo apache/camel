@@ -32,7 +32,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route id="scall">
       <from uri="direct:start"/>
-      <serviceCall name="myService" component="jetty">
+      <serviceCall name="myService" component="http">
         <!-- enable ribbon load balancer -->
         <ribbonLoadBalancer clientName="myClient">
           <properties key="listOfServers" value="localhost:{{firstPort}},localhost:{{secondPort}}"/>

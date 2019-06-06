@@ -44,7 +44,7 @@ public class RibbonServiceCallRouteDslTest extends CamelTestSupport {
                 from("direct:start")
                     .serviceCall()
                         .name("myService")
-                        .component("jetty")
+                        .component("http")
                         .ribbonLoadBalancer()
                         .staticServiceDiscovery()
                             .servers("localhost:9090")

@@ -55,7 +55,7 @@ public class RibbonServiceCallRouteMetadataTest extends CamelTestSupport {
                 from("direct:start")
                     .serviceCall()
                         .name("myService")
-                        .expression().simple("jetty:http://${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}/${header.CamelServiceCallServiceMeta[contextPath]}")
+                        .expression().simple("http://${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}/${header.CamelServiceCallServiceMeta[contextPath]}")
                         .loadBalancer(loadBalancer)
                         .serviceDiscovery(servers)
                         .end()
