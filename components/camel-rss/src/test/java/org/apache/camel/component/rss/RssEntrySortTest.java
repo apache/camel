@@ -18,8 +18,6 @@ package org.apache.camel.component.rss;
 
 import java.util.Date;
 
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
 import org.apache.camel.Body;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,6 +25,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+
+import com.rometools.rome.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndFeed;
 
 public class RssEntrySortTest extends CamelTestSupport {
 
@@ -65,7 +66,7 @@ public class RssEntrySortTest extends CamelTestSupport {
     public static class MyBean {
         public Date getPubDate(@Body Object body) {
             SyndFeed feed = (SyndFeed) body;
-            SyndEntry syndEntry = (SyndEntry) feed.getEntries().get(0);
+            SyndEntry syndEntry = feed.getEntries().get(0);
             Date date = syndEntry.getUpdatedDate();
             if (date == null) {
                 date = syndEntry.getPublishedDate();

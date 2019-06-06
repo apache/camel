@@ -2129,7 +2129,7 @@
   <feature name='camel-rss' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-atom</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rome/${rome-bundle-version}</bundle>
+    <bundle dependency="true">mvn:com.rometools/rome/${rome-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-rss/${project.version}</bundle>
   </feature>
   <feature name='camel-sap-netweaver' version='${project.version}' start-level='50'>
