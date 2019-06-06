@@ -694,6 +694,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
         RouteDefinition route = ProcessorDefinitionHelper.getRoute(def);
         if (route != null) {
+            if (route.hasCustomIdAssigned()) {
+                throw new IllegalArgumentException("You can only set routeId one time per route.");
+            }
             route.setId(id);
         }
 
