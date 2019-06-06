@@ -376,14 +376,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         return getNameStrategy().getName();
     }
 
-    /**
-     * Sets the name of the this context.
-     *
-     * @param name the name
-     */
     public void setName(String name) {
-        // use an explicit name strategy since an explicit name was provided to
-        // be used
+        // use an explicit name strategy since an explicit name was provided to be used
         setNameStrategy(new ExplicitCamelContextNameStrategy(name));
     }
 

@@ -39,7 +39,6 @@ import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.health.HealthCheckService;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.FileWatcherReloadStrategy;
 import org.apache.camel.model.Model;
 import org.apache.camel.processor.interceptor.BacklogTracer;
@@ -66,7 +65,6 @@ import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spring.CamelBeanPostProcessor;
-import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.spi.ApplicationContextBeanRepository;
 import org.apache.camel.spring.spi.XmlCamelContextConfigurer;
 import org.apache.camel.support.DefaultRegistry;
@@ -115,7 +113,7 @@ public class CamelAutoConfiguration {
     @ConditionalOnMissingBean(CamelContext.class)
     CamelContext camelContext(ApplicationContext applicationContext,
                               CamelConfigurationProperties config) throws Exception {
-        CamelContext camelContext = new SpringCamelContext(applicationContext);
+        CamelContext camelContext = new SpringBootCamelContext(applicationContext);
         return doConfigureCamelContext(applicationContext, camelContext, config);
     }
 
@@ -125,20 +123,18 @@ public class CamelAutoConfiguration {
 
         camelContext.init();
 
-        if (camelContext instanceof DefaultCamelContext) {
-            final DefaultCamelContext defaultContext = (DefaultCamelContext) camelContext;
-            final Map<String, BeanRepository> repositories = applicationContext.getBeansOfType(BeanRepository.class);
+        final Map<String, BeanRepository> repositories = applicationContext.getBeansOfType(BeanRepository.class);
 
-            if (!repositories.isEmpty()) {
-                List<BeanRepository> reps = new ArrayList<>();
-                // include default bean repository as well
-                reps.add(new ApplicationContextBeanRepository(applicationContext));
-                // and then any custom
-                reps.addAll(repositories.values());
-                // sort by ordered
-                OrderComparator.sort(reps);
-                defaultContext.setRegistry(new DefaultRegistry(reps));
-            }
+        if (!repositories.isEmpty()) {
+            List<BeanRepository> reps = new ArrayList<>();
+            // include default bean repository as well
+            reps.add(new ApplicationContextBeanRepository(applicationContext));
+            // and then any custom
+            reps.addAll(repositories.values());
+            // sort by ordered
+            OrderComparator.sort(reps);
+            // and plugin as new registry
+            camelContext.adapt(ExtendedCamelContext.class).setRegistry(new DefaultRegistry(reps));
         }
 
         if (ObjectHelper.isNotEmpty(config.getFileConfigurations())) {
@@ -158,7 +154,7 @@ public class CamelAutoConfiguration {
         }
 
         if (config.getName() != null) {
-            ((SpringCamelContext) camelContext).setName(config.getName());
+            camelContext.adapt(ExtendedCamelContext.class).setName(config.getName());
         }
 
         if (config.getShutdownTimeout() > 0) {
