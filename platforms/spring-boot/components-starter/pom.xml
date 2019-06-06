@@ -105,6 +105,7 @@
     <module>camel-ahc-starter</module>
     <module>camel-ahc-ws-starter</module>
     <module>camel-amqp-starter</module>
+    <module>camel-any23-starter</module>
     <module>camel-apns-starter</module>
     <module>camel-as2-starter</module>
     <module>camel-asn1-starter</module>
