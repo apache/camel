@@ -48,12 +48,11 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.health.HealthCheckService;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.reload.FileWatcherReloadStrategy;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.HandleFault;
+import org.apache.camel.reload.FileWatcherReloadStrategy;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.DataFormat;
@@ -909,7 +908,7 @@ public abstract class MainSupport extends ServiceSupport {
         }
 
         if (config.getName() != null) {
-            ((DefaultCamelContext) camelContext).setName(config.getName());
+            camelContext.adapt(ExtendedCamelContext.class).setName(config.getName());
         }
 
         if (config.getShutdownTimeout() > 0) {
