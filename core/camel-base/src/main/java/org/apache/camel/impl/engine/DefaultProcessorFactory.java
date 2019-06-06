@@ -25,7 +25,9 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.processor.SendDynamicProcessor;
+import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.RouteContext;
@@ -96,6 +98,9 @@ public class DefaultProcessorFactory implements ProcessorFactory {
             if (exchangePattern != null) {
                 answer.setPattern(exchangePattern);
             }
+        } else if ("UnitOfWorkProducer".equals(definitionName)) {
+            Producer producer = (Producer) args.get("producer");
+            return new UnitOfWorkProducer(producer);
         }
 
         return answer;
