@@ -197,6 +197,9 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @return the builder
      */
     public RouteDefinition routeId(String id) {
+        if (hasCustomIdAssigned()) {
+            throw new IllegalArgumentException("You can only set routeId one time per route.");
+        }
         setId(id);
         return this;
     }
