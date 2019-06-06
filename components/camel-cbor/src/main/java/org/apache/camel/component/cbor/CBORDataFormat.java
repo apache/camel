@@ -315,7 +315,7 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
         }
         
         if (prettyPrint) {
-        	objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
         }
         
         if (enableFeatures != null) {
