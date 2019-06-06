@@ -19,7 +19,7 @@ from("activemq:My.Queue").
 ### CBOR Options
 
 // dataformat options: START
-The CBOR dataformat supports 7 options, which are listed below.
+The CBOR dataformat supports 11 options, which are listed below.
 
 
 
@@ -32,6 +32,10 @@ The CBOR dataformat supports 7 options, which are listed below.
 | collectionTypeName |  | String | Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default.
 | useList | false | Boolean | To unarmshal to a List of Map or a List of Pojo.
 | allowUnmarshallType | false | Boolean | If enabled then Jackson CBOR is allowed to attempt to use the CamelCBORUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used.
+| prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
+| allowJmsType | false | Boolean | Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.
+| enableFeatures |  | String | Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma
+| disableFeatures |  | String | Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
@@ -51,18 +55,22 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 8 options, which are listed below.
+The component supports 12 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.dataformat.cbor.allow-jms-type* | Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to. | false | Boolean
 | *camel.dataformat.cbor.allow-unmarshall-type* | If enabled then Jackson CBOR is allowed to attempt to use the CamelCBORUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used. | false | Boolean
 | *camel.dataformat.cbor.collection-type-name* | Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default. |  | String
 | *camel.dataformat.cbor.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.cbor.disable-features* | Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma |  | String
+| *camel.dataformat.cbor.enable-features* | Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma |  | String
 | *camel.dataformat.cbor.enabled* | Whether to enable auto configuration of the cbor data format. This is enabled by default. |  | Boolean
 | *camel.dataformat.cbor.object-mapper* | Lookup and use the existing CBOR ObjectMapper with the given id when using Jackson. |  | String
+| *camel.dataformat.cbor.pretty-print* | To enable pretty printing output nicely formatted. Is by default false. | false | Boolean
 | *camel.dataformat.cbor.unmarshal-type-name* | Class name of the java type to use when unarmshalling |  | String
 | *camel.dataformat.cbor.use-default-object-mapper* | Whether to lookup and use default Jackson CBOR ObjectMapper from the registry. | true | Boolean
 | *camel.dataformat.cbor.use-list* | To unarmshal to a List of Map or a List of Pojo. | false | Boolean
