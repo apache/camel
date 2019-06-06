@@ -88,6 +88,7 @@ import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,8 +121,11 @@ public abstract class CamelTestSupport extends TestSupport {
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
     private final StopWatch watch = new StopWatch();
     private final Map<String, String> fromEndpoints = new HashMap<>();
-    private final AtomicInteger tests = new AtomicInteger(0);
+    private static final ThreadLocal<AtomicInteger> TESTS = new ThreadLocal<>();
+    private static final ThreadLocal<CamelTestSupport> INSTANCE = new ThreadLocal<>();
     private CamelTestWatcher camelTestWatcher = new CamelTestWatcher();
+    @ClassRule
+    public static final CamelTearDownRule CAMEL_TEAR_DOWN_RULE = new CamelTearDownRule(INSTANCE);
 
     /**
      * Use the RouteBuilder or not
@@ -298,24 +302,25 @@ public abstract class CamelTestSupport extends TestSupport {
         log.info("********************************************************************************");
 
         if (isCreateCamelContextPerClass()) {
-            while (true) {
-                int v = tests.get();
-                if (tests.compareAndSet(v, v + 1)) {
-                    if (v == 0) {
-                        // test is per class, so only setup once (the first time)
-                        doSpringBootCheck();
-                        setupResources();
-                        doPreSetup();
-                        doSetUp();
-                        doPostSetup();
-                    } else {
-                        // and in between tests we must do IoC and reset mocks
-                        postProcessTest();
-                        resetMocks();
-                    }
-
-                    break;
-                }
+            INSTANCE.set(this);
+            AtomicInteger v = TESTS.get();
+            if (v == null) {
+                v = new AtomicInteger();
+                TESTS.set(v);
+            }
+            if (v.getAndIncrement() == 0) {
+                LOG.debug("Setup CamelContext before running first test");
+                // test is per class, so only setup once (the first time)
+                doSpringBootCheck();
+                setupResources();
+                doPreSetup();
+                doSetUp();
+                doPostSetup();
+            } else {
+                LOG.debug("Reset between test methods");
+                // and in between tests we must do IoC and reset mocks
+                postProcessTest();
+                resetMocks();
             }
         } else {
             // test is per test so always setup
@@ -510,32 +515,23 @@ public abstract class CamelTestSupport extends TestSupport {
         log.info("********************************************************************************");
 
         if (isCreateCamelContextPerClass()) {
-            while (true) {
-                int v = tests.get();
-                if (v <= 0) {
-                    LOG.warn("Test already teared down");
-                    break;
-                }
-
-                if (tests.compareAndSet(v, v - 1)) {
-                    if (v == 1) {
-                        LOG.debug("tearDown test");
-                        doStopTemplates(threadConsumer.get(), threadTemplate.get(), threadFluentTemplate.get());
-                        doStopCamelContext(threadCamelContext.get(), threadService.get());
-                        doPostTearDown();
-                        cleanupResources();
-                    }
-
-                    break;
-                }
-            }
+            // will tear down test specially in CamelTearDownRule
         } else {
-            LOG.debug("tearDown test");
+            LOG.debug("tearDown()");
             doStopTemplates(consumer, template, fluentTemplate);
             doStopCamelContext(context, camelContextService);
             doPostTearDown();
             cleanupResources();
         }
+    }
+
+    void tearDownCreateCamelContextPerClass() throws Exception {
+        LOG.debug("tearDownCreateCamelContextPerClass()");
+        TESTS.remove();
+        doStopTemplates(threadConsumer.get(), threadTemplate.get(), threadFluentTemplate.get());
+        doStopCamelContext(threadCamelContext.get(), threadService.get());
+        doPostTearDown();
+        cleanupResources();
     }
 
     /**
