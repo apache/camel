@@ -72,7 +72,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.engine.DefaultCamelBeanPostProcessor;
 import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
@@ -80,6 +79,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.interceptor.BreakpointSupport;
 import org.apache.camel.processor.interceptor.DefaultDebugger;
 import org.apache.camel.reifier.RouteReifier;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.EndpointHelper;
@@ -105,6 +105,7 @@ public abstract class CamelTestSupport extends TestSupport {
      */
     public static final String ROUTE_COVERAGE_ENABLED = "CamelTestRouteCoverage";
 
+    // CHECKSTYLE:OFF
     private static final Logger LOG = LoggerFactory.getLogger(CamelTestSupport.class);
     private static ThreadLocal<ModelCamelContext> threadCamelContext = new ThreadLocal<>();
     private static ThreadLocal<ProducerTemplate> threadTemplate = new ThreadLocal<>();
@@ -116,7 +117,6 @@ public abstract class CamelTestSupport extends TestSupport {
     protected volatile FluentProducerTemplate fluentTemplate;
     protected volatile ConsumerTemplate consumer;
     protected volatile Service camelContextService;
-    protected boolean dumpRouteStats;
     private boolean useRouteBuilder = true;
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
     private final StopWatch watch = new StopWatch();
@@ -126,6 +126,7 @@ public abstract class CamelTestSupport extends TestSupport {
     private CamelTestWatcher camelTestWatcher = new CamelTestWatcher();
     @ClassRule
     public static final CamelTearDownRule CAMEL_TEAR_DOWN_RULE = new CamelTearDownRule(INSTANCE);
+    // CHECKSTYLE:ON
 
     /**
      * Use the RouteBuilder or not
@@ -732,18 +733,17 @@ public abstract class CamelTestSupport extends TestSupport {
     }
 
     /**
-     * Applies the {@link DefaultCamelBeanPostProcessor} to this instance.
+     * Applies the {@link CamelBeanPostProcessor} to this instance.
      *
      * Derived classes using IoC / DI frameworks may wish to turn this into a NoOp such as for CDI
      * we would just use CDI to inject this
      */
     protected void applyCamelPostProcessor() throws Exception {
-        // use the default bean post processor from camel-core if the test class is not dependency injected already by Spring
+        // use the bean post processor if the test class is not dependency injected already by Spring Framework
         boolean spring = hasClassAnnotation("org.springframework.boot.test.context.SpringBootTest", "org.springframework.context.annotation.ComponentScan");
         if (!spring) {
-            DefaultCamelBeanPostProcessor processor = new DefaultCamelBeanPostProcessor(context);
-            processor.postProcessBeforeInitialization(this, getClass().getName());
-            processor.postProcessAfterInitialization(this, getClass().getName());
+            context.getExtension(ExtendedCamelContext.class).getBeanPostProcessor().postProcessBeforeInitialization(this, getClass().getName());
+            context.getExtension(ExtendedCamelContext.class).getBeanPostProcessor().postProcessAfterInitialization(this, getClass().getName());
         }
     }
 
