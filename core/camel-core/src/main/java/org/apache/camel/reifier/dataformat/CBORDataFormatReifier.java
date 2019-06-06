@@ -67,6 +67,18 @@ public class CBORDataFormatReifier extends DataFormatReifier<CBORDataFormat> {
         if (definition.getAllowUnmarshallType() != null) {
             setProperty(camelContext, dataFormat, "allowUnmarshallType", definition.getAllowUnmarshallType());
         }
+        if (definition.getPrettyPrint() != null) {
+            setProperty(camelContext, dataFormat, "prettyPrint", definition.getPrettyPrint());
+        }
+        if (definition.getAllowJmsType() != null) {
+            setProperty(camelContext, dataFormat, "allowJmsType", definition.getAllowJmsType());
+        }
+        if (definition.getEnableFeatures() != null) {
+            setProperty(camelContext, dataFormat, "enableFeatures", definition.getEnableFeatures());
+        }
+        if (definition.getDisableFeatures() != null) {
+            setProperty(camelContext, dataFormat, "disableFeatures", definition.getDisableFeatures());
+        }
     }
 
 }

@@ -68,6 +68,35 @@ public class CBORDataFormatConfiguration
      */
     private Boolean allowUnmarshallType = false;
     /**
+     * To enable pretty printing output nicely formatted. Is by default false.
+     */
+    private Boolean prettyPrint = false;
+    /**
+     * Used for JMS users to allow the JMSType header from the JMS spec to
+     * specify a FQN classname to use to unmarshal to.
+     */
+    private Boolean allowJmsType = false;
+    /**
+     * Set of features to enable on the Jackson
+     * com.fasterxml.jackson.databind.ObjectMapper. The features should be a
+     * name that matches a enum from
+     * com.fasterxml.jackson.databind.SerializationFeature,
+     * com.fasterxml.jackson.databind.DeserializationFeature, or
+     * com.fasterxml.jackson.databind.MapperFeature Multiple features can be
+     * separated by comma
+     */
+    private String enableFeatures;
+    /**
+     * Set of features to disable on the Jackson
+     * com.fasterxml.jackson.databind.ObjectMapper. The features should be a
+     * name that matches a enum from
+     * com.fasterxml.jackson.databind.SerializationFeature,
+     * com.fasterxml.jackson.databind.DeserializationFeature, or
+     * com.fasterxml.jackson.databind.MapperFeature Multiple features can be
+     * separated by comma
+     */
+    private String disableFeatures;
+    /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
      * example application/xml for data formats marshalling to XML, or
@@ -121,6 +150,38 @@ public class CBORDataFormatConfiguration
 
     public void setAllowUnmarshallType(Boolean allowUnmarshallType) {
         this.allowUnmarshallType = allowUnmarshallType;
+    }
+
+    public Boolean getPrettyPrint() {
+        return prettyPrint;
+    }
+
+    public void setPrettyPrint(Boolean prettyPrint) {
+        this.prettyPrint = prettyPrint;
+    }
+
+    public Boolean getAllowJmsType() {
+        return allowJmsType;
+    }
+
+    public void setAllowJmsType(Boolean allowJmsType) {
+        this.allowJmsType = allowJmsType;
+    }
+
+    public String getEnableFeatures() {
+        return enableFeatures;
+    }
+
+    public void setEnableFeatures(String enableFeatures) {
+        this.enableFeatures = enableFeatures;
+    }
+
+    public String getDisableFeatures() {
+        return disableFeatures;
+    }
+
+    public void setDisableFeatures(String disableFeatures) {
+        this.disableFeatures = disableFeatures;
     }
 
     public Boolean getContentTypeHeader() {
