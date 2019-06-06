@@ -1,7 +1,7 @@
 * xref:ahc-component.adoc[AHC Component]
+* xref:amqp-component.adoc[AMQP Component]
 * xref:ahc-ws-component.adoc[AHC Websocket Component]
 * xref:apns-component.adoc[APNS Component]
-* xref:amqp-component.adoc[AMQP Component]
 * xref:asn1-dataformat.adoc[ASN.1 File DataFormat]
 * xref:asterisk-component.adoc[Asterisk Component]
 * xref:atmos-component.adoc[Atmos Component]
