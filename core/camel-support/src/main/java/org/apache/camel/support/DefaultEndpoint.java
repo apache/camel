@@ -57,7 +57,9 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     private CamelContext camelContext;
     private Component component;
     @UriParam(label = "producer",
-            description = "Whether the producer should be started lazy (on the first message).")
+            description = "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup"
+                    + " in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then"
+                    + " the startup failure can be handled during routing messages via Camel's routing error handlers.")
     private boolean lazyStartProducer;
     @UriParam(label = "consumer", optionalPrefix = "consumer.", description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while"
                     + " the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler."
@@ -259,8 +261,6 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     /**
      * Sets whether synchronous processing should be strictly used, or Camel is
      * allowed to use asynchronous processing (if supported).
-     * 
-     * @param synchronous <tt>true</tt> to enforce synchronous processing
      */
     public void setSynchronous(boolean synchronous) {
         this.synchronous = synchronous;
@@ -285,7 +285,9 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     /**
-     * Whether the producer should be started lazy (on the first message).
+     * Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup
+     * in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then
+     * the startup failure can be handled during routing messages via Camel's routing error handlers.
      */
     public void setLazyStartProducer(boolean lazyStartProducer) {
         this.lazyStartProducer = lazyStartProducer;
