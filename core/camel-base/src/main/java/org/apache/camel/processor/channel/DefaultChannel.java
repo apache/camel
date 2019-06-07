@@ -176,15 +176,6 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         if (nextProcessor instanceof CamelContextAware) {
             ((CamelContextAware) nextProcessor).setCamelContext(camelContext);
         }
-        if (nextProcessor instanceof EndpointAware) {
-            Endpoint endpoint = ((EndpointAware) nextProcessor).getEndpoint();
-            if (endpoint instanceof DefaultEndpoint) {
-                DefaultEndpoint de = (DefaultEndpoint) endpoint;
-                if (de.isLazyStartProducer()) {
-                    System.out.println("Lazy start producer, so wrap endpoint where we can control when to start the producer");
-                }
-            }
-        }
 
         // the definition to wrap should be the fine grained,
         // so if a child is set then use it, if not then its the original output used
