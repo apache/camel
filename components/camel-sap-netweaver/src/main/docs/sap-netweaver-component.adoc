@@ -90,7 +90,7 @@ with the following path and query parameters:
 | *flatternMap* (producer) | If the JSON Map contains only a single entry, then flattern by storing that single entry value as the message body. | true | boolean
 | *json* (producer) | Whether to return data in JSON format. If this option is false, then XML is returned in Atom format. | true | boolean
 | *jsonAsMap* (producer) | To transform the JSON from a String to a Map in the message body. | true | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. | false | boolean
 | *password* (producer) | *Required* Password for account. |  | String
 | *username* (producer) | *Required* Username for account. |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean

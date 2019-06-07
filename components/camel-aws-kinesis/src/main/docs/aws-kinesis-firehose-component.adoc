@@ -74,7 +74,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *amazonKinesisFirehoseClient* (producer) | Amazon Kinesis Firehose client to use for all requests for this endpoint |  | AmazonKinesisFirehose
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. | false | boolean
 | *proxyHost* (producer) | To define a proxy host when instantiating the DDBStreams client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the DDBStreams client |  | Integer
 | *region* (producer) | The region in which Kinesis client needs to work |  | String

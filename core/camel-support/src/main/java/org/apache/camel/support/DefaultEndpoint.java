@@ -188,19 +188,12 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     public AsyncProducer createAsyncProducer() throws Exception {
-        // create producer and turn it into async
-        Producer producer = createProducer();
-        AsyncProducer target;
-        if (producer instanceof AsyncProducer) {
-            target = (AsyncProducer) producer;
-        } else {
-            target = AsyncProcessorConverterHelper.convert(producer);
-        }
         if (isLazyStartProducer()) {
-            // wrap in lazy start
-            target = new LazyStartProducer(target);
+            
+            return new LazyStartProducer(this);
+        } else {
+            return AsyncProcessorConverterHelper.convert(createProducer());
         }
-        return target;
     }
 
     /**

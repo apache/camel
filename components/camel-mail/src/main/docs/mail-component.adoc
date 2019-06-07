@@ -159,7 +159,7 @@ with the following path and query parameters:
 | *bcc* (producer) | Sets the BCC email address. Separate multiple email addresses with comma. |  | String
 | *cc* (producer) | Sets the CC email address. Separate multiple email addresses with comma. |  | String
 | *from* (producer) | The from email address | camel@localhost | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. | false | boolean
 | *replyTo* (producer) | The Reply-To recipients (the receivers of the response mail). Separate multiple email addresses with a comma. |  | String
 | *subject* (producer) | The Subject of the message being sent. Note: Setting the subject in the header takes precedence over this option. |  | String
 | *to* (producer) | Sets the To email address. Separate multiple email addresses with comma. |  | String

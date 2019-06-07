@@ -74,7 +74,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *amazonCwClient* (producer) | To use the AmazonCloudWatch as the client |  | AmazonCloudWatch
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. | false | boolean
 | *name* (producer) | The metric name |  | String
 | *proxyHost* (producer) | To define a proxy host when instantiating the CW client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the CW client |  | Integer

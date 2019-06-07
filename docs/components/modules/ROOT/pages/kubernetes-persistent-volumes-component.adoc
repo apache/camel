@@ -54,7 +54,7 @@ with the following path and query parameters:
 | *apiVersion* (producer) | The Kubernetes API Version to use |  | String
 | *dnsDomain* (producer) | The dns domain, used for ServiceCall EIP |  | String
 | *kubernetesClient* (producer) | Default KubernetesClient to use if provided |  | KubernetesClient
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. | false | boolean
 | *operation* (producer) | Producer operation to do on Kubernetes |  | String
 | *portName* (producer) | The port name, used for ServiceCall EIP |  | String
 | *portProtocol* (producer) | The port protocol, used for ServiceCall EIP | tcp | String

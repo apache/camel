@@ -148,7 +148,7 @@ with the following path and query parameters:
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
 | *eventHost* (producer) | Override the default Splunk event host field |  | String
 | *index* (producer) | Splunk index to write to |  | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. | false | boolean
 | *raw* (producer) | Should the payload be inserted raw | false | boolean
 | *source* (producer) | Splunk source argument |  | String
 | *sourceType* (producer) | Splunk sourcetype argument |  | String

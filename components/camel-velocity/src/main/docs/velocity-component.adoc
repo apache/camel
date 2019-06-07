@@ -83,7 +83,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
 | *encoding* (producer) | Character encoding of the resource content. |  | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. | false | boolean
 | *loaderCache* (producer) | Enables / disables the velocity resource loader cache which is enabled by default | true | boolean
 | *propertiesFile* (producer) | The URI of the properties file which is used for VelocityEngine initialization. |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean

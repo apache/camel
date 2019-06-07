@@ -68,7 +68,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. | false | boolean
 | *page* (producer) | Use for pagination. Force the page number. | 1 | Integer
 | *perPage* (producer) | Use for pagination. Set the number of item per request. The maximum number of results per page is 200. | 25 | Integer
 | *resource* (producer) | *Required* The DigitalOcean resource type on which perform the operation. |  | DigitalOceanResources

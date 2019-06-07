@@ -79,7 +79,7 @@ with the following path and query parameters:
 | *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
 | *encoding* (producer) | Define the encoding of the body |  | String
 | *extension* (producer) | Define the file extension of the template |  | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. | false | boolean
 | *themeFolder* (producer) | Define the themes folder to scan |  | String
 | *themeLayer* (producer) | Define the theme layer to elaborate |  | String
 | *themeSubfolder* (producer) | Define the themes subfolder to scan |  | String

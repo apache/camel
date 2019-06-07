@@ -79,7 +79,7 @@ with the following path and query parameters:
 | *autoCreateTopic* (producer) | Setting the autocreation of the topic | true | boolean
 | *headerFilterStrategy* (producer) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
 | *kmsMasterKeyId* (producer) | The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a custom CMK. |  | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. | false | boolean
 | *messageStructure* (producer) | The message structure to use such as json |  | String
 | *policy* (producer) | The policy for this queue |  | String
 | *proxyHost* (producer) | To define a proxy host when instantiating the SNS client |  | String

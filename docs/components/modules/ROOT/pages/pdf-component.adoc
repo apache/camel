@@ -76,7 +76,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *font* (producer) | Font | Helvetica | PDFont
 | *fontSize* (producer) | Font size in pixels | 14 | float
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. | false | boolean
 | *marginBottom* (producer) | Margin bottom in pixels | 20 | int
 | *marginLeft* (producer) | Margin left in pixels | 20 | int
 | *marginRight* (producer) | Margin right in pixels | 40 | int

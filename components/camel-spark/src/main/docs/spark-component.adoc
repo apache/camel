@@ -97,7 +97,7 @@ with the following path and query parameters:
 | *collect* (producer) | Indicates if results should be collected or counted. | true | boolean
 | *dataFrame* (producer) | DataFrame to compute against. |  | Dataset
 | *dataFrameCallback* (producer) | Function performing action against an DataFrame. |  | DataFrameCallback
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. | false | boolean
 | *rdd* (producer) | RDD to compute against. |  | JavaRDDLike
 | *rddCallback* (producer) | Function performing action against an RDD. |  | RddCallback
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean

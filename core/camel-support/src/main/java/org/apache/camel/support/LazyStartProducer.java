@@ -18,42 +18,52 @@ package org.apache.camel.support;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProducer;
+import org.apache.camel.DelegateProcessor;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * A {@link org.apache.camel.Producer} which is started lazy, on the first message being processed.
  */
-public final class LazyStartProducer extends DefaultAsyncProducer {
+public final class LazyStartProducer extends DefaultAsyncProducer implements DelegateProcessor {
 
-    private final AsyncProducer delegate;
+    private AsyncProducer delegate;
 
-    public LazyStartProducer(AsyncProducer producer) {
-        super(producer.getEndpoint());
-        this.delegate = producer;
+    public LazyStartProducer(Endpoint endpoint) {
+        super(endpoint);
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        if (!ServiceHelper.isStarted(delegate)) {
-            try {
-                ServiceHelper.startService(delegate);
-            } catch (Throwable e) {
-                exchange.setException(e);
-                return true;
+        try {
+            if (delegate == null) {
+                synchronized (lock) {
+                    if (delegate == null) {
+                        delegate = AsyncProcessorConverterHelper.convert(getEndpoint().createProducer());
+                    }
+                }
             }
+            if (!ServiceHelper.isStarted(delegate)) {
+                ServiceHelper.startService(delegate);
+            }
+        } catch (Throwable e) {
+            exchange.setException(e);
+            return true;
         }
         return delegate.process(exchange, callback);
     }
 
     @Override
     public boolean isSingleton() {
-        return delegate.isSingleton();
+        return getEndpoint().isSingleton();
     }
 
     @Override
     protected void doInit() throws Exception {
-        ServiceHelper.initService(delegate);
+        // noop as we dont want to start the delegate but its started on the first message processed
     }
 
     @Override
@@ -79,5 +89,10 @@ public final class LazyStartProducer extends DefaultAsyncProducer {
     @Override
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownService(delegate);
+    }
+
+    @Override
+    public Processor getProcessor() {
+        return delegate;
     }
 }
