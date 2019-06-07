@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.main;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.main.MainSupport;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-public class MainSupportTest extends ContextTestSupport {
+public class MainSupportCommandLineTest {
 
     private class MyMainSupport extends MainSupport {
+
+        private CamelContext context = new DefaultCamelContext();
 
         @Override
         protected ProducerTemplate findOrCreateCamelTemplate() {
