@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,7 +36,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.jira.JiraComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
@@ -92,7 +92,11 @@ public class AttachFileProducerTest extends CamelTestSupport {
             return Promises.promise(issue);
         });
         when(issueRestClient.addAttachments(any(URI.class), any(File.class))).then(inv -> {
-            attachedFile = inv.getArgument(1);
+            File attachedFileTmp = inv.getArgument(1);
+            // create a temp destiny file as the attached file is marked for removal on AttachFileProducer
+            attachedFile = File.createTempFile("camel-jira-test-", null);
+            Files.copy(attachedFileTmp.toPath(), attachedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            attachedFile.deleteOnExit();
             Collection<Attachment> attachments = new ArrayList<>();
             attachments.add(new Attachment(issue.getAttachmentsUri(), attachedFile.getName(), null, null,
                     new Long(attachedFile.length()).intValue(), null, null, null));
@@ -112,12 +116,6 @@ public class AttachFileProducerTest extends CamelTestSupport {
     }
 
     @Override
-    protected void stopCamelContext() throws Exception {
-        super.stopCamelContext();
-        attachedFile.deleteOnExit();
-    }
-
-    @Override
     protected CamelContext createCamelContext() throws Exception {
         setMocks();
         CamelContext camelContext = super.createCamelContext();
@@ -131,14 +129,8 @@ public class AttachFileProducerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws IOException {
-                File sampleFile = generateSampleFile();
+            public void configure() {
                 from("direct:start")
-                        .process(processor -> {
-                            GenericFile<File> genFile = new GenericFile<>();
-                            genFile.setFile(sampleFile);
-                            processor.getOut().setBody(genFile);
-                        })
                         .setHeader(ISSUE_KEY, () -> KEY + "-1")
                         .to("jira://attach?jiraUrl=" + JIRA_CREDENTIALS)
                         .to(mockResult);
@@ -147,8 +139,8 @@ public class AttachFileProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void verifyAttachment() throws InterruptedException {
-        template.sendBody(null);
+    public void verifyAttachment() throws InterruptedException, IOException {
+        template.sendBody(generateSampleFile());
         Issue retrievedIssue = issueRestClient.getIssue(issue.getKey()).claim();
         assertEquals(issue, retrievedIssue);
         // there is only one attachment

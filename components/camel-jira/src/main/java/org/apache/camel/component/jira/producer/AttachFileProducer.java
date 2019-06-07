@@ -23,7 +23,7 @@ import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.jira.JiraEndpoint;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
@@ -40,22 +40,16 @@ public class AttachFileProducer extends DefaultProducer {
     }
 
     @Override
-    public void process(Exchange exchange) {
+    public void process(Exchange exchange) throws InvalidPayloadException {
         String issueKey = exchange.getIn().getHeader(ISSUE_KEY, String.class);
         if (issueKey == null) {
             throw new IllegalArgumentException("Missing exchange input header named \'IssueKey\', it should specify the issue key to attach a file.");
         }
-        Object body = exchange.getIn().getBody();
-        if (body instanceof GenericFile) {
-            JiraRestClient client = ((JiraEndpoint) getEndpoint()).getClient();
-            IssueRestClient issueClient = client.getIssueClient();
-            Issue issue = issueClient.getIssue(issueKey).claim();
-            URI attachmentsUri = issue.getAttachmentsUri();
-            GenericFile<File> file = (GenericFile<File>) body;
-            issueClient.addAttachments(attachmentsUri, file.getFile());
-        } else {
-            LOG.info("Jira AttachFileProducer can attach only one file on each invocation. The body instance is " + body.getClass().getName() + " but it accepts only GenericFile<File>. You can "
-                + "write a rooute processor to transform any incoming file to a Generic<File>");
-        }
+        File file = exchange.getIn().getMandatoryBody(File.class);
+        JiraRestClient client = ((JiraEndpoint) getEndpoint()).getClient();
+        IssueRestClient issueClient = client.getIssueClient();
+        Issue issue = issueClient.getIssue(issueKey).claim();
+        URI attachmentsUri = issue.getAttachmentsUri();
+        issueClient.addAttachments(attachmentsUri, file);
     }
 }

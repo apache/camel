@@ -171,8 +171,7 @@ public class OAuthAsynchronousHttpClientFactory {
                 props.load(resourceAsStream);
                 return props.getProperty("version", UNKNOWN_VERSION);
             } catch (Exception e) {
-                LOG.debug("Could not find version for maven artifact {}:{}", groupId, artifactId);
-                LOG.debug("Got the following exception", e);
+                LOG.debug("Could not find version for Jira Rest Java Client maven artifact {}:{}. Error: {}", groupId, artifactId, e.getMessage());
                 return UNKNOWN_VERSION;
             }
         }
