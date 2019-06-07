@@ -14,17 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean;
+package org.apache.camel.component.validator;
+
+import java.io.FileNotFoundException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class BeanLazyStartProducerTest extends ContextTestSupport {
+public class ValidatorLazyStartProducerTest extends ContextTestSupport {
 
     @Test
     public void testLazyStartProducer() throws Exception {
-        template.sendBody("direct:start", "Hello World");
+        try {
+            template.sendBody("direct:start", "Hello World");
+            fail("Should throw exception");
+        } catch (Exception e) {
+            assertIsInstanceOf(FileNotFoundException.class, e.getCause());
+        }
     }
 
     @Override
