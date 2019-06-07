@@ -90,7 +90,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
 
         log.trace("Receiving messages with request [{}]...", request);
 
-        ReceiveMessageResult messageResult = null;
+        ReceiveMessageResult messageResult;
         try {
             messageResult = getClient().receiveMessage(request);
         } catch (QueueDoesNotExistException e) {
@@ -161,7 +161,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
                 int repeatSeconds = Double.valueOf(visibilityTimeout.doubleValue() * 1.5).intValue();
                 if (log.isDebugEnabled()) {
                     log.debug("Scheduled TimeoutExtender task to start after {} delay, and run with {}/{} period/repeat (seconds), to extend exchangeId: {}",
-                              new Object[] {delay, period, repeatSeconds, exchange.getExchangeId()});
+                              delay, period, repeatSeconds, exchange.getExchangeId());
                 }
                 final ScheduledFuture<?> scheduledFuture = this.scheduledExecutor.scheduleAtFixedRate(new TimeoutExtender(exchange, repeatSeconds), delay, period,
                                                                                                       TimeUnit.SECONDS);
