@@ -91,7 +91,7 @@ with the following path and query parameters:
 | *copies* (producer) | Number of copies to print | 1 | int
 | *docFlavor* (producer) | Sets DocFlavor to use. |  | DocFlavor
 | *flavor* (producer) | Sets DocFlavor to use. |  | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. | false | boolean
 | *mediaSize* (producer) | Sets the stationary as defined by enumeration names in the javax.print.attribute.standard.MediaSizeName API. The default setting is to use North American Letter sized stationary. The value's case is ignored, e.g. values of iso_a4 and ISO_A4 may be used. | na-letter | String
 | *mediaTray* (producer) | Sets MediaTray supported by the javax.print.DocFlavor API, for example upper,middle etc. |  | String
 | *mimeType* (producer) | Sets mimeTypes supported by the javax.print.DocFlavor API |  | String

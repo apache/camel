@@ -76,7 +76,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *headersOnly* (producer) | Whether to only enrich the Exchange with headers, and leave the body as-is. | false | boolean
 | *language* (producer) | The language to use. | en | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *proxyAuthDomain* (proxy) | Domain for proxy NTML authentication |  | String

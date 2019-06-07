@@ -16,10 +16,8 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.AsyncProducer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Producer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.LazyStartProducer;
 import org.apache.camel.support.service.ServiceHelper;
@@ -39,29 +37,27 @@ public class LazyStartProducerTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello Lazy Producer", "Hello Again Lazy Producer");
 
-        Producer delegate = mock.createProducer();
-        assertFalse(ServiceHelper.isStarted(delegate));
-
-        LazyStartProducer lazy = new LazyStartProducer((AsyncProducer) delegate);
+        LazyStartProducer lazy = new LazyStartProducer(mock);
         assertFalse(ServiceHelper.isStarted(lazy));
+        assertFalse(ServiceHelper.isStarted(lazy.getProcessor()));
 
         ServiceHelper.startService(lazy);
         assertTrue(ServiceHelper.isStarted(lazy));
-        assertFalse(ServiceHelper.isStarted(delegate));
+        assertFalse(ServiceHelper.isStarted(lazy.getProcessor()));
 
         // process a message which should start the delegate
         Exchange exchange = mock.createExchange();
         exchange.getIn().setBody("Hello Lazy Producer");
         lazy.process(exchange);
         assertTrue(ServiceHelper.isStarted(lazy));
-        assertTrue(ServiceHelper.isStarted(delegate));
+        assertTrue(ServiceHelper.isStarted(lazy.getProcessor()));
 
         // process a message which should start the delegate
         exchange = mock.createExchange();
         exchange.getIn().setBody("Hello Again Lazy Producer");
         lazy.process(exchange);
         assertTrue(ServiceHelper.isStarted(lazy));
-        assertTrue(ServiceHelper.isStarted(delegate));
+        assertTrue(ServiceHelper.isStarted(lazy.getProcessor()));
 
         assertMockEndpointsSatisfied();
     }

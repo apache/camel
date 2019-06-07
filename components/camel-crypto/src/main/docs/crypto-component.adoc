@@ -125,7 +125,7 @@ with the following path and query parameters:
 | *certificateName* (producer) | Sets the reference name for a PrivateKey that can be found in the registry. |  | String
 | *keystore* (producer) | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges. A KeyStore is typically used with an alias, either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore, then this single entry will be used. |  | KeyStore
 | *keystoreName* (producer) | Sets the reference name for a Keystore that can be found in the registry. |  | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. | false | boolean
 | *privateKey* (producer) | Set the PrivateKey that should be used to sign the exchange |  | PrivateKey
 | *privateKeyName* (producer) | Sets the reference name for a PrivateKey that can be found in the registry. |  | String
 | *provider* (producer) | Set the id of the security provider that provides the configured Signature algorithm. |  | String

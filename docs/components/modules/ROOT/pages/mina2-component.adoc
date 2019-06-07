@@ -123,7 +123,7 @@ with the following path and query parameters:
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *noReplyLogLevel* (consumer) | If sync is enabled this option dictates MinaConsumer which logging level to use when logging a there is no reply to send back. | WARN | LoggingLevel
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. | false | boolean
 | *cachedAddress* (producer) | Whether to create the InetAddress once and reuse. Setting this to false allows to pickup DNS changes in the network. | true | boolean
 | *lazySessionCreation* (producer) | Sessions can be lazily created to avoid exceptions, if the remote server is not up and running when the Camel producer is started. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
