@@ -88,6 +88,18 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cloud</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-headersmap</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-caffeine-lrucache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-main</artifactId>
+        </dependency>
 
         <!-- NOTE: auto-generated list of components when building camel catalog -->
         <!-- camel components: START -->
@@ -2158,11 +2170,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-hdfs2-starter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-headersmap-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

@@ -37,6 +37,7 @@
         <include>org.apache.camel:camel-core-osgi</include>
         <include>org.apache.camel:camel-core-xml</include>
         <include>org.apache.camel:camel-cloud</include>
+        <include>org.apache.camel:camel-main</include>
 
         <!-- NOTE: auto-generated list of components when building camel catalog -->
         <!-- camel components: START -->
@@ -492,7 +493,6 @@
         <include>org.apache.camel:camel-hazelcast-starter</include>
         <include>org.apache.camel:camel-hbase-starter</include>
         <include>org.apache.camel:camel-hdfs2-starter</include>
-        <include>org.apache.camel:camel-headersmap-starter</include>
         <include>org.apache.camel:camel-hipchat-starter</include>
         <include>org.apache.camel:camel-hl7-starter</include>
         <include>org.apache.camel:camel-http-common-starter</include>
