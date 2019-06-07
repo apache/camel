@@ -254,7 +254,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         Exchange exchange = super.createExchange(pattern);
         Message message = exchange.getIn();
         message.setBody(msg.getBody());
-        message.setHeaders(new HashMap<String, Object>(msg.getAttributes()));
+        message.setHeaders(new HashMap<>(msg.getAttributes()));
         message.setHeader(SqsConstants.MESSAGE_ID, msg.getMessageId());
         message.setHeader(SqsConstants.MD5_OF_BODY, msg.getMD5OfBody());
         message.setHeader(SqsConstants.RECEIPT_HANDLE, msg.getReceiptHandle());
