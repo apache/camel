@@ -19,12 +19,12 @@ package org.apache.camel.component.rss;
 import java.util.Collections;
 import java.util.Date;
 
+import com.rometools.rome.feed.synd.SyndFeed;
+
 import org.apache.camel.Processor;
 import org.apache.camel.component.feed.EntryFilter;
 import org.apache.camel.component.feed.FeedEntryPollingConsumer;
 import org.apache.camel.util.ObjectHelper;
-
-import com.rometools.rome.feed.synd.SyndFeed;
 
 /**
  * Consumer to poll RSS feeds and return each entry from the feed step by step.

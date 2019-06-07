@@ -19,6 +19,9 @@ package org.apache.camel.component.rss;
 import java.util.Arrays;
 import java.util.Date;
 
+import com.rometools.rome.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndFeed;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -28,9 +31,6 @@ import org.apache.camel.component.feed.FeedPollingConsumer;
 import org.apache.camel.spi.UriEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.rometools.rome.feed.synd.SyndEntry;
-import com.rometools.rome.feed.synd.SyndFeed;
 
 /**
  * The rss component is used for consuming RSS feeds.

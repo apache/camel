@@ -19,14 +19,14 @@ package org.apache.camel.component.rss;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.rometools.rome.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndFeed;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.CastUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.rometools.rome.feed.synd.SyndEntry;
-import com.rometools.rome.feed.synd.SyndFeed;
 
 public class AggregateRssFeedStrategy implements AggregationStrategy {
     protected final Logger log = LoggerFactory.getLogger(AggregateRssFeedStrategy.class);
