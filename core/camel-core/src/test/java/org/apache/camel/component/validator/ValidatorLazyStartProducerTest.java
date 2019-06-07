@@ -25,13 +25,26 @@ import org.junit.Test;
 public class ValidatorLazyStartProducerTest extends ContextTestSupport {
 
     @Test
-    public void testLazyStartProducer() throws Exception {
+    public void testLazyStartProducerFail() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+
         try {
-            template.sendBody("direct:start", "Hello World");
+            template.sendBody("direct:fail", "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>");
             fail("Should throw exception");
         } catch (Exception e) {
             assertIsInstanceOf(FileNotFoundException.class, e.getCause());
         }
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testLazyStartProducerOk() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        template.sendBody("direct:ok", "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>");
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -39,8 +52,13 @@ public class ValidatorLazyStartProducerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("validator:org/apache/camel/component/validator/unknown.xsd?lazyStartProducer=true");
+                from("direct:fail")
+                    .to("validator:org/apache/camel/component/validator/unknown.xsd?lazyStartProducer=true")
+                    .to("mock:result");
+
+                from("direct:ok")
+                    .to("validator:org/apache/camel/component/validator/schema.xsd?lazyStartProducer=true")
+                    .to("mock:result");
             }
         };
     }
