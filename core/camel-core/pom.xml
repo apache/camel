@@ -542,10 +542,6 @@
                             <packages>org.apache.camel.impl:org.apache.camel.impl.*</packages>
                         </group>
                         <group>
-                            <title>Camel Main to run Camel standalone</title>
-                            <packages>org.apache.camel.main</packages>
-                        </group>
-                        <group>
                             <title>Type conversion helper classes</title>
                             <packages>org.apache.camel.converter:org.apache.camel.converter.*</packages>
                         </group>
@@ -625,10 +621,6 @@
                                 <group>
                                     <title>Camel Runtime</title>
                                     <packages>org.apache.camel.impl:org.apache.camel.impl.*</packages>
-                                </group>
-                                <group>
-                                    <title>Camel Main to run Camel standalone</title>
-                                    <packages>org.apache.camel.main</packages>
                                 </group>
                                 <group>
                                     <title>Type conversion helper classes</title>

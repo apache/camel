@@ -22,6 +22,7 @@ In Camel 2.x camel-core was one JAR file, which now has been splitup into many J
 - camel-cloud
 - camel-core
 - camel-jaxp
+- camel-main
 - camel-management-api
 - camel-management-impl
 - camel-support
@@ -81,6 +82,10 @@ All deprecated APIs and components from Camel 2.x has been removed in Camel 3.
 
 Migrating Camel applications
 ----------------------------
+
+### Main class
+
+The Camel `Main` class has been moved out of `camel-core` into `camel-main` so you should add that as dependency if you use Main.
 
 ### Removed components
 
