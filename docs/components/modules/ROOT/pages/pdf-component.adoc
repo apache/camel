@@ -68,7 +68,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (10 parameters):
+==== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -76,6 +76,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *font* (producer) | Font | Helvetica | PDFont
 | *fontSize* (producer) | Font size in pixels | 14 | float
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *marginBottom* (producer) | Margin bottom in pixels | 20 | int
 | *marginLeft* (producer) | Margin left in pixels | 20 | int
 | *marginRight* (producer) | Margin right in pixels | 40 | int

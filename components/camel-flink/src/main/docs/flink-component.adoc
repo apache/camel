@@ -58,7 +58,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (7 parameters):
+==== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -69,6 +69,7 @@ with the following path and query parameters:
 | *dataSetCallback* (producer) | Function performing action against a DataSet. |  | DataSetCallback
 | *dataStream* (producer) | DataStream to compute against. |  | DataStream
 | *dataStreamCallback* (producer) | Function performing action against a DataStream. |  | DataStreamCallback
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===

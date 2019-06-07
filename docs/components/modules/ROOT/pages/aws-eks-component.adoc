@@ -64,7 +64,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (9 parameters):
+==== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -72,6 +72,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *accessKey* (producer) | Amazon AWS Access Key |  | String
 | *eksClient* (producer) | To use a existing configured AWS EKS as client |  | AmazonEKS
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *operation* (producer) | *Required* The operation to perform |  | EKSOperations
 | *proxyHost* (producer) | To define a proxy host when instantiating the EKS client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the EKS client |  | Integer

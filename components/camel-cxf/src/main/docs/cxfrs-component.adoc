@@ -92,7 +92,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (31 parameters):
+==== Query Parameters (32 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -114,6 +114,7 @@ with the following path and query parameters:
 | *serviceBeans* (consumer) | The service beans which you want to export as REST service. Multiple beans can be separated by comma. |  | List
 | *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
 | *hostnameVerifier* (producer) | The hostname verifier to be used. Use the # notation to reference a HostnameVerifier from the registry. |  | HostnameVerifier
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *sslContextParameters* (producer) | The Camel SSL setting reference. Use the # notation to reference the SSL Context. |  | SSLContextParameters
 | *throwExceptionOnFailure* (producer) | This option tells the CxfRsProducer to inspect return codes and will generate an Exception if the return code is larger than 207. | true | boolean
 | *httpClientAPI* (producer) | If it is true, the CxfRsProducer will use the HttpClientAPI to invoke the service. If it is false, the CxfRsProducer will use the ProxyClientAPI to invoke the service | true | boolean

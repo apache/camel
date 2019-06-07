@@ -89,7 +89,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (14 parameters):
+==== Query Parameters (15 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -97,6 +97,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *dmax* (producer) | Minumum time in seconds before Ganglia will purge the metric value if it expires. Set to 0 and the value will remain in Ganglia indefinitely until a gmond agent restart. | 0 | int
 | *groupName* (producer) | The group that the metric belongs to. | java | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *metricName* (producer) | The name to use for the metric. | metric | String
 | *mode* (producer) | Send the UDP metric packets using MULTICAST or UNICAST | MULTICAST | UDPAddressingMode
 | *prefix* (producer) | Prefix the metric name with this string and an underscore. |  | String

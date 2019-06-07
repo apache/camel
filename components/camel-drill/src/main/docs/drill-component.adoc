@@ -70,7 +70,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (6 parameters):
+==== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -78,6 +78,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *clusterId* (producer) | Cluster ID https://drill.apache.org/docs/using-the-jdbc-driver/#determining-the-cluster-id |  | String
 | *directory* (producer) | Drill directory in ZooKeeper |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *mode* (producer) | Connection mode: zk: Zookeeper drillbit: Drillbit direct connection https://drill.apache.org/docs/using-the-jdbc-driver/ | ZK | DrillConnectionMode
 | *port* (producer) | ZooKeeper port number |  | Integer
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean

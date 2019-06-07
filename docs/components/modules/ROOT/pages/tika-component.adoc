@@ -62,12 +62,13 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (6 parameters):
+==== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *tikaConfig* (producer) | Tika Config |  | TikaConfig
 | *tikaConfigUri* (producer) | Tika Config Uri: The URI of tika-config.xml |  | String
 | *tikaParseOutputEncoding* (producer) | Tika Parse Output Encoding - Used to specify the character encoding of the parsed output. Defaults to Charset.defaultCharset() . |  | String

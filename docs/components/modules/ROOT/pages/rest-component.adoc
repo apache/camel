@@ -57,7 +57,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (17 parameters):
+==== Query Parameters (18 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -76,6 +76,7 @@ with the following path and query parameters:
 | *apiDoc* (producer) | The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSon format. |  | String
 | *bindingMode* (producer) | Configures the binding mode for the producer. If set to anything other than 'off' the producer will try to convert the body of the incoming message from inType to the json or xml, and the response from json or xml to outType. |  | RestBindingMode
 | *host* (producer) | Host and port of HTTP service to use (override host in swagger schema) |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *producerComponentName* (producer) | The Camel Rest component to use for (producer) the REST transport, such as http, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that is being used. |  | String
 | *queryParameters* (producer) | Query parameters for the HTTP service to call |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean

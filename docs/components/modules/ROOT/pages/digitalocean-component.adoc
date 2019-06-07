@@ -62,12 +62,13 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (11 parameters):
+==== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *page* (producer) | Use for pagination. Force the page number. | 1 | Integer
 | *perPage* (producer) | Use for pagination. Set the number of item per request. The maximum number of results per page is 200. | 25 | Integer
 | *resource* (producer) | *Required* The DigitalOcean resource type on which perform the operation. |  | DigitalOceanResources

@@ -94,7 +94,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (27 parameters):
+==== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -104,6 +104,7 @@ with the following path and query parameters:
 | *groupDelay* (producer) | Set the initial delay for stats (in millis) |  | Long
 | *groupInterval* (producer) | If specified will group message stats by this time interval (in millis) |  | Long
 | *groupSize* (producer) | An integer that specifies a group size for throughput logging. |  | Integer
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *level* (producer) | Logging level to use. The default value is INFO. | INFO | String
 | *logMask* (producer) | If true, mask sensitive information like password or passphrase in the log. |  | Boolean
 | *marker* (producer) | An optional Marker name to use. |  | String

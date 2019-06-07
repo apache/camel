@@ -44,7 +44,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (8 parameters):
+==== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -52,6 +52,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *capacity* (producer) | The queue capacity. Default: non-bounded. |  | int
 | *configuration* (producer) | The collection configuration. Default: empty configuration. You can also conveniently set inner properties by using configuration.xyz=123 options. |  | CollectionConfiguration
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *operation* (producer) | The operation to invoke on the Ignite Queue. Superseded by the IgniteConstants.IGNITE_QUEUE_OPERATION header in the IN message. Possible values: CONTAINS, ADD, SIZE, REMOVE, ITERATOR, CLEAR, RETAIN_ALL, ARRAY, DRAIN, ELEMENT, PEEK, OFFER, POLL, TAKE, PUT. |  | IgniteQueueOperation
 | *propagateIncomingBodyIfNo ReturnValue* (producer) | Sets whether to propagate the incoming body if the return type of the underlying Ignite operation is void. | true | boolean
 | *timeoutMillis* (producer) | The queue timeout in milliseconds. Default: no timeout. |  | Long

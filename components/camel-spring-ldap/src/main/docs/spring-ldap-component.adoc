@@ -68,12 +68,13 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (4 parameters):
+==== Query Parameters (5 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *operation* (producer) | *Required* The LDAP operation to be performed. |  | LdapOperation
 | *scope* (producer) | The scope of the search operation. | subtree | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean

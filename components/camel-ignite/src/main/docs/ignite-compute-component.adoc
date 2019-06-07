@@ -48,7 +48,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (9 parameters):
+==== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -57,6 +57,7 @@ with the following path and query parameters:
 | *clusterGroupExpression* (producer) | An expression that returns the Cluster Group for the IgniteCompute instance. |  | ClusterGroupExpression
 | *computeName* (producer) | The name of the compute job, which will be set via IgniteCompute#withName(String). |  | String
 | *executionType* (producer) | *Required* The compute operation to perform. Possible values: CALL, BROADCAST, APPLY, EXECUTE, RUN, AFFINITY_CALL, AFFINITY_RUN. The component expects different payload types depending on the operation. |  | IgniteComputeExecution Type
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *propagateIncomingBodyIfNo ReturnValue* (producer) | Sets whether to propagate the incoming body if the return type of the underlying Ignite operation is void. | true | boolean
 | *taskName* (producer) | The task name, only applicable if using the IgniteComputeExecutionType#EXECUTE execution type. |  | String
 | *timeoutMillis* (producer) | The timeout interval for triggered jobs, in milliseconds, which will be set via IgniteCompute#withTimeout(long). |  | Long

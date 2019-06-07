@@ -46,12 +46,8 @@ the Class or field.
 
  *Multiple models*
 
-If you use multiple models, each model has to be placed in it's own
-package to prevent unpredictable results.
-
-From *Camel 2.16* onwards this is no longer the case, as you can safely
-have multiple models in the same package, as you configure bindy using
-class names instead of package names now.
+As you configure bindy using class names instead of package names
+you can put multiple models in the same package.
 
 === Options
 
@@ -130,8 +126,8 @@ the POJO like :
 financial messages),
 * Section (to identify header, body and footer section),
 * OneToMany,
-* BindyConverter (since 2.18.0),
-* FormatFactories (since 2.18.0)
+* BindyConverter,
+* FormatFactories
 
 This section will describe them :
 
@@ -168,7 +164,7 @@ specify a value other than the three listed before, the value you enter
 |generateHeaderColumns |boolean |optional - default value = false - uses to generate the header columns
 of the CSV generates
 
-|autospanLine |boolean |*Camel 2.13/2.12.2:* optional - default value = false - if enabled then
+|autospanLine |boolean |optional - default value = false - if enabled then
 the last column is auto spanned to end of line, for example if its a
 comment, etc this allows the line to contain all characters, also the
 delimiter char.
@@ -176,14 +172,14 @@ delimiter char.
 |isOrdered |boolean |optional - default value = false - allow to change the order of the
 fields when CSV is generated
 
-|quote |String |*Camel 2.8.3/2.9:* option - allow to specify a quote character of the
+|quote |String |optional - allow to specify a quote character of the
 fields when CSV is generated. This annotation is associated to the root class of the model and must be
 declared one time.
 
-|quoting |boolean |*Camel 2.11:*optional - default value = false - Indicate if the values (and headers)
+|quoting |boolean |optional - default value = false - Indicate if the values (and headers)
 must be quoted when marshaling when CSV is generated.
 
-|endWithLineBreak |boolean |*Camel 2.21:* optional - default value = true - Indicate if the CSV generated file 
+|endWithLineBreak |boolean |optional - default value = true - Indicate if the CSV generated file
 should end with a line break.
 
 |
@@ -264,7 +260,7 @@ public Class Order {
 }
 ----
 
-From *Camel 2.8.3/2.9 or never* bindy will automatic detect if the
+Bindy automatically detects if the
 record is enclosed with either single or double quotes and automatic
 remove those quotes when unmarshalling from CSV to Object. Therefore do
 *not* include the quotes in the separator, but simple do as below:
@@ -472,7 +468,7 @@ will be formatted/parsed
 (SimpleDateFormat by example) to format/validate data. If using pattern,
 then setting locale on bindy data format is recommended. Either set to a
 known locale such as "us" or use "default" to use platform default
-locale. Notice that "default" requires Camel 2.14/2.13.3/2.12.5.
+locale.
 
 |position |int |optional - must be used when the position of the field in the CSV
 generated (output message) must be different compare to input position
@@ -482,19 +478,19 @@ generated (output message) must be different compare to input position
 
 |trim |boolean |optional - default value = "false"
 
-|defaultValue |string |*Camel 2.10:* optional - default value = "" - defines the field's
+|defaultValue |string |optional - default value = "" - defines the field's
 default value when the respective CSV field is empty/not available
 
-|impliedDecimalSeparator |boolean |*Camel 2.11:* optional - default value = "false" - Indicates if there is
+|impliedDecimalSeparator |boolean |optional - default value = "false" - Indicates if there is
 a decimal point implied at a specified location
 
-|lengthPos |int |*Camel 2.11*: optional - can be used to identify a data field in a
+|lengthPos |int |optional - can be used to identify a data field in a
 fixed-length record that defines the fixed length for this field
 
 |align |string |optional - default value = "R" - Align the text to the right or left within a fixed-length field.
 Use values 'R' or 'L'
 
-|delimiter |string |*Camel 2.11:* optional - can be used to demarcate the end of a variable-length field within a fixed-length record
+|delimiter |string |optional - can be used to demarcate the end of a variable-length field within a fixed-length record
 |===
 
 *case 1 : pos*
@@ -771,28 +767,28 @@ provided line delimiter as "WINDOWS" unless any other value is provided
 
 |length |int |mandatory = size of the fixed length record
 
-|hasHeader |boolean |*Camel 2.11* - optional - Indicates that the record(s) of this type may
+|hasHeader |boolean |optional - Indicates that the record(s) of this type may
 be preceded by a single header record at the beginning of the file /
 stream
 
-|hasFooter |boolean |*Camel 2.11* - optional - Indicates that the record(s) of this type may
+|hasFooter |boolean |optional - Indicates that the record(s) of this type may
 be followed by a single footer record at the end of the file / stream
 
-|skipHeader |boolean |*Camel 2.11* - optional - Configures the data format to skip marshalling
+|skipHeader |boolean |optional - Configures the data format to skip marshalling
 / unmarshalling of the header record. Configure this parameter on the
 primary record (e.g., not the header or footer).
 
-|skipFooter |boolean |*Camel 2.11* - optional - Configures the data format to skip marshalling
+|skipFooter |boolean |optional - Configures the data format to skip marshalling
 / unmarshalling of the footer record Configure this parameter on the
 primary record (e.g., not the header or footer)..
 
-|isHeader |boolean |*Camel 2.11* - optional - Identifies this FixedLengthRecord as a header
+|isHeader |boolean |optional - Identifies this FixedLengthRecord as a header
 record
 
-|isFooter |boolean |*Camel 2.11* - optional - Identifies this FixedLengthRecords as a footer
+|isFooter |boolean |optional - Identifies this FixedLengthRecords as a footer
 record
 
-|ignoreTrailingChars |boolean |*Camel 2.11.1* - optional - Indicates that characters beyond the last
+|ignoreTrailingChars |boolean |optional - Indicates that characters beyond the last
 mapped filed can be ignored when unmarshalling / parsing. This annotation is associated to the root class of the model and must be
 declared one time.
 |===
@@ -1009,7 +1005,7 @@ public static class Order {
 }
 ----
 
-As of *Camel 2.11* the 'pos' value(s) in a fixed-length record may
+The 'pos' value(s) in a fixed-length record may
 optionally be defined using ordinal, sequential values instead of
 precise column numbers.
 
@@ -1145,8 +1141,7 @@ public class OrderFooter {
 }
 ----
 
-*case 7 : Skipping content when parsing a fixed length record. (Camel
-2.11.1)*
+*case 7 : Skipping content when parsing a fixed length record.
 
 It is common to integrate with systems that provide fixed-length records
 containing more information than needed for the target use case. It is
@@ -1666,9 +1661,9 @@ FormattingOptions:
 * Enums
 * Float
 * Integer
-* LocalDate (java 8, since 2.18.0)
-* LocalDateTime (java 8, since 2.18.0)
-* LocalTime (java 8, since 2.18.0)
+* LocalDate
+* LocalDateTime
+* LocalTime
 * Long
 * Short
 * String
@@ -1678,22 +1673,16 @@ FactoryRegistry in the registry in use (e.g. spring or JNDI).
 
 === Using the Java DSL
 
-The next step consists in instantiating the DataFormat _bindy_ class
-associated with this record type and providing Java package name(s) as
-parameter.
+The next step instantiates the DataFormat _bindy_ class
+associated with this record type and providing a class as a parameter.
 
-For example the following uses the class `BindyCsvDataFormat` (who
-correspond to the class associated with the CSV record type) which is
-configured with `com.acme.model` package name to initialize the model objects
+For example the following uses the class `BindyCsvDataFormat` (which
+corresponds to the class associated with the CSV record type) which is
+configured with _com.acme.model.MyModel.class_ to initialize the model objects
 configured in this package.
 
 [source,java]
 ----
-// Camel 2.15 or older (configure by package name)
-DataFormat bindy = new BindyCsvDataFormat("com.acme.model");
-
- 
-// Camel 2.16 onwards (configure by class name)
 DataFormat bindy = new BindyCsvDataFormat(com.acme.model.MyModel.class);
 ----
 
@@ -1703,37 +1692,19 @@ Bindy supports configuring the locale on the dataformat, such as 
 
 [source,java]
 ----
-// Camel 2.15 or older (configure by package name)
-BindyCsvDataFormat bindy = new BindyCsvDataFormat("com.acme.model");
-// Camel 2.16 onwards (configure by class name)
 BindyCsvDataFormat bindy = new BindyCsvDataFormat(com.acme.model.MyModel.class);
 
 bindy.setLocale("us");
 ----
 
 Or to use the platform default locale then use "default" as the locale
-name. Notice this requires Camel 2.14/2.13.3/2.12.5.
+name.
 
 [source,java]
 ----
-// Camel 2.15 or older (configure by package name)
-BindyCsvDataFormat bindy = new BindyCsvDataFormat("com.acme.model");
-// Camel 2.16 onwards (configure by class name)
 BindyCsvDataFormat bindy = new BindyCsvDataFormat(com.acme.model.MyModel.class);
 
 bindy.setLocale("default");
-----
-
-for older releases you can set it using Java code as shown
-
-[source,java]
-----
-// Camel 2.15 or older (configure by package name)
-BindyCsvDataFormat bindy = new BindyCsvDataFormat("com.acme.model");
-// Camel 2.16 onwards (configure by class name)
-BindyCsvDataFormat bindy = new BindyCsvDataFormat(com.acme.model.MyModel.class);
-
-bindy.setLocale(Locale.getDefault().getISO3Country());
 ----
 
 ==== Unmarshaling
@@ -1841,8 +1812,7 @@ unmarshal the content and bind it to their model. The result is then
 send to a pojo (doing nothing special) and place them into a queue.
 
 The second route will extract the pojos from the queue and marshal the
-content to generate a file containing the csv record. The example above
-is for using Camel 2.16 onwards.
+content to generate a file containing the csv record.
 
 *spring dsl*
 

@@ -114,7 +114,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (20 parameters):
+==== Query Parameters (21 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -125,6 +125,7 @@ with the following path and query parameters:
 | *certificateName* (producer) | Sets the reference name for a PrivateKey that can be found in the registry. |  | String
 | *keystore* (producer) | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges. A KeyStore is typically used with an alias, either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore, then this single entry will be used. |  | KeyStore
 | *keystoreName* (producer) | Sets the reference name for a Keystore that can be found in the registry. |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *privateKey* (producer) | Set the PrivateKey that should be used to sign the exchange |  | PrivateKey
 | *privateKeyName* (producer) | Sets the reference name for a PrivateKey that can be found in the registry. |  | String
 | *provider* (producer) | Set the id of the security provider that provides the configured Signature algorithm. |  | String

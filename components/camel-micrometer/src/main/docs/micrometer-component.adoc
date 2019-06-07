@@ -83,7 +83,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (6 parameters):
+==== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -92,6 +92,7 @@ with the following path and query parameters:
 | *action* (producer) | Action expression when using timer type |  | String
 | *decrement* (producer) | Decrement value expression when using counter type |  | String
 | *increment* (producer) | Increment value expression when using counter type |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *value* (producer) | Value expression when using histogram type |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean

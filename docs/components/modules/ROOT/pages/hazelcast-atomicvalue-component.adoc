@@ -45,7 +45,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (11 parameters):
+==== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -55,6 +55,7 @@ with the following path and query parameters:
 | *defaultOperation* (producer) | To specify a default operation to use, if no operation header has been provided. |  | HazelcastOperation
 | *hazelcastInstance* (producer) | The hazelcast instance reference which can be used for hazelcast endpoint. |  | HazelcastInstance
 | *hazelcastInstanceName* (producer) | The hazelcast instance reference name which can be used for hazelcast endpoint. If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance. |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *concurrentConsumers* (seda) | To use concurrent consumers polling from the SEDA queue. | 1 | int

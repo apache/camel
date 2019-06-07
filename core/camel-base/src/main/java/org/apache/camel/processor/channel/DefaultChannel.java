@@ -25,6 +25,8 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
@@ -38,6 +40,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
 
@@ -172,6 +175,15 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         // init CamelContextAware as early as possible on nextProcessor
         if (nextProcessor instanceof CamelContextAware) {
             ((CamelContextAware) nextProcessor).setCamelContext(camelContext);
+        }
+        if (nextProcessor instanceof EndpointAware) {
+            Endpoint endpoint = ((EndpointAware) nextProcessor).getEndpoint();
+            if (endpoint instanceof DefaultEndpoint) {
+                DefaultEndpoint de = (DefaultEndpoint) endpoint;
+                if (de.isLazyStartProducer()) {
+                    System.out.println("Lazy start producer, so wrap endpoint where we can control when to start the producer");
+                }
+            }
         }
 
         // the definition to wrap should be the fine grained,

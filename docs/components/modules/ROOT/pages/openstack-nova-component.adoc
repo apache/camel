@@ -67,7 +67,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (10 parameters):
+==== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -76,6 +76,7 @@ with the following path and query parameters:
 | *apiVersion* (producer) | OpenStack API version | V3 | String
 | *config* (producer) | OpenStack configuration |  | Config
 | *domain* (producer) | Authentication domain | default | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *operation* (producer) | The operation to do |  | String
 | *password* (producer) | *Required* OpenStack password |  | String
 | *project* (producer) | *Required* The project ID |  | String

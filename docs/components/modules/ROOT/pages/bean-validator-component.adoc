@@ -78,7 +78,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (7 parameters):
+==== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -86,6 +86,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *constraintValidatorFactory* (producer) | To use a custom ConstraintValidatorFactory |  | ConstraintValidator Factory
 | *group* (producer) | To use a custom validation group | javax.validation.groups.Default | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *messageInterpolator* (producer) | To use a custom MessageInterpolator |  | MessageInterpolator
 | *traversableResolver* (producer) | To use a custom TraversableResolver |  | TraversableResolver
 | *validationProviderResolver* (producer) | To use a a custom ValidationProviderResolver |  | ValidationProvider Resolver
@@ -129,9 +130,8 @@ The component supports 3 options, which are listed below.
 To use Hibernate Validator in the OSGi environment use dedicated
 `ValidationProviderResolver` implementation, just as
 `org.apache.camel.component.bean.validator.HibernateValidationProviderResolver`.
-The snippet below demonstrates this approach. Keep in mind that you can
-use `HibernateValidationProviderResolver` starting from the Camel
-2.13.0.
+The snippet below demonstrates this approach. You can also
+use `HibernateValidationProviderResolver`.
 
 *Using HibernateValidationProviderResolver*
 

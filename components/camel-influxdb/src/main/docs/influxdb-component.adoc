@@ -76,7 +76,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (7 parameters):
+==== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -84,6 +84,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *batch* (producer) | Define if this operation is a batch operation or not | false | boolean
 | *databaseName* (producer) | The name of the database where the time series will be stored |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *operation* (producer) | Define if this operation is an insert or a query | insert | String
 | *query* (producer) | Define the query in case of operation query |  | String
 | *retentionPolicy* (producer) | The string that defines the retention policy to the data created by the endpoint | default | String

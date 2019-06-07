@@ -33,7 +33,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (23 parameters):
+==== Query Parameters (24 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -56,6 +56,7 @@ with the following path and query parameters:
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *action* (producer) | To configure using a cache operation by default. If an operation in the message header, then the operation from the header takes precedence. |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *cacheLoaderFactory* (advanced) | The CacheLoader factory |  | Factory
 | *cacheWriterFactory* (advanced) | The CacheWriter factory |  | Factory

@@ -73,7 +73,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (26 parameters):
+==== Query Parameters (27 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -88,6 +88,7 @@ with the following path and query parameters:
 | *maxConcurrentCallsPer Connection* (consumer) | The maximum number of concurrent calls permitted for each incoming server connection | 2147483647 | int
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *method* (producer) | gRPC method name |  | String
 | *producerStrategy* (producer) | The mode used to communicate with a remote gRPC server. In SIMPLE mode a single exchange is translated into a remote procedure call. In STREAMING mode all exchanges will be sent within the same request (input and output of the recipient gRPC service must be of type 'stream'). | SIMPLE | GrpcProducerStrategy
 | *streamRepliesTo* (producer) | When using STREAMING client mode, it indicates the endpoint where responses should be forwarded. |  | String
