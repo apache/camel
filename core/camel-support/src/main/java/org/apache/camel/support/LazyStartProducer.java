@@ -22,11 +22,10 @@ import org.apache.camel.DelegateProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Producer;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
- * A {@link org.apache.camel.Producer} which is started lazy, on the first message being processed.
+ * A {@link org.apache.camel.Producer} which is created and started lazy, on the first message processed.
  */
 public final class LazyStartProducer extends DefaultAsyncProducer implements DelegateProcessor {
 
@@ -39,6 +38,7 @@ public final class LazyStartProducer extends DefaultAsyncProducer implements Del
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
+            // create and start producer lazy
             if (delegate == null) {
                 synchronized (lock) {
                     if (delegate == null) {
@@ -51,6 +51,7 @@ public final class LazyStartProducer extends DefaultAsyncProducer implements Del
             }
         } catch (Throwable e) {
             exchange.setException(e);
+            callback.done(true);
             return true;
         }
         return delegate.process(exchange, callback);
