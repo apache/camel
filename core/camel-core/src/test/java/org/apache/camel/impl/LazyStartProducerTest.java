@@ -40,10 +40,12 @@ public class LazyStartProducerTest extends ContextTestSupport {
         LazyStartProducer lazy = new LazyStartProducer(mock);
         assertFalse(ServiceHelper.isStarted(lazy));
         assertFalse(ServiceHelper.isStarted(lazy.getProcessor()));
+        assertEquals(mock.isSingleton(), lazy.isSingleton());
 
         ServiceHelper.startService(lazy);
         assertTrue(ServiceHelper.isStarted(lazy));
         assertFalse(ServiceHelper.isStarted(lazy.getProcessor()));
+        assertEquals(mock.isSingleton(), lazy.isSingleton());
 
         // process a message which should start the delegate
         Exchange exchange = mock.createExchange();
@@ -51,6 +53,7 @@ public class LazyStartProducerTest extends ContextTestSupport {
         lazy.process(exchange);
         assertTrue(ServiceHelper.isStarted(lazy));
         assertTrue(ServiceHelper.isStarted(lazy.getProcessor()));
+        assertEquals(mock.isSingleton(), lazy.isSingleton());
 
         // process a message which should start the delegate
         exchange = mock.createExchange();
@@ -58,6 +61,7 @@ public class LazyStartProducerTest extends ContextTestSupport {
         lazy.process(exchange);
         assertTrue(ServiceHelper.isStarted(lazy));
         assertTrue(ServiceHelper.isStarted(lazy.getProcessor()));
+        assertEquals(mock.isSingleton(), lazy.isSingleton());
 
         assertMockEndpointsSatisfied();
     }
