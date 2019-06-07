@@ -16,9 +16,9 @@
  */
 package org.apache.camel.dataformat.rss;
 
-import org.apache.camel.builder.RouteBuilder;
-
 import com.rometools.rome.feed.synd.SyndFeed;
+
+import org.apache.camel.builder.RouteBuilder;
 
 public class RssConverterTest extends RssDataFormatTest {
 

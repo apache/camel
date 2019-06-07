@@ -19,14 +19,14 @@ package org.apache.camel.dataformat.rss;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.rometools.rome.feed.synd.SyndFeed;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
-
-import com.rometools.rome.feed.synd.SyndFeed;
 
 /**
  * RSS DataFormat

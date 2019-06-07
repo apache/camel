@@ -16,14 +16,14 @@
  */
 package org.apache.camel.dataformat.rss;
 
+import com.rometools.rome.feed.synd.SyndFeed;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rss.RssUtils;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.rometools.rome.feed.synd.SyndFeed;
 
 public class RssDataFormatTest extends CamelTestSupport {
     private String feedXml;
