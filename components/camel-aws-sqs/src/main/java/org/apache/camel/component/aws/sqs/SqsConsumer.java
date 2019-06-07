@@ -37,7 +37,6 @@ import com.amazonaws.services.sqs.model.ReceiptHandleIsInvalidException;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
@@ -79,8 +78,8 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
 
         ReceiveMessageRequest request = new ReceiveMessageRequest(getQueueUrl());
         request.setMaxNumberOfMessages(getMaxMessagesPerPoll() > 0 ? getMaxMessagesPerPoll() : null);
-        request.setVisibilityTimeout(getConfiguration().getVisibilityTimeout() != null ? getConfiguration().getVisibilityTimeout() : null);
-        request.setWaitTimeSeconds(getConfiguration().getWaitTimeSeconds() != null ? getConfiguration().getWaitTimeSeconds() : null);
+        request.setVisibilityTimeout(getConfiguration().getVisibilityTimeout());
+        request.setWaitTimeSeconds(getConfiguration().getWaitTimeSeconds());
 
         if (attributeNames != null) {
             request.setAttributeNames(attributeNames);
