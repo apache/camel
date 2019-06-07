@@ -29,7 +29,7 @@ import org.apache.camel.support.service.ServiceHelper;
  */
 public final class LazyStartProducer extends DefaultAsyncProducer implements DelegateProcessor {
 
-    private AsyncProducer delegate;
+    private volatile AsyncProducer delegate;
 
     public LazyStartProducer(Endpoint endpoint) {
         super(endpoint);
@@ -59,7 +59,11 @@ public final class LazyStartProducer extends DefaultAsyncProducer implements Del
 
     @Override
     public boolean isSingleton() {
-        return getEndpoint().isSingleton();
+        if (delegate != null) {
+            return delegate.isSingleton();
+        } else {
+            return getEndpoint().isSingleton();
+        }
     }
 
     @Override
