@@ -64,13 +64,14 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (5 parameters):
+==== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *abort* (producer) | Flag to abort the route and throw a schematron validation exception. | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *rules* (producer) | To use the given schematron rules instead of loading from the path |  | Templates
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean

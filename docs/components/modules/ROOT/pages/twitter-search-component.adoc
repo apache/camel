@@ -50,7 +50,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (43 parameters):
+==== Query Parameters (44 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -69,6 +69,7 @@ with the following path and query parameters:
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
 | *radius* (consumer) | Used by the non-stream geography search to search by radius. You need to configure all the following options: longitude, latitude, radius, and distanceMetric. |  | Double
 | *twitterStream* (consumer) | To use a custom instance of TwitterStream |  | TwitterStream
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *count* (filter) | Limiting number of results per page. | 5 | Integer

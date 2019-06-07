@@ -55,6 +55,9 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     private String endpointUri;
     private CamelContext camelContext;
     private Component component;
+    @UriParam(label = "producer",
+            description = "Whether the producer should be started lazy (on the first message).")
+    private boolean lazyStartProducer;
     @UriParam(label = "consumer", optionalPrefix = "consumer.", description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while"
                     + " the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler."
                     + " By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored.")
@@ -262,6 +265,17 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      */
     public void setBasicPropertyBinding(boolean basicPropertyBinding) {
         this.basicPropertyBinding = basicPropertyBinding;
+    }
+
+    public boolean isLazyStartProducer() {
+        return lazyStartProducer;
+    }
+
+    /**
+     * Whether the producer should be started lazy (on the first message).
+     */
+    public void setLazyStartProducer(boolean lazyStartProducer) {
+        this.lazyStartProducer = lazyStartProducer;
     }
 
     public boolean isBridgeErrorHandler() {

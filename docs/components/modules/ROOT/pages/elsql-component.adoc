@@ -86,7 +86,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (48 parameters):
+==== Query Parameters (49 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -116,6 +116,7 @@ with the following path and query parameters:
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
 | *processingStrategy* (consumer) | Allows to plugin to use a custom org.apache.camel.component.sql.SqlProcessingStrategy to execute queries when the consumer has processed the rows/batch. |  | SqlProcessingStrategy
 | *batch* (producer) | Enables or disables batch mode | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *noop* (producer) | If set, will ignore the results of the SQL query and use the existing IN message as the OUT message for the continuation of processing | false | boolean
 | *useMessageBodyForSql* (producer) | Whether to use the message body as the SQL and then headers for parameters. If this option is enabled then the SQL in the uri is not used. | false | boolean
 | *alwaysPopulateStatement* (advanced) | If enabled then the populateStatement method from org.apache.camel.component.sql.SqlPrepareStatementStrategy is always invoked, also if there is no expected parameters to be prepared. When this is false then the populateStatement is only invoked if there is 1 or more expected parameters to be set; for example this avoids reading the message body/headers for SQL queries with no parameters. | false | boolean

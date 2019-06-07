@@ -86,7 +86,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (11 parameters):
+==== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -95,6 +95,7 @@ with the following path and query parameters:
 | *failOnNullBody* (producer) | Whether to fail if no body exists. | true | boolean
 | *failOnNullHeader* (producer) | Whether to fail if no header exists when validating against a header. | true | boolean
 | *headerName* (producer) | To validate against a header instead of the message body. |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *errorHandler* (advanced) | To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception. |  | ValidatorErrorHandler
 | *resourceResolver* (advanced) | To use a custom LSResourceResolver. See also setResourceResolverFactory(ValidatorResourceResolverFactory) |  | LSResourceResolver

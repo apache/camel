@@ -76,7 +76,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (30 parameters):
+==== Query Parameters (31 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -95,6 +95,7 @@ with the following path and query parameters:
 | *processingStrategy* (consumer) | To use a custom MyBatisProcessingStrategy |  | MyBatisProcessing Strategy
 | *executorType* (producer) | The executor type to be used while executing statements. simple - executor does nothing special. reuse - executor reuses prepared statements. batch - executor reuses statements and batches updates. | SIMPLE | ExecutorType
 | *inputHeader* (producer) | User the header value for input parameters instead of the message body. By default, inputHeader == null and the input parameters are taken from the message body. If outputHeader is set, the value is used and query parameters will be taken from the header instead of the body. |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *outputHeader* (producer) | Store the query result in a header instead of the message body. By default, outputHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If outputHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. Setting outputHeader will also omit populating the default CamelMyBatisResult header since it would be the same as outputHeader all the time. |  | String
 | *statementType* (producer) | Mandatory to specify for the producer to control which kind of operation to invoke. |  | StatementType
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean

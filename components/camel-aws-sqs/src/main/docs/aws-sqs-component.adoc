@@ -69,7 +69,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (54 parameters):
+==== Query Parameters (55 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -100,6 +100,7 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
 | *delaySeconds* (producer) | Delay sending messages for a number of seconds. |  | Integer
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *messageDeduplicationId Strategy* (producer) | Only for FIFO queues. Strategy for setting the messageDeduplicationId on the message. Can be one of the following options: useExchangeId, useContentBasedDeduplication. For the useContentBasedDeduplication option, no messageDeduplicationId will be set on the message. | useExchangeId | MessageDeduplicationId Strategy
 | *messageGroupIdStrategy* (producer) | Only for FIFO queues. Strategy for setting the messageGroupId on the message. Can be one of the following options: useConstant, useExchangeId, usePropertyValue. For the usePropertyValue option, the value of property CamelAwsMessageGroupId will be used. |  | MessageGroupIdStrategy
 | *operation* (producer) | The operation to do in case the user don't want to send only a message |  | SqsOperations

@@ -64,7 +64,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (39 parameters):
+==== Query Parameters (40 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -96,6 +96,7 @@ with the following path and query parameters:
 | *headerPowHash* (producer) | The header's pow-hash (256 bits) used for submitting a proof-of-work solution. |  | String
 | *index* (producer) | The transactions/uncle index position in the block. |  | BigInteger
 | *keyName* (producer) | The key name in the database. |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *mixDigest* (producer) | The mix digest (256 bits) used for submitting a proof-of-work solution. |  | String
 | *nonce* (producer) | The nonce found (64 bits) used for submitting a proof-of-work solution. |  | String
 | *operation* (producer) | Operation to use. | transaction | String

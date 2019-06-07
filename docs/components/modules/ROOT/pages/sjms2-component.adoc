@@ -137,7 +137,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (38 parameters):
+==== Query Parameters (39 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -154,6 +154,7 @@ with the following path and query parameters:
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *messageSelector* (consumer) | Sets the JMS Message selector syntax. |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *namedReplyTo* (producer) | Sets the reply to destination name used for InOut producer endpoints. The type of the reply to destination can be determined by the starting prefix (topic: or queue:) in its name. |  | String
 | *persistent* (producer) | Flag used to enable/disable message persistence. | true | boolean
 | *producerCount* (producer) | Sets the number of producers used for this endpoint. | 1 | int

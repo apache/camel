@@ -56,7 +56,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (14 parameters):
+==== Query Parameters (15 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -70,6 +70,7 @@ with the following path and query parameters:
 | *query* (consumer) | The cmis query to execute against the repository. If not specified, the consumer will retrieve every node from the content repository by iterating the content tree recursively |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *queryMode* (producer) | If true, will execute the cmis query from the message body and return result, otherwise will create a node in the cmis repository | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *sessionFacadeFactory* (advanced) | To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade instances |  | CMISSessionFacade Factory

@@ -79,7 +79,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (22 parameters):
+==== Query Parameters (23 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -93,6 +93,7 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
 | *keepAlive* (producer) | Setting to ensure socket is not closed due to inactivity | true | Boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *options* (producer) | Sets additional channel options. The options that can be used are defined in org.xnio.Options. To configure from endpoint uri, then prefix each option with option., such as option.close-abort=true&option.send-buffer=8192 |  | Map
 | *reuseAddresses* (producer) | Setting to facilitate socket multiplexing | true | Boolean
 | *tcpNoDelay* (producer) | Setting to improve TCP protocol performance | true | Boolean

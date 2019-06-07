@@ -67,13 +67,14 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (8 parameters):
+==== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *amazonKinesisFirehoseClient* (producer) | Amazon Kinesis Firehose client to use for all requests for this endpoint |  | AmazonKinesisFirehose
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *proxyHost* (producer) | To define a proxy host when instantiating the DDBStreams client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the DDBStreams client |  | Integer
 | *region* (producer) | The region in which Kinesis client needs to work |  | String

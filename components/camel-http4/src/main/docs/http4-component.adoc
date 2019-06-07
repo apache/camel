@@ -109,7 +109,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (50 parameters):
+==== Query Parameters (51 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -128,6 +128,7 @@ with the following path and query parameters:
 | *deleteWithBody* (producer) | Whether the HTTP DELETE should include the message body or not. By default HTTP DELETE do not include any HTTP message. However in some rare cases users may need to be able to include the message body. | false | boolean
 | *httpMethod* (producer) | Configure the HTTP method to use. The HttpMethod header cannot override this option if set. |  | HttpMethods
 | *ignoreResponseBody* (producer) | If this option is true, The http producer won't read response body and cache the input stream | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *preserveHostHeader* (producer) | If the option is true, HttpProducer will set the Host header to the value contained in the current exchange Host header, useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client, this allows applications which use the Host header to generate accurate URL's for a proxied service | false | boolean
 | *throwExceptionOnFailure* (producer) | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code. | true | boolean
 | *transferException* (producer) | If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean

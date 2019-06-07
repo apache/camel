@@ -63,7 +63,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (48 parameters):
+==== Query Parameters (49 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -85,6 +85,7 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
 | *autoStartIdForInserts* (producer) | Define if we want an autostart Id when we are doing an insert operation | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *operation* (producer) | The operation to do | CCB_PUT | String
 | *persistTo* (producer) | Where to persist the data | 0 | int
 | *producerRetryAttempts* (producer) | Define the number of retry attempts | 2 | int

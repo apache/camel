@@ -120,7 +120,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (18 parameters):
+==== Query Parameters (19 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -134,6 +134,7 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *connectTimeout* (producer) | The Client will give up connection if the connection is timeout, 0 for unlimited wait. | 30000 | int
 | *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *socketTimeout* (producer) | The Client socket receive timeout, 0 for unlimited wait. | 30000 | int
 | *throwExceptionOnFailure* (producer) | Whether to throw exception on a producer failure. If this option is false then the http status code is set as a message header which can be checked if it has an error value. | true | boolean
 | *autoCloseStream* (producer) | Whether to auto close the stream representation as response from calling a REST service using the restlet producer. If the response is streaming and the option streamRepresentation is enabled then you may want to auto close the InputStream from the streaming response to ensure the input stream is closed when the Camel Exchange is done being routed. However if you need to read the stream outside a Camel route, you may need to not auto close the stream. | false | boolean

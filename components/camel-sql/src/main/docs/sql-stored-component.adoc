@@ -100,7 +100,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (8 parameters):
+==== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -109,6 +109,7 @@ with the following path and query parameters:
 | *batch* (producer) | Enables or disables batch mode | false | boolean
 | *dataSource* (producer) | Sets the DataSource to use to communicate with the database. |  | DataSource
 | *function* (producer) | Whether this call is for a function. | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *noop* (producer) | If set, will ignore the results of the template and use the existing IN message as the OUT message for the continuation of processing | false | boolean
 | *outputHeader* (producer) | Store the template result in a header instead of the message body. By default, outputHeader == null and the template result is stored in the message body, any existing content in the message body is discarded. If outputHeader is set, the value is used as the name of the header to store the template result and the original message body is preserved. |  | String
 | *useMessageBodyForTemplate* (producer) | Whether to use the message body as the template and then headers for parameters. If this option is enabled then the template in the uri is not used. | false | boolean

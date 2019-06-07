@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.20*
 
-The *caffeine-loadcache* component enables you to perform caching operations using
+The Caffeine Loadcache component enables you to perform caching operations using
 The Load cache from Caffeine.
 
 Maven users will need to add the following dependency to
@@ -67,7 +67,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (20 parameters):
+==== Query Parameters (21 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -85,6 +85,7 @@ with the following path and query parameters:
 | *expireAfterWriteTime* (producer) | Set the expire After Access Write in case of time based Eviction (in seconds) | 300 | int
 | *initialCapacity* (producer) | Set the initial Capacity for the cache | 10000 | int
 | *key* (producer) | To configure the default action key. If a key is set in the message header, then the key from the header takes precedence. |  | Object
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *maximumSize* (producer) | Set the maximum size for the cache | 10000 | int
 | *removalListener* (producer) | Set a specific removal Listener for the cache |  | RemovalListener
 | *statsCounter* (producer) | Set a specific Stats Counter for the cache stats |  | StatsCounter

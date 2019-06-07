@@ -62,7 +62,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (6 parameters):
+==== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -70,6 +70,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *currency* (producer) | The currency |  | Currency
 | *currencyPair* (producer) | The currency pair |  | CurrencyPair
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *method* (producer) | *Required* The method to execute |  | XChangeMethod
 | *service* (producer) | *Required* The service to call |  | XChangeService
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean

@@ -77,13 +77,14 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (14 parameters):
+==== Query Parameters (15 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *allowNamedParameters* (producer) | Whether to allow using named parameters in the queries. | true | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *outputClass* (producer) | Specify the full package and class name to use as conversion when outputType=SelectOne or SelectList. |  | String
 | *outputType* (producer) | Determines the output the producer should use. | SelectList | JdbcOutputType
 | *parameters* (producer) | Optional parameters to the java.sql.Statement. For example to set maxRows, fetchSize etc. |  | Map

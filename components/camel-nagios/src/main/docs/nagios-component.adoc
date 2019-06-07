@@ -78,13 +78,14 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (8 parameters):
+==== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *connectionTimeout* (producer) | Connection timeout in millis. | 5000 | int
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *sendSync* (producer) | Whether or not to use synchronous when sending a passive check. Setting it to false will allow Camel to continue routing the message and the passive check message will be send asynchronously. | true | boolean
 | *timeout* (producer) | Sending timeout in millis. | 5000 | int
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean

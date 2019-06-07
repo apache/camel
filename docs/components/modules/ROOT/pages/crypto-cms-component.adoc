@@ -68,7 +68,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (16 parameters):
+==== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -76,6 +76,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *keyStore* (common) | Keystore which contains signer private keys, verifier public keys, encryptor public keys, decryptor private keys depending on the operation. Use either this parameter or the parameter 'keyStoreParameters'. |  | KeyStore
 | *keyStoreParameters* (common) | Keystore containing signer private keys, verifier public keys, encryptor public keys, decryptor private keys depending on the operation. Use either this parameter or the parameter 'keystore'. |  | KeyStoreParameters
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *password* (decrypt) | Sets the password of the private keys. It is assumed that all private keys in the keystore have the same password. If not set then it is assumed that the password of the private keys is given by the keystore password given in the KeyStoreParameters. |  | Char[]

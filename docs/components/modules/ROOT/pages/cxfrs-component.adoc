@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.0*
 
-The *cxfrs:* component provides integration with
+The CXFRS component provides integration with
 http://cxf.apache.org[Apache CXF] for connecting to JAX-RS 1.1 and 2.0
 services hosted in CXF.
 
@@ -92,7 +92,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (31 parameters):
+==== Query Parameters (32 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -114,6 +114,7 @@ with the following path and query parameters:
 | *serviceBeans* (consumer) | The service beans which you want to export as REST service. Multiple beans can be separated by comma. |  | List
 | *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
 | *hostnameVerifier* (producer) | The hostname verifier to be used. Use the # notation to reference a HostnameVerifier from the registry. |  | HostnameVerifier
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *sslContextParameters* (producer) | The Camel SSL setting reference. Use the # notation to reference the SSL Context. |  | SSLContextParameters
 | *throwExceptionOnFailure* (producer) | This option tells the CxfRsProducer to inspect return codes and will generate an Exception if the return code is larger than 207. | true | boolean
 | *httpClientAPI* (producer) | If it is true, the CxfRsProducer will use the HttpClientAPI to invoke the service. If it is false, the CxfRsProducer will use the ProxyClientAPI to invoke the service | true | boolean
@@ -382,11 +383,11 @@ the endpoint. Instead, it is the responsibility of the route to do all
 processing.
 ====
 
-Note that starting from Camel 2.15 it is also sufficient to provide an
+It is sufficient to provide an
 interface only as opposed to a no-op service implementation class for
 the default mode.
 
-Starting from Camel 2.15, if a *performInvocation* option is enabled,
+If a *performInvocation* option is enabled,
 the service implementation will be invoked first, the response will be
 set on the Camel exchange and the route execution will continue as
 usual. This can be useful for integrating the existing JAX-RS implementations into Camel routes and
@@ -495,7 +496,7 @@ Exchange exchange = template.send("direct://http", new Processor() {
     }
 });
 ----
-From Camel 2.1, we also support to specify the query parameters from
+We also support to specify the query parameters from
 cxfrs URI for the CXFRS http centric client.
 [source,java]
 ----

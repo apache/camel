@@ -71,7 +71,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (5 parameters):
+==== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -80,6 +80,7 @@ with the following path and query parameters:
 | *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
 | *delimiterStart* (producer) | The variable start delimiter | < | char
 | *delimiterStop* (producer) | The variable end delimiter | > | char
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===

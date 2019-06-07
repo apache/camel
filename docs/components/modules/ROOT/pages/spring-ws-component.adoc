@@ -122,7 +122,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (23 parameters):
+==== Query Parameters (24 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -139,6 +139,7 @@ with the following path and query parameters:
 | *allowResponseHeaderOverride* (producer) | Option to override soap response header in in/out exchange with header info from the actual service layer. If the invoked service appends or rewrites the soap header this option when set to true, allows the modified soap header to be overwritten in in/out message headers | false | boolean
 | *faultAction* (producer) | Signifies the value for the faultAction response WS-Addressing Fault Action header that is provided by the method. |  | URI
 | *faultTo* (producer) | Signifies the value for the faultAction response WS-Addressing FaultTo header that is provided by the method. |  | URI
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). | false | boolean
 | *messageFactory* (producer) | Option to provide a custom WebServiceMessageFactory. For example when you want Apache Axiom to handle web service messages instead of SAAJ. |  | WebServiceMessage Factory
 | *messageIdStrategy* (producer) | Option to provide a custom MessageIdStrategy to control generation of unique message ids. |  | MessageIdStrategy
 | *messageSender* (producer) | Option to provide a custom WebServiceMessageSender. For example to perform authentication or use alternative transports |  | WebServiceMessage Sender
