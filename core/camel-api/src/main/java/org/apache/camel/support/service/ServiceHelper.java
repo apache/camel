@@ -47,6 +47,21 @@ public final class ServiceHelper {
     }
 
     /**
+     * Initializes the given {@code value} if it's a {@link Service} or a collection of it.
+     * <p/>
+     * Calling this method has no effect if {@code value} is {@code null}.
+     */
+    public static void initService(Object value) {
+        if (value instanceof Service) {
+            ((Service) value).init();
+        } else if (value instanceof Iterable) {
+            for (Object o : (Iterable) value) {
+                initService(o);
+            }
+        }
+    }
+
+    /**
      * Starts the given {@code value} if it's a {@link Service} or a collection of it.
      * <p/>
      * Calling this method has no effect if {@code value} is {@code null}.

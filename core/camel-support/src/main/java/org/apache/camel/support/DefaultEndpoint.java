@@ -28,6 +28,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HasId;
@@ -185,7 +186,19 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     public AsyncProducer createAsyncProducer() throws Exception {
-        return AsyncProcessorConverterHelper.convert(createProducer());
+        // create producer and turn it into async
+        Producer producer = createProducer();
+        AsyncProducer target;
+        if (producer instanceof AsyncProducer) {
+            target = (AsyncProducer) producer;
+        } else {
+            target = AsyncProcessorConverterHelper.convert(producer);
+        }
+        if (isLazyStartProducer()) {
+            // wrap in lazy start
+            target = new LazyStartProducer(target);
+        }
+        return target;
     }
 
     /**
