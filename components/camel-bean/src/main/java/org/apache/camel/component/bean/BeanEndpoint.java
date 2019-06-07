@@ -36,14 +36,14 @@ import org.apache.camel.support.DefaultEndpoint;
 public class BeanEndpoint extends DefaultEndpoint {
     private transient BeanHolder beanHolder;
     private transient BeanProcessor processor;
-    @UriPath(description = "Sets the name of the bean to invoke") @Metadata(required = true)
+    @UriPath(label = "common", description = "Sets the name of the bean to invoke") @Metadata(required = true)
     private String beanName;
-    @UriParam(description = "Sets the name of the method to invoke on the bean")
+    @UriParam(label = "common", description = "Sets the name of the method to invoke on the bean")
     private String method;
-    @UriParam(label = "advanced", description = "If enabled, Camel will cache the result of the first Registry look-up."
+    @UriParam(label = "common", description = "If enabled, Camel will cache the result of the first Registry look-up."
             + " Cache can be enabled if the bean in the Registry is defined as a singleton scope.")
     private Boolean cache;
-    @UriParam(prefix = "bean.", label = "advanced", description = "Used for configuring additional properties on the bean", multiValue = true)
+    @UriParam(prefix = "bean.", label = "common", description = "Used for configuring additional properties on the bean", multiValue = true)
     private Map<String, Object> parameters;
 
     public BeanEndpoint() {
