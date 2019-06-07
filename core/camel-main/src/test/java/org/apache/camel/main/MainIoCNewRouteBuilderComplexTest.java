@@ -18,7 +18,6 @@ package org.apache.camel.main;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.MyFoo;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
