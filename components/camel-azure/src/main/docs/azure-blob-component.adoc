@@ -98,7 +98,7 @@ with the following path and query parameters:
 | *blobMetadata* (producer) | Set the blob meta-data |  | Map
 | *blobPrefix* (producer) | Set a prefix which can be used for listing the blobs |  | String
 | *closeStreamAfterWrite* (producer) | Close the stream after write or keep it open, default is true | true | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *operation* (producer) | Blob service operation hint to the producer | listBlobs | BlobServiceOperations
 | *streamWriteSize* (producer) | Set the size of the buffer for writing block and page blocks |  | int
 | *useFlatListing* (producer) | Specify if the flat or hierarchical blob listing should be used | true | boolean
