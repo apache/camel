@@ -19,13 +19,13 @@ package org.apache.camel.component.rss;
 import java.util.Date;
 import java.util.Map;
 
+import com.rometools.rome.feed.synd.SyndEntry;
+
 import org.apache.camel.component.feed.EntryFilter;
 import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.support.LRUCacheFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.rometools.rome.feed.synd.SyndEntry;
 
 /**
  * Filters out all entries which occur before the last time of the entry we saw
