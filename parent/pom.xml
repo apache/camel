@@ -376,7 +376,8 @@
     <jclouds-google-guava-version-range>[18.0,19.0)</jclouds-google-guava-version-range>
     <jcommander-version>1.72</jcommander-version>
     <jcr-version>2.0</jcr-version>
-    <jdom-bundle-version>2.0.6_1</jdom-bundle-version>
+    <jdom-bundle-version>1.1_4</jdom-bundle-version>
+    <jdom2-bundle-version>2.0.6_1</jdom2-bundle-version>
     <jedis-client-version>2.9.0</jedis-client-version>
     <jedis-client-bundle-version>2.9.0_1</jedis-client-bundle-version>
     <jersey-version>2.11</jersey-version>

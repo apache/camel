@@ -314,8 +314,6 @@
     <feature version='${project.version}'>camel-core</feature>
 	  <feature>transaction</feature>
     <bundle dependency='true'>mvn:net.sf.ehcache/ehcache/${ehcache-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-cache/${project.version}</bundle>
   </feature>
   <feature name='camel-caffeine' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version="${project.version}">camel-core</feature>
@@ -951,8 +949,6 @@
     <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
     <bundle dependency='true'>mvn:commons-configuration/commons-configuration/${commons-configuration-version}</bundle>
     <bundle dependency='true'>mvn:commons-digester/commons-digester/${commons-digester-version}</bundle>
-    <bundle dependency='true'>mvn:commons-jxpath/commons-jxpath/${commons-jxpath-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/${ant-bundle-version}</bundle>
     <bundle dependency='true'>mvn:commons-configuration/commons-configuration/${commons-configuration-version}</bundle>
@@ -1292,7 +1288,6 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcel/${bcel-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xpp3/${xpp3-bundle-version}</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dom4j/${dom4j-bundle-version}</bundle>
   </feature>
   <feature name='camel-jing' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -1398,6 +1393,7 @@
     <bundle dependency='true'>mvn:commons-beanutils/commons-beanutils/${commons-beanutils-version}</bundle>
     <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:commons-jxpath/commons-jxpath/${commons-jxpath-version}</bundle>
     <bundle dependency='true'>mvn:commons-jxpath/commons-jxpath/${commons-jxpath-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jxpath/${project.version}</bundle>
   </feature>
@@ -2002,7 +1998,7 @@
   </feature>
   <feature name='camel-rss' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-atom</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom2-bundle-version}</bundle>
     <bundle dependency="true">mvn:com.rometools/rome/${rome-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-rss/${project.version}</bundle>
   </feature>
