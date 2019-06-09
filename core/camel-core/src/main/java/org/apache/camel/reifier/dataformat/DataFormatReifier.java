@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.dataformat.Any23DataFormat;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.BarcodeDataFormat;
@@ -76,6 +77,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
     private static final Map<Class<? extends DataFormatDefinition>, Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> DATAFORMATS;
     static {
         Map<Class<? extends DataFormatDefinition>, Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> map = new HashMap<>();
+        map.put(Any23DataFormat.class,Any23DataFormatReifier::new);
         map.put(ASN1DataFormat.class, ASN1DataFormatReifier::new);
         map.put(AvroDataFormat.class, AvroDataFormatReifier::new);
         map.put(BarcodeDataFormat.class, BarcodeDataFormatReifier::new);

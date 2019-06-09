@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.model.dataformat.Any23DataFormat;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.BarcodeDataFormat;
@@ -72,6 +73,7 @@ import org.apache.camel.spi.Metadata;
 public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
 
     @XmlElements({
+        @XmlElement(required = false, name = "any23", type = Any23DataFormat.class),
         @XmlElement(required = false, name = "asn1", type = ASN1DataFormat.class),
         @XmlElement(required = false, name = "avro", type = AvroDataFormat.class),
         @XmlElement(required = false, name = "barcode", type = BarcodeDataFormat.class),
