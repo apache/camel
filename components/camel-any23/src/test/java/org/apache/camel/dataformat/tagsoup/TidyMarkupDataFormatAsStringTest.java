@@ -64,7 +64,9 @@ public class TidyMarkupDataFormatAsStringTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").unmarshal().tidyMarkup().to("mock:result");
+              from("direct:start").marshal().any23().to("mock:result");
+              //  from("direct:start").marshal().tidyMarkup();
+              //  from("direct:start").unmarshal().tidyMarkup().to("mock:result");
             }
         };
     }

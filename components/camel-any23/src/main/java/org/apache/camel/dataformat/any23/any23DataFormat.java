@@ -61,8 +61,7 @@ public class any23DataFormat extends ServiceSupport implements DataFormat, DataF
    * Marshal data. Generate RDF.
    */
   public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
-    throw new CamelException("Marshalling from Well Formed HTML to ugly HTML is not supported."
-            + " Only unmarshal is supported");
+    throw new CamelException("Sin implementaci[on aun");
   }
 
   /**

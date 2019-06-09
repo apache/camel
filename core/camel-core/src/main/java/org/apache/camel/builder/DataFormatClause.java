@@ -23,6 +23,7 @@ import org.w3c.dom.Node;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.dataformat.Any23DataFormat;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
@@ -81,6 +82,17 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         this.processorType = processorType;
         this.operation = operation;
     }
+
+
+
+
+     /**
+     * Uses the Any23 data format
+     */
+    public T any23() {
+        return dataFormat(new Any23DataFormat());
+    }
+
 
     /**
      * Uses the Avro data format
