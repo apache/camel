@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedStartupListener;
 import org.apache.camel.StartupListener;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
@@ -50,7 +51,7 @@ import org.quartz.impl.StdSchedulerFactory;
  * fully.</p>
  */
 @Component("quartz,quartz2")
-public class QuartzComponent extends DefaultComponent implements StartupListener {
+public class QuartzComponent extends DefaultComponent implements ExtendedStartupListener {
 
     @Metadata(label = "advanced")
     private Scheduler scheduler;
@@ -456,16 +457,28 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
     @Override
     public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
+        if (alreadyStarted) {
+            // a route may have been added or starter after CamelContext is started so ensure we startup the scheduler
+            doStartScheduler();
+        }
+    }
+
+    @Override
+    public void onCamelContextFullyStarted(CamelContext context, boolean alreadyStarted) throws Exception {
+        doStartScheduler();
+    }
+
+    protected void doStartScheduler() throws Exception {
         // If Camel has already started and then user add a route dynamically, we need to ensure
         // to create and init the scheduler first.
         if (scheduler == null) {
             createAndInitScheduler();
         } else {
-            // in case custom scheduler was injected (i.e. created elsewhere), we may need to add 
+            // in case custom scheduler was injected (i.e. created elsewhere), we may need to add
             // current camel context to quartz context so jobs have access
             storeCamelContextInQuartzContext();
         }
-        
+
         // Now scheduler is ready, let see how we should start it.
         if (!autoStartScheduler) {
             log.info("Not starting scheduler because autoStartScheduler is set to false.");
