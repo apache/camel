@@ -35,5 +35,9 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Any23DataFormat extends DataFormatDefinition {
    
+    public Any23DataFormat() {
+        super("any23");
+        
+    }
 
 }
