@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.tagsoup;
+package org.apache.camel.dataformat.any23;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
@@ -22,7 +22,7 @@ import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 /*
  * This just tests whether this dataformat is available to UnmarshalType
  */
-public class TidyMarkupDataFormatWithUnmarshalTypeTest extends TidyMarkupDataFormatAsStringTest {
+public class TidyMarkupDataFormatWithUnmarshalTypeTest extends any23DataFormatBasicTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {

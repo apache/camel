@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.tagsoup;
+package org.apache.camel.dataformat.any23;
 
 import java.io.File;
 import java.util.List;
@@ -29,36 +29,36 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 
-public class TidyMarkupDataFormatAsStringTest extends CamelTestSupport {
+public class any23DataFormatBasicTest extends CamelTestSupport {
    
     @Test
     public void testUnMarshalToStringOfXml() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(2);
 
-        String badHtml = TidyMarkupTestSupport.loadFileAsString(new File(
-                "src/test/resources/org/apache/camel/dataformat/tagsoup/testfile1.html"));
-        String evilHtml = TidyMarkupTestSupport.loadFileAsString(new File(
-                "src/test/resources/org/apache/camel/dataformat/tagsoup/testfile2-evilHtml.html"));
+      //  String badHtml = TidyMarkupTestSupport.loadFileAsString(new File(
+      //          "src/test/resources/org/apache/camel/dataformat/any23/testfile1.html"));
+     //   String evilHtml = TidyMarkupTestSupport.loadFileAsString(new File(
+      //          "src/test/resources/org/apache/camel/dataformat/any23/testfile2-evilHtml.html"));
 
-        template.sendBody("direct:start", badHtml);
-        template.sendBody("direct:start", evilHtml);
+        template.sendBody("direct:start", "");
+      //  template.sendBody("direct:start", evilHtml);
 
         resultEndpoint.assertIsSatisfied();
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
             try {
                 Message in = exchange.getIn();
-                Node tidyMarkup = in.getBody(Node.class);
+              //  Node tidyMarkup = in.getBody(Node.class);
 
-                log.debug("Received " + tidyMarkup);
-                assertNotNull("Should be able to convert received body to a string", tidyMarkup);
+              //  log.debug("Received " + tidyMarkup);
+               // assertNotNull("Should be able to convert received body to a string", tidyMarkup);
                 
             } catch (Exception e) {
                 fail("Failed to convert the resulting String to XML: " + e.getLocalizedMessage());
             }
         }
-    }
+    } 
 
     @Override
     protected RouteBuilder createRouteBuilder() {
