@@ -33,12 +33,12 @@ import org.slf4j.LoggerFactory;
  * site (or file) into rdf.
  */
 @Dataformat("any23")
-public class any23DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+public class Any23DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
   /*
      * Our Logger
    */
-  private static final Logger LOG = LoggerFactory.getLogger(any23DataFormat.class);
+  private static final Logger LOG = LoggerFactory.getLogger(Any23DataFormat.class);
 
 
 
@@ -61,7 +61,7 @@ public class any23DataFormat extends ServiceSupport implements DataFormat, DataF
    * Marshal data. Generate RDF.
    */
   public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
-    throw new CamelException("Sin implementaci[on aun");
+    throw new CamelException("Under construction");
   }
 
   /**
@@ -69,7 +69,7 @@ public class any23DataFormat extends ServiceSupport implements DataFormat, DataF
    */
   public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
 
-     throw new CamelException("Sin implementaci[on aun");
+     throw new CamelException("Under construction");
   }
 
   @Override

@@ -29,7 +29,7 @@
 
     <artifactId>camel-any23</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: any23</name>
+    <name>Camel :: Any23</name>
     <description>Camel Any23 support</description>
 
     <properties>

@@ -19,6 +19,8 @@ package org.apache.camel.dataformat.any23;
 import java.io.File;
 import java.util.List;
 
+import org.w3c.dom.Node;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,55 +28,45 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class TidyMarkupDataFormatAsDomNodeTest extends CamelTestSupport {
-    
+
+public class Any23DataFormatBasicTest extends CamelTestSupport {
+   
     @Test
     public void testUnMarshalToStringOfXml() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(2);
 
-        /*
-         * each of these files has a <p>TidyMarkupNode section. (no closing tag)
-         * 
-         * See the route below, we send the tidyMarkup to xpath and boolean that out.
-         */
-        String badHtml = TidyMarkupTestSupport.loadFileAsString(new File(
-                "src/test/resources/org/apache/camel/dataformat/tagsoup/testfile1.html"));
-        String evilHtml = TidyMarkupTestSupport.loadFileAsString(new File(
-                "src/test/resources/org/apache/camel/dataformat/tagsoup/testfile2-evilHtml.html"));
+      //  String badHtml = TidyMarkupTestSupport.loadFileAsString(new File(
+      //          "src/test/resources/org/apache/camel/dataformat/any23/testfile1.html"));
+     //   String evilHtml = TidyMarkupTestSupport.loadFileAsString(new File(
+      //          "src/test/resources/org/apache/camel/dataformat/any23/testfile2-evilHtml.html"));
 
-        template.sendBody("direct:start", badHtml);
-        template.sendBody("direct:start", evilHtml);
+        template.sendBody("direct:start", "");
+      //  template.sendBody("direct:start", evilHtml);
 
         resultEndpoint.assertIsSatisfied();
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
-            Message in = exchange.getIn();
-            String response = in.getBody(String.class);
-
-            log.debug("Received " + response);
-            assertNotNull("Should be able to convert received body to a string", response);
-
             try {
-                /*
-                 * our route xpaths the existence of our signature "<p>TidyMarkupNode"
-                 * but of course, by the xpath time, it is well formed
-                 */
-                assertTrue(response.equals("true"));
-            } catch (Exception e) {
+                Message in = exchange.getIn();
+              //  Node tidyMarkup = in.getBody(Node.class);
 
+              //  log.debug("Received " + tidyMarkup);
+               // assertNotNull("Should be able to convert received body to a string", tidyMarkup);
+                
+            } catch (Exception e) {
                 fail("Failed to convert the resulting String to XML: " + e.getLocalizedMessage());
             }
-
         }
-    }
+    } 
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").unmarshal().tidyMarkup().setBody().xpath(
-                        "boolean(//p[contains(text(),'TidyMarkupNode')])", String.class).to("mock:result");
+              from("direct:start").marshal().any23().to("mock:result");
+              //  from("direct:start").marshal().tidyMarkup();
+              //  from("direct:start").unmarshal().tidyMarkup().to("mock:result");
             }
         };
     }
