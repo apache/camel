@@ -5,6 +5,7 @@
 * xref:ahc-ws-component.adoc[AHC Websocket Component]
 * xref:ahc-component.adoc[AHC Component]
 * xref:amqp-component.adoc[AMQP Component]
+* xref:any23-dataformat.adoc[Any23 DataFormat]
 * xref:apns-component.adoc[APNS Component]
 * xref:as2-component.adoc[AS2 Component]
 * xref:asn1-dataformat.adoc[ASN.1 File DataFormat]

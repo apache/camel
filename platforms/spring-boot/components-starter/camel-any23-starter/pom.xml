@@ -26,7 +26,7 @@
   </parent>
   <artifactId>camel-any23-starter</artifactId>
   <packaging>jar</packaging>
-  <name>Spring-Boot Starter :: Camel :: any23</name>
+  <name>Spring-Boot Starter :: Camel :: Any23</name>
   <description>Spring-Boot Starter for Camel Any23 support</description>
   <dependencies>
     <dependency>

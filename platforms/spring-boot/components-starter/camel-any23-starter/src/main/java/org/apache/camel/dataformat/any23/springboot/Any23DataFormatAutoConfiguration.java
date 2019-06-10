@@ -23,7 +23,7 @@ import javax.annotation.Generated;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.dataformat.any23.any23DataFormat;
+import org.apache.camel.dataformat.any23.Any23DataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatCustomizer;
 import org.apache.camel.spi.DataFormatFactory;
@@ -54,22 +54,22 @@ import org.springframework.context.annotation.Configuration;
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @Configuration
 @Conditional({ConditionalOnCamelContextAndAutoConfigurationBeans.class,
-        any23DataFormatAutoConfiguration.GroupConditions.class})
+        Any23DataFormatAutoConfiguration.GroupConditions.class})
 @AutoConfigureAfter(name = "org.apache.camel.spring.boot.CamelAutoConfiguration")
 @EnableConfigurationProperties({DataFormatConfigurationProperties.class,
-        any23DataFormatConfiguration.class})
-public class any23DataFormatAutoConfiguration {
+        Any23DataFormatConfiguration.class})
+public class Any23DataFormatAutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(any23DataFormatAutoConfiguration.class);
+            .getLogger(Any23DataFormatAutoConfiguration.class);
     @Autowired
     private ApplicationContext applicationContext;
     @Autowired
     private CamelContext camelContext;
     @Autowired
-    private any23DataFormatConfiguration configuration;
+    private Any23DataFormatConfiguration configuration;
     @Autowired(required = false)
-    private List<DataFormatCustomizer<any23DataFormat>> customizers;
+    private List<DataFormatCustomizer<Any23DataFormat>> customizers;
 
     static class GroupConditions extends GroupCondition {
         public GroupConditions() {
@@ -78,14 +78,14 @@ public class any23DataFormatAutoConfiguration {
     }
 
     @Bean(name = "any23-dataformat-factory")
-    @ConditionalOnMissingBean(any23DataFormat.class)
-    public DataFormatFactory configureany23DataFormatFactory() throws Exception {
+    @ConditionalOnMissingBean(Any23DataFormat.class)
+    public DataFormatFactory configureAny23DataFormatFactory() throws Exception {
         return new DataFormatFactory() {
             @Override
             public DataFormat newInstance() {
-                any23DataFormat dataformat = new any23DataFormat();
+                Any23DataFormat dataformat = new Any23DataFormat();
                 if (CamelContextAware.class
-                        .isAssignableFrom(any23DataFormat.class)) {
+                        .isAssignableFrom(Any23DataFormat.class)) {
                     CamelContextAware contextAware = CamelContextAware.class
                             .cast(dataformat);
                     if (contextAware != null) {
@@ -102,7 +102,7 @@ public class any23DataFormatAutoConfiguration {
                     throw new RuntimeCamelException(e);
                 }
                 if (ObjectHelper.isNotEmpty(customizers)) {
-                    for (DataFormatCustomizer<any23DataFormat> customizer : customizers) {
+                    for (DataFormatCustomizer<Any23DataFormat> customizer : customizers) {
                         boolean useCustomizer = (customizer instanceof HasId)
                                 ? HierarchicalPropertiesEvaluator.evaluate(
                                         applicationContext.getEnvironment(),
