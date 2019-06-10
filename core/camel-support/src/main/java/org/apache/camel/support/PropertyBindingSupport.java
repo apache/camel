@@ -47,7 +47,6 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  * This implementations reuses parts of {@link IntrospectionSupport}.
  */
 public final class PropertyBindingSupport {
-
     /**
      * To use a fluent builder style to configure this property binding support.
      */
@@ -58,6 +57,7 @@ public final class PropertyBindingSupport {
         private boolean reference = true;
         private boolean placeholder = true;
         private boolean fluentBuilder = true;
+        private String optionPrefix;
 
         /**
          * Whether nesting is in use
@@ -101,6 +101,15 @@ public final class PropertyBindingSupport {
         }
 
         /**
+         * Whether properties should be filtered by prefix.         *
+         * Note that the prefix is removed from the key before the property is bound.
+         */
+        public Builder withOptionPrefix(String optionPrefix) {
+            this.optionPrefix = optionPrefix;
+            return this;
+        }
+
+        /**
          * Binds the properties to the target object, and removes the property that was bound from properties.
          *
          * @param camelContext  the camel context
@@ -113,7 +122,7 @@ public final class PropertyBindingSupport {
             org.apache.camel.util.ObjectHelper.notNull(target, "target");
             org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
 
-            return bindProperties(camelContext, target, properties, nesting, deepNesting, fluentBuilder, reference, placeholder);
+            return bindProperties(camelContext, target, properties, optionPrefix, nesting, deepNesting, fluentBuilder, reference, placeholder);
         }
 
     }
@@ -258,11 +267,25 @@ public final class PropertyBindingSupport {
      * @return              true if one or more properties was bound
      */
     public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties) {
-        return bindProperties(camelContext, target, properties, true, true, true, true, true);
+        return bindProperties(camelContext, target, properties, null);
     }
 
     /**
-     * Binds the properties to the target object, and removes the property that was bound from properties.
+     * Binds the properties with the given prefix to the target object, and removes the property that was bound from properties.
+     * Note that the prefix is removed from the key before the property is bound.
+     *
+     * @param camelContext  the camel context
+     * @param target        the target object
+     * @param properties    the properties where the bound properties will be removed from
+     * @param optionPrefix  the prefix used to filter properties
+     * @return              true if one or more properties was bound
+     */
+    public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties, String optionPrefix) {
+        return bindProperties(camelContext, target, properties, optionPrefix, true, true, true, true, true);
+    }
+
+    /**
+     * Binds the properties with the given prefix to the target object, and removes the property that was bound from properties.
      *
      * @param camelContext  the camel context
      * @param target        the target object
@@ -277,6 +300,29 @@ public final class PropertyBindingSupport {
      */
     public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties,
                                          boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean reference, boolean placeholder) {
+
+        return bindProperties(camelContext, target, properties, null, nesting, deepNesting, fluentBuilder, reference, placeholder);
+    }
+
+    /**
+     * Binds the properties with the given prefix to the target object, and removes the property that was bound from properties.
+     * Note that the prefix is removed from the key before the property is bound.
+     *
+     * @param camelContext  the camel context
+     * @param target        the target object
+     * @param properties    the properties where the bound properties will be removed from
+     * @param optionPrefix  the prefix used to filter properties
+     * @param nesting       whether nesting is in use
+     * @param deepNesting   whether deep nesting is in use, where Camel will attempt to walk as deep as possible by creating new objects in the OGNL graph if
+     *                      a property has a setter and the object can be created from a default no-arg constructor.
+     * @param fluentBuilder whether fluent builder is allowed as a valid getter/setter
+     * @param reference     whether reference parameter (syntax starts with #) is in use
+     * @param placeholder   whether to use Camels property placeholder to resolve placeholders on keys and values
+     * @return              true if one or more properties was bound
+     */
+    public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties,
+                                         String optionPrefix,
+                                         boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean reference, boolean placeholder) {
         org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
         org.apache.camel.util.ObjectHelper.notNull(target, "target");
         org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
@@ -287,9 +333,22 @@ public final class PropertyBindingSupport {
 
         for (Iterator<Map.Entry<String, Object>> iter = properties.entrySet().iterator(); iter.hasNext();) {
             Map.Entry<String, Object> entry = iter.next();
-            if (bindProperty(camelContext, target, entry.getKey(), entry.getValue(), nesting, deepNesting, fluentBuilder, reference, placeholder)) {
-                iter.remove();
-                rc = true;
+            String key = entry.getKey();
+            Object value = entry.getValue();
+
+            if (isNotEmpty(optionPrefix)) {
+                if (!key.startsWith(optionPrefix)) {
+                    continue;
+                }
+
+                key = key.substring(optionPrefix.length());
+            }
+
+            if (entry != null) {
+                if (bindProperty(camelContext, target, key, value, nesting, deepNesting, fluentBuilder, reference, placeholder)) {
+                    iter.remove();
+                    rc = true;
+                }
             }
         }
 
