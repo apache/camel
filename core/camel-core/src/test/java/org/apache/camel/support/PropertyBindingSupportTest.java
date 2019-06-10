@@ -70,6 +70,31 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
+    public void testBindPropertiesWithOptionPrefix() throws Exception {
+        Foo foo = new Foo();
+
+        Map<String, Object> prop = new HashMap<>();
+        prop.put("my.prefix.name", "James");
+        prop.put("my.prefix.bar.age", "33");
+        prop.put("my.prefix.bar.{{committer}}", "true");
+        prop.put("my.prefix.bar.gold-customer", "true");
+        prop.put("my.prefix.bar.work.id", "123");
+        prop.put("my.prefix.bar.work.name", "{{companyName}}");
+        prop.put("my.other.prefix.something", "test");
+
+        PropertyBindingSupport.bindProperties(context, foo, prop, "my.prefix.");
+
+        assertEquals("James", foo.getName());
+        assertEquals(33, foo.getBar().getAge());
+        assertTrue(foo.getBar().isRider());
+        assertTrue(foo.getBar().isGoldCustomer());
+        assertEquals(123, foo.getBar().getWork().getId());
+        assertEquals("Acme", foo.getBar().getWork().getName());
+        assertTrue(prop.containsKey("my.other.prefix.something"));
+        assertEquals(1, prop.size());
+    }
+
+    @Test
     public void testNested() throws Exception {
         Foo foo = new Foo();
 
