@@ -47,6 +47,7 @@
         <include>org.apache.camel:camel-ahc</include>
         <include>org.apache.camel:camel-ahc-ws</include>
         <include>org.apache.camel:camel-amqp</include>
+        <include>org.apache.camel:camel-any23</include>
         <include>org.apache.camel:camel-apns</include>
         <include>org.apache.camel:camel-as2</include>
         <include>org.apache.camel:camel-as2-api</include>
@@ -395,6 +396,7 @@
         <include>org.apache.camel:camel-ahc-starter</include>
         <include>org.apache.camel:camel-ahc-ws-starter</include>
         <include>org.apache.camel:camel-amqp-starter</include>
+        <include>org.apache.camel:camel-any23-starter</include>
         <include>org.apache.camel:camel-apns-starter</include>
         <include>org.apache.camel:camel-as2-starter</include>
         <include>org.apache.camel:camel-asn1-starter</include>

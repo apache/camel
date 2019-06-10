@@ -16,4 +16,4 @@
 ## ---------------------------------------------------------------------------
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.dataformat.any23.springboot.any23DataFormatAutoConfiguration
+org.apache.camel.dataformat.any23.springboot.Any23DataFormatAutoConfiguration

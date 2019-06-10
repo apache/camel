@@ -27,7 +27,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.dataformat.any23")
-public class any23DataFormatConfiguration
+public class Any23DataFormatConfiguration
         extends
             DataFormatConfigurationPropertiesCommon {
 
