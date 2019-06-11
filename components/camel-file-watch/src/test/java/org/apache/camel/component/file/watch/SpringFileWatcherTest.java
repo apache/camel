@@ -49,7 +49,7 @@ public class SpringFileWatcherTest extends CamelSpringTestSupport {
         Files.write(springTestFile.toPath(), "modification".getBytes(), StandardOpenOption.SYNC);
         Files.write(springTestFile.toPath(), "modification 2".getBytes(), StandardOpenOption.SYNC);
         MockEndpoint mock = getMockEndpoint("mock:springTest");
-        mock.setExpectedCount(2); // one MODIFY event
+        mock.setExpectedCount(2); // two MODIFY events
         mock.setResultWaitTime(1000);
         mock.assertIsSatisfied();
 
