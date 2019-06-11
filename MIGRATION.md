@@ -262,6 +262,8 @@ Rename various APIs in camel-core to fix the typo `chiper` to `cipher`.
 
 The classes `ReloadStrategySupport` and `FileWatcherReloadStrategy` has been removed.
 
+The `MessageHistoryFactory` interface has some options to filter and copy the message and a slight change in its API.
+
 #### camel-test
 
 If you are using camel-test and override the `createRegistry` method, for example to register beans from the `JndiRegisty` class, then this is no longer necessary, and instead

@@ -21,6 +21,8 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NonManagedService;
@@ -29,6 +31,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.component.micrometer.MicrometerUtils;
 import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
@@ -41,6 +44,8 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport implements C
 
     private CamelContext camelContext;
     private MeterRegistry meterRegistry;
+    private boolean copyMessage;
+    private String nodePattern;
     private boolean prettyPrint = true;
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
     private MicrometerMessageHistoryNamingStrategy namingStrategy = MicrometerMessageHistoryNamingStrategy.DEFAULT;
@@ -102,10 +107,46 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport implements C
     }
 
     @Override
-    public MessageHistory newMessageHistory(String routeId, NamedNode namedNode, long timestamp) {
+    public boolean isCopyMessage() {
+        return copyMessage;
+    }
+
+    @Override
+    public void setCopyMessage(boolean copyMessage) {
+        this.copyMessage = copyMessage;
+    }
+
+    @Override
+    public String getNodePattern() {
+        return nodePattern;
+    }
+
+    @Override
+    public void setNodePattern(String nodePattern) {
+        this.nodePattern = nodePattern;
+    }
+
+    @Override
+    public MessageHistory newMessageHistory(String routeId, NamedNode namedNode, long timestamp, Exchange exchange) {
+        if (nodePattern != null) {
+            String name = namedNode.getShortName();
+            String[] parts = nodePattern.split(",");
+            for (String part : parts) {
+                boolean match = PatternHelper.matchPattern(name, part);
+                if (!match) {
+                    return null;
+                }
+            }
+        }
+
+        Message msg = null;
+        if (copyMessage) {
+            msg = exchange.getMessage().copy();
+        }
+
         Route route = camelContext.getRoute(routeId);
         if (route != null) {
-            return new MicrometerMessageHistory(getMeterRegistry(), route, namedNode, getNamingStrategy(), timestamp);
+            return new MicrometerMessageHistory(getMeterRegistry(), route, namedNode, getNamingStrategy(), timestamp, msg);
         } else {
             return null;
         }
@@ -113,7 +154,6 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport implements C
 
     @Override
     protected void doStart() throws Exception {
-
         if (meterRegistry == null) {
             meterRegistry = MicrometerUtils.getOrCreateMeterRegistry(camelContext.getRegistry(), METRICS_REGISTRY_NAME);
         }
