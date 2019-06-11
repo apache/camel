@@ -27,7 +27,6 @@ import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
-import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.ProducerTemplate;
@@ -39,6 +38,7 @@ import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.health.HealthCheckService;
+import org.apache.camel.main.DefaultConfigurationConfigurer;
 import org.apache.camel.model.Model;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.HandleFault;
@@ -58,7 +58,6 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
-import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
@@ -147,84 +146,15 @@ public class CamelAutoConfiguration {
             }
         }
 
-        if (!config.isJmxEnabled()) {
-            camelContext.disableJMX();
-        }
-
-        if (config.getName() != null) {
-            camelContext.adapt(ExtendedCamelContext.class).setName(config.getName());
-        }
-
-        if (config.getShutdownTimeout() > 0) {
-            camelContext.getShutdownStrategy().setTimeout(config.getShutdownTimeout());
-        }
-        camelContext.getShutdownStrategy().setSuppressLoggingOnTimeout(config.isShutdownSuppressLoggingOnTimeout());
-        camelContext.getShutdownStrategy().setShutdownNowOnTimeout(config.isShutdownNowOnTimeout());
-        camelContext.getShutdownStrategy().setShutdownRoutesInReverseOrder(config.isShutdownRoutesInReverseOrder());
-        camelContext.getShutdownStrategy().setLogInflightExchangesOnTimeout(config.isShutdownLogInflightExchangesOnTimeout());
-
-        if (config.getLogDebugMaxChars() != 0) {
-            camelContext.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "" + config.getLogDebugMaxChars());
-        }
-
-        // stream caching
-        camelContext.setStreamCaching(config.isStreamCachingEnabled());
-        camelContext.getStreamCachingStrategy().setAnySpoolRules(config.isStreamCachingAnySpoolRules());
-        camelContext.getStreamCachingStrategy().setBufferSize(config.getStreamCachingBufferSize());
-        camelContext.getStreamCachingStrategy().setRemoveSpoolDirectoryWhenStopping(config.isStreamCachingRemoveSpoolDirectoryWhenStopping());
-        camelContext.getStreamCachingStrategy().setSpoolCipher(config.getStreamCachingSpoolCipher());
-        if (config.getStreamCachingSpoolDirectory() != null) {
-            camelContext.getStreamCachingStrategy().setSpoolDirectory(config.getStreamCachingSpoolDirectory());
-        }
-        if (config.getStreamCachingSpoolThreshold() != 0) {
-            camelContext.getStreamCachingStrategy().setSpoolThreshold(config.getStreamCachingSpoolThreshold());
-        }
-        if (config.getStreamCachingSpoolUsedHeapMemoryLimit() != null) {
-            StreamCachingStrategy.SpoolUsedHeapMemoryLimit limit;
-            if ("Committed".equalsIgnoreCase(config.getStreamCachingSpoolUsedHeapMemoryLimit())) {
-                limit = StreamCachingStrategy.SpoolUsedHeapMemoryLimit.Committed;
-            } else if ("Max".equalsIgnoreCase(config.getStreamCachingSpoolUsedHeapMemoryLimit())) {
-                limit = StreamCachingStrategy.SpoolUsedHeapMemoryLimit.Max;
-            } else {
-                throw new IllegalArgumentException("Invalid option " + config.getStreamCachingSpoolUsedHeapMemoryLimit() + " must either be Committed or Max");
-            }
-            camelContext.getStreamCachingStrategy().setSpoolUsedHeapMemoryLimit(limit);
-        }
-        if (config.getStreamCachingSpoolUsedHeapMemoryThreshold() != 0) {
-            camelContext.getStreamCachingStrategy().setSpoolUsedHeapMemoryThreshold(config.getStreamCachingSpoolUsedHeapMemoryThreshold());
-        }
-
-        camelContext.setMessageHistory(config.isMessageHistory());
-        camelContext.setLogMask(config.isLogMask());
-        camelContext.setLogExhaustedMessageBody(config.isLogExhaustedMessageBody());
-        camelContext.setHandleFault(config.isHandleFault());
-        camelContext.setAutoStartup(config.isAutoStartup());
-        camelContext.setAllowUseOriginalMessage(config.isAllowUseOriginalMessage());
-        camelContext.setUseBreadcrumb(config.isUseBreadcrumb());
-        camelContext.setUseDataType(config.isUseDataType());
-        camelContext.setUseMDCLogging(config.isUseMdcLogging());
-        camelContext.setLoadTypeConverters(config.isLoadTypeConverters());
-
-        if (camelContext.getManagementStrategy().getManagementAgent() != null) {
-            camelContext.getManagementStrategy().getManagementAgent().setEndpointRuntimeStatisticsEnabled(config.isEndpointRuntimeStatisticsEnabled());
-            camelContext.getManagementStrategy().getManagementAgent().setStatisticsLevel(config.getJmxManagementStatisticsLevel());
-            camelContext.getManagementStrategy().getManagementAgent().setManagementNamePattern(config.getJmxManagementNamePattern());
-            camelContext.getManagementStrategy().getManagementAgent().setCreateConnector(config.isJmxCreateConnector());
-        }
-
         camelContext.adapt(ExtendedCamelContext.class).setPackageScanClassResolver(new FatJarPackageScanClassResolver());
-
-        // tracing
-        camelContext.setTracing(config.isTracing());
-
-        if (config.getThreadNamePattern() != null) {
-            camelContext.getExecutorServiceManager().setThreadNamePattern(config.getThreadNamePattern());
-        }
 
         if (config.getRouteFilterIncludePattern() != null || config.getRouteFilterExcludePattern() != null) {
             LOG.info("Route filtering pattern: include={}, exclude={}", config.getRouteFilterIncludePattern(), config.getRouteFilterExcludePattern());
             camelContext.getExtension(Model.class).setRouteFilterPattern(config.getRouteFilterIncludePattern(), config.getRouteFilterExcludePattern());
         }
+
+        // configure the common/default options
+        DefaultConfigurationConfigurer.configure(camelContext, config);
 
         // additional advanced configuration which is not configured using CamelConfigurationProperties
         afterPropertiesSet(applicationContext, camelContext);
