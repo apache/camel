@@ -23,10 +23,84 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "camel.springboot")
 public class CamelConfigurationProperties extends DefaultConfigurationProperties<CamelConfigurationProperties> {
 
+    // Spring Boot only Properties
+    // ---------------------------
+
+    /**
+     * Whether to use the main run controller to ensure the Spring-Boot application
+     * keeps running until being stopped or the JVM terminated.
+     * You typically only need this if you run Spring-Boot standalone.
+     * If you run Spring-Boot with spring-boot-starter-web then the web container keeps the JVM running.
+     */
+    private boolean mainRunController;
+
+    /**
+     * Whether to include non-singleton beans (prototypes) when scanning for RouteBuilder instances.
+     * By default only singleton beans is included in the context scan.
+     */
+    private boolean includeNonSingletons;
+
+    /**
+     * Whether to log a WARN if Camel on Spring Boot was immediately shutdown after starting which
+     * very likely is because there is no JVM thread to keep the application running.
+     */
+    private boolean warnOnEarlyShutdown = true;
+
+    /**
+     * Used for inclusive filtering component scanning of RouteBuilder classes with @Component annotation.
+     * The exclusive filtering takes precedence over inclusive filtering.
+     * The pattern is using Ant-path style pattern.
+     *
+     * Multiple patterns can be specified separated by comma.
+     * For example to include all classes starting with Foo use: &#42;&#42;/Foo*
+     * To include all routes form a specific package use: com/mycompany/foo/&#42;
+     * To include all routes form a specific package and its sub-packages use double wildcards: com/mycompany/foo/&#42;&#42;
+     * And to include all routes from two specific packages use: com/mycompany/foo/&#42;,com/mycompany/stuff/&#42;
+     */
+    private String javaRoutesIncludePattern;
+
+    /**
+     * Used for exclusive filtering component scanning of RouteBuilder classes with @Component annotation.
+     * The exclusive filtering takes precedence over inclusive filtering.
+     * The pattern is using Ant-path style pattern.
+     * Multiple patterns can be specified separated by comma.
+     *
+     * For example to exclude all classes starting with Bar use: &#42;&#42;/Bar&#42;
+     * To exclude all routes form a specific package use: com/mycompany/bar/&#42;
+     * To exclude all routes form a specific package and its sub-packages use double wildcards: com/mycompany/bar/&#42;&#42;
+     * And to exclude all routes from two specific packages use: com/mycompany/bar/&#42;,com/mycompany/stuff/&#42;
+     */
+    private String javaRoutesExcludePattern;
+
+    /**
+     * Directory to scan for adding additional XML routes.
+     * You can turn this off by setting the value to false.
+     *
+     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+     *
+     * Multiple directories can be specified and separated by comma, such as:
+     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     */
+    private String xmlRoutes = "classpath:camel/*.xml";
+
+    /**
+     * Directory to scan for adding additional XML rests.
+     * You can turn this off by setting the value to false.
+     *
+     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+     *
+     * Multiple directories can be specified and separated by comma, such as:
+     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     */
+    private String xmlRests = "classpath:camel-rest/*.xml";
+
+    // Default Properties via camel-main
+    // ---------------------------------
+
     // IMPORTANT: Must include the options from DefaultConfigurationProperties as spring boot apt compiler
     //            needs to grab the documentation from the javadoc on the field.
-
-    // Properties
 
     /**
      * Sets the name of the CamelContext.
@@ -37,12 +111,6 @@ public class CamelConfigurationProperties extends DefaultConfigurationProperties
      * Timeout in seconds to graceful shutdown Camel.
      */
     private int shutdownTimeout = 300;
-
-    /**
-     * Whether to log a WARN if Camel on Spring Boot was immediately shutdown after starting which
-     * very likely is because there is no JVM thread to keep the application running.
-     */
-    private boolean warnOnEarlyShutdown = true;
 
     /**
      * Whether Camel should try to suppress logging during shutdown and timeout was triggered,
@@ -99,56 +167,6 @@ public class CamelConfigurationProperties extends DefaultConfigurationProperties
     private boolean loadTypeConverters = true;
 
     /**
-     * Used for inclusive filtering component scanning of RouteBuilder classes with @Component annotation.
-     * The exclusive filtering takes precedence over inclusive filtering.
-     * The pattern is using Ant-path style pattern.
-     *
-     * Multiple patterns can be specified separated by comma.
-     * For example to include all classes starting with Foo use: &#42;&#42;/Foo*
-     * To include all routes form a specific package use: com/mycompany/foo/&#42;
-     * To include all routes form a specific package and its sub-packages use double wildcards: com/mycompany/foo/&#42;&#42;
-     * And to include all routes from two specific packages use: com/mycompany/foo/&#42;,com/mycompany/stuff/&#42;
-     */
-    private String javaRoutesIncludePattern;
-
-    /**
-     * Used for exclusive filtering component scanning of RouteBuilder classes with @Component annotation.
-     * The exclusive filtering takes precedence over inclusive filtering.
-     * The pattern is using Ant-path style pattern.
-     * Multiple patterns can be specified separated by comma.
-     *
-     * For example to exclude all classes starting with Bar use: &#42;&#42;/Bar&#42;
-     * To exclude all routes form a specific package use: com/mycompany/bar/&#42;
-     * To exclude all routes form a specific package and its sub-packages use double wildcards: com/mycompany/bar/&#42;&#42;
-     * And to exclude all routes from two specific packages use: com/mycompany/bar/&#42;,com/mycompany/stuff/&#42;
-     */
-    private String javaRoutesExcludePattern;
-
-    /**
-     * Directory to scan for adding additional XML routes.
-     * You can turn this off by setting the value to false.
-     *
-     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
-     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
-     *
-     * Multiple directories can be specified and separated by comma, such as:
-     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
-     */
-    private String xmlRoutes = "classpath:camel/*.xml";
-
-    /**
-     * Directory to scan for adding additional XML rests.
-     * You can turn this off by setting the value to false.
-     *
-     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
-     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
-     *
-     * Multiple directories can be specified and separated by comma, such as:
-     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
-     */
-    private String xmlRests = "classpath:camel-rest/*.xml";
-
-    /**
      * Directory to load additional configuration files that contains
      * configuration values that takes precedence over any other configuration.
      * This can be used to refer to files that may have secret configuration that
@@ -195,14 +213,6 @@ public class CamelConfigurationProperties extends DefaultConfigurationProperties
     private String routeFilterExcludePattern;
 
     /**
-     * Whether to use the main run controller to ensure the Spring-Boot application
-     * keeps running until being stopped or the JVM terminated.
-     * You typically only need this if you run Spring-Boot standalone.
-     * If you run Spring-Boot with spring-boot-starter-web then the web container keeps the JVM running.
-     */
-    private boolean mainRunController;
-
-    /**
      * To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM.
      * You can use this to run Spring Boot for a short while.
      */
@@ -219,12 +229,6 @@ public class CamelConfigurationProperties extends DefaultConfigurationProperties
      * You can use this to run Spring Boot for a short while.
      */
     private int durationMaxMessages;
-
-    /**
-     * Whether to include non-singleton beans (prototypes) when scanning for RouteBuilder instances.
-     * By default only singleton beans is included in the context scan.
-     */
-    private boolean includeNonSingletons;
 
     /**
      * Is used to limit the maximum length of the logging Camel message bodies. If the message body
@@ -417,6 +421,23 @@ public class CamelConfigurationProperties extends DefaultConfigurationProperties
     private String threadNamePattern;
 
     // Getters & setters
+    // -----------------
+
+    public boolean isMainRunController() {
+        return mainRunController;
+    }
+
+    public void setMainRunController(boolean mainRunController) {
+        this.mainRunController = mainRunController;
+    }
+
+    public boolean isIncludeNonSingletons() {
+        return includeNonSingletons;
+    }
+
+    public void setIncludeNonSingletons(boolean includeNonSingletons) {
+        this.includeNonSingletons = includeNonSingletons;
+    }
 
     public boolean isWarnOnEarlyShutdown() {
         return warnOnEarlyShutdown;
@@ -457,21 +478,4 @@ public class CamelConfigurationProperties extends DefaultConfigurationProperties
     public void setXmlRests(String xmlRests) {
         this.xmlRests = xmlRests;
     }
-
-    public boolean isMainRunController() {
-        return mainRunController;
-    }
-
-    public void setMainRunController(boolean mainRunController) {
-        this.mainRunController = mainRunController;
-    }
-
-    public boolean isIncludeNonSingletons() {
-        return includeNonSingletons;
-    }
-
-    public void setIncludeNonSingletons(boolean includeNonSingletons) {
-        this.includeNonSingletons = includeNonSingletons;
-    }
-
 }
