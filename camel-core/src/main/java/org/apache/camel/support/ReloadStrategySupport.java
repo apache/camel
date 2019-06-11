@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Base class for implementing custom {@link ReloadStrategy} SPI plugins.
  */
+@Deprecated
 public abstract class ReloadStrategySupport extends ServiceSupport implements ReloadStrategy {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
