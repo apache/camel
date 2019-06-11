@@ -20,15 +20,23 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.support.service.ServiceSupport;
 
-public class DefaultMessageHistoryFactory implements MessageHistoryFactory {
+@ManagedResource(description = "Managed MessageHistoryFactory")
+public class DefaultMessageHistoryFactory extends ServiceSupport implements MessageHistoryFactory {
 
     private boolean copyMessage;
     private String nodePattern;
 
     @Override
     public MessageHistory newMessageHistory(String routeId, NamedNode node, long timestamp, Exchange exchange) {
+        if (!isRunAllowed()) {
+            return null;
+        }
+
         if (nodePattern != null) {
             String name = node.getShortName();
             String[] parts = nodePattern.split(",");
@@ -48,23 +56,33 @@ public class DefaultMessageHistoryFactory implements MessageHistoryFactory {
         return new DefaultMessageHistory(routeId, node, timestamp, msg);
     }
 
-    @Override
+    @ManagedAttribute(description = "Whether a copy of the message is included in the message history")
     public boolean isCopyMessage() {
         return copyMessage;
     }
 
-    @Override
+    @ManagedAttribute(description = "Whether a copy of the message is included in the message history")
     public void setCopyMessage(boolean copyMessage) {
         this.copyMessage = copyMessage;
     }
 
-    @Override
+    @ManagedAttribute(description = "Pattern to filter EIPs")
     public String getNodePattern() {
         return nodePattern;
     }
 
-    @Override
+    @ManagedAttribute(description = "Pattern to filter EIPs")
     public void setNodePattern(String nodePattern) {
         this.nodePattern = nodePattern;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }

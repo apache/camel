@@ -19,11 +19,12 @@ package org.apache.camel.spi;
 import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
+import org.apache.camel.StaticService;
 
 /**
  * A factory to create {@link MessageHistory} instances.
  */
-public interface MessageHistoryFactory {
+public interface MessageHistoryFactory extends StaticService {
 
     /**
      * Creates a new {@link MessageHistory}
