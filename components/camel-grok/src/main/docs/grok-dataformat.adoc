@@ -4,7 +4,7 @@
 *Available as of Camel version 3.0*
 
 This component provides dataformat for processing inputs with grok patterns.
-Grok patterns are used to process unstructured data into structured objects - `List<Map<String, Object>`.
+Grok patterns are used to process unstructured data into structured objects - `List<Map<String, Object>>`.
 
 This component is based on https://github.com/thekrakken/java-grok[Java Grok library]
 
