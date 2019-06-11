@@ -790,7 +790,8 @@ public abstract class MainSupport extends ServiceSupport {
 
         // configure the common/default options
         DefaultConfigurationConfigurer.configure(camelContext, config);
-        DefaultConfigurationConfigurer.afterPropertiesSet(camelContext, camelContext.getRegistry());
+        // lookup and configure SPI beans
+        DefaultConfigurationConfigurer.afterPropertiesSet(camelContext);
 
         // now configure context with additional properties
         Properties prop = camelContext.getPropertiesComponent().loadProperties();
