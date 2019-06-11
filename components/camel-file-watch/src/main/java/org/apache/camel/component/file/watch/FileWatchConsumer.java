@@ -161,8 +161,8 @@ public class FileWatchConsumer extends DefaultConsumer {
         }
 
         return antPathMatcher.match(
-        getEndpoint().getAntInclude(),
-        PathUtils.normalizeToString(baseDirectory.relativize(fileEvent.getEventPath()))
+            getEndpoint().getAntInclude(),
+            PathUtils.normalizeToString(baseDirectory.relativize(fileEvent.getEventPath())) // match against relativized path
         );
     }
 
@@ -186,19 +186,19 @@ public class FileWatchConsumer extends DefaultConsumer {
 
         @Override
         public boolean isWatching() {
-            return isRunAllowed() && !isStoppingOrStopped() && !isSuspendingOrSuspended();
+            return !isStoppingOrStopped() && !isSuspendingOrSuspended();
         }
 
         @Override
         public void onException(Exception e) {
-            getExceptionHandler().handleException(e);
+            handleException(e);
         }
     }
 
     class PollRunnable implements Runnable {
         @Override
         public void run() {
-            while (isRunAllowed() && !isStoppingOrStopped() && !isSuspendingOrSuspended()) {
+            while (!isStoppingOrStopped() && !isSuspendingOrSuspended()) {
                 FileEvent event;
                 try {
                     event = eventQueue.poll(1000, TimeUnit.MILLISECONDS);
@@ -211,7 +211,7 @@ public class FileWatchConsumer extends DefaultConsumer {
                         Exchange exchange = prepareExchange(event);
                         getProcessor().process(exchange);
                     } catch (Throwable t) {
-                        getExceptionHandler().handleException(t);
+                        handleException(t);
                     }
                 }
             }
