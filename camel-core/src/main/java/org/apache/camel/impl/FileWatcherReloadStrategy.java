@@ -52,6 +52,7 @@ import org.apache.camel.util.ObjectHelper;
  * linux or windows systems.
  */
 @ManagedResource(description = "Managed FileWatcherReloadStrategy")
+@Deprecated
 public class FileWatcherReloadStrategy extends ReloadStrategySupport {
 
     private String folder;
