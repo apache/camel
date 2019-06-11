@@ -160,7 +160,8 @@ public final class DefaultConfigurationConfigurer {
      * Similar code in camel-core-xml module in class org.apache.camel.core.xml.AbstractCamelContextFactoryBean
      * or in camel-spring-boot module in class org.apache.camel.spring.boot.CamelAutoConfiguration.
      */
-    public static void afterPropertiesSet(CamelContext camelContext, Registry registry) throws Exception {
+    public static void afterPropertiesSet(CamelContext camelContext) throws Exception {
+        final Registry registry = camelContext.getRegistry();
         final ManagementStrategy managementStrategy = camelContext.getManagementStrategy();
 
         registerPropertyForBeanType(registry, BacklogTracer.class, bt -> camelContext.setExtension(BacklogTracer.class, bt));
