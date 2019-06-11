@@ -44,9 +44,6 @@ Number of Examples: 110 (0 deprecated)
 | link:camel-example-main/readme.adoc[Main] (camel-example-main) | Beginner | An example for showing standalone Camel
 
 | link:camel-example-pojo-messaging/README.md[POJO Routing] (camel-example-pojo-messaging) | Beginner | An example showing how to produce and consume messages from Camel endpoints using annotated POJOs
-    
-
-| link:camel-example-reload/Readme.md[Reload] (camel-example-reload) | Beginner | An example that live reloads routes when the XML file is updated
 
 | link:camel-example-rest-swagger/README.md[REST Swagger] (camel-example-rest-swagger) | Beginner | This example shows how to call a Rest service defined using Swagger specification
 

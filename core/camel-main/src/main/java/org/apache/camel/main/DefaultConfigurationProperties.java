@@ -17,7 +17,6 @@
 package org.apache.camel.main;
 
 import org.apache.camel.ManagementStatisticsLevel;
-import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.support.PatternHelper;
 
 /**
@@ -35,8 +34,6 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean shutdownRoutesInReverseOrder = true;
     private boolean shutdownLogInflightExchangesOnTimeout = true;
     private String fileConfigurations;
-    private String xmlRoutesReloadDirectory;
-    private boolean xmlRoutesReloadDirectoryRecursively;
     private boolean jmxEnabled = true;
     private int producerTemplateCacheSize = 1000;
     private int consumerTemplateCacheSize = 1000;
@@ -199,35 +196,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setFileConfigurations(String fileConfigurations) {
         this.fileConfigurations = fileConfigurations;
-    }
-
-    public String getXmlRoutesReloadDirectory() {
-        return xmlRoutesReloadDirectory;
-    }
-
-    /**
-     * Sets the directory name to watch XML file changes to trigger live reload of Camel XML routes.
-     *
-     * For example configure this to point to the source code where the Camel XML files are located
-     * such as: src/main/resources/camel/
-     *
-     * Notice you cannot set this value and a custom {@link ReloadStrategy} as well.
-     */
-    public void setXmlRoutesReloadDirectory(String xmlRoutesReloadDirectory) {
-        this.xmlRoutesReloadDirectory = xmlRoutesReloadDirectory;
-    }
-
-    public boolean isXmlRoutesReloadDirectoryRecursively() {
-        return xmlRoutesReloadDirectoryRecursively;
-    }
-
-    /**
-     * Sets the flag to watch directory of XML file changes recursively to trigger live reload of Camel routes.
-     *
-     * Notice you cannot set this value and a custom ReloadStrategy as well.
-     */
-    public void setXmlRoutesReloadDirectoryRecursively(boolean xmlRoutesReloadDirectoryRecursively) {
-        this.xmlRoutesReloadDirectoryRecursively = xmlRoutesReloadDirectoryRecursively;
     }
 
     public boolean isJmxEnabled() {
@@ -758,29 +726,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withFileConfigurations(String fileConfigurations) {
         this.fileConfigurations = fileConfigurations;
-        return (T) this;
-    }
-
-    /**
-     * Sets the directory name to watch XML file changes to trigger live reload of Camel XML routes.
-     *
-     * For example configure this to point to the source code where the Camel XML files are located
-     * such as: src/main/resources/camel/
-     *
-     * Notice you cannot set this value and a custom ReloadStrategy as well.
-     */
-    public T withXmlRoutesReloadDirectory(String xmlRoutesReloadDirectory) {
-        this.xmlRoutesReloadDirectory = xmlRoutesReloadDirectory;
-        return (T) this;
-    }
-
-    /**
-     * Sets the flag to watch directory of XML file changes recursively to trigger live reload of Camel routes.
-     *
-     * Notice you cannot set this value and a custom ReloadStrategy as well.
-     */
-    public T withXmlRoutesReloadDirectoryRecursively(boolean xmlRoutesReloadDirectoryRecursively) {
-        this.xmlRoutesReloadDirectoryRecursively = xmlRoutesReloadDirectoryRecursively;
         return (T) this;
     }
 

@@ -38,7 +38,6 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteController;
@@ -1197,18 +1196,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * Sets a custom {@link org.apache.camel.spi.RuntimeEndpointRegistry} to use.
      */
     void setRuntimeEndpointRegistry(RuntimeEndpointRegistry runtimeEndpointRegistry);
-
-    /**
-     * Returns the {@link ReloadStrategy} if in use.
-     *
-     * @return the strategy, or <tt>null</tt> if none has been configured.
-     */
-    ReloadStrategy getReloadStrategy();
-
-    /**
-     * Sets a custom {@link ReloadStrategy} to be used
-     */
-    void setReloadStrategy(ReloadStrategy reloadStrategy);
 
     /**
      * Sets the global SSL context parameters.

@@ -52,7 +52,6 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.HandleFault;
-import org.apache.camel.reload.FileWatcherReloadStrategy;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.DataFormat;
@@ -69,7 +68,6 @@ import org.apache.camel.spi.ManagementObjectNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
@@ -198,14 +196,6 @@ public abstract class MainSupport extends ServiceSupport {
             "exitcode") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 configure().setDurationHitExitCode(Integer.parseInt(parameter));
-            }
-        });
-        addOption(new ParameterOption("watch", "fileWatch",
-            "Sets a directory to watch for file changes to trigger reloading routes on-the-fly",
-            "fileWatch") {
-            @Override
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                configure().setXmlRoutesReloadDirectory(parameter);
             }
         });
         addOption(new ParameterOption("pl", "propertiesLocation",
@@ -500,54 +490,6 @@ public abstract class MainSupport extends ServiceSupport {
         this.routeBuilderClasses = builders;
     }
 
-    @Deprecated
-    public String getFileWatchDirectory() {
-        return mainConfigurationProperties.getXmlRoutesReloadDirectory();
-    }
-
-    /**
-     * Sets the directory name to watch XML file changes to trigger live reload of Camel routes.
-     * <p/>
-     * Notice you cannot set this value and a custom {@link ReloadStrategy} as well.
-     * @deprecated use {@link #configure()}
-     */
-    @Deprecated
-    public void setFileWatchDirectory(String fileWatchDirectory) {
-        mainConfigurationProperties.setXmlRoutesReloadDirectory(fileWatchDirectory);
-    }
-
-    @Deprecated
-    public boolean isFileWatchDirectoryRecursively() {
-        return mainConfigurationProperties.isXmlRoutesReloadDirectoryRecursively();
-    }
-
-    /**
-     * Sets the flag to watch directory of XML file changes recursively to trigger live reload of Camel routes.
-     * <p/>
-     * Notice you cannot set this value and a custom {@link ReloadStrategy} as well.
-     * @deprecated use {@link #configure()}
-     */
-    @Deprecated
-    public void setFileWatchDirectoryRecursively(boolean fileWatchDirectoryRecursively) {
-        mainConfigurationProperties.setXmlRoutesReloadDirectoryRecursively(fileWatchDirectoryRecursively);
-    }
-
-    @Deprecated
-    public ReloadStrategy getReloadStrategy() {
-        return mainConfigurationProperties.getReloadStrategy();
-    }
-
-    /**
-     * Sets a custom {@link ReloadStrategy} to be used.
-     * <p/>
-     * Notice you cannot set this value and the fileWatchDirectory as well.
-     * @deprecated use {@link #configure()}
-     */
-    @Deprecated
-    public void setReloadStrategy(ReloadStrategy reloadStrategy) {
-        mainConfigurationProperties.setReloadStrategy(reloadStrategy);
-    }
-
     public String getPropertyPlaceholderLocations() {
         return propertyPlaceholderLocations;
     }
@@ -801,30 +743,6 @@ public abstract class MainSupport extends ServiceSupport {
                 pc.setOverrideProperties(overrideProperties);
             }
             LOG.info("Using optional properties from classpath:application.properties");
-        }
-        if (mainConfigurationProperties.getXmlRoutesReloadDirectory() != null) {
-            ReloadStrategy reload = new FileWatcherReloadStrategy(mainConfigurationProperties.getXmlRoutesReloadDirectory(), mainConfigurationProperties.isXmlRoutesReloadDirectoryRecursively());
-            camelContext.setReloadStrategy(reload);
-            // ensure reload is added as service and started
-            camelContext.addService(reload);
-            // and ensure its register in JMX (which requires manually to be added because CamelContext is already started)
-            Object managedObject = camelContext.getManagementStrategy().getManagementObjectStrategy().getManagedObjectForService(camelContext, reload);
-            if (managedObject == null) {
-                // service should not be managed
-                return;
-            }
-
-            // skip already managed services, for example if a route has been restarted
-            if (camelContext.getManagementStrategy().isManaged(managedObject)) {
-                LOG.trace("The service is already managed: {}", reload);
-                return;
-            }
-
-            try {
-                camelContext.getManagementStrategy().manageObject(managedObject);
-            } catch (Exception e) {
-                LOG.warn("Could not register service: " + reload + " as Service MBean.", e);
-            }
         }
 
         if (mainConfigurationProperties.getDurationMaxMessages() > 0 || mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {

@@ -91,7 +91,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 126 options, which are listed below.
+The component supports 125 options, which are listed below.
 
 
 
@@ -194,7 +194,6 @@ The component supports 126 options, which are listed below.
 | *camel.springboot.warn-on-early-shutdown* | Whether to log a WARN if Camel on Spring Boot was immediately shutdown after starting which very likely is because there is no JVM thread to keep the application running. | true | Boolean
 | *camel.springboot.xml-rests* | Directory to scan for adding additional XML rests. You can turn this off by setting the value to false. Files can be loaded from either classpath or file by prefixing with classpath: or file: Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml Multiple directories can be specified and separated by comma, such as: file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml | classpath:camel-rest/*.xml | String
 | *camel.springboot.xml-routes* | Directory to scan for adding additional XML routes. You can turn this off by setting the value to false. Files can be loaded from either classpath or file by prefixing with classpath: or file: Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml Multiple directories can be specified and separated by comma, such as: file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml | classpath:camel/*.xml | String
-| *camel.springboot.xml-routes-reload-directory* | To watch the directory for file changes which triggers a live reload of the Camel routes on-the-fly. For example configure this to point to the source code where the Camel XML files are located such as: src/main/resources/camel/ |  | String
 | *camel.ssl.cert-alias* | An optional certificate alias to use. This is useful when the keystore has multiple certificates. |  | String
 | *camel.ssl.cipher-suites* | The optional explicitly configured cipher suites for this configuration. |  | CipherSuitesParameters
 | *camel.ssl.cipher-suites-filter* | The optional cipher suite filter configuration for this configuration. |  | FilterParameters

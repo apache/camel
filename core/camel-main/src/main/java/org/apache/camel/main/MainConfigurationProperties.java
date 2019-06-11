@@ -16,8 +16,6 @@
  */
 package org.apache.camel.main;
 
-import org.apache.camel.spi.ReloadStrategy;
-
 /**
  * Global configuration for Camel Main to setup context name, stream caching and other global configurations.
  */
@@ -29,7 +27,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private long duration = -1;
     private int durationHitExitCode;
     private boolean hangupInterceptorEnabled = true;
-    private ReloadStrategy reloadStrategy;
 
     // getter and setters
     // --------------------------------------------------------------
@@ -125,19 +122,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         this.durationHitExitCode = durationHitExitCode;
     }
 
-    public ReloadStrategy getReloadStrategy() {
-        return reloadStrategy;
-    }
-
-    /**
-     * Sets a custom {@link ReloadStrategy} to be used.
-     * <p/>
-     * Notice you cannot set this value and the xmlRoutesReloadDirectory as well.
-     */
-    public void setReloadStrategy(ReloadStrategy reloadStrategy) {
-        this.reloadStrategy = reloadStrategy;
-    }
-
     // fluent builders
     // --------------------------------------------------------------
 
@@ -211,16 +195,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public MainConfigurationProperties withDurationHitExitCode(int durationHitExitCode) {
         this.durationHitExitCode = durationHitExitCode;
-        return this;
-    }
-
-    /**
-     * Sets a custom {@link ReloadStrategy} to be used.
-     * <p/>
-     * Notice you cannot set this value and the fileWatchDirectory as well.
-     */
-    public MainConfigurationProperties withReloadStrategy(ReloadStrategy reloadStrategy) {
-        this.reloadStrategy = reloadStrategy;
         return this;
     }
 
