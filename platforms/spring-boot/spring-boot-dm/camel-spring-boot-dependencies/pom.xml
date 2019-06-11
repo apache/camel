@@ -172,6 +172,11 @@
         <version>0.1.9</version>
       </dependency>
       <dependency>
+        <groupId>io.methvin</groupId>
+        <artifactId>directory-watcher</artifactId>
+        <version>0.9.5</version>
+      </dependency>
+      <dependency>
         <groupId>io.nessus</groupId>
         <artifactId>nessus-ipfs-client</artifactId>
         <version>1.0.0.Beta4</version>
@@ -1200,6 +1205,16 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-file-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-file-watch</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-file-watch-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

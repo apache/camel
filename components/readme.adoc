@@ -271,6 +271,9 @@ Number of Components: 297 in 234 JAR artifacts (0 deprecated)
 | link:camel-file/src/main/docs/file-component.adoc[File] (camel-file) +
 `file:directoryName` | 1.0 | The file component is used for reading or writing files.
 
+| link:camel-file-watch/src/main/docs/file-watch-component.adoc[file-watch] (camel-file-watch) +
+`file-watch:path` | 3.0 | The file-watch is used to monitor file events in directory using java.nio.file.WatchService
+
 | link:camel-flatpack/src/main/docs/flatpack-component.adoc[Flatpack] (camel-flatpack) +
 `flatpack:type:resourceUri` | 1.4 | The flatpack component supports fixed width and delimited file parsing via the FlatPack library.
 
