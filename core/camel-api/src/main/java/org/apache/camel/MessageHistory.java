@@ -47,4 +47,9 @@ public interface MessageHistory {
      */
     void nodeProcessingDone();
 
+    /**
+     * A read-only copy of the message at the point of this history (if this has been enabled).
+     */
+    Message getMessage();
+
 }

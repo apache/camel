@@ -642,8 +642,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 }
             }
 
-            MessageHistory history = factory.newMessageHistory(targetRouteId, definition, System.currentTimeMillis());
-            list.add(history);
+            MessageHistory history = factory.newMessageHistory(targetRouteId, definition, System.currentTimeMillis(), exchange);
+            if (history != null) {
+                list.add(history);
+            }
             return history;
         }
 

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 
@@ -28,19 +29,27 @@ public class DefaultMessageHistory implements MessageHistory {
     private final NamedNode node;
     private final String nodeId;
     private final long timestamp;
+    private final Message message;
     private long elapsed;
 
     public DefaultMessageHistory(String routeId, NamedNode node, long timestamp) {
+        this(routeId, node, timestamp, null);
+    }
+
+    public DefaultMessageHistory(String routeId, NamedNode node, long timestamp, Message message) {
         this.routeId = routeId;
         this.node = node;
         this.nodeId = node.getId();
         this.timestamp = timestamp;
+        this.message = message;
     }
 
+    @Override
     public String getRouteId() {
         return routeId;
     }
 
+    @Override
     public NamedNode getNode() {
         return node;
     }
@@ -50,14 +59,21 @@ public class DefaultMessageHistory implements MessageHistory {
         return timestamp;
     }
 
+    @Override
     public long getElapsed() {
         return elapsed;
     }
 
+    @Override
     public void nodeProcessingDone() {
         if (timestamp > 0) {
             elapsed = System.currentTimeMillis() - timestamp;
         }
+    }
+
+    @Override
+    public Message getMessage() {
+        return message;
     }
 
     @Override
