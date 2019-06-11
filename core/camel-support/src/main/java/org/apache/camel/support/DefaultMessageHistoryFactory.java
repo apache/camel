@@ -40,12 +40,12 @@ public class DefaultMessageHistoryFactory implements MessageHistoryFactory {
             }
         }
 
-        Message target = null;
+        Message msg = null;
         if (copyMessage) {
-            target = exchange.getMessage().copy();
+            msg = exchange.getMessage().copy();
         }
 
-        return new DefaultMessageHistory(routeId, node, timestamp, target);
+        return new DefaultMessageHistory(routeId, node, timestamp, msg);
     }
 
     @Override
