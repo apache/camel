@@ -42,7 +42,6 @@ import org.apache.camel.health.HealthCheckService;
 import org.apache.camel.model.Model;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.HandleFault;
-import org.apache.camel.reload.FileWatcherReloadStrategy;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.EndpointStrategy;
@@ -55,7 +54,6 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementObjectNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
@@ -218,11 +216,6 @@ public class CamelAutoConfiguration {
 
         // tracing
         camelContext.setTracing(config.isTracing());
-
-        if (config.getXmlRoutesReloadDirectory() != null) {
-            ReloadStrategy reload = new FileWatcherReloadStrategy(config.getXmlRoutesReloadDirectory(), config.isXmlRoutesReloadDirectoryRecursively());
-            camelContext.setReloadStrategy(reload);
-        }
 
         if (config.getThreadNamePattern() != null) {
             camelContext.getExecutorServiceManager().setThreadNamePattern(config.getThreadNamePattern());

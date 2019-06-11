@@ -120,7 +120,6 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RestRegistryFactory;
@@ -250,7 +249,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private volatile ExecutorServiceManager executorServiceManager;
     private volatile UuidGenerator uuidGenerator;
     private volatile UnitOfWorkFactory unitOfWorkFactory;
-    private volatile ReloadStrategy reloadStrategy;
     private volatile RouteController routeController;
     private volatile ScheduledExecutorService errorHandlerExecutorService;
     private final DeferServiceFactory deferServiceFactory = new DefaultDeferServiceFactory();
@@ -2398,11 +2396,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
         forceLazyInitialization();
 
-        if (reloadStrategy != null) {
-            log.info("Using ReloadStrategy: {}", reloadStrategy);
-            addService(reloadStrategy, true, true);
-        }
-
         // if camel-bean is on classpath then we can load its bean proxy facory
         BeanProxyFactory beanProxyFactory = new BeanProxyFactoryResolver().resolve(this);
         if (beanProxyFactory != null) {
@@ -3744,16 +3737,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             }
         }
         return value;
-    }
-
-    @Override
-    public ReloadStrategy getReloadStrategy() {
-        return reloadStrategy;
-    }
-
-    @Override
-    public void setReloadStrategy(ReloadStrategy reloadStrategy) {
-        this.reloadStrategy = doAddService(reloadStrategy);
     }
 
     @Override

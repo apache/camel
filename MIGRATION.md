@@ -260,7 +260,7 @@ The annotation `org.apache.camel.language.SpEL` has been moved to `org.apache.ca
 
 Rename various APIs in camel-core to fix the typo `chiper` to `cipher`.
 
-The classes `ReloadStrategySupport` and `FileWatcherReloadStrategy` has been moved from package `org.apache.camel.impl` to `org.apache.camel.reload`.
+The classes `ReloadStrategySupport` and `FileWatcherReloadStrategy` has been removed.
 
 #### camel-test
 

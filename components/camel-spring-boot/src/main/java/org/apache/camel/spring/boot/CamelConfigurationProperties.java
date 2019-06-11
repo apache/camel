@@ -149,23 +149,6 @@ public class CamelConfigurationProperties extends DefaultConfigurationProperties
     private String xmlRests = "classpath:camel-rest/*.xml";
 
     /**
-     * Sets the directory name to watch XML file changes to trigger live reload of Camel XML routes.
-     *
-     * For example configure this to point to the source code where the Camel XML files are located
-     * such as: src/main/resources/camel/
-     *
-     * Notice you cannot set this value and a custom ReloadStrategy as well.
-     */
-    private String xmlRoutesReloadDirectory;
-
-    /**
-     * Sets the flag to watch directory of XML file changes recursively to trigger live reload of Camel routes.
-     * 
-     * Notice you cannot set this value and a custom ReloadStrategy as well.
-     */
-    private String xmlRoutesReloadDirectoryRecursive;
-
-    /**
      * Directory to load additional configuration files that contains
      * configuration values that takes precedence over any other configuration.
      * This can be used to refer to files that may have secret configuration that
