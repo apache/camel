@@ -26,6 +26,7 @@ import org.apache.camel.StaticService;
 /**
  * SPI strategy for reloading Camel routes in an existing running {@link org.apache.camel.CamelContext}
  */
+@Deprecated
 public interface ReloadStrategy extends Service, StaticService, CamelContextAware {
 
     /**
