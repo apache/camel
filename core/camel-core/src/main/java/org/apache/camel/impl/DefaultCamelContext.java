@@ -41,7 +41,7 @@ import org.apache.camel.impl.engine.DefaultInflightRepository;
 import org.apache.camel.impl.engine.DefaultInjector;
 import org.apache.camel.impl.engine.DefaultLanguageResolver;
 import org.apache.camel.impl.engine.DefaultManagementNameStrategy;
-import org.apache.camel.impl.engine.DefaultMessageHistoryFactory;
+import org.apache.camel.support.DefaultMessageHistoryFactory;
 import org.apache.camel.impl.engine.DefaultNodeIdFactory;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.engine.DefaultProcessorFactory;

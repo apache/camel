@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.impl.engine.DefaultAsyncProcessorAwaitManager;
-import org.apache.camel.impl.engine.DefaultMessageHistoryFactory;
+import org.apache.camel.support.DefaultMessageHistoryFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.support.DefaultExchange;
@@ -78,7 +78,7 @@ public class DefaultAsyncProcessorAwaitManagerTest {
         LinkedList<MessageHistory> messageHistories = new LinkedList<>();
         messageHistories.add(MESSAGE_HISTORY_FACTORY.newMessageHistory(null,
                 new MockNamedNode().withId(null),
-                0));
+                0, null));
         exchange.setProperty(Exchange.MESSAGE_HISTORY, messageHistories);
         AsyncProcessorAwaitManager.AwaitThread awaitThread = defaultAsyncProcessorAwaitManager.browse().iterator().next();
         assertThat(awaitThread.getRouteId(), is(nullValue()));
@@ -92,7 +92,7 @@ public class DefaultAsyncProcessorAwaitManagerTest {
         LinkedList<MessageHistory> messageHistories = new LinkedList<>();
         messageHistories.add(MESSAGE_HISTORY_FACTORY.newMessageHistory("routeId",
                 new MockNamedNode().withId("nodeId"),
-                0));
+                0, null));
         exchange.setProperty(Exchange.MESSAGE_HISTORY, messageHistories);
         AsyncProcessorAwaitManager.AwaitThread awaitThread = defaultAsyncProcessorAwaitManager.browse().iterator().next();
         assertThat(awaitThread.getRouteId(), is("routeId"));
