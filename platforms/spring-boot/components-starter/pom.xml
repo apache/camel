@@ -185,6 +185,7 @@
     <module>camel-fastjson-starter</module>
     <module>camel-fhir-starter</module>
     <module>camel-file-starter</module>
+    <module>camel-file-watch-starter</module>
     <module>camel-flatpack-starter</module>
     <module>camel-flink-starter</module>
     <module>camel-fop-starter</module>

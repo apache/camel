@@ -163,6 +163,7 @@
         <module>camel-facebook</module>
         <module>camel-fastjson</module>
         <module>camel-fhir</module>
+        <module>camel-file-watch</module>
         <module>camel-flatpack</module>
         <module>camel-flink</module>
         <module>camel-fop</module>

@@ -132,6 +132,7 @@
         <include>org.apache.camel:camel-fhir</include>
         <include>org.apache.camel:camel-fhir-api</include>
         <include>org.apache.camel:camel-file</include>
+        <include>org.apache.camel:camel-file-watch</include>
         <include>org.apache.camel:camel-flatpack</include>
         <include>org.apache.camel:camel-flink</include>
         <include>org.apache.camel:camel-fop</include>
@@ -473,6 +474,7 @@
         <include>org.apache.camel:camel-fastjson-starter</include>
         <include>org.apache.camel:camel-fhir-starter</include>
         <include>org.apache.camel:camel-file-starter</include>
+        <include>org.apache.camel:camel-file-watch-starter</include>
         <include>org.apache.camel:camel-flatpack-starter</include>
         <include>org.apache.camel:camel-flink-starter</include>
         <include>org.apache.camel:camel-fop-starter</include>
