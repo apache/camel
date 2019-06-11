@@ -36,7 +36,7 @@ OSGi server is at least challenging and is not support by Camel as well.
 
 ### URI format
 
-Currently the Spark component supports only producers - it it intended
+Currently the Spark component supports only producers - it is intended
 to invoke a Spark job and return results. You can call RDD, data frame
 or Hive SQL job.
 
