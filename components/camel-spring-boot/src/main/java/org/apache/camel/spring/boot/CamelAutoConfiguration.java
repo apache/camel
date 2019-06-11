@@ -220,7 +220,7 @@ public class CamelAutoConfiguration {
         camelContext.setTracing(config.isTracing());
 
         if (config.getXmlRoutesReloadDirectory() != null) {
-            ReloadStrategy reload = new FileWatcherReloadStrategy(config.getXmlRoutesReloadDirectory());
+            ReloadStrategy reload = new FileWatcherReloadStrategy(config.getXmlRoutesReloadDirectory(), config.isXmlRoutesReloadDirectoryRecursively());
             camelContext.setReloadStrategy(reload);
         }
 
@@ -248,7 +248,7 @@ public class CamelAutoConfiguration {
     @ConditionalOnMissingBean(RoutesCollector.class)
     RoutesCollector routesCollector(ApplicationContext applicationContext, CamelConfigurationProperties config) {
         Collection<CamelContextConfiguration> configurations = applicationContext.getBeansOfType(CamelContextConfiguration.class).values();
-        return new RoutesCollector(applicationContext, new ArrayList<>(configurations), config);
+        return new RoutesCollector(applicationContext, new ArrayList(configurations), config);
     }
 
     /**
