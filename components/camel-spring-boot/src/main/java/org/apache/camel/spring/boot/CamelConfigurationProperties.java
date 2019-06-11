@@ -17,10 +17,14 @@
 package org.apache.camel.spring.boot;
 
 import org.apache.camel.ManagementStatisticsLevel;
+import org.apache.camel.main.DefaultConfigurationProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "camel.springboot")
-public class CamelConfigurationProperties {
+public class CamelConfigurationProperties extends DefaultConfigurationProperties<CamelConfigurationProperties> {
+
+    // IMPORTANT: Must include the options from DefaultConfigurationProperties as spring boot apt compiler
+    //            needs to grab the documentation from the javadoc on the field.
 
     // Properties
 
@@ -86,11 +90,6 @@ public class CamelConfigurationProperties {
     private int consumerTemplateCacheSize = 1000;
 
     /**
-     * Enables enhanced Camel/Spring type conversion.
-     */
-    private boolean typeConversion = true;
-
-    /**
      * Whether to load custom type converters by scanning classpath.
      * This is used for backwards compatibility with Camel 2.x.
      * Its recommended to migrate to use fast type converter loading
@@ -150,13 +149,21 @@ public class CamelConfigurationProperties {
     private String xmlRests = "classpath:camel-rest/*.xml";
 
     /**
-     * To watch the directory for file changes which triggers
-     * a live reload of the Camel routes on-the-fly.
+     * Sets the directory name to watch XML file changes to trigger live reload of Camel XML routes.
      *
      * For example configure this to point to the source code where the Camel XML files are located
      * such as: src/main/resources/camel/
+     *
+     * Notice you cannot set this value and a custom ReloadStrategy as well.
      */
     private String xmlRoutesReloadDirectory;
+
+    /**
+     * Sets the flag to watch directory of XML file changes recursively to trigger live reload of Camel routes.
+     * 
+     * Notice you cannot set this value and a custom ReloadStrategy as well.
+     */
+    private String xmlRoutesReloadDirectoryRecursive;
 
     /**
      * Directory to load additional configuration files that contains
@@ -409,76 +416,6 @@ public class CamelConfigurationProperties {
     private boolean jmxCreateConnector;
 
     /**
-     * Tracer should output message body
-     */
-    private boolean traceFormatterShowBody = true;
-
-    /**
-     * Tracer should output message body type
-     */
-    private boolean tracerFormatterShowBodyType = true;
-
-    /**
-     * Tracer should output breadcrumb
-     */
-    private boolean traceFormatterShowBreadCrumb = true;
-
-    /**
-     * Tracer should output exchange id
-     */
-    private boolean traceFormatterShowExchangeId;
-
-    /**
-     * Tracer should output message headers
-     */
-    private boolean traceFormatterShowHeaders = true;
-
-    /**
-     * Tracer should output exchange properties
-     */
-    private boolean traceFormatterShowProperties;
-
-    /**
-     * Tracer should output EIP node
-     */
-    private boolean traceFormatterShowNode = true;
-
-    /**
-     * Tracer should output message exchange pattern (MEP)
-     */
-    private boolean traceFormatterShowExchangePattern = true;
-
-    /**
-     * Tracer should output exception
-     */
-    private boolean traceFormatterShowException = true;
-
-    /**
-     * Tracer should output route id
-     */
-    private boolean traceFormatterShowRouteId = true;
-
-    /**
-     * Tracer maximum length of breadcrumb ids
-     */
-    private Integer tracerFormatterBreadCrumbLength;
-
-    /**
-     * Tracer should output short exchange id
-     */
-    private boolean traceFormatterShowShortExchangeId;
-
-    /**
-     * Tracer maximum length of node
-     */
-    private Integer tracerFormatterNodeLength;
-
-    /**
-     * Tracer maximum characters in total
-     */
-    private Integer tracerFormatterMaxChars = 10000;
-    
-    /**
      * To turn on MDC logging
      */
     private boolean useMdcLogging;
@@ -498,92 +435,12 @@ public class CamelConfigurationProperties {
 
     // Getters & setters
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getShutdownTimeout() {
-        return shutdownTimeout;
-    }
-
-    public void setShutdownTimeout(int shutdownTimeout) {
-        this.shutdownTimeout = shutdownTimeout;
-    }
-
     public boolean isWarnOnEarlyShutdown() {
         return warnOnEarlyShutdown;
     }
 
     public void setWarnOnEarlyShutdown(boolean warnOnEarlyShutdown) {
         this.warnOnEarlyShutdown = warnOnEarlyShutdown;
-    }
-
-    public boolean isShutdownSuppressLoggingOnTimeout() {
-        return shutdownSuppressLoggingOnTimeout;
-    }
-
-    public void setShutdownSuppressLoggingOnTimeout(boolean shutdownSuppressLoggingOnTimeout) {
-        this.shutdownSuppressLoggingOnTimeout = shutdownSuppressLoggingOnTimeout;
-    }
-
-    public boolean isShutdownNowOnTimeout() {
-        return shutdownNowOnTimeout;
-    }
-
-    public void setShutdownNowOnTimeout(boolean shutdownNowOnTimeout) {
-        this.shutdownNowOnTimeout = shutdownNowOnTimeout;
-    }
-
-    public boolean isShutdownRoutesInReverseOrder() {
-        return shutdownRoutesInReverseOrder;
-    }
-
-    public void setShutdownRoutesInReverseOrder(boolean shutdownRoutesInReverseOrder) {
-        this.shutdownRoutesInReverseOrder = shutdownRoutesInReverseOrder;
-    }
-
-    public boolean isShutdownLogInflightExchangesOnTimeout() {
-        return shutdownLogInflightExchangesOnTimeout;
-    }
-
-    public void setShutdownLogInflightExchangesOnTimeout(boolean shutdownLogInflightExchangesOnTimeout) {
-        this.shutdownLogInflightExchangesOnTimeout = shutdownLogInflightExchangesOnTimeout;
-    }
-
-    public boolean isJmxEnabled() {
-        return jmxEnabled;
-    }
-
-    public void setJmxEnabled(boolean jmxEnabled) {
-        this.jmxEnabled = jmxEnabled;
-    }
-
-    public int getProducerTemplateCacheSize() {
-        return producerTemplateCacheSize;
-    }
-
-    public void setProducerTemplateCacheSize(int producerTemplateCacheSize) {
-        this.producerTemplateCacheSize = producerTemplateCacheSize;
-    }
-
-    public int getConsumerTemplateCacheSize() {
-        return consumerTemplateCacheSize;
-    }
-
-    public void setConsumerTemplateCacheSize(int consumerTemplateCacheSize) {
-        this.consumerTemplateCacheSize = consumerTemplateCacheSize;
-    }
-
-    public boolean isTypeConversion() {
-        return typeConversion;
-    }
-
-    public void setTypeConversion(boolean typeConversion) {
-        this.typeConversion = typeConversion;
     }
 
     public boolean isLoadTypeConverters() {
@@ -626,372 +483,12 @@ public class CamelConfigurationProperties {
         this.xmlRests = xmlRests;
     }
 
-    public String getXmlRoutesReloadDirectory() {
-        return xmlRoutesReloadDirectory;
-    }
-
-    public void setXmlRoutesReloadDirectory(String xmlRoutesReloadDirectory) {
-        this.xmlRoutesReloadDirectory = xmlRoutesReloadDirectory;
-    }
-
     public boolean isMainRunController() {
         return mainRunController;
     }
 
     public void setMainRunController(boolean mainRunController) {
         this.mainRunController = mainRunController;
-    }
-
-    public int getDurationMaxSeconds() {
-        return durationMaxSeconds;
-    }
-
-    public void setDurationMaxSeconds(int durationMaxSeconds) {
-        this.durationMaxSeconds = durationMaxSeconds;
-    }
-
-    public int getDurationMaxIdleSeconds() {
-        return durationMaxIdleSeconds;
-    }
-
-    public void setDurationMaxIdleSeconds(int durationMaxIdleSeconds) {
-        this.durationMaxIdleSeconds = durationMaxIdleSeconds;
-    }
-
-    public int getDurationMaxMessages() {
-        return durationMaxMessages;
-    }
-
-    public void setDurationMaxMessages(int durationMaxMessages) {
-        this.durationMaxMessages = durationMaxMessages;
-    }
-
-    public int getLogDebugMaxChars() {
-        return logDebugMaxChars;
-    }
-
-    public void setLogDebugMaxChars(int logDebugMaxChars) {
-        this.logDebugMaxChars = logDebugMaxChars;
-    }
-
-    public boolean isStreamCachingEnabled() {
-        return streamCachingEnabled;
-    }
-
-    public void setStreamCachingEnabled(boolean streamCachingEnabled) {
-        this.streamCachingEnabled = streamCachingEnabled;
-    }
-
-    public String getStreamCachingSpoolDirectory() {
-        return streamCachingSpoolDirectory;
-    }
-
-    public void setStreamCachingSpoolDirectory(String streamCachingSpoolDirectory) {
-        this.streamCachingSpoolDirectory = streamCachingSpoolDirectory;
-    }
-
-    public String getStreamCachingSpoolCipher() {
-        return streamCachingSpoolCipher;
-    }
-
-    public void setStreamCachingSpoolCipher(String streamCachingSpoolCipher) {
-        this.streamCachingSpoolCipher = streamCachingSpoolCipher;
-    }
-
-    public long getStreamCachingSpoolThreshold() {
-        return streamCachingSpoolThreshold;
-    }
-
-    public void setStreamCachingSpoolThreshold(long streamCachingSpoolThreshold) {
-        this.streamCachingSpoolThreshold = streamCachingSpoolThreshold;
-    }
-
-    public int getStreamCachingSpoolUsedHeapMemoryThreshold() {
-        return streamCachingSpoolUsedHeapMemoryThreshold;
-    }
-
-    public void setStreamCachingSpoolUsedHeapMemoryThreshold(int streamCachingSpoolUsedHeapMemoryThreshold) {
-        this.streamCachingSpoolUsedHeapMemoryThreshold = streamCachingSpoolUsedHeapMemoryThreshold;
-    }
-
-    public String getStreamCachingSpoolUsedHeapMemoryLimit() {
-        return streamCachingSpoolUsedHeapMemoryLimit;
-    }
-
-    public void setStreamCachingSpoolUsedHeapMemoryLimit(String streamCachingSpoolUsedHeapMemoryLimit) {
-        this.streamCachingSpoolUsedHeapMemoryLimit = streamCachingSpoolUsedHeapMemoryLimit;
-    }
-
-    public boolean isStreamCachingAnySpoolRules() {
-        return streamCachingAnySpoolRules;
-    }
-
-    public void setStreamCachingAnySpoolRules(boolean streamCachingAnySpoolRules) {
-        this.streamCachingAnySpoolRules = streamCachingAnySpoolRules;
-    }
-
-    public int getStreamCachingBufferSize() {
-        return streamCachingBufferSize;
-    }
-
-    public void setStreamCachingBufferSize(int streamCachingBufferSize) {
-        this.streamCachingBufferSize = streamCachingBufferSize;
-    }
-
-    public boolean isStreamCachingRemoveSpoolDirectoryWhenStopping() {
-        return streamCachingRemoveSpoolDirectoryWhenStopping;
-    }
-
-    public void setStreamCachingRemoveSpoolDirectoryWhenStopping(boolean streamCachingRemoveSpoolDirectoryWhenStopping) {
-        this.streamCachingRemoveSpoolDirectoryWhenStopping = streamCachingRemoveSpoolDirectoryWhenStopping;
-    }
-
-    public boolean isStreamCachingStatisticsEnabled() {
-        return streamCachingStatisticsEnabled;
-    }
-
-    public void setStreamCachingStatisticsEnabled(boolean streamCachingStatisticsEnabled) {
-        this.streamCachingStatisticsEnabled = streamCachingStatisticsEnabled;
-    }
-
-    public boolean isTracing() {
-        return tracing;
-    }
-
-    public void setTracing(boolean tracing) {
-        this.tracing = tracing;
-    }
-
-    public boolean isMessageHistory() {
-        return messageHistory;
-    }
-
-    public void setMessageHistory(boolean messageHistory) {
-        this.messageHistory = messageHistory;
-    }
-
-    public boolean isLogMask() {
-        return logMask;
-    }
-
-    public void setLogMask(boolean logMask) {
-        this.logMask = logMask;
-    }
-
-    public boolean isLogExhaustedMessageBody() {
-        return logExhaustedMessageBody;
-    }
-
-    public void setLogExhaustedMessageBody(boolean logExhaustedMessageBody) {
-        this.logExhaustedMessageBody = logExhaustedMessageBody;
-    }
-
-    public boolean isHandleFault() {
-        return handleFault;
-    }
-
-    public void setHandleFault(boolean handleFault) {
-        this.handleFault = handleFault;
-    }
-
-    public boolean isAutoStartup() {
-        return autoStartup;
-    }
-
-    public void setAutoStartup(boolean autoStartup) {
-        this.autoStartup = autoStartup;
-    }
-
-    public boolean isAllowUseOriginalMessage() {
-        return allowUseOriginalMessage;
-    }
-
-    public void setAllowUseOriginalMessage(boolean allowUseOriginalMessage) {
-        this.allowUseOriginalMessage = allowUseOriginalMessage;
-    }
-
-    public boolean isEndpointRuntimeStatisticsEnabled() {
-        return endpointRuntimeStatisticsEnabled;
-    }
-
-    public void setEndpointRuntimeStatisticsEnabled(boolean endpointRuntimeStatisticsEnabled) {
-        this.endpointRuntimeStatisticsEnabled = endpointRuntimeStatisticsEnabled;
-    }
-
-    public boolean isUseDataType() {
-        return useDataType;
-    }
-
-    public void setUseDataType(boolean useDataType) {
-        this.useDataType = useDataType;
-    }
-
-    public boolean isUseBreadcrumb() {
-        return useBreadcrumb;
-    }
-
-    public void setUseBreadcrumb(boolean useBreadcrumb) {
-        this.useBreadcrumb = useBreadcrumb;
-    }
-
-    public ManagementStatisticsLevel getJmxManagementStatisticsLevel() {
-        return jmxManagementStatisticsLevel;
-    }
-
-    public void setJmxManagementStatisticsLevel(ManagementStatisticsLevel jmxManagementStatisticsLevel) {
-        this.jmxManagementStatisticsLevel = jmxManagementStatisticsLevel;
-    }
-
-    public String getJmxManagementNamePattern() {
-        return jmxManagementNamePattern;
-    }
-
-    public void setJmxManagementNamePattern(String jmxManagementNamePattern) {
-        this.jmxManagementNamePattern = jmxManagementNamePattern;
-    }
-
-    public boolean isJmxCreateConnector() {
-        return jmxCreateConnector;
-    }
-
-    public void setJmxCreateConnector(boolean jmxCreateConnector) {
-        this.jmxCreateConnector = jmxCreateConnector;
-    }
-
-    public String getFileConfigurations() {
-        return fileConfigurations;
-    }
-
-    public void setFileConfigurations(String fileConfigurations) {
-        this.fileConfigurations = fileConfigurations;
-    }
-
-    public String getRouteFilterIncludePattern() {
-        return routeFilterIncludePattern;
-    }
-
-    public void setRouteFilterIncludePattern(String routeFilterIncludePattern) {
-        this.routeFilterIncludePattern = routeFilterIncludePattern;
-    }
-
-    public String getRouteFilterExcludePattern() {
-        return routeFilterExcludePattern;
-    }
-
-    public void setRouteFilterExcludePattern(String routeFilterExcludePattern) {
-        this.routeFilterExcludePattern = routeFilterExcludePattern;
-    }
-
-    public boolean isTraceFormatterShowBody() {
-        return traceFormatterShowBody;
-    }
-
-    public void setTraceFormatterShowBody(boolean traceFormatterShowBody) {
-        this.traceFormatterShowBody = traceFormatterShowBody;
-    }
-
-    public boolean isTracerFormatterShowBodyType() {
-        return tracerFormatterShowBodyType;
-    }
-
-    public void setTracerFormatterShowBodyType(boolean tracerFormatterShowBodyType) {
-        this.tracerFormatterShowBodyType = tracerFormatterShowBodyType;
-    }
-
-    public boolean isTraceFormatterShowBreadCrumb() {
-        return traceFormatterShowBreadCrumb;
-    }
-
-    public void setTraceFormatterShowBreadCrumb(boolean traceFormatterShowBreadCrumb) {
-        this.traceFormatterShowBreadCrumb = traceFormatterShowBreadCrumb;
-    }
-
-    public boolean isTraceFormatterShowExchangeId() {
-        return traceFormatterShowExchangeId;
-    }
-
-    public void setTraceFormatterShowExchangeId(boolean traceFormatterShowExchangeId) {
-        this.traceFormatterShowExchangeId = traceFormatterShowExchangeId;
-    }
-
-    public boolean isTraceFormatterShowHeaders() {
-        return traceFormatterShowHeaders;
-    }
-
-    public void setTraceFormatterShowHeaders(boolean traceFormatterShowHeaders) {
-        this.traceFormatterShowHeaders = traceFormatterShowHeaders;
-    }
-
-    public boolean isTraceFormatterShowProperties() {
-        return traceFormatterShowProperties;
-    }
-
-    public void setTraceFormatterShowProperties(boolean traceFormatterShowProperties) {
-        this.traceFormatterShowProperties = traceFormatterShowProperties;
-    }
-
-    public boolean isTraceFormatterShowNode() {
-        return traceFormatterShowNode;
-    }
-
-    public void setTraceFormatterShowNode(boolean traceFormatterShowNode) {
-        this.traceFormatterShowNode = traceFormatterShowNode;
-    }
-
-    public boolean isTraceFormatterShowExchangePattern() {
-        return traceFormatterShowExchangePattern;
-    }
-
-    public void setTraceFormatterShowExchangePattern(boolean traceFormatterShowExchangePattern) {
-        this.traceFormatterShowExchangePattern = traceFormatterShowExchangePattern;
-    }
-
-    public boolean isTraceFormatterShowException() {
-        return traceFormatterShowException;
-    }
-
-    public void setTraceFormatterShowException(boolean traceFormatterShowException) {
-        this.traceFormatterShowException = traceFormatterShowException;
-    }
-
-    public boolean isTraceFormatterShowRouteId() {
-        return traceFormatterShowRouteId;
-    }
-
-    public void setTraceFormatterShowRouteId(boolean traceFormatterShowRouteId) {
-        this.traceFormatterShowRouteId = traceFormatterShowRouteId;
-    }
-
-    public Integer getTracerFormatterBreadCrumbLength() {
-        return tracerFormatterBreadCrumbLength;
-    }
-
-    public void setTracerFormatterBreadCrumbLength(Integer tracerFormatterBreadCrumbLength) {
-        this.tracerFormatterBreadCrumbLength = tracerFormatterBreadCrumbLength;
-    }
-
-    public boolean isTraceFormatterShowShortExchangeId() {
-        return traceFormatterShowShortExchangeId;
-    }
-
-    public void setTraceFormatterShowShortExchangeId(boolean traceFormatterShowShortExchangeId) {
-        this.traceFormatterShowShortExchangeId = traceFormatterShowShortExchangeId;
-    }
-
-    public Integer getTracerFormatterNodeLength() {
-        return tracerFormatterNodeLength;
-    }
-
-    public void setTracerFormatterNodeLength(Integer tracerFormatterNodeLength) {
-        this.tracerFormatterNodeLength = tracerFormatterNodeLength;
-    }
-
-    public Integer getTracerFormatterMaxChars() {
-        return tracerFormatterMaxChars;
-    }
-
-    public void setTracerFormatterMaxChars(Integer tracerFormatterMaxChars) {
-        this.tracerFormatterMaxChars = tracerFormatterMaxChars;
     }
 
     public boolean isIncludeNonSingletons() {
@@ -1002,19 +499,4 @@ public class CamelConfigurationProperties {
         this.includeNonSingletons = includeNonSingletons;
     }
 
-    public boolean isUseMdcLogging() {
-        return useMdcLogging;
-    }
-
-    public void setUseMdcLogging(boolean useMdcLogging) {
-        this.useMdcLogging = useMdcLogging;
-    }
-
-    public String getThreadNamePattern() {
-        return threadNamePattern;
-    }
-
-    public void setThreadNamePattern(String threadNamePattern) {
-        this.threadNamePattern = threadNamePattern;
-    }
 }

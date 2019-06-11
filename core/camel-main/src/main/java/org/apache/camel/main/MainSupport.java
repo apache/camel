@@ -205,7 +205,7 @@ public abstract class MainSupport extends ServiceSupport {
             "fileWatch") {
             @Override
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                configure().setFileWatchDirectory(parameter);
+                configure().setXmlRoutesReloadDirectory(parameter);
             }
         });
         addOption(new ParameterOption("pl", "propertiesLocation",
@@ -502,7 +502,7 @@ public abstract class MainSupport extends ServiceSupport {
 
     @Deprecated
     public String getFileWatchDirectory() {
-        return mainConfigurationProperties.getFileWatchDirectory();
+        return mainConfigurationProperties.getXmlRoutesReloadDirectory();
     }
 
     /**
@@ -513,12 +513,12 @@ public abstract class MainSupport extends ServiceSupport {
      */
     @Deprecated
     public void setFileWatchDirectory(String fileWatchDirectory) {
-        mainConfigurationProperties.setFileWatchDirectory(fileWatchDirectory);
+        mainConfigurationProperties.setXmlRoutesReloadDirectory(fileWatchDirectory);
     }
 
     @Deprecated
     public boolean isFileWatchDirectoryRecursively() {
-        return mainConfigurationProperties.isFileWatchDirectoryRecursively();
+        return mainConfigurationProperties.isXmlRoutesReloadDirectoryRecursively();
     }
 
     /**
@@ -529,7 +529,7 @@ public abstract class MainSupport extends ServiceSupport {
      */
     @Deprecated
     public void setFileWatchDirectoryRecursively(boolean fileWatchDirectoryRecursively) {
-        mainConfigurationProperties.setFileWatchDirectoryRecursively(fileWatchDirectoryRecursively);
+        mainConfigurationProperties.setXmlRoutesReloadDirectoryRecursively(fileWatchDirectoryRecursively);
     }
 
     @Deprecated
@@ -802,8 +802,8 @@ public abstract class MainSupport extends ServiceSupport {
             }
             LOG.info("Using optional properties from classpath:application.properties");
         }
-        if (mainConfigurationProperties.getFileWatchDirectory() != null) {
-            ReloadStrategy reload = new FileWatcherReloadStrategy(mainConfigurationProperties.getFileWatchDirectory(), mainConfigurationProperties.isFileWatchDirectoryRecursively());
+        if (mainConfigurationProperties.getXmlRoutesReloadDirectory() != null) {
+            ReloadStrategy reload = new FileWatcherReloadStrategy(mainConfigurationProperties.getXmlRoutesReloadDirectory(), mainConfigurationProperties.isXmlRoutesReloadDirectoryRecursively());
             camelContext.setReloadStrategy(reload);
             // ensure reload is added as service and started
             camelContext.addService(reload);
