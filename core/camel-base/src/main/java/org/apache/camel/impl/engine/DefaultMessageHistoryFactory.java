@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
+package org.apache.camel.impl.engine;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -23,6 +23,8 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.support.DefaultMessageHistory;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 @ManagedResource(description = "Managed MessageHistoryFactory")
@@ -30,17 +32,13 @@ public class DefaultMessageHistoryFactory extends ServiceSupport implements Mess
 
     private boolean copyMessage;
     private String nodePattern;
+    private volatile String[] nodePatternParts;
 
     @Override
     public MessageHistory newMessageHistory(String routeId, NamedNode node, long timestamp, Exchange exchange) {
-        if (!isRunAllowed()) {
-            return null;
-        }
-
-        if (nodePattern != null) {
+        if (nodePatternParts != null) {
             String name = node.getShortName();
-            String[] parts = nodePattern.split(",");
-            for (String part : parts) {
+            for (String part : nodePatternParts) {
                 boolean match = PatternHelper.matchPattern(name, part);
                 if (!match) {
                     return null;
@@ -74,6 +72,9 @@ public class DefaultMessageHistoryFactory extends ServiceSupport implements Mess
     @ManagedAttribute(description = "Pattern to filter EIPs")
     public void setNodePattern(String nodePattern) {
         this.nodePattern = nodePattern;
+        if (nodePattern != null) {
+            this.nodePatternParts = nodePattern.split(",");
+        }
     }
 
     @Override
