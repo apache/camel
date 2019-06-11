@@ -426,14 +426,6 @@ public class CamelConfigurationProperties extends DefaultConfigurationProperties
         this.warnOnEarlyShutdown = warnOnEarlyShutdown;
     }
 
-    public boolean isLoadTypeConverters() {
-        return loadTypeConverters;
-    }
-
-    public void setLoadTypeConverters(boolean loadTypeConverters) {
-        this.loadTypeConverters = loadTypeConverters;
-    }
-
     public String getJavaRoutesIncludePattern() {
         return javaRoutesIncludePattern;
     }

@@ -37,6 +37,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean jmxEnabled = true;
     private int producerTemplateCacheSize = 1000;
     private int consumerTemplateCacheSize = 1000;
+    private boolean loadTypeConverters = true;
     private int logDebugMaxChars;
     private boolean streamCachingEnabled;
     private String streamCachingSpoolDirectory;
@@ -229,6 +230,21 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setConsumerTemplateCacheSize(int consumerTemplateCacheSize) {
         this.consumerTemplateCacheSize = consumerTemplateCacheSize;
+    }
+
+    public boolean isLoadTypeConverters() {
+        return loadTypeConverters;
+    }
+
+    /**
+     * Whether to load custom type converters by scanning classpath.
+     * This is used for backwards compatibility with Camel 2.x.
+     * Its recommended to migrate to use fast type converter loading
+     * by setting <tt>@Converter(loader = true)</tt> on your custom
+     * type converter classes.
+     */
+    public void setLoadTypeConverters(boolean loadTypeConverters) {
+        this.loadTypeConverters = loadTypeConverters;
     }
 
     public int getLogDebugMaxChars() {
@@ -750,6 +766,18 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withConsumerTemplateCacheSize(int consumerTemplateCacheSize) {
         this.consumerTemplateCacheSize = consumerTemplateCacheSize;
+        return (T) this;
+    }
+
+    /**
+     * Whether to load custom type converters by scanning classpath.
+     * This is used for backwards compatibility with Camel 2.x.
+     * Its recommended to migrate to use fast type converter loading
+     * by setting <tt>@Converter(loader = true)</tt> on your custom
+     * type converter classes.
+     */
+    public T withLoadTypeConverters(boolean loadTypeConverters) {
+        this.loadTypeConverters = loadTypeConverters;
         return (T) this;
     }
 
