@@ -29,7 +29,7 @@ import org.junit.Test;
 
 public class ManagedNonManagedServiceTest extends ManagementTestSupport {
 
-    private static final int SERVICES = 11;
+    private static final int SERVICES = 12;
 
     @Test
     public void testService() throws Exception {
@@ -37,6 +37,8 @@ public class ManagedNonManagedServiceTest extends ManagementTestSupport {
         if (isPlatform("aix")) {
             return;
         }
+
+        template.sendBody("direct:start", "Hello World");
 
         // must enable always as CamelContext has been started
         // and we add the service manually below
