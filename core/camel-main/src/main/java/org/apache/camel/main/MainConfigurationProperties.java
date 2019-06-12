@@ -30,6 +30,24 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
 
     // extended configuration
     private final HystrixConfigurationProperties hystrixConfigurationProperties = new HystrixConfigurationProperties(this);
+    private final RestConfigurationProperties restConfigurationProperties = new RestConfigurationProperties(this);
+
+    // extended
+    // --------------------------------------------------------------
+
+    /**
+     * To configure Hystrix EIP
+     */
+    public HystrixConfigurationProperties hystrix() {
+        return hystrixConfigurationProperties;
+    }
+
+    /**
+     * To configure Rest DSL
+     */
+    public RestConfigurationProperties rest() {
+        return restConfigurationProperties;
+    }
 
     // getter and setters
     // --------------------------------------------------------------
@@ -199,10 +217,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     public MainConfigurationProperties withDurationHitExitCode(int durationHitExitCode) {
         this.durationHitExitCode = durationHitExitCode;
         return this;
-    }
-
-    public HystrixConfigurationProperties hystrix() {
-        return hystrixConfigurationProperties;
     }
 
 }
