@@ -34,6 +34,7 @@
     <description>Camel CXF support</description>
 
     <properties>
+        <camel.osgi.import.defaults/>
         <camel.osgi.import>
             !org.springframework.boot.*,
             !org.springframework.context.annotation.*;resolution:=optional,
