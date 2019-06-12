@@ -16,6 +16,8 @@
  */
 package org.apache.camel.main;
 
+import java.util.HashMap;
+
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.PatternHelper;
 
@@ -268,6 +270,72 @@ public class RestConfigurationProperties extends RestConfiguration {
      */
     public RestConfigurationProperties withXmlDataFormat(String xmlDataFormat) {
         setXmlDataFormat(xmlDataFormat);
+        return this;
+    }
+
+    /**
+     * Adds a component property
+     */
+    public RestConfigurationProperties withComponentProperty(String key, Object value) {
+        if (getComponentProperties() == null) {
+            setComponentProperties(new HashMap<>());
+        }
+        getComponentProperties().put(key, value);
+        return this;
+    }
+
+    /**
+     * Adds a endpoint property
+     */
+    public RestConfigurationProperties withEndpointProperty(String key, Object value) {
+        if (getEndpointProperties() == null) {
+            setEndpointProperties(new HashMap<>());
+        }
+        getEndpointProperties().put(key, value);
+        return this;
+    }
+
+    /**
+     * Adds a consumer property
+     */
+    public RestConfigurationProperties withConsumerProperty(String key, Object value) {
+        if (getConsumerProperties() == null) {
+            setConsumerProperties(new HashMap<>());
+        }
+        getConsumerProperties().put(key, value);
+        return this;
+    }
+
+    /**
+     * Adds a data format property
+     */
+    public RestConfigurationProperties withDataFormatProperty(String key, Object value) {
+        if (getDataFormatProperties() == null) {
+            setDataFormatProperties(new HashMap<>());
+        }
+        getDataFormatProperties().put(key, value);
+        return this;
+    }
+
+    /**
+     * Adds a api property
+     */
+    public RestConfigurationProperties withApiProperty(String key, Object value) {
+        if (getApiProperties() == null) {
+            setApiProperties(new HashMap<>());
+        }
+        getApiProperties().put(key, value);
+        return this;
+    }
+
+    /**
+     * Adds a CORS header property
+     */
+    public RestConfigurationProperties withCorsHeader(String key, String value) {
+        if (getCorsHeaders() == null) {
+            setCorsHeaders(new HashMap<>());
+        }
+        getCorsHeaders().put(key, value);
         return this;
     }
 
