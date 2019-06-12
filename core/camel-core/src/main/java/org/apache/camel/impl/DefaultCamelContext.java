@@ -53,6 +53,7 @@ import org.apache.camel.impl.engine.DefaultUnitOfWorkFactory;
 import org.apache.camel.impl.engine.DefaultUuidGenerator;
 import org.apache.camel.impl.engine.EndpointKey;
 import org.apache.camel.impl.engine.HeadersMapFactoryResolver;
+import org.apache.camel.impl.engine.ReactiveExecutorResolver;
 import org.apache.camel.impl.engine.RestRegistryFactoryResolver;
 import org.apache.camel.impl.engine.ServicePool;
 import org.apache.camel.impl.engine.WebSpherePackageScanClassResolver;
@@ -308,6 +309,6 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     }
 
     protected ReactiveExecutor createReactiveExecutor() {
-        return new DefaultReactiveExecutor();
+        return new ReactiveExecutorResolver().resolve(this);
     }
 }
