@@ -3142,6 +3142,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         getProducerServicePool();
         getPollingConsumerServicePool();
         getRestRegistryFactory();
+        getReactiveExecutor();
 
         if (isTypeConverterStatisticsEnabled() != null) {
             getTypeConverterRegistry().getStatistics().setStatisticsEnabled(isTypeConverterStatisticsEnabled());
@@ -3170,7 +3171,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         getBeanProxyFactory();
         getBeanProcessorFactory();
         getBeanPostProcessor();
-        getReactiveExecutor();
     }
 
     /**
