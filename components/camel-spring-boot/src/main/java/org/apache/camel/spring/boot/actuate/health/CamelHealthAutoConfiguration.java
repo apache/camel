@@ -35,14 +35,15 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(HealthCheckVerboseConfiguration.class)
 public class CamelHealthAutoConfiguration {
 
-    private  HealthCheckVerboseConfiguration properties; 
+    private HealthCheckVerboseConfiguration properties;
+
     public CamelHealthAutoConfiguration(HealthCheckVerboseConfiguration configuration) {
         this.properties = configuration;
     }
 
     @ConditionalOnClass({CamelContext.class})
     @ConditionalOnMissingBean(CamelHealthIndicator.class)
-    protected  class CamelHealthIndicatorInitializer {
+    protected class CamelHealthIndicatorInitializer {
 
         @Bean
         public HealthIndicator camelHealthIndicator(CamelContext camelContext) {
