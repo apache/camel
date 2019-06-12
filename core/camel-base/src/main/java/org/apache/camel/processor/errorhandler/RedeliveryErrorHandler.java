@@ -48,7 +48,6 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
-import org.apache.camel.support.ReactiveHelper;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -153,9 +152,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         RedeliveryState state = new RedeliveryState(exchange, callback);
         // Run it
         if (exchange.isTransacted()) {
-            ReactiveHelper.scheduleSync(state);
+            camelContext.getReactiveExecutor().scheduleSync(state);
         } else {
-            ReactiveHelper.scheduleMain(state);
+            camelContext.getReactiveExecutor().scheduleMain(state);
         }
         return false;
     }
@@ -442,7 +441,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                         if (log.isTraceEnabled()) {
                             log.trace("Scheduling redelivery task to run in {} millis for exchangeId: {}", redeliveryDelay, exchange.getExchangeId());
                         }
-                        executorService.schedule(() -> ReactiveHelper.schedule(this::redeliver), redeliveryDelay, TimeUnit.MILLISECONDS);
+                        executorService.schedule(() -> camelContext.getReactiveExecutor().schedule(this::redeliver), redeliveryDelay, TimeUnit.MILLISECONDS);
 
                     } else {
                         // async delayed redelivery was disabled or we are transacted so we must be synchronous
@@ -458,9 +457,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                                 // mark the exchange as redelivery exhausted so the failure processor / dead letter channel can process the exchange
                                 exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
                                 // jump to start of loop which then detects that we are failed and exhausted
-                                ReactiveHelper.schedule(this);
+                                camelContext.getReactiveExecutor().schedule(this);
                             } else {
-                                ReactiveHelper.schedule(this::redeliver);
+                                camelContext.getReactiveExecutor().schedule(this::redeliver);
                             }
                         } catch (InterruptedException e) {
                             redeliverySleepCounter.decrementAndGet();
@@ -469,12 +468,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                             // mark the exchange to stop continue routing when interrupted
                             // as we do not want to continue routing (for example a task has been cancelled)
                             exchange.setProperty(Exchange.ROUTE_STOP, Boolean.TRUE);
-                            ReactiveHelper.callback(callback);
+                            camelContext.getReactiveExecutor().callback(callback);
                         }
                     }
                 } else {
                     // execute the task immediately
-                    ReactiveHelper.schedule(this::redeliver);
+                    camelContext.getReactiveExecutor().schedule(this::redeliver);
                 }
             } else {
                 // Simple delivery
@@ -482,10 +481,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     // only process if the exchange hasn't failed
                     // and it has not been handled by the error processor
                     if (isDone(exchange)) {
-                        ReactiveHelper.callback(callback);
+                        camelContext.getReactiveExecutor().callback(callback);
                     } else {
                         // error occurred so loop back around which we do by invoking the processAsyncErrorHandler
-                        ReactiveHelper.schedule(this);
+                        camelContext.getReactiveExecutor().schedule(this);
                     }
                 });
             }
@@ -563,11 +562,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 // only process if the exchange hasn't failed
                 // and it has not been handled by the error processor
                 if (isDone(exchange)) {
-                    ReactiveHelper.callback(callback);
+                    camelContext.getReactiveExecutor().callback(callback);
                     return;
                 } else {
                     // error occurred so loop back around which we do by invoking the processAsyncErrorHandler
-                    ReactiveHelper.schedule(this);
+                    camelContext.getReactiveExecutor().schedule(this);
                 }
             });
         }
@@ -845,7 +844,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                         EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, deadLetterChannel, deadLetterUri);
                     } finally {
                         // if the fault was handled asynchronously, this should be reflected in the callback as well
-                        ReactiveHelper.callback(callback);
+                        camelContext.getReactiveExecutor().callback(callback);
                     }
                 });
             } else {
@@ -864,7 +863,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     prepareExchangeAfterFailure(exchange, isDeadLetterChannel, shouldHandle, shouldContinue);
                 } finally {
                     // callback we are done
-                    ReactiveHelper.callback(callback);
+                    camelContext.getReactiveExecutor().callback(callback);
                 }
             }
 

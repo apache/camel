@@ -56,7 +56,6 @@ import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.support.ReactiveHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
@@ -220,12 +219,12 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
         MulticastState state = new MulticastState(exchange, pairs, callback);
         if (isParallelProcessing()) {
-            executorService.submit(() -> ReactiveHelper.schedule(state));
+            executorService.submit(() -> exchange.getContext().getReactiveExecutor().schedule(state));
         } else {
             if (exchange.isTransacted()) {
-                ReactiveHelper.scheduleSync(state);
+                exchange.getContext().getReactiveExecutor().scheduleSync(state);
             } else {
-                ReactiveHelper.scheduleMain(state);
+                exchange.getContext().getReactiveExecutor().scheduleMain(state);
             }
         }
 
@@ -237,9 +236,9 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
     protected void schedule(Runnable runnable) {
         if (isParallelProcessing()) {
-            executorService.submit(() -> ReactiveHelper.schedule(runnable));
+            executorService.submit(() -> camelContext.getReactiveExecutor().schedule(runnable));
         } else {
-            ReactiveHelper.schedule(runnable, "Multicast next step");
+            camelContext.getReactiveExecutor().schedule(runnable, "Multicast next step");
         }
     }
 
@@ -524,7 +523,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             original.setProperty(Exchange.REDELIVERY_EXHAUSTED, exhaust);
         }
 
-        ReactiveHelper.callback(callback);
+        camelContext.getReactiveExecutor().callback(callback);
     }
 
     /**

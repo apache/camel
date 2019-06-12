@@ -20,7 +20,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.support.ReactiveHelper;
 
 /**
  * A {@link LoadBalancer} implementations which sends to all destinations
@@ -33,7 +32,7 @@ public class TopicLoadBalancer extends LoadBalancerSupport {
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         AsyncProcessor[] processors = doGetProcessors();
-        ReactiveHelper.schedule(new State(exchange, callback, processors)::run);
+        exchange.getContext().getReactiveExecutor().schedule(new State(exchange, callback, processors)::run);
         return false;
     }
 
@@ -64,7 +63,7 @@ public class TopicLoadBalancer extends LoadBalancerSupport {
                 exchange.setException(current.getException());
                 callback.done(false);
             } else {
-                ReactiveHelper.schedule(this::run);
+                exchange.getContext().getReactiveExecutor().schedule(this::run);
             }
         }
     }

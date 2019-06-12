@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.engine;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.support.ReactiveHelper;
 
@@ -57,5 +58,10 @@ public class DefaultReactiveExecutor implements ReactiveExecutor {
     @Override
     public boolean executeFromQueue() {
         return ReactiveHelper.executeFromQueue();
+    }
+
+    @Override
+    public void callback(AsyncCallback callback) {
+        ReactiveHelper.callback(callback);
     }
 }
