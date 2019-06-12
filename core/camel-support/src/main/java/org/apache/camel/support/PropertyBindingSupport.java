@@ -442,13 +442,14 @@ public final class PropertyBindingSupport {
                         Method method = findBestSetterMethod(newClass, part, fluentBuilder);
                         if (method != null) {
                             Class<?> parameterType = method.getParameterTypes()[0];
+                            Object instance = null;
                             if (parameterType != null && org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor(parameterType)) {
-                                Object instance = context.getInjector().newInstance(parameterType);
-                                if (instance != null) {
-                                    org.apache.camel.support.ObjectHelper.invokeMethod(method, newTarget, instance);
-                                    newTarget = instance;
-                                    newClass = newTarget.getClass();
-                                }
+                                instance = context.getInjector().newInstance(parameterType);
+                            }
+                            if (instance != null) {
+                                org.apache.camel.support.ObjectHelper.invokeMethod(method, newTarget, instance);
+                                newTarget = instance;
+                                newClass = newTarget.getClass();
                             }
                         }
                     } else {
