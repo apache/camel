@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.16*
 
-The *elsql:* component is an extension to the existing
+The ELSQL component is an extension to the existing
 <<sql-component,SQL Component>> that uses
 https://github.com/OpenGamma/ElSql[ElSql] to define the SQL queries. 
 
@@ -40,10 +40,12 @@ The parameters to the SQL queries are named parameters in the elsql
 mapping files, and maps to corresponding keys from the Camel message, in
 the given precedence:
 
-1. *Camel 2.16.1:* from message body if <<simple-language,Simple>>
+1. from message body if <<simple-language,Simple>>
 expression.
 
-2. from message body if its a `java.util.Map`3. from message headers
+2. from message body if its a `java.util.Map`
+
+3. from message headers
 
 If a named parameter cannot be resolved, then an exception is thrown.
 

@@ -293,10 +293,10 @@ headers).
 
 |`parserFactory` |`null` |Uses the default Flatpack parser factory.
 
-|`allowShortLines` |`false` |*Camel 2.9.7 and 2.10.5 onwards*: Allows for lines to be shorter than
+|`allowShortLines` |`false` |Allows for lines to be shorter than
 expected and ignores the extra characters.
 
-|`ignoreExtraColumns` |`false` |*Camel 2.9.7 and 2.10.5 onwards*: Allows for lines to be longer than
+|`ignoreExtraColumns` |`false` |Allows for lines to be longer than
 expected and ignores the extra characters.
 |=======================================================================
 
