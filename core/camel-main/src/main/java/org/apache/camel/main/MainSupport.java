@@ -41,11 +41,13 @@ import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
@@ -795,10 +797,11 @@ public abstract class MainSupport extends ServiceSupport {
         // lookup and configure SPI beans
         DefaultConfigurationConfigurer.afterPropertiesSet(camelContext);
 
-        // now configure context with additional properties
+        // now configure context/hystrix/rest with additional properties
         Properties prop = camelContext.getPropertiesComponent().loadProperties();
         Map<String, Object> properties = new LinkedHashMap<>();
         Map<String, Object> hystrixProperties = new LinkedHashMap<>();
+        Map<String, Object> restProperties = new LinkedHashMap<>();
         for (String key : prop.stringPropertyNames()) {
             if (key.startsWith("camel.context.")) {
                 // grab the value
@@ -810,6 +813,11 @@ public abstract class MainSupport extends ServiceSupport {
                 String value = prop.getProperty(key);
                 String option = key.substring(14);
                 hystrixProperties.put(option, value);
+            } else if (key.startsWith("camel.rest.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(11);
+                restProperties.put(option, value);
             }
         }
         if (!properties.isEmpty()) {
@@ -825,6 +833,16 @@ public abstract class MainSupport extends ServiceSupport {
                 model.setHystrixConfiguration(hystrix);
             }
             setCamelProperties(camelContext, hystrix, hystrixProperties, true);
+        }
+        if (!restProperties.isEmpty()) {
+            LOG.info("Auto configuring Rest DSL from loaded properties: {}", restProperties.size());
+            ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
+            RestConfiguration rest = model.getRestConfiguration();
+            if (rest == null) {
+                rest = new RestConfiguration();
+                model.setRestConfiguration(rest);
+            }
+            setCamelProperties(camelContext, rest, restProperties, true);
         }
     }
 
