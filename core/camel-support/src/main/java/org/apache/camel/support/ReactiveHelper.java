@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A basic reactive engine that uses a worker pool to process tasks.
  */
+@Deprecated
 public final class ReactiveHelper {
 
     private static final ThreadLocal<Worker> WORKERS = ThreadLocal.withInitial(Worker::new);
