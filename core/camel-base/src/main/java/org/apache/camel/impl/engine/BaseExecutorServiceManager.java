@@ -52,10 +52,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default {@link org.apache.camel.spi.ExecutorServiceManager}.
- *
+ * Base {@link org.apache.camel.spi.ExecutorServiceManager} which can be used for implementations
  */
-public class BaseExecutorServiceManager extends ServiceSupport implements ExecutorServiceManager {
+public abstract class BaseExecutorServiceManager extends ServiceSupport implements ExecutorServiceManager {
     private static final Logger LOG = LoggerFactory.getLogger(BaseExecutorServiceManager.class);
 
     private final CamelContext camelContext;
