@@ -45,6 +45,7 @@ import org.apache.camel.impl.engine.DefaultMessageHistoryFactory;
 import org.apache.camel.impl.engine.DefaultNodeIdFactory;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.engine.DefaultProcessorFactory;
+import org.apache.camel.impl.engine.DefaultReactiveExecutor;
 import org.apache.camel.impl.engine.DefaultRouteController;
 import org.apache.camel.impl.engine.DefaultShutdownStrategy;
 import org.apache.camel.impl.engine.DefaultStreamCachingStrategy;
@@ -81,6 +82,7 @@ import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
@@ -303,5 +305,9 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
 
     protected StreamCachingStrategy createStreamCachingStrategy() {
         return new DefaultStreamCachingStrategy();
+    }
+
+    protected ReactiveExecutor createReactiveExecutor() {
+        return new DefaultReactiveExecutor();
     }
 }

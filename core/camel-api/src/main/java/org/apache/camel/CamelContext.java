@@ -37,6 +37,7 @@ import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
@@ -1227,5 +1228,12 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * Sets a custom {@link HeadersMapFactory} to be used.
      */
     void setHeadersMapFactory(HeadersMapFactory factory);
+
+    ReactiveExecutor getReactiveExecutor();
+
+    /**
+     * Sets a custom {@link ReactiveExecutor} to be used.
+     */
+    void setReactiveExecutor(ReactiveExecutor reactiveExecutor);
 
 }
