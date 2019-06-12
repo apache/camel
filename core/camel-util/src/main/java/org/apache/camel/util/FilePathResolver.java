@@ -22,13 +22,14 @@ import java.util.regex.Pattern;
 /**
  * A resolver for file paths that supports resolving with system and environment properties.
  */
-public final class FilePathResolver {
+public class FilePathResolver {
 
     // must be non greedy patterns
     private static final Pattern ENV_PATTERN = Pattern.compile("\\$\\{env:(.*?)\\}", Pattern.DOTALL);
     private static final Pattern SYS_PATTERN = Pattern.compile("\\$\\{(.*?)\\}", Pattern.DOTALL);
 
     private FilePathResolver() {
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     /**

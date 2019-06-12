@@ -19,9 +19,10 @@ package org.apache.camel.util;
 /**
  * Unit utils.
  */
-public final class UnitUtils {
+public class UnitUtils {
 
     private UnitUtils() {
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     /**

@@ -23,8 +23,9 @@ import java.util.function.Predicate;
  * Predicate helpers, inspired by http://minborgsjavapot.blogspot.it/2016/03/put-your-java-8-method-references-to.html
  *
  */
-public final class Predicates {
+public class Predicates {
     private Predicates() {
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     /**

@@ -21,8 +21,9 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public final class Bindings {
+public class Bindings {
     private Bindings() {
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     public static <T1, T2> Consumer<T2> bind(T1 v1, BiConsumer<T1, T2> consumer) {

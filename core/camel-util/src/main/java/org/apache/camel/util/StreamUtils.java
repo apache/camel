@@ -20,8 +20,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public final class StreamUtils {
+public class StreamUtils {
     private StreamUtils() {
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     /**

@@ -23,9 +23,10 @@ import java.util.Map;
  * Bridge class for ActiveMQ component
  */
 @Deprecated
-public final class IntrospectionSupport {
+public class IntrospectionSupport {
 
     private IntrospectionSupport() {
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     /**

@@ -33,10 +33,10 @@ import javax.naming.NamingEnumeration;
  * Utility methods for type casting.
  */
 @SuppressWarnings("unchecked")
-public final class CastUtils {
+public class CastUtils {
 
     private CastUtils() {
-        //utility class, never constructed
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     public static <T, U> Map<T, U> cast(Map<?, ?> p) {

@@ -29,12 +29,13 @@ import java.util.regex.Pattern;
 /**
  * Helper methods for working with Strings.
  */
-public final class StringHelper {
+public class StringHelper {
 
     /**
      * Constructor of utility class should be private.
      */
     private StringHelper() {
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     /**

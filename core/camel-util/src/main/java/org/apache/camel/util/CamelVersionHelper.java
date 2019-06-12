@@ -28,10 +28,10 @@ import java.util.Stack;
 /**
  * A simple util to test Camel versions.
  */
-public final class CamelVersionHelper {
+public class CamelVersionHelper {
 
     private CamelVersionHelper() {
-        // utility class, never constructed
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     /**

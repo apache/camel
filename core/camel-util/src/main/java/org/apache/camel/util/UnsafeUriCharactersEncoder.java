@@ -25,7 +25,7 @@ import java.util.List;
  * <p/>
  * A good source for details is <a href="http://en.wikipedia.org/wiki/Url_encode">wikipedia url encode</a> article.
  */
-public final class UnsafeUriCharactersEncoder {
+public class UnsafeUriCharactersEncoder {
     private static BitSet unsafeCharactersRfc1738;
     private static BitSet unsafeCharactersHttp;
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C',
@@ -68,7 +68,7 @@ public final class UnsafeUriCharactersEncoder {
     }
 
     private UnsafeUriCharactersEncoder() {
-        // util class
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     public static String encode(String s) {

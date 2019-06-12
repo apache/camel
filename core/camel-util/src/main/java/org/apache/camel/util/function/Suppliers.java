@@ -23,8 +23,9 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public final class Suppliers {
+public class Suppliers {
     private Suppliers() {
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     public static <T> Supplier<T> memorize(Supplier<T> supplier) {

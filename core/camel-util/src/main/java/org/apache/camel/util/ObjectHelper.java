@@ -48,17 +48,15 @@ import org.slf4j.LoggerFactory;
 /**
  * A number of useful helper methods for working with Objects
  */
-public final class ObjectHelper {
+public class ObjectHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(ObjectHelper.class);
 
     private static final Float FLOAT_NAN = Float.NaN;
     private static final Double DOUBLE_NAN = Double.NaN;
 
-    /**
-     * Utility classes should not have a public constructor.
-     */
     private ObjectHelper() {
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     /**

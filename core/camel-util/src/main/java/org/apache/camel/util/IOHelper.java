@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 /**
  * IO helper class.
  */
-public final class IOHelper {
+public class IOHelper {
 
     public static Supplier<Charset> defaultCharset = Charset::defaultCharset;
 
@@ -62,7 +62,7 @@ public final class IOHelper {
     private static final boolean ZERO_BYTE_EOL_ENABLED = "true".equalsIgnoreCase(System.getProperty("camel.zeroByteEOLEnabled", "true"));
 
     private IOHelper() {
-        // Utility Class
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     /**

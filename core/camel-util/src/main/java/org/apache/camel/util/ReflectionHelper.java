@@ -26,10 +26,10 @@ import java.util.Arrays;
  * <p/>
  * This code is based on org.apache.camel.spring.util.ReflectionUtils class.
  */
-public final class ReflectionHelper {
+public class ReflectionHelper {
 
     private ReflectionHelper() {
-        // utility class
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     /**

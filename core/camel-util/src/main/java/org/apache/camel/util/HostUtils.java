@@ -26,10 +26,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-public final class HostUtils {
+public class HostUtils {
 
     private HostUtils() {
-        //Utility Class
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     /**

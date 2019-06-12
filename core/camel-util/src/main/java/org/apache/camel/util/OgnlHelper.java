@@ -24,11 +24,12 @@ import java.util.regex.Pattern;
 /**
  * Helper for Camel OGNL (Object-Graph Navigation Language) expressions.
  */
-public final class OgnlHelper {
+public class OgnlHelper {
 
     private static final Pattern INDEX_PATTERN = Pattern.compile("^(.*)\\[(.*)\\]$");
 
     private OgnlHelper() {
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     /**

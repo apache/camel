@@ -22,9 +22,10 @@ import java.util.List;
 /**
  * Utility class for parsing quoted string which is intended for parameters, separated by comma.
  */
-public final class StringQuoteHelper {
+public class StringQuoteHelper {
 
     private StringQuoteHelper() {
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     /**

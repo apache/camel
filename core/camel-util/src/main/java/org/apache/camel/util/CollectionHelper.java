@@ -35,12 +35,10 @@ import org.w3c.dom.NodeList;
 /**
  * A number of helper methods for working with collections
  */
-public final class CollectionHelper {
+public class CollectionHelper {
 
-    /**
-     * Utility classes should not have a public constructor.
-     */
     private CollectionHelper() {
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     /**

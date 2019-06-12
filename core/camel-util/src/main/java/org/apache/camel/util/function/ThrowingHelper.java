@@ -24,8 +24,9 @@ import java.util.function.Supplier;
 
 import org.apache.camel.util.ObjectHelper;
 
-public final class ThrowingHelper {
+public class ThrowingHelper {
     private ThrowingHelper() {
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     public static <V, T extends Throwable> Supplier<V> wrapAsSupplier(ThrowingSupplier<V, T> supplier) {

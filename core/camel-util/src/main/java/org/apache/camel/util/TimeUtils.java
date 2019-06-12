@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Time utils.
  */
-public final class TimeUtils {
+public class TimeUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(TimeUtils.class);
     private static final Pattern NUMBERS_ONLY_STRING_PATTERN = Pattern.compile("^[-]?(\\d)+$", Pattern.CASE_INSENSITIVE);
@@ -38,6 +38,7 @@ public final class TimeUtils {
     private static final Pattern SECONDS_REGEX_PATTERN = Pattern.compile("((\\d)*(\\d))s(ec(ond)?(s)?)?", Pattern.CASE_INSENSITIVE);
 
     private TimeUtils() {
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     /**

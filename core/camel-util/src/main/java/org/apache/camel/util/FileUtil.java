@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * File utilities.
  */
-public final class FileUtil {
+public class FileUtil {
     
     public static final int BUFFER_SIZE = 128 * 1024;
 
@@ -46,7 +46,7 @@ public final class FileUtil {
     private static boolean windowsOs = initWindowsOs();
 
     private FileUtil() {
-        // Utils method
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     private static boolean initWindowsOs() {

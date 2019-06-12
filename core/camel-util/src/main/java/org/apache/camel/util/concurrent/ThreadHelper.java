@@ -25,13 +25,14 @@ import org.apache.camel.util.StringHelper;
 /**
  * Various helper method for thread naming.
  */
-public final class ThreadHelper {
+public class ThreadHelper {
     public static final String DEFAULT_PATTERN = "Camel Thread ##counter# - #name#";
     private static final Pattern INVALID_PATTERN = Pattern.compile(".*#\\w+#.*");
 
     private static AtomicLong threadCounter = new AtomicLong();
     
     private ThreadHelper() {
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
     
     private static long nextThreadCounter() {

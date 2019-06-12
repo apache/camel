@@ -22,10 +22,10 @@ import java.net.UnknownHostException;
 /**
  * Util class for {@link java.net.InetAddress}
  */
-public final class InetAddressUtil {
+public class InetAddressUtil {
 
     private InetAddressUtil() {
-        // util class
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     /**

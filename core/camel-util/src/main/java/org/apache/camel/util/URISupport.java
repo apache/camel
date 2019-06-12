@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 /**
  * URI utilities.
  */
-public final class URISupport {
+public class URISupport {
 
     public static final String RAW_TOKEN_PREFIX = "RAW";
     public static final char[] RAW_TOKEN_START = {'(', '{'};
@@ -54,7 +54,7 @@ public final class URISupport {
     private static final String CHARSET = "UTF-8";
 
     private URISupport() {
-        // Helper class
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     /**

@@ -23,8 +23,9 @@ import java.util.function.Supplier;
 import org.apache.camel.util.function.ThrowingRunnable;
 import org.apache.camel.util.function.ThrowingSupplier;
 
-public final class LockHelper {
+public class LockHelper {
     private LockHelper() {
+        throw new AssertionError("Utility class can't be instantiated or extended");
     }
 
     public static void doWithReadLock(StampedLock lock, Runnable task) {
