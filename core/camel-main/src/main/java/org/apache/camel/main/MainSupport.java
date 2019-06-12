@@ -37,7 +37,9 @@ import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.DataFormat;
@@ -796,18 +798,34 @@ public abstract class MainSupport extends ServiceSupport {
         // now configure context with additional properties
         Properties prop = camelContext.getPropertiesComponent().loadProperties();
         Map<String, Object> properties = new LinkedHashMap<>();
+        Map<String, Object> hystrixProperties = new LinkedHashMap<>();
         for (String key : prop.stringPropertyNames()) {
             if (key.startsWith("camel.context.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(14);
                 properties.put(option, value);
+            } else if (key.startsWith("camel.hystrix.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(14);
+                hystrixProperties.put(option, value);
             }
         }
         if (!properties.isEmpty()) {
             LOG.info("Auto configuring CamelContext from loaded properties: {}", properties.size());
+            setCamelProperties(camelContext, camelContext, properties, true);
         }
-        setCamelProperties(camelContext, camelContext, properties, true);
+        if (!hystrixProperties.isEmpty()) {
+            LOG.info("Auto configuring Hystrix EIP from loaded properties: {}", hystrixProperties.size());
+            ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
+            HystrixConfigurationDefinition hystrix = model.getHystrixConfiguration(null);
+            if (hystrix == null) {
+                hystrix = new HystrixConfigurationDefinition();
+                model.setHystrixConfiguration(hystrix);
+            }
+            setCamelProperties(camelContext, hystrix, hystrixProperties, true);
+        }
     }
 
     protected void autoConfigurationPropertiesComponent(CamelContext camelContext) throws Exception {
@@ -857,9 +875,8 @@ public abstract class MainSupport extends ServiceSupport {
 
         if (!properties.isEmpty()) {
             LOG.info("Auto configuring main from loaded properties: {}", properties.size());
+            setCamelProperties(camelContext, config, properties, true);
         }
-
-        setCamelProperties(camelContext, config, properties, true);
     }
 
     protected void autoConfigurationFromProperties(CamelContext camelContext) throws Exception {
