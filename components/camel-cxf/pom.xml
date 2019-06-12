@@ -54,7 +54,7 @@
             javax.xml.ws*;version="[0.0,3.0)",
             org.apache.camel.*;${camel.osgi.import.camel.version},
             org.springframework*;version="${spring-version-range}";resolution:=optional,
-            org.apache.cxf.*;version="${cxf-version-range}"
+            org.apache.cxf.*;version="${cxf-version-range}",
             ${camel.osgi.import.defaults},
             ${camel.osgi.import.additional},
             org.osgi.service.blueprint;resolution:=optional,
