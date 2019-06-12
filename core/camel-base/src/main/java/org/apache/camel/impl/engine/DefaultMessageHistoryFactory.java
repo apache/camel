@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.engine;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
@@ -30,9 +31,20 @@ import org.apache.camel.support.service.ServiceSupport;
 @ManagedResource(description = "Managed MessageHistoryFactory")
 public class DefaultMessageHistoryFactory extends ServiceSupport implements MessageHistoryFactory {
 
+    private CamelContext camelContext;
     private boolean copyMessage;
     private String nodePattern;
     private volatile String[] nodePatternParts;
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     @Override
     public MessageHistory newMessageHistory(String routeId, NamedNode node, long timestamp, Exchange exchange) {
@@ -52,6 +64,11 @@ public class DefaultMessageHistoryFactory extends ServiceSupport implements Mess
         }
 
         return new DefaultMessageHistory(routeId, node, timestamp, msg);
+    }
+
+    @ManagedAttribute(description = "Whether message history is enabled")
+    public boolean isEnabled() {
+        return camelContext != null ? camelContext.isMessageHistory() : false;
     }
 
     @ManagedAttribute(description = "Whether a copy of the message is included in the message history")
