@@ -28,6 +28,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private int durationHitExitCode;
     private boolean hangupInterceptorEnabled = true;
 
+    // extended configuration
+    private final HystrixConfigurationProperties hystrixConfigurationProperties = new HystrixConfigurationProperties(this);
+
     // getter and setters
     // --------------------------------------------------------------
 
@@ -196,6 +199,10 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     public MainConfigurationProperties withDurationHitExitCode(int durationHitExitCode) {
         this.durationHitExitCode = durationHitExitCode;
         return this;
+    }
+
+    public HystrixConfigurationProperties hystrix() {
+        return hystrixConfigurationProperties;
     }
 
 }
