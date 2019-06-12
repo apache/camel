@@ -22,6 +22,9 @@ import org.apache.camel.AsyncCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A basic reactive engine that uses a worker pool to process tasks.
+ */
 public final class ReactiveHelper {
 
     private static final ThreadLocal<Worker> WORKERS = ThreadLocal.withInitial(Worker::new);
@@ -51,6 +54,10 @@ public final class ReactiveHelper {
         WORKERS.get().schedule(describe(runnable, description), true, false, false);
     }
 
+    /**
+     * @deprecated not in use
+     */
+    @Deprecated
     public static void scheduleLast(Runnable runnable, String description) {
         WORKERS.get().schedule(describe(runnable, description), false, false, false);
     }
@@ -91,9 +98,9 @@ public final class ReactiveHelper {
 
     private static class Worker {
 
-        LinkedList<Runnable> queue = new LinkedList<>();
-        LinkedList<LinkedList<Runnable>> back;
-        boolean running;
+        private volatile LinkedList<Runnable> queue = new LinkedList<>();
+        private volatile LinkedList<LinkedList<Runnable>> back;
+        private volatile boolean running;
 
         public void schedule(Runnable runnable, boolean first, boolean main, boolean sync) {
             if (main) {
@@ -129,7 +136,7 @@ public final class ReactiveHelper {
 //                            thread.setName(name + " - " + polled.toString());
                             polled.run();
                         } catch (Throwable t) {
-                            t.printStackTrace();
+                            LOG.warn("Error executing reactive work due to " + t.getMessage() + ". This exception is ignored.", t);
                         }
                     }
                 } finally {
@@ -152,7 +159,8 @@ public final class ReactiveHelper {
                 thread.setName(name + " - " + polled.toString());
                 polled.run();
             } catch (Throwable t) {
-                t.printStackTrace();
+                // should not happen
+                LOG.warn("Error executing reactive work due to " + t.getMessage() + ". This exception is ignored.", t);
             } finally {
                 thread.setName(name);
             }
