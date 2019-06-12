@@ -26,6 +26,9 @@ import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 
+/**
+ * Default {@link org.apache.camel.spi.ExecutorServiceManager}.
+ */
 public class DefaultExecutorServiceManager extends BaseExecutorServiceManager {
 
     public DefaultExecutorServiceManager(CamelContext camelContext) {
