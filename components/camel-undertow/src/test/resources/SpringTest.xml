@@ -50,8 +50,10 @@
         </property>
     </bean>
 
+    <bean id="accessLogReceiver" class="io.undertow.server.handlers.accesslog.JBossLoggingAccessLogReceiver"/>
+
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <endpoint id="input" uri="undertow:https://localhost:#{dynaPort}/spring?sslContextParameters=#sslContextParameters"/>
+        <endpoint id="input" uri="undertow:https://localhost:#{dynaPort}/spring?sslContextParameters=#sslContextParameters&amp;accessLog=true&amp;accessLogReceiver=#accessLogReceiver"/>
 
         <route>
             <from uri="ref:input"/>

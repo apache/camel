@@ -22,6 +22,8 @@ import java.util.Map;
 import javax.net.ssl.SSLContext;
 
 import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.accesslog.AccessLogReceiver;
+
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -67,6 +69,8 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     @UriParam(label = "advanced")
     private UndertowHttpBinding undertowHttpBinding;
     @UriParam(label = "advanced")
+    private AccessLogReceiver accessLogReceiver;
+    @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy = new UndertowHeaderFilterStrategy();
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
@@ -74,6 +78,8 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private String httpMethodRestrict;
     @UriParam(label = "consumer", defaultValue = "false")
     private Boolean matchOnUriPrefix = Boolean.FALSE;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private Boolean accessLog = Boolean.FALSE;
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean throwExceptionOnFailure = Boolean.TRUE;
     @UriParam(label = "producer", defaultValue = "false")
@@ -455,6 +461,29 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
             webSocketHttpHandler = new CamelWebSocketHandler();
         }
         return webSocketHttpHandler;
+    }
+
+    public Boolean getAccessLog() {
+        return accessLog;
+    }
+
+    /**
+     * Whether or not the consumer should write access log
+     */
+    public void setAccessLog(Boolean accessLog) {
+        this.accessLog = accessLog;
+    }
+
+    public AccessLogReceiver getAccessLogReceiver() {
+        return accessLogReceiver;
+    }
+
+    /**
+     * Which Undertow AccessLogReciever should be used
+     * Will use JBossLoggingAccessLogReceiver if not specifid
+     */
+    public void setAccessLogReceiver(AccessLogReceiver accessLogReceiver) {
+        this.accessLogReceiver = accessLogReceiver;
     }
 
 }
