@@ -119,6 +119,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
@@ -216,6 +217,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     private final Object lock = new Object();
     private volatile CamelContextNameStrategy nameStrategy;
+    private volatile ReactiveExecutor reactiveExecutor;
     private volatile ManagementNameStrategy managementNameStrategy;
     private volatile Registry registry;
     private volatile TypeConverter typeConverter;
@@ -3896,6 +3898,21 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         this.headersMapFactory = doAddService(headersMapFactory);
     }
 
+    public ReactiveExecutor getReactiveExecutor() {
+        if (reactiveExecutor == null) {
+            synchronized (lock) {
+                if (reactiveExecutor == null) {
+                    setReactiveExecutor(createReactiveExecutor());
+                }
+            }
+        }
+        return reactiveExecutor;
+    }
+
+    public void setReactiveExecutor(ReactiveExecutor reactiveExecutor) {
+        this.reactiveExecutor = reactiveExecutor;
+    }
+
     @Override
     public DeferServiceFactory getDeferServiceFactory() {
         return deferServiceFactory;
@@ -3973,6 +3990,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             }
         }
     }
+
+    protected abstract ReactiveExecutor createReactiveExecutor();
 
     protected abstract StreamCachingStrategy createStreamCachingStrategy();
 
