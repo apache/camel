@@ -963,11 +963,8 @@ spring XML file:
 
 === Filtering using ANT path matcher
 
-The ANT path matcher is shipped out-of-the-box in the *camel-spring*
-jar. So you need to depend on *camel-spring* if you are using Maven. +
- The reasons is that we leverage Spring's
-http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/util/AntPathMatcher.html[AntPathMatcher]
-to do the actual matching.
+The ANT path matcher is based on
+http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/util/AntPathMatcher.html[AntPathMatcher].
 
 The file paths is matched with the following rules:
 
