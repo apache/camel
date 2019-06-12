@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.AsyncCallback;
+
 /**
  * SPI to plugin different reactive engines in the Camel routing engine.
  */
@@ -37,5 +39,7 @@ public interface ReactiveExecutor {
     void scheduleSync(Runnable runnable, String description);
 
     boolean executeFromQueue();
+
+    void callback(AsyncCallback callback);
 
 }

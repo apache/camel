@@ -25,7 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.support.ReactiveHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
@@ -54,9 +53,9 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
             LoopState state = new LoopState(exchange, callback);
 
             if (exchange.isTransacted()) {
-                ReactiveHelper.scheduleSync(state);
+                exchange.getContext().getReactiveExecutor().scheduleSync(state);
             } else {
-                ReactiveHelper.scheduleMain(state);
+                exchange.getContext().getReactiveExecutor().scheduleMain(state);
             }
             return false;
 
@@ -113,7 +112,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                     processor.process(current, doneSync -> {
                         // increment counter after done
                         index++;
-                        ReactiveHelper.schedule(this);
+                        exchange.getContext().getReactiveExecutor().schedule(this);
                     });
                 } else {
                     // we are done so prepare the result

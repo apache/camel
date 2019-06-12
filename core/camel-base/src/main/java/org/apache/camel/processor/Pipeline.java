@@ -33,7 +33,6 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.support.ReactiveHelper;
 import org.apache.camel.support.service.ServiceHelper;
 
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
@@ -82,10 +81,10 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (exchange.isTransacted()) {
-            ReactiveHelper.scheduleSync(() -> Pipeline.this.doProcess(exchange, callback, processors.iterator(), true),
+            camelContext.getReactiveExecutor().scheduleSync(() -> Pipeline.this.doProcess(exchange, callback, processors.iterator(), true),
                     "Step[" + exchange.getExchangeId() + "," + Pipeline.this + "]");
         } else {
-            ReactiveHelper.scheduleMain(() -> Pipeline.this.doProcess(exchange, callback, processors.iterator(), true),
+            camelContext.getReactiveExecutor().scheduleMain(() -> Pipeline.this.doProcess(exchange, callback, processors.iterator(), true),
                     "Step[" + exchange.getExchangeId() + "," + Pipeline.this + "]");
         }
         return false;
@@ -105,7 +104,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
             AsyncProcessor processor = processors.next();
 
             processor.process(exchange, doneSync ->
-                    ReactiveHelper.schedule(() -> doProcess(exchange, callback, processors, false),
+                    camelContext.getReactiveExecutor().schedule(() -> doProcess(exchange, callback, processors, false),
                             "Step[" + exchange.getExchangeId() + "," + Pipeline.this + "]"));
         } else {
             ExchangeHelper.copyResults(exchange, exchange);
@@ -115,7 +114,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
             // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
             log.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
 
-            ReactiveHelper.callback(callback);
+            camelContext.getReactiveExecutor().callback(callback);
         }
     }
 
