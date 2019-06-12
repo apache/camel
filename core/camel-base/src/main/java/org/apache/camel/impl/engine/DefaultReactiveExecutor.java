@@ -19,16 +19,17 @@ package org.apache.camel.impl.engine;
 import java.util.LinkedList;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.StaticService;
 import org.apache.camel.spi.ReactiveExecutor;
+import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Default {@link ReactiveExecutor}.
  */
-public class DefaultReactiveExecutor implements ReactiveExecutor {
+public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveExecutor, StaticService {
 
-    // TODO: StaticServiceSupport so we can init/start/stop
     // TODO: Add mbean info so we can get details
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultReactiveExecutor.class);
@@ -36,33 +37,27 @@ public class DefaultReactiveExecutor implements ReactiveExecutor {
     private final ThreadLocal<Worker> workers = ThreadLocal.withInitial(Worker::new);
 
     @Override
-    public void scheduleMain(Runnable runnable) {
+    public void scheduleMain(Runnable runnable, String description) {
+        if (description != null) {
+            runnable = describe(runnable, description);
+        }
         workers.get().schedule(runnable, true, true, false);
     }
 
     @Override
-    public void scheduleSync(Runnable runnable) {
-        workers.get().schedule(runnable, true, true, true);
-    }
-
-    @Override
-    public void scheduleMain(Runnable runnable, String description) {
-        workers.get().schedule(describe(runnable, description), true, true, false);
-    }
-
-    @Override
-    public void schedule(Runnable runnable) {
-        workers.get().schedule(runnable, true, false, false);;
-    }
-
-    @Override
     public void schedule(Runnable runnable, String description) {
-        workers.get().schedule(describe(runnable, description), true, false, false);
+        if (description != null) {
+            runnable = describe(runnable, description);
+        }
+        workers.get().schedule(runnable, true, false, false);
     }
 
     @Override
     public void scheduleSync(Runnable runnable, String description) {
-        workers.get().schedule(describe(runnable, description), false, true, true);
+        if (description != null) {
+            runnable = describe(runnable, description);
+        }
+        workers.get().schedule(runnable, false, true, true);
     }
 
     @Override
@@ -97,13 +92,23 @@ public class DefaultReactiveExecutor implements ReactiveExecutor {
         };
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
+
     private static class Worker {
 
         private volatile LinkedList<Runnable> queue = new LinkedList<>();
         private volatile LinkedList<LinkedList<Runnable>> back;
         private volatile boolean running;
 
-        public void schedule(Runnable runnable, boolean first, boolean main, boolean sync) {
+        void schedule(Runnable runnable, boolean first, boolean main, boolean sync) {
             if (main) {
                 if (!queue.isEmpty()) {
                     if (back == null) {
@@ -149,7 +154,7 @@ public class DefaultReactiveExecutor implements ReactiveExecutor {
             }
         }
 
-        public boolean executeFromQueue() {
+        boolean executeFromQueue() {
             final Runnable polled = queue != null ? queue.poll() : null;
             if (polled == null) {
                 return false;

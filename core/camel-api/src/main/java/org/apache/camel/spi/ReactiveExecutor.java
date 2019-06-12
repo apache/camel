@@ -26,20 +26,40 @@ public interface ReactiveExecutor {
     // TODO: Add javadoc
     // TODO: Better name
 
-    void scheduleMain(Runnable runnable);
-
-    void scheduleSync(Runnable runnable);
-
-    void scheduleMain(Runnable runnable, String description);
-
-    void schedule(Runnable runnable);
+    default void schedule(Runnable runnable) {
+        schedule(runnable, null);
+    }
 
     void schedule(Runnable runnable, String description);
 
+    default void scheduleMain(Runnable runnable) {
+        scheduleMain(runnable, null);
+    }
+
+    void scheduleMain(Runnable runnable, String description);
+
+    default void scheduleSync(Runnable runnable) {
+        scheduleSync(runnable, null);
+    }
+
     void scheduleSync(Runnable runnable, String description);
 
+    // TODO: Can we make this so we dont need an method on this interface as its only used once
     boolean executeFromQueue();
 
-    void callback(AsyncCallback callback);
+    default void callback(AsyncCallback callback) {
+        schedule(new Runnable() {
+
+            @Override
+            public void run() {
+                callback.done(false);
+            }
+
+            @Override
+            public String toString() {
+                return "Callback[" + callback + "]";
+            }
+        });
+    }
 
 }
