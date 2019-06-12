@@ -3256,6 +3256,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     protected void doStartEagerServices() {
+        getFactoryFinderResolver();
+        getDefaultFactoryFinder();
         getComponentResolver();
         getDataFormatResolver();
         getManagementStrategy();
@@ -3264,8 +3266,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         getNodeIdFactory();
         getProcessorFactory();
         getMessageHistoryFactory();
-        getFactoryFinderResolver();
-        getDefaultFactoryFinder();
         getStreamCachingStrategy();
         getModelJAXBContextFactory();
         getUuidGenerator();
@@ -3274,6 +3274,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         getBeanProxyFactory();
         getBeanProcessorFactory();
         getBeanPostProcessor();
+        getReactiveExecutor();
     }
 
     /**
