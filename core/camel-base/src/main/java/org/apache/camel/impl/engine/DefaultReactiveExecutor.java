@@ -17,9 +17,14 @@
 package org.apache.camel.impl.engine;
 
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.StaticService;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
@@ -28,13 +33,23 @@ import org.slf4j.LoggerFactory;
 /**
  * Default {@link ReactiveExecutor}.
  */
+@ManagedResource(description = "Managed ReactiveExecutor")
 public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveExecutor, StaticService {
-
-    // TODO: Add mbean info so we can get details
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultReactiveExecutor.class);
 
-    private final ThreadLocal<Worker> workers = ThreadLocal.withInitial(Worker::new);
+    private final ThreadLocal<Worker> workers = ThreadLocal.withInitial(new Supplier<Worker>() {
+        @Override
+        public Worker get() {
+            createdWorkers.incrementAndGet();
+            return new Worker(DefaultReactiveExecutor.this);
+        }
+    });
+
+    // use for statistics so we have insights at runtime
+    private final AtomicInteger createdWorkers = new AtomicInteger();
+    private final AtomicInteger runningWorkers = new AtomicInteger();
+    private final AtomicLong pendingTasks = new AtomicLong();
 
     @Override
     public void scheduleMain(Runnable runnable, String description) {
@@ -63,6 +78,21 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
     @Override
     public boolean executeFromQueue() {
         return workers.get().executeFromQueue();
+    }
+
+    @ManagedAttribute(description = "Number of created workers")
+    public int getCreatedWorkers() {
+        return createdWorkers.get();
+    }
+
+    @ManagedAttribute(description = "Number of running workers")
+    public int getRunningWorkers() {
+        return runningWorkers.get();
+    }
+
+    @ManagedAttribute(description = "Number of pending tasks")
+    public long getPendingTasks() {
+        return pendingTasks.get();
     }
 
     @Override
@@ -104,9 +134,14 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
 
     private static class Worker {
 
+        private final DefaultReactiveExecutor executor;
         private volatile LinkedList<Runnable> queue = new LinkedList<>();
         private volatile LinkedList<LinkedList<Runnable>> back;
         private volatile boolean running;
+
+        public Worker(DefaultReactiveExecutor executor) {
+            this.executor = executor;
+        }
 
         void schedule(Runnable runnable, boolean first, boolean main, boolean sync) {
             if (main) {
@@ -120,11 +155,14 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
             }
             if (first) {
                 queue.addFirst(runnable);
+                executor.pendingTasks.incrementAndGet();
             } else {
                 queue.addLast(runnable);
+                executor.pendingTasks.incrementAndGet();
             }
             if (!running || sync) {
                 running = true;
+                executor.runningWorkers.incrementAndGet();
 //                Thread thread = Thread.currentThread();
 //                String name = thread.getName();
                 try {
@@ -139,6 +177,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                             }
                         }
                         try {
+                            executor.pendingTasks.decrementAndGet();
 //                            thread.setName(name + " - " + polled.toString());
                             polled.run();
                         } catch (Throwable t) {
@@ -148,6 +187,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                 } finally {
 //                    thread.setName(name);
                     running = false;
+                    executor.runningWorkers.decrementAndGet();
                 }
             } else {
                 LOG.debug("Queuing reactive work: {}", runnable);
@@ -162,6 +202,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
             Thread thread = Thread.currentThread();
             String name = thread.getName();
             try {
+                executor.pendingTasks.decrementAndGet();
                 thread.setName(name + " - " + polled.toString());
                 polled.run();
             } catch (Throwable t) {
