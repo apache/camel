@@ -2587,8 +2587,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             shutdownServices(notifier);
         }
 
-        // shutdown executor service and management as the last one
+        // shutdown executor service, reactive executor and management as the last one
         shutdownServices(executorServiceManager);
+        shutdownServices(reactiveExecutor);
         shutdownServices(managementStrategy);
         shutdownServices(managementMBeanAssembler);
         shutdownServices(lifecycleStrategies);
@@ -3806,7 +3807,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     public void setReactiveExecutor(ReactiveExecutor reactiveExecutor) {
-        this.reactiveExecutor = reactiveExecutor;
+        // special for executorServiceManager as want to stop it manually so
+        // false in stopOnShutdown
+        this.reactiveExecutor = doAddService(reactiveExecutor, false);
     }
 
     @Override
