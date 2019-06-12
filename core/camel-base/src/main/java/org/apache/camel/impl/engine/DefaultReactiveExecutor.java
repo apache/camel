@@ -25,6 +25,9 @@ import org.apache.camel.support.ReactiveHelper;
  */
 public class DefaultReactiveExecutor implements ReactiveExecutor {
 
+    // TODO: ReactiveHelper code should be moved here and not static
+    // ppl should use the SPI interface
+
     @Override
     public void scheduleMain(Runnable runnable) {
         ReactiveHelper.scheduleMain(runnable);
