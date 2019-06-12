@@ -459,6 +459,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
                     context.put("lookupType", lookupClassName);
                     context.put("externalIdsList", externalIds);
                     context.put("lookupClassName", lookupClassName);
+                    context.put("type", reference);                    
 
                     try (final Writer writer = new OutputStreamWriter(new FileOutputStream(lookupClassFile),
                         StandardCharsets.UTF_8)) {

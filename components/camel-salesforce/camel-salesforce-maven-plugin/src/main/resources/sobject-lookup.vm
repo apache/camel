@@ -35,6 +35,18 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias("$lookupClassName")
 @JsonInclude(Include.NON_NULL)
 public class $lookupClassName {
+    class Attributes {
+        @JsonProperty("type")
+        public String getType() {
+            return "$type";
+        }
+    }
+
+    @JsonProperty("attributes")
+    public Attributes getAttributes() {
+        return new Attributes();
+    }
+
 #foreach ( $externalId in $externalIdsList)
     private String $externalId.Name;
 
