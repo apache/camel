@@ -57,8 +57,8 @@
                     <map>
                         <entry key="action" value="Signature Timestamp"/>
                         <entry key="passwordCallbackClass" value="org.apache.camel.component.cxf.wssecurity.server.UTPasswordCallback"/>
-                        <entry key="user" value="serverx509v1"/>
-                        <entry key="signaturePropFile" value="wssecurity/etc/Server_Decrypt.properties"/>
+                        <entry key="user" value="bob"/>
+                        <entry key="signaturePropFile" value="wssecurity/etc/bob.properties"/>
                         <entry key="signatureKeyIdentifier" value="DirectReference"/>
                         <entry key="signatureParts" 
                                value="{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp"/>
@@ -71,7 +71,7 @@
                 <constructor-arg>
                     <map>
                         <entry key="action" value="Signature Timestamp"/>
-                        <entry key="signaturePropFile" value="wssecurity/etc/Server_SignVerf.properties"/>
+                        <entry key="signaturePropFile" value="wssecurity/etc/cxfca.properties"/>
                     </map>
                 </constructor-arg>
             </bean>
@@ -109,8 +109,8 @@
                 <constructor-arg>
                     <map>
                         <entry key="action" value="Encrypt"/>
-                        <entry key="user" value="clientx509v1"/>
-                        <entry key="encryptionPropFile" value="wssecurity/etc/Server_SignVerf.properties"/>
+                        <entry key="user" value="alice"/>
+                        <entry key="encryptionPropFile" value="wssecurity/etc/alice.properties"/>
                         <entry key="encryptionKeyIdentifier" value="IssuerSerial"/>
                     </map>
                 </constructor-arg>
@@ -121,7 +121,7 @@
                 <constructor-arg>
                     <map>
                         <entry key="action" value="Encrypt"/>
-                        <entry key="decryptionPropFile" value="wssecurity/etc/Server_Decrypt.properties"/>
+                        <entry key="decryptionPropFile" value="wssecurity/etc/bob.properties"/>
                         <entry key="passwordCallbackClass" value="org.apache.camel.component.cxf.wssecurity.server.UTPasswordCallback"/>
                     </map>
                 </constructor-arg>
@@ -138,7 +138,7 @@
         wsdlLocation="hello_world_wssec.wsdl">
         <jaxws:properties>
             <entry key="ws-security.callback-handler" value="org.apache.camel.component.cxf.wssecurity.client.UTPasswordCallback"/>
-            <entry key="ws-security.signature.properties" value="wssecurity/etc/Server_Decrypt.properties"/>
+            <entry key="ws-security.signature.properties" value="wssecurity/etc/bob.properties"/>
         </jaxws:properties>
         <jaxws:features>
             <p:policies>
