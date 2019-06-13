@@ -28,13 +28,13 @@
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-example-main</artifactId>
+    <artifactId>camel-example-reactive-executor-vertx</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Example :: Main</name>
-    <description>An example for showing standalone Camel</description>
+    <name>Camel :: Example :: Reactive Executor :: VertX</name>
+    <description>An example for showing using VertX as reactive executor with standalone Camel</description>
 
     <properties>
-        <category>Beginner</category>
+        <category>Reactive</category>
     </properties>
 
     <dependencies>
@@ -49,7 +49,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-quartz2</artifactId>
+            <artifactId>camel-reactive-executor-vertx</artifactId>
         </dependency>
 
         <!-- logging -->
@@ -87,7 +87,6 @@
                     <mainClass>org.apache.camel.example.MyApplication</mainClass>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 

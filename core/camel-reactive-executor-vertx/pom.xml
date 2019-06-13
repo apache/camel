@@ -27,6 +27,8 @@
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
+    <!-- TODO: move to components -->
+
     <artifactId>camel-reactive-executor-vertx</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Reactive Executor :: Vert X</name>

@@ -15,11 +15,9 @@ and Camel should auto-detect this on startup and log as follows:
 Detected and using custom HeadersMapFactory: org.apache.camel.component.headersmap.FastHeadersMapFactory@71e9ebae
 ----
 
-For spring-boot there is a `camel-headersmap-starter` dependency you should use.
-
 === Manual enabling
 
-If you use OSGi or the implementation is not added to the classpath, you need to enable this explict such:
+If you use OSGi or the implementation is not added to the classpath, you need to enable this explicit such:
 
 [source,java]
 ----
