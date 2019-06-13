@@ -71,7 +71,6 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
      *
      * @param processor the processor
      * @param exchange  the exchange
-     * @throws Exception can be thrown if waiting is interrupted
      */
     public void process(final AsyncProcessor processor, final Exchange exchange) {
         CountDownLatch latch = new CountDownLatch(1);

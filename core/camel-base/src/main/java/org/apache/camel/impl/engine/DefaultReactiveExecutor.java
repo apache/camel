@@ -144,6 +144,9 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
         }
 
         void schedule(Runnable runnable, boolean first, boolean main, boolean sync) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Schedule [first={}, main={}, sync={}]: {}", first, main, sync, runnable);
+            }
             if (main) {
                 if (!queue.isEmpty()) {
                     if (back == null) {
@@ -179,6 +182,9 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                         try {
                             executor.pendingTasks.decrementAndGet();
 //                            thread.setName(name + " - " + polled.toString());
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace("Running: {}", runnable);
+                            }
                             polled.run();
                         } catch (Throwable t) {
                             LOG.warn("Error executing reactive work due to " + t.getMessage() + ". This exception is ignored.", t);
@@ -204,6 +210,9 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
             try {
                 executor.pendingTasks.decrementAndGet();
                 thread.setName(name + " - " + polled.toString());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Running: {}", polled);
+                }
                 polled.run();
             } catch (Throwable t) {
                 // should not happen

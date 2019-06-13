@@ -75,7 +75,7 @@ public interface ReactiveExecutor {
     void scheduleSync(Runnable runnable, String description);
 
     /**
-     * Executes the next task
+     * Executes the next task (if supported by the reactive executor implementation)
      *
      * @return true if a task was executed or false if no more pending tasks
      */
