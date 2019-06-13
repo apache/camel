@@ -94,6 +94,7 @@
         <module>camel-example-opentracing</module>
         <module>camel-example-pojo-messaging</module>
         <module>camel-example-rabbitmq</module>
+        <module>camel-example-reactive-executor-vertx</module>
         <module>camel-example-reactive-streams</module>
         <module>camel-example-rest-producer</module>
         <module>camel-example-rest-swagger</module>
