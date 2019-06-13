@@ -374,6 +374,7 @@
         <include>org.apache.camel:camel-route-parser</include>
         <include>org.apache.camel:camel-headersmap</include>
         <include>org.apache.camel:camel-caffeine-lrucache</include>
+        <include>org.apache.camel:camel-reactive-executor-vertx</include>
       </includes>
     </dependencySet>
 

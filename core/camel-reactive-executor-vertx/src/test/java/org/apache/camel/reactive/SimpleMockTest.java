@@ -27,7 +27,6 @@ public class SimpleMockTest extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        // TODO: should detect from classpath
         CamelContext context = super.createCamelContext();
         context.setReactiveExecutor(new VertXReactiveExecutor());
         return context;
