@@ -67,7 +67,6 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
     public CxfConsumer(final CxfEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         cxfEndpoint = endpoint;
-        server = createServer();
     }
 
     protected Server createServer() throws Exception {

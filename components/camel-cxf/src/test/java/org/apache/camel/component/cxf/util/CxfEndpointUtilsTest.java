@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf.util;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfComponent;
@@ -106,7 +107,7 @@ public class CxfEndpointUtilsTest extends Assert {
     public void testCheckServiceClassConsumer() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI());
         try {
-            endpoint.createConsumer(new Processor() {
+            Consumer cxfConsumer = endpoint.createConsumer(new Processor() {
 
                 @Override
                 public void process(Exchange exchange) throws Exception {
@@ -114,6 +115,7 @@ public class CxfEndpointUtilsTest extends Assert {
                 }
 
             });
+            cxfConsumer.start();
             fail("Should have thrown exception");
         } catch (IllegalArgumentException exception) {
             assertNotNull("Should get a CamelException here", exception);
