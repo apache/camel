@@ -1050,7 +1050,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 ==== Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 30 in 30 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 31 in 31 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1073,6 +1073,8 @@ Number of Miscellaneous Components: 30 in 30 JAR artifacts (0 deprecated)
 | link:camel-lra/src/main/docs/lra.adoc[Lra] (camel-lra) | 2.21 | Camel saga binding for Long-Running-Action framework
 
 | link:camel-opentracing/src/main/docs/opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
+
+| link:camel-reactive-executor-vertx/src/main/docs/reactive-executor-vertx.adoc[Reactive Executor Vertx] (camel-reactive-executor-vertx) | 3.0 | Reactive Executor for camel-core using Vert X
 
 | link:camel-reactor/src/main/docs/reactor.adoc[Reactor] (camel-reactor) | 2.20 | Reactor based back-end for Camel's reactive streams component
 

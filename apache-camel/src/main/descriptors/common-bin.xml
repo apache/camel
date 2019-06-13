@@ -250,6 +250,7 @@
         <include>org.apache.camel:camel-quartz2</include>
         <include>org.apache.camel:camel-quickfix</include>
         <include>org.apache.camel:camel-rabbitmq</include>
+        <include>org.apache.camel:camel-reactive-executor-vertx</include>
         <include>org.apache.camel:camel-reactive-streams</include>
         <include>org.apache.camel:camel-reactor</include>
         <include>org.apache.camel:camel-ref</include>
@@ -585,6 +586,7 @@
         <include>org.apache.camel:camel-quartz2-starter</include>
         <include>org.apache.camel:camel-quickfix-starter</include>
         <include>org.apache.camel:camel-rabbitmq-starter</include>
+        <include>org.apache.camel:camel-reactive-executor-vertx-starter</include>
         <include>org.apache.camel:camel-reactive-streams-starter</include>
         <include>org.apache.camel:camel-reactor-starter</include>
         <include>org.apache.camel:camel-ref-starter</include>

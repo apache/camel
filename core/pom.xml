@@ -40,7 +40,6 @@
         <module>camel-support</module>
         <module>camel-caffeine-lrucache</module>
         <module>camel-headersmap</module>
-        <module>camel-reactive-executor-vertx</module>
         <module>camel-management-api</module>
         <module>camel-management-impl</module>
         <module>camel-base</module>
