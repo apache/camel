@@ -2476,7 +2476,12 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                      getHeadersMapFactory());
         }
 
-        log.info("Using ReactiveExecutor: {}", getReactiveExecutor());
+        // lets log at INFO level if we are not using the default reactive executor
+        if (!getReactiveExecutor().getClass().getSimpleName().equals("DefaultReactiveExecutor")) {
+            log.info("Using ReactiveExecutor: {}", getReactiveExecutor());
+        } else {
+            log.debug("Using ReactiveExecutor: {}", getReactiveExecutor());
+        }
 
         // start routes
         if (doNotStartRoutesOnFirstStart) {
