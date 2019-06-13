@@ -40,14 +40,14 @@ public class ReactiveExecutorResolver {
         // use factory finder to find a custom implementations
         Class<?> type = null;
         try {
-            type = findFactory("reactive-executor-factory", context);
+            type = findFactory("reactive-executor", context);
         } catch (Exception e) {
             // ignore
         }
 
         if (type != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Found ReactiveExecutor: {} via: {}{}", type.getName(), factoryFinder.getResourcePath(), "reactive-executor-factory");
+                LOG.debug("Found ReactiveExecutor: {} via: {}{}", type.getName(), factoryFinder.getResourcePath(), "reactive-executor");
             }
             if (ReactiveExecutor.class.isAssignableFrom(type)) {
                 ReactiveExecutor answer = (ReactiveExecutor) context.getInjector().newInstance(type, false);
