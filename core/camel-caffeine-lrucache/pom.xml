@@ -35,7 +35,7 @@
 
     <properties>
         <firstVersion>3.0</firstVersion>
-        <label>tooling</label>
+        <label>core</label>
     </properties>
 
     <dependencies>
