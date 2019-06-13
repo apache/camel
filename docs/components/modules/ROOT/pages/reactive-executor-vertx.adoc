@@ -1,0 +1,46 @@
+== ReactiveExecutor VertX
+
+*Available as of Camel 3.0*
+
+The camel-reactive-executor-vertx is a VertX based implementation of the `ReactiveExecutor` SPI.
+
+By default Camel uses its own reactive engine for routing messages, but you can plugin
+different engines via a SPI interface. This is a VertX based plugin that uses the VertX event loop
+for processing message during routing.
+
+NOTE: At this time this component is an experiment so use it with care.
+
+=== VertX instance
+
+This implementation will by default create a default `io.vertx.core.Vertx` instance to be used.
+However you can configure an existing instance using the getter/setter on the `VertXReactiveExecutor` class.
+
+=== Auto detection from classpath
+
+To use this implementation all you need to do is to add the `camel-reactive-executor-vertx` dependency to the classpath,
+and Camel should auto-detect this on startup and log as follows:
+
+[source,text]
+----
+Using ReactiveExecutor: org.apache.camel.reactive.vertx.VertXReactiveExecutor@2a62b5bc
+----
+
+=== Manual enabling
+
+If you use OSGi or the implementation is not added to the classpath, you need to enable this explict such:
+
+[source,java]
+----
+CamelContext camel = ...
+
+camel.setReactiveExecutor(new VertXReactiveExecutor());
+----
+
+Or in XML DSL (spring or blueprint XML file) you can declare the factory as a `<bean>`:
+
+[source,xml]
+----
+<bean id="vertxReactiveExecutor" class="org.apache.camel.reactive.vertx.VertXReactiveExecutor"/>
+----
+
+and then Camel should detect the bean and use the reactive executor.
