@@ -35,6 +35,18 @@ public class VertXReactiveExecutor extends ServiceSupport implements ReactiveExe
     private static final Logger LOG = LoggerFactory.getLogger(VertXReactiveExecutor.class);
 
     private Vertx vertx;
+    private boolean shouldClose;
+
+    public Vertx getVertx() {
+        return vertx;
+    }
+
+    /**
+     * To use an existing instance of {@link Vertx} instead of creating a default instance.
+     */
+    public void setVertx(Vertx vertx) {
+        this.vertx = vertx;
+    }
 
     @Override
     public void schedule(Runnable runnable, String description) {
@@ -88,13 +100,18 @@ public class VertXReactiveExecutor extends ServiceSupport implements ReactiveExe
 
     @Override
     protected void doStart() throws Exception {
-        LOG.debug("Starting VertX");
-        vertx = Vertx.vertx();
+        if (vertx == null) {
+            LOG.debug("Starting VertX");
+            shouldClose = true;
+            vertx = Vertx.vertx();
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
-        LOG.debug("Stopping VertX");
-        vertx.close();
+        if (vertx != null && shouldClose) {
+            LOG.debug("Stopping VertX");
+            vertx.close();
+        }
     }
 }

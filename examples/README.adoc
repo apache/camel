@@ -44,6 +44,7 @@ Number of Examples: 110 (0 deprecated)
 | link:camel-example-main/readme.adoc[Main] (camel-example-main) | Beginner | An example for showing standalone Camel
 
 | link:camel-example-pojo-messaging/README.md[POJO Routing] (camel-example-pojo-messaging) | Beginner | An example showing how to produce and consume messages from Camel endpoints using annotated POJOs
+    
 
 | link:camel-example-rest-swagger/README.md[REST Swagger] (camel-example-rest-swagger) | Beginner | This example shows how to call a Rest service defined using Swagger specification
 
@@ -215,6 +216,8 @@ Number of Examples: 110 (0 deprecated)
 | link:camel-example-swagger-osgi/README.md[Swagger OSGi] (camel-example-swagger-osgi) | OSGi | An example using REST DSL in XML and Swagger API
 
 | link:camel-example-kotlin/ReadMe.md[Kotlin] (camel-example-kotlin) | Other Languages | A Camel route using Kotlin
+
+| link:camel-example-reactive-executor-vertx/readme.adoc[Reactive Executor Vertx] (camel-example-reactive-executor-vertx) | Reactive | An example for showing using VertX as reactive executor with standalone Camel
 
 | link:camel-example-reactive-streams/readme.adoc[Reactive Streams] (camel-example-reactive-streams) | Reactive | An example that shows how Camel can exchange data using reactive streams with Spring Boot reactor
     
