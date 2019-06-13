@@ -2503,7 +2503,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
         forceLazyInitialization();
 
-        // if camel-bean is on classpath then we can load its bean proxy facory
+        // if camel-bean is on classpath then we can load its bean proxy factory
         BeanProxyFactory beanProxyFactory = new BeanProxyFactoryResolver().resolve(this);
         if (beanProxyFactory != null) {
             addService(beanProxyFactory);
@@ -2580,6 +2580,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             log.info("HeadersMapFactory: {} is case-sensitive which can cause problems for protocols such as HTTP based, which rely on case-insensitive headers.",
                      getHeadersMapFactory());
         }
+
+        log.info("Using ReactiveExecutor: {}", getReactiveExecutor());
 
         // start routes
         if (doNotStartRoutesOnFirstStart) {

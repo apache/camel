@@ -27,13 +27,13 @@
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-headersmap</artifactId>
+    <artifactId>camel-reactive-executor-vertx</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Headers Map</name>
-    <description>Fast case-insensitive headers map implementation</description>
+    <name>Camel :: Reactive Executor :: Vert X</name>
+    <description>Reactive Executor for camel-core using Vert X</description>
 
     <properties>
-        <firstVersion>2.20.0</firstVersion>
+        <firstVersion>3.0.0</firstVersion>
         <label>core</label>
     </properties>
 
@@ -45,15 +45,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.cedarsoftware</groupId>
-            <artifactId>java-util</artifactId>
-            <version>${java-util-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.logging.log4j</groupId>
-                    <artifactId>log4j-core</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-core</artifactId>
+            <version>${vertx-version}</version>
         </dependency>
 
         <!-- testing -->
