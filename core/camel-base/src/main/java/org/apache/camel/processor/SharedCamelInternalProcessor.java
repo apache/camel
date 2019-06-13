@@ -107,7 +107,7 @@ public class SharedCamelInternalProcessor {
     /**
      * Asynchronous API
      */
-    public boolean process(Exchange exchange, AsyncCallback ocallback, AsyncProcessor processor, Processor resultProcessor) {
+    public boolean process(Exchange exchange, AsyncCallback originalCallback, AsyncProcessor processor, Processor resultProcessor) {
         // ----------------------------------------------------------
         // CAMEL END USER - READ ME FOR DEBUGGING TIPS
         // ----------------------------------------------------------
@@ -124,7 +124,7 @@ public class SharedCamelInternalProcessor {
 
         if (processor == null || !continueProcessing(exchange, processor)) {
             // no processor or we should not continue then we are done
-            ocallback.done(true);
+            originalCallback.done(true);
             return true;
         }
 
@@ -138,13 +138,13 @@ public class SharedCamelInternalProcessor {
                 states[i] = state;
             } catch (Throwable e) {
                 exchange.setException(e);
-                ocallback.done(true);
+                originalCallback.done(true);
                 return true;
             }
         }
 
         // create internal callback which will execute the advices in reverse order when done
-        AsyncCallback callback = new InternalCallback(states, exchange, ocallback, resultProcessor);
+        AsyncCallback callback = new InternalCallback(states, exchange, originalCallback, resultProcessor);
 
         // UNIT_OF_WORK_PROCESS_SYNC is @deprecated and we should remove it from Camel 3.0
         Object synchronous = exchange.removeProperty(Exchange.UNIT_OF_WORK_PROCESS_SYNC);
