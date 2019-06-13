@@ -133,7 +133,7 @@
         <constructor-arg>
             <map>
                 <entry key="action" value="Signature Timestamp"/>
-                <entry key="signaturePropFile" value="wssecurity/etc/Server_SignVerf.properties"/>
+                <entry key="signaturePropFile" value="wssecurity/etc/cxfca.properties"/>
             </map>
         </constructor-arg>
     </bean>
