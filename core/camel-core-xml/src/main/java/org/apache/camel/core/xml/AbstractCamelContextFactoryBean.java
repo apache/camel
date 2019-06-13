@@ -102,6 +102,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicyFactory;
@@ -1165,6 +1166,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (messageHistoryFactory != null) {
             LOG.info("Using custom MessageHistoryFactory: {}", messageHistoryFactory);
             getContext().setMessageHistoryFactory(messageHistoryFactory);
+        }
+        ReactiveExecutor reactiveExecutor = getBeanForType(ReactiveExecutor.class);
+        if (reactiveExecutor != null) {
+            // already logged in CamelContext
+            getContext().setReactiveExecutor(reactiveExecutor);
         }
     }
 }
