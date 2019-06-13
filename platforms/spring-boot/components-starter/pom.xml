@@ -301,6 +301,7 @@
     <module>camel-quartz2-starter</module>
     <module>camel-quickfix-starter</module>
     <module>camel-rabbitmq-starter</module>
+    <module>camel-reactive-executor-vertx-starter</module>
     <module>camel-reactive-streams-starter</module>
     <module>camel-reactor-starter</module>
     <module>camel-ref-starter</module>

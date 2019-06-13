@@ -23,11 +23,9 @@
 
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>core</artifactId>
+        <artifactId>components</artifactId>
         <version>3.0.0-SNAPSHOT</version>
     </parent>
-
-    <!-- TODO: move to components -->
 
     <artifactId>camel-reactive-executor-vertx</artifactId>
     <packaging>jar</packaging>
@@ -36,7 +34,7 @@
 
     <properties>
         <firstVersion>3.0.0</firstVersion>
-        <label>core</label>
+        <label>reactive</label>
     </properties>
 
     <dependencies>
