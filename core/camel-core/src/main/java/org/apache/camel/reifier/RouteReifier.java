@@ -329,7 +329,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         if (endpoint == null) {
             EndpointConsumerBuilder def = definition.getInput().getEndpointConsumerBuilder();
             if (def != null) {
-                endpoint = def.resolve(routeContext);
+                endpoint = def.resolve(routeContext.getCamelContext());
             } else {
                 endpoint = routeContext.resolveEndpoint(definition.getInput().getEndpointUri());
             }

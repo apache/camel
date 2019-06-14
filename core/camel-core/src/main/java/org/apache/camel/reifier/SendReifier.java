@@ -40,7 +40,7 @@ class SendReifier extends ProcessorReifier<SendDefinition<?>> {
             if (definition.getEndpointProducerBuilder() == null) {
                 return context.resolveEndpoint(definition.getEndpointUri(), (String) null);
             } else {
-                return definition.getEndpointProducerBuilder().resolve(context);
+                return definition.getEndpointProducerBuilder().resolve(context.getCamelContext());
             }
         } else {
             return definition.getEndpoint();

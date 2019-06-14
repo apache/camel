@@ -23,6 +23,7 @@ import java.util.TreeMap;
 
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
@@ -41,10 +42,14 @@ public class AbstractEndpointBuilder {
         this.path = path;
     }
 
-    public Endpoint resolve(RouteContext context) throws NoSuchEndpointException {
+    public Endpoint resolve(CamelContext context) throws NoSuchEndpointException {
         Map<String, Object> remaining = new HashMap<>();
         String uri = computeUri(remaining);
-        return context.resolveEndpoint(uri, remaining);
+        Endpoint endpoint = context.getEndpoint(uri, properties);
+        if (endpoint == null) {
+            throw new NoSuchEndpointException(uri);
+        }
+        return null;
     }
 
     public String getUri() {

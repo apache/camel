@@ -16,13 +16,13 @@
  */
 package org.apache.camel.builder;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.spi.RouteContext;
 
 public interface EndpointConsumerBuilder {
 
-    Endpoint resolve(RouteContext context) throws NoSuchEndpointException;
+    Endpoint resolve(CamelContext context) throws NoSuchEndpointException;
 
     String getUri();
 
