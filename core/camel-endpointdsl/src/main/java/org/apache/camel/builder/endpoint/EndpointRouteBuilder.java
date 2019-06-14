@@ -16,11 +16,41 @@
  */
 package org.apache.camel.builder.endpoint;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.function.ThrowingConsumer;
 
 /**
  * A route builder which gives access to the endpoint DSL
  */
 public abstract class EndpointRouteBuilder extends RouteBuilder implements EndpointBuilderFactory {
+
+    public EndpointRouteBuilder() {
+    }
+
+    public EndpointRouteBuilder(CamelContext context) {
+        super(context);
+    }
+
+    /**
+     * Add routes to a context using a lambda expression.
+     * It can be used as following:
+     * <pre>
+     * RouteBuilder.addRoutes(context, rb ->
+     *     rb.from("direct:inbound").bean(ProduceTemplateBean.class)));
+     * </pre>
+     *
+     * @param context the camel context to add routes
+     * @param rbc a lambda expression receiving the {@code RouteBuilder} to use to create routes
+     * @throws Exception if an error occurs
+     */
+    public static void addEndpointRoutes(CamelContext context, ThrowingConsumer<EndpointRouteBuilder, Exception> rbc) throws Exception {
+        context.addRoutes(new EndpointRouteBuilder(context) {
+            @Override
+            public void configure() throws Exception {
+                rbc.accept(this);
+            }
+        });
+    }
 
 }
