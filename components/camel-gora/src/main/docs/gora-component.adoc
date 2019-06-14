@@ -15,8 +15,8 @@ for this component:
 <dependency>
  <groupId>org.apache.camel</groupId>
  <artifactId>camel-gora</artifactId>
+ <!-- use the same version as your Camel core version -->
  <version>x.x.x</version>
- <!-- use the same version as your Camel core version -->
 </dependency>
 ---------------------------------------------------------
 

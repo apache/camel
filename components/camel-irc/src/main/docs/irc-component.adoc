@@ -3,7 +3,7 @@
 
 *Available as of Camel version 1.1*
 
-The *irc* component implements an
+The IRC component implements an
 http://en.wikipedia.org/wiki/Internet_Relay_Chat[IRC] (Internet Relay
 Chat) transport.
 
@@ -149,8 +149,8 @@ The component supports 4 options, which are listed below.
 
 #### Using the JSSE Configuration Utility
 
-As of Camel 2.9, the IRC component supports SSL/TLS configuration
-through the xref:camel-configuration-utilities.adoc[Camel JSSE
+The IRC component supports SSL/TLS configuration
+through the link:camel-configuration-utilities.html[Camel JSSE
 Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
 endpoint and component levels.  The following examples demonstrate how

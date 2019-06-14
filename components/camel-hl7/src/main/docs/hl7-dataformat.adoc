@@ -3,14 +3,14 @@
 
 *Available as of Camel version 2.0*
 
-The *HL7* component is used for working with the HL7 MLLP protocol and
+The HL7 component is used for working with the HL7 MLLP protocol and
 http://www.hl7.org/implement/standards/product_brief.cfm?product_id=185[HL7
 v2 messages] using the http://hl7api.sourceforge.net[HAPI library].
 
 This component supports the following:
 
 * HL7 MLLP codec for <<mina2-component,Mina>>
-* HL7 MLLP codec for <<netty4-component,Netty4>> from *Camel 2.15* onwards
+* HL7 MLLP codec for <<netty4-component,Netty4>>
 * Type Converter from/to HAPI and String
 * HL7 DataFormat using the HAPI library
 * Even more ease-of-use as it's integrated well with the
@@ -58,7 +58,7 @@ name]) to use for the codec. If not provided, Camel will use the
 http://docs.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html#defaultCharset()[JVM
 default Charset].
 
-|`produceString` |`true` |*(as of Camel 2.14.1)* If true, the codec creates a string using the
+|`produceString` |`true` |If true, the codec creates a string using the
 defined charset. If false, the codec sends a plain byte array into the
 route, so that the HL7 Data Format can determine the actual charset from
 the HL7 message content.
@@ -166,7 +166,7 @@ Type Converter to convert to/from strings to
 the HAPI HL7 model objects, but you can use the plain String objects if
 you prefer, for instance if you wish to parse the data yourself.
 
-As of Camel 2.14.1 you can also let both the Mina and Netty codecs use a
+You can also let both the Mina and Netty codecs use a
 plain `byte[]` as its data format by setting the `produceString`
 property to false. The Type Converter is also capable of converting
 the `byte[]` to/from HAPI HL7 model objects.
@@ -289,14 +289,14 @@ passed to our patient lookup service.
 
 ==== Serializable messages
 
-As of HAPI 2.0 (used by *Camel 2.11*), the HL7v2 model classes are fully
+As of HAPI 2.0, the HL7v2 model classes are fully
 serializable. So you can put HL7v2 messages directly into a JMS queue
 (i.e. without calling `marshal()` and read them again directly from the
 queue (i.e. without calling `unmarshal()`.
 
 ==== Segment separators
 
-As of *Camel 2.11*, `unmarshal` does not automatically fix segment
+Unmarshalling does not automatically fix segment
 separators anymore by converting `\n` to `\r`. If you  +
  need this conversion,
 `org.apache.camel.component.hl7.HL7#convertLFToCR` provides a handy
@@ -305,7 +305,7 @@ separators anymore by converting `\n` to `\r`. If you  +
 
 ==== Charset
 
-As of *Camel 2.14.1*, both `marshal and unmarshal` evaluate the charset
+Both `marshal and unmarshal` evaluate the charset
 provided in the field `MSH-18`. If this field is empty, by default the
 charset contained in the corresponding Camel charset property/header is
 assumed. You can even change this default behavior by overriding the
@@ -360,11 +360,11 @@ headers on the Camel message:
 
 |`CamelHL7VersionId` |`MSH-12` |`2.4`
 
-|`CamelHL7Context |`` |` *(Camel 2.14)* contains the
+|`CamelHL7Context |`` |`contains the
 http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/HapiContext.html[HapiContext]
-that was used to parse the message
+that was used to parse the message`
 
-|`CamelHL7Charset` |`MSH-18` |*(Camel 2.14.1)* `UNICODE UTF-8`
+|`CamelHL7Charset` |`MSH-18` |`UNICODE UTF-8`
 |===
 
 All headers except `CamelHL7Context `are `String` types. If a header
