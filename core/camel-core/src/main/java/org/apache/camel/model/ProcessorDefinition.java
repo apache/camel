@@ -1145,7 +1145,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Creates a validation expression which only if it is <tt>true</tt> then the
      * exchange is forwarded to the destination.
-     * Otherwise a {@link org.apache.camel.processor.validation.PredicateValidationException} is thrown.
+     * Otherwise a {@link org.apache.camel.support.processor.validation.PredicateValidationException} is thrown.
      *
      * @param expression  the expression
      * @return the builder
@@ -1159,7 +1159,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Creates a validation expression which only if it is <tt>true</tt> then the
      * exchange is forwarded to the destination.
-     * Otherwise a {@link org.apache.camel.processor.validation.PredicateValidationException} is thrown.
+     * Otherwise a {@link org.apache.camel.support.processor.validation.PredicateValidationException} is thrown.
      *
      * @param predicate  the predicate
      * @return the builder
@@ -1173,7 +1173,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Creates a validation expression which only if it is <tt>true</tt> then the
      * exchange is forwarded to the destination.
-     * Otherwise a {@link org.apache.camel.processor.validation.PredicateValidationException} is thrown.
+     * Otherwise a {@link org.apache.camel.support.processor.validation.PredicateValidationException} is thrown.
      *
      * @return the builder
      */
