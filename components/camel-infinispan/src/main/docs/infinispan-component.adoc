@@ -8,7 +8,7 @@ http://infinispan.org/[Infinispan] distributed data grid / cache.
 Infinispan is an extremely scalable, highly available key/value data
 store and data grid platform written in Java.
 
-From *Camel 2.17* onwards Infinispan requires Java 8.
+Infinispan requires at least Java 8.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -172,9 +172,9 @@ The component supports 23 options, which are listed below.
 |CamelInfinispanTimeUnit |`null` |String |Producer |The Time Unit of an entry Lifespan Time.
 |CamelInfinispanMaxIdleTime |`null` |long |Producer |The maximum amount of time an entry is allowed to be idle for before it is considered as expired.
 |CamelInfinispanMaxIdleTimeUnit |`null` |String |Producer |The Time Unit of an entry Max Idle Time.
-|CamelInfinispanQueryBuilder |null |InfinispanQueryBuilder |Producer | *From Camel 2.17:* The QueryBuilde to use for QUERY command, if not present the command defaults to InifinispanConfiguration's one
-|CamelInfinispanIgnoreReturnValues |null |Boolean |Producer |*From Camel 2.17:* If this header is set, the return value for cache operation returning something is ignored by the client application
-|CamelInfinispanOperationResultHeader |null |String |Producer|*From Camel 2.20:* Store the operation result in a header instead of the message body
+|CamelInfinispanQueryBuilder |null |InfinispanQueryBuilder |Producer |The QueryBuilde to use for QUERY command, if not present the command defaults to InifinispanConfiguration's one
+|CamelInfinispanIgnoreReturnValues |null |Boolean |Producer |If this header is set, the return value for cache operation returning something is ignored by the client application
+|CamelInfinispanOperationResultHeader |null |String |Producer |Store the operation result in a header instead of the message body
 |=======================================================================
 
 ### Examples

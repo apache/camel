@@ -24,7 +24,8 @@ for this component:
     <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-google-drive</artifactId>
-            <version>2.14-SNAPSHOT</version>
+            <!-- use the same version as your Camel core version -->
+            <version>x.x.x</version>
     </dependency>
         
 -------------------------------------------------------

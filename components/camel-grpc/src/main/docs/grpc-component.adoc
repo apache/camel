@@ -20,7 +20,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-Starting with Camel *2.22* gRCP requires strong own of the Google Guava version. It's necessary to
+gRCP requires strong own of the Google Guava version. It's necessary to
 add following configuration property to the maven file
 
 [source,xml]
@@ -138,7 +138,7 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Transport security and authentication support (available from *Camel 2.20*)
+### Transport security and authentication support
 
 The following https://grpc.io/docs/guides/auth.html[authentication] mechanisms are built-in to gRPC and available in this component:
 

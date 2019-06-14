@@ -2,7 +2,7 @@
 
 *Available as of Camel version 2.18*
 
-The hystrix component integrates Netflix Hystrix circuit breaker in Camel routes.
+The Hystrix component integrates Netflix Hystrix circuit breaker in Camel routes.
 
 For more details see the Hystrix EIP documentation.
 
