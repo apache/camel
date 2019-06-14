@@ -117,7 +117,11 @@ public class NotifyBuilder {
             @Override
             public boolean onExchange(Exchange exchange) {
                 // filter non matching exchanges
-                return EndpointHelper.matchEndpoint(context, exchange.getFromEndpoint().getEndpointUri(), endpointUri);
+                if (exchange.getFromEndpoint() != null) {
+                    return EndpointHelper.matchEndpoint(context, exchange.getFromEndpoint().getEndpointUri(), endpointUri);
+                } else {
+                    return false;
+                }
             }
 
             public boolean matches() {
@@ -191,7 +195,7 @@ public class NotifyBuilder {
                 // and just continue to route that on the consumer side, which causes the EventNotifier not to
                 // emit events when the consumer received the exchange, as its already done. For example by
                 // ProducerTemplate which creates the UoW before producing messages.
-                if (exchange.getFromEndpoint().getEndpointUri().startsWith("direct:")) {
+                if (exchange.getFromEndpoint() != null && exchange.getFromEndpoint().getEndpointUri().startsWith("direct:")) {
                     return true;
                 }
                 return PatternHelper.matchPattern(exchange.getFromRouteId(), "*");
