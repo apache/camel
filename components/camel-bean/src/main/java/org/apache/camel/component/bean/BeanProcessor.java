@@ -106,6 +106,10 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         delegate.doStop();
     }
 
+    public String toString() {
+        return delegate.toString();
+    }
+
     private static final class DelegateBeanProcessor extends AbstractBeanProcessor {
 
         public DelegateBeanProcessor(Object pojo, BeanInfo beanInfo) {

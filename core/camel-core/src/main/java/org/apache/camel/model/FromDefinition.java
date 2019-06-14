@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -36,6 +37,8 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
     private String uri;
     @XmlTransient
     private Endpoint endpoint;
+    @XmlTransient
+    private EndpointConsumerBuilder endpointConsumerBuilder;
 
     public FromDefinition() {
     }
@@ -46,6 +49,10 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
 
     public FromDefinition(Endpoint endpoint) {
         setEndpoint(endpoint);
+    }
+
+    public FromDefinition(EndpointConsumerBuilder endpointConsumerBuilder) {
+        setEndpointConsumerBuilder(endpointConsumerBuilder);
     }
 
     @Override
@@ -60,25 +67,28 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
 
     @Override
     public String getLabel() {
-        return description(getUri(), getEndpoint());
+        String uri = getEndpointUri();
+        return uri != null ? uri : "no uri supplied";
     }
 
     @Override
     public String getEndpointUri() {
-        return getUri();
+        if (uri != null) {
+            return uri;
+        } else if (endpoint != null) {
+            return endpoint.getEndpointUri();
+        } else if (endpointConsumerBuilder != null) {
+            return endpointConsumerBuilder.getUri();
+        } else {
+            return null;
+        }
     }
 
     // Properties
     // -----------------------------------------------------------------------
 
     public String getUri() {
-        if (uri != null) {
-            return uri;
-        } else if (endpoint != null) {
-            return endpoint.getEndpointUri();
-        } else {
-            return null;
-        }
+        return uri;
     }
 
     /**
@@ -95,7 +105,7 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
      * Gets tne endpoint if an {@link Endpoint} instance was set.
      * <p/>
      * This implementation may return <tt>null</tt> which means you need to use
-     * {@link #getUri()} to get information about the endpoint.
+     * {@link #getEndpointUri()} to get information about the endpoint.
      *
      * @return the endpoint instance, or <tt>null</tt>
      */
@@ -104,26 +114,23 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
     }
 
     public void setEndpoint(Endpoint endpoint) {
+        clear();
         this.endpoint = endpoint;
-        this.uri = null;
-        if (endpoint != null) {
-            this.uri = endpoint.getEndpointUri();
-        }
+    }
+
+    public EndpointConsumerBuilder getEndpointConsumerBuilder() {
+        return endpointConsumerBuilder;
+    }
+
+    public void setEndpointConsumerBuilder(EndpointConsumerBuilder endpointConsumerBuilder) {
+        clear();
+        this.endpointConsumerBuilder = endpointConsumerBuilder;
     }
 
     // Implementation methods
     // -----------------------------------------------------------------------
-    protected static String description(String uri, Endpoint endpoint) {
-        if (endpoint != null) {
-            return endpoint.getEndpointUri();
-        } else if (uri != null) {
-            return uri;
-        } else {
-            return "no uri or ref supplied!";
-        }
-    }
-
     protected void clear() {
+        this.endpointConsumerBuilder = null;
         this.endpoint = null;
         this.uri = null;
     }

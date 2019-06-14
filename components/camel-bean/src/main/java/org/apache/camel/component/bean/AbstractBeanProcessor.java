@@ -57,7 +57,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
 
     @Override
     public String toString() {
-        return "BeanProcessor[" + beanHolder + "]";
+        return "BeanProcessor[" + beanHolder + (method != null ? "#" + method : "") + "]";
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {

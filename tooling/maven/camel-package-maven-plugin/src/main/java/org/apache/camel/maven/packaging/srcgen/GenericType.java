@@ -35,7 +35,7 @@ public class GenericType {
 
     private static final Map<String, Class> PRIMITIVE_CLASSES = new HashMap<>();
 
-    enum BoundType {
+    public enum BoundType {
         Exact, Extends, Super
     }
     

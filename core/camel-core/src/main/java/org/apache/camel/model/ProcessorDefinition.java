@@ -45,6 +45,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.DataFormatClause;
+import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.EnrichClause;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ExpressionClause;
@@ -362,7 +363,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         addOutput(new ToDefinition(endpoint));
         return (Type) this;
     }
-    
+
+    @SuppressWarnings("unchecked")
+    public Type to(EndpointProducerBuilder endpoint) {
+        addOutput(new ToDefinition(endpoint));
+        return (Type) this;
+    }
+
     /**
      * Sends the exchange with certain exchange pattern to the given endpoint
      * <p/>

@@ -23,9 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,7 +31,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -78,8 +74,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.jboss.forge.roaster.model.util.Strings;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Opcodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -1092,23 +1086,13 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
     protected DynamicClassLoader getProjectClassLoader() {
         if (projectClassLoader == null) {
-            final List<?> classpathElements;
+            final List<String> classpathElements;
             try {
                 classpathElements = project.getTestClasspathElements();
             } catch (org.apache.maven.artifact.DependencyResolutionRequiredException e) {
                 throw new RuntimeException(e.getMessage(), e);
             }
-            final URL[] urls = new URL[classpathElements.size()];
-            int i = 0;
-            for (Iterator<?> it = classpathElements.iterator(); it.hasNext(); i++) {
-                try {
-                    urls[i] = new File((String)it.next()).toURI().toURL();
-                } catch (MalformedURLException e) {
-                    throw new RuntimeException(e.getMessage(), e);
-                }
-            }
-            final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-            projectClassLoader = new DynamicClassLoader(urls, tccl != null ? tccl : getClass().getClassLoader());
+            projectClassLoader = DynamicClassLoader.createDynamicClassLoader(classpathElements);
         }
         return projectClassLoader;
     }
@@ -1523,16 +1507,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         writeSourceIfChanged(javaClass, fileName, true);
     }
 
-    static class DynamicClassLoader extends URLClassLoader {
-        public DynamicClassLoader(URL[] urls, ClassLoader parent) {
-            super(urls, parent);
-        }
-
-        public Class defineClass(String name, byte[] data) {
-            return super.defineClass(name, data, 0, data.length);
-        }
-    }
-
     private void createComponentAutoConfigurationSource(String packageName, ComponentModel model, List<String> componentAliases, String overrideComponentName)
         throws MojoFailureException {
 
@@ -1604,10 +1578,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     private Class generateDummyClass(String clazzName) {
-        ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-        cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, clazzName.replace('.', '/'), null, "java/lang/Object", null);
-        cw.visitEnd();
-        return getProjectClassLoader().defineClass(clazzName, cw.toByteArray());
+        return getProjectClassLoader().generateDummyClass(clazzName);
     }
 
     private void createDataFormatAutoConfigurationSource(String packageName, DataFormatModel model, List<String> dataFormatAliases, String overrideDataFormatName)

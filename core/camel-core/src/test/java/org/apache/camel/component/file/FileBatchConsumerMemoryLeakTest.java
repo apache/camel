@@ -29,7 +29,7 @@ import org.junit.Test;
 @Ignore("Manual test")
 public class FileBatchConsumerMemoryLeakTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/data/filesorter/";
+    private String fileUrl = "target/data/filesorter/";
 
     @Override
     @Before
@@ -70,7 +70,7 @@ public class FileBatchConsumerMemoryLeakTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(fileUrl + "c/?sortBy=ignoreCase:file:name")
+                from("file:" + fileUrl + "/c/?sortBy=ignoreCase:file:name")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 StringBuilder buf = new StringBuilder(10000000);

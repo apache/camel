@@ -33,6 +33,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.model.rest.RestBindingDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -164,6 +165,11 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @return the builder
      */
     public RouteDefinition from(Endpoint endpoint) {
+        setInput(new FromDefinition(endpoint));
+        return this;
+    }
+
+    public RouteDefinition from(EndpointConsumerBuilder endpoint) {
         setInput(new FromDefinition(endpoint));
         return this;
     }

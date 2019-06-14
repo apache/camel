@@ -24,6 +24,7 @@ import java.util.Objects;
 public class Method {
     String name;
     GenericType returnType;
+    boolean isDefault;
     boolean isPublic;
     boolean isConstructor;
     String body;
@@ -34,6 +35,11 @@ public class Method {
 
     public Method setPublic() {
         isPublic = true;
+        return this;
+    }
+
+    public Method setDefault() {
+        isDefault = true;
         return this;
     }
 

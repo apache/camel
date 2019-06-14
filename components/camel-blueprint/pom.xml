@@ -357,6 +357,7 @@
                                                 <include name="org/apache/camel/LoggingLevel.java"/>
                                                 <include name="org/apache/camel/ManagementStatisticsLevel.java"/>
                                                 <include name="**/package-info.java"/>
+                                                <exclude name="org/apache/camel/model/endpoint/*.java"/>
                                             </fileset>
                                             <fileset dir="${basedir}/../../core/camel-util/src/main/java">
                                                 <include

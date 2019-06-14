@@ -368,6 +368,7 @@
                             <goal>prepare-spring-boot-starter</goal>
                             <goal>prepare-spring-boot-auto-configuration</goal>
                             <goal>generate-legal</goal>
+                            <goal>generate-endpoint-dsl</goal>
                         </goals>
                         <phase>prepare-package</phase>
                     </execution>
