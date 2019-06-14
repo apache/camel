@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.14*
 
-The *hdfs2* component enables you to read and write messages from/to an
+The HDFS2 component enables you to read and write messages from/to an
 HDFS file system using Hadoop 2.x. HDFS is the distributed file system
 at the heart of http://hadoop.apache.org[Hadoop].
 
@@ -241,7 +241,7 @@ The following headers are supported by this component:
 |=======================================================================
 |Header |Description
 
-|`CamelFileName` |*Camel 2.13:* Specifies the name of the file to write (relative to the
+|`CamelFileName` |Specifies the name of the file to write (relative to the
 endpoint path). The name can be a `String` or an
 Expression object. Only relevant when not using a
 split strategy.

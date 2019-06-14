@@ -19,8 +19,8 @@ for this component:
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-google-bigquery</artifactId>
-    <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
+    <version>x.x.x</version>
 </dependency>
 
 ------------------------------------------------------
@@ -159,7 +159,7 @@ The component supports 9 options, which are listed below.
 Producer endpoints can accept and deliver to BigQuery individual and grouped
 exchanges alike. Grouped exchanges have `Exchange.GROUPED_EXCHANGE` property set.
 
-Goole BigQuery producer will send a grouped exchange in a single api call unless different table suffix or
+Google BigQuery producer will send a grouped exchange in a single api call unless different table suffix or
 partition decorators are specified in which case it will break it down to ensure data is written with the
 correct suffix or partition decorator.
 
