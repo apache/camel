@@ -26,6 +26,7 @@ import org.apache.camel.spi.PackageScanFilter;
  */
 public class AssignableToPackageScanFilter implements PackageScanFilter {
     private final Set<Class<?>> parents = new HashSet<>();
+    private boolean includeInterfaces;
 
     public AssignableToPackageScanFilter() {
     }
@@ -38,13 +39,24 @@ public class AssignableToPackageScanFilter implements PackageScanFilter {
         this.parents.addAll(parents);
     }
 
+    public boolean isIncludeInterfaces() {
+        return includeInterfaces;
+    }
+
+    public void setIncludeInterfaces(boolean includeInterfaces) {
+        this.includeInterfaces = includeInterfaces;
+    }
+
     public void addParentType(Class<?> parentType) {
         parents.add(parentType);
     }
 
     public boolean matches(Class<?> type) {
-        if (parents != null && parents.size() > 0) {
+        if (parents.size() > 0) {
             for (Class<?> parent : parents) {
+                if (!includeInterfaces && parent.isInterface()) {
+                    continue;
+                }
                 if (parent.isAssignableFrom(type)) {
                     return true;
                 }
