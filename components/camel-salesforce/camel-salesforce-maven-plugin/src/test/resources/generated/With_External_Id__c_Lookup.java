@@ -18,6 +18,18 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias("With_External_Id__c_Lookup")
 @JsonInclude(Include.NON_NULL)
 public class With_External_Id__c_Lookup {
+    class Attributes {
+        @JsonProperty("type")
+        public String getType() {
+            return "With_External_Id__c";
+        }
+    }
+
+    @JsonProperty("attributes")
+    public Attributes getAttributes() {
+        return new Attributes();
+    }
+
     private String External_Id__c;
 
     @JsonProperty("External_Id__c")
