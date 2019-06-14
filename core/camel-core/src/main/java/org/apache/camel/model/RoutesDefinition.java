@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
 
@@ -170,6 +171,12 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
      * @return the builder
      */
     public RouteDefinition from(Endpoint endpoint) {
+        RouteDefinition route = createRoute();
+        route.from(endpoint);
+        return route(route);
+    }
+
+    public RouteDefinition from(EndpointConsumerBuilder endpoint) {
         RouteDefinition route = createRoute();
         route.from(endpoint);
         return route(route);

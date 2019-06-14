@@ -780,6 +780,111 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         return answer;
     }
 
+    public Endpoint getEndpoint(String uri, Map<String, Object> parameters) {
+        init();
+
+        StringHelper.notEmpty(uri, "uri");
+
+        log.trace("Getting endpoint with uri: {} and parameters: {}", uri, parameters);
+
+        // in case path has property placeholders then try to let property
+        // component resolve those
+        try {
+            uri = resolvePropertyPlaceholders(uri);
+        } catch (Exception e) {
+            throw new ResolveEndpointFailedException(uri, e);
+        }
+
+        final String rawUri = uri;
+
+        // normalize uri so we can do endpoint hits with minor mistakes and
+        // parameters is not in the same order
+        uri = normalizeEndpointUri(uri);
+
+        log.trace("Getting endpoint with raw uri: {}, normalized uri: {}", rawUri, uri);
+
+        Endpoint answer;
+        String scheme = null;
+        // use optimized method to get the endpoint uri
+        EndpointKey key = getEndpointKeyPreNormalized(uri);
+        answer = endpoints.get(key);
+        if (answer == null) {
+            try {
+                // Use the URI prefix to find the component.
+                String[] splitURI = StringHelper.splitOnCharacter(uri, ":", 2);
+                if (splitURI[1] != null) {
+                    scheme = splitURI[0];
+                    log.trace("Endpoint uri: {} is from component with name: {}", uri, scheme);
+                    Component component = getComponent(scheme);
+
+                    // Ask the component to resolve the endpoint.
+                    if (component != null) {
+                        log.trace("Creating endpoint from uri: {} using component: {}", uri, component);
+
+                        // Have the component create the endpoint if it can.
+                        if (component.useRawUri()) {
+                            answer = component.createEndpoint(rawUri, parameters);
+                        } else {
+                            answer = component.createEndpoint(uri, parameters);
+                        }
+
+                        if (answer != null && log.isDebugEnabled()) {
+                            log.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
+                        }
+                    }
+                }
+
+                if (answer == null) {
+                    // no component then try in registry and elsewhere
+                    answer = createEndpoint(uri);
+                    log.trace("No component to create endpoint from uri: {} fallback lookup in registry -> {}", uri, answer);
+                }
+
+                if (answer == null && splitURI[1] == null) {
+                    // the uri has no context-path which is rare and it was not
+                    // referring to an endpoint in the registry
+                    // so try to see if it can be created by a component
+
+                    int pos = uri.indexOf('?');
+                    String componentName = pos > 0 ? uri.substring(0, pos) : uri;
+
+                    Component component = getComponent(componentName);
+
+                    // Ask the component to resolve the endpoint.
+                    if (component != null) {
+                        log.trace("Creating endpoint from uri: {} using component: {}", uri, component);
+
+                        // Have the component create the endpoint if it can.
+                        if (component.useRawUri()) {
+                            answer = component.createEndpoint(rawUri, parameters);
+                        } else {
+                            answer = component.createEndpoint(uri, parameters);
+                        }
+
+                        if (answer != null && log.isDebugEnabled()) {
+                            log.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
+                        }
+                    }
+
+                }
+
+                if (answer != null) {
+                    addService(answer);
+                    answer = addEndpointToRegistry(uri, answer);
+                }
+            } catch (Exception e) {
+                throw new ResolveEndpointFailedException(uri, e);
+            }
+        }
+
+        // unknown scheme
+        if (answer == null && scheme != null) {
+            throw new ResolveEndpointFailedException(uri, "No component found with scheme: " + scheme);
+        }
+
+        return answer;
+    }
+
     public <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType) {
         Endpoint endpoint = getEndpoint(name);
         if (endpoint == null) {

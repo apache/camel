@@ -26,6 +26,7 @@ public class EndpointOptionModel {
     private String displayName;
     private String kind;
     private String group;
+    private String label;
     private String required;
     private String type;
     private String javaType;
@@ -72,6 +73,14 @@ public class EndpointOptionModel {
 
     public void setGroup(String group) {
         this.group = group;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     public String getRequired() {

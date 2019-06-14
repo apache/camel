@@ -24,11 +24,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ShutdownRoute;
@@ -43,6 +45,9 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * The context used to activate new routing rules
@@ -116,7 +121,7 @@ public class DefaultRouteContext implements RouteContext {
     public Endpoint resolveEndpoint(String uri, String ref) {
         Endpoint endpoint = null;
         if (uri != null) {
-            endpoint = resolveEndpoint(uri);
+            endpoint = camelContext.getEndpoint(uri);
             if (endpoint == null) {
                 throw new NoSuchEndpointException(uri);
             }
@@ -142,6 +147,17 @@ public class DefaultRouteContext implements RouteContext {
         } else {
             return endpoint;
         }
+    }
+
+    public Endpoint resolveEndpoint(String uri, Map<String, Object> properties) {
+        Endpoint endpoint = camelContext.hasEndpoint(uri);
+        if (endpoint == null) {
+            endpoint = camelContext.getEndpoint(uri, properties);
+        }
+        if (endpoint != null) {
+            return endpoint;
+        }
+        throw new NoSuchEndpointException(uri);
     }
 
     public <T> T lookup(String name, Class<T> type) {
@@ -496,7 +512,7 @@ public class DefaultRouteContext implements RouteContext {
     public void addErrorHandlerFactoryReference(ErrorHandlerFactory source, ErrorHandlerFactory target) {
         Set<NamedNode> list = getErrorHandlers(source);
         Set<NamedNode> previous = errorHandlers.put(target, list);
-        if (previous != null && previous != list) {
+        if (list != previous && ObjectHelper.isNotEmpty(previous) && ObjectHelper.isNotEmpty(list)) {
             throw new IllegalStateException("multiple references with different handlers");
         }
     }

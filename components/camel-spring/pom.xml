@@ -390,6 +390,7 @@
                                         <include name="org/apache/camel/ShutdownRunningTask.java"/>
                                         <include name="org/apache/camel/WaitForTaskToComplete.java"/>
                                         <include name="org/apache/camel/package-info.java"/>
+                                        <exclude name="org/apache/camel/model/endpoint/*.java"/>
                                     </fileset>
                                     <fileset dir="${basedir}/../../core/camel-util/src/main/java">
                                         <include name="org/apache/camel/concurrent/ThreadPoolRejectedPolicy.java"/>

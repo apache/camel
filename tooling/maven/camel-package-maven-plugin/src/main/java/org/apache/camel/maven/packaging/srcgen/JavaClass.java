@@ -25,6 +25,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.jboss.forge.roaster.model.util.Strings;
+
 public class JavaClass {
 
     ClassLoader classLoader;
@@ -32,12 +34,14 @@ public class JavaClass {
     String packageName;
     String name;
     String extendsName = "java.lang.Object";
+    List<String> implementNames = new ArrayList<>();
     List<String> imports = new ArrayList<>();
     List<Annotation> annotations = new ArrayList<>();
     List<Property> properties = new ArrayList<>();
     List<Field> fields = new ArrayList<>();
     List<Method> methods = new ArrayList<>();
     List<JavaClass> nested = new ArrayList<>();
+    List<String> values = new ArrayList<>();
     Javadoc javadoc = new Javadoc();
     boolean isStatic;
     boolean isPublic = true;
@@ -57,6 +61,14 @@ public class JavaClass {
         this.parent = parent;
     }
 
+    protected ClassLoader getClassLoader() {
+        if (classLoader == null && parent != null) {
+            return parent.getClassLoader();
+        } else {
+            return classLoader;
+        }
+    }
+
     public JavaClass setStatic(boolean aStatic) {
         isStatic = aStatic;
         return this;
@@ -72,6 +84,9 @@ public class JavaClass {
         return this;
     }
 
+    public String getPackage() {
+        return packageName;
+    }
     public JavaClass setPackage(String packageName) {
         this.packageName = packageName;
         return this;
@@ -102,6 +117,10 @@ public class JavaClass {
         return extendsName;
     }
 
+    public JavaClass implementInterface(String implementName) {
+        this.implementNames.add(implementName);
+        return this;
+    }
 
     public List<String> getImports() {
         return imports;
@@ -121,7 +140,7 @@ public class JavaClass {
 
     public Annotation addAnnotation(String type) {
         try {
-            Class<?> cl = classLoader.loadClass(type);
+            Class<?> cl = getClassLoader().loadClass(type);
             return addAnnotation(cl);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Unable to parse type", e);
@@ -139,9 +158,9 @@ public class JavaClass {
 
     public Property addProperty(String type, String name) {
         try {
-            return addProperty(GenericType.parse(type, classLoader), name);
+            return addProperty(GenericType.parse(type, getClassLoader()), name);
         } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("Unable to parse type", e);
+            throw new IllegalArgumentException("Unable to parse type " + type + " for property " + name, e);
         }
     }
 
@@ -171,6 +190,10 @@ public class JavaClass {
         JavaClass clazz = new JavaClass(this);
         nested.add(clazz);
         return clazz;
+    }
+
+    public void addValue(String value) {
+        values.add(value);
     }
 
     public boolean isClass() {
@@ -236,6 +259,21 @@ public class JavaClass {
         printJavadoc(sb, indent, javadoc);
         printAnnotations(sb, indent, annotations);
 
+        if (isEnum) {
+            sb.append(indent)
+                .append(isPublic ? "public " : "")
+                .append(isStatic ? "static " : "")
+                .append("enum ").append(name).append(" {\n")
+                .append(indent)
+                .append("    ")
+                .append(Strings.join(values, ", "))
+                .append(";\n")
+                .append(indent)
+                .append("}");
+            return;
+
+        }
+
         StringBuilder sb2 = new StringBuilder();
         sb2.append(indent);
         if (isPublic) {
@@ -244,9 +282,13 @@ public class JavaClass {
         if (isStatic) {
             sb2.append("static ");
         }
-        sb2.append("class ").append(name);
+        sb2.append(isClass ? "class " : "interface ").append(name);
         if (extendsName != null && !"java.lang.Object".equals(extendsName)) {
             sb2.append(" extends ").append(extendsName);
+        }
+        if (!implementNames.isEmpty()) {
+            sb2.append(isClass ? " implements " : " extends ")
+                    .append(Strings.join(implementNames, ", "));
         }
         sb2.append(" {");
         if (sb2.length() < 80) {
@@ -259,11 +301,16 @@ public class JavaClass {
             if (isStatic) {
                 sb.append("static ");
             }
-            sb.append("class ").append(name);
+            sb.append(isClass ? "class " : "interface ").append(name);
             if (extendsName != null && !"java.lang.Object".equals(extendsName)) {
                 sb.append("\n");
                 sb.append(indent).append("        extends\n");
                 sb.append(indent).append("            ").append(extendsName);
+            }
+            if (!implementNames.isEmpty()) {
+                sb.append("\n");
+                sb.append(indent).append(isClass ? "        implements\n" : "        extends\n");
+                sb.append(indent).append("            ").append(Strings.join(implementNames, ", "));
             }
             sb.append(" {\n");
         }
@@ -372,6 +419,9 @@ public class JavaClass {
         if (method.isPublic) {
             sb2.append("public ");
         }
+        if (method.isDefault) {
+            sb2.append("default ");
+        }
         if (!method.isConstructor) {
             sb2.append(method.returnType != null ? shortName(method.returnType) : "void");
             sb2.append(" ");
@@ -392,6 +442,9 @@ public class JavaClass {
             sb.append(indent);
             if (method.isPublic) {
                 sb.append("public ");
+            }
+            if (method.isDefault) {
+                sb.append("default ");
             }
             sb.append(shortName(method.returnType));
             sb.append(" ");

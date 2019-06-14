@@ -146,7 +146,7 @@ public final class RouteDefinitionHelper {
             } else {
                 RestDefinition rest = route.getRestDefinition();
                 if (rest != null && route.isRest()) {
-                    VerbDefinition verb = findVerbDefinition(rest, route.getInput().getUri());
+                    VerbDefinition verb = findVerbDefinition(rest, route.getInput().getEndpointUri());
                     if (verb != null) {
                         String id = verb.getId();
                         if (verb.hasCustomIdAssigned() && ObjectHelper.isNotEmpty(id) && !customIds.contains(id)) {
@@ -193,7 +193,7 @@ public final class RouteDefinitionHelper {
             }
             RestDefinition rest = route.getRestDefinition();
             if (rest != null && route.isRest()) {
-                VerbDefinition verb = findVerbDefinition(rest, route.getInput().getUri());
+                VerbDefinition verb = findVerbDefinition(rest, route.getInput().getEndpointUri());
                 if (verb != null) {
                     String id = verb.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
                     if (!verb.getUsedForGeneratingNodeId()) {
@@ -571,7 +571,7 @@ public final class RouteDefinitionHelper {
                     match = false;
 
                     // a bit more logic to lookup the endpoint as it can be uri/ref based
-                    String uri = route.getInput().getUri();
+                    String uri = route.getInput().getEndpointUri();
                     // if the pattern is not a ref itself, then resolve the ref uris, so we can match the actual uri's with each other
                     if (!isRefPattern) {
                         if (uri != null && uri.startsWith("ref:")) {

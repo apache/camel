@@ -88,7 +88,7 @@ public class RouteIdFactory implements NodeIdFactory {
         }
 
         FromDefinition from = routeDefinition.getInput();
-        String uri = from.getUri();
+        String uri = from.getEndpointUri();
 
         // we want to use the context-path of the route
         int colon = uri.indexOf(':');
@@ -152,7 +152,7 @@ public class RouteIdFactory implements NodeIdFactory {
         }
 
         FromDefinition from = route.getInput();
-        String uri = from.getUri();
+        String uri = from.getEndpointUri();
 
         String[] uriSplitted = uri.split(":");
 
