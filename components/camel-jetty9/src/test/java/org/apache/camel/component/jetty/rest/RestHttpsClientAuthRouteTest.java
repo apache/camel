@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,20 +22,21 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
-import org.apache.camel.support.jsse.KeyManagersParameters;
-import org.apache.camel.support.jsse.KeyStoreParameters;
-import org.apache.camel.support.jsse.SSLContextParameters;
-import org.apache.camel.support.jsse.SSLContextServerParameters;
-import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.jsse.KeyManagersParameters;
+import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.SSLContextServerParameters;
+import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.junit.Test;
 
 public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
     static int port = AvailablePortFinder.getNextAvailable();
 
-    @Produce("direct:start")
+    @Produce(uri = "direct:start")
     protected ProducerTemplate sender;
 
 
@@ -52,7 +53,10 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
         return "http4://localhost:%d/TestResource/some-id?sslContextParameters=#clientSSLContextParameters";
     }
 
-    protected void decorateRestConfiguration(RestConfigurationDefinition restConfig) {
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+
         KeyStoreParameters keystoreParameters = new KeyStoreParameters();
         keystoreParameters.setResource("service.jks");
         keystoreParameters.setPassword("security");
@@ -84,9 +88,13 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
         clientAuthClientSSLKeyManagers.setKeyStore(keystoreParameters);
         clientSSLContextParameters.setKeyManagers(clientAuthClientSSLKeyManagers);
 
-        context.getRegistry().bind("serviceSSLContextParameters", serviceSSLContextParameters);
-        context.getRegistry().bind("clientSSLContextParameters", clientSSLContextParameters);
+        registry.bind("serviceSSLContextParameters", serviceSSLContextParameters);
+        registry.bind("clientSSLContextParameters", clientSSLContextParameters);
 
+        return registry;
+    }
+
+    protected void decorateRestConfiguration(RestConfigurationDefinition restConfig) {
         restConfig.endpointProperty("sslContextParameters", "#serviceSSLContextParameters");
     }
 
